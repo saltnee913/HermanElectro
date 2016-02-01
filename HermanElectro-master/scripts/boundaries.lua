@@ -1,7 +1,7 @@
 require('scripts.object')
 
 local P = {}
-Boundaries = P
+boundaries = P
 P.Boundary = Object:new{x=0, y=0, width=0, height=0, isPlayer=false}
 
 function P.Boundary:onCollide(bound)
@@ -26,4 +26,4 @@ function P.Door:onCollide(bound)
 	end
 end
 
-return Boundaries
+return boundaries
