@@ -9,6 +9,7 @@ P.rooms = {}
 local MapInfo = Object:new{height = 0, numRooms = 0}
 
 function P.loadRooms()
+
 	--super hacky, will do json later
 	
 	for roomNum = 0, 20 do
@@ -16,7 +17,7 @@ function P.loadRooms()
 		for i = 0, 10 do
 			P.rooms[roomNum][i] = {}
 			for j = 0, 20 do
-				P.rooms[roomNum][i][j] = tiles.tile
+				P.rooms[roomNum][i][j] = nil
 			end
 		end
 		P.rooms[roomNum][0][roomNum] = tiles.conductiveTile
