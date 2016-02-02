@@ -21,6 +21,9 @@ function love.load()
 	love.graphics.setBackgroundColor(255,255,255)
 	f1 = love.graphics.newImage('concretewalls.png')
 	walls = love.graphics.newImage('walls2.png')
+	rocks = love.graphics.newImage('pen15.png')
+	number1 = love.math.random()*-200
+	number2 = love.math.random()*-200
 	--print(love.graphics.getWidth(f1))
 	scale = (width - 2*wallSprite.width)/(20 * 16)
 	floor = tiles.tile
@@ -30,6 +33,7 @@ function love.load()
 end
 
 function love.draw()
+	love.graphics.draw(rocks, -mapx * width, -mapy * height, 0, 1, 1)
 	for i = 0, (width-wallSprite.width*2)/(floor.sprite:getWidth()*scale) do
 		for j = 0, (height-wallSprite.height*2)/(floor.sprite:getHeight()*scale) do
 			if j > table.getn(room) or i > table.getn(room[0]) then
@@ -37,7 +41,7 @@ function love.draw()
 			else
 				toDraw = room[j][i].sprite
 			end
-			love.graphics.draw(toDraw, i*floor.sprite:getWidth()*scale+wallSprite.width, j*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
+			--love.graphics.draw(toDraw, i*floor.sprite:getWidth()*scale+wallSprite.width, j*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
 		end
 	end
 	love.graphics.draw(walls, 0, 0, 0, width/walls:getWidth(), height/walls:getHeight())
