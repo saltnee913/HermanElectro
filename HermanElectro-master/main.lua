@@ -36,9 +36,9 @@ function love.draw()
 	love.graphics.draw(rocks, -mapx * width, -mapy * height, 0, 1, 1)
 	for i = 0, (width-wallSprite.width*2)/(floor.sprite:getWidth()*scale) do
 		for j = 0, (height-wallSprite.height*2)/(floor.sprite:getHeight()*scale) do
-			if room[j][i] ~= nil then
+			if room[j][i] ~= 0 then
 				if j <= table.getn(room) or i <= table.getn(room[0]) then
-					toDraw = room[j][i].sprite
+					toDraw = tiles[room[j][i]].sprite
 				end
 				love.graphics.draw(toDraw, i*floor.sprite:getWidth()*scale+wallSprite.width, j*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
 			end

@@ -1,5 +1,6 @@
 require('scripts.object')
 require('scripts.tiles')
+local json = require('scripts.dkjson')
 
 local P = {}
 map = P
@@ -17,11 +18,16 @@ function P.loadRooms()
 		for i = 0, 10 do
 			P.rooms[roomNum][i] = {}
 			for j = 0, 20 do
-				P.rooms[roomNum][i][j] = nil
+				P.rooms[roomNum][i][j] = 0
 			end
 		end
-		P.rooms[roomNum][0][roomNum] = tiles.conductiveTile
+		P.rooms[roomNum][0][roomNum] = 2
 	end
+
+	local str = json.encode(P.rooms, {indent = true})
+	print(str)
+
+
 end
 
 local function printMap(inMap)

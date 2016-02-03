@@ -7,4 +7,6 @@ function P.tile:onEnter(player)
 	player.x = 1000
 end
 P.conductiveTile = P.tile:new{isPowered = false, sprite = love.graphics.newImage('electricfloor.png')}
+tiles[1] = P.tile
+tiles[2] = P.conductiveTile
 return tiles
