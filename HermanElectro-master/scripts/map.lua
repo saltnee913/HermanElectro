@@ -12,20 +12,14 @@ local MapInfo = Object:new{height = 0, numRooms = 0}
 function P.loadRooms()
 
 	--super hacky, will do json later
-	
-	for roomNum = 0, 20 do
-		P.rooms[roomNum] = {}
-		for i = 0, 10 do
-			P.rooms[roomNum][i] = {}
-			for j = 0, 20 do
-				P.rooms[roomNum][i][j] = 0
-			end
-		end
-		P.rooms[roomNum][0][roomNum] = 2
+	io.input('rooms.json')
+	local str = io.read('*all')
+	local obj, pos, err = json.decode(str, 1, nil)
+	if err then
+		print('Error:', err)
+	else
+		P.rooms = obj.rooms
 	end
-
-	local str = json.encode(P.rooms, {indent = true})
-	print(str)
 
 
 end

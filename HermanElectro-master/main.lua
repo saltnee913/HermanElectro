@@ -12,9 +12,9 @@ function love.load()
 	mapHeight = 8
 	mainMap = map.generateMap(mapHeight, 20, os.time())
 	map.loadRooms()
-	room = map.rooms[0]
+	room = map.rooms[1]
 	width, height = love.graphics.getDimensions()
-	player = { x = 400, y = 400, width = 20, height = 20, speed = 250, sprite = love.graphics.newImage('herman_sketch.png'), roomid = 0, scale = 0.3 }
+	player = { x = 400, y = 400, width = 20, height = 20, speed = 250, sprite = love.graphics.newImage('herman_sketch.png'), roomid = 1, scale = 0.3 }
 	--image = love.graphics.newImage("cake.jpg")
 	love.graphics.setNewFont(12)
 	love.graphics.setColor(255,255,255)
@@ -36,7 +36,7 @@ function love.draw()
 	love.graphics.draw(rocks, -mapx * width, -mapy * height, 0, 1, 1)
 	for i = 0, (width-wallSprite.width*2)/(floor.sprite:getWidth()*scale) do
 		for j = 0, (height-wallSprite.height*2)/(floor.sprite:getHeight()*scale) do
-			if room[j][i] ~= 0 then
+			if room[j] ~= nil and room[j][i] ~= nil and room[j][i] ~= 0 then
 				if j <= table.getn(room) or i <= table.getn(room[0]) then
 					toDraw = tiles[room[j][i]].sprite
 				end
@@ -80,6 +80,7 @@ function enterRoom(dir)
 				mapy = mapy-1
 				newRoomNum = mainMap[mapy][mapx].roomid
 				room = map.rooms[newRoomNum]
+				if room == nil then print(';'..newRoomNum) end
 				player.y = height-wallSprite.heightForHitbox-5
 			end
 		end
@@ -89,6 +90,7 @@ function enterRoom(dir)
 				mapx = mapx+1
 				newRoomNum = mainMap[mapy][mapx].roomid
 				room = map.rooms[newRoomNum]
+				if room == nil then print(';'..newRoomNum) end
 				player.x = wallSprite.width+5
 			end
 		end
@@ -98,6 +100,7 @@ function enterRoom(dir)
 				mapy = mapy+1
 				newRoomNum = mainMap[mapy][mapx].roomid
 				room = map.rooms[newRoomNum]
+				if room == nil then print(';'..newRoomNum) end
 				player.y = wallSprite.heightForHitbox+player.height+5
 			end
 		end
@@ -107,6 +110,7 @@ function enterRoom(dir)
 				mapx = mapx-1
 				newRoomNum = mainMap[mapy][mapx].roomid
 				room = map.rooms[newRoomNum]
+				if room == nil then print(';'..newRoomNum) end
 				player.x = width-wallSprite.width-player.width-5
 			end
 		end
