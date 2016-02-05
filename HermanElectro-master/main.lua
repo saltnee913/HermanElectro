@@ -1,4 +1,5 @@
-
+roomHeight = 10
+roomLength = 20
 
 debug = true
 
@@ -13,6 +14,7 @@ function love.load()
 	mainMap = map.generateMap(mapHeight, 20, os.time())
 	map.loadRooms()
 	room = map.rooms[1]
+	powered = {}
 	width, height = love.graphics.getDimensions()
 	player = { x = 400, y = 400, width = 20, height = 20, speed = 250, sprite = love.graphics.newImage('herman_sketch.png'), roomid = 1, scale = 0.3 }
 	--image = love.graphics.newImage("cake.jpg")
@@ -32,15 +34,69 @@ function love.load()
 	end
 end
 
+function updatePower()
+	for i=1, roomHeight do
+		powered[i] = {}
+		for j=1, roomLength do
+			powered[i][j]=0
+		end
+	end
+	for i=1, roomHeight do
+		for j=1, roomLength do
+			if room[i][j]~=0 and tiles[room[i][j]].name == "powerSupply" then
+				powered[i][j] = 1
+				powerTest(i, j)
+			end
+		end
+	end
+	for i=1, roomHeight do
+		for j=1, roomLength do
+			if powered[i][j]==1 then
+				if room[i][j]==4 then
+					room[i][j] = 5
+				end
+			end
+		end
+	end	
+end
+
+function powerTest(x, y)
+	if x>1 and powered[x-1][y]==0 and canBePowered(x-1,y) then
+		powered[x-1][y] = 1
+		powerTest(x-1,y)
+	end
+	if x<roomHeight and powered[x+1][y]==0 and canBePowered(x+1,y) then
+		powered[x+1][y] = 1
+		powerTest(x+1,y)
+	end
+	if y>1 and powered[x][y-1]==0 and canBePowered(x,y-1) then
+		powered[x][y-1] = 1
+		powerTest(x,y-1)
+	end
+	if y<roomLength and powered[x][y+1]==0 and canBePowered(x,y+1) then
+		powered[x][y+1] = 1
+		powerTest(x,y+1)
+	end
+end
+
+--this function can be modified with a direction variable as argument,
+--customized for each tile to allow for directional current movement
+function canBePowered(x,y)
+	if room[x][y]==3 or room[x][y]==4 or room[x][y]==5 then
+		return true
+	end
+	return false
+end
+
 function love.draw()
 	love.graphics.draw(rocks, -mapx * width, -mapy * height, 0, 1, 1)
-	for i = 0, (width-wallSprite.width*2)/(floor.sprite:getWidth()*scale) do
-		for j = 0, (height-wallSprite.height*2)/(floor.sprite:getHeight()*scale) do
+	for i = 1, (width-wallSprite.width*2)/(floor.sprite:getWidth()*scale) do
+		for j = 1, (height-wallSprite.height*2)/(floor.sprite:getHeight()*scale) do
 			if room[j] ~= nil and room[j][i] ~= nil and room[j][i] ~= 0 then
 				if j <= table.getn(room) or i <= table.getn(room[0]) then
 					toDraw = tiles[room[j][i]].sprite
 				end
-				love.graphics.draw(toDraw, i*floor.sprite:getWidth()*scale+wallSprite.width, j*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
+				love.graphics.draw(toDraw, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
 			end
 		end
 	end
@@ -65,18 +121,12 @@ function love.draw()
 	love.graphics.setColor(255,255,255)
 end
 
-function isNotNil(a)
-	if a==nil then
-		return false;
-	end
-		return true;
-end
 mapx=4
 mapy=4
 function enterRoom(dir)
 	if dir== 0 then
 		if mapy>0 then
-			if isNotNil(mainMap[mapy-1][mapx]) then
+			if mainMap[mapy-1][mapx]~=nil then
 				mapy = mapy-1
 				newRoomNum = mainMap[mapy][mapx].roomid
 				room = map.rooms[newRoomNum]
@@ -86,7 +136,7 @@ function enterRoom(dir)
 		end
 	elseif dir == 1 then
 		if mapx<mapHeight then
-			if isNotNil(mainMap[mapy][mapx+1]) then
+			if mainMap[mapy][mapx+1]~=nil then
 				mapx = mapx+1
 				newRoomNum = mainMap[mapy][mapx].roomid
 				room = map.rooms[newRoomNum]
@@ -96,7 +146,7 @@ function enterRoom(dir)
 		end
 	elseif dir == 2 then
 		if mapy<mapHeight then
-			if isNotNil(mainMap[mapy+1][mapx]) then
+			if mainMap[mapy+1][mapx]~=nil then
 				mapy = mapy+1
 				newRoomNum = mainMap[mapy][mapx].roomid
 				room = map.rooms[newRoomNum]
@@ -106,7 +156,7 @@ function enterRoom(dir)
 		end
 	elseif dir == 3 then
 		if mapx>0 then
-			if isNotNil(mainMap[mapy][mapx-1]) then
+			if mainMap[mapy][mapx-1]~=nil then
 				mapx = mapx-1
 				newRoomNum = mainMap[mapy][mapx].roomid
 				room = map.rooms[newRoomNum]
@@ -118,6 +168,7 @@ function enterRoom(dir)
 end
 
 function love.update(dt)
+	updatePower()
 	if love.keyboard.isDown("up") then 
 		if player.y == wallSprite.heightForHitbox+player.height and player.x < width/2+20 and player.x > width/2-40 then
 			enterRoom(0)
