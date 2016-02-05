@@ -47,7 +47,7 @@ function P.generateMap(height, numRooms, seed)
 	for i = 0, height+1 do
 		newmap[i] = {}
 	end
-	newmap[height/2][height/2] = {roomid = 0, isFinal = false, isInitial = false}
+	newmap[height/2][height/2] = {roomid = 1, isFinal = false, isInitial = false}
 	for i = 0, numRooms-1 do
 		available = {}
 		local a = 0
