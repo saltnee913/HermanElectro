@@ -49,31 +49,24 @@ function updatePower()
 			end
 		end
 	end
-	for i=1, roomHeight do
-		for j=1, roomLength do
-			if powered[i][j]==1 then
-				if room[i][j]==4 then
-					room[i][j] = 5
-				end
-			end
-		end
-	end	
 end
 
 function powerTest(x, y)
-	if x>1 and powered[x-1][y]==0 and canBePowered(x-1,y) then
+	--x refers to y-direction and vice versa
+	--1 for up, 2 for right, 3 for down, 4 for left
+	if tiles[room[x][y]].dirSend[1]==1 and x>1 and powered[x-1][y]==0 and canBePowered(x-1,y,3) then
 		powered[x-1][y] = 1
 		powerTest(x-1,y)
 	end
-	if x<roomHeight and powered[x+1][y]==0 and canBePowered(x+1,y) then
+	if tiles[room[x][y]].dirSend[3]==1 and x<roomHeight and powered[x+1][y]==0 and canBePowered(x+1,y,1) then
 		powered[x+1][y] = 1
 		powerTest(x+1,y)
 	end
-	if y>1 and powered[x][y-1]==0 and canBePowered(x,y-1) then
+	if tiles[room[x][y]].dirSend[4]==1 and y>1 and powered[x][y-1]==0 and canBePowered(x,y-1,2) then
 		powered[x][y-1] = 1
 		powerTest(x,y-1)
 	end
-	if y<roomLength and powered[x][y+1]==0 and canBePowered(x,y+1) then
+	if tiles[room[x][y]].dirSend[2]==1 and y<roomLength and powered[x][y+1]==0 and canBePowered(x,y+1,4) then
 		powered[x][y+1] = 1
 		powerTest(x,y+1)
 	end
@@ -81,8 +74,8 @@ end
 
 --this function can be modified with a direction variable as argument,
 --customized for each tile to allow for directional current movement
-function canBePowered(x,y)
-	if room[x][y]==3 or room[x][y]==4 or room[x][y]==5 then
+function canBePowered(x,y,dir)
+	if room[x][y]>0 and tiles[room[x][y]].canBePowered and tiles[room[x][y]].dirAccept[dir]==1 then
 		return true
 	end
 	return false
@@ -94,7 +87,11 @@ function love.draw()
 		for j = 1, (height-wallSprite.height*2)/(floor.sprite:getHeight()*scale) do
 			if room[j] ~= nil and room[j][i] ~= nil and room[j][i] ~= 0 then
 				if j <= table.getn(room) or i <= table.getn(room[0]) then
-					toDraw = tiles[room[j][i]].sprite
+					if powered[j][i]==0 then
+						toDraw = tiles[room[j][i]].sprite
+					else
+						toDraw = tiles[room[j][i]].poweredSprite
+					end
 				end
 				love.graphics.draw(toDraw, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
 			end
