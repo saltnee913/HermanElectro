@@ -17,7 +17,6 @@ function love.load()
 	map.loadRooms()
 	mainMap = map.generateMap(mapHeight, 20, os.time())
 	room = mainMap[mapy][mapx].room
-	powered = {}
 	width, height = love.graphics.getDimensions()
 	player = { x = 400, y = 400, width = 20, height = 20, speed = 250, sprite = love.graphics.newImage('herman_sketch.png'), scale = 0.3 }
 	--image = love.graphics.newImage("cake.jpg")
@@ -39,15 +38,9 @@ end
 
 function updatePower()
 	for i=1, roomHeight do
-		powered[i] = {}
-		for j=1, roomLength do
-			powered[i][j]=0
-		end
-	end
-	for i=1, roomHeight do
 		for j=1, roomLength do
 			if room[i]~=nil and room[i][j]~=nil and room[i][j].name == "powerSupply" then
-				powered[i][j] = 1
+				room[i][j].powered = true
 				powerTest(i, j)
 			end
 		end
@@ -57,20 +50,24 @@ end
 function powerTest(x, y)
 	--x refers to y-direction and vice versa
 	--1 for up, 2 for right, 3 for down, 4 for left
-	if room[x][y].dirSend[1]==1 and x>1 and powered[x-1][y]==0 and canBePowered(x-1,y,3) then
-		powered[x-1][y] = 1
+	if room[x][y].dirSend[1]==1 and x>1 and room[x-1][y].powered == false and canBePowered(x-1,y,3) then
+		--powered[x-1][y] = 1
+		room[x-1][y].powered = true;
 		powerTest(x-1,y)
 	end
-	if room[x][y].dirSend[3]==1 and x<roomHeight and powered[x+1][y]==0 and canBePowered(x+1,y,1) then
-		powered[x+1][y] = 1
+	if room[x][y].dirSend[3]==1 and x<roomHeight and room[x+1][y].powered == false and canBePowered(x+1,y,1) then
+		--powered[x+1][y] = 1
+		room[x+1][y].powered = true;
 		powerTest(x+1,y)
 	end
-	if room[x][y].dirSend[4]==1 and y>1 and powered[x][y-1]==0 and canBePowered(x,y-1,2) then
-		powered[x][y-1] = 1
+	if room[x][y].dirSend[4]==1 and y>1 and room[x][y-1].powered==false and canBePowered(x,y-1,2) then
+		--powered[x][y-1] = 1
+		room[x][y-1].powered = true;
 		powerTest(x,y-1)
 	end
-	if room[x][y].dirSend[2]==1 and y<roomLength and powered[x][y+1]==0 and canBePowered(x,y+1,4) then
-		powered[x][y+1] = 1
+	if room[x][y].dirSend[2]==1 and y<roomLength and room[x][y+1].powered==false and canBePowered(x,y+1,4) then
+		--powered[x][y+1] = 1
+		room[x][y+1].powered = true;
 		powerTest(x,y+1)
 	end
 end
@@ -88,9 +85,9 @@ function love.draw()
 	love.graphics.draw(rocks, -mapx * width, -mapy * height, 0, 1, 1)
 	for i = 1, (width-wallSprite.width*2)/(floor.sprite:getWidth()*scale) do
 		for j = 1, (height-wallSprite.height*2)/(floor.sprite:getHeight()*scale) do
-			if room[j] ~= nil and room[j][i] ~= nil then
+			if room[j] ~= nil and room[j][i] ~= nil and room[j][i].name~="basicTile" then
 				if j <= table.getn(room) or i <= table.getn(room[0]) then
-					if powered[j][i]==0 then
+					if room[j][i].powered == false then
 						toDraw = room[j][i].sprite
 					else
 						toDraw = room[j][i].poweredSprite
@@ -159,6 +156,7 @@ function enterRoom(dir)
 			end
 		end
 	end
+	updatePower()
 end
 
 function love.update(dt)
