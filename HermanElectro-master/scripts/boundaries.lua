@@ -19,11 +19,16 @@ function P.Boundary:isColliding(bound)
 	return false
 end
 
-P.Door = Boundary:new{dir = 0}
+P.Door = P.Boundary:new{dir = 0}
 function P.Door:onCollide(bound)
 	if(bound.isPlayer) then
 		bound.switchRooms(self.dir)
 	end
 end
+
+local function getRealSize()
+	return self.scale * self.size
+end
+P.Block= P.Boundary:new{}
 
 return boundaries

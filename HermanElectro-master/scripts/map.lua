@@ -9,6 +9,24 @@ P.rooms = {}
 
 local MapInfo = Object:new{height = 0, numRooms = 0}
 
+local function createRoom(inRoom)
+	print(inRoom)
+	local roomToLoad = P.rooms[inRoom]
+	local loadedRoom = {}
+	for i = 1, #roomToLoad do
+		loadedRoom[i] = {}
+		for j = 1, #(roomToLoad[i]) do
+			if roomToLoad[i][j] == nil or roomToLoad[i][j] == 0 then
+				loadedRoom[i][j] = nil
+			else
+				loadedRoom[i][j] = tiles[roomToLoad[i][j]]:new()
+			end
+		end
+	end
+	if(loadedRoom==nil) then print("ellie fucked up") end
+	return loadedRoom
+end
+
 function P.loadRooms()
 
 	--super hacky, will do json later
@@ -47,7 +65,7 @@ function P.generateMap(height, numRooms, seed)
 	for i = 0, height+1 do
 		newmap[i] = {}
 	end
-	newmap[height/2][height/2] = {roomid = 1, isFinal = false, isInitial = false}
+	newmap[height/2][height/2] = {roomid = 1, room = createRoom(1), isFinal = false, isInitial = false}
 	for i = 0, numRooms-1 do
 		available = {}
 		local a = 0
@@ -84,7 +102,7 @@ function P.generateMap(height, numRooms, seed)
 		local choice = available[math.floor(math.random()*a)]
 		--roomNum = math.floor(math.random()*table.getn(rooms)) -- what we will actually do, with some editing
 		local roomNum = i+2 -- for testing purposes
-		newmap[choice.x][choice.y] = {roomid = roomNum, isFinal = false, isInitial = false}
+		newmap[choice.x][choice.y] = {roomid = roomNum, room = createRoom(roomNum), isFinal = false, isInitial = false}
 	end
 	printMap(newmap)
 	return newmap

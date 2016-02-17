@@ -7,16 +7,19 @@ wallSprite = {width = 78, height = 72, heightForHitbox = 62}
 
 require('scripts.tiles')
 require('scripts.map')
+require('scripts.boundaries')
 
 
+mapx=4
+mapy=4
 function love.load()
 	mapHeight = 8
-	mainMap = map.generateMap(mapHeight, 20, os.time())
 	map.loadRooms()
-	room = map.rooms[1]
+	mainMap = map.generateMap(mapHeight, 20, os.time())
+	room = mainMap[mapy][mapx].room
 	powered = {}
 	width, height = love.graphics.getDimensions()
-	player = { x = 400, y = 400, width = 20, height = 20, speed = 250, sprite = love.graphics.newImage('herman_sketch.png'), roomid = 1, scale = 0.3 }
+	player = { x = 400, y = 400, width = 20, height = 20, speed = 250, sprite = love.graphics.newImage('herman_sketch.png'), scale = 0.3 }
 	--image = love.graphics.newImage("cake.jpg")
 	love.graphics.setNewFont(12)
 	love.graphics.setColor(255,255,255)
@@ -43,7 +46,7 @@ function updatePower()
 	end
 	for i=1, roomHeight do
 		for j=1, roomLength do
-			if room[i][j]~=0 and tiles[room[i][j]].name == "powerSupply" then
+			if room[i]~=nil and room[i][j]~=nil and room[i][j].name == "powerSupply" then
 				powered[i][j] = 1
 				powerTest(i, j)
 			end
@@ -54,19 +57,19 @@ end
 function powerTest(x, y)
 	--x refers to y-direction and vice versa
 	--1 for up, 2 for right, 3 for down, 4 for left
-	if tiles[room[x][y]].dirSend[1]==1 and x>1 and powered[x-1][y]==0 and canBePowered(x-1,y,3) then
+	if room[x][y].dirSend[1]==1 and x>1 and powered[x-1][y]==0 and canBePowered(x-1,y,3) then
 		powered[x-1][y] = 1
 		powerTest(x-1,y)
 	end
-	if tiles[room[x][y]].dirSend[3]==1 and x<roomHeight and powered[x+1][y]==0 and canBePowered(x+1,y,1) then
+	if room[x][y].dirSend[3]==1 and x<roomHeight and powered[x+1][y]==0 and canBePowered(x+1,y,1) then
 		powered[x+1][y] = 1
 		powerTest(x+1,y)
 	end
-	if tiles[room[x][y]].dirSend[4]==1 and y>1 and powered[x][y-1]==0 and canBePowered(x,y-1,2) then
+	if room[x][y].dirSend[4]==1 and y>1 and powered[x][y-1]==0 and canBePowered(x,y-1,2) then
 		powered[x][y-1] = 1
 		powerTest(x,y-1)
 	end
-	if tiles[room[x][y]].dirSend[2]==1 and y<roomLength and powered[x][y+1]==0 and canBePowered(x,y+1,4) then
+	if room[x][y].dirSend[2]==1 and y<roomLength and powered[x][y+1]==0 and canBePowered(x,y+1,4) then
 		powered[x][y+1] = 1
 		powerTest(x,y+1)
 	end
@@ -75,7 +78,7 @@ end
 --this function can be modified with a direction variable as argument,
 --customized for each tile to allow for directional current movement
 function canBePowered(x,y,dir)
-	if room[x][y]>0 and tiles[room[x][y]].canBePowered and tiles[room[x][y]].dirAccept[dir]==1 then
+	if room[x][y]~=nil and room[x][y].canBePowered and room[x][y].dirAccept[dir]==1 then
 		return true
 	end
 	return false
@@ -85,12 +88,12 @@ function love.draw()
 	love.graphics.draw(rocks, -mapx * width, -mapy * height, 0, 1, 1)
 	for i = 1, (width-wallSprite.width*2)/(floor.sprite:getWidth()*scale) do
 		for j = 1, (height-wallSprite.height*2)/(floor.sprite:getHeight()*scale) do
-			if room[j] ~= nil and room[j][i] ~= nil and room[j][i] ~= 0 then
+			if room[j] ~= nil and room[j][i] ~= nil then
 				if j <= table.getn(room) or i <= table.getn(room[0]) then
 					if powered[j][i]==0 then
-						toDraw = tiles[room[j][i]].sprite
+						toDraw = room[j][i].sprite
 					else
-						toDraw = tiles[room[j][i]].poweredSprite
+						toDraw = room[j][i].poweredSprite
 					end
 				end
 				love.graphics.draw(toDraw, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
@@ -118,16 +121,13 @@ function love.draw()
 	love.graphics.setColor(255,255,255)
 end
 
-mapx=4
-mapy=4
 function enterRoom(dir)
 	if dir== 0 then
 		if mapy>0 then
 			if mainMap[mapy-1][mapx]~=nil then
 				mapy = mapy-1
-				newRoomNum = mainMap[mapy][mapx].roomid
-				room = map.rooms[newRoomNum]
-				if room == nil then print(';'..newRoomNum) end
+				room = mainMap[mapy][mapx].room
+				if room == nil then print(mainMap[mapy][mapx].roomid) end
 				player.y = height-wallSprite.heightForHitbox-5
 			end
 		end
@@ -135,9 +135,8 @@ function enterRoom(dir)
 		if mapx<mapHeight then
 			if mainMap[mapy][mapx+1]~=nil then
 				mapx = mapx+1
-				newRoomNum = mainMap[mapy][mapx].roomid
-				room = map.rooms[newRoomNum]
-				if room == nil then print(';'..newRoomNum) end
+				room = mainMap[mapy][mapx].room
+				if room == nil then print(mainMap[mapy][mapx].roomid) end
 				player.x = wallSprite.width+5
 			end
 		end
@@ -145,9 +144,8 @@ function enterRoom(dir)
 		if mapy<mapHeight then
 			if mainMap[mapy+1][mapx]~=nil then
 				mapy = mapy+1
-				newRoomNum = mainMap[mapy][mapx].roomid
-				room = map.rooms[newRoomNum]
-				if room == nil then print(';'..newRoomNum) end
+				room = mainMap[mapy][mapx].room
+				if room == nil then print(mainMap[mapy][mapx].roomid) end
 				player.y = wallSprite.heightForHitbox+player.height+5
 			end
 		end
@@ -155,9 +153,8 @@ function enterRoom(dir)
 		if mapx>0 then
 			if mainMap[mapy][mapx-1]~=nil then
 				mapx = mapx-1
-				newRoomNum = mainMap[mapy][mapx].roomid
-				room = map.rooms[newRoomNum]
-				if room == nil then print(';'..newRoomNum) end
+				room = mainMap[mapy][mapx].room
+				if room == nil then print(mainMap[mapy][mapx].roomid) end
 				player.x = width-wallSprite.width-player.width-5
 			end
 		end
