@@ -4,8 +4,14 @@ require('scripts.boundaries')
 local P = {}
 tiles = P
 P.tile = Object:new{powered = false, dirSend = {1,1,1,1}, dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile", sprite = love.graphics.newImage('cavesfloor.png'), poweredSprite = love.graphics.newImage('cavesfloor.png')}
-function P.tile:onEnter(player)
-	player.x = 1000
+function P.tile:onEnter(player) 
+	--self.name = "fuckyou"
+end
+function P.tile:onLeave(player) 
+	--self.name = "fuckme"
+end
+function P.tile:onStay(player) 
+	--player.x = player.x+1
 end
 local bounds = {}
 P.boundedTile = P.tile:new{boundary = boundaries.Boundary}
@@ -16,8 +22,17 @@ P.horizontalWire = P.tile:new{powered = false, dirSend = {0,1,0,1}, dirAccept = 
 P.verticalWire = P.tile:new{powered = false, dirSend = {1,0,1,0}, dirAccept = {1,0,1,0}, canBePowered = true, name = "verticalWire", sprite = love.graphics.newImage('verticalWireUnpowered.png'), poweredSprite = love.graphics.newImage('verticalWirePowered.png')}
 P.spikes = P.tile:new{powered = false, dirSend = {0,0,0,0}, dirAccept = {0,0,0,0}, canBePowered = true, name = "spikes", sprite = love.graphics.newImage('spikes.png')}
 
-bounds.buttonBound = boundaries.Boundary:new{width = 20, height = 20}
-P.button = P.boundedTile:new{powered = false, dirSend = {1,1,1,1}, dirAccept = {1,1,1,1}, canBePowered = true, name = "button", pressed = false, sprite = love.graphics.newImage('button.png'), poweredButton = love.graphics.newImage('buttonPressed.png')}
+P.button = P.tile:new{powered = false, dirSend = {1,1,1,1}, dirAccept = {1,1,1,1}, canBePowered = false, name = "button", pressed = false, sprite = love.graphics.newImage('button.png'), poweredSprite = love.graphics.newImage('buttonPressed.png')}
+function P.button:onEnter(player)
+	if self.powered then
+		self.powered = false
+	end
+	self.canBePowered = not self.canBePowered
+	print('btest')
+	--self.name = "onbutton"
+end
+
+
 tiles[1] = P.tile
 tiles[2] = P.conductiveTile
 tiles[3] = P.powerSupply

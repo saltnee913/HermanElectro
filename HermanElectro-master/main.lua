@@ -166,6 +166,8 @@ function enterRoom(dir)
 	updatePower()
 end
 
+oldTilesOn = {}
+
 function checkBoundaries()
 --tile locations: (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, starts at (0,0)
 --hitbox: bottom left (player.x, player.y), height player.height, width player.width
@@ -208,18 +210,59 @@ function checkBoundaries()
 	end
 		toPrint = toPrint .. (tileLoc1..','..tileLoc2 .. '  ')
 
+	for j = 1, 4 do
+		local isOnNow = false
+		for i = 1, 4 do
+			if tilesOn[i] == oldTilesOn[j] then
+				isOnNow = true
+			end
+		end
+		if oldTilesOn[j] ~= nil and not isOnNow then
+			oldTilesOn[j]:onLeave(player)
+		end
+		if oldTilesOn[j] ~= nil then
+			toPrint = toPrint .. oldTilesOn[j].name .. '-'
+		end
+	end
+	toPrint = toPrint .. '  fuck  '
+	ttt = false
 	for i = 1, 4 do
 		local t = tilesOn[i]
 		for j = 1, i-1 do
 			if tilesOn[i] == tilesOn[j] then
 				tilesOn[i] = nil
+				t = nil
 			end
 		end
-		if tilesOn[i] ~= nil then
+		if t ~= nil then
 			toPrint = toPrint .. (t.name) .. '-'
+			local isOnStay  = false
+			for j = 1, 4 do
+				if oldTilesOn[j] == t then
+					isOnStay = true
+				end
+			end
+			if isOnStay then
+				t:onStay(player)
+			else
+				t:onEnter(player)
+				ttt = true
+				for j = 1, 4 do
+					if oldTilesOn[j] ~= nil then
+						print(' ;' .. oldTilesOn[j].name .. '; ' .. t.name)
+					end
+				end
+			end
 		end
+
 	end
-	print("----")
+	for i = 1, 4 do
+		oldTilesOn[i] = tilesOn[i]
+	end
+	if ttt then
+		print(toPrint)
+		print('test')
+	end
 end
 
 function love.update(dt)
