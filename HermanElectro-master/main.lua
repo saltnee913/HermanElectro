@@ -50,22 +50,26 @@ end
 function powerTest(x, y)
 	--x refers to y-direction and vice versa
 	--1 for up, 2 for right, 3 for down, 4 for left
-	if room[x][y].dirSend[1]==1 and x>1 and room[x-1][y].powered == false and canBePowered(x-1,y,3) then
+	if room[x] == nil or room[x][y] == nil then
+		return
+	end
+
+	if room[x][y].dirSend[1]==1 and x>1 and room[x-1][y] ~=nil and room[x-1][y].powered == false and canBePowered(x-1,y,3) then
 		--powered[x-1][y] = 1
 		room[x-1][y].powered = true;
 		powerTest(x-1,y)
 	end
-	if room[x][y].dirSend[3]==1 and x<roomHeight and room[x+1][y].powered == false and canBePowered(x+1,y,1) then
+	if room[x][y].dirSend[3]==1 and x<roomHeight and room[x+1][y] ~=nil and room[x+1][y].powered == false and canBePowered(x+1,y,1) then
 		--powered[x+1][y] = 1
 		room[x+1][y].powered = true;
 		powerTest(x+1,y)
 	end
-	if room[x][y].dirSend[4]==1 and y>1 and room[x][y-1].powered==false and canBePowered(x,y-1,2) then
+	if room[x][y].dirSend[4]==1 and y>1 and room[x][y-1] ~=nil and room[x][y-1].powered==false and canBePowered(x,y-1,2) then
 		--powered[x][y-1] = 1
 		room[x][y-1].powered = true;
 		powerTest(x,y-1)
 	end
-	if room[x][y].dirSend[2]==1 and y<roomLength and room[x][y+1].powered==false and canBePowered(x,y+1,4) then
+	if room[x][y].dirSend[2]==1 and y<roomLength and room[x][y+1] ~=nil and room[x][y+1].powered==false and canBePowered(x,y+1,4) then
 		--powered[x][y+1] = 1
 		room[x][y+1].powered = true;
 		powerTest(x,y+1)
@@ -100,6 +104,9 @@ function love.draw()
 	love.graphics.draw(walls, 0, 0, 0, width/walls:getWidth(), height/walls:getHeight())
 	love.graphics.draw(player.sprite, player.x-player.sprite:getWidth()*player.scale/2, player.y-player.sprite:getHeight()*player.scale, 0, player.scale, player.scale)
 	love.graphics.print(player:getTileLoc().x .. ":" .. player:getTileLoc().y, 0, 0);
+	if toPrint ~= nil then
+		love.graphics.print(toPrint, 0, 10)
+	end
 	for i = 0, mapHeight do
 		for j = 0, mapHeight do
 			if mainMap[i][j] == nil then
@@ -159,6 +166,62 @@ function enterRoom(dir)
 	updatePower()
 end
 
+function checkBoundaries()
+--tile locations: (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, starts at (0,0)
+--hitbox: bottom left (player.x, player.y), height player.height, width player.width
+	toPrint = ""
+	tilesOn = {}
+	xCorner = player.x
+	yCorner = player.y
+	tileLoc1 = math.ceil((xCorner-wallSprite.width)/(scale*floor.sprite:getWidth()))
+	tileLoc2 = math.ceil((yCorner-wallSprite.height)/(scale*floor.sprite:getHeight()))
+	if room[tileLoc2] ~= nil then
+		tilesOn[1] = room[tileLoc2][tileLoc1]
+	end
+		toPrint = (tileLoc1..','..tileLoc2 .. '  ')
+
+	xCorner = player.x+player.width
+	yCorner = player.y-player.height
+	tileLoc1 = math.ceil((xCorner-wallSprite.width)/(scale*floor.sprite:getWidth()))
+	tileLoc2 = math.ceil((yCorner-wallSprite.height)/(scale*floor.sprite:getHeight()))
+	if room[tileLoc2] ~= nil then
+		tilesOn[2] = room[tileLoc2][tileLoc1]
+	end
+		toPrint = toPrint .. (tileLoc1..','..tileLoc2 .. '  ')
+	
+
+	xCorner = player.x
+	yCorner = player.y-player.height
+	tileLoc1 = math.ceil((xCorner-wallSprite.width)/(scale*floor.sprite:getWidth()))
+	tileLoc2 = math.ceil((yCorner-wallSprite.height)/(scale*floor.sprite:getHeight()))
+	if room[tileLoc2] ~= nil then
+		tilesOn[3] = room[tileLoc2][tileLoc1]
+	end
+		toPrint = toPrint .. (tileLoc1..','..tileLoc2 .. '  ')
+
+	xCorner = player.x+player.width
+	yCorner = player.y
+	tileLoc1 = math.ceil((xCorner-wallSprite.width)/(scale*floor.sprite:getWidth()))
+	tileLoc2 = math.ceil((yCorner-wallSprite.height)/(scale*floor.sprite:getHeight()))
+	if room[tileLoc2] ~= nil then
+		tilesOn[4] = room[tileLoc2][tileLoc1]
+	end
+		toPrint = toPrint .. (tileLoc1..','..tileLoc2 .. '  ')
+
+	for i = 1, 4 do
+		local t = tilesOn[i]
+		for j = 1, i-1 do
+			if tilesOn[i] == tilesOn[j] then
+				tilesOn[i] = nil
+			end
+		end
+		if tilesOn[i] ~= nil then
+			toPrint = toPrint .. (t.name) .. '-'
+		end
+	end
+	print("----")
+end
+
 function love.update(dt)
 	updatePower()
 	if love.keyboard.isDown("up") then 
@@ -201,4 +264,5 @@ function love.update(dt)
 	if player.y > height-wallSprite.heightForHitbox then
 		player.y = height-wallSprite.heightForHitbox
 	end
+	checkBoundaries()
 end
