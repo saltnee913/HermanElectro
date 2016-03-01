@@ -32,6 +32,15 @@ function P.button:onEnter(player)
 	--self.name = "onbutton"
 end
 
+P.stickyButton = P.button:new{}
+function P.stickyButton:onEnter(player)
+	self.canBePowered = true
+	updatePower()
+end
+
+P.stayButton = P.button:new{}
+P.stayButton.onLeave = P.stayButton.onEnter
+
 
 tiles[1] = P.tile
 tiles[2] = P.conductiveTile
@@ -41,4 +50,6 @@ tiles[5] = P.horizontalWire
 tiles[6] = P.verticalWire
 tiles[7] = P.spikes
 tiles[8] = P.button
+tiles[9] = P.stickyButton
+tiles[10] = P.stayButton
 return tiles
