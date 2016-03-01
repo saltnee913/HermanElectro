@@ -39,6 +39,13 @@ end
 function updatePower()
 	for i=1, roomHeight do
 		for j=1, roomLength do
+			if room[i]~=nil and room[i][j]~=nil and room[i][j].name ~= "powerSupply" then
+				room[i][j].powered = false
+			end
+		end
+	end
+	for i=1, roomHeight do
+		for j=1, roomLength do
 			if room[i]~=nil and room[i][j]~=nil and room[i][j].name == "powerSupply" then
 				room[i][j].powered = true
 				powerTest(i, j)
@@ -131,7 +138,6 @@ function enterRoom(dir)
 			if mainMap[mapy-1][mapx]~=nil then
 				mapy = mapy-1
 				room = mainMap[mapy][mapx].room
-				if room == nil then print(mainMap[mapy][mapx].roomid) end
 				player.y = height-wallSprite.heightForHitbox-5
 			end
 		end
@@ -140,7 +146,6 @@ function enterRoom(dir)
 			if mainMap[mapy][mapx+1]~=nil then
 				mapx = mapx+1
 				room = mainMap[mapy][mapx].room
-				if room == nil then print(mainMap[mapy][mapx].roomid) end
 				player.x = wallSprite.width+5
 			end
 		end
@@ -149,7 +154,6 @@ function enterRoom(dir)
 			if mainMap[mapy+1][mapx]~=nil then
 				mapy = mapy+1
 				room = mainMap[mapy][mapx].room
-				if room == nil then print(mainMap[mapy][mapx].roomid) end
 				player.y = wallSprite.heightForHitbox+player.height+5
 			end
 		end
@@ -158,12 +162,10 @@ function enterRoom(dir)
 			if mainMap[mapy][mapx-1]~=nil then
 				mapx = mapx-1
 				room = mainMap[mapy][mapx].room
-				if room == nil then print(mainMap[mapy][mapx].roomid) end
 				player.x = width-wallSprite.width-player.width-5
 			end
 		end
 	end
-	updatePower()
 end
 
 oldTilesOn = {}
@@ -180,7 +182,6 @@ function checkBoundaries()
 	if room[tileLoc2] ~= nil then
 		tilesOn[1] = room[tileLoc2][tileLoc1]
 	end
-		toPrint = (tileLoc1..','..tileLoc2 .. '  ')
 
 	xCorner = player.x+player.width
 	yCorner = player.y-player.height
@@ -189,7 +190,6 @@ function checkBoundaries()
 	if room[tileLoc2] ~= nil then
 		tilesOn[2] = room[tileLoc2][tileLoc1]
 	end
-		toPrint = toPrint .. (tileLoc1..','..tileLoc2 .. '  ')
 	
 
 	xCorner = player.x
@@ -199,7 +199,6 @@ function checkBoundaries()
 	if room[tileLoc2] ~= nil then
 		tilesOn[3] = room[tileLoc2][tileLoc1]
 	end
-		toPrint = toPrint .. (tileLoc1..','..tileLoc2 .. '  ')
 
 	xCorner = player.x+player.width
 	yCorner = player.y
@@ -208,7 +207,6 @@ function checkBoundaries()
 	if room[tileLoc2] ~= nil then
 		tilesOn[4] = room[tileLoc2][tileLoc1]
 	end
-		toPrint = toPrint .. (tileLoc1..','..tileLoc2 .. '  ')
 
 	for j = 1, 4 do
 		local isOnNow = false
@@ -220,12 +218,7 @@ function checkBoundaries()
 		if oldTilesOn[j] ~= nil and not isOnNow then
 			oldTilesOn[j]:onLeave(player)
 		end
-		if oldTilesOn[j] ~= nil then
-			toPrint = toPrint .. oldTilesOn[j].name .. '-'
-		end
 	end
-	toPrint = toPrint .. '  fuck  '
-	ttt = false
 	for i = 1, 4 do
 		local t = tilesOn[i]
 		for j = 1, i-1 do
@@ -235,7 +228,6 @@ function checkBoundaries()
 			end
 		end
 		if t ~= nil then
-			toPrint = toPrint .. (t.name) .. '-'
 			local isOnStay  = false
 			for j = 1, 4 do
 				if oldTilesOn[j] == t then
@@ -246,22 +238,12 @@ function checkBoundaries()
 				t:onStay(player)
 			else
 				t:onEnter(player)
-				ttt = true
-				for j = 1, 4 do
-					if oldTilesOn[j] ~= nil then
-						print(' ;' .. oldTilesOn[j].name .. '; ' .. t.name)
-					end
-				end
 			end
 		end
 
 	end
 	for i = 1, 4 do
 		oldTilesOn[i] = tilesOn[i]
-	end
-	if ttt then
-		print(toPrint)
-		print('test')
 	end
 end
 

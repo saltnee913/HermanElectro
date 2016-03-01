@@ -28,7 +28,7 @@ function P.button:onEnter(player)
 		self.powered = false
 	end
 	self.canBePowered = not self.canBePowered
-	print('btest')
+	updatePower()
 	--self.name = "onbutton"
 end
 
