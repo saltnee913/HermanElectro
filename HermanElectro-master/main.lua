@@ -37,6 +37,11 @@ function love.load()
 	updatePower()
 end
 
+function kill()
+	player.x = 0
+	player.y = 0
+end
+
 function updatePower()
 	for i=1, roomHeight do
 		for j=1, roomLength do
