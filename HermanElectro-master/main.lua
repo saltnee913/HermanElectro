@@ -48,7 +48,7 @@ function updatePower()
 			if room[i]~=nil and room[i][j]~=nil and room[i][j].name ~= "powerSupply" then
 				room[i][j].powered = false
 			end
-		end
+		end 
 	end
 	for i=1, roomHeight do
 		for j=1, roomLength do
@@ -182,12 +182,14 @@ function checkBoundaries()
 --hitbox: bottom left (player.x, player.y), height player.height, width player.width
 	toPrint = ""
 	tilesOn = {}
+	tileLocs = {}
 	xCorner = player.x
 	yCorner = player.y
 	tileLoc1 = math.ceil((xCorner-wallSprite.width)/(scale*floor.sprite:getWidth()))
 	tileLoc2 = math.ceil((yCorner-wallSprite.height)/(scale*floor.sprite:getHeight()))
 	if room[tileLoc2] ~= nil then
 		tilesOn[1] = room[tileLoc2][tileLoc1]
+		tileLocs[1] = {x=tileLoc1, y=tileLoc2}
 	end
 
 	xCorner = player.x+player.width
@@ -196,6 +198,7 @@ function checkBoundaries()
 	tileLoc2 = math.ceil((yCorner-wallSprite.height)/(scale*floor.sprite:getHeight()))
 	if room[tileLoc2] ~= nil then
 		tilesOn[2] = room[tileLoc2][tileLoc1]
+		tileLocs[2] = {x=tileLoc1, y=tileLoc2}
 	end
 	
 
@@ -205,6 +208,7 @@ function checkBoundaries()
 	tileLoc2 = math.ceil((yCorner-wallSprite.height)/(scale*floor.sprite:getHeight()))
 	if room[tileLoc2] ~= nil then
 		tilesOn[3] = room[tileLoc2][tileLoc1]
+		tileLocs[3] = {x=tileLoc1, y=tileLoc2}
 	end
 
 	xCorner = player.x+player.width
@@ -213,6 +217,7 @@ function checkBoundaries()
 	tileLoc2 = math.ceil((yCorner-wallSprite.height)/(scale*floor.sprite:getHeight()))
 	if room[tileLoc2] ~= nil then
 		tilesOn[4] = room[tileLoc2][tileLoc1]
+		tileLocs[4] = {x=tileLoc1, y=tileLoc2}
 	end
 
 	for j = 1, 4 do
@@ -242,9 +247,9 @@ function checkBoundaries()
 				end
 			end
 			if isOnStay then
-				t:onStay(player)
+				t:onStay(player, tileLocs[i])
 			else
-				t:onEnter(player)
+				t:onEnter(player, tileLocs[i])
 			end
 		end
 
