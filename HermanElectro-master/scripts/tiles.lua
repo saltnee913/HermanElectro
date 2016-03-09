@@ -3,6 +3,7 @@ require('scripts.boundaries')
 
 local P = {}
 tiles = P
+
 P.tile = Object:new{powered = false, dirSend = {1,1,1,1}, dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile", sprite = love.graphics.newImage('cavesfloor.png'), poweredSprite = love.graphics.newImage('cavesfloor.png')}
 function P.tile:onEnter(player) 
 	--self.name = "fuckyou"
@@ -32,29 +33,64 @@ function P.button:onEnter(player)
 	--self.name = "onbutton"
 end
 
-P.stickyButton = P.button:new{}
+P.stickyButton = P.button:new{name = "stickyButton"}
 function P.stickyButton:onEnter(player)
 	self.canBePowered = true
 	updatePower()
 end
 
-P.stayButton = P.button:new{}
+P.stayButton = P.button:new{name = "stayButton"}
 P.stayButton.onLeave = P.stayButton.onEnter
 
-P.electricFloor = P.conductiveTile:new{}
+P.electricFloor = P.conductiveTile:new{name = "electricfloor"}
 function P.electricFloor:onStay(player)
 	if self.powered then
 		kill()
 	end
 end
 
-P.poweredFloor = P.conductiveTile:new{}
+P.poweredFloor = P.conductiveTile:new{name = "poweredFloor"}
 function P.poweredFloor:onStay(player)
 	if not self.powered then
 		kill()
 	end
 end
 
+
+local function getTileX(posX)
+	return (posX-1)*floor.sprite:getWidth()*scale+wallSprite.width
+end
+
+local function getTileY(posY)
+	return (posY-1)*floor.sprite:getHeight()*scale+wallSprite.height
+end
+
+P.wall = P.tile:new{name = "wall", sprite = P.conductiveTile.sprite}
+function P.wall:onStay(player, tileLoc)
+	local block = {}
+	block.x = getTileX(tileLoc.x)
+	block.y = getTileY(tileLoc.y)
+
+	local xDiff = 0 -- 1 for right corner -1 for left corner
+	local yDiff = 0 -- -1 for bottom corner 1 for top corner
+	if player.x < block.x and player.x + player.width < block.x + self.sprite:getWidth()*scale then
+		xDiff = player.x + player.width - block.x
+	else
+		xDiff = player.x - block.x - self.sprite:getWidth()*scale
+	end
+	if player.y > block.y and player.y - player.height < block.y then
+		yDiff = player.y - block.y
+	else
+		yDiff = player.y - player.height - block.y - self.sprite:getHeight()*scale
+	end
+	if (math.abs(xDiff)>math.abs(yDiff)) then
+		player.x = player.x - xDiff
+	else
+		player.y = player.y - yDiff
+	end
+
+end
+P.wall.onEnter = P.wall.onStay
 
 tiles[1] = P.tile
 tiles[2] = P.conductiveTile
@@ -68,4 +104,5 @@ tiles[9] = P.stickyButton
 tiles[10] = P.stayButton
 tiles[11] = P.electricFloor
 tiles[12] = P.poweredFloor
+tiles[13] = P.wall
 return tiles
