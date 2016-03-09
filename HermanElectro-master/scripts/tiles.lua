@@ -55,6 +55,17 @@ function P.poweredFloor:onStay(player)
 	end
 end
 
+P.wall = P.tile:new{canBePowered = false, name = "wall", sprite = love.graphics.newImage('electricfloor.png'), poweredSprite = love.graphics.newImage('spikes.png') }
+function P.wall:onEnter(player)
+	player.x = player.prevx
+	player.y = player.prevy
+
+end
+
+function P.wall:onStay(player)
+	player.x = player.prevx
+	player.y = player.prevy
+end
 
 tiles[1] = P.tile
 tiles[2] = P.conductiveTile
@@ -68,4 +79,5 @@ tiles[9] = P.stickyButton
 tiles[10] = P.stayButton
 tiles[11] = P.electricFloor
 tiles[12] = P.poweredFloor
+tiles[13] = P.wall
 return tiles

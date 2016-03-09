@@ -18,7 +18,7 @@ function love.load()
 	mainMap = map.generateMap(mapHeight, 20, os.time())
 	room = mainMap[mapy][mapx].room
 	width, height = love.graphics.getDimensions()
-	player = { x = 400, y = 400, width = 20, height = 20, speed = 250, sprite = love.graphics.newImage('herman_sketch.png'), scale = 0.3 }
+	player = { x = 400, y = 400, prevx = 400, prevy = 400, width = 20, height = 20, speed = 250, sprite = love.graphics.newImage('herman_sketch.png'), scale = 0.3 }
 	--image = love.graphics.newImage("cake.jpg")
 	love.graphics.setNewFont(12)
 	love.graphics.setColor(255,255,255)
@@ -267,6 +267,14 @@ function love.update(dt)
 		end
 		player.y = player.y + player.speed * dt
 	end
+	if player.y < wallSprite.heightForHitbox+player.height then
+		player.y = wallSprite.heightForHitbox+player.height
+	end
+	if player.y > height-wallSprite.heightForHitbox then
+		player.y = height-wallSprite.heightForHitbox
+	end
+	checkBoundaries()
+	player.prevy = player.y
 	if love.keyboard.isDown("left") then 
 		if player.x == wallSprite.width and player.y < height/2+50 and player.y > height/2-20 then
 			enterRoom(3)
@@ -286,14 +294,9 @@ function love.update(dt)
 	if player.x < wallSprite.width then
 		player.x = wallSprite.width
 	end
-	if player.y < wallSprite.heightForHitbox+player.height then
-		player.y = wallSprite.heightForHitbox+player.height
-	end
 	if player.x > width-wallSprite.width-player.width then
 		player.x = width-wallSprite.width-player.width
 	end
-	if player.y > height-wallSprite.heightForHitbox then
-		player.y = height-wallSprite.heightForHitbox
-	end
 	checkBoundaries()
+	player.prevx = player.x
 end
