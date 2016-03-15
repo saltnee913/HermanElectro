@@ -15,8 +15,14 @@ function P.tile:onStay(player)
 	--player.x = player.x+1
 end
 local bounds = {}
+
 P.boundedTile = P.tile:new{boundary = boundaries.Boundary}
 P.conductiveTile = P.tile:new{powered = false, dirSend = {1,1,1,1}, dirAccept = {1,1,1,1}, canBePowered = true, name = "conductiveTile", sprite = love.graphics.newImage('electricfloor.png'), poweredSprite = love.graphics.newImage('spikes.png')}
+
+function P.conductiveTile:updateTile(dir)
+	self.powered = true
+end
+
 P.powerSupply = P.tile:new{powered = false, dirSend = {1,1,1,1}, dirAccept = {1,1,1,1}, canBePowered = true, name = "powerSupply", sprite = love.graphics.newImage('powersupply.png'), poweredSprite = love.graphics.newImage('powersupply.png')}
 P.wire = P.tile:new{powered = false, dirSend = {1,1,1,1}, dirAccept = {1,1,1,1}, canBePowered = true, name = "wire", sprite = love.graphics.newImage('wires.png'), poweredSprite = love.graphics.newImage('poweredwires.png')}
 P.horizontalWire = P.tile:new{powered = false, dirSend = {0,1,0,1}, dirAccept = {0,1,0,1}, canBePowered = true, name = "horizontalWire", sprite = love.graphics.newImage('horizontalWireUnpowered.png'), poweredSprite = love.graphics.newImage('horizontalWirePowered.png')}
@@ -65,6 +71,12 @@ end
 
 P.wall.onEnter = P.wall.onStay
 
+P.gate = P.conductiveTile:new{name = "gate", dirSend = {0,0,0,0}, dirAccept = {0,0,0,0}, gotten = {0,0,0,0}}
+function P:gate:updateTile(dir)
+	gotten[dir] = 1
+	dirSend = self.getOutputs()
+end
+
 local function getTileX(posX)
 	return (posX-1)*floor.sprite:getWidth()*scale+wallSprite.width
 end
@@ -87,4 +99,6 @@ tiles[10] = P.stayButton
 tiles[11] = P.electricFloor
 tiles[12] = P.poweredFloor
 tiles[13] = P.wall
+tiles[14] = P.xor
+
 return tiles
