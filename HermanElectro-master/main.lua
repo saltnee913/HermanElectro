@@ -8,6 +8,7 @@ wallSprite = {width = 78, height = 72, heightForHitbox = 62}
 require('scripts.tiles')
 require('scripts.map')
 require('scripts.boundaries')
+require('scripts.tools')
 
 
 mapx=4
@@ -15,6 +16,7 @@ mapy=4
 function love.load()
 	mapHeight = 8
 	map.loadRooms()
+	
 	mainMap = map.generateMap(mapHeight, 20, os.time())
 	room = mainMap[mapy][mapx].room
 	width, height = love.graphics.getDimensions()
@@ -134,6 +136,12 @@ function love.draw()
 				love.graphics.rectangle("fill", width - 18*(mapHeight-j+1), 9*i, 18, 9 )
 			end
 		end
+	end
+	for i = 0, 6 do
+		love.graphics.setColor(255,255,255)
+		love.graphics.rectangle("fill", i*width/18, 0, width/18, width/18)
+		love.graphics.setColor(0,0,0)
+		love.graphics.rectangle("line", i*width/18, 0, width/18, width/18)
 	end
 	love.graphics.setColor(255,255,255)
 end
