@@ -14,6 +14,9 @@ end
 function P.tile:onStay(player) 
 	--player.x = player.x+1
 end
+function P.tile:updateTile(dir)
+	self.powered = true
+end
 local bounds = {}
 
 P.boundedTile = P.tile:new{boundary = boundaries.Boundary}
@@ -72,10 +75,33 @@ end
 P.wall.onEnter = P.wall.onStay
 
 P.gate = P.conductiveTile:new{name = "gate", dirSend = {0,0,0,0}, dirAccept = {0,0,0,0}, gotten = {0,0,0,0}}
-function P:gate:updateTile(dir)
-	gotten[dir] = 1
-	dirSend = self.getOutputs()
+function P.gate:updateTile(dir)
+	self.gotten[dir] = 1
 end
+
+P.splitGate = P.conductiveTile:new{name = "splitGate", dirSend = {0,0,0,0}, dirAccept = {1,0,0,0}, sprite = love.graphics.newImage('splitgate.png'), poweredSprite = love.graphics.newImage('splitgate.png') }
+function P.splitGate:updateTile(dir)
+	if dir == 1 then
+		self.powered=true
+		self.dirSend = {0, 1, 0, 1}
+	else
+		self.powered = false
+		self.dirSend = {0,0,0,0}
+	end
+end
+
+P.andGate = P.conductiveTile:new{name = "andGate", dirSend = {0,0,0,0}, dirAccept = {0,1,0,1}, gotten = {0,0,0,0}, sprite = love.graphics.newImage('andgate.png'), poweredSprite = love.graphics.newImage('andgate.png') }
+function P.andGate:updateTile(dir)
+	self.gotten[dir] = 1
+	if self.gotten[2] == 1 and self.gotten[4] == 1 then
+		self.powered = true
+		self.dirSend = {1,0,1,0}
+	else
+		self.powered = false
+		self.dirSend = {0,0,0,0}
+	end
+end
+
 
 local function getTileX(posX)
 	return (posX-1)*floor.sprite:getWidth()*scale+wallSprite.width
@@ -99,6 +125,7 @@ tiles[10] = P.stayButton
 tiles[11] = P.electricFloor
 tiles[12] = P.poweredFloor
 tiles[13] = P.wall
-tiles[14] = P.xor
+tiles[14] = P.splitGate
+tiles[15] = P.andGate;
 
 return tiles
