@@ -49,48 +49,107 @@ function updatePower()
 		for j=1, roomLength do
 			if room[i]~=nil and room[i][j]~=nil and room[i][j].name ~= "powerSupply" then
 				room[i][j].powered = false
-				if room[i][j].name == "andGate" then --or other gates
-					room[i][j].gotten = {0,0,0,0}
+				room[i][j].poweredNeighbors = {0,0,0,0}
+				if room[i][j].name == "notGate" then
+					room[i][j].dirSend = {1,0,0,0}
 				end
+				room[i][j]:updateTile()
 			end
 		end 
 	end
 	for i=1, roomHeight do
 		for j=1, roomLength do
+			--power starts at power sources: powerSupply and notGate
 			if room[i]~=nil and room[i][j]~=nil and room[i][j].name == "powerSupply" then
 				room[i][j].powered = true
-				powerTest(i, j)
+			end
+			if room[i]~=nil and room[i][j]~=nil and room[i][j].name == "notGate" then
+				room[i][j].powered = true
+			end
+		end
+	end
+	for i=1, roomHeight do
+		for j=1, roomLength do
+			--power starts at power sources: powerSupply and notGate
+			if room[i]~=nil and room[i][j]~=nil and (room[i][j].name == "powerSupply" or room[i][j].name == "notGate") then
+				room[i][j]:updateTile(0)
+				powerTest(i,j,0)
 			end
 		end
 	end
 end
 
-function powerTest(x, y)
+function powerTest(x, y, lastDir)
 	--x refers to y-direction and vice versa
 	--1 for up, 2 for right, 3 for down, 4 for left
 	if room[x] == nil or room[x][y] == nil then
 		return
 	end
 
-	if room[x][y].dirSend[1]==1 and x>1 and room[x-1][y] ~=nil and room[x-1][y].powered == false and canBePowered(x-1,y,3) then
+
+	if x>1 and room[x-1][y] ~=nil and canBePowered(x-1,y,3) and lastDir~=1 then
+		formerPowered = room[x-1][y].powered
+		formerSend = room[x-1][y].dirSend
+		formerAccept = room[x-1][y].dirAccept
 		--powered[x-1][y] = 1
+		if room[x][y].dirSend[1]==1 and room[x][y].powered then
+			room[x-1][y].poweredNeighbors[3] = 1
+		else
+			room[x-1][y].poweredNeighbors[3] = 0
+		end
 		room[x-1][y]:updateTile(3)
-		powerTest(x-1,y)
+		if room[x-1][y].powered ~= formerPowered or room[x-1][y].dirSend ~= formerSend or room[x-1][y].dirAccept ~= formerAccept then
+			powerTest(x-1,y,3)
+		end
 	end
-	if room[x][y].dirSend[3]==1 and x<roomHeight and room[x+1][y] ~=nil and room[x+1][y].powered == false and canBePowered(x+1,y,1) then
+
+
+	if x<roomHeight and room[x+1][y] ~=nil and canBePowered(x+1,y,1) and lastDir~=3 then
 		--powered[x+1][y] = 1
+		formerPowered = room[x+1][y].powered
+		formerSend = room[x+1][y].dirSend
+		formerAccept = room[x+1][y].dirAccept
+		if room[x][y].dirSend[3]==1 and room[x][y].powered then
+			room[x+1][y].poweredNeighbors[1] = 1
+		else
+			room[x+1][y].poweredNeighbors[1] = 0
+		end
 		room[x+1][y]:updateTile(1)
-		powerTest(x+1,y)
+		if room[x+1][y].powered ~= formerPowered or room[x+1][y].dirSend ~= formerSend or room[x+1][y].dirAccept ~= formerAccept then
+			powerTest(x+1,y,1)
+		end
 	end
-	if room[x][y].dirSend[4]==1 and y>1 and room[x][y-1] ~=nil and room[x][y-1].powered==false and canBePowered(x,y-1,2) then
+
+	if y>1 and room[x][y-1] ~=nil and canBePowered(x,y-1,2) and lastDir~=4 then
+		formerPowered = room[x][y-1].powered
+		formerSend = room[x][y-1].dirSend
+		formerAccept = room[x][y-1].dirAccept
 		--powered[x][y-1] = 1
+		if room[x][y].dirSend[4]==1 and room[x][y].powered then
+			room[x][y-1].poweredNeighbors[2] = 1
+		else
+			room[x][y-1].poweredNeighbors[2] = 0
+		end
 		room[x][y-1]:updateTile(2)
-		powerTest(x,y-1)
+		if room[x][y-1].powered ~= formerPowered or room[x][y-1].dirSend ~= formerSend or room[x][y-1].dirAccept ~= formerAccept then
+			powerTest(x, y-1, 2)
+		end
 	end
-	if room[x][y].dirSend[2]==1 and y<roomLength and room[x][y+1] ~=nil and room[x][y+1].powered==false and canBePowered(x,y+1,4) then
+
+	if y<roomLength and room[x][y+1] ~=nil and canBePowered(x,y+1,4) and lastDir~=2 then
+		formerPowered = room[x][y+1].powered
+		formerSend = room[x][y+1].dirSend
+		formerAccept = room[x][y+1].dirAccept
 		--powered[x][y+1] = 1
+		if room[x][y].dirSend[2]==1 and room[x][y].powered then
+			room[x][y+1].poweredNeighbors[4] = 1
+		else
+			room[x][y+1].poweredNeighbors[4] = 0
+		end
 		room[x][y+1]:updateTile(4)
-		powerTest(x,y+1)
+		if room[x][y+1].powered ~= formerPowered or room[x][y+1].dirSend ~= formerSend or room[x][y+1].dirAccept ~= formerAccept then
+			powerTest(x, y+1, 4)
+		end
 	end
 end
 
