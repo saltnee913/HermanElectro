@@ -3,10 +3,10 @@ roomLength = 20
 
 debug = true
 
-wallSprite = {width = 78, height = 72, heightForHitbox = 62}
-
 require('scripts.tiles')
 require('scripts.map')
+
+wallSprite = {width = 78, height = 72, heightForHitbox = 62}
 require('scripts.boundaries')
 require('scripts.tools')
 
@@ -14,11 +14,15 @@ require('scripts.tools')
 mapx=4
 mapy=4
 function love.load()
+	black = love.graphics.newImage('electricfloor.png')
 	mapHeight = 8
 	map.loadRooms()
-	
 	mainMap = map.generateMap(mapHeight, 20, os.time())
 	room = mainMap[mapy][mapx].room
+	litTiles = {}
+	for i = 1, roomHeight do
+		litTiles[i] = {}
+	end
 	width, height = love.graphics.getDimensions()
 	player = { x = 400, y = 400, prevx = 400, prevy = 400, width = 20, height = 20, speed = 250, sprite = love.graphics.newImage('herman_sketch.png'), scale = 0.3 }
 	--image = love.graphics.newImage("cake.jpg")
@@ -42,6 +46,19 @@ end
 function kill()
 	player.x = 0
 	player.y = 0
+end
+
+function updateLight()
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			litTiles[i][j]=0
+		end
+	end
+	xCorner = player.x
+	yCorner = player.y
+	tileLoc1 = math.ceil((xCorner-wallSprite.width)/(scale*floor.sprite:getWidth()))
+	tileLoc2 = math.ceil((yCorner-wallSprite.height)/(scale*floor.sprite:getHeight()))
+	lightTest(tileLoc2, tileLoc1)
 end
 
 function updatePower()
@@ -75,6 +92,42 @@ function updatePower()
 				room[i][j]:updateTile(0)
 				powerTest(i,j,0)
 			end
+		end
+	end
+end
+
+function lightTest(x, y)
+	--x refers to y-direction and vice versa
+	--1 for up, 2 for right, 3 for down, 4 for left
+	if room[x] == nil or litTiles[x][y] == 1 then
+		return
+	end
+
+	litTiles[x][y] = 1
+
+
+	if x>1 then
+		if room[x-1][y]==nil or room[x-1][y].blocksVision == false then
+			lightTest(x-1,y,3)
+		end
+	end
+
+
+	if x<roomHeight then
+		if room[x+1][y]==nil or room[x+1][y].blocksVision == false then
+			lightTest(x+1,y,1)
+		end
+	end
+
+	if y>1 then
+		if room[x][y-1]==nil or room[x][y-1].blocksVision == false then
+			lightTest(x,y-1,2)
+		end
+	end
+
+	if y<roomLength then
+		if room[x][y+1]==nil or room[x][y+1].blocksVision == false then
+			lightTest(x,y+1,4)
 		end
 	end
 end
@@ -166,15 +219,19 @@ function love.draw()
 	love.graphics.draw(rocks, -mapx * width, -mapy * height, 0, 1, 1)
 	for i = 1, (width-wallSprite.width*2)/(floor.sprite:getWidth()*scale) do
 		for j = 1, (height-wallSprite.height*2)/(floor.sprite:getHeight()*scale) do
-			if room[j] ~= nil and room[j][i] ~= nil and room[j][i].name~="basicTile" then
+			if (room[j] ~= nil and room[j][i] ~= nil and room[j][i].name~="basicTile") or (room[j]~=nil and room[j][i]==nil) then
 				if j <= table.getn(room) or i <= table.getn(room[0]) then
-					if room[j][i].powered == false then
+					if litTiles[j][i] == 0 then
+						toDraw = black
+					elseif room[j][i]~=nil and room[j][i].powered == false then
 						toDraw = room[j][i].sprite
-					else
+					elseif room[j][i]~=nil then
 						toDraw = room[j][i].poweredSprite
 					end
 				end
-				love.graphics.draw(toDraw, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
+				if room[j][i]~=nil or litTiles[j][i]==0 then
+					love.graphics.draw(toDraw, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
+				end
 			end
 		end
 	end
@@ -243,6 +300,7 @@ function enterRoom(dir)
 		end
 	end
 	updatePower()
+	updateLight()
 end
 
 oldTilesOn = {}

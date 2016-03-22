@@ -4,7 +4,7 @@ require('scripts.boundaries')
 local P = {}
 tiles = P
 
-P.tile = Object:new{powered = false, poweredNeighbors = {0,0,0,0}, dirSend = {1,1,1,1}, dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile", sprite = love.graphics.newImage('cavesfloor.png'), poweredSprite = love.graphics.newImage('cavesfloor.png')}
+P.tile = Object:new{powered = false, poweredNeighbors = {0,0,0,0}, blocksVision = false, dirSend = {1,1,1,1}, dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile", sprite = love.graphics.newImage('cavesfloor.png'), poweredSprite = love.graphics.newImage('cavesfloor.png')}
 function P.tile:onEnter(player) 
 	--self.name = "fuckyou"
 end
@@ -44,9 +44,20 @@ P.horizontalWire = P.tile:new{powered = false, dirSend = {0,1,0,1}, dirAccept = 
 P.verticalWire = P.tile:new{powered = false, dirSend = {1,0,1,0}, dirAccept = {1,0,1,0}, canBePowered = true, name = "verticalWire", sprite = love.graphics.newImage('verticalWireUnpowered.png'), poweredSprite = love.graphics.newImage('verticalWirePowered.png')}
 P.spikes = P.tile:new{powered = false, dirSend = {0,0,0,0}, dirAccept = {0,0,0,0}, canBePowered = true, name = "spikes", sprite = love.graphics.newImage('spikes.png')}
 
-P.button = P.tile:new{down = false, powered = false, dirSend = {1,1,1,1}, dirAccept = {0,0,0,0}, canBePowered = true, name = "button", pressed = false, sprite = love.graphics.newImage('button.png'), poweredSprite = love.graphics.newImage('buttonPressed.png')}
+P.button = P.tile:new{down = false, powered = false, dirSend = {1,1,1,1}, dirAccept = {0,0,0,0}, canBePowered = true, name = "button", pressed = false, sprite = love.graphics.newImage('button.png'), poweredSprite = love.graphics.newImage('button.png'), downSprite = love.graphics.newImage('buttonPressed.png'), upSprite = love.graphics.newImage('button.png')}
+
+function P.button:updateSprite()
+	if self.down then
+		self.sprite = self.downSprite
+		self.poweredSprite = self.downSprite
+	else
+		self.sprite = self.upSprite
+		self.poweredSprite = self.upSprite
+	end
+end
+
 function P.button:onEnter(player)
-	down = not down
+	self.down = not self.down
 	if self.dirAccept[1]==1 then
 		self.powered = false
 		self.dirAccept = {0,0,0,0}
@@ -54,8 +65,10 @@ function P.button:onEnter(player)
 		self.dirAccept = {1,1,1,1}
 	end
 	updatePower()
+	self:updateSprite()
 	--self.name = "onbutton"
 end
+
 
 function P.button:updateTile(dir)
 	if self.down and self.poweredNeighbors[1]==1 or self.poweredNeighbors[2]==1 or self.poweredNeighbors[3]==1 or self.poweredNeighbors[4]==1 then
@@ -70,6 +83,7 @@ function P.stickyButton:onEnter(player)
 	down = true
 	self.dirAccept = {1,1,1,1}
 	updatePower()
+	self:updateSprite()
 end
 
 P.stayButton = P.button:new{name = "stayButton"}
@@ -89,7 +103,7 @@ function P.poweredFloor:onStay(player)
 	end
 end
 
-P.wall = P.tile:new{canBePowered = false, name = "wall", sprite = love.graphics.newImage('electricfloor.png'), poweredSprite = love.graphics.newImage('spikes.png') }
+P.wall = P.tile:new{canBePowered = false, name = "wall", blocksVision = true, sprite = love.graphics.newImage('electricfloor.png'), poweredSprite = love.graphics.newImage('spikes.png') }
 function P.wall:onStay(player)
 	player.x = player.prevx
 	player.y = player.prevy
