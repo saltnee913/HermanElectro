@@ -6,6 +6,7 @@ local P = {}
 map = P
 
 P.rooms = {}
+P.itemsNeeded = {}
 
 local MapInfo = Object:new{height = 0, numRooms = 0}
 
@@ -38,8 +39,6 @@ function P.loadRooms()
 	else
 		P.rooms = obj.rooms
 	end
-
-
 end
 
 local function printMap(inMap)

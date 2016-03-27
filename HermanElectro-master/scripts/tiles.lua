@@ -14,6 +14,8 @@ end
 function P.tile:onStay(player) 
 	--player.x = player.x+1
 end
+function P.tile:useTool(tool)
+end
 function P.tile:updateTile(dir)
 	if self.poweredNeighbors[1]==1 or self.poweredNeighbors[2]==1 or self.poweredNeighbors[3]==1 or self.poweredNeighbors[4]==1 then
 		self.powered = true
@@ -78,9 +80,9 @@ function P.button:updateTile(dir)
 	end
 end
 
-P.stickyButton = P.button:new{name = "stickyButton"}
+P.stickyButton = P.button:new{name = "stickyButton", downSprite = love.graphics.newImage('stickyButtonPressed.png'), sprite = love.graphics.newImage('stickyButton.png')}
 function P.stickyButton:onEnter(player)
-	down = true
+	self.down = true
 	self.dirAccept = {1,1,1,1}
 	updatePower()
 	self:updateSprite()
@@ -103,11 +105,22 @@ function P.poweredFloor:onStay(player)
 	end
 end
 
-P.wall = P.tile:new{canBePowered = false, name = "wall", blocksVision = true, sprite = love.graphics.newImage('electricfloor.png'), poweredSprite = love.graphics.newImage('spikes.png') }
+P.wall = P.tile:new{sawed = false, canBePowered = false, name = "wall", blocksVision = true, destroyedSprite = love.graphics.newImage("doorsopen.png"), sprite = love.graphics.newImage('woodwall.png'), poweredSprite = love.graphics.newImage('woodwall.png') }
 function P.wall:onStay(player)
-	player.x = player.prevx
-	player.y = player.prevy
+	if not self.sawed then
+		player.x = player.prevx
+		player.y = player.prevy
+	end
 
+end
+function P.wall:useTool(tool)
+	if tool==1 then
+		self.blocksVision = false
+		self.sprite = self.destroyedSprite
+		self.sawed = true
+		return true
+	end
+	return false
 end
 
 P.wall.onEnter = P.wall.onStay
@@ -172,6 +185,46 @@ local function getTileY(posY)
 	return (posY-1)*floor.sprite:getHeight()*scale+wallSprite.height
 end
 
+P.hDoor= P.tile:new{name = "hDoor", blocksVision = true, canBePowered = false, dirSend = {0,0,0,0}, dirAccept = {0,0,0,0}, sprite = love.graphics.newImage("door.png"), closedSprite = love.graphics.newImage("door.png"), openSprite = love.graphics.newImage("doorsopen.png")}
+function P.hDoor:onEnter(player)
+	self.sprite = self.openSprite
+	self.blocksVision = false
+	updateLight()
+end
+
+P.vDoor= P.tile:new{name = "hDoor", blocksVision = true, canBePowered = false, dirSend = {0,0,0,0}, dirAccept = {0,0,0,0}, sprite = love.graphics.newImage("door.png"), closedSprite = love.graphics.newImage("door.png"), openSprite = love.graphics.newImage("doorsopen.png")}
+function P.vDoor:onEnter(player)
+	self.sprite = self.openSprite
+	self.blocksVision = false
+	updateLight()
+end
+
+function P.hDoor:onLeave(player)
+	--self.sprite = self.closedSprite
+	--self.blocksVision = true
+	--updateLight()
+end
+
+P.endTile = P.tile:new{name = "endTile", canBePowered = false, dirAccept = {0,0,0,0}, sprite = love.graphics.newImage("end.png")}
+function P.endTile:onEnter(player)
+	completedRooms[mapy][mapx] = 1
+	done = false
+	while (done == false) do
+		x = math.floor(math.random()*(mapHeight+1))
+		y = math.floor(math.random()*(mapHeight+1))
+		if completedRooms[x]~=null and completedRooms[x][y]~=null and completedRooms[x][y] == 0 then
+			if (completedRooms[x-1]~=null and completedRooms[x-1][y] ~=null and completedRooms[x-1][y] == 1) or
+				(completedRooms[x+1]~=null and completedRooms[x+1][y] ~=null and completedRooms[x+1][y] ==1) or
+				(completedRooms[x][y-1]~=null and completedRooms[x][y-1]==1) or
+				(completedRooms[x][y+1]~=null and completedRooms[x][y+1]==1) then
+				for i=1,7 do
+					inventory[i] = inventory[i]+itemsNeeded[mainMap[x][y].roomid][i]
+					done = true
+				end
+			end
+		end
+	end
+end
 
 tiles[1] = P.tile
 tiles[2] = P.conductiveTile
@@ -190,5 +243,7 @@ tiles[14] = P.splitGate
 tiles[15] = P.andGate
 tiles[16] = P.notGate
 tiles[17] = P.orGate
+tiles[18] = P.hDoor
+tiles[19] = P.endTile
 
 return tiles

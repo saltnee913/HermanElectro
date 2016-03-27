@@ -1,12 +1,13 @@
-roomHeight = 10
-roomLength = 20
+roomHeight = 12
+roomLength = 24
+screenScale = 70
 
 debug = true
 
 require('scripts.tiles')
 require('scripts.map')
 
-wallSprite = {width = 78, height = 72, heightForHitbox = 62}
+wallSprite = {width = 78*screenScale/50, height = 72*screenScale/50, heightForHitbox = 62*screenScale/50}
 require('scripts.boundaries')
 require('scripts.tools')
 
@@ -14,7 +15,20 @@ require('scripts.tools')
 mapx=4
 mapy=4
 function love.load()
-	black = love.graphics.newImage('electricfloor.png')
+	local json = require('scripts.dkjson')
+	io.input('itemsNeeded.json')
+	tool = 0
+	local str = io.read('*all')
+	local obj, pos, err = json.decode(str, 1, nil)
+	if err then
+		print('Error:', err)
+	else
+		itemsNeeded = obj.itemsNeeded
+	end
+	black = love.graphics.newImage('dark.png')
+	green = love.graphics.newImage('green.png')
+	doorwaybg = love.graphics.newImage('doorwaybackground.png')
+	saw = love.graphics.newImage('saw.png')
 	mapHeight = 8
 	map.loadRooms()
 	mainMap = map.generateMap(mapHeight, 20, os.time())
@@ -23,24 +37,41 @@ function love.load()
 	for i = 1, roomHeight do
 		litTiles[i] = {}
 	end
-	width, height = love.graphics.getDimensions()
-	player = { x = 400, y = 400, prevx = 400, prevy = 400, width = 20, height = 20, speed = 250, sprite = love.graphics.newImage('herman_sketch.png'), scale = 0.3 }
+	completedRooms = {}
+	for i=1, mapHeight do
+		completedRooms[i] = {}
+		for j=1, mapHeight do
+			if mainMap[i][j]==nil then
+				completedRooms[i][j]=-1
+			else
+				completedRooms[i][j]=0
+			end
+		end
+	end
+	--1=saw
+	inventory = {0,0,0,0,0,0,0}
+	width = 16*screenScale
+	height = 9*screenScale
+	width2, height2 = love.graphics.getDimensions()
+	player = { x = 400, y = 400, prevx = 400, prevy = 400, width = 20, height = 20, speed = 250, sprite = love.graphics.newImage('herman_sketch.png'), scale = 0.25 }
 	--image = love.graphics.newImage("cake.jpg")
 	love.graphics.setNewFont(12)
 	love.graphics.setColor(255,255,255)
 	love.graphics.setBackgroundColor(255,255,255)
 	f1 = love.graphics.newImage('concretewalls.png')
-	walls = love.graphics.newImage('walls2.png')
+	walls = love.graphics.newImage('walls3.png')
 	rocks = love.graphics.newImage('pen15.png')
+	rocksQuad = love.graphics.newQuad(mapx*14*screenScale,mapx*8*screenScale,16*screenScale, 9*screenScale,rocks:getWidth(), rocks:getHeight())
 	number1 = love.math.random()*-200
 	number2 = love.math.random()*-200
 	--print(love.graphics.getWidth(f1))
-	scale = (width - 2*wallSprite.width)/(20 * 16)
+	scale = (width - 2*wallSprite.width)/(20.3 * 16)*5/6
 	floor = tiles.tile
 	function player:getTileLoc()
 		return {x = self.x/(floor.sprite:getWidth()*scale), y = self.y/(floor.sprite:getWidth()*scale)}
 	end
 	updatePower()
+	updateLight()
 end
 
 function kill()
@@ -54,11 +85,48 @@ function updateLight()
 			litTiles[i][j]=0
 		end
 	end
-	xCorner = player.x
-	yCorner = player.y
+	xCorner = player.x+player.width/2
+	yCorner = player.y-player.height/2
 	tileLoc1 = math.ceil((xCorner-wallSprite.width)/(scale*floor.sprite:getWidth()))
 	tileLoc2 = math.ceil((yCorner-wallSprite.height)/(scale*floor.sprite:getHeight()))
+	if tileLoc2>roomHeight then
+		tileLoc2 = roomHeight
+	end
+	if tileLoc1>roomLength then
+		tileLoc1 = roomLength
+	end
+	if tileLoc1<1 then
+		tileLoc1=1
+	end
+	if tileLoc2<1 then
+		tileLoc2=1
+	end
 	lightTest(tileLoc2, tileLoc1)
+	for i=1,roomHeight do
+		for j=1,roomLength do
+			--checkLight(i,j, tileLoc2, tileLoc1)
+		end
+	end
+end
+
+function checkLight(i, j, x, y)
+	vx = i-x
+	vy = j-y
+	ox = x
+	oy = y
+	length = math.sqrt(vx*vx+vy*vy)
+	vx = vx/(length*2)
+	vy = vy/(length*2)
+	for inc = 0, length*2 do
+		xcoord = math.floor(ox)
+		ycoord = math.floor(oy)
+		if room[xcoord]~=nil and room[xcoord][ycoord]~=nil and room[xcoord][ycoord].blocksVision and not (xcoord==i and ycoord ==j) then
+			return
+		end
+		ox=ox+vx
+		oy=oy+vy
+	end
+	litTiles[i][j]=1
 end
 
 function updatePower()
@@ -107,27 +175,35 @@ function lightTest(x, y)
 
 
 	if x>1 then
-		if room[x-1][y]==nil or room[x-1][y].blocksVision == false then
+		if room[x-1][y]~=nil and room[x-1][y].blocksVision then
+			litTiles[x-1][y] = 1
+		else
 			lightTest(x-1,y,3)
 		end
 	end
 
 
 	if x<roomHeight then
-		if room[x+1][y]==nil or room[x+1][y].blocksVision == false then
+		if room[x+1][y]~=nil and room[x+1][y].blocksVision then
+			litTiles[x+1][y] = 1
+		else
 			lightTest(x+1,y,1)
 		end
 	end
 
 	if y>1 then
-		if room[x][y-1]==nil or room[x][y-1].blocksVision == false then
-			lightTest(x,y-1,2)
+		if room[x][y-1]~=nil and room[x][y-1].blocksVision then
+			litTiles[x][y-1] = 1
+		else
+			lightTest(x, y-1,2)
 		end
 	end
 
 	if y<roomLength then
-		if room[x][y+1]==nil or room[x][y+1].blocksVision == false then
-			lightTest(x,y+1,4)
+		if room[x][y+1]~=nil and room[x][y+1].blocksVision then
+			litTiles[x][y+1] = 1
+		else
+			lightTest(x, y+1,4)
 		end
 	end
 end
@@ -216,9 +292,12 @@ function canBePowered(x,y,dir)
 end
 
 function love.draw()
-	love.graphics.draw(rocks, -mapx * width, -mapy * height, 0, 1, 1)
-	for i = 1, (width-wallSprite.width*2)/(floor.sprite:getWidth()*scale) do
-		for j = 1, (height-wallSprite.height*2)/(floor.sprite:getHeight()*scale) do
+	love.graphics.setBackgroundColor(0,0,0)
+	love.graphics.translate(width2/2-16*screenScale/2, height2/2-9*screenScale/2)
+	love.graphics.draw(rocks, rocksQuad, 0, 0)
+	--love.graphics.draw(rocks, -mapx * width, -mapy * height, 0, 1, 1)
+	for i = 1, (width-wallSprite.width*2)/(floor.sprite:getWidth()*scale)+1 do
+		for j = 1, (height-wallSprite.height*2)/(floor.sprite:getHeight()*scale)+1 do
 			if (room[j] ~= nil and room[j][i] ~= nil and room[j][i].name~="basicTile") or (room[j]~=nil and room[j][i]==nil) then
 				if j <= table.getn(room) or i <= table.getn(room[0]) then
 					if litTiles[j][i] == 0 then
@@ -232,7 +311,36 @@ function love.draw()
 				if room[j][i]~=nil or litTiles[j][i]==0 then
 					love.graphics.draw(toDraw, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
 				end
+				if tool~="" then
+					if room[j][i]~=nil and adjacent(i,j) then
+						if tool==1 then
+							if room[j][i].name == "wall" then
+								love.graphics.draw(green, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
+							end
+						end
+					end
+				end
 			end
+		end
+	end
+	if mapy>0 then
+		if mainMap[mapy-1][mapx]==nil or (completedRooms[mapy][mapx]==0 and completedRooms[mapy-1][mapx]==0) then
+			love.graphics.draw(doorwaybg, width/2-150, 0, 0, scale, scale*0.42)
+		end
+	end
+	if mapx<mapHeight then
+		if mainMap[mapy][mapx+1]==nil or (completedRooms[mapy][mapx]==0 and completedRooms[mapy][mapx+1]==0) then
+			love.graphics.draw(doorwaybg, width-wallSprite.width-9, height/2-150, 0, scale*0.42, scale)
+		end
+	end
+	if mapy<mapHeight then
+		if mainMap[mapy+1][mapx]==nil or (completedRooms[mapy][mapx]==0 and completedRooms[mapy+1][mapx]==0) then
+			love.graphics.draw(doorwaybg, width/2-150, height-scale*0.42*doorwaybg:getHeight()+11, 0, scale, scale*0.36)
+		end
+	end
+	if mapx>0 then
+		if mainMap[mapy][mapx-1]==nil or (completedRooms[mapy][mapx]==0 and completedRooms[mapy][mapx-1]==0) then
+			love.graphics.draw(doorwaybg, 2, height/2-150, 0, scale*0.45, scale)
 		end
 	end
 	love.graphics.draw(walls, 0, 0, 0, width/walls:getWidth(), height/walls:getHeight())
@@ -249,8 +357,10 @@ function love.draw()
 			else
 				if (i == mapy and j == mapx) then
 					love.graphics.setColor(0,255,0)
-				else
+				elseif completedRooms[i][j]==1 then
 					love.graphics.setColor(255,255,255)
+				else
+					love.graphics.setColor(100,100,100)
 				end
 				love.graphics.rectangle("fill", width - 18*(mapHeight-j+1), 9*i, 18, 9 )
 			end
@@ -258,16 +368,59 @@ function love.draw()
 	end
 	for i = 0, 6 do
 		love.graphics.setColor(255,255,255)
+		if i==0 and tool==1 then
+			love.graphics.setColor(50, 200, 50)
+		end
 		love.graphics.rectangle("fill", i*width/18, 0, width/18, width/18)
 		love.graphics.setColor(0,0,0)
 		love.graphics.rectangle("line", i*width/18, 0, width/18, width/18)
+		love.graphics.setColor(255,255,255)
+		love.graphics.draw(saw, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
+		love.graphics.setColor(0,0,0)
+		love.graphics.print(inventory[i+1], i*width/18, 0);
 	end
 	love.graphics.setColor(255,255,255)
 end
 
+function adjacent(xloc, yloc)
+	xCorner = player.x
+	yCorner = player.y
+	tileLoc1 = math.ceil((xCorner-wallSprite.width)/(scale*floor.sprite:getWidth()))
+	tileLoc2 = math.ceil((yCorner-wallSprite.height)/(scale*floor.sprite:getHeight()))
+	if math.abs(tileLoc1-xloc)+math.abs(tileLoc2-yloc)<=1 then
+		return true
+	end
+
+	xCorner = player.x+player.width
+	yCorner = player.y-player.height
+	tileLoc1 = math.ceil((xCorner-wallSprite.width)/(scale*floor.sprite:getWidth()))
+	tileLoc2 = math.ceil((yCorner-wallSprite.height)/(scale*floor.sprite:getHeight()))
+	if math.abs(tileLoc1-xloc)+math.abs(tileLoc2-yloc)<=1 then
+		return true
+	end
+	
+
+	xCorner = player.x
+	yCorner = player.y-player.height
+	tileLoc1 = math.ceil((xCorner-wallSprite.width)/(scale*floor.sprite:getWidth()))
+	tileLoc2 = math.ceil((yCorner-wallSprite.height)/(scale*floor.sprite:getHeight()))
+	if math.abs(tileLoc1-xloc)+math.abs(tileLoc2-yloc)<=1 then
+		return true
+	end
+
+	xCorner = player.x+player.width
+	yCorner = player.y
+	tileLoc1 = math.ceil((xCorner-wallSprite.width)/(scale*floor.sprite:getWidth()))
+	tileLoc2 = math.ceil((yCorner-wallSprite.height)/(scale*floor.sprite:getHeight()))
+	if math.abs(tileLoc1-xloc)+math.abs(tileLoc2-yloc)<=1 then
+		return true
+	end
+	return false
+end
+
 function enterRoom(dir)
 	if dir== 0 then
-		if mapy>0 then
+		if mapy>0 and not (completedRooms[mapy][mapx]==0 and completedRooms[mapy-1][mapx]==0) then
 			if mainMap[mapy-1][mapx]~=nil then
 				mapy = mapy-1
 				room = mainMap[mapy][mapx].room
@@ -275,7 +428,7 @@ function enterRoom(dir)
 			end
 		end
 	elseif dir == 1 then
-		if mapx<mapHeight then
+		if mapx<mapHeight and not (completedRooms[mapy][mapx]==0 and completedRooms[mapy][mapx+1]==0)then
 			if mainMap[mapy][mapx+1]~=nil then
 				mapx = mapx+1
 				room = mainMap[mapy][mapx].room
@@ -283,7 +436,7 @@ function enterRoom(dir)
 			end
 		end
 	elseif dir == 2 then
-		if mapy<mapHeight then
+		if mapy<mapHeight and not (completedRooms[mapy][mapx]==0 and completedRooms[mapy+1][mapx]==0) then
 			if mainMap[mapy+1][mapx]~=nil then
 				mapy = mapy+1
 				room = mainMap[mapy][mapx].room
@@ -291,7 +444,7 @@ function enterRoom(dir)
 			end
 		end
 	elseif dir == 3 then
-		if mapx>0 then
+		if mapx>0 and not (completedRooms[mapy][mapx]==0 and completedRooms[mapy][mapx-1]==0) then
 			if mainMap[mapy][mapx-1]~=nil then
 				mapx = mapx-1
 				room = mainMap[mapy][mapx].room
@@ -299,6 +452,9 @@ function enterRoom(dir)
 			end
 		end
 	end
+
+	rocksQuad = love.graphics.newQuad(mapx*14*screenScale,mapx*8*screenScale,16*screenScale, 9*screenScale,rocks:getWidth(), rocks:getHeight())
+
 	updatePower()
 	updateLight()
 end
@@ -389,13 +545,13 @@ end
 
 function love.update(dt)
 	if love.keyboard.isDown("up") then 
-		if player.y == wallSprite.heightForHitbox+player.height and player.x < width/2+20 and player.x > width/2-40 then
+		if player.y == wallSprite.heightForHitbox+player.height and player.x+player.width/2 < width/2+40 and player.x+player.width/2 > width/2-110 then
 			enterRoom(0)
 		end
 		player.y = player.y - player.speed * dt
 	end
 	if love.keyboard.isDown("down") then 
-		if player.y == height - wallSprite.heightForHitbox and player.x < width/2+20 and player.x > width/2-40 then
+		if player.y == height - wallSprite.heightForHitbox and player.x < width/2+40 and player.x > width/2-110 then
 			enterRoom(2)
 		end
 		player.y = player.y + player.speed * dt
@@ -407,6 +563,9 @@ function love.update(dt)
 		player.y = height-wallSprite.heightForHitbox
 	end
 	checkBoundaries()
+	if player.prevy~=player.y then
+		updateLight()
+	end
 	player.prevy = player.y
 	if love.keyboard.isDown("left") then 
 		if player.x == wallSprite.width and player.y < height/2+50 and player.y > height/2-20 then
@@ -431,5 +590,38 @@ function love.update(dt)
 		player.x = width-wallSprite.width-player.width
 	end
 	checkBoundaries()
+	if player.x~=player.prevx then
+		updateLight()
+	end
 	player.prevx = player.x
+end
+
+function love.mousepressed(x, y, button, istouch)
+	updateLight()
+	updatePower()
+	mouseX = x-width2/2+16*screenScale/2
+	mouseY = y-height2/2+9*screenScale/2
+	if mouseY<width/18 and mouseX<width/18 then
+		if tool==1 then
+			tool=0
+		elseif inventory[1]>0 then
+			tool=1
+		end
+	end
+
+	tileLoc1 = math.ceil((mouseX-wallSprite.width)/(scale*floor.sprite:getWidth()))
+	tileLoc2 = math.ceil((mouseY-wallSprite.height)/(scale*floor.sprite:getHeight()))
+	if tool~=0 and room[tileLoc2]~=nil and room[tileLoc2][tileLoc1]~=nil then
+		if room[tileLoc2][tileLoc1]:useTool(tool) then
+			inventory[tool] = inventory[tool]-1
+			if inventory[tool]==0 then
+				tool = 0
+			end
+		end
+	end
+end
+
+function love.mousemoved(x, y, dx, dy)
+	mouseX = x-width2/2+16*screenScale/2
+	mouseY = y-height2/2+9*screenScale/2
 end
