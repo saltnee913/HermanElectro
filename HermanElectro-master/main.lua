@@ -27,8 +27,11 @@ function love.load()
 	end
 	black = love.graphics.newImage('dark.png')
 	green = love.graphics.newImage('green.png')
+	gray = love.graphics.newImage('gray.png')
+	floortile = love.graphics.newImage('cavesfloor.png')
 	doorwaybg = love.graphics.newImage('doorwaybackground.png')
 	saw = love.graphics.newImage('saw.png')
+	ladder = love.graphics.newImage('ladder.png')
 	mapHeight = 8
 	map.loadRooms()
 	mainMap = map.generateMap(mapHeight, 20, os.time())
@@ -60,7 +63,7 @@ function love.load()
 	love.graphics.setBackgroundColor(255,255,255)
 	f1 = love.graphics.newImage('concretewalls.png')
 	walls = love.graphics.newImage('walls3.png')
-	rocks = love.graphics.newImage('pen15.png')
+	rocks = love.graphics.newImage('pen16.png')
 	rocksQuad = love.graphics.newQuad(mapx*14*screenScale,mapx*8*screenScale,16*screenScale, 9*screenScale,rocks:getWidth(), rocks:getHeight())
 	number1 = love.math.random()*-200
 	number2 = love.math.random()*-200
@@ -306,6 +309,8 @@ function love.draw()
 						toDraw = room[j][i].sprite
 					elseif room[j][i]~=nil then
 						toDraw = room[j][i].poweredSprite
+					--else
+						--toDraw = floortile
 					end
 				end
 				if room[j][i]~=nil or litTiles[j][i]==0 then
@@ -314,7 +319,11 @@ function love.draw()
 				if tool~="" then
 					if room[j][i]~=nil and adjacent(i,j) then
 						if tool==1 then
-							if room[j][i].name == "wall" then
+							if room[j][i].name == "wall" and not room[j][i].sawed then
+								love.graphics.draw(green, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
+							end
+						elseif tool==2 then
+							if room[j][i].name == "poweredFloor" and not room[j][i].ladder then
 								love.graphics.draw(green, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
 							end
 						end
@@ -368,16 +377,23 @@ function love.draw()
 	end
 	for i = 0, 6 do
 		love.graphics.setColor(255,255,255)
-		if i==0 and tool==1 then
+		if tool == i+1 then
 			love.graphics.setColor(50, 200, 50)
 		end
 		love.graphics.rectangle("fill", i*width/18, 0, width/18, width/18)
 		love.graphics.setColor(0,0,0)
 		love.graphics.rectangle("line", i*width/18, 0, width/18, width/18)
 		love.graphics.setColor(255,255,255)
-		love.graphics.draw(saw, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
+		if i==0 then
+			love.graphics.draw(saw, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
+		elseif i==1 then
+			love.graphics.draw(ladder, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
+		end
+		if inventory[i+1]==0 then
+			love.graphics.draw(gray, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
+		end
 		love.graphics.setColor(0,0,0)
-		love.graphics.print(inventory[i+1], i*width/18, 0);
+		love.graphics.print(inventory[i+1], i*width/18+3, 0);
 	end
 	love.graphics.setColor(255,255,255)
 end
@@ -597,28 +613,32 @@ function love.update(dt)
 end
 
 function love.mousepressed(x, y, button, istouch)
-	updateLight()
-	updatePower()
 	mouseX = x-width2/2+16*screenScale/2
 	mouseY = y-height2/2+9*screenScale/2
-	if mouseY<width/18 and mouseX<width/18 then
-		if tool==1 then
-			tool=0
-		elseif inventory[1]>0 then
-			tool=1
+	if mouseY<width/18 and mouseY>0 then
+		inventoryX = math.floor(mouseX/(width/18))
+		print(inventoryX)
+		if inventoryX>-1 and inventoryX<7 then
+			if tool==inventoryX+1 then
+				tool=0
+			elseif inventory[inventoryX+1]>0 then
+				tool=inventoryX+1
+			end
 		end
 	end
 
-	tileLoc1 = math.ceil((mouseX-wallSprite.width)/(scale*floor.sprite:getWidth()))
-	tileLoc2 = math.ceil((mouseY-wallSprite.height)/(scale*floor.sprite:getHeight()))
-	if tool~=0 and room[tileLoc2]~=nil and room[tileLoc2][tileLoc1]~=nil then
-		if room[tileLoc2][tileLoc1]:useTool(tool) then
+	tileLocX = math.ceil((mouseX-wallSprite.width)/(scale*floor.sprite:getWidth()))
+	tileLocY = math.ceil((mouseY-wallSprite.height)/(scale*floor.sprite:getHeight()))
+	if tool~=0 and room[tileLocY]~=nil and room[tileLocY][tileLocX]~=nil and adjacent(tileLocX, tileLocY) then
+		if room[tileLocY][tileLocX]:useTool(tool) then
 			inventory[tool] = inventory[tool]-1
 			if inventory[tool]==0 then
 				tool = 0
 			end
 		end
 	end
+	updateLight()
+	updatePower()
 end
 
 function love.mousemoved(x, y, dx, dy)

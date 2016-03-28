@@ -15,6 +15,7 @@ function P.tile:onStay(player)
 	--player.x = player.x+1
 end
 function P.tile:useTool(tool)
+	return false
 end
 function P.tile:updateTile(dir)
 	if self.poweredNeighbors[1]==1 or self.poweredNeighbors[2]==1 or self.poweredNeighbors[3]==1 or self.poweredNeighbors[4]==1 then
@@ -91,21 +92,30 @@ end
 P.stayButton = P.button:new{name = "stayButton"}
 P.stayButton.onLeave = P.stayButton.onEnter
 
-P.electricFloor = P.conductiveTile:new{name = "electricfloor"}
+P.electricFloor = P.conductiveTile:new{name = "electricfloor", sprite = love.graphics.newImage('electricfloor.png'), poweredSprite = love.graphics.newImage('electricfloorpowered.png')}
 function P.electricFloor:onStay(player)
 	if self.powered then
 		kill()
 	end
 end
 
-P.poweredFloor = P.conductiveTile:new{name = "poweredFloor"}
+P.poweredFloor = P.conductiveTile:new{name = "poweredFloor", ladder = false, destroyedSprite = love.graphics.newImage('trapdoorwithladder.png'), destroyedPoweredSprite = love.graphics.newImage('trapdoorclosedwithladder.png'), sprite = love.graphics.newImage('trapdoor.png'), poweredSprite = love.graphics.newImage('trapdoorclosed.png')}
 function P.poweredFloor:onStay(player)
-	if not self.powered then
+	if not self.powered and not self.ladder then
 		kill()
 	end
 end
+function P.poweredFloor:useTool(tool)
+	if tool==2 and not self.ladder then
+		self.sprite = self.destroyedSprite
+		self.poweredSprite = self.destroyedPoweredSprite
+		self.ladder= true
+		return true
+	end
+	return false
+end
 
-P.wall = P.tile:new{sawed = false, canBePowered = false, name = "wall", blocksVision = true, destroyedSprite = love.graphics.newImage("doorsopen.png"), sprite = love.graphics.newImage('woodwall.png'), poweredSprite = love.graphics.newImage('woodwall.png') }
+P.wall = P.tile:new{sawed = false, canBePowered = false, name = "wall", blocksVision = true, destroyedSprite = love.graphics.newImage("woodwallbroken.png"), sprite = love.graphics.newImage('woodwall.png'), poweredSprite = love.graphics.newImage('woodwall.png') }
 function P.wall:onStay(player)
 	if not self.sawed then
 		player.x = player.prevx
@@ -114,7 +124,7 @@ function P.wall:onStay(player)
 
 end
 function P.wall:useTool(tool)
-	if tool==1 then
+	if tool==1 and not self.sawed then
 		self.blocksVision = false
 		self.sprite = self.destroyedSprite
 		self.sawed = true
@@ -158,7 +168,7 @@ P.andGate = P.powerSupply:new{name = "andGate", dirSend = {0,0,0,0}, dirAccept =
 function P.andGate:updateTile(dir)
 	if self.poweredNeighbors[2]==1 and self.poweredNeighbors[4]==1 then
 		self.powered = true
-		self.dirSend = {1,0,1,0}
+		self.dirSend = {1,0,0,0}
 	else
 		self.powered = false
 		self.dirSend = {0,0,0,0}
