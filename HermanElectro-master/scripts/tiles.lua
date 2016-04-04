@@ -37,14 +37,37 @@ function P.conductiveTile:updateTile(dir)
 	end
 end
 
-P.powerSupply = P.tile:new{powered = false, dirSend = {1,1,1,1}, dirAccept = {1,1,1,1}, canBePowered = true, name = "powerSupply", sprite = love.graphics.newImage('powersupply.png'), poweredSprite = love.graphics.newImage('powersupply.png')}
+P.powerSupply = P.tile:new{powered = false, wet = false, dirSend = {1,1,1,1}, dirAccept = {1,1,1,1}, canBePowered = true, name = "powerSupply", sprite = love.graphics.newImage('powersupply.png'), destroyedSprite = love.graphics.newImage('powersupplydead.png'), poweredSprite = love.graphics.newImage('powersupply.png')}
 function P.powerSupply:updateTile(dir)
-
+end
+function P.powerSupply:useTool(tool)
+	if tool==4 and not self.wet then
+		self.sprite = self.destroyedSprite
+		self.canBePowered = false
+		self.powered = false
+		self.wet = true
+		dirAccept = {0,0,0,0}
+		dirSend = {0,0,0,0}
+		return true
+	end
+	return false
 end
 
-P.wire = P.tile:new{powered = false, dirSend = {1,1,1,1}, dirAccept = {1,1,1,1}, canBePowered = true, name = "wire", sprite = love.graphics.newImage('wires.png'), poweredSprite = love.graphics.newImage('poweredwires.png')}
-P.horizontalWire = P.tile:new{powered = false, dirSend = {0,1,0,1}, dirAccept = {0,1,0,1}, canBePowered = true, name = "horizontalWire", sprite = love.graphics.newImage('horizontalWireUnpowered.png'), poweredSprite = love.graphics.newImage('horizontalWirePowered.png')}
-P.verticalWire = P.tile:new{powered = false, dirSend = {1,0,1,0}, dirAccept = {1,0,1,0}, canBePowered = true, name = "verticalWire", sprite = love.graphics.newImage('verticalWireUnpowered.png'), poweredSprite = love.graphics.newImage('verticalWirePowered.png')}
+P.wire = P.tile:new{cut = false, powered = false, dirSend = {1,1,1,1}, dirAccept = {1,1,1,1}, destroyedSprite = love.graphics.newImage('wirescut.png'), canBePowered = true, name = "wire", sprite = love.graphics.newImage('wires.png'), poweredSprite = love.graphics.newImage('poweredwires.png')}
+function P.wire:useTool(tool)
+	if tool==3 and not self.cut then
+		self.sprite = self.destroyedSprite
+		self.canBePowered = false
+		self.cut = true
+		dirAccept = {0,0,0,0}
+		dirSend = {0,0,0,0}
+		return true
+	end
+	return false
+end
+
+P.horizontalWire = P.wire:new{powered = false, dirSend = {0,1,0,1}, dirAccept = {0,1,0,1}, canBePowered = true, name = "horizontalWire", sprite = love.graphics.newImage('horizontalWireUnpowered.png'), destroyedSprite = love.graphics.newImage('horizontalWireCut.png'), poweredSprite = love.graphics.newImage('horizontalWirePowered.png')}
+P.verticalWire = P.wire:new{powered = false, dirSend = {1,0,1,0}, dirAccept = {1,0,1,0}, canBePowered = true, name = "verticalWire", sprite = love.graphics.newImage('verticalWireUnpowered.png'), destroyedSprite = love.graphics.newImage('verticalWireCut.png'), poweredSprite = love.graphics.newImage('verticalWirePowered.png')}
 P.spikes = P.tile:new{powered = false, dirSend = {0,0,0,0}, dirAccept = {0,0,0,0}, canBePowered = true, name = "spikes", sprite = love.graphics.newImage('spikes.png')}
 
 P.button = P.tile:new{down = false, powered = false, dirSend = {1,1,1,1}, dirAccept = {0,0,0,0}, canBePowered = true, name = "button", pressed = false, sprite = love.graphics.newImage('button.png'), poweredSprite = love.graphics.newImage('button.png'), downSprite = love.graphics.newImage('buttonPressed.png'), upSprite = love.graphics.newImage('button.png')}
@@ -92,11 +115,22 @@ end
 P.stayButton = P.button:new{name = "stayButton"}
 P.stayButton.onLeave = P.stayButton.onEnter
 
-P.electricFloor = P.conductiveTile:new{name = "electricfloor", sprite = love.graphics.newImage('electricfloor.png'), poweredSprite = love.graphics.newImage('electricfloorpowered.png')}
+P.electricFloor = P.conductiveTile:new{name = "electricfloor", cut = false, sprite = love.graphics.newImage('electricfloor.png'), destroyedSprite = love.graphics.newImage('electricfloorcut.png'), poweredSprite = love.graphics.newImage('electricfloorpowered.png')}
 function P.electricFloor:onStay(player)
-	if self.powered then
+	if self.powered and not self.cut then
 		kill()
 	end
+end
+function P.electricFloor:useTool(tool)
+	if tool==3 and not self.cut then
+		self.sprite = self.destroyedSprite
+		self.canBePowered = false
+		self.cut = true
+		dirAccept = {0,0,0,0}
+		dirSend = {0,0,0,0}
+		return true
+	end
+	return false
 end
 
 P.poweredFloor = P.conductiveTile:new{name = "poweredFloor", ladder = false, destroyedSprite = love.graphics.newImage('trapdoorwithladder.png'), destroyedPoweredSprite = love.graphics.newImage('trapdoorclosedwithladder.png'), sprite = love.graphics.newImage('trapdoor.png'), poweredSprite = love.graphics.newImage('trapdoorclosed.png')}

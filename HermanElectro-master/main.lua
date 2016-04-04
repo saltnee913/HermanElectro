@@ -10,10 +10,11 @@ require('scripts.map')
 require('scripts.boundaries')
 require('scripts.tools')
 
+loadedOnce = false
 
-mapx=4
-mapy=4
 function love.load()
+	mapx=4
+	mapy=4
 	local json = require('scripts.dkjson')
 	io.input('itemsNeeded.json')
 	tool = 0
@@ -32,6 +33,7 @@ function love.load()
 	saw = love.graphics.newImage('saw.png')
 	ladder = love.graphics.newImage('ladder.png')
 	wirecutters = love.graphics.newImage('wirecutters.png')
+	waterbottle = love.graphics.newImage('waterbottle.png')
 	mapHeight = 8
 	map.loadRooms()
 	mainMap = map.generateMap(mapHeight, 20, os.time())
@@ -70,10 +72,12 @@ function love.load()
 	love.graphics.setNewFont(12)
 	love.graphics.setColor(255,255,255)
 	love.graphics.setBackgroundColor(255,255,255)
-	f1 = love.graphics.newImage('concretewalls.png')
-	walls = love.graphics.newImage('walls3.png')
-	rocks = love.graphics.newImage('pen16.png')
-	rocksQuad = love.graphics.newQuad(mapy*14*screenScale,mapx*8*screenScale, width, height, rocks:getWidth(), rocks:getHeight())
+	if not loadedOnce then
+		f1 = love.graphics.newImage('concretewalls.png')
+		walls = love.graphics.newImage('walls3.png')
+		rocks = love.graphics.newImage('pen16.png')
+		rocksQuad = love.graphics.newQuad(mapy*14*screenScale,mapx*8*screenScale, width, height, rocks:getWidth(), rocks:getHeight())
+	end
 	number1 = love.math.random()*-200
 	number2 = love.math.random()*-200
 	--print(love.graphics.getWidth(f1))
@@ -84,6 +88,7 @@ function love.load()
 	end
 	updatePower()
 	updateLight()
+	loadedOnce = true
 end
 
 function kill()
@@ -144,7 +149,7 @@ end
 function updatePower()
 	for i=1, roomHeight do
 		for j=1, roomLength do
-			if room[i]~=nil and room[i][j]~=nil and room[i][j].name ~= "powerSupply" then
+			if room[i]~=nil and room[i][j]~=nil and not (room[i][j].name == "powerSupply" and not room[i][j].wet) then
 				room[i][j].powered = false
 				room[i][j].poweredNeighbors = {0,0,0,0}
 				if room[i][j].name == "notGate" then
@@ -157,7 +162,7 @@ function updatePower()
 	for i=1, roomHeight do
 		for j=1, roomLength do
 			--power starts at power sources: powerSupply and notGate
-			if room[i]~=nil and room[i][j]~=nil and room[i][j].name == "powerSupply" then
+			if room[i]~=nil and room[i][j]~=nil and room[i][j].name == "powerSupply" and not room[i][j].wet then
 				room[i][j].powered = true
 			end
 			if room[i]~=nil and room[i][j]~=nil and room[i][j].name == "notGate" then
@@ -336,6 +341,14 @@ function love.draw()
 							if room[j][i].name == "poweredFloor" and not room[j][i].ladder then
 								love.graphics.draw(green, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
 							end
+						elseif tool==3 then
+							if (room[j][i].name == "electricfloor" or room[j][i].name == "horizontalWire" or room[j][i].name == "verticalWire" or room[j][i].name == "wire") and not room[j][i].cut then
+								love.graphics.draw(green, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
+							end
+						elseif tool==4 then
+							if room[j][i].name == "powerSupply" and not room[j][i].wet then
+								love.graphics.draw(green, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
+							end
 						end
 					end
 				end
@@ -399,7 +412,9 @@ function love.draw()
 		elseif i==1 then
 			love.graphics.draw(ladder, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
 		elseif i==2 then
-				love.graphics.draw(wirecutters, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
+			love.graphics.draw(wirecutters, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
+		elseif i==3 then
+			love.graphics.draw(waterbottle, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
 		end
 		if inventory[i+1]==0 then
 			love.graphics.draw(gray, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
@@ -569,6 +584,13 @@ function checkBoundaries()
 	for i = 1, 4 do
 		oldTilesOn[i] = tilesOn[i]
 	end
+end
+
+function love.keypressed(key, unicode)
+    -- ignore non-printable characters (see http://www.ascii-code.com/)
+    if key == "r" then
+    	love.load()
+    end
 end
 
 function love.update(dt)
