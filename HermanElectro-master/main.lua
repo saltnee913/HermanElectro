@@ -8,16 +8,17 @@ require('scripts.tiles')
 require('scripts.map')
 
 require('scripts.boundaries')
-require('scripts.tools')
+--require('scripts.tools')
+require('scripts.animals')
 
 loadedOnce = false
 
 function love.load()
+	dead = false
 	mapx=4
 	mapy=4
 	local json = require('scripts.dkjson')
 	io.input('itemsNeeded.json')
-	tool = 0
 	local str = io.read('*all')
 	local obj, pos, err = json.decode(str, 1, nil)
 	if err then
@@ -25,15 +26,6 @@ function love.load()
 	else
 		itemsNeeded = obj.itemsNeeded
 	end
-	black = love.graphics.newImage('dark.png')
-	green = love.graphics.newImage('green.png')
-	gray = love.graphics.newImage('gray.png')
-	floortile = love.graphics.newImage('cavesfloor.png')
-	doorwaybg = love.graphics.newImage('doorwaybackground.png')
-	saw = love.graphics.newImage('saw.png')
-	ladder = love.graphics.newImage('ladder.png')
-	wirecutters = love.graphics.newImage('wirecutters.png')
-	waterbottle = love.graphics.newImage('waterbottle.png')
 	mapHeight = 8
 	map.loadRooms()
 	mainMap = map.generateMap(mapHeight, 20, os.time())
@@ -55,6 +47,8 @@ function love.load()
 	end
 	--1=saw
 	inventory = {0,0,0,0,0,0,0}
+	tool = 0
+	animals = {}
 	--width = 16*screenScale
 	--height = 9*screenScale
 	width2, height2 = love.graphics.getDimensions()
@@ -67,33 +61,45 @@ function love.load()
 	end
 	--wallSprite = {width = 78*screenScale/50, height = 72*screenScale/50, heightForHitbox = 62*screenScale/50}
 	wallSprite = {width = 187*width/1920, height = 170*height/1080, heightBottom = 150*height/1080}
-	player = { x = 500, y = 500, prevx = 400, prevy = 400, width = 20, height = 20, speed = 250, sprite = love.graphics.newImage('herman_sketch.png'), scale = 0.25 * width/1200}
 	--image = love.graphics.newImage("cake.jpg")
 	love.graphics.setNewFont(12)
 	love.graphics.setColor(255,255,255)
 	love.graphics.setBackgroundColor(255,255,255)
 	if not loadedOnce then
-		f1 = love.graphics.newImage('concretewalls.png')
-		walls = love.graphics.newImage('walls3.png')
-		rocks = love.graphics.newImage('pen16.png')
+		f1 = love.graphics.newImage('Graphics/concretewalls.png')
+		walls = love.graphics.newImage('Graphics/walls3.png')
+		rocks = love.graphics.newImage('Graphics/pen16.png')
 		rocksQuad = love.graphics.newQuad(mapy*14*screenScale,mapx*8*screenScale, width, height, rocks:getWidth(), rocks:getHeight())
+		black = love.graphics.newImage('Graphics/dark.png')
+		green = love.graphics.newImage('Graphics/green.png')
+		gray = love.graphics.newImage('Graphics/gray.png')
+		floortile = love.graphics.newImage('Graphics/cavesfloor.png')
+		doorwaybg = love.graphics.newImage('Graphics/doorwaybackground.png')
+		saw = love.graphics.newImage('Graphics/saw.png')
+		ladder = love.graphics.newImage('Graphics/ladder.png')
+		wirecutters = love.graphics.newImage('Graphics/wirecutters.png')
+		waterbottle = love.graphics.newImage('Graphics/waterbottle.png')
+		deathscreen = love.graphics.newImage('Graphics/deathscreen.png')
+		cuttingtorch = love.graphics.newImage('Graphics/cuttingtorch.png')
 	end
 	number1 = love.math.random()*-200
 	number2 = love.math.random()*-200
 	--print(love.graphics.getWidth(f1))
 	scale = (width - 2*wallSprite.width)/(20.3 * 16)*5/6
 	floor = tiles.tile
+	player = { tileX = 3, tileY = 10, x = (3-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10, 
+	y = (10-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10, prevTileX = 3, prevTileY = 10, prevx = 500, prevy = 500, width = 20, height = 20, speed = 250, sprite = love.graphics.newImage('Graphics/herman_sketch.png'), scale = 0.25 * width/1200}
 	function player:getTileLoc()
 		return {x = self.x/(floor.sprite:getWidth()*scale), y = self.y/(floor.sprite:getWidth()*scale)}
 	end
-	updatePower()
-	updateLight()
+	enterRoom(mapx, mapy)
 	loadedOnce = true
 end
 
 function kill()
-	player.x = 0
-	player.y = 0
+	--player.x = 0
+	--player.y = 0
+	dead = true
 end
 
 function updateLight()
@@ -328,7 +334,7 @@ function love.draw()
 						--toDraw = floortile
 					end
 				end
-				if room[j][i]~=nil or litTiles[j][i]==0 then
+				if (room[j][i]~=nil and room[j][i].name~="pitbull") or litTiles[j][i]==0 then
 					love.graphics.draw(toDraw, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
 				end
 				if tool~="" then
@@ -347,6 +353,10 @@ function love.draw()
 							end
 						elseif tool==4 then
 							if room[j][i].name == "powerSupply" and not room[j][i].wet then
+								love.graphics.draw(green, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
+							end
+						elseif tool==5 then
+							if room[j][i].name == "metalwall" and not room[j][i].sawed then
 								love.graphics.draw(green, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
 							end
 						end
@@ -376,6 +386,13 @@ function love.draw()
 		end
 	end
 	love.graphics.draw(walls, 0, 0, 0, width/walls:getWidth(), height/walls:getHeight())
+	for i = 1, 100 do
+		if animals[i]~=nil then
+			love.graphics.draw(animals[i].sprite, animals[i].x, animals[i].y, 0, scale, scale)
+		else
+			break
+		end
+	end
 	love.graphics.draw(player.sprite, player.x-player.sprite:getWidth()*player.scale/2, player.y-player.sprite:getHeight()*player.scale, 0, player.scale, player.scale)
 	love.graphics.print(player:getTileLoc().x .. ":" .. player:getTileLoc().y, 0, 0);
 	if toPrint ~= nil then
@@ -415,14 +432,19 @@ function love.draw()
 			love.graphics.draw(wirecutters, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
 		elseif i==3 then
 			love.graphics.draw(waterbottle, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
+		elseif i==4 then
+			love.graphics.draw(cuttingtorch, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
 		end
 		if inventory[i+1]==0 then
 			love.graphics.draw(gray, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
 		end
 		love.graphics.setColor(0,0,0)
-		love.graphics.print(inventory[i+1], i*width/18+3, 0);
+		love.graphics.print(inventory[i+1], i*width/18+3, 0)
 	end
 	love.graphics.setColor(255,255,255)
+	if dead then
+		love.graphics.draw(deathscreen, width/2-width/2000*320, 10, 0, width/1000, width/1000)
+	end
 end
 
 function adjacent(xloc, yloc)
@@ -468,6 +490,9 @@ function enterRoom(dir)
 				mapy = mapy-1
 				room = mainMap[mapy][mapx].room
 				player.y = height-wallSprite.heightBottom-5
+				player.tileY = roomHeight
+				player.prevy = player.y
+				player.prevTileY = player.tileY
 			end
 		end
 	elseif dir == 1 then
@@ -476,6 +501,9 @@ function enterRoom(dir)
 				mapx = mapx+1
 				room = mainMap[mapy][mapx].room
 				player.x = wallSprite.width+5
+				player.tileX = roomLength
+				player.prevx = player.x
+				player.prevTileX = player.tileX
 			end
 		end
 	elseif dir == 2 then
@@ -484,6 +512,9 @@ function enterRoom(dir)
 				mapy = mapy+1
 				room = mainMap[mapy][mapx].room
 				player.y = wallSprite.height+player.height+5
+				player.tileY = 1
+				player.prevy = player.y
+				player.prevTileY = player.tileY
 			end
 		end
 	elseif dir == 3 then
@@ -492,11 +523,27 @@ function enterRoom(dir)
 				mapx = mapx-1
 				room = mainMap[mapy][mapx].room
 				player.x = width-wallSprite.width-player.width-5
+				player.tileX = 1
+				player.prevx = player.x
+				player.prevTileX = player.tileX
 			end
 		end
 	end
 
 	rocksQuad = love.graphics.newQuad(mapy*14*screenScale,mapx*8*screenScale, width, height, rocks:getWidth(), rocks:getHeight())
+
+	animalCounter = 1
+	animals = {}
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i]~=nil and room[i][j]~=nil and room[i][j].name~=nil and room[i][j].name == "pitbull" then
+				animals[animalCounter] = animalList[2]:new()
+				animals[animalCounter].y = (i-1)*floor.sprite:getWidth()*scale+wallSprite.height
+				animals[animalCounter].x = (j-1)*floor.sprite:getHeight()*scale+wallSprite.width
+				animalCounter=animalCounter+1
+			end
+		end
+	end
 
 	updatePower()
 	updateLight()
@@ -512,8 +559,12 @@ function checkBoundaries()
 	tileLocs = {}
 	xCorner = player.x
 	yCorner = player.y
+	--xCorner = player.x+player.width/2
+	--yCorner = player.y-player.height/2
 	tileLoc1 = math.ceil((xCorner-wallSprite.width)/(scale*floor.sprite:getWidth()))
 	tileLoc2 = math.ceil((yCorner-wallSprite.height)/(scale*floor.sprite:getHeight()))
+	--tileLoc1 = math.ceil((xCorner-wallSprite.width)/(scale*floor.sprite:getWidth()))
+	--tileLoc2 = math.ceil((yCorner-wallSprite.height)/(scale*floor.sprite:getHeight()))
 	if room[tileLoc2] ~= nil then
 		tilesOn[1] = room[tileLoc2][tileLoc1]
 		tileLocs[1] = {x=tileLoc1, y=tileLoc2}
@@ -558,7 +609,7 @@ function checkBoundaries()
 			oldTilesOn[j]:onLeave(player)
 		end
 	end
-	for i = 1, 4 do
+	for i = 1, 1 do
 		local t = tilesOn[i]
 		for j = 1, i-1 do
 			if tilesOn[i] == tilesOn[j] then
@@ -568,14 +619,14 @@ function checkBoundaries()
 		end
 		if t ~= nil then
 			local isOnStay  = false
-			for j = 1, 4 do
+			for j = 1, 1 do
 				if oldTilesOn[j] == t then
 					isOnStay = true
 				end
 			end
 			if isOnStay then
 				t:onStay(player, tileLocs[i])
-			else
+			else										
 				t:onEnter(player, tileLocs[i])
 			end
 		end
@@ -584,67 +635,144 @@ function checkBoundaries()
 	for i = 1, 4 do
 		oldTilesOn[i] = tilesOn[i]
 	end
+	if tilesOn[1]~=nil then
+		--print(tilesOn[1].name..tilesOn[2]..tilesOn[3]..tilesOn[4])
+	end
 end
 
 function love.keypressed(key, unicode)
     -- ignore non-printable characters (see http://www.ascii-code.com/)
     if key == "r" then
     	love.load()
+    elseif key == "w" then
+    	if player.tileY>1 then
+    		player.prevx = player.x
+    		player.prevy = player.y
+    		player.prevTileX = player.tileX
+    		player.prevTileY = player.tileY
+    		player.tileY = player.tileY-1
+    		player.y = player.y-floor.sprite:getHeight()*scale
+		elseif player.tileY==1 and player.x+player.width/2 < width/2+40 and player.x+player.width/2 > width/2-110 then
+			enterRoom(0)
+		end
+    elseif key == "s" then
+    	if player.tileY<roomHeight then
+    		player.prevx = player.x
+    		player.prevy = player.y
+    		player.prevTileX = player.tileX
+    		player.prevTileY = player.tileY
+    		player.tileY = player.tileY+1
+    		player.y = player.y+floor.sprite:getHeight()*scale
+		elseif player.tileY == roomHeight and player.x < width/2+40 and player.x > width/2-110 then
+			enterRoom(2)
+    	end
+    elseif key == "a" then
+    	if player.tileX>1 then
+    		player.prevx = player.x
+    		player.prevy = player.y
+    		player.prevTileX = player.tileX
+    		player.prevTileY = player.tileY
+    		player.tileX = player.tileX-1
+    		player.x = player.x-floor.sprite:getHeight()*scale
+		elseif player.tileX == 1 and player.y < height/2+50 and player.y > height/2-20 then
+			enterRoom(3)
+    	end
+    elseif key == "d" then
+    	if player.tileX<roomLength then
+    		player.prevx = player.x
+    		player.prevy = player.y
+    		player.prevTileX = player.tileX
+    		player.prevTileY = player.tileY
+    		player.tileX = player.tileX+1
+    		player.x = player.x+floor.sprite:getHeight()*scale
+    	elseif player.tileX == roomLength and player.y < height/2+50 and player.y > height/2-20 then
+				enterRoom(1)
+		end
+    end
+    if player.prevy~=player.y or player.prevx~=player.x then
+    	checkBoundaries()
+    	updateLight()
+    	updatePower()
     end
 end
 
-function love.update(dt)
-	if love.keyboard.isDown("up") then 
-		if player.y == wallSprite.height+player.height*player.scale and player.x+player.width/2 < width/2+40 and player.x+player.width/2 > width/2-110 then
-			enterRoom(0)
+--change to update(dt) for non-tile movement
+function love.updateOld(dt)
+	if not dead then
+		if love.keyboard.isDown("w") then 
+			if player.y == wallSprite.height+player.height*player.scale and player.x+player.width/2 < width/2+40 and player.x+player.width/2 > width/2-110 then
+				enterRoom(0)
+			end
+			player.y = player.y - player.speed * dt
 		end
-		player.y = player.y - player.speed * dt
-	end
-	if love.keyboard.isDown("down") then 
-		if player.y == height - wallSprite.heightBottom and player.x < width/2+40 and player.x > width/2-110 then
-			enterRoom(2)
+		if love.keyboard.isDown("s") then 
+			if player.y == height - wallSprite.heightBottom and player.x < width/2+40 and player.x > width/2-110 then
+				enterRoom(2)
+			end
+			player.y = player.y + player.speed * dt
 		end
-		player.y = player.y + player.speed * dt
-	end
-	if player.y < wallSprite.height+player.height*player.scale then
-		player.y = wallSprite.height+player.height*player.scale
-	end
-	if player.y > height-wallSprite.heightBottom then
-		player.y = height-wallSprite.heightBottom
-	end
-	checkBoundaries()
-	if player.prevy~=player.y then
-		updateLight()
-	end
-	player.prevy = player.y
-	if love.keyboard.isDown("left") then 
-		if player.x == wallSprite.width and player.y < height/2+50 and player.y > height/2-20 then
-			enterRoom(3)
+		if player.y < wallSprite.height+player.height*player.scale then
+			player.y = wallSprite.height+player.height*player.scale
 		end
-		player.x = player.x - player.speed * dt
-		
-	end
-	if love.keyboard.isDown("right") then 
-		if player.x == width-wallSprite.width-player.width and player.y < height/2+50 and player.y > height/2-20 then
-			enterRoom(1)
+		if player.y > height-wallSprite.heightBottom then
+			player.y = height-wallSprite.heightBottom
 		end
-		player.x = player.x + player.speed * dt
+		checkBoundaries()
+		if player.prevy~=player.y then
+			updateLight()
+			for i = 1, 100 do
+				if animals[i]~=nil then
+					animals[i]:move(player.x, player.y, dt)
+				else
+					break
+				end
+			end
+		end
+		player.prevy = player.y
+		if love.keyboard.isDown("a") then 
+			if player.x == wallSprite.width and player.y < height/2+50 and player.y > height/2-20 then
+				enterRoom(3)
+			end
+			player.x = player.x - player.speed * dt
+			
+		end
+		if love.keyboard.isDown("d") then 
+			if player.x == width-wallSprite.width-player.width and player.y < height/2+50 and player.y > height/2-20 then
+				enterRoom(1)
+			end
+			player.x = player.x + player.speed * dt
+		end
+		if player.x < 0 then
+			player.x = 0
+		end
+		if player.x < wallSprite.width then
+			player.x = wallSprite.width
+		end
+		if player.x > width-wallSprite.width-player.width then
+			player.x = width-wallSprite.width-player.width
+		end
+		checkBoundaries()
+		if player.x~=player.prevx then
+			updateLight()
+			for i = 1, 100 do
+				if animals[i]~=nil then
+					animals[i]:move(player.x, player.y, dt)
+				else
+					break
+				end
+			end
+		end
+		player.prevx = player.x
 	end
-	if player.x < 0 then
-		player.x = 0
+	for i = 1, 100 do
+		if animals[i]~=nil then
+			animals[i].update()
+		else
+			break
+		end
 	end
-	if player.x < wallSprite.width then
-		player.x = wallSprite.width
-	end
-	if player.x > width-wallSprite.width-player.width then
-		player.x = width-wallSprite.width-player.width
-	end
-	checkBoundaries()
-	if player.x~=player.prevx then
-		updateLight()
-	end
-	player.prevx = player.x
 end
+
 
 function love.mousepressed(x, y, button, istouch)
 	--mouseX = x-width2/2+16*screenScale/2

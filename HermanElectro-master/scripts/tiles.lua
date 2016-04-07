@@ -4,7 +4,7 @@ require('scripts.boundaries')
 local P = {}
 tiles = P
 
-P.tile = Object:new{powered = false, poweredNeighbors = {0,0,0,0}, blocksVision = false, dirSend = {1,1,1,1}, dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile", sprite = love.graphics.newImage('cavesfloor.png'), poweredSprite = love.graphics.newImage('cavesfloor.png')}
+P.tile = Object:new{powered = false, poweredNeighbors = {0,0,0,0}, blocksVision = false, dirSend = {1,1,1,1}, dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile", sprite = love.graphics.newImage('Graphics/cavesfloor.png'), poweredSprite = love.graphics.newImage('Graphics/cavesfloor.png')}
 function P.tile:onEnter(player) 
 	--self.name = "fuckyou"
 end
@@ -27,7 +27,7 @@ end
 local bounds = {}
 
 P.boundedTile = P.tile:new{boundary = boundaries.Boundary}
-P.conductiveTile = P.tile:new{powered = false, dirSend = {1,1,1,1}, dirAccept = {1,1,1,1}, canBePowered = true, name = "conductiveTile", sprite = love.graphics.newImage('electricfloor.png'), poweredSprite = love.graphics.newImage('spikes.png')}
+P.conductiveTile = P.tile:new{powered = false, dirSend = {1,1,1,1}, dirAccept = {1,1,1,1}, canBePowered = true, name = "conductiveTile", sprite = love.graphics.newImage('Graphics/electricfloor.png'), poweredSprite = love.graphics.newImage('Graphics/spikes.png')}
 
 function P.conductiveTile:updateTile(dir)
 	if self.poweredNeighbors[1]==1 or self.poweredNeighbors[2]==1 or self.poweredNeighbors[3]==1 or self.poweredNeighbors[4]==1 then
@@ -37,7 +37,7 @@ function P.conductiveTile:updateTile(dir)
 	end
 end
 
-P.powerSupply = P.tile:new{powered = false, wet = false, dirSend = {1,1,1,1}, dirAccept = {1,1,1,1}, canBePowered = true, name = "powerSupply", sprite = love.graphics.newImage('powersupply.png'), destroyedSprite = love.graphics.newImage('powersupplydead.png'), poweredSprite = love.graphics.newImage('powersupply.png')}
+P.powerSupply = P.tile:new{powered = false, wet = false, dirSend = {1,1,1,1}, dirAccept = {1,1,1,1}, canBePowered = true, name = "powerSupply", sprite = love.graphics.newImage('Graphics/powersupply.png'), destroyedSprite = love.graphics.newImage('Graphics/powersupplydead.png'), poweredSprite = love.graphics.newImage('Graphics/powersupply.png')}
 function P.powerSupply:updateTile(dir)
 end
 function P.powerSupply:useTool(tool)
@@ -53,7 +53,7 @@ function P.powerSupply:useTool(tool)
 	return false
 end
 
-P.wire = P.tile:new{cut = false, powered = false, dirSend = {1,1,1,1}, dirAccept = {1,1,1,1}, destroyedSprite = love.graphics.newImage('wirescut.png'), canBePowered = true, name = "wire", sprite = love.graphics.newImage('wires.png'), poweredSprite = love.graphics.newImage('poweredwires.png')}
+P.wire = P.tile:new{cut = false, powered = false, dirSend = {1,1,1,1}, dirAccept = {1,1,1,1}, destroyedSprite = love.graphics.newImage('Graphics/wirescut.png'), canBePowered = true, name = "wire", sprite = love.graphics.newImage('Graphics/wires.png'), poweredSprite = love.graphics.newImage('Graphics/poweredwires.png')}
 function P.wire:useTool(tool)
 	if tool==3 and not self.cut then
 		self.sprite = self.destroyedSprite
@@ -66,12 +66,11 @@ function P.wire:useTool(tool)
 	return false
 end
 
-P.horizontalWire = P.wire:new{powered = false, dirSend = {0,1,0,1}, dirAccept = {0,1,0,1}, canBePowered = true, name = "horizontalWire", sprite = love.graphics.newImage('horizontalWireUnpowered.png'), destroyedSprite = love.graphics.newImage('horizontalWireCut.png'), poweredSprite = love.graphics.newImage('horizontalWirePowered.png')}
-P.verticalWire = P.wire:new{powered = false, dirSend = {1,0,1,0}, dirAccept = {1,0,1,0}, canBePowered = true, name = "verticalWire", sprite = love.graphics.newImage('verticalWireUnpowered.png'), destroyedSprite = love.graphics.newImage('verticalWireCut.png'), poweredSprite = love.graphics.newImage('verticalWirePowered.png')}
-P.spikes = P.tile:new{powered = false, dirSend = {0,0,0,0}, dirAccept = {0,0,0,0}, canBePowered = true, name = "spikes", sprite = love.graphics.newImage('spikes.png')}
+P.horizontalWire = P.wire:new{powered = false, dirSend = {0,1,0,1}, dirAccept = {0,1,0,1}, canBePowered = true, name = "horizontalWire", sprite = love.graphics.newImage('Graphics/horizontalWireUnpowered.png'), destroyedSprite = love.graphics.newImage('Graphics/horizontalWireCut.png'), poweredSprite = love.graphics.newImage('Graphics/horizontalWirePowered.png')}
+P.verticalWire = P.wire:new{powered = false, dirSend = {1,0,1,0}, dirAccept = {1,0,1,0}, canBePowered = true, name = "verticalWire", sprite = love.graphics.newImage('Graphics/verticalWireUnpowered.png'), destroyedSprite = love.graphics.newImage('Graphics/verticalWireCut.png'), poweredSprite = love.graphics.newImage('Graphics/verticalWirePowered.png')}
+P.spikes = P.tile:new{powered = false, dirSend = {0,0,0,0}, dirAccept = {0,0,0,0}, canBePowered = true, name = "spikes", sprite = love.graphics.newImage('Graphics/spikes.png')}
 
-P.button = P.tile:new{down = false, powered = false, dirSend = {1,1,1,1}, dirAccept = {0,0,0,0}, canBePowered = true, name = "button", pressed = false, sprite = love.graphics.newImage('button.png'), poweredSprite = love.graphics.newImage('button.png'), downSprite = love.graphics.newImage('buttonPressed.png'), upSprite = love.graphics.newImage('button.png')}
-
+P.button = P.tile:new{justPressed = false, down = false, powered = false, dirSend = {1,1,1,1}, dirAccept = {0,0,0,0}, canBePowered = true, name = "button", pressed = false, sprite = love.graphics.newImage('Graphics/button.png'), poweredSprite = love.graphics.newImage('Graphics/button.png'), downSprite = love.graphics.newImage('Graphics/buttonPressed.png'), upSprite = love.graphics.newImage('Graphics/button.png')}
 function P.button:updateSprite()
 	if self.down then
 		self.sprite = self.downSprite
@@ -81,20 +80,25 @@ function P.button:updateSprite()
 		self.poweredSprite = self.upSprite
 	end
 end
-
 function P.button:onEnter(player)
-	self.down = not self.down
-	if self.dirAccept[1]==1 then
-		self.powered = false
-		self.dirAccept = {0,0,0,0}
-	else
-		self.dirAccept = {1,1,1,1}
-	end
-	updatePower()
-	self:updateSprite()
-	--self.name = "onbutton"
+	--justPressed prevents flickering button next to wall
+	--if not self.justPressed then
+		self.justPressed = true
+		self.down = not self.down
+		if self.dirAccept[1]==1 then
+			self.powered = false
+			self.dirAccept = {0,0,0,0}
+		else
+			self.dirAccept = {1,1,1,1}
+		end
+		updatePower()
+		self:updateSprite()
+		--self.name = "onbutton"
+	--end
 end
-
+function P.button:onLeave(player)
+	--self.justPressed = false
+end
 
 function P.button:updateTile(dir)
 	if self.down and self.poweredNeighbors[1]==1 or self.poweredNeighbors[2]==1 or self.poweredNeighbors[3]==1 or self.poweredNeighbors[4]==1 then
@@ -104,19 +108,29 @@ function P.button:updateTile(dir)
 	end
 end
 
-P.stickyButton = P.button:new{name = "stickyButton", downSprite = love.graphics.newImage('stickyButtonPressed.png'), sprite = love.graphics.newImage('stickyButton.png')}
+P.stickyButton = P.button:new{name = "stickyButton", downSprite = love.graphics.newImage('Graphics/stickyButtonPressed.png'), sprite = love.graphics.newImage('Graphics/stickyButton.png')}
 function P.stickyButton:onEnter(player)
-	self.down = true
-	self.dirAccept = {1,1,1,1}
-	updatePower()
-	self:updateSprite()
+	--if not self.justPressed then
+		self.justPressed = true
+		self.down = true
+		self.dirAccept = {1,1,1,1}
+		updatePower()
+		self:updateSprite()
+	--end
 end
 
 P.stayButton = P.button:new{name = "stayButton"}
+function P.stayButton:onLeave(player)
+	--self.justPressed = false
+	self.down = false
+	self.dirAccept = {0,0,0,0}
+	updatePower()
+	self:updateSprite()
+end
 P.stayButton.onLeave = P.stayButton.onEnter
 
-P.electricFloor = P.conductiveTile:new{name = "electricfloor", cut = false, sprite = love.graphics.newImage('electricfloor.png'), destroyedSprite = love.graphics.newImage('electricfloorcut.png'), poweredSprite = love.graphics.newImage('electricfloorpowered.png')}
-function P.electricFloor:onStay(player)
+P.electricFloor = P.conductiveTile:new{name = "electricfloor", cut = false, sprite = love.graphics.newImage('Graphics/electricfloor.png'), destroyedSprite = love.graphics.newImage('Graphics/electricfloorcut.png'), poweredSprite = love.graphics.newImage('Graphics/electricfloorpowered.png')}
+function P.electricFloor:onEnter(player)
 	if self.powered and not self.cut then
 		kill()
 	end
@@ -133,8 +147,8 @@ function P.electricFloor:useTool(tool)
 	return false
 end
 
-P.poweredFloor = P.conductiveTile:new{name = "poweredFloor", ladder = false, destroyedSprite = love.graphics.newImage('trapdoorwithladder.png'), destroyedPoweredSprite = love.graphics.newImage('trapdoorclosedwithladder.png'), sprite = love.graphics.newImage('trapdoor.png'), poweredSprite = love.graphics.newImage('trapdoorclosed.png')}
-function P.poweredFloor:onStay(player)
+P.poweredFloor = P.conductiveTile:new{name = "poweredFloor", ladder = false, destroyedSprite = love.graphics.newImage('Graphics/trapdoorwithladder.png'), destroyedPoweredSprite = love.graphics.newImage('Graphics/trapdoorclosedwithladder.png'), sprite = love.graphics.newImage('Graphics/trapdoor.png'), poweredSprite = love.graphics.newImage('Graphics/trapdoorclosed.png')}
+function P.poweredFloor:onEnter(player)
 	if not self.powered and not self.ladder then
 		kill()
 	end
@@ -149,14 +163,20 @@ function P.poweredFloor:useTool(tool)
 	return false
 end
 
-P.wall = P.tile:new{sawed = false, canBePowered = false, name = "wall", blocksVision = true, destroyedSprite = love.graphics.newImage("woodwallbroken.png"), sprite = love.graphics.newImage('woodwall.png'), poweredSprite = love.graphics.newImage('woodwall.png') }
-function P.wall:onStay(player)
+P.wall = P.tile:new{sawed = false, canBePowered = false, name = "wall", blocksVision = true, destroyedSprite = love.graphics.newImage('Graphics/woodwallbroken.png'), sprite = love.graphics.newImage('Graphics/woodwall.png'), poweredSprite = love.graphics.newImage('Graphics/woodwall.png') }
+function P.wall:onEnter(player)	
 	if not self.sawed then
 		player.x = player.prevx
 		player.y = player.prevy
+		player.tileX = player.prevTileX
+		player.tileY = player.prevTileY
+		player.prevx = player.x
+		player.prevy = player.y
+		player.prevTileX = player.tileX
+		player.prevTileY = player.tileY
 	end
-
 end
+P.wall.onStay = P.wall.onEnter
 function P.wall:useTool(tool)
 	if tool==1 and not self.sawed then
 		self.blocksVision = false
@@ -167,14 +187,26 @@ function P.wall:useTool(tool)
 	return false
 end
 
-P.wall.onEnter = P.wall.onStay
+P.metalWall = P.wall:new{dirAccept = {1,1,1,1}, dirSend = {1,1,1,1}, sawed = false, canBePowered = true, name = "metalwall", blocksVision = true, destroyedSprite = love.graphics.newImage('Graphics/metalwallbroken.png'), sprite = love.graphics.newImage('Graphics/metalwall.png'), poweredSprite = love.graphics.newImage('Graphics/metalwallpowered.png') }
+function P.metalWall:useTool(tool)
+	if tool==5 and not self.sawed then
+		self.blocksVision = false
+		self.sprite = self.destroyedSprite
+		self.sawed = true
+		self.canBePowered = false
+		self.dirAccept = {0,0,0,0}
+		self.dirSend = {0,0,0,0}
+		return true
+	end
+	return false
+end
 
 P.gate = P.conductiveTile:new{name = "gate", dirSend = {0,0,0,0}, dirAccept = {0,0,0,0}, gotten = {0,0,0,0}}
 function P.gate:updateTile(dir)
 	self.gotten[dir] = 1
 end
 
-P.splitGate = P.conductiveTile:new{name = "splitGate", dirSend = {0,0,0,0}, dirAccept = {1,0,0,0}, sprite = love.graphics.newImage('splitgate.png'), poweredSprite = love.graphics.newImage('splitgate.png') }
+P.splitGate = P.conductiveTile:new{name = "splitGate", dirSend = {0,0,0,0}, dirAccept = {1,0,0,0}, sprite = love.graphics.newImage('Graphics/splitgate.png'), poweredSprite = love.graphics.newImage('Graphics/splitgate.png') }
 function P.splitGate:updateTile(dir)
 	if dir == 1 then
 		self.powered=true
@@ -187,7 +219,7 @@ function P.splitGate:updateTile(dir)
 	end
 end
 
-P.notGate = P.conductiveTile:new{name = "notGate", dirSend = {1,0,0,0}, dirAccept = {1,0,1,0}, sprite = love.graphics.newImage('notgate.png'), poweredSprite = love.graphics.newImage('splitgate.png') }
+P.notGate = P.conductiveTile:new{name = "notGate", dirSend = {1,0,0,0}, dirAccept = {1,0,1,0}, sprite = love.graphics.newImage('Graphics/notgate.png'), poweredSprite = love.graphics.newImage('Graphics/splitgate.png') }
 function P.notGate:updateTile(dir)
 	if self.poweredNeighbors[3] == 0 then
 		self.powered = true
@@ -198,7 +230,7 @@ function P.notGate:updateTile(dir)
 	end
 end
 
-P.andGate = P.powerSupply:new{name = "andGate", dirSend = {0,0,0,0}, dirAccept = {0,1,0,1}, sprite = love.graphics.newImage('andgate.png'), poweredSprite = love.graphics.newImage('andgate.png') }
+P.andGate = P.powerSupply:new{name = "andGate", dirSend = {0,0,0,0}, dirAccept = {0,1,0,1}, sprite = love.graphics.newImage('Graphics/andgate.png'), poweredSprite = love.graphics.newImage('Graphics/andgate.png') }
 function P.andGate:updateTile(dir)
 	if self.poweredNeighbors[2]==1 and self.poweredNeighbors[4]==1 then
 		self.powered = true
@@ -209,7 +241,7 @@ function P.andGate:updateTile(dir)
 	end
 end
 
-P.orGate = P.conductiveTile:new{name = "orGate", dirSend = {0,0,0,0}, dirAccept = {0,1,0,1}, sprite = love.graphics.newImage('orgate.png'), poweredSprite = love.graphics.newImage('orgate.png') }
+P.orGate = P.conductiveTile:new{name = "orGate", dirSend = {0,0,0,0}, dirAccept = {0,1,0,1}, sprite = love.graphics.newImage('Graphics/orgate.png'), poweredSprite = love.graphics.newImage('Graphics/orgate.png') }
 function P.orGate:updateTile(dir)
 	if self.poweredNeighbors[2]==1 or self.poweredNeighbors[4]==1 then
 		self.powered = true
@@ -229,14 +261,14 @@ local function getTileY(posY)
 	return (posY-1)*floor.sprite:getHeight()*scale+wallSprite.height
 end
 
-P.hDoor= P.tile:new{name = "hDoor", blocksVision = true, canBePowered = false, dirSend = {0,0,0,0}, dirAccept = {0,0,0,0}, sprite = love.graphics.newImage("door.png"), closedSprite = love.graphics.newImage("door.png"), openSprite = love.graphics.newImage("doorsopen.png")}
+P.hDoor= P.tile:new{name = "hDoor", blocksVision = true, canBePowered = false, dirSend = {0,0,0,0}, dirAccept = {0,0,0,0}, sprite = love.graphics.newImage('Graphics/door.png'), closedSprite = love.graphics.newImage('Graphics/door.png'), openSprite = love.graphics.newImage('Graphics/doorsopen.png')}
 function P.hDoor:onEnter(player)
 	self.sprite = self.openSprite
 	self.blocksVision = false
 	updateLight()
 end
 
-P.vDoor= P.tile:new{name = "hDoor", blocksVision = true, canBePowered = false, dirSend = {0,0,0,0}, dirAccept = {0,0,0,0}, sprite = love.graphics.newImage("door.png"), closedSprite = love.graphics.newImage("door.png"), openSprite = love.graphics.newImage("doorsopen.png")}
+P.vDoor= P.tile:new{name = "hDoor", blocksVision = true, canBePowered = false, dirSend = {0,0,0,0}, dirAccept = {0,0,0,0}, sprite = love.graphics.newImage('Graphics/door.png'), closedSprite = love.graphics.newImage('Graphics/door.png'), openSprite = love.graphics.newImage('Graphics/doorsopen.png')}
 function P.vDoor:onEnter(player)
 	self.sprite = self.openSprite
 	self.blocksVision = false
@@ -249,7 +281,7 @@ function P.hDoor:onLeave(player)
 	--updateLight()
 end
 
-P.endTile = P.tile:new{name = "endTile", canBePowered = false, dirAccept = {0,0,0,0}, sprite = love.graphics.newImage("end.png")}
+P.endTile = P.tile:new{name = "endTile", canBePowered = false, dirAccept = {0,0,0,0}, sprite = love.graphics.newImage('Graphics/end.png')}
 function P.endTile:onEnter(player)
 	completedRooms[mapy][mapx] = 1
 	done = false
@@ -270,6 +302,10 @@ function P.endTile:onEnter(player)
 	end
 end
 
+P.pitbullTile = P.tile:new{name = "pitbull"}
+--reserves spot for pitbull at beginning
+
+
 tiles[1] = P.tile
 tiles[2] = P.conductiveTile
 tiles[3] = P.powerSupply
@@ -289,5 +325,7 @@ tiles[16] = P.notGate
 tiles[17] = P.orGate
 tiles[18] = P.hDoor
 tiles[19] = P.endTile
+tiles[20] = P.metalWall
+tiles[21] = P.pitbullTile
 
 return tiles
