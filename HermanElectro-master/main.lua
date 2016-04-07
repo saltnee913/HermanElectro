@@ -540,6 +540,8 @@ function enterRoom(dir)
 				animals[animalCounter] = animalList[2]:new()
 				animals[animalCounter].y = (i-1)*floor.sprite:getWidth()*scale+wallSprite.height
 				animals[animalCounter].x = (j-1)*floor.sprite:getHeight()*scale+wallSprite.width
+				animals[animalCounter].tileX = j
+				animals[animalCounter].tileY = i
 				animalCounter=animalCounter+1
 			end
 		end
@@ -693,6 +695,9 @@ function love.keypressed(key, unicode)
     	checkBoundaries()
     	updateLight()
     	updatePower()
+    	for i = 1, animalCounter-1 do
+    		animals[i]:move(player.tileX, player.tileY)
+    	end
     end
 end
 
