@@ -4,7 +4,7 @@ require('scripts.boundaries')
 local P = {}
 tiles = P
 
-P.tile = Object:new{powered = false, poweredNeighbors = {0,0,0,0}, blocksVision = false, dirSend = {1,1,1,1}, dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile", sprite = love.graphics.newImage('Graphics/cavesfloor.png'), poweredSprite = love.graphics.newImage('Graphics/cavesfloor.png')}
+P.tile = Object:new{powered = false, blocksMovement = false, poweredNeighbors = {0,0,0,0}, blocksVision = false, dirSend = {1,1,1,1}, dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile", sprite = love.graphics.newImage('Graphics/cavesfloor.png'), poweredSprite = love.graphics.newImage('Graphics/cavesfloor.png')}
 function P.tile:onEnter(player) 
 	--self.name = "fuckyou"
 end
@@ -16,6 +16,10 @@ function P.tile:onStay(player)
 end
 function P.tile:useTool(tool)
 	return false
+end
+function P.tile:onEnterAnimal(animal)
+end
+function P.tile:onLeaveAnimal(animal)
 end
 function P.tile:updateTile(dir)
 	if self.poweredNeighbors[1]==1 or self.poweredNeighbors[2]==1 or self.poweredNeighbors[3]==1 or self.poweredNeighbors[4]==1 then
@@ -82,7 +86,7 @@ function P.button:updateSprite()
 end
 function P.button:onEnter(player)
 	--justPressed prevents flickering button next to wall
-	--if not self.justPressed then
+	if not self.justPressed then
 		self.justPressed = true
 		self.down = not self.down
 		if self.dirAccept[1]==1 then
@@ -94,10 +98,27 @@ function P.button:onEnter(player)
 		updatePower()
 		self:updateSprite()
 		--self.name = "onbutton"
-	--end
+	end
 end
 function P.button:onLeave(player)
-	--self.justPressed = false
+	self.justPressed = false
+end
+function P.button:onEnterAnimal(animal)
+	if not self.justPressed then
+		self.justPressed = true
+		self.down = not self.down
+		if self.dirAccept[1]==1 then
+			self.powered = false
+			self.dirAccept = {0,0,0,0}
+		else
+			self.dirAccept = {1,1,1,1}
+		end
+		updatePower()
+		self:updateSprite()
+	end
+end
+function P.button:onLeaveAnimal(animal)
+	self.justPressed = false
 end
 
 function P.button:updateTile(dir)
@@ -121,13 +142,13 @@ end
 
 P.stayButton = P.button:new{name = "stayButton"}
 function P.stayButton:onLeave(player)
-	--self.justPressed = false
+	self.justPressed = false
 	self.down = false
 	self.dirAccept = {0,0,0,0}
 	updatePower()
 	self:updateSprite()
 end
-P.stayButton.onLeave = P.stayButton.onEnter
+--P.stayButton.onLeave = P.stayButton.onEnter
 
 P.electricFloor = P.conductiveTile:new{name = "electricfloor", cut = false, sprite = love.graphics.newImage('Graphics/electricfloor.png'), destroyedSprite = love.graphics.newImage('Graphics/electricfloorcut.png'), poweredSprite = love.graphics.newImage('Graphics/electricfloorpowered.png')}
 function P.electricFloor:onEnter(player)
@@ -163,7 +184,7 @@ function P.poweredFloor:useTool(tool)
 	return false
 end
 
-P.wall = P.tile:new{sawed = false, canBePowered = false, name = "wall", blocksVision = true, destroyedSprite = love.graphics.newImage('Graphics/woodwallbroken.png'), sprite = love.graphics.newImage('Graphics/woodwall.png'), poweredSprite = love.graphics.newImage('Graphics/woodwall.png') }
+P.wall = P.tile:new{blocksMovement = true, sawed = false, canBePowered = false, name = "wall", blocksVision = true, destroyedSprite = love.graphics.newImage('Graphics/woodwallbroken.png'), sprite = love.graphics.newImage('Graphics/woodwall.png'), poweredSprite = love.graphics.newImage('Graphics/woodwall.png') }
 function P.wall:onEnter(player)	
 	if not self.sawed then
 		player.x = player.prevx
@@ -177,6 +198,7 @@ function P.wall:onEnter(player)
 	end
 end
 P.wall.onStay = P.wall.onEnter
+P.wall.onEnterAnimal = P.wall.onEnter
 function P.wall:useTool(tool)
 	if tool==1 and not self.sawed then
 		self.blocksVision = false

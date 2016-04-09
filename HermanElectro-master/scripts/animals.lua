@@ -20,11 +20,18 @@ scale = (width - 2*wallSprite.width)/(20.3 * 16)*5/6
 floor = tiles.tile
 
 --speed same as player (250)
-P.animal = Object:new{tileX, tileY, x, y, speed = 250, width = 16*scale, height = 16*scale, sprite = love.graphics.newImage('Graphics/pitbull.png'), tilesOn = {}, oldTilesOn = {}}
-function P.animal:move(playerx, playery)
+P.animal = Object:new{tileX, tileY, prevx, prevy, prevTileX, prevTileY, x, y, speed = 250, width = 16*scale, height = 16*scale, sprite = love.graphics.newImage('Graphics/pitbull.png'), tilesOn = {}, oldTilesOn = {}}
+function P.animal:move(playerx, playery, dir)
 	diffx = playerx-self.tileX
 	diffy = playery-self.tileY
-	if math.abs(diffx)>math.abs(diffy) then
+	self.prevx = self.x
+	self.prevy = self.y
+	self.prevTileX = self.tileX
+	self.prevTileY = self.tileY
+	if diffx==0 and diffy==0 then
+		return
+	end
+	if (math.abs(diffx)>math.abs(diffy) or dir == "x") and dir~="y" then
 		if playerx>self.tileX then
 			self.x = self.x+floor.sprite:getHeight()*scale
 			self.tileX = self.tileX+1

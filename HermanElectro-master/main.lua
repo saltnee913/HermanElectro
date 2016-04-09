@@ -14,7 +14,6 @@ require('scripts.animals')
 loadedOnce = false
 
 function love.load()
-	dead = false
 	mapx=4
 	mapy=4
 	local json = require('scripts.dkjson')
@@ -87,8 +86,11 @@ function love.load()
 	--print(love.graphics.getWidth(f1))
 	scale = (width - 2*wallSprite.width)/(20.3 * 16)*5/6
 	floor = tiles.tile
-	player = { tileX = 3, tileY = 10, x = (3-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10, 
-	y = (10-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10, prevTileX = 3, prevTileY = 10, prevx = 500, prevy = 500, width = 20, height = 20, speed = 250, sprite = love.graphics.newImage('Graphics/herman_sketch.png'), scale = 0.25 * width/1200}
+	player = { dead = false, tileX = 3, tileY = 10, x = (3-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10, 
+	y = (10-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10, prevTileX = 3, prevTileY = 10,
+	prevx = (3-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10,
+	prevy = (10-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10,
+	width = 20, height = 20, speed = 250, sprite = love.graphics.newImage('Graphics/herman_sketch.png'), scale = 0.25 * width/1200}
 	function player:getTileLoc()
 		return {x = self.x/(floor.sprite:getWidth()*scale), y = self.y/(floor.sprite:getWidth()*scale)}
 	end
@@ -99,7 +101,7 @@ end
 function kill()
 	--player.x = 0
 	--player.y = 0
-	dead = true
+	player.dead = true
 end
 
 function updateLight()
@@ -183,6 +185,14 @@ function updatePower()
 				room[i][j]:updateTile(0)
 				powerTest(i,j,0)
 			end
+		end
+	end
+	if room[player.tileY][player.tileX]~=nil then
+		t = room[player.tileY][player.tileX]
+		if t.name == "electricfloor" and t.powered then
+			player.dead = true
+		elseif t.name == "poweredFloor" and not t.powered then
+			player.dead = true
 		end
 	end
 end
@@ -442,7 +452,7 @@ function love.draw()
 		love.graphics.print(inventory[i+1], i*width/18+3, 0)
 	end
 	love.graphics.setColor(255,255,255)
-	if dead then
+	if player.dead then
 		love.graphics.draw(deathscreen, width/2-width/2000*320, 10, 0, width/1000, width/1000)
 	end
 end
@@ -489,10 +499,13 @@ function enterRoom(dir)
 			if mainMap[mapy-1][mapx]~=nil then
 				mapy = mapy-1
 				room = mainMap[mapy][mapx].room
-				player.y = height-wallSprite.heightBottom-5
+				--player.y = height-wallSprite.heightBottom-5
+				player.y = (roomHeight-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
 				player.tileY = roomHeight
 				player.prevy = player.y
 				player.prevTileY = player.tileY
+				player.prevx = player.x
+				player.prevTileX = player.tileX
 			end
 		end
 	elseif dir == 1 then
@@ -500,8 +513,9 @@ function enterRoom(dir)
 			if mainMap[mapy][mapx+1]~=nil then
 				mapx = mapx+1
 				room = mainMap[mapy][mapx].room
-				player.x = wallSprite.width+5
-				player.tileX = roomLength
+				--player.x = wallSprite.width+5
+				player.x = (1-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10
+				player.tileX = 1
 				player.prevx = player.x
 				player.prevTileX = player.tileX
 			end
@@ -511,7 +525,8 @@ function enterRoom(dir)
 			if mainMap[mapy+1][mapx]~=nil then
 				mapy = mapy+1
 				room = mainMap[mapy][mapx].room
-				player.y = wallSprite.height+player.height+5
+				--player.y = wallSprite.height+player.height+5
+				player.y = (1-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
 				player.tileY = 1
 				player.prevy = player.y
 				player.prevTileY = player.tileY
@@ -522,8 +537,9 @@ function enterRoom(dir)
 			if mainMap[mapy][mapx-1]~=nil then
 				mapx = mapx-1
 				room = mainMap[mapy][mapx].room
-				player.x = width-wallSprite.width-player.width-5
-				player.tileX = 1
+				--player.x = width-wallSprite.width-player.width-5
+				player.x = (roomLength-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10
+				player.tileX = roomLength
 				player.prevx = player.x
 				player.prevTileX = player.tileX
 			end
@@ -696,14 +712,49 @@ function love.keypressed(key, unicode)
     	updateLight()
     	updatePower()
     	for i = 1, animalCounter-1 do
-    		animals[i]:move(player.tileX, player.tileY)
+    		--for button: make sure doesn't press button twice for animal and player if both on same tile (use justPressed variable)
+    		--also add onExitAnimal
+    		animalDir = ""
+			diffx = player.tileX-animals[i].tileX
+			diffy = player.tileY-animals[i].tileY
+			if math.abs(diffx)>math.abs(diffy) then
+				print("b")
+				if player.tileX>animals[i].tileX then
+					if room[animals[i].tileY][animals[i].tileX+1]~=nil and room[animals[i].tileY][animals[i].tileX+1].blocksMovement then
+						animalDir = "y"
+					end
+				else
+					if room[animals[i].tileY][animals[i].tileX-1]~=nil and room[animals[i].tileY][animals[i].tileX-1].blocksMovement then
+						animalDir = "y"
+					end
+				end
+			else
+				print("a")
+				if player.tileY>animals[i].tileY then
+					if room[animals[i].tileY+1][animals[i].tileX]~=nil and room[animals[i].tileY+1][animals[i].tileX].blocksMovement then
+						animalDir = "x"
+					end
+				else
+					if room[animals[i].tileY-1][animals[i].tileX]~=nil and room[animals[i].tileY-1][animals[i].tileX].blocksMovement then
+						animalDir = "x"
+					end
+				end
+			end
+    		animals[i]:move(player.tileX, player.tileY, animalDir)
+    		print(animalDir)
+    		if room[animals[i].tileY][animals[i].tileX]~=nil then
+    			room[animals[i].tileY][animals[i].tileX]:onEnterAnimal(animals[i])
+    		end
+    		if room[animals[i].prevTileY][animals[i].prevTileX]~=nil then
+    			room[animals[i].prevTileY][animals[i].prevTileX]:onLeaveAnimal(animals[i])
+    		end
     	end
     end
 end
 
 --change to update(dt) for non-tile movement
 function love.updateOld(dt)
-	if not dead then
+	if not player.dead then
 		if love.keyboard.isDown("w") then 
 			if player.y == wallSprite.height+player.height*player.scale and player.x+player.width/2 < width/2+40 and player.x+player.width/2 > width/2-110 then
 				enterRoom(0)
