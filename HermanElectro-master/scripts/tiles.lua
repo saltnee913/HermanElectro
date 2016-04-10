@@ -153,7 +153,12 @@ end
 P.electricFloor = P.conductiveTile:new{name = "electricfloor", cut = false, sprite = love.graphics.newImage('Graphics/electricfloor.png'), destroyedSprite = love.graphics.newImage('Graphics/electricfloorcut.png'), poweredSprite = love.graphics.newImage('Graphics/electricfloorpowered.png')}
 function P.electricFloor:onEnter(player)
 	if self.powered and not self.cut then
-		kill()
+		--kill()
+	end
+end
+function P.electricFloor:onEnterAnimal(animal)
+	if self.powered and not self.cut then
+		animal:kill()
 	end
 end
 function P.electricFloor:useTool(tool)
@@ -171,7 +176,12 @@ end
 P.poweredFloor = P.conductiveTile:new{name = "poweredFloor", ladder = false, destroyedSprite = love.graphics.newImage('Graphics/trapdoorwithladder.png'), destroyedPoweredSprite = love.graphics.newImage('Graphics/trapdoorclosedwithladder.png'), sprite = love.graphics.newImage('Graphics/trapdoor.png'), poweredSprite = love.graphics.newImage('Graphics/trapdoorclosed.png')}
 function P.poweredFloor:onEnter(player)
 	if not self.powered and not self.ladder then
-		kill()
+		--kill()
+	end
+end
+function P.poweredFloor:onEnterAnimal(animal)
+	if not self.powered and not self.ladder then
+		animal:kill()
 	end
 end
 function P.poweredFloor:useTool(tool)
@@ -325,6 +335,8 @@ function P.endTile:onEnter(player)
 end
 
 P.pitbullTile = P.tile:new{name = "pitbull"}
+P.pupTile = P.tile:new{name = "pup"}
+P.catTile = P.tile:new{name = "cat"}
 --reserves spot for pitbull at beginning
 
 
@@ -349,5 +361,7 @@ tiles[18] = P.hDoor
 tiles[19] = P.endTile
 tiles[20] = P.metalWall
 tiles[21] = P.pitbullTile
+tiles[22] = P.pupTile
+tiles[23] = P.catTile
 
 return tiles

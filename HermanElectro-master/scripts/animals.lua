@@ -7,6 +7,8 @@ animalList = P
 
 playerheight = 20
 playerwidth = 20
+roomHeight = 12
+roomLength = 24
 width2, height2 = love.graphics.getDimensions()
 if width2>height2*16/9 then
 	height = height2
@@ -20,8 +22,8 @@ scale = (width - 2*wallSprite.width)/(20.3 * 16)*5/6
 floor = tiles.tile
 
 --speed same as player (250)
-P.animal = Object:new{tileX, tileY, prevx, prevy, prevTileX, prevTileY, x, y, speed = 250, width = 16*scale, height = 16*scale, sprite = love.graphics.newImage('Graphics/pitbull.png'), tilesOn = {}, oldTilesOn = {}}
-function P.animal:move(playerx, playery, dir)
+P.animal = Object:new{dead = false, name == "animal", tileX, tileY, prevx, prevy, prevTileX, prevTileY, x, y, speed = 250, width = 16*scale, height = 16*scale, sprite = love.graphics.newImage('Graphics/pitbull.png'), deadSprite = love.graphics.newImage('Graphics/pitbulldead.png'), tilesOn = {}, oldTilesOn = {}}
+function P.animal:move(playerx, playery, room)
 	diffx = playerx-self.tileX
 	diffy = playery-self.tileY
 	self.prevx = self.x
@@ -31,21 +33,62 @@ function P.animal:move(playerx, playery, dir)
 	if diffx==0 and diffy==0 then
 		return
 	end
-	if (math.abs(diffx)>math.abs(diffy) or dir == "x") and dir~="y" then
+	unableToMove = false
+	if math.abs(diffx)>math.abs(diffy) then
 		if playerx>self.tileX then
-			self.x = self.x+floor.sprite:getHeight()*scale
-			self.tileX = self.tileX+1
+			if not (room[self.tileY][self.tileX+1]~=nil and room[self.tileY][self.tileX+1].blocksMovement) then
+				self.x = self.x+floor.sprite:getHeight()*scale
+				self.tileX = self.tileX+1
+			elseif room[self.tileY][self.tileX+1].blocksMovement then
+				unableToMove = true
+			end
 		else
-			self.x = self.x-floor.sprite:getHeight()*scale
-			self.tileX = self.tileX-1
+			if not (room[self.tileY][self.tileX-1]~=nil and room[self.tileY][self.tileX-1].blocksMovement) then
+				self.x = self.x-floor.sprite:getHeight()*scale
+				self.tileX = self.tileX-1
+			elseif room[self.tileY][self.tileX-1].blocksMovement then
+				unableToMove = true
+			end
 		end
-	else
+	end
+	if math.abs(diffx)<=math.abs(diffy) or unableToMove then
 		if playery>self.tileY then
-			self.y = self.y+floor.sprite:getHeight()*scale
-			self.tileY = self.tileY+1
+			if not (room[self.tileY+1][self.tileX]~=nil and room[self.tileY+1][self.tileX].blocksMovement) then
+				self.y = self.y+floor.sprite:getHeight()*scale
+				self.tileY = self.tileY+1
+			elseif room[self.tileY+1][self.tileX].blocksMovement then
+				unableToMove = true
+			end
 		else
-			self.y = self.y-floor.sprite:getHeight()*scale
-			self.tileY = self.tileY-1
+			if not (room[self.tileY-1][self.tileX]~=nil and room[self.tileY-1][self.tileX].blocksMovement) then
+				self.y = self.y-floor.sprite:getHeight()*scale
+				self.tileY = self.tileY-1
+			elseif room[self.tileY-1][self.tileX].blocksMovement then
+				unableToMove = true
+			end
+		end
+	end
+	if unableToMove then
+		if playerx>self.tileX then
+			if not (room[self.tileY][self.tileX+1]~=nil and room[self.tileY][self.tileX+1].blocksMovement) then
+				self.x = self.x+floor.sprite:getHeight()*scale
+				self.tileX = self.tileX+1
+			end
+		elseif playerx<self.tileX then
+			if not (room[self.tileY][self.tileX-1]~=nil and room[self.tileY][self.tileX-1].blocksMovement) then
+				self.x = self.x-floor.sprite:getHeight()*scale
+				self.tileX = self.tileX-1
+			end
+		end
+	end
+end
+function P.animal:checkDeath()
+	if room[self.tileY][self.tileX]~=nil then
+		t = room[self.tileY][self.tileX]
+		if t.name == "electricfloor" and t.powered then
+			self:kill()
+		elseif t.name == "poweredFloor" and not t.powered then
+			self:kill()
 		end
 	end
 end
@@ -68,6 +111,10 @@ function P.animal:moveOld(playerx, playery, dt)
 			self.y = self.y+self.speed*dt
 		end
 	end
+end
+function P.animal:kill()
+	self.dead = true
+	self.sprite = self.deadSprite
 end
 function P.animal:update()
 	checkBoundaries()
@@ -153,10 +200,82 @@ function P.animal:checkBoundaries()
 	end
 end
 
-P.pitbull = P.animal:new{}
+P.pitbull = P.animal:new{name = "pitbull"}
+P.pup = P.animal:new{name = "pup", sprite = love.graphics.newImage('Graphics/pup.png'), deadSprite = love.graphics.newImage('Graphics/pupdead.png')}
+P.cat = P.animal:new{name = "cat", sprite = love.graphics.newImage('Graphics/cat.png'), deadSprite = love.graphics.newImage('Graphics/catdead.png')}
+function P.cat:move(playerx, playery, room)
+	diffx = playerx-self.tileX
+	diffy = playery-self.tileY
+	self.prevx = self.x
+	self.prevy = self.y
+	self.prevTileX = self.tileX
+	self.prevTileY = self.tileY
+	if diffx==0 and diffy==0 then
+		return
+	end
+	unableToMove = false
+	if math.abs(diffy)>math.abs(diffx) then
+		if playerx>=self.tileX then
+			if self.tileX>1 and not (room[self.tileY][self.tileX-1]~=nil and room[self.tileY][self.tileX-1].blocksMovement) then
+				self.x = self.x-floor.sprite:getHeight()*scale
+				self.tileX = self.tileX-1
+				return
+			else
+				unableToMove = true
+			end
+		end
+		if playerx<=self.tileX then
+			if self.tileX<roomLength and not (room[self.tileY][self.tileX+1]~=nil and room[self.tileY][self.tileX+1].blocksMovement) then
+				self.x = self.x+floor.sprite:getHeight()*scale
+				self.tileX = self.tileX+1
+				return
+			else
+				unableToMove = true
+			end
+		end
+	end
+	if math.abs(diffy)<=math.abs(diffx) or unableToMove then
+		if playery>=self.tileY then
+			if self.tileY>1 and not (room[self.tileY-1][self.tileX]~=nil and room[self.tileY-1][self.tileX].blocksMovement) then
+				self.y = self.y-floor.sprite:getHeight()*scale
+				self.tileY = self.tileY-1
+				return
+			else
+				unableToMove = true
+			end
+		end
+		if playery<=self.tileY then
+			if self.tileY<roomHeight and not (room[self.tileY+1][self.tileX]~=nil and room[self.tileY+1][self.tileX].blocksMovement) then
+				self.y = self.y+floor.sprite:getHeight()*scale
+				self.tileY = self.tileY+1
+				return
+			else
+				unableToMove = true
+			end
+		end
+	end
+	if unableToMove then
+		if playerx>=self.tileX then
+			if self.tileX>1 and not (room[self.tileY][self.tileX-1]~=nil and room[self.tileY][self.tileX-1].blocksMovement) then
+				self.x = self.x-floor.sprite:getHeight()*scale
+				self.tileX = self.tileX-1
+				return
+			end
+		end
+		if playerx<=self.tileX then
+			if self.tileX<roomLength and not (room[self.tileY][self.tileX+1]~=nil and room[self.tileY][self.tileX+1].blocksMovement) then
+				self.x = self.x+floor.sprite:getHeight()*scale
+				self.tileX = self.tileX+1
+				return
+			end
+		end
+	end
+end
 
 
 animalList[1] = P.animal
 animalList[2] = P.pitbull
+animalList[3] = P.pup
+animalList[4] = P.cat
 
 return animalList

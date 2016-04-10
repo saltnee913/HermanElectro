@@ -187,14 +187,14 @@ function updatePower()
 			end
 		end
 	end
-	if room[player.tileY][player.tileX]~=nil then
-		t = room[player.tileY][player.tileX]
-		if t.name == "electricfloor" and t.powered then
-			player.dead = true
-		elseif t.name == "poweredFloor" and not t.powered then
-			player.dead = true
-		end
-	end
+	--if room[player.tileY][player.tileX]~=nil then
+		--t = room[player.tileY][player.tileX]
+		--if t.name == "electricfloor" and t.powered then
+		--	kill()
+		--elseif t.name == "poweredFloor" and not t.powered then
+		--	kill()
+		--end
+	--end
 end
 
 function lightTest(x, y)
@@ -344,7 +344,7 @@ function love.draw()
 						--toDraw = floortile
 					end
 				end
-				if (room[j][i]~=nil and room[j][i].name~="pitbull") or litTiles[j][i]==0 then
+				if (room[j][i]~=nil and room[j][i].name~="pitbull" and room[j][i].name~="cat" and room[j][i].name~="pup") or litTiles[j][i]==0 then
 					love.graphics.draw(toDraw, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
 				end
 				if tool~="" then
@@ -552,8 +552,15 @@ function enterRoom(dir)
 	animals = {}
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
-			if room[i]~=nil and room[i][j]~=nil and room[i][j].name~=nil and room[i][j].name == "pitbull" then
-				animals[animalCounter] = animalList[2]:new()
+			if room[i]~=nil and room[i][j]~=nil and room[i][j].name~=nil and (room[i][j].name == "pitbull" or room[i][j].name == "cat" or room[i][j].name == "pup") then
+				animalName = room[i][j].name
+				if animalName == "pitbull" then
+					animals[animalCounter] = animalList[2]:new()
+				elseif animalName == "pup" then
+					animals[animalCounter] = animalList[3]:new()
+				elseif animalName == "cat" then
+					animals[animalCounter ] = animalList[4]:new()
+				end
 				animals[animalCounter].y = (i-1)*floor.sprite:getWidth()*scale+wallSprite.height
 				animals[animalCounter].x = (j-1)*floor.sprite:getHeight()*scale+wallSprite.width
 				animals[animalCounter].tileX = j
@@ -712,44 +719,125 @@ function love.keypressed(key, unicode)
     	updateLight()
     	updatePower()
     	for i = 1, animalCounter-1 do
-    		--for button: make sure doesn't press button twice for animal and player if both on same tile (use justPressed variable)
-    		--also add onExitAnimal
-    		animalDir = ""
-			diffx = player.tileX-animals[i].tileX
-			diffy = player.tileY-animals[i].tileY
-			if math.abs(diffx)>math.abs(diffy) then
-				print("b")
-				if player.tileX>animals[i].tileX then
-					if room[animals[i].tileY][animals[i].tileX+1]~=nil and room[animals[i].tileY][animals[i].tileX+1].blocksMovement then
-						animalDir = "y"
-					end
-				else
-					if room[animals[i].tileY][animals[i].tileX-1]~=nil and room[animals[i].tileY][animals[i].tileX-1].blocksMovement then
-						animalDir = "y"
-					end
+    		if animals[i].name == "pitbull" and not animals[i].dead then
+    			--animalMove(i)
+    			animals[i]:move(player.tileX, player.tileY, room)
+    		end
+    	end
+    	  for i = 1, animalCounter-1 do
+    		if animals[i].name == "pup"  and not animals[i].dead then
+    			--animalMove(i)
+    			animals[i]:move(player.tileX, player.tileY, room)
+    		end
+    	end
+    	for i = 1, animalCounter-1 do
+    		if animals[i].name == "cat"  and not animals[i].dead then
+    			--animalMove(i)
+    			animals[i]:move(player.tileX, player.tileY, room)
+    		end
+    	end
+    	resolveConflicts()
+    	for i = 1, animalCounter-1 do
+    		if (player.prevx~=player.x or player.prevy~=player.y) and not (animals[i].prevx == animals[i].x and animals[i].prevy == animals[i].y) and not animals[i].dead then
+				if room[animals[i].tileY][animals[i].tileX]~=nil then
+					room[animals[i].tileY][animals[i].tileX]:onEnterAnimal(animals[i])
 				end
-			else
-				print("a")
-				if player.tileY>animals[i].tileY then
-					if room[animals[i].tileY+1][animals[i].tileX]~=nil and room[animals[i].tileY+1][animals[i].tileX].blocksMovement then
-						animalDir = "x"
-					end
-				else
-					if room[animals[i].tileY-1][animals[i].tileX]~=nil and room[animals[i].tileY-1][animals[i].tileX].blocksMovement then
-						animalDir = "x"
+				if room[animals[i].prevTileY][animals[i].prevTileX]~=nil then
+					room[animals[i].prevTileY][animals[i].prevTileX]:onLeaveAnimal(animals[i])
+				end
+			end
+		end
+    end
+    checkDeath()
+    for i = 1, animalCounter-1 do
+    	animals[i]:checkDeath(room)
+    end
+end
+
+function animalMove(i)
+	animalDir = ""
+	diffx = player.tileX-animals[i].tileX
+	diffy = player.tileY-animals[i].tileY
+	if math.abs(diffx)>math.abs(diffy) then
+		if player.tileX>animals[i].tileX then
+			if room[animals[i].tileY][animals[i].tileX+1]~=nil and room[animals[i].tileY][animals[i].tileX+1].blocksMovement then
+				animalDir = "y"
+			end
+		else
+			if room[animals[i].tileY][animals[i].tileX-1]~=nil and room[animals[i].tileY][animals[i].tileX-1].blocksMovement then
+				animalDir = "y"
+			end
+		end
+	else
+		if player.tileY>animals[i].tileY then
+			if room[animals[i].tileY+1][animals[i].tileX]~=nil and room[animals[i].tileY+1][animals[i].tileX].blocksMovement then
+				animalDir = "x"
+			end
+		else
+			if room[animals[i].tileY-1][animals[i].tileX]~=nil and room[animals[i].tileY-1][animals[i].tileX].blocksMovement then
+				animalDir = "x"
+			end
+		end
+	end
+	if (player.prevx~=player.x or player.prevy~=player.y) and not animals[i].dead then
+		animals[i]:move(player.tileX, player.tileY, animalDir)
+		if room[animals[i].tileY][animals[i].tileX]~=nil then
+			room[animals[i].tileY][animals[i].tileX]:onEnterAnimal(animals[i])
+		end
+		if room[animals[i].prevTileY][animals[i].prevTileX]~=nil then
+			room[animals[i].prevTileY][animals[i].prevTileX]:onLeaveAnimal(animals[i])
+		end
+	end
+end
+
+function resolveConflicts()
+	conflicts = true
+	while conflicts do
+		for i = 1, animalCounter-1 do
+			for j = 1, i-1 do
+				if animals[i].tileX == animals[j].tileX and animals[i].tileY == animals[j].tileY then
+					if animals[i].tileX~=animals[i].prevTileX then
+						animals[i].tileX = animals[i].prevTileX
+						animals[i].x = animals[i].prevx
+					elseif animals[i].tileY~=animals[i].prevTileY then
+						animals[i].tileY = animals[i].prevTileY
+						animals[i].y = animals[i].prevy
+					elseif animals[j].tileX~=animals[j].prevTileX then
+						animals[j].tileX = animals[j].prevTileX
+						animals[j].x = animals[j].prevx
+					elseif animals[j].tileY~=animals[j].prevTileY then
+						animals[j].tileY = animals[j].prevTileY
+						animals[j].y = animals[j].prevy
 					end
 				end
 			end
-    		animals[i]:move(player.tileX, player.tileY, animalDir)
-    		print(animalDir)
-    		if room[animals[i].tileY][animals[i].tileX]~=nil then
-    			room[animals[i].tileY][animals[i].tileX]:onEnterAnimal(animals[i])
-    		end
-    		if room[animals[i].prevTileY][animals[i].prevTileX]~=nil then
-    			room[animals[i].prevTileY][animals[i].prevTileX]:onLeaveAnimal(animals[i])
-    		end
-    	end
-    end
+		end
+
+		conflicts = false
+		for i = 1, animalCounter-1 do
+			for j = 1, i-1 do
+				if animals[i].tileX == animals[j].tileX and animals[i].tileY == animals[j].tileY then
+					conflicts = true
+				end
+			end
+		end
+	end
+end
+
+function checkDeath()
+	if room[player.tileY][player.tileX]~=nil then
+		t = room[player.tileY][player.tileX]
+		if t.name == "electricfloor" and t.powered then
+			kill()
+		elseif t.name == "poweredFloor" and not t.powered then
+			kill()
+		end
+	end
+	for i = 1, animalCounter-1 do
+		if player.tileX == animals[i].tileX and player.tileY == animals[i].tileY and animals[i].name == "pitbull" then
+			kill()
+		end
+	end
 end
 
 --change to update(dt) for non-tile movement
