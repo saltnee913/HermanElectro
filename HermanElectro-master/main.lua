@@ -80,6 +80,8 @@ function love.load()
 		waterbottle = love.graphics.newImage('Graphics/waterbottle.png')
 		deathscreen = love.graphics.newImage('Graphics/deathscreen.png')
 		cuttingtorch = love.graphics.newImage('Graphics/cuttingtorch.png')
+		brick = love.graphics.newImage('Graphics/brick.png')
+		gun = love.graphics.newImage('Graphics/gun.png')
 	end
 	number1 = love.math.random()*-200
 	number2 = love.math.random()*-200
@@ -348,26 +350,43 @@ function love.draw()
 					love.graphics.draw(toDraw, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
 				end
 				if tool~="" then
-					if room[j][i]~=nil and adjacent(i,j) then
-						if tool==1 then
-							if room[j][i].name == "wall" and not room[j][i].sawed then
-								love.graphics.draw(green, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
+					if tool~=7 then
+						if room[j][i]~=nil and adjacent(i,j) then
+							if tool==1 then
+								if room[j][i].name == "wall" and not room[j][i].sawed then
+									love.graphics.draw(green, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
+								end
+							elseif tool==2 then
+								if room[j][i].name == "poweredFloor" and not room[j][i].ladder then
+									love.graphics.draw(green, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
+								end
+							elseif tool==3 then
+								if (room[j][i].name == "electricfloor" or room[j][i].name == "horizontalWire" or room[j][i].name == "verticalWire" or room[j][i].name == "wire") and not room[j][i].cut then
+									love.graphics.draw(green, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
+								end
+							elseif tool==4 then
+								if room[j][i].name == "powerSupply" and not room[j][i].wet then
+									love.graphics.draw(green, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
+								end
+							elseif tool==5 then
+								if room[j][i].name == "metalwall" and not room[j][i].sawed then
+									love.graphics.draw(green, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
+								end
+							elseif tool==6 then
+								if room[j][i].name == "glasswall" and not room[j][i].sawed then
+									love.graphics.draw(green, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
+								end
 							end
-						elseif tool==2 then
-							if room[j][i].name == "poweredFloor" and not room[j][i].ladder then
-								love.graphics.draw(green, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
-							end
-						elseif tool==3 then
-							if (room[j][i].name == "electricfloor" or room[j][i].name == "horizontalWire" or room[j][i].name == "verticalWire" or room[j][i].name == "wire") and not room[j][i].cut then
-								love.graphics.draw(green, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
-							end
-						elseif tool==4 then
-							if room[j][i].name == "powerSupply" and not room[j][i].wet then
-								love.graphics.draw(green, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
-							end
-						elseif tool==5 then
-							if room[j][i].name == "metalwall" and not room[j][i].sawed then
-								love.graphics.draw(green, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
+						end
+
+					else
+						if (j == player.tileY and math.abs(i-player.tileX)<=3) or (i == player.tileX and math.abs(j-player.tileY)<=3) then
+							for k = 1, animalCounter-1 do
+								if animals[k].tileY == j and animals[k].tileX == i then
+									print(i.."  "..j)
+									love.graphics.draw(green, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
+									break
+								end
 							end
 						end
 					end
@@ -444,6 +463,10 @@ function love.draw()
 			love.graphics.draw(waterbottle, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
 		elseif i==4 then
 			love.graphics.draw(cuttingtorch, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
+		elseif i == 5 then
+			love.graphics.draw(brick, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
+		elseif i == 6 then
+			love.graphics.draw(gun, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
 		end
 		if inventory[i+1]==0 then
 			love.graphics.draw(gray, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
@@ -719,19 +742,19 @@ function love.keypressed(key, unicode)
     	updateLight()
     	updatePower()
     	for i = 1, animalCounter-1 do
-    		if animals[i].name == "pitbull" and not animals[i].dead then
+    		if animals[i].name == "pitbull" and not animals[i].dead and litTiles[animals[i].tileY][animals[i].tileX]==1 then
     			--animalMove(i)
     			animals[i]:move(player.tileX, player.tileY, room)
     		end
     	end
     	  for i = 1, animalCounter-1 do
-    		if animals[i].name == "pup"  and not animals[i].dead then
+    		if animals[i].name == "pup"  and not animals[i].dead and litTiles[animals[i].tileY][animals[i].tileX]==1 then
     			--animalMove(i)
     			animals[i]:move(player.tileX, player.tileY, room)
     		end
     	end
     	for i = 1, animalCounter-1 do
-    		if animals[i].name == "cat"  and not animals[i].dead then
+    		if animals[i].name == "cat"  and not animals[i].dead and litTiles[animals[i].tileY][animals[i].tileX]==1 then
     			--animalMove(i)
     			animals[i]:move(player.tileX, player.tileY, room)
     		end
@@ -834,7 +857,7 @@ function checkDeath()
 		end
 	end
 	for i = 1, animalCounter-1 do
-		if player.tileX == animals[i].tileX and player.tileY == animals[i].tileY and animals[i].name == "pitbull" then
+		if player.tileX == animals[i].tileX and player.tileY == animals[i].tileY and animals[i].name == "pitbull" and not animals[i].dead then
 			kill()
 		end
 	end
@@ -940,7 +963,20 @@ function love.mousepressed(x, y, button, istouch)
 
 	tileLocX = math.ceil((mouseX-wallSprite.width)/(scale*floor.sprite:getWidth()))
 	tileLocY = math.ceil((mouseY-wallSprite.height)/(scale*floor.sprite:getHeight()))
-	if tool~=0 and room[tileLocY]~=nil and room[tileLocY][tileLocX]~=nil and adjacent(tileLocX, tileLocY) then
+	if tool==7 then
+		if (tileLocX == player.tileX and math.abs(tileLocY-player.tileY)<=3) or (tileLocY == player.tileY and math.abs(tileLocX-player.tileX)<=3) then
+			for i = 1, animalCounter-1 do
+				if animals[i].tileX == tileLocX and animals[i].tileY == tileLocY then
+					animals[i]:kill()
+					inventory[tool] = inventory[tool]-1
+					if inventory[tool] == 0 then
+						tool = 0
+					end
+					break
+				end
+			end
+		end
+	elseif tool~=0 and room[tileLocY]~=nil and room[tileLocY][tileLocX]~=nil and adjacent(tileLocX, tileLocY) then
 		if room[tileLocY][tileLocX]:useTool(tool) then
 			clickActivated = true
 			inventory[tool] = inventory[tool]-1
