@@ -383,7 +383,6 @@ function love.draw()
 						if (j == player.tileY and math.abs(i-player.tileX)<=3) or (i == player.tileX and math.abs(j-player.tileY)<=3) then
 							for k = 1, animalCounter-1 do
 								if animals[k].tileY == j and animals[k].tileX == i then
-									print(i.."  "..j)
 									love.graphics.draw(green, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
 									break
 								end
@@ -689,6 +688,7 @@ function checkBoundaries()
 end
 
 function love.keypressed(key, unicode)
+	love.keyboard.setKeyRepeat(true)
     -- ignore non-printable characters (see http://www.ascii-code.com/)
     if key == "r" then
     	love.load()
@@ -735,6 +735,11 @@ function love.keypressed(key, unicode)
     		player.x = player.x+floor.sprite:getHeight()*scale
     	elseif player.tileX == roomLength and player.y < height/2+50 and player.y > height/2-20 then
 				enterRoom(1)
+		end
+	elseif key == "1" or key == "2" or key == "3" or key == "4" or key == "5" or key == "6" or key == "7" then
+		numPressed = tonumber(key)
+		if inventory[numPressed]>0 then
+			tool = numPressed
 		end
     end
     if (key=="w" or key=="a" or key=="s" or key=="d") and (player.prevy~=player.y or player.prevx~=player.x) then
