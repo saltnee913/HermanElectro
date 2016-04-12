@@ -688,8 +688,11 @@ function checkBoundaries()
 end
 
 function love.keypressed(key, unicode)
-	love.keyboard.setKeyRepeat(true)
+	love.keyboard.setKeyRepeat(falsesssdw)
     -- ignore non-printable characters (see http://www.ascii-code.com/)
+    if dead and (key == "w" or key == "a" or key == "s" or key == "d") then
+    	return
+    end
     if key == "r" then
     	love.load()
     elseif key == "w" then
@@ -823,7 +826,7 @@ function resolveConflicts()
 	while conflicts do
 		for i = 1, animalCounter-1 do
 			for j = 1, i-1 do
-				if animals[i].tileX == animals[j].tileX and animals[i].tileY == animals[j].tileY then
+				if (not animals[i].dead) and (not animals[j].dead) and animals[i].tileX == animals[j].tileX and animals[i].tileY == animals[j].tileY then
 					if animals[i].tileX~=animals[i].prevTileX then
 						animals[i].tileX = animals[i].prevTileX
 						animals[i].x = animals[i].prevx
@@ -844,7 +847,7 @@ function resolveConflicts()
 		conflicts = false
 		for i = 1, animalCounter-1 do
 			for j = 1, i-1 do
-				if animals[i].tileX == animals[j].tileX and animals[i].tileY == animals[j].tileY then
+				if (not animals[i]==dead) and (not animals[j]==dead) and animals[i].tileX == animals[j].tileX and animals[i].tileY == animals[j].tileY then
 					conflicts = true
 				end
 			end
@@ -855,9 +858,9 @@ end
 function checkDeath()
 	if room[player.tileY][player.tileX]~=nil then
 		t = room[player.tileY][player.tileX]
-		if t.name == "electricfloor" and t.powered then
+		if t.name == "electricfloor" and t.powered and not t.cut then
 			kill()
-		elseif t.name == "poweredFloor" and not t.powered then
+		elseif t.name == "poweredFloor" and not t.powered and not t.ladder then
 			kill()
 		end
 	end

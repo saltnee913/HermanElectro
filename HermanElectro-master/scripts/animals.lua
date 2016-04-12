@@ -85,9 +85,9 @@ end
 function P.animal:checkDeath()
 	if room[self.tileY][self.tileX]~=nil then
 		t = room[self.tileY][self.tileX]
-		if t.name == "electricfloor" and t.powered then
+		if t.name == "electricfloor" and t.powered and not t.cut then
 			self:kill()
-		elseif t.name == "poweredFloor" and not t.powered then
+		elseif t.name == "poweredFloor" and not t.powered and not t.ladder then
 			self:kill()
 		end
 	end
