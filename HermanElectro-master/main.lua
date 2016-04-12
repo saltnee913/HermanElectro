@@ -737,7 +737,7 @@ function love.keypressed(key, unicode)
 				enterRoom(1)
 		end
     end
-    if player.prevy~=player.y or player.prevx~=player.x then
+    if (key=="w" or key=="a" or key=="s" or key=="d") and (player.prevy~=player.y or player.prevx~=player.x) then
     	checkBoundaries()
     	updateLight()
     	updatePower()
