@@ -686,13 +686,23 @@ function checkBoundaries()
 		--print(tilesOn[1].name..tilesOn[2]..tilesOn[3]..tilesOn[4])
 	end
 end
+keyTimer = {base = .05, timeLeft = .05}
+function love.update(dt)
+	keyTimer.timeLeft = keyTimer.timeLeft - dt
+end
 
 function love.keypressed(key, unicode)
 	love.keyboard.setKeyRepeat(true)
-    -- ignore non-printable characters (see http://www.ascii-code.com/)
     if key == "r" then
     	love.load()
-    elseif key == "w" then
+    end
+
+	if keyTimer.timeLeft > 0 then
+		return
+	end
+	keyTimer.timeLeft = keyTimer.base
+    -- ignore non-printable characters (see http://www.ascii-code.com/)
+    if key == "w" then
     	if player.tileY>1 then
     		player.prevx = player.x
     		player.prevy = player.y
