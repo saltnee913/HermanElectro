@@ -28,6 +28,15 @@ function love.load()
 	mapHeight = 8
 	map.loadRooms()
 	mainMap = map.generateMap(mapHeight, 20, os.time())
+	visibleMap = {}
+	for i = 0, mapHeight do
+		visibleMap[i] = {}
+		for j = 0, mapHeight do
+			visibleMap[i][j] = 0
+		end
+	end
+
+	visibleMap[mapx][mapy] = 1
 	room = mainMap[mapy][mapx].room
 	litTiles = {}
 	for i = 1, roomHeight do
@@ -428,18 +437,26 @@ function love.draw()
 	end
 	for i = 0, mapHeight do
 		for j = 0, mapHeight do
-			if mainMap[i][j] == nil then
-				love.graphics.setColor(255,255,255)
-				love.graphics.rectangle("line", width - 18*(mapHeight-j+1), 9*i, 18, 9 )
-			else
-				if (i == mapy and j == mapx) then
-					love.graphics.setColor(0,255,0)
-				elseif completedRooms[i][j]==1 then
-					love.graphics.setColor(255,255,255)
-				else
-					love.graphics.setColor(100,100,100)
+			if visibleMap[i][j] == 1 then
+				if mainMap[i][j] == nil then
+					--love.graphics.setColor(255,255,255)
+					--love.graphics.rectangle("line", width - 18*(mapHeight-j+1), 9*i, 18, 9 )
 				end
-				love.graphics.rectangle("fill", width - 18*(mapHeight-j+1), 9*i, 18, 9 )
+				--else
+					if mainMap[i][j]==nil then
+						love.graphics.setColor(0, 0, 0)
+					elseif (i == mapy and j == mapx) then
+						love.graphics.setColor(0,255,0)
+					elseif completedRooms[i][j]==1 then
+						love.graphics.setColor(255,255,255)
+					else
+						love.graphics.setColor(100,100,100)
+					end
+					love.graphics.rectangle("fill", width - 18*(mapHeight-j+1), 9*i, 18, 9 )
+				--end
+			else
+				--love.graphics.setColor(255,255,255)
+				--love.graphics.rectangle("line", width - 18*(mapHeight-j+1), 9*i, 18, 9 )
 			end
 		end
 	end
@@ -594,6 +611,19 @@ function enterRoom(dir)
 
 	updatePower()
 	updateLight()
+	visibleMap[mapy][mapx] = 1
+	if mapy>0 then
+		visibleMap[mapy-1][mapx] = 1
+	end
+	if mapy<mapHeight then
+		visibleMap[mapy+1][mapx] = 1
+	end
+	if mapx>0 then
+		visibleMap[mapy][mapx-1] = 1
+	end
+	if mapx<mapHeight then
+		visibleMap[mapy][mapx+1] = 1
+	end
 end
 
 oldTilesOn = {}
@@ -688,9 +718,9 @@ function checkBoundaries()
 end
 
 function love.keypressed(key, unicode)
-	love.keyboard.setKeyRepeat(falsesssdw)
+	love.keyboard.setKeyRepeat(false)
     -- ignore non-printable characters (see http://www.ascii-code.com/)
-    if dead and (key == "w" or key == "a" or key == "s" or key == "d") then
+    if player.dead and (key == "w" or key == "a" or key == "s" or key == "d") then
     	return
     end
     if key == "r" then
