@@ -19,6 +19,9 @@ local function createRoom(inRoom)
 		for j = 1, #(roomToLoad[i]) do
 			if roomToLoad[i][j] == nil or roomToLoad[i][j] == 0 then
 				loadedRoom[i][j] = nil
+			elseif tiles[roomToLoad[i][j]].animal ~= nil then
+				loadedRoom[i][j] = tiles[roomToLoad[i][j]]:new()
+				loadedRoom[i][j].animal = tiles[roomToLoad[i][j]].animal:new()
 			else
 				loadedRoom[i][j] = tiles[roomToLoad[i][j]]:new()
 			end

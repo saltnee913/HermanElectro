@@ -13,6 +13,7 @@ require('scripts.animals')
 
 loadedOnce = false
 
+
 function love.load()
 	mapx=4
 	mapy=4
@@ -574,20 +575,16 @@ function enterRoom(dir)
 	animals = {}
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
-			if room[i]~=nil and room[i][j]~=nil and room[i][j].name~=nil and (room[i][j].name == "pitbull" or room[i][j].name == "cat" or room[i][j].name == "pup") then
-				animalName = room[i][j].name
-				if animalName == "pitbull" then
-					animals[animalCounter] = animalList[2]:new()
-				elseif animalName == "pup" then
-					animals[animalCounter] = animalList[3]:new()
-				elseif animalName == "cat" then
-					animals[animalCounter ] = animalList[4]:new()
+			if room[i]~=nil and room[i][j]~=nil and room[i][j].name~=nil and (room[i][j].animal~=nil) then
+				animalToSpawn = room[i][j].animal
+				if not animalToSpawn.dead then
+					animals[animalCounter] = animalToSpawn
+					animals[animalCounter].y = (i-1)*floor.sprite:getWidth()*scale+wallSprite.height
+					animals[animalCounter].x = (j-1)*floor.sprite:getHeight()*scale+wallSprite.width
+					animals[animalCounter].tileX = j
+					animals[animalCounter].tileY = i
+					animalCounter=animalCounter+1
 				end
-				animals[animalCounter].y = (i-1)*floor.sprite:getWidth()*scale+wallSprite.height
-				animals[animalCounter].x = (j-1)*floor.sprite:getHeight()*scale+wallSprite.width
-				animals[animalCounter].tileX = j
-				animals[animalCounter].tileY = i
-				animalCounter=animalCounter+1
 			end
 		end
 	end
@@ -693,6 +690,11 @@ end
 
 function love.keypressed(key, unicode)
 	love.keyboard.setKeyRepeat(true)
+    -- ignore non-printable characters (see http://www.ascii-code.com/)
+    if dead and (key == "w" or key == "a" or key == "s" or key == "d") then
+    	return
+    end
+
     if key == "r" then
     	love.load()
     end
@@ -702,6 +704,7 @@ function love.keypressed(key, unicode)
 	end
 	keyTimer.timeLeft = keyTimer.base
     -- ignore non-printable characters (see http://www.ascii-code.com/)
+    print(tiles.catTile.animal.dead)
     if key == "w" then
     	if player.tileY>1 then
     		player.prevx = player.x
@@ -776,6 +779,8 @@ function love.keypressed(key, unicode)
     	end
     	resolveConflicts()
     	for i = 1, animalCounter-1 do
+    		animals[i].x = (animals[i].tileX-1)*floor.sprite:getWidth()*scale+wallSprite.height
+    		animals[i].y = (animals[i].tileY-1)*floor.sprite:getHeight()*scale+wallSprite.width
     		if (player.prevx~=player.x or player.prevy~=player.y) and not (animals[i].prevx == animals[i].x and animals[i].prevy == animals[i].y) and not animals[i].dead then
 				if room[animals[i].tileY][animals[i].tileX]~=nil then
 					room[animals[i].tileY][animals[i].tileX]:onEnterAnimal(animals[i])
@@ -833,7 +838,7 @@ function resolveConflicts()
 	while conflicts do
 		for i = 1, animalCounter-1 do
 			for j = 1, i-1 do
-				if animals[i].tileX == animals[j].tileX and animals[i].tileY == animals[j].tileY then
+				if (not animals[i].dead) and (not animals[j].dead) and animals[i].tileX == animals[j].tileX and animals[i].tileY == animals[j].tileY then
 					if animals[i].tileX~=animals[i].prevTileX then
 						animals[i].tileX = animals[i].prevTileX
 						animals[i].x = animals[i].prevx
@@ -854,7 +859,7 @@ function resolveConflicts()
 		conflicts = false
 		for i = 1, animalCounter-1 do
 			for j = 1, i-1 do
-				if animals[i].tileX == animals[j].tileX and animals[i].tileY == animals[j].tileY then
+				if (not animals[i]==dead) and (not animals[j]==dead) and animals[i].tileX == animals[j].tileX and animals[i].tileY == animals[j].tileY then
 					conflicts = true
 				end
 			end
@@ -865,9 +870,9 @@ end
 function checkDeath()
 	if room[player.tileY][player.tileX]~=nil then
 		t = room[player.tileY][player.tileX]
-		if t.name == "electricfloor" and t.powered then
+		if t.name == "electricfloor" and t.powered and not t.cut then
 			kill()
-		elseif t.name == "poweredFloor" and not t.powered then
+		elseif t.name == "poweredFloor" and not t.powered and not t.ladder then
 			kill()
 		end
 	end

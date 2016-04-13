@@ -1,5 +1,6 @@
 require('scripts.object')
 require('scripts.boundaries')
+require('scripts.animals')
 
 local P = {}
 tiles = P
@@ -343,9 +344,9 @@ function P.endTile:onEnter(player)
 	end
 end
 
-P.pitbullTile = P.tile:new{name = "pitbull"}
-P.pupTile = P.tile:new{name = "pup"}
-P.catTile = P.tile:new{name = "cat"}
+P.pitbullTile = P.tile:new{name = "pitbull", animal = animalList[2]:new()}
+P.pupTile = P.tile:new{name = "pup", animal = animalList[3]:new()}
+P.catTile = P.tile:new{name = "cat", animal = animalList[4]:new()}
 --reserves spot for pitbull at beginning
 
 
