@@ -219,6 +219,7 @@ function P.wall:useTool(tool)
 		self.blocksVision = false
 		self.sprite = self.destroyedSprite
 		self.sawed = true
+		self.blocksMovement = false
 		return true
 	end
 	return false
@@ -233,6 +234,7 @@ function P.metalWall:useTool(tool)
 		self.canBePowered = false
 		self.dirAccept = {0,0,0,0}
 		self.dirSend = {0,0,0,0}
+		self.blocksMovement = false
 		return true
 	end
 	return false
@@ -242,6 +244,7 @@ function P.glassWall:useTool(tool)
 	if tool==6 and not self.sawed then
 		self.sprite = self.destroyedSprite
 		self.sawed = true
+		self.blocksMovement = false
 		return true
 	end
 	return false

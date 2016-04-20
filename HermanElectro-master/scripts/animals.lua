@@ -51,7 +51,7 @@ function P.animal:move(playerx, playery, room)
 			end
 		end
 	end
-	if math.abs(diffx)<=math.abs(diffy) or unableToMove then
+	if math.abs(diffx)<=math.abs(diffy) or (unableToMove and math.abs(diffy)>0) then
 		if playery>self.tileY then
 			if not (room[self.tileY+1][self.tileX]~=nil and room[self.tileY+1][self.tileX].blocksMovement) then
 				--self.y = self.y+floor.sprite:getHeight()*scale
