@@ -383,7 +383,7 @@ function love.draw()
 									love.graphics.draw(green, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
 								end
 							elseif tool==6 then
-								if room[j][i].name == "glasswall" and not room[j][i].sawed then
+								if (room[j][i].name == "glasswall" and not room[j][i].sawed) or (room[j][i].name == "button" and not room[j][i].bricked) then
 									love.graphics.draw(green, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
 								end
 							end
@@ -605,22 +605,9 @@ function enterRoom(dir)
 			end
 		end
 	end
-
+	visibleMap[mapy][mapx] = 1
 	updatePower()
 	updateLight()
-	visibleMap[mapy][mapx] = 1
-	if mapy>0 then
-		visibleMap[mapy-1][mapx] = 1
-	end
-	if mapy<mapHeight then
-		visibleMap[mapy+1][mapx] = 1
-	end
-	if mapx>0 then
-		visibleMap[mapy][mapx-1] = 1
-	end
-	if mapx<mapHeight then
-		visibleMap[mapy][mapx+1] = 1
-	end
 end
 
 oldTilesOn = {}
@@ -808,8 +795,8 @@ function love.keypressed(key, unicode)
     	end
     	resolveConflicts()
     	for i = 1, animalCounter-1 do
-    		animals[i].x = (animals[i].tileX-1)*floor.sprite:getWidth()*scale+wallSprite.height
-    		animals[i].y = (animals[i].tileY-1)*floor.sprite:getHeight()*scale+wallSprite.width
+    		animals[i].x = (animals[i].tileX-1)*floor.sprite:getHeight()*scale+wallSprite.width
+    		animals[i].y = (animals[i].tileY-1)*floor.sprite:getWidth()*scale+wallSprite.height
     		if (player.prevx~=player.x or player.prevy~=player.y) and not (animals[i].prevx == animals[i].x and animals[i].prevy == animals[i].y) and not animals[i].dead then
 				if room[animals[i].tileY][animals[i].tileX]~=nil then
 					room[animals[i].tileY][animals[i].tileX]:onEnterAnimal(animals[i])

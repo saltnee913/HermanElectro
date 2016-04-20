@@ -75,9 +75,12 @@ P.horizontalWire = P.wire:new{powered = false, dirSend = {0,1,0,1}, dirAccept = 
 P.verticalWire = P.wire:new{powered = false, dirSend = {1,0,1,0}, dirAccept = {1,0,1,0}, canBePowered = true, name = "verticalWire", sprite = love.graphics.newImage('Graphics/verticalWireUnpowered.png'), destroyedSprite = love.graphics.newImage('Graphics/verticalWireCut.png'), poweredSprite = love.graphics.newImage('Graphics/verticalWirePowered.png')}
 P.spikes = P.tile:new{powered = false, dirSend = {0,0,0,0}, dirAccept = {0,0,0,0}, canBePowered = true, name = "spikes", sprite = love.graphics.newImage('Graphics/spikes.png')}
 
-P.button = P.tile:new{justPressed = false, down = false, powered = false, dirSend = {1,1,1,1}, dirAccept = {0,0,0,0}, canBePowered = true, name = "button", pressed = false, sprite = love.graphics.newImage('Graphics/button.png'), poweredSprite = love.graphics.newImage('Graphics/button.png'), downSprite = love.graphics.newImage('Graphics/buttonPressed.png'), upSprite = love.graphics.newImage('Graphics/button.png')}
+P.button = P.tile:new{bricked = false, justPressed = false, down = false, powered = false, dirSend = {1,1,1,1}, dirAccept = {0,0,0,0}, canBePowered = true, name = "button", pressed = false, sprite = love.graphics.newImage('Graphics/button.png'), poweredSprite = love.graphics.newImage('Graphics/button.png'), downSprite = love.graphics.newImage('Graphics/buttonPressed.png'), brickedSprite = love.graphics.newImage('Graphics/brickedButton.png'), upSprite = love.graphics.newImage('Graphics/button.png')}
 function P.button:updateSprite()
-	if self.down then
+	if self.bricked then
+		self.sprite = self.brickedSprite
+		self.poweredSprite = self.brickedSprite
+	elseif self.down then
 		self.sprite = self.downSprite
 		self.poweredSprite = self.downSprite
 	else
@@ -87,6 +90,9 @@ function P.button:updateSprite()
 end
 function P.button:onEnter(player)
 	--justPressed prevents flickering button next to wall
+	if self.bricked then
+		return
+	end
 	if not self.justPressed then
 		self.justPressed = true
 		self.down = not self.down
@@ -101,26 +107,24 @@ function P.button:onEnter(player)
 		--self.name = "onbutton"
 	end
 end
+function P.button:useTool(tool)
+	if tool == 6 then
+		self.bricked = true
+		self.down = true
+		self.dirAccept = {1,1,1,1}
+		self.dirSend = {1,1,1,1}
+		self.canBePowered = true
+		updatePower()
+		self:updateSprite()
+		return true
+	end
+	return false
+end
 function P.button:onLeave(player)
 	self.justPressed = false
 end
-function P.button:onEnterAnimal(animal)
-	if not self.justPressed then
-		self.justPressed = true
-		self.down = not self.down
-		if self.dirAccept[1]==1 then
-			self.powered = false
-			self.dirAccept = {0,0,0,0}
-		else
-			self.dirAccept = {1,1,1,1}
-		end
-		updatePower()
-		self:updateSprite()
-	end
-end
-function P.button:onLeaveAnimal(animal)
-	self.justPressed = false
-end
+P.button.onEnterAnimal = P.button.onEnter
+P.button.onLeaveAnimal = P.button.onLeave
 
 function P.button:updateTile(dir)
 	if self.down and self.poweredNeighbors[1]==1 or self.poweredNeighbors[2]==1 or self.poweredNeighbors[3]==1 or self.poweredNeighbors[4]==1 then
@@ -327,6 +331,18 @@ P.endTile = P.tile:new{name = "endTile", canBePowered = false, dirAccept = {0,0,
 function P.endTile:onEnter(player)
 	completedRooms[mapy][mapx] = 1
 	done = false
+	if mapy>0 then
+		visibleMap[mapy-1][mapx] = 1
+	end
+	if mapy<mapHeight then
+		visibleMap[mapy+1][mapx] = 1
+	end
+	if mapx>0 then
+		visibleMap[mapy][mapx-1] = 1
+	end
+	if mapx<mapHeight then
+		visibleMap[mapy][mapx+1] = 1
+	end
 	while (done == false) do
 		x = math.floor(math.random()*(mapHeight+1))
 		y = math.floor(math.random()*(mapHeight+1))
