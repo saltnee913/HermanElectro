@@ -706,6 +706,8 @@ function love.update(dt)
 end
 
 function love.keypressed(key, unicode)
+	beforePressX = player.x
+	beforePressY = player.y
 	love.keyboard.setKeyRepeat(true)
     -- ignore non-printable characters (see http://www.ascii-code.com/)
     if player.dead and (key == "w" or key == "a" or key == "s" or key == "d") then
@@ -771,7 +773,7 @@ function love.keypressed(key, unicode)
 			tool = numPressed
 		end
     end
-    if (key=="w" or key=="a" or key=="s" or key=="d") and (player.prevy~=player.y or player.prevx~=player.x) then
+    if (key=="w" or key=="a" or key=="s" or key=="d") and (beforePressY~=player.y or beforePressX~=player.x) then
     	checkBoundaries()
     	updateLight()
     	updatePower()
