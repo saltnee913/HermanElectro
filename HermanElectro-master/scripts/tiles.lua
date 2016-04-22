@@ -325,6 +325,32 @@ function P.vDoor:onEnter(player)
 	updateLight()
 end
 
+P.vPoweredDoor = P.tile:new{sawed = false, name = "vPoweredDoor", blocksMovement = false, blocksVision = false, canBePowered = true, dirSend = {1,0,1,0}, dirAccept = {1,0,1,0}, sprite = love.graphics.newImage('Graphics/powereddooropen.png'), closedSprite = love.graphics.newImage('Graphics/powereddoor.png'), openSprite = love.graphics.newImage('Graphics/powereddooropen.png')}
+function P.vPoweredDoor:updateTile(player)
+	if self.poweredNeighbors[1] == 1 or self.poweredNeighbors[3]==1 then
+		self.blocksVision = true
+		self.sprite = self.closedSprite
+		self.blocksMovement = true
+	else
+		self.blocksVision = false
+		self.sprite = self.openSprite
+		self.blocksMovement = false
+	end
+end
+function P.vPoweredDoor:onEnter(player)
+	if self.blocksMovement then
+		player.x = player.prevx
+		player.y = player.prevy
+		player.tileX = player.prevTileX
+		player.tileY = player.prevTileY
+		player.prevx = player.x
+		player.prevy = player.y
+		player.prevTileX = player.tileX
+		player.prevTileY = player.tileY
+	end
+end
+P.vPoweredDoor.onStay = P.vPoweredDoor.onEnter
+
 function P.hDoor:onLeave(player)
 	--self.sprite = self.closedSprite
 	--self.blocksVision = true
@@ -394,5 +420,6 @@ tiles[21] = P.pitbullTile
 tiles[22] = P.pupTile
 tiles[23] = P.catTile
 tiles[24] = P.glassWall
+tiles[25] = P.vPoweredDoor
 
 return tiles

@@ -89,6 +89,8 @@ function P.animal:checkDeath()
 			self:kill()
 		elseif t.name == "poweredFloor" and not t.powered and not t.ladder then
 			self:kill()
+		elseif t.name == "vPoweredDoor" and t.blocksMovement then
+			self:kill()
 		end
 	end
 end
