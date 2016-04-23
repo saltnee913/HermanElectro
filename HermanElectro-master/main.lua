@@ -15,6 +15,8 @@ loadedOnce = false
 
 
 function love.load()
+	editorMode = false
+	editorAdd = 0
 	mapx=4
 	mapy=4
 	local json = require('scripts.dkjson')
@@ -495,6 +497,29 @@ function love.draw()
 	if player.dead then
 		love.graphics.draw(deathscreen, width/2-width/2000*320, 10, 0, width/1000, width/1000)
 	end
+	if not editorMode then
+		botText = "e to toggle editor mode"
+	else
+		botText = "e to toggle editor mode, r to clear screen, p to print matrix of room, click to select/place tiles below"
+	end
+	barLength = 200
+	if editorMode then
+		barLength = 660
+		love.graphics.setColor(255,255,255)
+		for i = 1, 25 do
+			toDraw = tiles[i].sprite
+			--love.graphics.rectangle("fill", (i-1)*width/25, height-width/25, width/25, width/25)
+			--sprite width: floor.sprite:getWidth()
+			love.graphics.draw(toDraw, (i-1)*width/30, height-width/30, 0, (width/30)/(floor.sprite:getWidth()), (width/30)/(floor.sprite:getWidth()))
+			if editorAdd == i then
+				love.graphics.draw(green, (i-1)*width/30, height-width/30, 0, (width/30)/(floor.sprite:getWidth()), (width/30)/(floor.sprite:getWidth()))
+			end
+		end
+	end
+	love.graphics.setColor(0,0,0)
+	love.graphics.rectangle("fill", 5, height-width/30-20, barLength, 15)
+	love.graphics.setColor(255,255,255)
+	love.graphics.print(botText, 10, height-width/30-20)
 end
 
 function adjacent(xloc, yloc)
@@ -706,6 +731,37 @@ function love.update(dt)
 end
 
 function love.keypressed(key, unicode)
+	if key=="e" then
+		editorMode = not editorMode
+	end
+	if editorMode and key=="p" then
+		print("[")
+		for i = 1, roomHeight do
+			prt = "["
+			for j =1, roomLength do
+				if room[i][j]~=nil then
+					for k = 1, 100 do
+						if tiles[k]~=nil and room[i][j]~=nil and tiles[k].name == room[i][j].name then
+							addk = k
+							if k == 1 then
+								addk=0
+							end
+							prt = prt..addk
+							break
+						end
+					end
+				else
+					prt = prt..0
+				end
+				if j ~= roomLength then
+					prt = prt..","
+				end
+			end
+			prt = prt.."]"
+			print(prt)
+		end
+		print("]")
+	end
 	beforePressX = player.x
 	beforePressY = player.y
 	love.keyboard.setKeyRepeat(true)
@@ -715,7 +771,16 @@ function love.keypressed(key, unicode)
     end
 
     if key == "r" then
-    	love.load()
+    	if editorMode then
+    		player.dead = false
+    		for i = 1, roomHeight do
+    			for j = 1, roomLength do
+    				room[i][j] = nil
+    			end
+    		end
+    	else 
+    		love.load()
+    	end
     end
 
 	if keyTimer.timeLeft > 0 then
@@ -1026,6 +1091,9 @@ function love.mousepressed(x, y, button, istouch)
 	if not clickActivated then
 		tool = 0
 	end
+	if editorMode and mouseY>height-width/30 then
+		editorAdd = math.floor(mouseX/(width/30))+1
+	end
 	updateLight()
 	updatePower()
 end
@@ -1035,4 +1103,13 @@ function love.mousemoved(x, y, dx, dy)
 	--mouseY = y-height2/2+9*screenScale/2
 	mouseX = x-(width2-width)/2
 	mouseY = y-(height2-height)/2
+	tileLocX = math.ceil((mouseX-wallSprite.width)/(scale*floor.sprite:getWidth()))
+	tileLocY = math.ceil((mouseY-wallSprite.height)/(scale*floor.sprite:getHeight()))
+	if editorMode and love.mouse.isDown(1) then
+		if editorAdd>0 and tileLocX>=1 and tileLocX<=24 and tileLocY>=1 and tileLocY<=12 then
+			room[tileLocY][tileLocX] = tiles[editorAdd]:new()
+			updateLight()
+			updatePower()
+		end
+	end
 end
