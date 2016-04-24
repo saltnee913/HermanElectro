@@ -951,6 +951,9 @@ function resolveConflicts()
 end
 
 function checkDeath()
+	if editorMode then
+		return
+	end
 	if room[player.tileY][player.tileX]~=nil then
 		t = room[player.tileY][player.tileX]
 		if t.name == "electricfloor" and t.powered and not t.cut then
@@ -1091,8 +1094,34 @@ function love.mousepressed(x, y, button, istouch)
 	if not clickActivated then
 		tool = 0
 	end
-	if editorMode and mouseY>height-width/30 then
-		editorAdd = math.floor(mouseX/(width/30))+1
+	if editorMode then
+		if mouseY>height-width/30 then
+			editorAdd = math.floor(mouseX/(width/30))+1
+		elseif editorAdd>0 and tileLocX>=1 and tileLocX<=24 and tileLocY>=1 and tileLocY<=12 then
+			room[tileLocY][tileLocX] = tiles[editorAdd]:new()
+			for i = 1, animalCounter-1 do
+				if animals[i]~=nil and animals[i].tileX == tileLocX and animals[i].tileY == tileLocY then
+					animals[i] = nil
+					for j = i+1, animalCounter do
+						animals[j-1] = animals[j]
+					end
+					animalCounter = animalCounter-1
+				end
+			end
+			if editorAdd == 21 or editorAdd == 22 or editorAdd == 23 then
+				animalToSpawn = room[tileLocY][tileLocX].animal
+				if not animalToSpawn.dead then
+					animals[animalCounter] = animalList[editorAdd-19]:new()
+					animals[animalCounter].y = (tileLocY-1)*floor.sprite:getWidth()*scale+wallSprite.height
+					animals[animalCounter].x = (tileLocX-1)*floor.sprite:getHeight()*scale+wallSprite.width
+					animals[animalCounter].tileX = tileLocX
+					animals[animalCounter].tileY = tileLocY
+					animalCounter = animalCounter+1
+				end
+			end
+			updateLight()
+			updatePower()
+		end
 	end
 	updateLight()
 	updatePower()
