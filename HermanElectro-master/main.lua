@@ -1094,11 +1094,16 @@ function love.mousepressed(x, y, button, istouch)
 	if not clickActivated then
 		tool = 0
 	end
+	if button == 'l' or button == 1 then
+		tempAdd = editorAdd
+	elseif button == 'r' or button == 2 then
+		tempAdd = 1
+	end
 	if editorMode then
 		if mouseY>height-width/30 then
 			editorAdd = math.floor(mouseX/(width/30))+1
-		elseif editorAdd>0 and tileLocX>=1 and tileLocX<=24 and tileLocY>=1 and tileLocY<=12 then
-			room[tileLocY][tileLocX] = tiles[editorAdd]:new()
+		elseif tempAdd>0 and tileLocX>=1 and tileLocX<=24 and tileLocY>=1 and tileLocY<=12 then
+			room[tileLocY][tileLocX] = tiles[tempAdd]:new()
 			for i = 1, animalCounter-1 do
 				if animals[i]~=nil and animals[i].tileX == tileLocX and animals[i].tileY == tileLocY then
 					animals[i] = nil
@@ -1108,10 +1113,10 @@ function love.mousepressed(x, y, button, istouch)
 					animalCounter = animalCounter-1
 				end
 			end
-			if editorAdd == 21 or editorAdd == 22 or editorAdd == 23 then
+			if tempAdd == 21 or tempAdd == 22 or tempAdd == 23 then
 				animalToSpawn = room[tileLocY][tileLocX].animal
 				if not animalToSpawn.dead then
-					animals[animalCounter] = animalList[editorAdd-19]:new()
+					animals[animalCounter] = animalList[tempAdd-19]:new()
 					animals[animalCounter].y = (tileLocY-1)*floor.sprite:getWidth()*scale+wallSprite.height
 					animals[animalCounter].x = (tileLocX-1)*floor.sprite:getHeight()*scale+wallSprite.width
 					animals[animalCounter].tileX = tileLocX
@@ -1134,9 +1139,9 @@ function love.mousemoved(x, y, dx, dy)
 	mouseY = y-(height2-height)/2
 	tileLocX = math.ceil((mouseX-wallSprite.width)/(scale*floor.sprite:getWidth()))
 	tileLocY = math.ceil((mouseY-wallSprite.height)/(scale*floor.sprite:getHeight()))
-	if editorMode and love.mouse.isDown(1) then
-		if editorAdd>0 and tileLocX>=1 and tileLocX<=24 and tileLocY>=1 and tileLocY<=12 then
-			room[tileLocY][tileLocX] = tiles[editorAdd]:new()
+	if editorMode and (love.mouse.isDown('l') or love.mouse.isDown('r') or love.mouse.isDown(1) or love.mouse.isDown(2)) then
+		if tempAdd>0 and tileLocX>=1 and tileLocX<=24 and tileLocY>=1 and tileLocY<=12 then
+			room[tileLocY][tileLocX] = tiles[tempAdd]:new()
 			updateLight()
 			updatePower()
 		end
