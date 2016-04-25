@@ -404,6 +404,9 @@ end
 P.pitbullTile = P.tile:new{name = "pitbull", animal = animalList[2]:new()}
 P.pupTile = P.tile:new{name = "pup", animal = animalList[3]:new()}
 P.catTile = P.tile:new{name = "cat", animal = animalList[4]:new()}
+
+P.vDoor= P.hDoor:new{name = "vDoor", sprite = love.graphics.newImage('Graphics/door.png'), closedSprite = love.graphics.newImage('Graphics/door.png'), openSprite = love.graphics.newImage('Graphics/doorsopen.png')}
+P.vDoor.onEnter = P.hDoor.onEnter
 --reserves spot for pitbull at beginning
 
 
@@ -432,5 +435,6 @@ tiles[22] = P.pupTile
 tiles[23] = P.catTile
 tiles[24] = P.glassWall
 tiles[25] = P.vPoweredDoor
+tiles[26] = P.vDoor
 
 return tiles

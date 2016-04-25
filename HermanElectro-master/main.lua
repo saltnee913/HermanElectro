@@ -868,7 +868,7 @@ function love.keypressed(key, unicode)
 				if room[animals[i].tileY][animals[i].tileX]~=nil then
 					room[animals[i].tileY][animals[i].tileX]:onEnterAnimal(animals[i])
 				end
-				if room[animals[i].prevTileY][animals[i].prevTileX]~=nil then
+				if room[animals[i].prevTileY]~=nil and room[animals[i].prevTileY][animals[i].prevTileX]~=nil then
 					room[animals[i].prevTileY][animals[i].prevTileX]:onLeaveAnimal(animals[i])
 				end
 			end
