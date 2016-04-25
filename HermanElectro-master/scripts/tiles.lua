@@ -391,7 +391,7 @@ function P.endTile:onEnter(player)
 						end
 					end
 					listChoose = math.random(numLists)
-					print(listChoose)
+					--print(listChoose)
 					--inventory[i] = inventory[i]+itemsNeeded[mainMap[x][y].roomid][i]
 					inventory[i] = inventory[i]+listOfItemsNeeded[listChoose][i]
 					done = true
