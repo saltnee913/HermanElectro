@@ -5,7 +5,7 @@ require('scripts.animals')
 local P = {}
 tiles = P
 
-P.tile = Object:new{powered = false, blocksMovement = false, poweredNeighbors = {0,0,0,0}, blocksVision = false, dirSend = {1,1,1,1}, dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile", sprite = love.graphics.newImage('Graphics/cavesfloor.png'), poweredSprite = love.graphics.newImage('Graphics/cavesfloor.png')}
+P.tile = Object:new{notGates = {}, powered = false, blocksMovement = false, poweredNeighbors = {0,0,0,0}, blocksVision = false, dirSend = {1,1,1,1}, dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile", sprite = love.graphics.newImage('Graphics/cavesfloor.png'), poweredSprite = love.graphics.newImage('Graphics/cavesfloor.png')}
 function P.tile:onEnter(player) 
 	--self.name = "fuckyou"
 end
@@ -94,7 +94,7 @@ function P.button:onEnter(player)
 		return
 	end
 	if not self.justPressed then
-		self.justPressed = true
+		--self.justPressed = true
 		self.down = not self.down
 		if self.dirAccept[1]==1 then
 			self.powered = false
@@ -268,7 +268,7 @@ function P.splitGate:updateTile(dir)
 	end
 end
 
-P.notGate = P.conductiveTile:new{name = "notGate", dirSend = {1,0,0,0}, dirAccept = {1,1,1,1}, sprite = love.graphics.newImage('Graphics/notgate.png'), poweredSprite = love.graphics.newImage('Graphics/splitgate.png') }
+P.notGate = P.conductiveTile:new{name = "notGate", dirSend = {1,0,0,0}, dirAccept = {0,0,1,0}, sprite = love.graphics.newImage('Graphics/notgate.png'), poweredSprite = love.graphics.newImage('Graphics/splitgate.png') }
 function P.notGate:updateTile(dir)
 	if self.poweredNeighbors[3] == 0 then
 	--if self.poweredNeighbors[2] == 0 and self.poweredNeighbors[4] == 0 then

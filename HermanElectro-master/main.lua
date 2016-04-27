@@ -264,7 +264,6 @@ function powerTest(x, y, lastDir)
 		return
 	end
 
-
 	if x>1 and room[x-1][y] ~=nil and canBePowered(x-1,y,3) and lastDir~=1 then
 		formerPowered = room[x-1][y].powered
 		formerSend = room[x-1][y].dirSend
@@ -429,7 +428,7 @@ function love.draw()
 	end
 	love.graphics.draw(walls, 0, 0, 0, width/walls:getWidth(), height/walls:getHeight())
 	for i = 1, 100 do
-		if animals[i]~=nil then
+		if animals[i]~=nil and litTiles[animals[i].tileY][animals[i].tileX]==1 then
 			love.graphics.draw(animals[i].sprite, animals[i].x, animals[i].y, 0, scale, scale)
 		else
 			break
@@ -852,38 +851,41 @@ function love.keypressed(key, unicode)
 			tool = numPressed
 		end
     end
-    if (key=="w" or key=="a" or key=="s" or key=="d") and (beforePressY~=player.y or beforePressX~=player.x) then
+
+    if (key=="w" or key=="a" or key=="s" or key=="d") then
     	checkBoundaries()
-    	updateLight()
-    	updatePower()
-    	for i = 1, animalCounter-1 do
-    		if animals[i].name == "pitbull" and not animals[i].dead and litTiles[animals[i].tileY][animals[i].tileX]==1 then
-    			--animalMove(i)
-    			animals[i]:move(player.tileX, player.tileY, room)
-    		end
-    	end
-    	  for i = 1, animalCounter-1 do
-    		if animals[i].name == "pup"  and not animals[i].dead and litTiles[animals[i].tileY][animals[i].tileX]==1 then
-    			--animalMove(i)
-    			animals[i]:move(player.tileX, player.tileY, room)
-    		end
-    	end
-    	for i = 1, animalCounter-1 do
-    		if animals[i].name == "cat"  and not animals[i].dead and litTiles[animals[i].tileY][animals[i].tileX]==1 then
-    			--animalMove(i)
-    			animals[i]:move(player.tileX, player.tileY, room)
-    		end
-    	end
-    	resolveConflicts()
-    	for i = 1, animalCounter-1 do
-    		animals[i].x = (animals[i].tileX-1)*floor.sprite:getHeight()*scale+wallSprite.width
-    		animals[i].y = (animals[i].tileY-1)*floor.sprite:getWidth()*scale+wallSprite.height
-    		if (player.prevx~=player.x or player.prevy~=player.y) and not (animals[i].prevx == animals[i].x and animals[i].prevy == animals[i].y) and not animals[i].dead then
-				if room[animals[i].tileY][animals[i].tileX]~=nil then
-					room[animals[i].tileY][animals[i].tileX]:onEnterAnimal(animals[i])
-				end
-				if room[animals[i].prevTileY]~=nil and room[animals[i].prevTileY][animals[i].prevTileX]~=nil then
-					room[animals[i].prevTileY][animals[i].prevTileX]:onLeaveAnimal(animals[i])
+	    if beforePressY~=player.y or beforePressX~=player.x then
+	    	updateLight()
+	    	updatePower()
+	    	for i = 1, animalCounter-1 do
+	    		if animals[i].name == "pitbull" and not animals[i].dead and litTiles[animals[i].tileY][animals[i].tileX]==1 then
+	    			--animalMove(i)
+	    			animals[i]:move(player.tileX, player.tileY, room)
+	    		end
+	    	end
+	    	  for i = 1, animalCounter-1 do
+	    		if animals[i].name == "pup"  and not animals[i].dead and litTiles[animals[i].tileY][animals[i].tileX]==1 then
+	    			--animalMove(i)
+	    			animals[i]:move(player.tileX, player.tileY, room)
+	    		end
+	    	end
+	    	for i = 1, animalCounter-1 do
+	    		if animals[i].name == "cat"  and not animals[i].dead and litTiles[animals[i].tileY][animals[i].tileX]==1 then
+	    			--animalMove(i)
+	    			animals[i]:move(player.tileX, player.tileY, room)
+	    		end
+	    	end
+	    	resolveConflicts()
+	    	for i = 1, animalCounter-1 do
+	    		animals[i].x = (animals[i].tileX-1)*floor.sprite:getHeight()*scale+wallSprite.width
+	    		animals[i].y = (animals[i].tileY-1)*floor.sprite:getWidth()*scale+wallSprite.height
+	    		if not (animals[i].prevx == animals[i].x and animals[i].prevy == animals[i].y) and not animals[i].dead then
+					if room[animals[i].tileY][animals[i].tileX]~=nil then
+						room[animals[i].tileY][animals[i].tileX]:onEnterAnimal(animals[i])
+					end
+					if room[animals[i].prevTileY]~=nil and room[animals[i].prevTileY][animals[i].prevTileX]~=nil then
+						room[animals[i].prevTileY][animals[i].prevTileX]:onLeaveAnimal(animals[i])
+					end
 				end
 			end
 		end
@@ -1100,7 +1102,7 @@ function love.mousepressed(x, y, button, istouch)
 	if tool==7 then
 		if (tileLocX == player.tileX and math.abs(tileLocY-player.tileY)<=3) or (tileLocY == player.tileY and math.abs(tileLocX-player.tileX)<=3) then
 			for i = 1, animalCounter-1 do
-				if animals[i].tileX == tileLocX and animals[i].tileY == tileLocY then
+				if animals[i].tileX == tileLocX and animals[i].tileY == tileLocY and not animals[i].dead then
 					animals[i]:kill()
 					inventory[tool] = inventory[tool]-1
 					if inventory[tool] == 0 then
