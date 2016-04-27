@@ -292,7 +292,7 @@ function P.splitGate:updateTile(dir)
 	end
 end
 
-P.notGate = P.gate:new{name = "notGate", dirSend = {1,0,0,0}, dirAccept = {1,1,1,1}, sprite = love.graphics.newImage('Graphics/notgate.png'), poweredSprite = love.graphics.newImage('Graphics/splitgate.png') }
+P.notGate = P.gate:new{name = "notGate", dirSend = {1,0,0,0}, dirAccept = {1,1,1,1}, sprite = love.graphics.newImage('Graphics/notgateoff.png'), poweredSprite = love.graphics.newImage('Graphics/notgate.png') }
 function P.notGate:updateTile(dir)
 	if self.poweredNeighbors[self:cfr(3)] == 0 then
 	--if self.poweredNeighbors[2] == 0 and self.poweredNeighbors[4] == 0 then
