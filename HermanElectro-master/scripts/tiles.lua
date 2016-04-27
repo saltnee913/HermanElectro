@@ -5,7 +5,7 @@ require('scripts.animals')
 local P = {}
 tiles = P
 
-P.tile = Object:new{powered = false, blocksMovement = false, poweredNeighbors = {0,0,0,0}, blocksVision = false, dirSend = {1,1,1,1}, dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile", sprite = love.graphics.newImage('Graphics/cavesfloor.png'), poweredSprite = love.graphics.newImage('Graphics/cavesfloor.png')}
+P.tile = Object:new{rotation = 0, powered = false, blocksMovement = false, poweredNeighbors = {0,0,0,0}, blocksVision = false, dirSend = {1,1,1,1}, dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile", sprite = love.graphics.newImage('Graphics/cavesfloor.png'), poweredSprite = love.graphics.newImage('Graphics/cavesfloor.png')}
 function P.tile:onEnter(player) 
 	--self.name = "fuckyou"
 end
@@ -27,6 +27,21 @@ function P.tile:updateTile(dir)
 		self.powered = true
 	elseif self.name ~= "powerSupply" then
 		self.powered = false
+	end
+end
+local function shiftArray(arr, times)
+	if times == 0 then return arr end
+	if(times == nil) then times = 1 end
+	return shiftArray({arr[4], arr[1], arr[2], arr[3]}, times-1)
+end
+function P.tile:rotate(times)
+	self.rotation = self.rotation + times
+	if self.rotation >= 4 then
+		self.rotation = self.rotation - 4
+	end
+	for i=1,times do
+		self.dirSend = shiftArray(self.dirSend)
+		self.dirAccept = shiftArray(self.dirAccept)
 	end
 end
 local bounds = {}
@@ -254,48 +269,57 @@ P.gate = P.conductiveTile:new{name = "gate", dirSend = {0,0,0,0}, dirAccept = {0
 function P.gate:updateTile(dir)
 	self.gotten[dir] = 1
 end
+function P.tile:correctForRotation(dir)
+	local temp = dir + self.rotation
+	if(temp > 4) then
+		temp = temp - 4
+	end
+	if temp ~= dir then print(temp..';'..dir) end
+	return temp
+end
+P.tile.cfr = P.gate.correctForRotation
 
-P.splitGate = P.conductiveTile:new{name = "splitGate", dirSend = {0,0,0,0}, dirAccept = {1,0,0,0}, sprite = love.graphics.newImage('Graphics/splitgate.png'), poweredSprite = love.graphics.newImage('Graphics/splitgate.png') }
+P.splitGate = P.gate:new{name = "splitGate", dirSend = {1,0,0,0}, dirAccept = {1,0,0,0}, sprite = love.graphics.newImage('Graphics/splitgate.png'), poweredSprite = love.graphics.newImage('Graphics/splitgate.png') }
 function P.splitGate:updateTile(dir)
-	if dir == 1 then
+	if dir == self:cfr(1) then
 		self.powered=true
-		self.dirSend = {0, 1, 0, 1}
-		self.dirAccept = {0, 1, 0, 1}
+		self.dirSend = shiftArray({0,1,0,1}, self.rotation)
+		self.dirAccept = shiftArray({0,1,0,1}, self.rotation)
 	else
 		self.powered = false
 		self.dirSend = {0,0,0,0}
-		self.dirAccept = {1,0,0,0}
+		self.dirAccept = shiftArray({1,0,0,0}, self.rotation)
 	end
 end
 
-P.notGate = P.conductiveTile:new{name = "notGate", dirSend = {1,0,0,0}, dirAccept = {1,1,1,1}, sprite = love.graphics.newImage('Graphics/notgate.png'), poweredSprite = love.graphics.newImage('Graphics/splitgate.png') }
+P.notGate = P.gate:new{name = "notGate", dirSend = {1,0,0,0}, dirAccept = {1,1,1,1}, sprite = love.graphics.newImage('Graphics/notgate.png'), poweredSprite = love.graphics.newImage('Graphics/splitgate.png') }
 function P.notGate:updateTile(dir)
-	if self.poweredNeighbors[3] == 0 then
+	if self.poweredNeighbors[self:cfr(3)] == 0 then
 	--if self.poweredNeighbors[2] == 0 and self.poweredNeighbors[4] == 0 then
 		self.powered = true
-		self.dirSend = {1,0,0,0}
+		self.dirSend = shiftArray({1,0,0,0}, self.rotation)
 	else
 		self.powered = false
 		self.dirSend = {0,0,0,0}
 	end
 end
 
-P.andGate = P.powerSupply:new{name = "andGate", dirSend = {0,0,0,0}, dirAccept = {0,1,0,1}, sprite = love.graphics.newImage('Graphics/andgate.png'), poweredSprite = love.graphics.newImage('Graphics/andgate.png') }
+P.andGate = P.gate:new{name = "andGate", dirSend = {1,0,0,0}, dirAccept = {0,1,0,1}, sprite = love.graphics.newImage('Graphics/andgate.png'), poweredSprite = love.graphics.newImage('Graphics/andgate.png') }
 function P.andGate:updateTile(dir)
-	if self.poweredNeighbors[2]==1 and self.poweredNeighbors[4]==1 then
+	if self.poweredNeighbors[self:cfr(2)]==1 and self.poweredNeighbors[self:cfr(4)]==1 then
 		self.powered = true
-		self.dirSend = {1,0,0,0}
+		self.dirSend = shiftArray({1,0,0,0}, self.rotation)
 	else
 		self.powered = false
 		self.dirSend = {0,0,0,0}
 	end
 end
 
-P.orGate = P.conductiveTile:new{name = "orGate", dirSend = {0,0,0,0}, dirAccept = {0,1,0,1}, sprite = love.graphics.newImage('Graphics/orgate.png'), poweredSprite = love.graphics.newImage('Graphics/orgate.png') }
+P.orGate = P.gate:new{name = "orGate", dirSend = {1,0,0,0}, dirAccept = {0,1,0,1}, sprite = love.graphics.newImage('Graphics/orgate.png'), poweredSprite = love.graphics.newImage('Graphics/orgate.png') }
 function P.orGate:updateTile(dir)
-	if self.poweredNeighbors[2]==1 or self.poweredNeighbors[4]==1 then
+	if self.poweredNeighbors[self:cfr(2)]==1 or self.poweredNeighbors[self:cfr(4)]==1 then
 		self.powered = true
-		self.dirSend = {1,0,0,0}
+		self.dirSend = shiftArray({1,0,0,0}, self.rotation)
 	else
 		self.powered = false
 		self.dirSend = {0,0,0,0}

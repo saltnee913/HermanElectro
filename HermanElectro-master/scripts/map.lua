@@ -9,21 +9,24 @@ P.rooms = {}
 P.itemsNeeded = {}
 
 local MapInfo = Object:new{height = 0, numRooms = 0}
-
 local function createRoom(inRoom)
-	print(inRoom)
 	local roomToLoad = P.rooms[inRoom]
 	local loadedRoom = {}
 	for i = 1, #roomToLoad do
 		loadedRoom[i] = {}
 		for j = 1, #(roomToLoad[i]) do
-			if roomToLoad[i][j] == nil or roomToLoad[i][j] == 0 then
+			local ind = math.floor(roomToLoad[i][j])
+			if roomToLoad[i][j] == nil or ind == 0 then
 				loadedRoom[i][j] = nil
-			elseif tiles[roomToLoad[i][j]].animal ~= nil then
-				loadedRoom[i][j] = tiles[roomToLoad[i][j]]:new()
-				loadedRoom[i][j].animal = tiles[roomToLoad[i][j]].animal:new()
+			elseif tiles[ind].animal ~= nil then
+				loadedRoom[i][j] = tiles[ind]:new()
+				loadedRoom[i][j].animal = tiles[ind].animal:new()
 			else
-				loadedRoom[i][j] = tiles[roomToLoad[i][j]]:new()
+				loadedRoom[i][j] = tiles[ind]:new()
+			end
+			local rot = math.floor(10*(roomToLoad[i][j]-ind+0.01))
+			if rot ~= 0 then
+				loadedRoom[i][j]:rotate(rot)
 			end
 		end
 	end

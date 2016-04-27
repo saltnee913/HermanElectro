@@ -15,6 +15,7 @@ loadedOnce = false
 
 
 function love.load()
+	tempAdd = 1
 	editorMode = false
 	editorAdd = 0
 	mapx=4
@@ -174,10 +175,6 @@ function updatePower()
 			if room[i]~=nil and room[i][j]~=nil and not (room[i][j].name == "powerSupply" and not room[i][j].wet) then
 				room[i][j].powered = false
 				room[i][j].poweredNeighbors = {0,0,0,0}
-				if room[i][j].name == "notGate" then
-					room[i][j].dirSend = {1,0,0,0}
-				end
-				room[i][j]:updateTile()
 			end
 		end 
 	end
@@ -347,19 +344,30 @@ function love.draw()
 	for i = 1, (width-wallSprite.width*2)/(floor.sprite:getWidth()*scale)+1 do
 		for j = 1, (height-wallSprite.height*2)/(floor.sprite:getHeight()*scale)+1 do
 			if (room[j] ~= nil and room[j][i] ~= nil and room[j][i].name~="basicTile") or (room[j]~=nil and room[j][i]==nil) then
+				local rot = 0
+				local tempi = i
+				local tempj = j
 				if j <= table.getn(room) or i <= table.getn(room[0]) then
 					if litTiles[j][i] == 0 then
 						toDraw = black
 					elseif room[j][i]~=nil and room[j][i].powered == false then
 						toDraw = room[j][i].sprite
+						rot = room[j][i].rotation
 					elseif room[j][i]~=nil then
 						toDraw = room[j][i].poweredSprite
+						rot = room[j][i].rotation
 					--else
 						--toDraw = floortile
 					end
+					if rot == 1 or rot == 2 then
+						tempi = tempi + 1
+					end
+					if rot == 2 or rot == 3 then
+						tempj = tempj + 1
+					end
 				end
 				if (room[j][i]~=nil and room[j][i].name~="pitbull" and room[j][i].name~="cat" and room[j][i].name~="pup") or litTiles[j][i]==0 then
-					love.graphics.draw(toDraw, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
+					love.graphics.draw(toDraw, (tempi-1)*floor.sprite:getWidth()*scale+wallSprite.width, (tempj-1)*floor.sprite:getHeight()*scale+wallSprite.height, rot * math.pi / 2, scale, scale)
 				end
 				if tool~="" then
 					if tool~=7 then
@@ -747,6 +755,9 @@ function love.keypressed(key, unicode)
 								addk=0
 							end
 							prt = prt..addk
+							if(room[i][j].rotation ~= 0) then
+								prt = prt..'.'..room[i][j].rotation
+							end
 							break
 						end
 					end
@@ -1103,7 +1114,11 @@ function love.mousepressed(x, y, button, istouch)
 		if mouseY>height-width/30 then
 			editorAdd = math.floor(mouseX/(width/30))+1
 		elseif tempAdd>0 and tileLocX>=1 and tileLocX<=24 and tileLocY>=1 and tileLocY<=12 then
-			room[tileLocY][tileLocX] = tiles[tempAdd]:new()
+			if(room[tileLocY][tileLocX] ~= nil and room[tileLocY][tileLocX].name == tiles[tempAdd].name) then
+				room[tileLocY][tileLocX]:rotate(1)
+			else
+				room[tileLocY][tileLocX] = tiles[tempAdd]:new()
+			end
 			for i = 1, animalCounter-1 do
 				if animals[i]~=nil and animals[i].tileX == tileLocX and animals[i].tileY == tileLocY then
 					animals[i] = nil
