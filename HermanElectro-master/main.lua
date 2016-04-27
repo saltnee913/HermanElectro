@@ -42,6 +42,7 @@ function love.load()
 
 	visibleMap[mapx][mapy] = 1
 	room = mainMap[mapy][mapx].room
+	prevRoom = room
 	litTiles = {}
 	for i = 1, roomHeight do
 		litTiles[i] = {}
@@ -78,6 +79,7 @@ function love.load()
 	love.graphics.setColor(255,255,255)
 	love.graphics.setBackgroundColor(255,255,255)
 	if not loadedOnce then
+		mouseDown = 0
 		f1 = love.graphics.newImage('Graphics/concretewalls.png')
 		walls = love.graphics.newImage('Graphics/walls3.png')
 		rocks = love.graphics.newImage('Graphics/pen16.png')
@@ -259,7 +261,6 @@ function powerTest(x, y, lastDir)
 		return
 	end
 
-
 	if x>1 and room[x-1][y] ~=nil and canBePowered(x-1,y,3) and lastDir~=1 then
 		formerPowered = room[x-1][y].powered
 		formerSend = room[x-1][y].dirSend
@@ -385,7 +386,7 @@ function love.draw()
 									love.graphics.draw(green, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
 								end
 							elseif tool==4 then
-								if room[j][i].name == "powerSupply" and not room[j][i].wet then
+								if (room[j][i].name == "powerSupply" and not room[j][i].wet) or (room[j][i].name == "electricfloor" and not room[j][i].cut) then
 									love.graphics.draw(green, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
 								end
 							elseif tool==5 then
@@ -435,7 +436,7 @@ function love.draw()
 	end
 	love.graphics.draw(walls, 0, 0, 0, width/walls:getWidth(), height/walls:getHeight())
 	for i = 1, 100 do
-		if animals[i]~=nil then
+		if animals[i]~=nil and litTiles[animals[i].tileY][animals[i].tileX]==1 then
 			love.graphics.draw(animals[i].sprite, animals[i].x, animals[i].y, 0, scale, scale)
 		else
 			break
@@ -514,7 +515,7 @@ function love.draw()
 	if editorMode then
 		barLength = 660
 		love.graphics.setColor(255,255,255)
-		for i = 1, 25 do
+		for i = 1, 27 do
 			toDraw = tiles[i].sprite
 			--love.graphics.rectangle("fill", (i-1)*width/25, height-width/25, width/25, width/25)
 			--sprite width: floor.sprite:getWidth()
@@ -783,16 +784,28 @@ function love.keypressed(key, unicode)
 
     if key == "r" then
     	if editorMode then
-    		player.dead = false
+    		--player.dead = false
     		for i = 1, roomHeight do
     			for j = 1, roomLength do
     				room[i][j] = nil
     			end
     		end
+    		animals = {}
+    		animalCounter = 1
     	else 
     		love.load()
     	end
-    end
+    elseif key == "z" and editorMode and prevRoom~=nil then
+    	room = prevRoom
+    	animals = prevAnimals
+    	animalCounter = 1
+    	for i = 1, 100 do
+    		if animals[i]~=nil then
+    			animalCounter = animalCounter+1
+    		end
+    	end
+    	--print(room[1][1].name)
+	end
 
 	if keyTimer.timeLeft > 0 then
 		return
@@ -849,38 +862,41 @@ function love.keypressed(key, unicode)
 			tool = numPressed
 		end
     end
-    if (key=="w" or key=="a" or key=="s" or key=="d") and (beforePressY~=player.y or beforePressX~=player.x) then
+
+    if (key=="w" or key=="a" or key=="s" or key=="d") then
     	checkBoundaries()
-    	updateLight()
-    	updatePower()
-    	for i = 1, animalCounter-1 do
-    		if animals[i].name == "pitbull" and not animals[i].dead and litTiles[animals[i].tileY][animals[i].tileX]==1 then
-    			--animalMove(i)
-    			animals[i]:move(player.tileX, player.tileY, room)
-    		end
-    	end
-    	  for i = 1, animalCounter-1 do
-    		if animals[i].name == "pup"  and not animals[i].dead and litTiles[animals[i].tileY][animals[i].tileX]==1 then
-    			--animalMove(i)
-    			animals[i]:move(player.tileX, player.tileY, room)
-    		end
-    	end
-    	for i = 1, animalCounter-1 do
-    		if animals[i].name == "cat"  and not animals[i].dead and litTiles[animals[i].tileY][animals[i].tileX]==1 then
-    			--animalMove(i)
-    			animals[i]:move(player.tileX, player.tileY, room)
-    		end
-    	end
-    	resolveConflicts()
-    	for i = 1, animalCounter-1 do
-    		animals[i].x = (animals[i].tileX-1)*floor.sprite:getHeight()*scale+wallSprite.width
-    		animals[i].y = (animals[i].tileY-1)*floor.sprite:getWidth()*scale+wallSprite.height
-    		if (player.prevx~=player.x or player.prevy~=player.y) and not (animals[i].prevx == animals[i].x and animals[i].prevy == animals[i].y) and not animals[i].dead then
-				if room[animals[i].tileY][animals[i].tileX]~=nil then
-					room[animals[i].tileY][animals[i].tileX]:onEnterAnimal(animals[i])
-				end
-				if room[animals[i].prevTileY]~=nil and room[animals[i].prevTileY][animals[i].prevTileX]~=nil then
-					room[animals[i].prevTileY][animals[i].prevTileX]:onLeaveAnimal(animals[i])
+	    if beforePressY~=player.y or beforePressX~=player.x then
+	    	updateLight()
+	    	updatePower()
+	    	for i = 1, animalCounter-1 do
+	    		if animals[i].name == "pitbull" and not animals[i].dead and litTiles[animals[i].tileY][animals[i].tileX]==1 then
+	    			--animalMove(i)
+	    			animals[i]:move(player.tileX, player.tileY, room)
+	    		end
+	    	end
+	    	  for i = 1, animalCounter-1 do
+	    		if animals[i].name == "pup"  and not animals[i].dead and litTiles[animals[i].tileY][animals[i].tileX]==1 then
+	    			--animalMove(i)
+	    			animals[i]:move(player.tileX, player.tileY, room)
+	    		end
+	    	end
+	    	for i = 1, animalCounter-1 do
+	    		if animals[i].name == "cat"  and not animals[i].dead and litTiles[animals[i].tileY][animals[i].tileX]==1 then
+	    			--animalMove(i)
+	    			animals[i]:move(player.tileX, player.tileY, room)
+	    		end
+	    	end
+	    	resolveConflicts()
+	    	for i = 1, animalCounter-1 do
+	    		animals[i].x = (animals[i].tileX-1)*floor.sprite:getHeight()*scale+wallSprite.width
+	    		animals[i].y = (animals[i].tileY-1)*floor.sprite:getWidth()*scale+wallSprite.height
+	    		if not (animals[i].prevx == animals[i].x and animals[i].prevy == animals[i].y) and not animals[i].dead then
+					if room[animals[i].tileY][animals[i].tileX]~=nil then
+						room[animals[i].tileY][animals[i].tileX]:onEnterAnimal(animals[i])
+					end
+					if room[animals[i].prevTileY]~=nil and room[animals[i].prevTileY][animals[i].prevTileX]~=nil then
+						room[animals[i].prevTileY][animals[i].prevTileX]:onLeaveAnimal(animals[i])
+					end
 				end
 			end
 		end
@@ -1059,6 +1075,20 @@ end
 
 
 function love.mousepressed(x, y, button, istouch)
+	if editorMode then
+		prevRoom = {}
+		for i = 1, roomHeight do
+			prevRoom[i] = {}
+			for j = 1, roomLength do
+				prevRoom[i][j] = room[i][j]
+			end
+		end
+		prevAnimals = {}
+		for i = 1, animalCounter - 1 do
+			prevAnimals[i] = animals[i]
+		end
+	end
+	mouseDown = mouseDown+1
 	--mouseX = x-width2/2+16*screenScale/2
 	--mouseY = y-height2/2+9*screenScale/2
 	mouseX = x-(width2-width)/2
@@ -1083,7 +1113,7 @@ function love.mousepressed(x, y, button, istouch)
 	if tool==7 then
 		if (tileLocX == player.tileX and math.abs(tileLocY-player.tileY)<=3) or (tileLocY == player.tileY and math.abs(tileLocX-player.tileX)<=3) then
 			for i = 1, animalCounter-1 do
-				if animals[i].tileX == tileLocX and animals[i].tileY == tileLocY then
+				if animals[i].tileX == tileLocX and animals[i].tileY == tileLocY and not animals[i].dead then
 					animals[i]:kill()
 					inventory[tool] = inventory[tool]-1
 					if inventory[tool] == 0 then
@@ -1147,6 +1177,10 @@ function love.mousepressed(x, y, button, istouch)
 	updatePower()
 end
 
+function love.mousereleased(x, y, button, istouch)
+	mouseDown = mouseDown-1
+end
+
 function love.mousemoved(x, y, dx, dy)
 	--mouseX = x-width2/2+16*screenScale/2
 	--mouseY = y-height2/2+9*screenScale/2
@@ -1154,7 +1188,7 @@ function love.mousemoved(x, y, dx, dy)
 	mouseY = y-(height2-height)/2
 	tileLocX = math.ceil((mouseX-wallSprite.width)/(scale*floor.sprite:getWidth()))
 	tileLocY = math.ceil((mouseY-wallSprite.height)/(scale*floor.sprite:getHeight()))
-	if editorMode and (love.mouse.isDown('l') or love.mouse.isDown('r') or love.mouse.isDown(1) or love.mouse.isDown(2)) then
+	if editorMode and mouseDown>0 then
 		if tempAdd>0 and tileLocX>=1 and tileLocX<=24 and tileLocY>=1 and tileLocY<=12 then
 			room[tileLocY][tileLocX] = tiles[tempAdd]:new()
 			updateLight()

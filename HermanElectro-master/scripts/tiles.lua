@@ -5,7 +5,7 @@ require('scripts.animals')
 local P = {}
 tiles = P
 
-P.tile = Object:new{rotation = 0, powered = false, blocksMovement = false, poweredNeighbors = {0,0,0,0}, blocksVision = false, dirSend = {1,1,1,1}, dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile", sprite = love.graphics.newImage('Graphics/cavesfloor.png'), poweredSprite = love.graphics.newImage('Graphics/cavesfloor.png')}
+P.tile = Object:new{notGates = {}, rotation = 0, powered = false, blocksMovement = false, poweredNeighbors = {0,0,0,0}, blocksVision = false, dirSend = {1,1,1,1}, dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile", sprite = love.graphics.newImage('Graphics/cavesfloor.png'), poweredSprite = love.graphics.newImage('Graphics/cavesfloor.png')}
 function P.tile:onEnter(player) 
 	--self.name = "fuckyou"
 end
@@ -109,7 +109,7 @@ function P.button:onEnter(player)
 		return
 	end
 	if not self.justPressed then
-		self.justPressed = true
+		--self.justPressed = true
 		self.down = not self.down
 		if self.dirAccept[1]==1 then
 			self.powered = false
@@ -182,7 +182,7 @@ function P.electricFloor:onEnterAnimal(animal)
 	end
 end
 function P.electricFloor:useTool(tool)
-	if tool==3 and not self.cut then
+	if (tool==3 or tool==4) and not self.cut then
 		self.sprite = self.destroyedSprite
 		self.canBePowered = false
 		self.cut = true
@@ -376,6 +376,19 @@ function P.vPoweredDoor:onEnter(player)
 end
 P.vPoweredDoor.onStay = P.vPoweredDoor.onEnter
 
+P.hPoweredDoor = P.vPoweredDoor:new{name = "hPoweredDoor", dirSend = {0,1,0,1}, dirAccept = {0,1,0,1}}
+function P.hPoweredDoor:updateTile(player)
+	if self.poweredNeighbors[2] == 1 or self.poweredNeighbors[4]==1 then
+		self.blocksVision = true
+		self.sprite = self.closedSprite
+		self.blocksMovement = true
+	else
+		self.blocksVision = false
+		self.sprite = self.openSprite
+		self.blocksMovement = false
+	end
+end
+
 function P.hDoor:onLeave(player)
 	--self.sprite = self.closedSprite
 	--self.blocksVision = true
@@ -460,5 +473,6 @@ tiles[23] = P.catTile
 tiles[24] = P.glassWall
 tiles[25] = P.vPoweredDoor
 tiles[26] = P.vDoor
+tiles[27] = P.hPoweredDoor
 
 return tiles
