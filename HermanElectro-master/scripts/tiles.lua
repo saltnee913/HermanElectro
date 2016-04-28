@@ -112,7 +112,7 @@ function P.button:onEnter(player)
 		return
 	end
 	if not self.justPressed then
-		--self.justPressed = true
+		self.justPressed = true
 		self.down = not self.down
 		if self.dirAccept[1]==1 then
 			self.powered = false
@@ -120,7 +120,7 @@ function P.button:onEnter(player)
 		else
 			self.dirAccept = {1,1,1,1}
 		end
-		updatePower()
+		--updatePower()
 		self:updateSprite()
 		--self.name = "onbutton"
 	end

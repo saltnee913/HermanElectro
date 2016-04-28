@@ -111,7 +111,7 @@ function love.load()
 	function player:getTileLoc()
 		return {x = self.x/(floor.sprite:getWidth()*scale), y = self.y/(floor.sprite:getWidth()*scale)}
 	end
-	enterRoom(mapx, mapy)
+	enterRoom(-1)
 	loadedOnce = true
 end
 
@@ -187,7 +187,7 @@ function updatePower()
 				room[i][j].powered = true
 			end
 			if room[i]~=nil and room[i][j]~=nil and room[i][j].name == "notGate" then
-				room[i][j].powered = true
+				--room[i][j].powered = true
 			end
 		end
 	end
@@ -568,7 +568,9 @@ function adjacent(xloc, yloc)
 end
 
 function enterRoom(dir)
-	if dir== 0 then
+	prevMapX = mapx
+	prevMapY = mapy
+	if dir == 0 then
 		if mapy>0 and not (completedRooms[mapy][mapx]==0 and completedRooms[mapy-1][mapx]==0) then
 			if mainMap[mapy-1][mapx]~=nil then
 				mapy = mapy-1
@@ -621,20 +623,21 @@ function enterRoom(dir)
 	end
 
 	rocksQuad = love.graphics.newQuad(mapy*14*screenScale,mapx*8*screenScale, width, height, rocks:getWidth(), rocks:getHeight())
-
-	animalCounter = 1
-	animals = {}
-	for i = 1, roomHeight do
-		for j = 1, roomLength do
-			if room[i]~=nil and room[i][j]~=nil and room[i][j].name~=nil and (room[i][j].animal~=nil) then
-				animalToSpawn = room[i][j].animal
-				if not animalToSpawn.dead then
-					animals[animalCounter] = animalToSpawn
-					animals[animalCounter].y = (i-1)*floor.sprite:getWidth()*scale+wallSprite.height
-					animals[animalCounter].x = (j-1)*floor.sprite:getHeight()*scale+wallSprite.width
-					animals[animalCounter].tileX = j
-					animals[animalCounter].tileY = i
-					animalCounter=animalCounter+1
+	if (prevMapX~=mapx or prevMapY~=mapy) or dir == -1 then
+		animalCounter = 1
+		animals = {}
+		for i = 1, roomHeight do
+			for j = 1, roomLength do
+				if room[i]~=nil and room[i][j]~=nil and room[i][j].name~=nil and (room[i][j].animal~=nil) then
+					animalToSpawn = room[i][j].animal
+					if not animalToSpawn.dead then
+						animals[animalCounter] = animalToSpawn
+						animals[animalCounter].y = (i-1)*floor.sprite:getWidth()*scale+wallSprite.height
+						animals[animalCounter].x = (j-1)*floor.sprite:getHeight()*scale+wallSprite.width
+						animals[animalCounter].tileX = j
+						animals[animalCounter].tileY = i
+						animalCounter=animalCounter+1
+					end
 				end
 			end
 		end
@@ -864,6 +867,13 @@ function love.keypressed(key, unicode)
     end
 
     if (key=="w" or key=="a" or key=="s" or key=="d") then
+    	for i = 1, roomHeight do
+    		for j = 1, roomLength do
+    			if room[i][j]~=nil and room[i][j].name == "button" then
+    				room[i][j].justPressed = false
+    			end
+    		end
+    	end
     	checkBoundaries()
 	    if beforePressY~=player.y or beforePressX~=player.x then
 	    	updateLight()
