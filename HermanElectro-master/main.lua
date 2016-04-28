@@ -200,6 +200,28 @@ function updatePower()
 			end
 		end
 	end
+
+	--fixing weird not-gate bug
+	for k = 1, 10 do
+		for i = 1, roomHeight do
+			for j = 1, roomLength do
+				if room[i][j]~=nil and not (room[i][j].name == "powerSupply" or room[i][j].name == "notGate") then
+					room[i][j].poweredNeighbors = {0,0,0,0}
+					--room[i][j].powered = false
+					room[i][j]:updateTile(0)
+				end
+			end
+		end
+		for i = 1, roomHeight do
+			for j = 1, roomLength do
+				if room[i][j]~=nil then
+					if (room[i][j].name == "powerSupply" or room[i][j].name == "notGate") and room[i][j].powered then
+						powerTest(i,j,0)
+					end
+				end
+			end
+		end
+	end
 	--if room[player.tileY][player.tileX]~=nil then
 		--t = room[player.tileY][player.tileX]
 		--if t.name == "electricfloor" and t.powered then
@@ -322,7 +344,80 @@ function powerTest(x, y, lastDir)
 		end
 		room[x][y+1]:updateTile(4)
 		if room[x][y+1].powered ~= formerPowered or room[x][y+1].dirSend ~= formerSend or room[x][y+1].dirAccept ~= formerAccept then
-			powerTest(x, y+1, 4)
+			powerTestSpecial(x, y+1, 4)
+		end
+	end
+end
+
+function powerTestSpecial(x, y, lastDir)
+--x refers to y-direction and vice versa
+	--1 for up, 2 for right, 3 for down, 4 for left
+	if room[x] == nil or room[x][y] == nil then
+		return
+	end
+
+	if x>1 and room[x-1][y] ~=nil and room[x-1][y].name~="notGate" and canBePowered(x-1,y,3) and lastDir~=1 then
+		formerPowered = room[x-1][y].powered
+		formerSend = room[x-1][y].dirSend
+		formerAccept = room[x-1][y].dirAccept
+		--powered[x-1][y] = 1
+		if room[x][y].dirSend[1]==1 and room[x][y].powered then
+			room[x-1][y].poweredNeighbors[3] = 1
+		else
+			room[x-1][y].poweredNeighbors[3] = 0
+		end
+		room[x-1][y]:updateTile(3)
+		if room[x-1][y].powered ~= formerPowered or room[x-1][y].dirSend ~= formerSend or room[x-1][y].dirAccept ~= formerAccept then
+			powerTestSpecial(x-1,y,3)
+		end
+	end
+
+
+	if x<roomHeight and room[x+1][y] ~=nil and room[x+1][y].name~="notGate" and canBePowered(x+1,y,1) and lastDir~=3 then
+		--powered[x+1][y] = 1
+		formerPowered = room[x+1][y].powered
+		formerSend = room[x+1][y].dirSend
+		formerAccept = room[x+1][y].dirAccept
+		if room[x][y].dirSend[3]==1 and room[x][y].powered then
+			room[x+1][y].poweredNeighbors[1] = 1
+		else
+			room[x+1][y].poweredNeighbors[1] = 0
+		end
+		room[x+1][y]:updateTile(1)
+		if room[x+1][y].powered ~= formerPowered or room[x+1][y].dirSend ~= formerSend or room[x+1][y].dirAccept ~= formerAccept then
+			powerTestSpecial(x+1,y,1)
+		end
+	end
+
+	if y>1 and room[x][y-1] ~=nil and room[x][y-1].name~="notGate" and canBePowered(x,y-1,2) and lastDir~=4 then
+		formerPowered = room[x][y-1].powered
+		formerSend = room[x][y-1].dirSend
+		formerAccept = room[x][y-1].dirAccept
+		--powered[x][y-1] = 1
+		if room[x][y].dirSend[4]==1 and room[x][y].powered then
+			room[x][y-1].poweredNeighbors[2] = 1
+		else
+			room[x][y-1].poweredNeighbors[2] = 0
+		end
+		room[x][y-1]:updateTile(2)
+		if room[x][y-1].powered ~= formerPowered or room[x][y-1].dirSend ~= formerSend or room[x][y-1].dirAccept ~= formerAccept then
+			powerTestSpecial(x, y-1, 2)
+		end
+	end
+
+	if y<roomLength and room[x][y+1] ~=nil and room[x][y+1].name~="notGate" and canBePowered(x,y+1,4) and lastDir~=2 then
+		formerPowered = room[x][y+1].powered
+		formerSend = room[x][y+1].dirSend
+		formerAccept = room[x][y+1].dirAccept
+		--powered[x][y+1] = 1
+		if room[x][y].dirSend[2]==1 and room[x][y].powered then
+			room[x][y+1].poweredNeighbors[4] = 1
+		else
+			room[x][y+1].poweredNeighbors[4] = 0
+		end
+		room[x][y+1]:updateTile(4)
+		if room[x][y+1].powered ~= formerPowered or room[x][y+1].dirSend ~= formerSend or room[x][y+1].dirAccept ~= formerAccept then
+			powerTestSpecial(x, y+1, 4)
 		end
 	end
 end
