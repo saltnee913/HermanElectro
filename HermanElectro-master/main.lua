@@ -174,7 +174,7 @@ end
 function updatePower()
 	for i=1, roomHeight do
 		for j=1, roomLength do
-			if room[i]~=nil and room[i][j]~=nil and not (room[i][j].name == "powerSupply" and not room[i][j].wet) then
+			if room[i]~=nil and room[i][j]~=nil then
 				room[i][j].powered = false
 				room[i][j].poweredNeighbors = {0,0,0,0}
 			end
@@ -207,7 +207,7 @@ function updatePower()
 			for j = 1, roomLength do
 				if room[i][j]~=nil and not (room[i][j].name == "powerSupply" or room[i][j].name == "notGate") then
 					room[i][j].poweredNeighbors = {0,0,0,0}
-					--room[i][j].powered = false
+					room[i][j].powered = false
 					room[i][j]:updateTile(0)
 				end
 			end
@@ -216,7 +216,7 @@ function updatePower()
 			for j = 1, roomLength do
 				if room[i][j]~=nil then
 					if (room[i][j].name == "powerSupply" or room[i][j].name == "notGate") and room[i][j].powered then
-						powerTest(i,j,0)
+						powerTestSpecial(i,j,0)
 					end
 				end
 			end
@@ -282,6 +282,9 @@ function powerTest(x, y, lastDir)
 	if room[x] == nil or room[x][y] == nil then
 		return
 	end
+		if x == 8 and y == 12 then
+		print("aaa")
+	end
 
 	if x>1 and room[x-1][y] ~=nil and canBePowered(x-1,y,3) and lastDir~=1 then
 		formerPowered = room[x-1][y].powered
@@ -344,7 +347,7 @@ function powerTest(x, y, lastDir)
 		end
 		room[x][y+1]:updateTile(4)
 		if room[x][y+1].powered ~= formerPowered or room[x][y+1].dirSend ~= formerSend or room[x][y+1].dirAccept ~= formerAccept then
-			powerTestSpecial(x, y+1, 4)
+			powerTest(x, y+1, 4)
 		end
 	end
 end

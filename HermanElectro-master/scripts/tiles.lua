@@ -5,7 +5,7 @@ require('scripts.animals')
 local P = {}
 tiles = P
 
-P.tile = Object:new{notGates = {}, rotation = 0, powered = false, blocksMovement = false, poweredNeighbors = {0,0,0,0}, blocksVision = false, dirSend = {1,1,1,1}, dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile", sprite = love.graphics.newImage('Graphics/cavesfloor.png'), poweredSprite = love.graphics.newImage('Graphics/cavesfloor.png')}
+P.tile = Object:new{rotation = 0, powered = false, blocksMovement = false, poweredNeighbors = {0,0,0,0}, blocksVision = false, dirSend = {1,1,1,1}, dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile", sprite = love.graphics.newImage('Graphics/cavesfloor.png'), poweredSprite = love.graphics.newImage('Graphics/cavesfloor.png')}
 function P.tile:onEnter(player) 
 	--self.name = "fuckyou"
 end
@@ -120,7 +120,7 @@ function P.button:onEnter(player)
 		else
 			self.dirAccept = {1,1,1,1}
 		end
-		--updatePower()
+		updatePower()
 		self:updateSprite()
 		--self.name = "onbutton"
 	end
@@ -145,7 +145,7 @@ P.button.onEnterAnimal = P.button.onEnter
 P.button.onLeaveAnimal = P.button.onLeave
 
 function P.button:updateTile(dir)
-	if self.down and self.poweredNeighbors[1]==1 or self.poweredNeighbors[2]==1 or self.poweredNeighbors[3]==1 or self.poweredNeighbors[4]==1 then
+	if self.down and (self.poweredNeighbors[1]==1 or self.poweredNeighbors[2]==1 or self.poweredNeighbors[3]==1 or self.poweredNeighbors[4]==1) then
 		self.powered = true
 	else
 		self.powered = false
@@ -355,7 +355,7 @@ end
 
 P.vPoweredDoor = P.tile:new{sawed = false, name = "vPoweredDoor", blocksMovement = false, blocksVision = false, canBePowered = true, dirSend = {1,0,1,0}, dirAccept = {1,0,1,0}, sprite = love.graphics.newImage('Graphics/powereddooropen.png'), closedSprite = love.graphics.newImage('Graphics/powereddoor.png'), openSprite = love.graphics.newImage('Graphics/powereddooropen.png')}
 function P.vPoweredDoor:updateTile(player)
-	if self.poweredNeighbors[1] == 1 or self.poweredNeighbors[3]==1 then
+	if self.poweredNeighbors[self:cfr(1)] == 1 or self.poweredNeighbors[self:cfr(3)]==1 then
 		self.blocksVision = true
 		self.sprite = self.closedSprite
 		self.blocksMovement = true
