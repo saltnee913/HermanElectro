@@ -283,6 +283,7 @@ function powerTest(x, y, lastDir)
 		return
 	end
 
+
 	if x>1 and room[x-1][y] ~=nil and canBePowered(x-1,y,3) and lastDir~=1 then
 		formerPowered = room[x-1][y].powered
 		formerSend = room[x-1][y].dirSend
@@ -903,6 +904,10 @@ function love.keypressed(key, unicode)
     		end
     	end
     	--print(room[1][1].name)
+	elseif key == "f" and editorMode then
+		for i = 1, 7 do
+			inventory[i] = inventory[i]+1
+		end
 	end
 
 	if keyTimer.timeLeft > 0 then

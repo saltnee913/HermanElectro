@@ -162,6 +162,10 @@ function P.stickyButton:onEnter(player)
 		self:updateSprite()
 	--end
 end
+function P.stickyButton:onLeave(player)
+end
+P.stickyButton.onEnterAnimal = P.stickyButton.onEnter
+P.stickyButton.onLeaveAnimal = P.stickyButton.onLeave
 
 P.stayButton = P.button:new{name = "stayButton"}
 function P.stayButton:onLeave(player)
@@ -277,7 +281,7 @@ function P.tile:correctForRotation(dir)
 	if(temp > 4) then
 		temp = temp - 4
 	end
-	if temp ~= dir then print(temp..';'..dir) end
+	--if temp ~= dir then print(temp..';'..dir) end
 	return temp
 end
 P.tile.cfr = P.gate.correctForRotation
@@ -353,12 +357,13 @@ function P.vDoor:onEnter(player)
 	updateLight()
 end
 
-P.vPoweredDoor = P.tile:new{sawed = false, name = "vPoweredDoor", blocksMovement = false, blocksVision = false, canBePowered = true, dirSend = {1,0,1,0}, dirAccept = {1,0,1,0}, sprite = love.graphics.newImage('Graphics/powereddooropen.png'), closedSprite = love.graphics.newImage('Graphics/powereddoor.png'), openSprite = love.graphics.newImage('Graphics/powereddooropen.png')}
+P.vPoweredDoor = P.tile:new{sawed = false, name = "vPoweredDoor", blocksMovement = false, blocksVision = false, canBePowered = true, dirSend = {1,0,1,0}, dirAccept = {1,0,1,0}, sprite = love.graphics.newImage('Graphics/powereddooropen.png'), closedSprite = love.graphics.newImage('Graphics/powereddoor.png'), openSprite = love.graphics.newImage('Graphics/powereddooropen.png'), poweredSprite = love.graphics.newImage('Graphics/powereddoor.png')}
 function P.vPoweredDoor:updateTile(player)
 	if self.poweredNeighbors[self:cfr(1)] == 1 or self.poweredNeighbors[self:cfr(3)]==1 then
 		self.blocksVision = true
 		self.sprite = self.closedSprite
 		self.blocksMovement = true
+		self.powered = true
 	else
 		self.blocksVision = false
 		self.sprite = self.openSprite
