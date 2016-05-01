@@ -282,9 +282,6 @@ function powerTest(x, y, lastDir)
 	if room[x] == nil or room[x][y] == nil then
 		return
 	end
-		if x == 8 and y == 12 then
-		print("aaa")
-	end
 
 	if x>1 and room[x-1][y] ~=nil and canBePowered(x-1,y,3) and lastDir~=1 then
 		formerPowered = room[x-1][y].powered

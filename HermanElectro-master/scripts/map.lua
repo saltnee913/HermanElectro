@@ -25,7 +25,7 @@ local function createRoom(inRoom)
 				loadedRoom[i][j] = tiles[ind]:new()
 			end
 			local rot = math.floor(10*(roomToLoad[i][j]-ind+0.01))
-			if rot ~= 0 then
+			if rot~=nil and rot ~= 0 and loadedRoom[i][j]~=nil then
 				loadedRoom[i][j]:rotate(rot)
 			end
 		end
