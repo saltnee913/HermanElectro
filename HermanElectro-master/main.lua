@@ -909,11 +909,12 @@ function love.keypressed(key, unicode)
 		print("]")
 	end
 	if editorMode and roomHack < 1 and key=='h' then
-		roomHack = 1
+		roomHack = mainMap[mapy][mapx].roomid
 		log('Room Hack: '..roomHack)
 	elseif roomHack >= 1 and key=='h' then
 		hackEnterRoom(roomHack)
 		roomHack = 0
+		log()
 	end
 	if roomHack >= 1 and key =='right' then
 		roomHack = roomHack + 1
