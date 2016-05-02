@@ -440,7 +440,7 @@ function love.draw()
 	--love.graphics.draw(rocks, -mapx * width, -mapy * height, 0, 1, 1)
 	for i = 1, (width-wallSprite.width*2)/(floor.sprite:getWidth()*scale)+1 do
 		for j = 1, (height-wallSprite.height*2)/(floor.sprite:getHeight()*scale)+1 do
-			if (room[j] ~= nil and room[j][i] ~= nil and room[j][i].name~="basicTile") or (room[j]~=nil and room[j][i]==nil) then
+			if (room[j] ~= nil and room[j][i] ~= nil and room[j][i].isVisible) or (room[j]~=nil and room[j][i]==nil) then
 				local rot = 0
 				local tempi = i
 				local tempj = j
