@@ -18,6 +18,7 @@ function love.load()
 	debugText = nil
 	tempAdd = 1
 	editorMode = false
+	roomHack = 0
 	editorAdd = 0
 	mapx=4
 	mapy=4
@@ -672,6 +673,32 @@ function adjacent(xloc, yloc)
 	return false
 end
 
+function hackEnterRoom(roomid)
+	mainMap[mapy][mapx] = {roomid = roomid, room = map.createRoom(roomid), 
+		isFinal = mainMap[mapy][mapx].isFinal, isInitial = mainMap[mapy][mapx].isInitial,
+		isCompleted = mainMap[mapy][mapx].isCompleted}
+	room = mainMap[mapy][mapx].room
+	animalCounter = 1
+	animals = {}
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i]~=nil and room[i][j]~=nil and room[i][j].name~=nil and (room[i][j].animal~=nil) then
+				animalToSpawn = room[i][j].animal
+				if not animalToSpawn.dead then
+					animals[animalCounter] = animalToSpawn
+					animals[animalCounter].y = (i-1)*floor.sprite:getWidth()*scale+wallSprite.height
+					animals[animalCounter].x = (j-1)*floor.sprite:getHeight()*scale+wallSprite.width
+					animals[animalCounter].tileX = j
+					animals[animalCounter].tileY = i
+					animalCounter=animalCounter+1
+				end
+			end
+		end
+	end
+	updatePower()
+	updateLight()
+end
+
 function enterRoom(dir)
 	prevMapX = mapx
 	prevMapY = mapy
@@ -880,6 +907,20 @@ function love.keypressed(key, unicode)
 			print(prt)
 		end
 		print("]")
+	end
+	if editorMode and roomHack < 1 and key=='h' then
+		roomHack = 1
+		log('Room Hack: '..roomHack)
+	elseif roomHack >= 1 and key=='h' then
+		hackEnterRoom(roomHack)
+		roomHack = 0
+	end
+	if roomHack >= 1 and key =='right' then
+		roomHack = roomHack + 1
+		log('Room Hack: '..roomHack)
+	elseif roomHack >= 2 and key == 'left' then
+		roomHack = roomHack - 1
+		log('Room Hack: '..roomHack)
 	end
 	beforePressX = player.x
 	beforePressY = player.y
