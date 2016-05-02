@@ -9,7 +9,7 @@ P.rooms = {}
 P.itemsNeeded = {}
 
 local MapInfo = Object:new{height = 0, numRooms = 0}
-local function createRoom(inRoom)
+function P.createRoom(inRoom)
 	local roomToLoad = P.rooms[inRoom]
 	local loadedRoom = {}
 	for i = 1, #roomToLoad do
@@ -70,7 +70,7 @@ function P.generateMap(height, numRooms, seed)
 	for i = 0, height+1 do
 		newmap[i] = {}
 	end
-	newmap[height/2][height/2] = {roomid = 1, room = createRoom(1), isFinal = false, isInitial = true, isCompleted = true}
+	newmap[height/2][height/2] = {roomid = 1, room = P.createRoom(1), isFinal = false, isInitial = true, isCompleted = true}
 	for i = 0, numRooms-1 do
 		available = {}
 		local a = 0
@@ -107,7 +107,7 @@ function P.generateMap(height, numRooms, seed)
 		local choice = available[math.floor(math.random()*a)]
 		--roomNum = math.floor(math.random()*table.getn(rooms)) -- what we will actually do, with some editing
 		local roomNum = i+2 -- for testing purposes
-		newmap[choice.x][choice.y] = {roomid = roomNum, room = createRoom(roomNum), isFinal = false, isInitial = false}
+		newmap[choice.x][choice.y] = {roomid = roomNum, room = P.createRoom(roomNum), isFinal = false, isInitial = false}
 	end
 	printMap(newmap)
 	return newmap
