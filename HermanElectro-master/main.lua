@@ -54,6 +54,8 @@ function love.load()
 		for j=1, mapHeight do
 			if mainMap[i][j]==nil then
 				completedRooms[i][j]=-1
+			elseif mainMap[i][j].isInitial then
+				completedRooms[i][j]=1
 			else
 				completedRooms[i][j]=0
 			end
