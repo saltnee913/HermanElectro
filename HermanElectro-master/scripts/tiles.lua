@@ -5,7 +5,7 @@ require('scripts.animals')
 local P = {}
 tiles = P
 
-P.tile = Object:new{rotation = 0, powered = false, blocksMovement = false, poweredNeighbors = {0,0,0,0}, blocksVision = false, dirSend = {1,1,1,1}, dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile", sprite = love.graphics.newImage('Graphics/cavesfloor.png'), poweredSprite = love.graphics.newImage('Graphics/cavesfloor.png')}
+P.tile = Object:new{isVisible = true, rotation = 0, powered = false, blocksMovement = false, poweredNeighbors = {0,0,0,0}, blocksVision = false, dirSend = {1,1,1,1}, dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile", sprite = love.graphics.newImage('Graphics/cavesfloor.png'), poweredSprite = love.graphics.newImage('Graphics/cavesfloor.png')}
 function P.tile:onEnter(player) 
 	--self.name = "fuckyou"
 end
@@ -44,6 +44,7 @@ function P.tile:rotate(times)
 		self.dirAccept = shiftArray(self.dirAccept)
 	end
 end
+P.invisibleTile = P.tile:new{isVisible = false}
 local bounds = {}
 
 P.boundedTile = P.tile:new{boundary = boundaries.Boundary}
@@ -403,10 +404,10 @@ function P.hDoor:onLeave(player)
 	--updateLight()
 end
 
-P.endTile = P.tile:new{name = "endTile", canBePowered = false, dirAccept = {0,0,0,0}, sprite = love.graphics.newImage('Graphics/end.png')}
+P.endTile = P.tile:new{name = "endTile", canBePowered = false, dirAccept = {0,0,0,0}, sprite = love.graphics.newImage('Graphics/end.png'), done = false}
 function P.endTile:onEnter(player)
+	if self.done then return end
 	completedRooms[mapy][mapx] = 1
-	done = false
 	if mapy>0 then
 		visibleMap[mapy-1][mapx] = 1
 	end
@@ -419,7 +420,7 @@ function P.endTile:onEnter(player)
 	if mapx<mapHeight then
 		visibleMap[mapy][mapx+1] = 1
 	end
-	while (done == false) do
+	while (self.done == false) do
 		x = math.floor(math.random()*(mapHeight+1))
 		y = math.floor(math.random()*(mapHeight+1))
 		if completedRooms[x]~=null and completedRooms[x][y]~=null and completedRooms[x][y] == 0 then
@@ -439,11 +440,12 @@ function P.endTile:onEnter(player)
 					--print(listChoose)
 					--inventory[i] = inventory[i]+itemsNeeded[mainMap[x][y].roomid][i]
 					inventory[i] = inventory[i]+listOfItemsNeeded[listChoose][i]
-					done = true
+					self.done = true
 				end
 			end
 		end
 	end
+	self.isVisible = false
 end
 
 P.pitbullTile = P.tile:new{name = "pitbull", animal = animalList[2]:new()}
@@ -455,7 +457,7 @@ P.vDoor.onEnter = P.hDoor.onEnter
 --reserves spot for pitbull at beginning
 
 
-tiles[1] = P.tile
+tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
 tiles[3] = P.powerSupply
 tiles[4] = P.wire

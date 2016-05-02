@@ -15,6 +15,7 @@ loadedOnce = false
 
 
 function love.load()
+	debugText = nil
 	tempAdd = 1
 	editorMode = false
 	editorAdd = 0
@@ -53,6 +54,8 @@ function love.load()
 		for j=1, mapHeight do
 			if mainMap[i][j]==nil then
 				completedRooms[i][j]=-1
+			elseif mainMap[i][j].isInitial then
+				completedRooms[i][j]=1
 			else
 				completedRooms[i][j]=0
 			end
@@ -440,7 +443,7 @@ function love.draw()
 	--love.graphics.draw(rocks, -mapx * width, -mapy * height, 0, 1, 1)
 	for i = 1, (width-wallSprite.width*2)/(floor.sprite:getWidth()*scale)+1 do
 		for j = 1, (height-wallSprite.height*2)/(floor.sprite:getHeight()*scale)+1 do
-			if (room[j] ~= nil and room[j][i] ~= nil and room[j][i].name~="basicTile") or (room[j]~=nil and room[j][i]==nil) then
+			if (room[j] ~= nil and room[j][i] ~= nil and room[j][i].isVisible) or (room[j]~=nil and room[j][i]==nil) then
 				local rot = 0
 				local tempi = i
 				local tempj = j
@@ -540,9 +543,6 @@ function love.draw()
 	end
 	love.graphics.draw(player.sprite, player.x-player.sprite:getWidth()*player.scale/2, player.y-player.sprite:getHeight()*player.scale, 0, player.scale, player.scale)
 	love.graphics.print(player:getTileLoc().x .. ":" .. player:getTileLoc().y, 0, 0);
-	if toPrint ~= nil then
-		love.graphics.print(toPrint, 0, 10)
-	end
 	for i = 0, mapHeight do
 		for j = 0, mapHeight do
 			if visibleMap[i][j] == 1 then
@@ -625,6 +625,15 @@ function love.draw()
 	love.graphics.rectangle("fill", 5, height-width/30-20, barLength, 15)
 	love.graphics.setColor(255,255,255)
 	love.graphics.print(botText, 10, height-width/30-20)
+	if debugText ~= nil then
+		love.graphics.setColor(0,255,0,255)
+		love.graphics.print(debugText, 0, 100)
+		love.graphics.setColor(255,255,255,255)
+	end
+end
+
+function log(text)
+	debugText = text
 end
 
 function adjacent(xloc, yloc)
@@ -748,7 +757,6 @@ oldTilesOn = {}
 function checkBoundaries()
 --tile locations: (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, starts at (0,0)
 --hitbox: bottom left (player.x, player.y), height player.height, width player.width
-	toPrint = ""
 	tilesOn = {}
 	tileLocs = {}
 	xCorner = player.x
@@ -1014,6 +1022,25 @@ function love.keypressed(key, unicode)
     checkDeath()
     for i = 1, animalCounter-1 do
     	animals[i]:checkDeath(room)
+    end
+    --Debug console stuff
+    if key=='p' then
+    	local roomid = mainMap[mapy][mapx].roomid
+    	local toPrint = 'Room ID:'..roomid..', Items Needed:'
+    	local itemsForRoom = itemsNeeded[roomid]
+    	for i=1,#itemsForRoom do
+    		if itemsForRoom[i][1]~=0 then toPrint = toPrint..' '..itemsForRoom[i][1]..' saw' end
+    		if itemsForRoom[i][2]~=0 then toPrint = toPrint..' '..itemsForRoom[i][2]..' ladder' end
+    		if itemsForRoom[i][3]~=0 then toPrint = toPrint..' '..itemsForRoom[i][3]..' wire-cutters' end
+    		if itemsForRoom[i][4]~=0 then toPrint = toPrint..' '..itemsForRoom[i][4]..' water-bottle' end
+    		if itemsForRoom[i][5]~=0 then toPrint = toPrint..' '..itemsForRoom[i][5]..' cutting-torch' end
+    		if itemsForRoom[i][6]~=0 then toPrint = toPrint..' '..itemsForRoom[i][6]..' brick' end
+    		if itemsForRoom[i][7]~=0 then toPrint = toPrint..' '..itemsForRoom[i][7]..' gun' end
+    		if i~=#itemsForRoom then toPrint = toPrint..' or ' end
+    	end
+    	log(toPrint)
+    elseif key == 'c' then
+    	log(nil)
     end
 end
 
