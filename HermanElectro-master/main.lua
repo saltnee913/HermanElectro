@@ -612,7 +612,7 @@ function love.draw()
 	if editorMode then
 		barLength = 660
 		love.graphics.setColor(255,255,255)
-		for i = 1, 27 do
+		for i = 1, 29 do
 			toDraw = tiles[i].sprite
 			--love.graphics.rectangle("fill", (i-1)*width/25, height-width/25, width/25, width/25)
 			--sprite width: floor.sprite:getWidth()
