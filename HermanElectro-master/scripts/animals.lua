@@ -22,7 +22,7 @@ scale = (width - 2*wallSprite.width)/(20.3 * 16)*5/6
 --floor = tiles.tile
 
 --speed same as player (250)
-P.animal = Object:new{dead = false, name == "animal", tileX, tileY, prevx, prevy, prevTileX, prevTileY, x, y, speed = 250, width = 16*scale, height = 16*scale, sprite = love.graphics.newImage('Graphics/pitbull.png'), deadSprite = love.graphics.newImage('Graphics/pitbulldead.png'), tilesOn = {}, oldTilesOn = {}}
+P.animal = Object:new{triggered = false, dead = false, name == "animal", tileX, tileY, prevx, prevy, prevTileX, prevTileY, x, y, speed = 250, width = 16*scale, height = 16*scale, sprite = love.graphics.newImage('Graphics/pitbull.png'), deadSprite = love.graphics.newImage('Graphics/pitbulldead.png'), tilesOn = {}, oldTilesOn = {}}
 function P.animal:move(playerx, playery, room)
 	diffx = playerx-self.tileX
 	diffy = playery-self.tileY
