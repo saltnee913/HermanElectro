@@ -536,10 +536,10 @@ function love.draw()
 	end
 	love.graphics.draw(walls, 0, 0, 0, width/walls:getWidth(), height/walls:getHeight())
 	for i = 1, 100 do
+		if animals[i]~=nil then
+		end
 		if animals[i]~=nil and litTiles[animals[i].tileY][animals[i].tileX]==1 then
 			love.graphics.draw(animals[i].sprite, animals[i].x, animals[i].y, 0, scale, scale)
-		else
-			break
 		end
 	end
 	love.graphics.draw(player.sprite, player.x-player.sprite:getWidth()*player.scale/2, player.y-player.sprite:getHeight()*player.scale, 0, player.scale, player.scale)
@@ -1029,19 +1029,19 @@ function love.keypressed(key, unicode)
 	    	updateLight()
 	    	updatePower()
 	    	for i = 1, animalCounter-1 do
-	    		if animals[i].name == "pitbull" and not animals[i].dead and litTiles[animals[i].tileY][animals[i].tileX]==1 then
+	    		if animals[i].name == "pitbull" and not animals[i].dead and (litTiles[animals[i].tileY][animals[i].tileX]==1 or animals[i].triggered) then
 	    			--animalMove(i)
 	    			animals[i]:move(player.tileX, player.tileY, room)
 	    		end
 	    	end
 	    	  for i = 1, animalCounter-1 do
-	    		if animals[i].name == "pup"  and not animals[i].dead and litTiles[animals[i].tileY][animals[i].tileX]==1 then
+	    		if animals[i].name == "pup"  and not animals[i].dead and (litTiles[animals[i].tileY][animals[i].tileX]==1 or animals[i].triggered) then
 	    			--animalMove(i)
 	    			animals[i]:move(player.tileX, player.tileY, room)
 	    		end
 	    	end
 	    	for i = 1, animalCounter-1 do
-	    		if animals[i].name == "cat"  and not animals[i].dead and litTiles[animals[i].tileY][animals[i].tileX]==1 then
+	    		if animals[i].name == "cat"  and not animals[i].dead and (litTiles[animals[i].tileY][animals[i].tileX]==1 or animals[i].triggered) then
 	    			--animalMove(i)
 	    			animals[i]:move(player.tileX, player.tileY, room)
 	    		end
@@ -1063,6 +1063,9 @@ function love.keypressed(key, unicode)
     end
     checkDeath()
     for i = 1, animalCounter-1 do
+    	if litTiles[animals[i].tileY][animals[i].tileX]==1 then
+    		animals[i].triggered = true
+    	end
     	animals[i]:checkDeath(room)
     end
     --Debug console stuff
