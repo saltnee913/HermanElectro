@@ -209,7 +209,7 @@ function updatePower()
 	for k = 1, 10 do
 		for i = 1, roomHeight do
 			for j = 1, roomLength do
-				if room[i][j]~=nil and not (room[i][j].name == "powerSupply" or room[i][j].name == "notGate") then
+				if room[i]~=nil and room[i][j]~=nil and not (room[i][j].name == "powerSupply" or room[i][j].name == "notGate") then
 					room[i][j].poweredNeighbors = {0,0,0,0}
 					room[i][j].powered = false
 					room[i][j]:updateTile(0)
@@ -218,7 +218,7 @@ function updatePower()
 		end
 		for i = 1, roomHeight do
 			for j = 1, roomLength do
-				if room[i][j]~=nil then
+				if room[i]~=nil and room[i][j]~=nil then
 					if (room[i][j].name == "powerSupply" or room[i][j].name == "notGate") and room[i][j].powered then
 						powerTestSpecial(i,j,0)
 					end
@@ -227,8 +227,8 @@ function updatePower()
 		end
 		for i = 1, roomHeight do
 			for j = 1, roomLength do
-				if room[i][j]~=nil and room[i][j].name == "notGate" then
-					if room[i+1]~=nil and room[i+1][j].powered==false then
+				if room[i]~=nill and room[i][j]~=nil and room[i][j].name == "notGate" then
+					if room[i+1]~=nil and room[i+1][j]~=nil and room[i+1][j].powered==false then
 						room[i][j].poweredNeighbors[3]=0
 						room[i][j]:updateTile(0)
 					end
@@ -1060,7 +1060,7 @@ function love.keypressed(key, unicode)
 	    	for i = 1, animalCounter-1 do
 	    		animals[i].x = (animals[i].tileX-1)*floor.sprite:getHeight()*scale+wallSprite.width
 	    		animals[i].y = (animals[i].tileY-1)*floor.sprite:getWidth()*scale+wallSprite.height
-	    		if not (animals[i].prevx == animals[i].x and animals[i].prevy == animals[i].y) and not animals[i].dead then
+	    		if animals[i]:hasMoved() and not animals[i].dead then
 					if room[animals[i].tileY][animals[i].tileX]~=nil then
 						room[animals[i].tileY][animals[i].tileX]:onEnterAnimal(animals[i])
 					end
@@ -1083,15 +1083,17 @@ function love.keypressed(key, unicode)
     	local roomid = mainMap[mapy][mapx].roomid
     	local toPrint = 'Room ID:'..roomid..', Items Needed:'
     	local itemsForRoom = itemsNeeded[roomid]
-    	for i=1,#itemsForRoom do
-    		if itemsForRoom[i][1]~=0 then toPrint = toPrint..' '..itemsForRoom[i][1]..' saw' end
-    		if itemsForRoom[i][2]~=0 then toPrint = toPrint..' '..itemsForRoom[i][2]..' ladder' end
-    		if itemsForRoom[i][3]~=0 then toPrint = toPrint..' '..itemsForRoom[i][3]..' wire-cutters' end
-    		if itemsForRoom[i][4]~=0 then toPrint = toPrint..' '..itemsForRoom[i][4]..' water-bottle' end
-    		if itemsForRoom[i][5]~=0 then toPrint = toPrint..' '..itemsForRoom[i][5]..' cutting-torch' end
-    		if itemsForRoom[i][6]~=0 then toPrint = toPrint..' '..itemsForRoom[i][6]..' brick' end
-    		if itemsForRoom[i][7]~=0 then toPrint = toPrint..' '..itemsForRoom[i][7]..' gun' end
-    		if i~=#itemsForRoom then toPrint = toPrint..' or ' end
+    	if itemsForRoom~=nil then
+    		for i=1,#itemsForRoom do
+    			if itemsForRoom[i][1]~=0 then toPrint = toPrint..' '..itemsForRoom[i][1]..' saw' end
+    			if itemsForRoom[i][2]~=0 then toPrint = toPrint..' '..itemsForRoom[i][2]..' ladder' end
+    			if itemsForRoom[i][3]~=0 then toPrint = toPrint..' '..itemsForRoom[i][3]..' wire-cutters' end
+    			if itemsForRoom[i][4]~=0 then toPrint = toPrint..' '..itemsForRoom[i][4]..' water-bottle' end
+    			if itemsForRoom[i][5]~=0 then toPrint = toPrint..' '..itemsForRoom[i][5]..' cutting-torch' end
+    			if itemsForRoom[i][6]~=0 then toPrint = toPrint..' '..itemsForRoom[i][6]..' brick' end
+    			if itemsForRoom[i][7]~=0 then toPrint = toPrint..' '..itemsForRoom[i][7]..' gun' end
+    			if i~=#itemsForRoom then toPrint = toPrint..' or ' end
+    		end
     	end
     	log(toPrint)
     elseif key == 'c' then
@@ -1126,11 +1128,13 @@ function animalMove(i)
 	end
 	if (player.prevx~=player.x or player.prevy~=player.y) and not animals[i].dead then
 		animals[i]:move(player.tileX, player.tileY, animalDir)
-		if room[animals[i].tileY][animals[i].tileX]~=nil then
-			room[animals[i].tileY][animals[i].tileX]:onEnterAnimal(animals[i])
-		end
-		if room[animals[i].prevTileY][animals[i].prevTileX]~=nil then
-			room[animals[i].prevTileY][animals[i].prevTileX]:onLeaveAnimal(animals[i])
+		if animals[i]:hasMoved() then
+			if room[animals[i].tileY][animals[i].tileX]~=nil then
+				room[animals[i].tileY][animals[i].tileX]:onEnterAnimal(animals[i])
+			end
+			if room[animals[i].prevTileY][animals[i].prevTileX]~=nil then
+				room[animals[i].prevTileY][animals[i].prevTileX]:onLeaveAnimal(animals[i])
+			end
 		end
 	end
 end

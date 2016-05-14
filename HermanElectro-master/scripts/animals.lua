@@ -33,7 +33,7 @@ function P.animal:move(playerx, playery, room)
 	if diffx==0 and diffy==0 then
 		return
 	end
-	unableToMove = false
+	local unableToMove = false
 	if math.abs(diffx)>math.abs(diffy) then
 		if playerx>self.tileX then
 			if not (room[self.tileY][self.tileX+1]~=nil and room[self.tileY][self.tileX+1].blocksMovement) then
@@ -94,6 +94,9 @@ function P.animal:checkDeath()
 		end
 	end
 end
+function P.animal:hasMoved()
+	return self.prevTileX ~= self.tileX or self.prevTileY ~= self.tileY
+end
 
 function P.animal:kill()
 	self.dead = true
@@ -117,7 +120,7 @@ function P.cat:move(playerx, playery, room)
 	if diffx==0 and diffy==0 then
 		return
 	end
-	unableToMove = false
+	local unableToMove = false
 	if math.abs(diffy)>math.abs(diffx) then
 		if playerx>=self.tileX then
 			if self.tileX>1 and not (room[self.tileY][self.tileX-1]~=nil and room[self.tileY][self.tileX-1].blocksMovement) then

@@ -185,13 +185,20 @@ P.stickyButton.onEnterAnimal = P.stickyButton.onEnter
 P.stickyButton.onLeaveAnimal = P.stickyButton.onLeave
 
 P.stayButton = P.button:new{name = "stayButton"}
+function P.stayButton:onEnter(player)
+	self.down = true
+	self.dirAccept = {1,1,1,1}
+	updatePower()
+	self:updateSprite()
+end
 function P.stayButton:onLeave(player)
-	self.justPressed = false
 	self.down = false
 	self.dirAccept = {0,0,0,0}
 	updatePower()
 	self:updateSprite()
 end
+P.stayButton.onEnterAnimal = P.stayButton.onEnter
+P.stayButton.onLeaveAnimal = P.stayButton.onLeave
 --P.stayButton.onLeave = P.stayButton.onEnter
 
 P.electricFloor = P.conductiveTile:new{name = "electricfloor", cut = false, sprite = love.graphics.newImage('Graphics/electricfloor.png'), destroyedSprite = love.graphics.newImage('Graphics/electricfloorcut.png'), poweredSprite = love.graphics.newImage('Graphics/electricfloorpowered.png')}
