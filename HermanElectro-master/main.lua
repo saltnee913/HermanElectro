@@ -20,8 +20,6 @@ function love.load()
 	editorMode = false
 	roomHack = 0
 	editorAdd = 0
-	mapx=4
-	mapy=4
 	local json = require('scripts.dkjson')
 	io.input('itemsNeeded.json')
 	local str = io.read('*all')
@@ -31,9 +29,11 @@ function love.load()
 	else
 		itemsNeeded = obj.itemsNeeded
 	end
-	mapHeight = 8
-	map.loadRooms()
-	mainMap = map.generateMap(mapHeight, 20, os.time())
+	map.loadRooms('rooms.json')
+	mainMap = map.generateMap(8, 20, os.time())
+	mapHeight = mainMap.height
+	mapx = mainMap.initialX
+	mapy = mainMap.initialY
 	visibleMap = {}
 	for i = 0, mapHeight do
 		visibleMap[i] = {}
@@ -42,7 +42,7 @@ function love.load()
 		end
 	end
 
-	visibleMap[mapx][mapy] = 1
+	visibleMap[mapy][mapx] = 1
 	room = mainMap[mapy][mapx].room
 	prevRoom = room
 	litTiles = {}
@@ -55,8 +55,6 @@ function love.load()
 		for j=1, mapHeight do
 			if mainMap[i][j]==nil then
 				completedRooms[i][j]=-1
-			elseif mainMap[i][j].isInitial then
-				completedRooms[i][j]=1
 			else
 				completedRooms[i][j]=0
 			end

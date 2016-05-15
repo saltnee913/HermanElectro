@@ -446,13 +446,13 @@ function P.endTile:onEnter(player)
 	while (self.done == false) do
 		x = math.floor(math.random()*(mapHeight+1))
 		y = math.floor(math.random()*(mapHeight+1))
-		if completedRooms[x]~=null and completedRooms[x][y]~=null and completedRooms[x][y] == 0 then
-			if (completedRooms[x-1]~=null and completedRooms[x-1][y] ~=null and completedRooms[x-1][y] == 1) or
-				(completedRooms[x+1]~=null and completedRooms[x+1][y] ~=null and completedRooms[x+1][y] ==1) or
-				(completedRooms[x][y-1]~=null and completedRooms[x][y-1]==1) or
-				(completedRooms[x][y+1]~=null and completedRooms[x][y+1]==1) then
+		if completedRooms[y]~=nil and completedRooms[y][x]~=nil and completedRooms[y][x] == 0 then
+			if (completedRooms[y-1]~=nil and completedRooms[y-1][x] ~=nil and completedRooms[y-1][x] == 1) or
+				(completedRooms[y+1]~=nil and completedRooms[y+1][x] ~=nil and completedRooms[y+1][x] ==1) or
+				(completedRooms[y][x-1]~=nil and completedRooms[y][x-1]==1) or
+				(completedRooms[y][x+1]~=nil and completedRooms[y][x+1]==1) then
 				for i=1,7 do
-					listOfItemsNeeded = itemsNeeded[mainMap[x][y].roomid]
+					listOfItemsNeeded = itemsNeeded[mainMap[y][x].roomid]
 					numLists = 0
 					for j = 1, 10 do
 						if listOfItemsNeeded[j]~=nil then
