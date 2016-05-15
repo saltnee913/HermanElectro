@@ -451,15 +451,15 @@ function P.endTile:onEnter(player)
 				(completedRooms[y+1]~=nil and completedRooms[y+1][x] ~=nil and completedRooms[y+1][x] ==1) or
 				(completedRooms[y][x-1]~=nil and completedRooms[y][x-1]==1) or
 				(completedRooms[y][x+1]~=nil and completedRooms[y][x+1]==1) then
-				for i=1,7 do
-					listOfItemsNeeded = itemsNeeded[mainMap[y][x].roomid]
-					numLists = 0
-					for j = 1, 10 do
-						if listOfItemsNeeded[j]~=nil then
-							numLists = numLists+1
-						end
+				listOfItemsNeeded = itemsNeeded[mainMap[y][x].roomid]
+				numLists = 0
+				for j = 1, 10 do
+					if listOfItemsNeeded[j]~=nil then
+						numLists = numLists+1
 					end
-					listChoose = math.random(numLists)
+				end
+				listChoose = math.random(numLists)
+				for i=1,7 do
 					--print(listChoose)
 					--inventory[i] = inventory[i]+itemsNeeded[mainMap[x][y].roomid][i]
 					inventory[i] = inventory[i]+listOfItemsNeeded[listChoose][i]
