@@ -3,6 +3,7 @@ roomLength = 24
 screenScale = 70
 
 debug = true
+loadTutorial = true
 
 require('scripts.tiles')
 require('scripts.map')
@@ -21,7 +22,11 @@ function love.load()
 	roomHack = 0
 	editorAdd = 0
 	local json = require('scripts.dkjson')
-	io.input('itemsNeeded.json')
+	local itemsNeededPath = 'RoomData/itemsNeeded.json'
+	if loadTutorial then
+		itemsNeededPath = 'RoomData/tut_itemsNeeded.json'
+	end
+	io.input(itemsNeededPath)
 	local str = io.read('*all')
 	local obj, pos, err = json.decode(str, 1, nil)
 	if err then
@@ -29,8 +34,16 @@ function love.load()
 	else
 		itemsNeeded = obj.itemsNeeded
 	end
-	map.loadRooms('rooms.json')
-	mainMap = map.generateMap(8, 20, os.time())
+	local roomsPath = 'RoomData/rooms.json'
+	if loadTutorial then
+		roomsPath = 'RoomData/tut_rooms.json'
+	end
+	map.loadRooms(roomsPath)
+	if loadTutorial then
+		mainMap = map.generateTutorial()
+	else
+		mainMap = map.generateMap(8, 20, os.time())
+	end
 	mapHeight = mainMap.height
 	mapx = mainMap.initialX
 	mapy = mainMap.initialY
