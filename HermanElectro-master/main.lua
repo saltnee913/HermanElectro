@@ -962,7 +962,18 @@ function love.keypressed(key, unicode)
     		end
     		animals = {}
     		animalCounter = 1
-    	else 
+    	elseif loadTutorial then
+    		player.dead = false
+			player.y = (1-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
+			player.tileY = 1
+			player.x = (roomLength/2-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10
+			player.tileX = roomLength/2
+			player.prevy = player.y
+			player.prevTileY = player.tileY
+			player.prevx = player.x
+			player.prevTileX = player.tileX
+			hackEnterRoom(mainMap[mapy][mapx].roomid)
+    	else
     		love.load()
     	end
     elseif key == "z" and editorMode and prevRoom~=nil then
