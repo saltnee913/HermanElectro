@@ -973,6 +973,9 @@ function love.keypressed(key, unicode)
 			player.prevx = player.x
 			player.prevTileX = player.tileX
 			hackEnterRoom(mainMap[mapy][mapx].roomid)
+			for i = 1,7 do
+				inventory[i] = itemsNeeded[mainMap[mapy][mapx].roomid][1][i]
+			end
     	else
     		love.load()
     	end
