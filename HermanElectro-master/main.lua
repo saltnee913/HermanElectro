@@ -3,7 +3,7 @@ roomLength = 24
 screenScale = 70
 
 debug = true
-loadTutorial = true
+loadTutorial = false
 
 require('scripts.tiles')
 require('scripts.map')
@@ -118,8 +118,8 @@ function love.load()
 	--print(love.graphics.getWidth(f1))
 	scale = (width - 2*wallSprite.width)/(20.3 * 16)*5/6
 	floor = tiles.tile
-	player = { dead = false, tileX = 3, tileY = 10, x = (3-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10, 
-	y = (10-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10, prevTileX = 3, prevTileY = 10,
+	player = { dead = false, tileX = 1, tileY = 6, x = (1-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10, 
+	y = (6-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10, prevTileX = 3, prevTileY = 10,
 	prevx = (3-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10,
 	prevy = (10-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10,
 	width = 20, height = 20, speed = 250, sprite = love.graphics.newImage('Graphics/herman_sketch.png'), scale = 0.25 * width/1200}
