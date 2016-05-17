@@ -3,7 +3,7 @@ roomLength = 24
 screenScale = 70
 
 debug = true
-loadTutorial = false
+loadTutorial = true
 
 require('scripts.tiles')
 require('scripts.map')
@@ -63,7 +63,7 @@ function love.load()
 		litTiles[i] = {}
 	end
 	completedRooms = {}
-	for i=1, mapHeight do
+	for i=0, mapHeight do
 		completedRooms[i] = {}
 		for j=1, mapHeight do
 			if mainMap[i][j]==nil then
