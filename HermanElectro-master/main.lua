@@ -238,7 +238,7 @@ function updatePower()
 		end
 		for i = 1, roomHeight do
 			for j = 1, roomLength do
-				if room[i]~=nill and room[i][j]~=nil and room[i][j].name == "notGate" then
+				if room[i]~=nil and room[i][j]~=nil and room[i][j].name == "notGate" then
 					if room[i+1]~=nil and room[i+1][j]~=nil and room[i+1][j].powered==false then
 						room[i][j].poweredNeighbors[3]=0
 						room[i][j]:updateTile(0)
