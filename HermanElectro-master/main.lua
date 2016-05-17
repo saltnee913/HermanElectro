@@ -1050,7 +1050,45 @@ function love.keypressed(key, unicode)
 			tool = numPressed
 		end
     end
-
+    local useTool = false
+    local tileLocXDelta = 0
+    local tileLocYDelta = 0
+    if key == 'up' then tileLocYDelta = -1
+    elseif key == 'down' then tileLocYDelta = 1
+    elseif key == 'left' then tileLocXDelta = -1
+    elseif key == 'right' then tileLocXDelta = 1 end
+    if tileLocXDelta ~= 0 or tileLocYDelta ~= 0 then
+    	useTool = true
+    end
+    if useTool then
+    	local tileLocX = player.tileX + tileLocXDelta
+    	local tileLocY = player.tileY + tileLocYDelta
+		if tool==7 then
+			for mult = 0, 3 do
+				tileLocX = player.tileX + tileLocXDelta*mult
+				local killedAnimal = false
+				for i = 1, animalCounter-1 do
+					if animals[i].tileX == tileLocX and animals[i].tileY == tileLocY and not animals[i].dead then
+						animals[i]:kill()
+						inventory[tool] = inventory[tool]-1
+						if inventory[tool] == 0 then
+							tool = 0
+						end
+						killedAnimal = true
+					end
+				end
+				if killedAnimal then break end
+			end
+		elseif tool~=0 and room[tileLocY]~=nil and room[tileLocY][tileLocX]~=nil and adjacent(tileLocX, tileLocY) then
+			if room[tileLocY][tileLocX]:useTool(tool) then
+				clickActivated = true
+				inventory[tool] = inventory[tool]-1
+				if inventory[tool]==0 then
+					tool = 0
+				end
+			end
+		end
+	end
     if (key=="w" or key=="a" or key=="s" or key=="d") then
     	for i = 1, roomHeight do
     		for j = 1, roomLength do
