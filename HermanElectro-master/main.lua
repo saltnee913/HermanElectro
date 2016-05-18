@@ -1059,7 +1059,7 @@ function love.keypressed(key, unicode)
     elseif key == 'down' then tileLocYDelta = 1
     elseif key == 'left' then tileLocXDelta = -1
     elseif key == 'right' then tileLocXDelta = 1 end
-    if tileLocXDelta ~= 0 or tileLocYDelta ~= 0 then
+    if tileLocXDelta ~= 0 or tileLocYDelta ~= 0 or key == 'space' then
     	useTool = true
     end
     if useTool then
