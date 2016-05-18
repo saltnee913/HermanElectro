@@ -1090,6 +1090,8 @@ function love.keypressed(key, unicode)
 				end
 			end
 		end
+		updateLight()
+		updatePower()
 	end
     if (key=="w" or key=="a" or key=="s" or key=="d") then
     	for i = 1, roomHeight do
