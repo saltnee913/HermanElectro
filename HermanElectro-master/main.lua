@@ -633,13 +633,15 @@ function love.draw()
 	if editorMode then
 		barLength = 660
 		love.graphics.setColor(255,255,255)
-		for i = 1, 29 do
-			toDraw = tiles[i].sprite
-			--love.graphics.rectangle("fill", (i-1)*width/25, height-width/25, width/25, width/25)
-			--sprite width: floor.sprite:getWidth()
-			love.graphics.draw(toDraw, (i-1)*width/30, height-width/30, 0, (width/30)/(floor.sprite:getWidth()), (width/30)/(floor.sprite:getWidth()))
-			if editorAdd == i then
-				love.graphics.draw(green, (i-1)*width/30, height-width/30, 0, (width/30)/(floor.sprite:getWidth()), (width/30)/(floor.sprite:getWidth()))
+		for i = 1, 45 do
+			if tiles[i]~=nil then
+				toDraw = tiles[i].sprite
+				--love.graphics.rectangle("fill", (i-1)*width/25, height-width/25, width/25, width/25)
+				--sprite width: floor.sprite:getWidth()
+				love.graphics.draw(toDraw, (i-1)*width/45, height-width/45, 0, (width/45)/(floor.sprite:getWidth()), (width/45)/(floor.sprite:getWidth()))
+				if editorAdd == i then
+					love.graphics.draw(green, (i-1)*width/45, height-width/45, 0, (width/45)/(floor.sprite:getWidth()), (width/45)/(floor.sprite:getWidth()))
+				end
 			end
 		end
 	end
@@ -1124,6 +1126,9 @@ function love.keypressed(key, unicode)
     elseif key == 'c' then
     	log(nil)
     end
+    if room[player.tileY][player.tileX]~=nil and room[player.tileY][player.tileX].name == "tunnel" then
+    	love.load()
+    end
 end
 
 function animalMove(i)
@@ -1362,8 +1367,8 @@ function love.mousepressed(x, y, button, istouch)
 		tempAdd = 1
 	end
 	if editorMode then
-		if mouseY>height-width/30 then
-			editorAdd = math.floor(mouseX/(width/30))+1
+		if mouseY>height-width/45 then
+			editorAdd = math.floor(mouseX/(width/45))+1
 		elseif tempAdd>0 and tileLocX>=1 and tileLocX<=24 and tileLocY>=1 and tileLocY<=12 then
 			if(room[tileLocY][tileLocX] ~= nil and room[tileLocY][tileLocX].name == tiles[tempAdd].name) then
 				room[tileLocY][tileLocX]:rotate(1)

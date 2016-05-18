@@ -30,7 +30,7 @@ function P.createRoom(inRoom)
 			end
 		end
 	end
-	if(loadedRoom==nil) then print("ellie fucked up") end
+	if(loadedRoom==nil) then print("ellie fucked up, and jmoney is fucking hype") end
 	return loadedRoom
 end
 

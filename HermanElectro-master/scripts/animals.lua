@@ -56,6 +56,7 @@ function P.animal:move(playerx, playery, room)
 			if not (room[self.tileY+1][self.tileX]~=nil and room[self.tileY+1][self.tileX].blocksMovement) then
 				--self.y = self.y+floor.sprite:getHeight()*scale
 				self.tileY = self.tileY+1
+				unableToMove = false
 			elseif room[self.tileY+1][self.tileX].blocksMovement then
 				unableToMove = true
 			end
@@ -63,6 +64,7 @@ function P.animal:move(playerx, playery, room)
 			if not (room[self.tileY-1][self.tileX]~=nil and room[self.tileY-1][self.tileX].blocksMovement) then
 				--self.y = self.y-floor.sprite:getHeight()*scale
 				self.tileY = self.tileY-1
+				unableToMove = false
 			elseif room[self.tileY-1][self.tileX].blocksMovement then
 				unableToMove = true
 			end

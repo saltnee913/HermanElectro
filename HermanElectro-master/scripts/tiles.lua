@@ -489,7 +489,36 @@ P.catTile = P.tile:new{name = "cat", animal = animalList[4]:new()}
 
 P.vDoor= P.hDoor:new{name = "vDoor", sprite = love.graphics.newImage('Graphics/door.png'), closedSprite = love.graphics.newImage('Graphics/door.png'), openSprite = love.graphics.newImage('Graphics/doorsopen.png')}
 P.vDoor.onEnter = P.hDoor.onEnter
---reserves spot for pitbull at beginning
+
+P.sign = P.tile:new{text = "", name = "sign"}
+
+P.rotater = P.button:new{canBePowered = true, dirAccept = {1,0,1,0}, dirSend = {1,0,1,0}, sprite = love.graphics.newImage('Graphics/rotater.png'), poweredSprite = love.graphics.newImage('Graphics/rotater.png')}
+function P.rotater:updateSprite()
+end
+function P.rotater:onEnter(player)
+	if not self.justPressed then
+		self:rotate(1)
+		self.justPressed = true
+	end
+end
+function P.rotater:updateTile(dir)
+	if self.poweredNeighbors[1]==1 or self.poweredNeighbors[2]==1 or self.poweredNeighbors[3]==1 or self.poweredNeighbors[4]==1 then
+		self.powered = true
+	else
+		self.powered = false
+	end
+end
+P.rotater.useTool = P.tile.useTool
+function P.rotater:onLeave(player)
+	self.justPressed = false
+end
+P.rotater.onEnterAnimal = P.rotater.onEnter
+P.rotater.onLeaveAnimal = P.rotater.onLeave
+
+P.concreteWall = P.wall:new{name = "concreteWall", sprite = love.graphics.newImage('Graphics/concreteWall.png')}
+P.concreteWall.useTool = P.tile.useTool
+
+P.tunnel = P.tile:new{name = "tunnel"}
 
 
 tiles[1] = P.invisibleTile
@@ -517,9 +546,11 @@ tiles[22] = P.pupTile
 tiles[23] = P.catTile
 tiles[24] = P.glassWall
 tiles[25] = P.vPoweredDoor
-tiles[26] = P.vDoor
-tiles[27] = P.hPoweredDoor
+tiles[26] = P.sign
+tiles[27] = P.rotater
 tiles[28] = P.spikes
 tiles[29] = P.crossWire
+tiles[30] = P.tunnel
+tiles[31] = P.concreteWall
 
 return tiles
