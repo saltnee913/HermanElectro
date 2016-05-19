@@ -3,7 +3,7 @@ roomLength = 24
 screenScale = 70
 
 debug = true
-loadTutorial = false
+loadTutorial = true
 
 require('scripts.tiles')
 require('scripts.map')
