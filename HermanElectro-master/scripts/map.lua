@@ -121,13 +121,14 @@ function P.generateTutorial()
 	newmap[newmap.height+1] = {}
 	for i = 1, newmap.height do
 		newmap[i] = {}
-		newmap[i][newmap.height/2] = {roomid = i, room = P.createRoom(i), isFinal = false, isInitial = false, isCompleted = false}
+		newmap[i][math.floor(newmap.height/2)] = {roomid = i, room = P.createRoom(i), isFinal = false, isInitial = false, isCompleted = false}
 	end
-	newmap[1][newmap.height/2].isInitial = true
+	newmap[1][math.floor(newmap.height/2)].isInitial = true
 	newmap.initialY = 1
-	newmap.initialX = newmap.height/2
-	newmap[1][newmap.height/2].isCompleted = false
-	newmap[newmap.height][newmap.height/2].isFinal = true
+	newmap.initialX = math.floor(newmap.height/2)
+	newmap[1][math.floor(newmap.height/2)].isCompleted = false
+	newmap[newmap.height][math.floor(newmap.height/2)].isFinal = true
+	print(newmap[1][math.floor(newmap.height/2)].roomid)
 	printMap(newmap)
 	return newmap
 end
