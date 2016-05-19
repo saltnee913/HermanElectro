@@ -4,23 +4,22 @@
   "itemsNeeded": [
     //tut_1: just a goal
     [[0,0,0,0,0,0,0]],
-    //tut_2: walls
+    //tut_2: doors and vision
     [[0,0,0,0,0,0,0]],
-    //tut_3: doors and vision
+    //tut_3: electricity and trapdoors
     [[0,0,0,0,0,0,0]],
-    //tut_4: electricity and trapdoors
+    //tut_4: buttons
     [[0,0,0,0,0,0,0]],
-    //tut_5: buttons
+    //tut_6: NOT, AND, and efloors
     [[0,0,0,0,0,0,0]],
-    //tut_6: electric walls
+    //tut_7: wire trickery and iron doors
     [[0,0,0,0,0,0,0]],
-    //tut_7: NOT, AND, and efloors
-    [[0,0,0,0,0,0,0]],
-    //tut_8: wire trickery and iron doors
-    [[0,0,0,0,0,0,0]],
-    //tut_9: saw
+    //tut_8: saw
     [[1,0,0,0,0,0,0]],
-    //tut_10: brick
+    //tut_9: brick
     [[0,0,0,0,0,1,0]],
+
+    //tut 10: animals
+    [[0,0,0,0,0,0,0]],
   ]
 }
