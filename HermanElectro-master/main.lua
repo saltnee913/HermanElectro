@@ -24,7 +24,7 @@ function love.load()
 	local json = require('scripts.dkjson')
 	local itemsNeededPath = 'RoomData/itemsNeeded.json'
 	if loadTutorial then
-		itemsNeededPath = 'RoomData/tut_itemsNeeded.json'
+		itemsNeededPath = 'RoomData/tut_itemsGiven.json'
 	end
 	io.input(itemsNeededPath)
 	local str = io.read('*all')
