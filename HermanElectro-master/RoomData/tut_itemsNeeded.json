@@ -1,11 +1,11 @@
 {
   //order: saw, ladder, wire cutters, water bottle, cutting torch, brick, gun
   
-  "itemsGiven": [
+  "itemsNeeded": [
     //tut_1: just a goal
     [[0,0,0,0,0,0,0]],
     //tut_2: doors and vision
-    [[1,0,0,0,0,0,0]],
+    [[0,0,0,0,0,0,0]],
     //tut_3: electricity and trapdoors
     [[0,0,0,0,0,0,0]],
     //tut_4: buttons
@@ -15,9 +15,9 @@
     //tut_7: wire trickery and iron doors
     [[0,0,0,0,0,0,0]],
     //tut_8: saw
-    [[0,0,0,0,0,1,0]],
+    [[1,0,0,0,0,0,0]],
     //tut_9: brick
-    [[0,0,0,0,0,0,0]],
+    [[0,0,0,0,0,1,0]],
     //tut 10: animals
     [[0,0,0,0,0,0,0]],
   ]

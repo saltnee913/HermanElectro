@@ -444,7 +444,12 @@ function P.endTile:onEnter(player)
 		visibleMap[mapy][mapx+1] = 1
 	end
 	if loadTutorial then
-		inventory = itemsNeeded[mainMap[mapy][mapx].roomid][1]
+		for i = 1, #inventory do
+			player.totalItemsGiven[i] = player.totalItemsGiven[i] + itemsGiven[mainMap[mapy][mapx].roomid][1][i]
+			player.totalItemsNeeded[i] = player.totalItemsNeeded[i] + itemsNeeded[mainMap[mapy][mapx].roomid][1][i]
+			inventory[i] = player.totalItemsGiven[i] - player.totalItemsNeeded[i]
+		end
+		self.done = true
 	else
 		local checkedRooms = {}
 		for i = 0, mapHeight do
@@ -484,6 +489,7 @@ function P.endTile:onEnter(player)
 			end
 		end
 	end
+	self.isCompleted = true
 	self.isVisible = false
 end
 
