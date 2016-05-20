@@ -116,7 +116,8 @@ function P.generateMap(height, numRooms, seed)
 end
 
 function P.generateTutorial()
-	local newmap = MapInfo:new{height = #P.rooms, numRooms = #P.rooms}
+	return P.generateMapFromJSON('RoomData/tut_map.json')
+	--[[local newmap = MapInfo:new{height = #P.rooms, numRooms = #P.rooms}
 	newmap[0] = {}
 	newmap[newmap.height+1] = {}
 	for i = 1, newmap.height do
@@ -129,6 +130,38 @@ function P.generateTutorial()
 	newmap[1][math.floor(newmap.height/2)].isCompleted = false
 	newmap[newmap.height][math.floor(newmap.height/2)].isFinal = true
 	print(newmap[1][math.floor(newmap.height/2)].roomid)
+	printMap(newmap)
+	return newmap]]
+end
+
+function P.generateMapFromJSON(mapFile)
+	local newmap
+	io.input(mapFile)
+	local str = io.read('*all')
+	local obj, pos, err = json.decode(str, 1, nil)
+	if err then
+		print('Error:', err)
+	else
+		newmap = obj.map
+	end
+	newmap.height = #newmap
+	newmap.numRooms = 0
+	for i = 1, newmap.height do
+		for j = 1, newmap.height do
+			if newmap[i] ~= nil and newmap[i][j] ~= nil and newmap[i][j] ~= 0 then
+				newmap.numRooms = newmap.numRooms + 1
+				newmap[i][j] = {roomid = newmap[i][j], room = P.createRoom(newmap[i][j]), isFinal = false, isInitial = false, isCompleted = false}
+				if newmap[i][j].roomid == 1 then
+					newmap[i][j].isInitial = true
+					newmap.initialX = j
+					newmap.initialY = i
+				end
+			elseif newmap[i] ~= nil and newmap[i][j] == 0 then
+				newmap[i][j] = nil
+			end
+		end
+	end
+	newmap[0] = {}
 	printMap(newmap)
 	return newmap
 end
