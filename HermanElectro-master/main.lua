@@ -1256,6 +1256,8 @@ function checkDeath()
 			kill()
 		elseif t.name == "poweredFloor" and not t.powered and not t.ladder then
 			kill()
+		elseif t.name == "pit" then
+			kill()
 		end
 	end
 	for i = 1, animalCounter-1 do
