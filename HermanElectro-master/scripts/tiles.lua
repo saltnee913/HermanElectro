@@ -520,6 +520,8 @@ P.concreteWall.useTool = P.tile.useTool
 
 P.tunnel = P.tile:new{name = "tunnel"}
 
+P.pit = P.tile:new{name = "pit", sprite = love.graphics.newImage('Graphics/pit.png')}
+
 
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
@@ -552,5 +554,6 @@ tiles[28] = P.spikes
 tiles[29] = P.crossWire
 tiles[30] = P.tunnel
 tiles[31] = P.concreteWall
+tiles[32] = P.pit
 
 return tiles
