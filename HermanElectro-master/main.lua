@@ -3,7 +3,7 @@ roomLength = 24
 screenScale = 70
 
 debug = true
-loadTutorial = true
+loadTutorial = false
 
 require('scripts.tiles')
 require('scripts.map')
@@ -241,6 +241,9 @@ function updatePower()
 				if room[i]~=nil and room[i][j]~=nil and room[i][j].name == "notGate" then
 					if room[i+1]~=nil and room[i+1][j]~=nil and room[i+1][j].powered==false then
 						room[i][j].poweredNeighbors[3]=0
+						room[i][j]:updateTile(0)
+					elseif room[i+1]~=nil and room[i+1][j]~=nil and room[i+1][j].powered==true and room[i+1][j].dirSend[1]==1 then
+						room[i][j].poweredNeighbors[3]=1
 						room[i][j]:updateTile(0)
 					end
 				end
