@@ -1,9 +1,10 @@
+
 roomHeight = 12
 roomLength = 24
 screenScale = 70
 
 debug = true
-loadTutorial = true
+loadTutorial = false
 
 require('scripts.tiles')
 require('scripts.map')
@@ -251,11 +252,14 @@ function updatePower()
 		for i = 1, roomHeight do
 			for j = 1, roomLength do
 				if room[i]~=nil and room[i][j]~=nil and room[i][j].name == "notGate" then
-					if room[i+1]~=nil and room[i+1][j]~=nil and room[i+1][j].powered==false then
-						room[i][j].poweredNeighbors[3]=0
+					local offset = room[i][j]:getOffsetsByDir(3)
+					if room[i+offset.y]~=nil and room[i+offset.y][j+offset.x]~=nil and room[i+offset.y][j+offset.x].powered==false then
+						room[i][j].poweredNeighbors[room[i][j]:cfr(3)]=0
 						room[i][j]:updateTile(0)
-					elseif room[i+1]~=nil and room[i+1][j]~=nil and room[i+1][j].powered==true and room[i+1][j].dirSend[1]==1 then
-						room[i][j].poweredNeighbors[3]=1
+					elseif room[i+offset.y]~=nil and room[i+offset.y][j+offset.x]~=nil
+					  and room[i+offset.y][j+offset.x].powered==true
+					  and room[i+offset.y][j+offset.x].dirSend[room[i][j]:cfr(1)]==1 then
+						room[i][j].poweredNeighbors[room[i][j]:cfr(3)]=1
 						room[i][j]:updateTile(0)
 					end
 				end

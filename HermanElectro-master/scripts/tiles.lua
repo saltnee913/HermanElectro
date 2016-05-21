@@ -29,6 +29,14 @@ function P.tile:updateTile(dir)
 		self.powered = false
 	end
 end
+function P.tile:getOffsetsByDir(dir)
+	dir = dir + self.rotation
+	while (dir > 4) do dir = dir - 4 end
+	if dir == 1 then return {y = -1, x = 0}
+	elseif dir == 2 then return {y = 0, x = 1}
+	elseif dir == 3 then return {y = 1, x = 0}
+	else return {y = 0, x = -1} end
+end
 local function shiftArray(arr, times)
 	if times == 0 then return arr end
 	if(times == nil) then times = 1 end
@@ -302,7 +310,7 @@ function P.gate:updateTile(dir)
 end
 function P.tile:correctForRotation(dir)
 	local temp = dir + self.rotation
-	if(temp > 4) then
+	while(temp > 4) do
 		temp = temp - 4
 	end
 	--if temp ~= dir then print(temp..';'..dir) end
