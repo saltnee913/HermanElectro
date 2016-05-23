@@ -1,3 +1,4 @@
+
 roomHeight = 12
 roomLength = 24
 screenScale = 70
@@ -25,6 +26,14 @@ function love.load()
 	local itemsNeededPath = 'RoomData/itemsNeeded.json'
 	if loadTutorial then
 		itemsNeededPath = 'RoomData/tut_itemsNeeded.json'
+		io.input('RoomData/tut_itemsGiven.json')
+		local str = io.read('*all')
+		local obj, pos, err = json.decode(str, 1, nil)
+		if err then
+			print('Error:', err)
+		else
+			itemsGiven = obj.itemsGiven
+		end
 	end
 	io.input(itemsNeededPath)
 	local str = io.read('*all')
@@ -119,10 +128,14 @@ function love.load()
 	scale = (width - 2*wallSprite.width)/(20.3 * 16)*5/6
 	floor = tiles.tile
 	player = { dead = false, tileX = 1, tileY = 6, x = (1-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10, 
-	y = (6-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10, prevTileX = 3, prevTileY = 10,
-	prevx = (3-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10,
-	prevy = (10-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10,
-	width = 20, height = 20, speed = 250, sprite = love.graphics.newImage('Graphics/herman_sketch.png'), scale = 0.25 * width/1200}
+		y = (6-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10, prevTileX = 3, prevTileY = 10,
+		prevx = (3-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10,
+		prevy = (10-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10,
+		width = 20, height = 20, speed = 250, sprite = love.graphics.newImage('Graphics/herman_sketch.png'), scale = 0.25 * width/1200}
+	if loadTutorial then
+		player.totalItemsGiven = {0,0,0,0,0,0,0}
+		player.totalItemsNeeded = {0,0,0,0,0,0,0}
+	end
 	function player:getTileLoc()
 		return {x = self.x/(floor.sprite:getWidth()*scale), y = self.y/(floor.sprite:getWidth()*scale)}
 	end
@@ -239,11 +252,14 @@ function updatePower()
 		for i = 1, roomHeight do
 			for j = 1, roomLength do
 				if room[i]~=nil and room[i][j]~=nil and room[i][j].name == "notGate" then
-					if room[i+1]~=nil and room[i+1][j]~=nil and room[i+1][j].powered==false then
-						room[i][j].poweredNeighbors[3]=0
+					local offset = room[i][j]:getOffsetsByDir(3)
+					if room[i+offset.y]~=nil and room[i+offset.y][j+offset.x]~=nil and room[i+offset.y][j+offset.x].powered==false then
+						room[i][j].poweredNeighbors[room[i][j]:cfr(3)]=0
 						room[i][j]:updateTile(0)
-					elseif room[i+1]~=nil and room[i+1][j]~=nil and room[i+1][j].powered==true and room[i+1][j].dirSend[1]==1 then
-						room[i][j].poweredNeighbors[3]=1
+					elseif room[i+offset.y]~=nil and room[i+offset.y][j+offset.x]~=nil
+					  and room[i+offset.y][j+offset.x].powered==true
+					  and room[i+offset.y][j+offset.x].dirSend[room[i][j]:cfr(1)]==1 then
+						room[i][j].poweredNeighbors[room[i][j]:cfr(3)]=1
 						room[i][j]:updateTile(0)
 					end
 				end
@@ -699,11 +715,15 @@ function adjacent(xloc, yloc)
 	return false
 end
 
-function hackEnterRoom(roomid)
-	mainMap[mapy][mapx] = {roomid = roomid, room = map.createRoom(roomid), 
-		isFinal = mainMap[mapy][mapx].isFinal, isInitial = mainMap[mapy][mapx].isInitial,
-		isCompleted = mainMap[mapy][mapx].isCompleted}
-	room = mainMap[mapy][mapx].room
+function hackEnterRoom(roomid, y, x)
+	if y == nil then y = mapy end
+	if x == nil then x = mapx end
+	mainMap[y][x] = {roomid = roomid, room = map.createRoom(roomid), 
+		isFinal = mainMap[y][x].isFinal, isInitial = mainMap[y][x].isInitial,
+		isCompleted = mainMap[y][x].isCompleted}
+	if y == mapy and x == mapx then
+		room = mainMap[y][x].room
+	end
 	animalCounter = 1
 	animals = {}
 	for i = 1, roomHeight do
@@ -977,9 +997,20 @@ function love.keypressed(key, unicode)
 			player.prevTileY = player.tileY
 			player.prevx = player.x
 			player.prevTileX = player.tileX
-			hackEnterRoom(mainMap[mapy][mapx].roomid)
 			for i = 1,7 do
-				inventory[i] = itemsNeeded[mainMap[mapy][mapx].roomid][1][i]
+				if (completedRooms[mapy][mapx] == 1) then
+					player.totalItemsGiven[i] = player.totalItemsGiven[i] - itemsGiven[mainMap[mapy][mapx].roomid][1][i]
+					player.totalItemsNeeded[i] = player.totalItemsNeeded[i] - itemsNeeded[mainMap[mapy][mapx].roomid][1][i]
+				end
+				inventory[i] = player.totalItemsGiven[i] - player.totalItemsNeeded[i]
+			end
+			completedRooms[mapy][mapx] = 0
+			for i = 0, mainMap.height do
+				for j = 0, mainMap.height do
+					if completedRooms[i][j] == 0 then
+						hackEnterRoom(mainMap[i][j].roomid, i, j)
+					end
+				end
 			end
     	else
     		love.load()

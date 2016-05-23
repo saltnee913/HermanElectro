@@ -29,6 +29,14 @@ function P.tile:updateTile(dir)
 		self.powered = false
 	end
 end
+function P.tile:getOffsetsByDir(dir)
+	dir = dir + self.rotation
+	while (dir > 4) do dir = dir - 4 end
+	if dir == 1 then return {y = -1, x = 0}
+	elseif dir == 2 then return {y = 0, x = 1}
+	elseif dir == 3 then return {y = 1, x = 0}
+	else return {y = 0, x = -1} end
+end
 local function shiftArray(arr, times)
 	if times == 0 then return arr end
 	if(times == nil) then times = 1 end
@@ -302,7 +310,7 @@ function P.gate:updateTile(dir)
 end
 function P.tile:correctForRotation(dir)
 	local temp = dir + self.rotation
-	if(temp > 4) then
+	while(temp > 4) do
 		temp = temp - 4
 	end
 	--if temp ~= dir then print(temp..';'..dir) end
@@ -443,43 +451,53 @@ function P.endTile:onEnter(player)
 	if mapx<mapHeight then
 		visibleMap[mapy][mapx+1] = 1
 	end
-	local checkedRooms = {}
-	for i = 0, mapHeight do
-		checkedRooms[i] = {}
-	end
-	local amtChecked = 0
-	while (self.done == false) do
-		y = math.floor(math.random()*(mapHeight+1))
-		x = math.floor(math.random()*(mapHeight+1))
-		if checkedRooms[y][x] == nil then
-			checkedRooms[y][x] = 1
-			amtChecked = amtChecked + 1
-			if amtChecked == (mapHeight + 1)*(mapHeight + 1) then
-				break
-			end
-			if completedRooms[y]~=nil and completedRooms[y][x]~=nil and completedRooms[y][x] == 0 then
-				if (completedRooms[y-1]~=nil and completedRooms[y-1][x] ~=nil and completedRooms[y-1][x] == 1) or
-					(completedRooms[y+1]~=nil and completedRooms[y+1][x] ~=nil and completedRooms[y+1][x] ==1) or
-					(completedRooms[y][x-1]~=nil and completedRooms[y][x-1]==1) or
-					(completedRooms[y][x+1]~=nil and completedRooms[y][x+1]==1) then
-					listOfItemsNeeded = itemsNeeded[mainMap[y][x].roomid]
-					numLists = 0
-					for j = 1, 10 do
-						if listOfItemsNeeded[j]~=nil then
-							numLists = numLists+1
+	if loadTutorial then
+		for i = 1, #inventory do
+			player.totalItemsGiven[i] = player.totalItemsGiven[i] + itemsGiven[mainMap[mapy][mapx].roomid][1][i]
+			player.totalItemsNeeded[i] = player.totalItemsNeeded[i] + itemsNeeded[mainMap[mapy][mapx].roomid][1][i]
+			inventory[i] = player.totalItemsGiven[i] - player.totalItemsNeeded[i]
+		end
+		self.done = true
+	else
+		local checkedRooms = {}
+		for i = 0, mapHeight do
+			checkedRooms[i] = {}
+		end
+		local amtChecked = 0
+		while (self.done == false) do
+			y = math.floor(math.random()*(mapHeight+1))
+			x = math.floor(math.random()*(mapHeight+1))
+			if checkedRooms[y][x] == nil then
+				checkedRooms[y][x] = 1
+				amtChecked = amtChecked + 1
+				if amtChecked == (mapHeight + 1)*(mapHeight + 1) then
+					break
+				end
+				if completedRooms[y]~=nil and completedRooms[y][x]~=nil and completedRooms[y][x] == 0 then
+					if (completedRooms[y-1]~=nil and completedRooms[y-1][x] ~=nil and completedRooms[y-1][x] == 1) or
+						(completedRooms[y+1]~=nil and completedRooms[y+1][x] ~=nil and completedRooms[y+1][x] ==1) or
+						(completedRooms[y][x-1]~=nil and completedRooms[y][x-1]==1) or
+						(completedRooms[y][x+1]~=nil and completedRooms[y][x+1]==1) then
+						listOfItemsNeeded = itemsNeeded[mainMap[y][x].roomid]
+						numLists = 0
+						for j = 1, 10 do
+							if listOfItemsNeeded[j]~=nil then
+								numLists = numLists+1
+							end
 						end
-					end
-					listChoose = math.random(numLists)
-					for i=1,7 do
-						--print(listChoose)
-						--inventory[i] = inventory[i]+itemsNeeded[mainMap[x][y].roomid][i]
-						inventory[i] = inventory[i]+listOfItemsNeeded[listChoose][i]
-						self.done = true
+						listChoose = math.random(numLists)
+						for i=1,7 do
+							--print(listChoose)
+							--inventory[i] = inventory[i]+itemsNeeded[mainMap[x][y].roomid][i]
+							inventory[i] = inventory[i]+listOfItemsNeeded[listChoose][i]
+							self.done = true
+						end
 					end
 				end
 			end
 		end
 	end
+	self.isCompleted = true
 	self.isVisible = false
 end
 
