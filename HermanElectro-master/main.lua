@@ -3,7 +3,7 @@ roomLength = 24
 screenScale = 70
 
 debug = true
-loadTutorial = true
+loadTutorial = false
 
 require('scripts.tiles')
 require('scripts.map')
@@ -495,7 +495,7 @@ function love.draw()
 					love.graphics.draw(toDraw, (tempi-1)*floor.sprite:getWidth()*scale+wallSprite.width, (tempj-1)*floor.sprite:getHeight()*scale+wallSprite.height, rot * math.pi / 2, scale, scale)
 				end
 				if tool~="" then
-					if tool~=7 then
+					if tool~=7 and tool~=6 then
 						if room[j][i]~=nil and adjacent(i,j) then
 							if tool==1 then
 								if room[j][i].name == "wall" and not room[j][i].sawed then
@@ -517,17 +517,17 @@ function love.draw()
 								if room[j][i].name == "metalwall" and not room[j][i].sawed then
 									love.graphics.draw(green, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
 								end
-							elseif tool==6 then
-								if (room[j][i].name == "glasswall" and not room[j][i].sawed) or (room[j][i].name == "button" and not room[j][i].bricked) then
-									love.graphics.draw(green, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
-								end
 							end
 						end
-
+					elseif tool==6 then
+						if room[j][i]~=nil and ((room[j][i].name == "glasswall" and not room[j][i].sawed) or (room[j][i].name == "button" and not room[j][i].bricked)) and
+						(j == player.tileY and (math.abs(i-player.tileX)<=3) or (i == player.tileX and math.abs(j-player.tileY)<=3))then
+							love.graphics.draw(green, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
+						end
 					else
 						if (j == player.tileY and math.abs(i-player.tileX)<=3) or (i == player.tileX and math.abs(j-player.tileY)<=3) then
 							for k = 1, animalCounter-1 do
-								if animals[k].tileY == j and animals[k].tileX == i then
+								if animals[k].tileY == j and animals[k].tileX == i and not animals[k].dead then
 									love.graphics.draw(green, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
 									break
 								end
@@ -1071,6 +1071,7 @@ function love.keypressed(key, unicode)
 		if tool==7 then
 			for mult = 0, 3 do
 				tileLocX = player.tileX + tileLocXDelta*mult
+				tileLocY = player.tileY+tileLocYDelta*mult
 				local killedAnimal = false
 				for i = 1, animalCounter-1 do
 					if animals[i].tileX == tileLocX and animals[i].tileY == tileLocY and not animals[i].dead then
@@ -1084,6 +1085,21 @@ function love.keypressed(key, unicode)
 				end
 				if killedAnimal then break end
 			end
+		elseif tool==6 then
+			for mult = 0, 3 do
+				tileLocX = player.tileX + tileLocXDelta*mult
+				tileLocY = player.tileY+tileLocYDelta*mult
+				if room[tileLocY]~=nil and room[tileLocY][tileLocX]~=nil then
+					if room[tileLocY][tileLocX]:useTool(tool) then
+						clickActivated = true
+						inventory[tool] = inventory[tool]-1
+						if inventory[tool]==0 then
+							tool = 0
+						end
+						break
+					end
+				end
+			end	
 		elseif tool~=0 and room[tileLocY]~=nil and room[tileLocY][tileLocX]~=nil and adjacent(tileLocX, tileLocY) then
 			if room[tileLocY][tileLocX]:useTool(tool) then
 				clickActivated = true
@@ -1383,17 +1399,47 @@ function love.mousepressed(x, y, button, istouch)
 	tileLocY = math.ceil((mouseY-wallSprite.height)/(scale*floor.sprite:getHeight()))
 	if tool==7 then
 		if (tileLocX == player.tileX and math.abs(tileLocY-player.tileY)<=3) or (tileLocY == player.tileY and math.abs(tileLocX-player.tileX)<=3) then
-			for i = 1, animalCounter-1 do
-				if animals[i].tileX == tileLocX and animals[i].tileY == tileLocY and not animals[i].dead then
-					animals[i]:kill()
-					inventory[tool] = inventory[tool]-1
-					if inventory[tool] == 0 then
-						tool = 0
+			if tileLocX==player.tileX then
+				diff = 1
+				if tileLocY<player.tileY then
+					diff = -1
+				end
+				bulY = player.tileY+diff
+				while (bulY~=tileLocY) do
+					for i = 1, animalCounter-1 do
+						if animals[i].tileX == tileLocX and animals[i].tileY == bulY and not animals[i].dead then
+							animals[i]:kill()
+							inventory[tool] = inventory[tool]-1
+							if inventory[tool] == 0 then
+								tool = 0
+							end
+							break
+						end
 					end
-					break
+					bulY=bulY+diff
+				end
+			elseif tileLocY == player.tileY then
+				diff = 1
+				if tileLocX<player.tileX then
+					diff = -1
+				end
+				bulX = player.tileX+diff
+				while (bulX~=tileLocX) do
+					for i = 1, animalCounter-1 do
+						if animals[i].tileX == bulX and animals[i].tileY == tileLocY and not animals[i].dead then
+							animals[i]:kill()
+							inventory[tool] = inventory[tool]-1
+							if inventory[tool] == 0 then
+								tool = 0
+							end
+							break
+						end
+					end
+					bulX = bulX+diff
 				end
 			end
 		end
+	elseif tool==6 then
 	elseif tool~=0 and room[tileLocY]~=nil and room[tileLocY][tileLocX]~=nil and adjacent(tileLocX, tileLocY) then
 		if room[tileLocY][tileLocX]:useTool(tool) then
 			clickActivated = true
