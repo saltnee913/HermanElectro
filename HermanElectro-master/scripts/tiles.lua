@@ -5,7 +5,7 @@ require('scripts.animals')
 local P = {}
 tiles = P
 
-P.tile = Object:new{isVisible = true, rotation = 0, powered = false, blocksMovement = false, poweredNeighbors = {0,0,0,0}, blocksVision = false, dirSend = {1,1,1,1}, dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile", sprite = love.graphics.newImage('Graphics/cavesfloor.png'), poweredSprite = love.graphics.newImage('Graphics/cavesfloor.png')}
+P.tile = Object:new{blocksProjectiles = false, isVisible = true, rotation = 0, powered = false, blocksMovement = false, poweredNeighbors = {0,0,0,0}, blocksVision = false, dirSend = {1,1,1,1}, dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile", sprite = love.graphics.newImage('Graphics/cavesfloor.png'), poweredSprite = love.graphics.newImage('Graphics/cavesfloor.png')}
 function P.tile:onEnter(player) 
 	--self.name = "fuckyou"
 end
@@ -151,7 +151,7 @@ function P.button:onEnter(player)
 	end
 end
 function P.button:useTool(tool)
-	if tool == 6 then
+	if tool == 6 and not self.bricked then
 		self.bricked = true
 		self.down = true
 		self.dirAccept = {1,1,1,1}
@@ -253,7 +253,7 @@ function P.poweredFloor:useTool(tool)
 	return false
 end
 
-P.wall = P.tile:new{blocksMovement = true, sawed = false, canBePowered = false, name = "wall", blocksVision = true, destroyedSprite = love.graphics.newImage('Graphics/woodwallbroken.png'), sprite = love.graphics.newImage('Graphics/woodwall.png'), poweredSprite = love.graphics.newImage('Graphics/woodwall.png') }
+P.wall = P.tile:new{blocksProjectiles = true, blocksMovement = true, sawed = false, canBePowered = false, name = "wall", blocksVision = true, destroyedSprite = love.graphics.newImage('Graphics/woodwallbroken.png'), sprite = love.graphics.newImage('Graphics/woodwall.png'), poweredSprite = love.graphics.newImage('Graphics/woodwall.png') }
 function P.wall:onEnter(player)	
 	if not self.sawed then
 		player.x = player.prevx
@@ -293,7 +293,7 @@ function P.metalWall:useTool(tool)
 	end
 	return false
 end
-P.glassWall = P.wall:new{canBePowered = false, dirAccept = {0,0,0,0}, dirSend = {0,0,0,0}, sawed = false, name = "glasswall", blocksVision = false, destroyedSprite = love.graphics.newImage('Graphics/glassbroken.png'), sprite = love.graphics.newImage('Graphics/glass.png'), poweredSprite = love.graphics.newImage('Graphics/metalwallpowered.png') }
+P.glassWall = P.wall:new{blocksProjectiles = true, canBePowered = false, dirAccept = {0,0,0,0}, dirSend = {0,0,0,0}, sawed = false, name = "glasswall", blocksVision = false, destroyedSprite = love.graphics.newImage('Graphics/glassbroken.png'), sprite = love.graphics.newImage('Graphics/glass.png'), poweredSprite = love.graphics.newImage('Graphics/metalwallpowered.png') }
 function P.glassWall:useTool(tool)
 	if tool==6 and not self.sawed then
 		self.sprite = self.destroyedSprite
