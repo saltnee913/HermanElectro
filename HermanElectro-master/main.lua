@@ -537,16 +537,72 @@ function love.draw()
 						end
 					elseif tool==6 then
 						if room[j][i]~=nil and ((room[j][i].name == "glasswall" and not room[j][i].sawed) or (room[j][i].name == "button" and not room[j][i].bricked)) and
-						(j == player.tileY and (math.abs(i-player.tileX)<=3) or (i == player.tileX and math.abs(j-player.tileY)<=3))then
-							love.graphics.draw(green, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
-						end
-					else
-						if (j == player.tileY and math.abs(i-player.tileX)<=3) or (i == player.tileX and math.abs(j-player.tileY)<=3) then
-							for k = 1, animalCounter-1 do
-								if animals[k].tileY == j and animals[k].tileX == i and not animals[k].dead then
-									love.graphics.draw(green, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
-									break
+						(j == player.tileY and (math.abs(i-player.tileX)<=3) or (i == player.tileX and math.abs(j-player.tileY)<=3)) then
+							canThrow = true
+							diffx = 0
+							diffy = 0
+							if j == player.tileY then
+								if i>player.tileX then diffx = 1
+								else diffx = -1 end
+							else
+								if j>player.tileY then diffy = 1
+								else diffy = -1 end
+							end
+
+							for k = 0, 3 do
+								xTest = player.tileX+diffx*k
+								yTest = player.tileY+diffy*k
+								if room[yTest][xTest]~=nil then
+									if yTest == j and xTest == i then break
+									elseif room[yTest][xTest].blocksProjectiles then
+										canThrow = false
+									end
 								end
+							end
+							if canThrow then
+								love.graphics.draw(green, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
+							end
+						end
+					elseif tool==7 then
+						if room[j]~=nil and room[j][i]~=nil and
+						(j == player.tileY and (math.abs(i-player.tileX)<=3) or (i == player.tileX and math.abs(j-player.tileY)<=3)) then
+							canShoot = false
+							for h = 1, animalCounter-1 do
+								if animals[h].tileX == i and animals[h].tileY == j and not animals[h].dead then
+									canShoot = true
+								end
+							end
+							diffx = 0
+							diffy = 0
+							if j == player.tileY then
+								if i>player.tileX then diffx = 1
+								else diffx = -1 end
+							else
+								if j>player.tileY then diffy = 1
+								else diffy = -1 end
+							end
+
+							for k = 1, 3 do
+								xTest = player.tileX+diffx*k
+								yTest = player.tileY+diffy*k
+								if room[yTest][xTest]~=nil then
+									if yTest == j and xTest == i then break
+									elseif room[yTest][xTest].blocksProjectiles then
+										canShoot = false
+									else
+										for l = 1, animalCounter-1 do
+											if animals[l].tileY == yTest and animals[l].tileX ==xTest and not animals[l].dead then
+												canShoot = false
+											end
+										end
+									end
+								end
+							end
+							if j == player.tileY and i == player.tileX then
+								canShoot = true
+							end
+							if canShoot then
+								love.graphics.draw(green, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
 							end
 						end
 					end
@@ -1429,48 +1485,81 @@ function love.mousepressed(x, y, button, istouch)
 	tileLocX = math.ceil((mouseX-wallSprite.width)/(scale*floor.sprite:getWidth()))
 	tileLocY = math.ceil((mouseY-wallSprite.height)/(scale*floor.sprite:getHeight()))
 	if tool==7 then
-		if (tileLocX == player.tileX and math.abs(tileLocY-player.tileY)<=3) or (tileLocY == player.tileY and math.abs(tileLocX-player.tileX)<=3) then
-			if tileLocX==player.tileX then
-				diff = 1
-				if tileLocY<player.tileY then
-					diff = -1
-				end
-				bulY = player.tileY+diff
-				while (bulY~=tileLocY) do
-					for i = 1, animalCounter-1 do
-						if animals[i].tileX == tileLocX and animals[i].tileY == bulY and not animals[i].dead then
-							animals[i]:kill()
-							inventory[tool] = inventory[tool]-1
-							if inventory[tool] == 0 then
-								tool = 0
+		if room[tileLocY]~=nil and room[tileLocY][tileLocX]~=nil and
+		(tileLocY == player.tileY and (math.abs(tileLocX-player.tileX)<=3) or (tileLocX == player.tileX and math.abs(tileLocY-player.tileY)<=3)) then
+			canShoot = true
+			diffx = 0
+			diffy = 0
+			if tileLocY == player.tileY then
+				if tileLocX>player.tileX then diffx = 1
+				else diffx = -1 end
+			else
+				if tileLocY>player.tileY then diffy = 1
+				else diffy = -1 end
+			end
+
+			for k = 0, 3 do
+				xTest = player.tileX+diffx*k
+				yTest = player.tileY+diffy*k
+				if room[yTest][xTest]~=nil then
+					if yTest == tileLocY and xTest == tileLocX then break
+					elseif room[yTest][xTest].blocksProjectiles then
+						canShoot = false
+					elseif k~=0 then
+						for i = 1, animalCounter-1 do
+							if animals[i].tileY == yTest and animals[i].tileX ==xTest and not animals[i].dead then
+								canShoot = false
 							end
-							break
 						end
 					end
-					bulY=bulY+diff
 				end
-			elseif tileLocY == player.tileY then
-				diff = 1
-				if tileLocX<player.tileX then
-					diff = -1
-				end
-				bulX = player.tileX+diff
-				while (bulX~=tileLocX) do
-					for i = 1, animalCounter-1 do
-						if animals[i].tileX == bulX and animals[i].tileY == tileLocY and not animals[i].dead then
-							animals[i]:kill()
-							inventory[tool] = inventory[tool]-1
-							if inventory[tool] == 0 then
-								tool = 0
-							end
-							break
+			end
+			if tileLocY == player.tileY and tileLocX == player.tileX then
+				canShoot = true
+			end
+			if canShoot then
+				killedAnimal = false
+				for i = 1, animalCounter-1 do
+					if animals[i].tileX == tileLocX and animals[i].tileY == tileLocY and not animals[i].dead then
+						animals[i]:kill()
+						inventory[tool] = inventory[tool]-1
+						if inventory[tool] == 0 then
+							tool = 0
 						end
+						killedAnimal = true
 					end
-					bulX = bulX+diff
+					if killedAnimal then break end
 				end
 			end
 		end
 	elseif tool==6 then
+		if room[tileLocY]~=nil and room[tileLocY][tileLocX]~=nil and ((room[tileLocY][tileLocX].name == "glasswall" and not room[tileLocY][tileLocX].sawed) or (room[tileLocY][tileLocX].name == "button" and not room[tileLocY][tileLocX].bricked)) and
+		(tileLocY == player.tileY and (math.abs(tileLocX-player.tileX)<=3) or (tileLocX == player.tileX and math.abs(tileLocY-player.tileY)<=3)) then
+			canThrow = true
+			diffx = 0
+			diffy = 0
+			if tileLocY == player.tileY then
+				if tileLocX>player.tileX then diffx = 1
+				else diffx = -1 end
+			else
+				if tileLocY>player.tileY then diffy = 1
+				else diffy = -1 end
+			end
+
+			for k = 0, 3 do
+				xTest = player.tileX+diffx*k
+				yTest = player.tileY+diffy*k
+				if room[yTest][xTest]~=nil then
+					if yTest == tileLocY and xTest == tileLocX then break
+					elseif room[yTest][xTest].blocksProjectiles then
+						canThrow = false
+					end
+				end
+			end
+			if canThrow then
+				room[tileLocY][tileLocX]:useTool(tool)
+			end
+		end
 	elseif tool~=0 and room[tileLocY]~=nil and room[tileLocY][tileLocX]~=nil and adjacent(tileLocX, tileLocY) then
 		if room[tileLocY][tileLocX]:useTool(tool) then
 			clickActivated = true
