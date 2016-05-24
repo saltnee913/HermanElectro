@@ -7,11 +7,11 @@
     //tut_2: doors and vision
     [[0,0,0,0,0,0,0]],
     //tut_3: electricity and trapdoors
-    [[0,0,0,0,0,0,0]],
+    [[1,0,0,0,0,0,0]],
     //tut_4: buttons
     [[0,0,0,0,0,0,0]],
     //tut_6: NOT, AND, and efloors
-    [[0,0,0,0,0,0,0]],
+    [[0,1,0,0,0,0,0]],
     //tut_7: wire trickery and iron doors
     [[0,0,0,0,0,0,0]],
     //tut_8: saw
