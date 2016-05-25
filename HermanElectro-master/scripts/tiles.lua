@@ -539,7 +539,15 @@ P.concreteWall.useTool = P.tile.useTool
 
 P.tunnel = P.tile:new{name = "tunnel"}
 
-P.pit = P.tile:new{name = "pit", sprite = love.graphics.newImage('Graphics/pit.png')}
+P.pit = P.tile:new{name = "pit", ladder = false, sprite = love.graphics.newImage('Graphics/pit.png'), destroyedSprite = love.graphics.newImage('Graphics/ladderedPit.png')}
+function P.pit:useTool(tool)
+	if tool == 2 then
+		self.sprite = self.destroyedSprite
+		self.ladder = true
+		return true
+	end
+	return false
+end
 
 
 tiles[1] = P.invisibleTile

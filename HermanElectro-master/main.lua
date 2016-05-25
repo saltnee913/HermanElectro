@@ -518,7 +518,7 @@ function love.draw()
 									love.graphics.draw(green, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
 								end
 							elseif tool==2 then
-								if room[j][i].name == "poweredFloor" and not room[j][i].ladder then
+								if (room[j][i].name == "poweredFloor" and not room[j][i].ladder) or (room[j][i].name == "pit" and not room[j][i].ladder) then
 									love.graphics.draw(green, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
 								end
 							elseif tool==3 then
@@ -1357,7 +1357,7 @@ function checkDeath()
 			kill()
 		elseif t.name == "poweredFloor" and not t.powered and not t.ladder then
 			kill()
-		elseif t.name == "pit" then
+		elseif t.name == "pit" and not t.ladder then
 			kill()
 		end
 	end
