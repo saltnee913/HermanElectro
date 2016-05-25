@@ -296,6 +296,9 @@ encode2 = function (value, indent, level, buffer, buflen, tables, globalorder, s
     end
     local msg
     if isa then -- JSON array
+      if indent then
+        buflen = addnewline2 (level, buffer, buflen)
+      end
       buflen = buflen + 1
       buffer[buflen] = "["
       for i = 1, n do
@@ -310,6 +313,9 @@ encode2 = function (value, indent, level, buffer, buflen, tables, globalorder, s
       buffer[buflen] = "]"
     else -- JSON object
       local prev = false
+      if indent then
+        buflen = addnewline2 (level - 1, buffer, buflen)
+      end
       buflen = buflen + 1
       buffer[buflen] = "{"
       local order = valmeta and valmeta.__jsonorder or globalorder

@@ -4,7 +4,7 @@ roomLength = 24
 screenScale = 70
 
 debug = true
-loadTutorial = false
+loadTutorial = true
 
 require('scripts.tiles')
 require('scripts.map')
@@ -22,27 +22,42 @@ function love.load()
 	editorMode = false
 	roomHack = 0
 	editorAdd = 0
-	local json = require('scripts.dkjson')
-	local itemsNeededPath = 'RoomData/itemsNeeded.json'
-	if loadTutorial then
-		itemsNeededPath = 'RoomData/tut_itemsNeeded.json'
-		io.input('RoomData/tut_itemsGiven.json')
-		local str = io.read('*all')
-		local obj, pos, err = json.decode(str, 1, nil)
-		if err then
-			print('Error:', err)
-		else
-			itemsGiven = obj.itemsGiven
-		end
-	end
-	io.input(itemsNeededPath)
+	--[[local json = require('scripts.dkjson')
+	io.input('RoomData/rooms.json')
+	local roomsToFix
+	local itemsNeededToFix
 	local str = io.read('*all')
 	local obj, pos, err = json.decode(str, 1, nil)
 	if err then
 		print('Error:', err)
 	else
-		itemsNeeded = obj.itemsNeeded
+		roomsToFix = obj.rooms
 	end
+	io.input('RoomData/itemsNeeded.json')
+	local itemsNeededToFix
+	local str = io.read('*all')
+	local obj, pos, err = json.decode(str, 1, nil)
+	if err then
+		print('Error:', err)
+	else
+		itemsNeededToFix = obj.itemsNeeded
+	end
+	local outputPrint = {rooms = {}}
+	local outputFixed = outputPrint.rooms
+	local i=1
+	while roomsToFix[i] ~= nil do
+		outputFixed[i] = {id = ''..i, layout = roomsToFix[i]}
+		outputFixed[i].itemsNeeded = {}
+		outputFixed[i].itemsNeeded[1] = {0,0,0,0,0,0,0}
+		if itemsNeededToFix[i] ~= nil then
+			outputFixed[i].itemsNeeded = itemsNeededToFix[i]
+		end
+		i = i+1
+	end
+	local state = {indent = true}
+	print(json.encode(outputPrint, state))
+	game.crash()]]
+
 	local roomsPath = 'RoomData/rooms.json'
 	if loadTutorial then
 		roomsPath = 'RoomData/tut_rooms.json'
@@ -133,6 +148,8 @@ function love.load()
 		prevy = (10-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10,
 		width = 20, height = 20, speed = 250, sprite = love.graphics.newImage('Graphics/herman_sketch.png'), scale = 0.25 * width/1200}
 	if loadTutorial then
+		player.enterX = player.tileX
+		player.enterY = player.tileY
 		player.totalItemsGiven = {0,0,0,0,0,0,0}
 		player.totalItemsNeeded = {0,0,0,0,0,0,0}
 	end
@@ -850,6 +867,10 @@ function enterRoom(dir)
 			end
 		end
 	end
+	if loadTutorial then
+		player.enterX = player.tileX
+		player.enterY = player.tileY
+	end
 
 	rocksQuad = love.graphics.newQuad(mapy*14*screenScale,mapx*8*screenScale, width, height, rocks:getWidth(), rocks:getHeight())
 	if (prevMapX~=mapx or prevMapY~=mapy) or dir == -1 then
@@ -1040,18 +1061,18 @@ function love.keypressed(key, unicode)
     		animalCounter = 1
     	elseif loadTutorial then
     		player.dead = false
-			player.y = (1-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
-			player.tileY = 1
-			player.x = (roomLength/2-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10
-			player.tileX = roomLength/2
+			player.y = (player.enterY-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
+			player.tileY = player.enterY
+			player.x = (player.enterX-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10
+			player.tileX = player.enterX
 			player.prevy = player.y
-			player.prevTileY = player.tileY
+			player.prevTileY = player.enterY
 			player.prevx = player.x
-			player.prevTileX = player.tileX
+			player.prevTileX = player.enterX
 			for i = 1,7 do
 				if (completedRooms[mapy][mapx] == 1) then
-					player.totalItemsGiven[i] = player.totalItemsGiven[i] - itemsGiven[mainMap[mapy][mapx].roomid][1][i]
-					player.totalItemsNeeded[i] = player.totalItemsNeeded[i] - itemsNeeded[mainMap[mapy][mapx].roomid][1][i]
+					player.totalItemsGiven[i] = player.totalItemsGiven[i] - map.getItemsGiven(mainMap[mapy][mapx].roomid)[1][i]
+					player.totalItemsNeeded[i] = player.totalItemsNeeded[i] - map.getItemsNeeded(mainMap[mapy][mapx].roomid)[1][i]
 				end
 				inventory[i] = player.totalItemsGiven[i] - player.totalItemsNeeded[i]
 				if inventory[i] < 0 then inventory[i] = 0 end
@@ -1253,7 +1274,7 @@ function love.keypressed(key, unicode)
     if key=='p' then
     	local roomid = mainMap[mapy][mapx].roomid
     	local toPrint = 'Room ID:'..roomid..', Items Needed:'
-    	local itemsForRoom = itemsNeeded[roomid]
+    	local itemsForRoom = map.getItemsNeeded(roomid)
     	if itemsForRoom~=nil then
     		for i=1,#itemsForRoom do
     			if itemsForRoom[i][1]~=0 then toPrint = toPrint..' '..itemsForRoom[i][1]..' saw' end

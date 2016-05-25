@@ -453,8 +453,8 @@ function P.endTile:onEnter(player)
 	end
 	if loadTutorial then
 		for i = 1, #inventory do
-			player.totalItemsGiven[i] = player.totalItemsGiven[i] + itemsGiven[mainMap[mapy][mapx].roomid][1][i]
-			player.totalItemsNeeded[i] = player.totalItemsNeeded[i] + itemsNeeded[mainMap[mapy][mapx].roomid][1][i]
+			player.totalItemsGiven[i] = player.totalItemsGiven[i] + map.getItemsGiven(mainMap[mapy][mapx].roomid)[1][i]
+			player.totalItemsNeeded[i] = player.totalItemsNeeded[i] + map.getItemsNeeded(mainMap[mapy][mapx].roomid)[1][i]
 			inventory[i] = player.totalItemsGiven[i] - player.totalItemsNeeded[i]
 			if inventory[i] < 0 then inventory[i] = 0 end
 		end
@@ -479,7 +479,7 @@ function P.endTile:onEnter(player)
 						(completedRooms[y+1]~=nil and completedRooms[y+1][x] ~=nil and completedRooms[y+1][x] ==1) or
 						(completedRooms[y][x-1]~=nil and completedRooms[y][x-1]==1) or
 						(completedRooms[y][x+1]~=nil and completedRooms[y][x+1]==1) then
-						listOfItemsNeeded = itemsNeeded[mainMap[y][x].roomid]
+						listOfItemsNeeded = map.getItemsNeeded(mainMap[y][x].roomid)
 						numLists = 0
 						for j = 1, 10 do
 							if listOfItemsNeeded[j]~=nil then
