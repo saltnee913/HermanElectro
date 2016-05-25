@@ -554,7 +554,7 @@ function love.draw()
 								yTest = player.tileY+diffy*k
 								if room[yTest][xTest]~=nil then
 									if yTest == j and xTest == i then break
-									elseif room[yTest][xTest].blocksProjectiles then
+									elseif room[yTest][xTest].blocksProjectiles and not room[yTest][xTest].sawed then
 										canThrow = false
 									end
 								end
@@ -585,7 +585,7 @@ function love.draw()
 								xTest = player.tileX+diffx*k
 								yTest = player.tileY+diffy*k
 								if yTest == j and xTest == i then break
-								elseif room[yTest]~=nil and room[yTest][xTest]~=nil and room[yTest][xTest].blocksProjectiles then
+								elseif room[yTest]~=nil and room[yTest][xTest]~=nil and room[yTest][xTest].blocksProjectiles  and not room[yTest][xTest].sawed then
 									canShoot = false
 								elseif k~=0 then
 									for l = 1, animalCounter-1 do
@@ -1167,9 +1167,10 @@ function love.keypressed(key, unicode)
 					end
 				end
 				if killedAnimal then break end
+				if room[tileLocY][tileLocX].blocksProjectiles and not room[tileLocY][tileLocX].sawed then break end
 			end
 		elseif tool==6 then
-			for mult = 0, 3 do
+			for mult = 1, 3 do
 				tileLocX = player.tileX + tileLocXDelta*mult
 				tileLocY = player.tileY+tileLocYDelta*mult
 				if room[tileLocY]~=nil and room[tileLocY][tileLocX]~=nil then
@@ -1497,7 +1498,7 @@ function love.mousepressed(x, y, button, istouch)
 				xTest = player.tileX+diffx*k
 				yTest = player.tileY+diffy*k
 				if yTest == tileLocY and xTest == tileLocX then break
-				elseif room[yTest]~=nil and room[yTest][xTest]~=nil and room[yTest][xTest].blocksProjectiles then
+				elseif room[yTest]~=nil and room[yTest][xTest]~=nil and room[yTest][xTest].blocksProjectiles and not room[yTest][xTest].sawed then
 					canShoot = false
 				elseif k~=0 then
 					for l = 1, animalCounter-1 do
@@ -1538,7 +1539,7 @@ function love.mousepressed(x, y, button, istouch)
 				yTest = player.tileY+diffy*k
 				if room[yTest][xTest]~=nil then
 					if yTest == tileLocY and xTest == tileLocX then break
-					elseif room[yTest][xTest].blocksProjectiles then
+					elseif room[yTest][xTest].blocksProjectiles and not room[yTest][xTest].sawed then
 						canThrow = false
 					end
 				end
