@@ -1054,6 +1054,7 @@ function love.keypressed(key, unicode)
 					player.totalItemsNeeded[i] = player.totalItemsNeeded[i] - itemsNeeded[mainMap[mapy][mapx].roomid][1][i]
 				end
 				inventory[i] = player.totalItemsGiven[i] - player.totalItemsNeeded[i]
+				if inventory[i] < 0 then inventory[i] = 0 end
 			end
 			completedRooms[mapy][mapx] = 0
 			for i = 0, mainMap.height do
