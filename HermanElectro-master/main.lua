@@ -497,8 +497,8 @@ function love.draw()
 	love.graphics.translate((width2-width)/2, (height2-height)/2)
 	love.graphics.draw(rocks, rocksQuad, 0, 0)
 	--love.graphics.draw(rocks, -mapx * width, -mapy * height, 0, 1, 1)
-	for i = 1, (width-wallSprite.width*2)/(floor.sprite:getWidth()*scale)+1 do
-		for j = 1, (height-wallSprite.height*2)/(floor.sprite:getHeight()*scale)+1 do
+	for i = 1, roomLength do
+		for j = 1, roomHeight do
 			if (room[j] ~= nil and room[j][i] ~= nil and room[j][i].isVisible) or (room[j]~=nil and room[j][i]==nil) then
 				local rot = 0
 				local tempi = i
@@ -569,7 +569,7 @@ function love.draw()
 								yTest = player.tileY+diffy*k
 								if room[yTest][xTest]~=nil then
 									if yTest == j and xTest == i then break
-									elseif room[yTest][xTest].blocksProjectiles then
+									elseif room[yTest][xTest].blocksProjectiles and not room[yTest][xTest].sawed then
 										canThrow = false
 									end
 								end
@@ -579,11 +579,10 @@ function love.draw()
 							end
 						end
 					elseif tool==7 then
-						if room[j]~=nil and room[j][i]~=nil and
-						(j == player.tileY and (math.abs(i-player.tileX)<=3) or (i == player.tileX and math.abs(j-player.tileY)<=3)) then
-							canShoot = false
+						canShoot = false
+						if ((j == player.tileY and math.abs(i-player.tileX)<=3) or (i == player.tileX and math.abs(j-player.tileY)<=3)) then
 							for h = 1, animalCounter-1 do
-								if animals[h].tileX == i and animals[h].tileY == j and not animals[h].dead then
+								if animals[h].tileY == j and animals[h].tileX == i and (not animals[h].dead) then
 									canShoot = true
 								end
 							end
@@ -597,24 +596,19 @@ function love.draw()
 								else diffy = -1 end
 							end
 
-							for k = 1, 3 do
+							for k = 0, 3 do
 								xTest = player.tileX+diffx*k
 								yTest = player.tileY+diffy*k
-								if room[yTest][xTest]~=nil then
-									if yTest == j and xTest == i then break
-									elseif room[yTest][xTest].blocksProjectiles then
-										canShoot = false
-									else
-										for l = 1, animalCounter-1 do
-											if animals[l].tileY == yTest and animals[l].tileX ==xTest and not animals[l].dead then
-												canShoot = false
-											end
+								if yTest == j and xTest == i then break
+								elseif room[yTest]~=nil and room[yTest][xTest]~=nil and room[yTest][xTest].blocksProjectiles  and not room[yTest][xTest].sawed then
+									canShoot = false
+								elseif k~=0 then
+									for l = 1, animalCounter-1 do
+										if animals[l].tileY == yTest and animals[l].tileX ==xTest and not animals[l].dead then
+											canShoot = false
 										end
 									end
 								end
-							end
-							if j == player.tileY and i == player.tileX then
-								canShoot = true
 							end
 							if canShoot then
 								love.graphics.draw(green, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
@@ -625,6 +619,7 @@ function love.draw()
 			end
 		end
 	end
+	
 	if mapy>0 then
 		if mainMap[mapy-1][mapx]==nil or (completedRooms[mapy][mapx]==0 and completedRooms[mapy-1][mapx]==0) then
 			love.graphics.draw(doorwaybg, width/2-150, 0, 0, scale, scale*0.42)
@@ -1172,7 +1167,7 @@ function love.keypressed(key, unicode)
     	local tileLocX = player.tileX + tileLocXDelta
     	local tileLocY = player.tileY + tileLocYDelta
 		if tool==7 then
-			for mult = 0, 3 do
+			for mult = 1, 3 do
 				tileLocX = player.tileX + tileLocXDelta*mult
 				tileLocY = player.tileY+tileLocYDelta*mult
 				local killedAnimal = false
@@ -1187,9 +1182,11 @@ function love.keypressed(key, unicode)
 					end
 				end
 				if killedAnimal then break end
+				if room[tileLocY]~=nil and room[tileLocY][tileLocX]~=nil and
+				room[tileLocY][tileLocX].blocksProjectiles and not room[tileLocY][tileLocX].sawed then break end
 			end
 		elseif tool==6 then
-			for mult = 0, 3 do
+			for mult = 1, 3 do
 				tileLocX = player.tileX + tileLocXDelta*mult
 				tileLocY = player.tileY+tileLocYDelta*mult
 				if room[tileLocY]~=nil and room[tileLocY][tileLocX]~=nil then
@@ -1357,7 +1354,7 @@ function resolveConflicts()
 		conflicts = false
 		for i = 1, animalCounter-1 do
 			for j = 1, i-1 do
-				if (not animals[i]==dead) and (not animals[j]==dead) and animals[i].tileX == animals[j].tileX and animals[i].tileY == animals[j].tileY then
+				if (not animals[i].dead) and (not animals[j].dead) and animals[i].tileX == animals[j].tileX and animals[i].tileY == animals[j].tileY then
 					conflicts = true
 				end
 			end
@@ -1501,8 +1498,7 @@ function love.mousepressed(x, y, button, istouch)
 	tileLocX = math.ceil((mouseX-wallSprite.width)/(scale*floor.sprite:getWidth()))
 	tileLocY = math.ceil((mouseY-wallSprite.height)/(scale*floor.sprite:getHeight()))
 	if tool==7 then
-		if room[tileLocY]~=nil and room[tileLocY][tileLocX]~=nil and
-		(tileLocY == player.tileY and (math.abs(tileLocX-player.tileX)<=3) or (tileLocX == player.tileX and math.abs(tileLocY-player.tileY)<=3)) then
+		if ((tileLocY == player.tileY and math.abs(tileLocX-player.tileX)<=3) or (tileLocX == player.tileX and math.abs(tileLocY-player.tileY)<=3)) then
 			canShoot = true
 			diffx = 0
 			diffy = 0
@@ -1517,24 +1513,18 @@ function love.mousepressed(x, y, button, istouch)
 			for k = 0, 3 do
 				xTest = player.tileX+diffx*k
 				yTest = player.tileY+diffy*k
-				if room[yTest][xTest]~=nil then
-					if yTest == tileLocY and xTest == tileLocX then break
-					elseif room[yTest][xTest].blocksProjectiles then
-						canShoot = false
-					elseif k~=0 then
-						for i = 1, animalCounter-1 do
-							if animals[i].tileY == yTest and animals[i].tileX ==xTest and not animals[i].dead then
-								canShoot = false
-							end
+				if yTest == tileLocY and xTest == tileLocX then break
+				elseif room[yTest]~=nil and room[yTest][xTest]~=nil and room[yTest][xTest].blocksProjectiles and not room[yTest][xTest].sawed then
+					canShoot = false
+				elseif k~=0 then
+					for l = 1, animalCounter-1 do
+						if animals[l].tileY == yTest and animals[l].tileX ==xTest and not animals[l].dead then
+							canShoot = false
 						end
 					end
 				end
 			end
-			if tileLocY == player.tileY and tileLocX == player.tileX then
-				canShoot = true
-			end
 			if canShoot then
-				killedAnimal = false
 				for i = 1, animalCounter-1 do
 					if animals[i].tileX == tileLocX and animals[i].tileY == tileLocY and not animals[i].dead then
 						animals[i]:kill()
@@ -1542,9 +1532,7 @@ function love.mousepressed(x, y, button, istouch)
 						if inventory[tool] == 0 then
 							tool = 0
 						end
-						killedAnimal = true
 					end
-					if killedAnimal then break end
 				end
 			end
 		end
@@ -1567,7 +1555,7 @@ function love.mousepressed(x, y, button, istouch)
 				yTest = player.tileY+diffy*k
 				if room[yTest][xTest]~=nil then
 					if yTest == tileLocY and xTest == tileLocX then break
-					elseif room[yTest][xTest].blocksProjectiles then
+					elseif room[yTest][xTest].blocksProjectiles and not room[yTest][xTest].sawed then
 						canThrow = false
 					end
 				end
