@@ -1167,7 +1167,8 @@ function love.keypressed(key, unicode)
 					end
 				end
 				if killedAnimal then break end
-				if room[tileLocY][tileLocX].blocksProjectiles and not room[tileLocY][tileLocX].sawed then break end
+				if room[tileLocY]~=nil and room[tileLocY][tileLocX]~=nil and
+				room[tileLocY][tileLocX].blocksProjectiles and not room[tileLocY][tileLocX].sawed then break end
 			end
 		elseif tool==6 then
 			for mult = 1, 3 do
