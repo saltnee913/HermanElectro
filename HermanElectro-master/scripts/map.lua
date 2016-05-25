@@ -6,11 +6,10 @@ local P = {}
 map = P
 
 P.rooms = {}
-P.itemsNeeded = {}
 
-local MapInfo = Object:new{height = 0, numRooms = 0}
+local MapInfo = Object:new{floor = 1, height = 0, numRooms = 0}
 function P.createRoom(inRoom)
-	local roomToLoad = P.rooms[inRoom]
+	local roomToLoad = P.rooms[inRoom].layout
 	local loadedRoom = {}
 	for i = 1, #roomToLoad do
 		loadedRoom[i] = {}
@@ -32,6 +31,13 @@ function P.createRoom(inRoom)
 	end
 	if(loadedRoom==nil) then print("ellie fucked up, and jmoney is fucking hype") end
 	return loadedRoom
+end
+
+function P.getItemsNeeded(inRoom)
+	return P.rooms[inRoom].itemsNeeded
+end
+function P.getItemsGiven(inRoom)
+	return P.rooms[inRoom].itemsGiven
 end
 
 function P.loadRooms(roomPath)
