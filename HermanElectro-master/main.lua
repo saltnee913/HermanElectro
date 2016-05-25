@@ -4,7 +4,7 @@ roomLength = 24
 screenScale = 70
 
 debug = true
-loadTutorial = false
+loadTutorial = true
 
 require('scripts.tiles')
 require('scripts.map')
@@ -148,6 +148,8 @@ function love.load()
 		prevy = (10-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10,
 		width = 20, height = 20, speed = 250, sprite = love.graphics.newImage('Graphics/herman_sketch.png'), scale = 0.25 * width/1200}
 	if loadTutorial then
+		player.enterX = player.tileX
+		player.enterY = player.tileY
 		player.totalItemsGiven = {0,0,0,0,0,0,0}
 		player.totalItemsNeeded = {0,0,0,0,0,0,0}
 	end
@@ -865,6 +867,10 @@ function enterRoom(dir)
 			end
 		end
 	end
+	if loadTutorial then
+		player.enterX = player.tileX
+		player.enterY = player.tileY
+	end
 
 	rocksQuad = love.graphics.newQuad(mapy*14*screenScale,mapx*8*screenScale, width, height, rocks:getWidth(), rocks:getHeight())
 	if (prevMapX~=mapx or prevMapY~=mapy) or dir == -1 then
@@ -1055,14 +1061,14 @@ function love.keypressed(key, unicode)
     		animalCounter = 1
     	elseif loadTutorial then
     		player.dead = false
-			player.y = (1-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
-			player.tileY = 1
-			player.x = (roomLength/2-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10
-			player.tileX = roomLength/2
+			player.y = (player.enterY-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
+			player.tileY = player.enterY
+			player.x = (player.enterX-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10
+			player.tileX = player.enterX
 			player.prevy = player.y
-			player.prevTileY = player.tileY
+			player.prevTileY = player.enterY
 			player.prevx = player.x
-			player.prevTileX = player.tileX
+			player.prevTileX = player.enterX
 			for i = 1,7 do
 				if (completedRooms[mapy][mapx] == 1) then
 					player.totalItemsGiven[i] = player.totalItemsGiven[i] - map.getItemsGiven(mainMap[mapy][mapx].roomid)[1][i]
