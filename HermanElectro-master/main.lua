@@ -622,25 +622,17 @@ function love.draw()
 		end
 	end
 	
-	if mapy>0 then
-		if mainMap[mapy-1][mapx]==nil or (completedRooms[mapy][mapx]==0 and completedRooms[mapy-1][mapx]==0) then
-			love.graphics.draw(doorwaybg, width/2-150, 0, 0, scale, scale*0.42)
-		end
+	if mapy<=0 or mainMap[mapy-1][mapx]==nil or (completedRooms[mapy][mapx]==0 and completedRooms[mapy-1][mapx]==0) then
+		love.graphics.draw(doorwaybg, width/2-150, 0, 0, scale, scale*0.42)
 	end
-	if mapx<mapHeight then
-		if mainMap[mapy][mapx+1]==nil or (completedRooms[mapy][mapx]==0 and completedRooms[mapy][mapx+1]==0) then
-			love.graphics.draw(doorwaybg, width-wallSprite.width-9, height/2-150, 0, scale*0.42, scale)
-		end
+	if mapx>=mapHeight or mainMap[mapy][mapx+1]==nil or (completedRooms[mapy][mapx]==0 and completedRooms[mapy][mapx+1]==0) then
+		love.graphics.draw(doorwaybg, width-wallSprite.width-9, height/2-150, 0, scale*0.42, scale)
 	end
-	if mapy<mapHeight then
-		if mainMap[mapy+1][mapx]==nil or (completedRooms[mapy][mapx]==0 and completedRooms[mapy+1][mapx]==0) then
-			love.graphics.draw(doorwaybg, width/2-150, height-scale*0.42*doorwaybg:getHeight()+11, 0, scale, scale*0.36)
-		end
-	end
-	if mapx>0 then
-		if mainMap[mapy][mapx-1]==nil or (completedRooms[mapy][mapx]==0 and completedRooms[mapy][mapx-1]==0) then
-			love.graphics.draw(doorwaybg, 2, height/2-150, 0, scale*0.45, scale)
-		end
+	if mapy>=mapHeight or mainMap[mapy+1][mapx]==nil or (completedRooms[mapy][mapx]==0 and completedRooms[mapy+1][mapx]==0) then
+		love.graphics.draw(doorwaybg, width/2-150, height-scale*0.42*doorwaybg:getHeight()+11, 0, scale, scale*0.36)
+	end		
+	if mapx<=0 or mainMap[mapy][mapx-1]==nil or (completedRooms[mapy][mapx]==0 and completedRooms[mapy][mapx-1]==0) then
+		love.graphics.draw(doorwaybg, 2, height/2-150, 0, scale*0.45, scale)
 	end
 	love.graphics.draw(walls, 0, 0, 0, width/walls:getWidth(), height/walls:getHeight())
 	for i = 1, 100 do
