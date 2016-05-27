@@ -102,8 +102,6 @@ function love.load()
 	end
 	--1=saw
 	toolMode = 1
-	inventory = {0,0,0,0,0,0,0}
-	inventorySpecial = {0,0,0,0,0,0,0}
 	tool = 0
 	animals = {}
 	--width = 16*screenScale
@@ -141,6 +139,8 @@ function love.load()
 		cuttingtorch = love.graphics.newImage('Graphics/cuttingtorch.png')
 		brick = love.graphics.newImage('Graphics/brick.png')
 		gun = love.graphics.newImage('Graphics/gun.png')
+		inventory = {0,0,0,0,0,0,0}
+		inventorySpecial = {0,0,0,0,0,0,0}
 	end
 	number1 = love.math.random()*-200
 	number2 = love.math.random()*-200

@@ -95,6 +95,9 @@ function P.wire:useTool(tool)
 	return false
 end
 
+P.maskedWire = P.wire:new{sprite = love.graphics.newImage('Graphics/maskedWire.png'), poweredSprite = love.graphics.newImage('Graphics/maskedWire.png')}
+
+
 P.crossWire = P.wire:new{dirSend = {0,0,0,0}, dirAccept = {1,1,1,1}, name = "crossWire", sprite = love.graphics.newImage('Graphics/crosswires.png'), poweredSprite = love.graphics.newImage('Graphics/crosswires.png')}
 function P.crossWire:updateTile(dir)
 	self.powered = false
@@ -293,6 +296,9 @@ function P.metalWall:useTool(tool)
 	end
 	return false
 end
+
+P.maskedMetalWall = P.metalWall:new{sprite = love.graphics.newImage('Graphics/maskedMetalWall.png'), poweredSprite = love.graphics.newImage('Graphics/maskedMetalWall.png')}
+
 P.glassWall = P.wall:new{canBePowered = false, dirAccept = {0,0,0,0}, dirSend = {0,0,0,0}, sawed = false, name = "glasswall", blocksVision = false, destroyedSprite = love.graphics.newImage('Graphics/glassbroken.png'), sprite = love.graphics.newImage('Graphics/glass.png'), poweredSprite = love.graphics.newImage('Graphics/metalwallpowered.png') }
 function P.glassWall:useTool(tool)
 	if tool==6 and not self.sawed then
@@ -643,5 +649,7 @@ tiles[31] = P.concreteWall
 tiles[32] = P.pit
 tiles[33] = P.breakablePit
 tiles[34] = P.treasureTile
+tiles[35] = P.maskedWire
+tiles[36] = P.maskedMetalWall
 
 return tiles

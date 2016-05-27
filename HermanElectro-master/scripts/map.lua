@@ -104,6 +104,8 @@ function P.generateMap(height, numRooms, seed)
 	newmap[height/2][height/2] = {roomid = 1, room = P.createRoom(1, P.rooms), isFinal = false, isInitial = true, isCompleted = false}
 	newmap.initialY = height/2
 	newmap.initialX = height/2
+	treasureX = 0
+	treasureY = 0
 	for i = 0, numRooms-1 do
 		available = {}
 		local a = 0
@@ -129,8 +131,17 @@ function P.generateMap(height, numRooms, seed)
 						numNil=numNil+1
 					end
 					if (numNil == 3) then
-						available[a] = {x=j,y=k}
-						a=a+1
+						works = true
+						if i == numRooms - 1 then
+							if (j+1 == treasureY and k == treasureX) or (j-1 == treasureY and k == treasureX)
+							or (j == treasureY and k+1 == treasureX) or (j == treasureY and k-1 == treasureX) then
+								works = false
+							end
+						end
+						if works then
+							available[a] = {x=j,y=k}
+							a=a+1
+						end
 					end
 				end
 			end
@@ -144,6 +155,8 @@ function P.generateMap(height, numRooms, seed)
 		if i == numRooms-2 then
 			arr = P.treasureRooms
 			roomNum = 1
+			treasureX = choice.y
+			treasureY = choice.x
 		elseif i == numRooms-1 then
 			roomNum = 1
 			arr = P.finalRooms
