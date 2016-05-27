@@ -1,10 +1,9 @@
-
 roomHeight = 12
 roomLength = 24
 screenScale = 70
 
 debug = true
-loadTutorial = true
+loadTutorial = false
 
 require('scripts.tiles')
 require('scripts.map')
@@ -59,14 +58,18 @@ function love.load()
 	game.crash()]]
 
 	local roomsPath = 'RoomData/rooms.json'
+	local treasureRoomsPath = 'RoomData/treasurerooms.json'
+	local finalRoomsPath = 'RoomData/finalrooms.json'
 	if loadTutorial then
 		roomsPath = 'RoomData/tut_rooms.json'
 	end
 	map.loadRooms(roomsPath)
+	map.loadTreasureRooms(treasureRoomsPath)
+	map.loadFinalRooms(finalRoomsPath)
 	if loadTutorial then
 		mainMap = map.generateTutorial()
 	else
-		mainMap = map.generateMap(8, 20, os.time())
+		mainMap = map.generateMap(8, 5, os.time())
 	end
 	mapHeight = mainMap.height
 	mapx = mainMap.initialX
@@ -98,7 +101,7 @@ function love.load()
 		end
 	end
 	--1=saw
-	inventory = {0,0,0,0,0,0,0}
+	toolMode = 1
 	tool = 0
 	animals = {}
 	--width = 16*screenScale
@@ -136,6 +139,8 @@ function love.load()
 		cuttingtorch = love.graphics.newImage('Graphics/cuttingtorch.png')
 		brick = love.graphics.newImage('Graphics/brick.png')
 		gun = love.graphics.newImage('Graphics/gun.png')
+		inventory = {0,0,0,0,0,0,0}
+		inventorySpecial = {0,0,0,0,0,0,0}
 	end
 	number1 = love.math.random()*-200
 	number2 = love.math.random()*-200
@@ -535,7 +540,8 @@ function love.draw()
 									love.graphics.draw(green, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
 								end
 							elseif tool==2 then
-								if room[j][i].name == "poweredFloor" and not room[j][i].ladder then
+								if (room[j][i].name == "poweredFloor" and not room[j][i].ladder) or (room[j][i].name == "pit" and not room[j][i].ladder)
+								or (room[j][i].name == "breakablePit" and not room[j][i].ladder and room[j][i].strength ==0) then
 									love.graphics.draw(green, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
 								end
 							elseif tool==3 then
@@ -622,25 +628,17 @@ function love.draw()
 		end
 	end
 	
-	if mapy>0 then
-		if mainMap[mapy-1][mapx]==nil or (completedRooms[mapy][mapx]==0 and completedRooms[mapy-1][mapx]==0) then
-			love.graphics.draw(doorwaybg, width/2-150, 0, 0, scale, scale*0.42)
-		end
+	if mapy<=0 or mainMap[mapy-1][mapx]==nil or (completedRooms[mapy][mapx]==0 and completedRooms[mapy-1][mapx]==0) then
+		love.graphics.draw(doorwaybg, width/2-150, 0, 0, scale, scale*0.42)
 	end
-	if mapx<mapHeight then
-		if mainMap[mapy][mapx+1]==nil or (completedRooms[mapy][mapx]==0 and completedRooms[mapy][mapx+1]==0) then
-			love.graphics.draw(doorwaybg, width-wallSprite.width-9, height/2-150, 0, scale*0.42, scale)
-		end
+	if mapx>=mapHeight or mainMap[mapy][mapx+1]==nil or (completedRooms[mapy][mapx]==0 and completedRooms[mapy][mapx+1]==0) then
+		love.graphics.draw(doorwaybg, width-wallSprite.width-9, height/2-150, 0, scale*0.42, scale)
 	end
-	if mapy<mapHeight then
-		if mainMap[mapy+1][mapx]==nil or (completedRooms[mapy][mapx]==0 and completedRooms[mapy+1][mapx]==0) then
-			love.graphics.draw(doorwaybg, width/2-150, height-scale*0.42*doorwaybg:getHeight()+11, 0, scale, scale*0.36)
-		end
-	end
-	if mapx>0 then
-		if mainMap[mapy][mapx-1]==nil or (completedRooms[mapy][mapx]==0 and completedRooms[mapy][mapx-1]==0) then
-			love.graphics.draw(doorwaybg, 2, height/2-150, 0, scale*0.45, scale)
-		end
+	if mapy>=mapHeight or mainMap[mapy+1][mapx]==nil or (completedRooms[mapy][mapx]==0 and completedRooms[mapy+1][mapx]==0) then
+		love.graphics.draw(doorwaybg, width/2-150, height-scale*0.42*doorwaybg:getHeight()+11, 0, scale, scale*0.36)
+	end		
+	if mapx<=0 or mainMap[mapy][mapx-1]==nil or (completedRooms[mapy][mapx]==0 and completedRooms[mapy][mapx-1]==0) then
+		love.graphics.draw(doorwaybg, 2, height/2-150, 0, scale*0.45, scale)
 	end
 	love.graphics.draw(walls, 0, 0, 0, width/walls:getWidth(), height/walls:getHeight())
 	for i = 1, 100 do
@@ -686,26 +684,49 @@ function love.draw()
 		love.graphics.setColor(0,0,0)
 		love.graphics.rectangle("line", i*width/18, 0, width/18, width/18)
 		love.graphics.setColor(255,255,255)
-		if i==0 then
-			love.graphics.draw(saw, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
-		elseif i==1 then
-			love.graphics.draw(ladder, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
-		elseif i==2 then
-			love.graphics.draw(wirecutters, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
-		elseif i==3 then
-			love.graphics.draw(waterbottle, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
-		elseif i==4 then
-			love.graphics.draw(cuttingtorch, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
-		elseif i == 5 then
-			love.graphics.draw(brick, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
-		elseif i == 6 then
-			love.graphics.draw(gun, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
+		if toolMode == 1 then
+			if i==0 then
+				love.graphics.draw(saw, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
+			elseif i==1 then
+				love.graphics.draw(ladder, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
+			elseif i==2 then
+				love.graphics.draw(wirecutters, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
+			elseif i==3 then
+				love.graphics.draw(waterbottle, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
+			elseif i==4 then
+				love.graphics.draw(cuttingtorch, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
+			elseif i == 5 then
+				love.graphics.draw(brick, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
+			elseif i == 6 then
+				love.graphics.draw(gun, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
+			end
+			if inventory[i+1]==0 then
+				love.graphics.draw(gray, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
+			end
+			love.graphics.setColor(0,0,0)
+			love.graphics.print(inventory[i+1], i*width/18+3, 0)
+		elseif toolMode == 2 then
+			if i==0 then
+				love.graphics.draw(saw, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
+			elseif i==1 then
+				love.graphics.draw(ladder, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
+			elseif i==2 then
+				love.graphics.draw(wirecutters, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
+			elseif i==3 then
+				love.graphics.draw(waterbottle, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
+			elseif i==4 then
+				love.graphics.draw(cuttingtorch, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
+			elseif i == 5 then
+				love.graphics.draw(brick, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
+			elseif i == 6 then
+				love.graphics.draw(gun, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
+			end
+			if inventorySpecial[i+1]==0 then
+				love.graphics.draw(gray, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
+			end
+			love.graphics.setColor(0,0,0)
+			love.graphics.print(inventorySpecial[i+1], i*width/18+3, 0)
 		end
-		if inventory[i+1]==0 then
-			love.graphics.draw(gray, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
-		end
-		love.graphics.setColor(0,0,0)
-		love.graphics.print(inventory[i+1], i*width/18+3, 0)
 	end
 	love.graphics.setColor(255,255,255)
 	if player.dead then
@@ -994,6 +1015,13 @@ end
 function love.keypressed(key, unicode)
 	if key=="e" then
 		editorMode = not editorMode
+	end
+	if key=='t' then
+		if toolMode == 1 then
+			toolMode = 2
+		else
+			toolMode = 1
+		end
 	end
 	if editorMode and key=="p" then
 		print("[")
@@ -1378,7 +1406,7 @@ function checkDeath()
 			kill()
 		elseif t.name == "poweredFloor" and not t.powered and not t.ladder then
 			kill()
-		elseif t.name == "pit" then
+		elseif (t.name == "pit" or (t.name == "breakablePit" and t.strength ==0)) and not t.ladder then
 			kill()
 		end
 	end
