@@ -33,11 +33,15 @@ function P.createRoom(inRoom)
 	return loadedRoom
 end
 
+function P.getFieldForRoom(inRoom, inField)
+	return P.rooms[inRoom][inField]
+end
+
 function P.getItemsNeeded(inRoom)
-	return P.rooms[inRoom].itemsNeeded
+	return P.getFieldForRoom(inRoom, 'itemsNeeded')
 end
 function P.getItemsGiven(inRoom)
-	return P.rooms[inRoom].itemsGiven
+	return P.getFieldForRoom(inRoom, 'itemsGiven')
 end
 
 function P.loadRooms(roomPath)
