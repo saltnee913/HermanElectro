@@ -470,10 +470,6 @@ function P.endTile:onEnter(player)
 			x = math.floor(math.random()*(mapHeight+1))
 			if checkedRooms[y][x] == nil then
 				checkedRooms[y][x] = 1
-				amtChecked = amtChecked + 1
-				if amtChecked == (mapHeight + 1)*(mapHeight + 1) then
-					break
-				end
 				if completedRooms[y]~=nil and completedRooms[y][x]~=nil and completedRooms[y][x] == 0 then
 					if (completedRooms[y-1]~=nil and completedRooms[y-1][x] ~=nil and completedRooms[y-1][x] == 1) or
 						(completedRooms[y+1]~=nil and completedRooms[y+1][x] ~=nil and completedRooms[y+1][x] ==1) or
@@ -491,9 +487,15 @@ function P.endTile:onEnter(player)
 							--print(listChoose)
 							--inventory[i] = inventory[i]+itemsNeeded[mainMap[x][y].roomid][i]
 							inventory[i] = inventory[i]+listOfItemsNeeded[listChoose][i]
-							self.done = true
+							if listOfItemsNeeded[listChoose][i]>0 then
+								self.done = true
+							end
 						end
 					end
+				end
+				amtChecked = amtChecked + 1
+				if amtChecked == (mapHeight + 1)*(mapHeight + 1) then
+					break
 				end
 			end
 		end
@@ -549,6 +551,63 @@ function P.pit:useTool(tool)
 	return false
 end
 
+P.breakablePit = P.pit:new{strength = 2, name = "breakablePit", sprite = love.graphics.newImage('Graphics/pitcovered.png'), halfBrokenSprite = love.graphics.newImage('Graphics/pithalfcovered.png'), brokenSprite = love.graphics.newImage('Graphics/pit.png')}
+function P.breakablePit:onEnter(player)
+	if self.strength>0 then
+		self.strength = self.strength - 1
+	end
+	if self.strength == 1 then
+		self.sprite = self.halfBrokenSprite
+	elseif self.strength == 0 and not self.ladder then
+		self.sprite = self.brokenSprite
+	else
+		self.sprite = self.destroyedSprite
+	end
+end
+P.breakablePit.onEnterAnimal = P.breakablePit.onEnter
+function P.breakablePit:useTool(tool)
+	if tool == 2 and self.strength == 0 then
+		self.sprite = self.destroyedSprite
+		self.ladder = true
+		return true
+	end
+	return false
+end
+
+P.treasureTile = P.tile:new{name = "treasureTile", sprite = love.graphics.newImage('Graphics/treasuretile.png')}
+function P.treasureTile:onEnter()
+	reward =  math.floor(math.random()*1000)
+	if reward<200 then
+		--do nothing
+	elseif reward<500 then
+		--give one tool
+		slot = math.floor(math.random()*7)+1
+		inventory[slot] = inventory[slot]+1
+	elseif reward<800 then
+		--give two tools
+		for i = 1, 2 do
+			slot = math.floor(math.random()*7)+1
+			inventory[slot] = inventory[slot]+1
+		end
+	elseif reward<900 then
+		--give three tools
+		for i = 1, 3 do
+			slot = math.floor(math.random()*7)+1
+			inventory[slot] = inventory[slot]+1
+		end
+	elseif reward<990 then
+		--give one special tool
+		slot = math.floor(math.random()*7)+1
+		inventorySpecial[slot] = inventorySpecial[slot]+1
+	else
+		--give two special tools
+		for i = 1, 2 do
+			slot = math.floor(math.random()*7)+1
+			inventory[slot] = inventory[slot]+1
+		end
+	end
+end
+
 
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
@@ -582,5 +641,7 @@ tiles[29] = P.crossWire
 tiles[30] = P.tunnel
 tiles[31] = P.concreteWall
 tiles[32] = P.pit
+tiles[33] = P.breakablePit
+tiles[34] = P.treasureTile
 
 return tiles
