@@ -36,7 +36,7 @@ function P.createRoom(inRoom, arr)
 end
 
 function P.getFieldForRoom(inRoom, inField)
-	return P.rooms[inRoom][inField]
+	return P.rooms[tonumber(inRoom)][inField]
 end
 
 function P.getItemsNeeded(inRoom)
@@ -158,14 +158,17 @@ function P.generateMap(height, numRooms, seed)
 		arr = P.rooms
 		if i == numRooms-2 then
 			arr = P.treasureRooms
-			roomNum = 1
+			roomNum = math.floor(math.random()*#arr)+1
 			treasureX = choice.y
 			treasureY = choice.x
 		elseif i == numRooms-1 then
-			roomNum = 1
 			arr = P.finalRooms
+			roomNum = math.floor(math.random()*#arr)+1
 		end
-		newmap[choice.x][choice.y] = {roomid = roomNum, room = P.createRoom(roomNum, arr), isFinal = false, isInitial = false}
+		prefix = ""
+		if i == numRooms-2 then prefix = "t"
+		elseif i == numRooms-1 then prefix = "f" end
+		newmap[choice.x][choice.y] = {roomid = prefix..roomNum, room = P.createRoom(roomNum, arr), isFinal = false, isInitial = false}
 	end
 	--printMap(newmap)
 	return newmap

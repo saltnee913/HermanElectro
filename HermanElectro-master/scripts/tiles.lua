@@ -477,24 +477,27 @@ function P.endTile:onEnter(player)
 			if checkedRooms[y][x] == nil then
 				checkedRooms[y][x] = 1
 				if completedRooms[y]~=nil and completedRooms[y][x]~=nil and completedRooms[y][x] == 0 then
-					if (completedRooms[y-1]~=nil and completedRooms[y-1][x] ~=nil and completedRooms[y-1][x] == 1) or
-						(completedRooms[y+1]~=nil and completedRooms[y+1][x] ~=nil and completedRooms[y+1][x] ==1) or
-						(completedRooms[y][x-1]~=nil and completedRooms[y][x-1]==1) or
-						(completedRooms[y][x+1]~=nil and completedRooms[y][x+1]==1) then
-						listOfItemsNeeded = map.getItemsNeeded(mainMap[y][x].roomid)
-						numLists = 0
-						for j = 1, 10 do
-							if listOfItemsNeeded[j]~=nil then
-								numLists = numLists+1
+					if ((completedRooms[y-1]~=nil and completedRooms[y-1][x] ~=nil and completedRooms[y-1][x] == 1) or
+					(completedRooms[y+1]~=nil and completedRooms[y+1][x] ~=nil and completedRooms[y+1][x] ==1) or
+					(completedRooms[y][x-1]~=nil and completedRooms[y][x-1]==1) or
+					(completedRooms[y][x+1]~=nil and completedRooms[y][x+1]==1)) then
+						id = tostring(mainMap[y][x].roomid)
+						if id:sub(1,1)~="t" and id:sub(1,1)~="f" then
+							listOfItemsNeeded = map.getItemsNeeded(mainMap[y][x].roomid)
+							numLists = 0
+							for j = 1, 10 do
+								if listOfItemsNeeded[j]~=nil then
+									numLists = numLists+1
+								end
 							end
-						end
-						listChoose = math.random(numLists)
-						for i=1,7 do
-							--print(listChoose)
-							--inventory[i] = inventory[i]+itemsNeeded[mainMap[x][y].roomid][i]
-							inventory[i] = inventory[i]+listOfItemsNeeded[listChoose][i]
-							if listOfItemsNeeded[listChoose][i]>0 then
-								self.done = true
+							listChoose = math.random(numLists)
+							for i=1,7 do
+								--print(listChoose)
+								--inventory[i] = inventory[i]+itemsNeeded[mainMap[x][y].roomid][i]
+								inventory[i] = inventory[i]+listOfItemsNeeded[listChoose][i]
+								if listOfItemsNeeded[listChoose][i]>0 then
+									self.done = true
+								end
 							end
 						end
 					end
@@ -580,8 +583,9 @@ function P.breakablePit:useTool(tool)
 	return false
 end
 
-P.treasureTile = P.tile:new{name = "treasureTile", sprite = love.graphics.newImage('Graphics/treasuretile.png')}
+P.treasureTile = P.tile:new{name = "treasureTile", sprite = love.graphics.newImage('Graphics/treasuretile.png'), done = false}
 function P.treasureTile:onEnter()
+	if self.done then return end
 	reward =  math.floor(math.random()*1000)
 	if reward<200 then
 		--do nothing
@@ -612,6 +616,9 @@ function P.treasureTile:onEnter()
 			inventory[slot] = inventory[slot]+1
 		end
 	end
+	self.done = true
+	self.isCompleted = true
+	self.isVisible = false
 end
 
 

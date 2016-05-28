@@ -69,7 +69,7 @@ function love.load()
 	if loadTutorial then
 		mainMap = map.generateTutorial()
 	else
-		mainMap = map.generateMap(8, 5, os.time())
+		mainMap = map.generateMap(8, 3, os.time())
 	end
 	mapHeight = mainMap.height
 	mapx = mainMap.initialX
@@ -101,7 +101,7 @@ function love.load()
 		end
 	end
 	--1=saw
-	toolMode = 1
+	--toolMode = 1
 	tool = 0
 	animals = {}
 	--width = 16*screenScale
@@ -140,7 +140,7 @@ function love.load()
 		brick = love.graphics.newImage('Graphics/brick.png')
 		gun = love.graphics.newImage('Graphics/gun.png')
 		inventory = {0,0,0,0,0,0,0}
-		inventorySpecial = {0,0,0,0,0,0,0}
+		inventorySpecial = {0,0,0,0,0}
 	end
 	number1 = love.math.random()*-200
 	number2 = love.math.random()*-200
@@ -684,49 +684,56 @@ function love.draw()
 		love.graphics.setColor(0,0,0)
 		love.graphics.rectangle("line", i*width/18, 0, width/18, width/18)
 		love.graphics.setColor(255,255,255)
-		if toolMode == 1 then
-			if i==0 then
-				love.graphics.draw(saw, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
-			elseif i==1 then
-				love.graphics.draw(ladder, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
-			elseif i==2 then
-				love.graphics.draw(wirecutters, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
-			elseif i==3 then
-				love.graphics.draw(waterbottle, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
-			elseif i==4 then
-				love.graphics.draw(cuttingtorch, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
-			elseif i == 5 then
-				love.graphics.draw(brick, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
-			elseif i == 6 then
-				love.graphics.draw(gun, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
-			end
-			if inventory[i+1]==0 then
-				love.graphics.draw(gray, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
-			end
-			love.graphics.setColor(0,0,0)
-			love.graphics.print(inventory[i+1], i*width/18+3, 0)
-		elseif toolMode == 2 then
-			if i==0 then
-				love.graphics.draw(saw, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
-			elseif i==1 then
-				love.graphics.draw(ladder, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
-			elseif i==2 then
-				love.graphics.draw(wirecutters, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
-			elseif i==3 then
-				love.graphics.draw(waterbottle, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
-			elseif i==4 then
-				love.graphics.draw(cuttingtorch, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
-			elseif i == 5 then
-				love.graphics.draw(brick, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
-			elseif i == 6 then
-				love.graphics.draw(gun, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
-			end
-			if inventorySpecial[i+1]==0 then
-				love.graphics.draw(gray, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
-			end
-			love.graphics.setColor(0,0,0)
-			love.graphics.print(inventorySpecial[i+1], i*width/18+3, 0)
+		if i==0 then
+			love.graphics.draw(saw, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
+		elseif i==1 then
+			love.graphics.draw(ladder, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
+		elseif i==2 then
+			love.graphics.draw(wirecutters, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
+		elseif i==3 then
+			love.graphics.draw(waterbottle, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
+		elseif i==4 then
+			love.graphics.draw(cuttingtorch, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
+		elseif i == 5 then
+			love.graphics.draw(brick, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
+		elseif i == 6 then
+			love.graphics.draw(gun, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
 		end
+		if inventory[i+1]==0 then
+			love.graphics.draw(gray, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
+		end
+		love.graphics.setColor(0,0,0)
+		love.graphics.print(inventory[i+1], i*width/18+3, 0)
+	end
+	for i = 0, 4 do
+		love.graphics.setColor(255,255,255)
+		if tool == i+1 then
+			love.graphics.setColor(50, 200, 50)
+		end
+		love.graphics.rectangle("fill", (i+11)*width/18, 0, width/18, width/18)
+		love.graphics.setColor(0,0,0)
+		love.graphics.rectangle("line", (i+11)*width/18, 0, width/18, width/18)
+		love.graphics.setColor(255,255,255)
+		if i==0 then
+			love.graphics.draw(saw, (i+11)*width/18, 0, 0, (width/18)/32, (width/18)/32)
+		elseif i==1 then
+			love.graphics.draw(ladder, (i+11)*width/18, 0, 0, (width/18)/32, (width/18)/32)
+		elseif i==2 then
+			love.graphics.draw(wirecutters, (i+11)*width/18, 0, 0, (width/18)/32, (width/18)/32)
+		elseif i==3 then
+			love.graphics.draw(waterbottle, (i+11)*width/18, 0, 0, (width/18)/32, (width/18)/32)
+		elseif i==4 then
+			love.graphics.draw(cuttingtorch, (i+11)*width/18, 0, 0, (width/18)/32, (width/18)/32)
+		elseif i == 5 then
+			love.graphics.draw(brick, (i+11)*width/18, 0, 0, (width/18)/32, (width/18)/32)
+		elseif i == 6 then
+			love.graphics.draw(gun, (i+11)*width/18, 0, 0, (width/18)/32, (width/18)/32)
+		end
+		if inventory[i+1]==0 then
+			love.graphics.draw(gray, (i+11)*width/18, 0, 0, (width/18)/32, (width/18)/32)
+		end
+		love.graphics.setColor(0,0,0)
+		love.graphics.print(inventorySpecial[i+1], i*width/18+3, 0)
 	end
 	love.graphics.setColor(255,255,255)
 	if player.dead then
@@ -1016,13 +1023,13 @@ function love.keypressed(key, unicode)
 	if key=="e" then
 		editorMode = not editorMode
 	end
-	if key=='t' then
+	--[[if key=='t' then
 		if toolMode == 1 then
 			toolMode = 2
 		else
 			toolMode = 1
 		end
-	end
+	end]]
 	if editorMode and key=="p" then
 		print("[")
 		for i = 1, roomHeight do
