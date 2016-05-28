@@ -11,6 +11,7 @@ require('scripts.map')
 require('scripts.boundaries')
 --require('scripts.tools')
 require('scripts.animals')
+editor = require('scripts.editor')
 
 loadedOnce = false
 
@@ -746,19 +747,7 @@ function love.draw()
 	end
 	barLength = 200
 	if editorMode then
-		barLength = 660
-		love.graphics.setColor(255,255,255)
-		for i = 1, 45 do
-			if tiles[i]~=nil then
-				toDraw = tiles[i].sprite
-				--love.graphics.rectangle("fill", (i-1)*width/25, height-width/25, width/25, width/25)
-				--sprite width: floor.sprite:getWidth()
-				love.graphics.draw(toDraw, (i-1)*width/45, height-width/45, 0, (width/45)/(floor.sprite:getWidth()), (width/45)/(floor.sprite:getWidth()))
-				if editorAdd == i then
-					love.graphics.draw(green, (i-1)*width/45, height-width/45, 0, (width/45)/(floor.sprite:getWidth()), (width/45)/(floor.sprite:getWidth()))
-				end
-			end
-		end
+		editor.draw()
 	end
 	love.graphics.setColor(0,0,0)
 	love.graphics.rectangle("fill", 5, height-width/30-20, barLength, 15)
@@ -814,7 +803,7 @@ end
 function hackEnterRoom(roomid, y, x)
 	if y == nil then y = mapy end
 	if x == nil then x = mapx end
-	mainMap[y][x] = {roomid = roomid, room = map.createRoom(roomid), 
+	mainMap[y][x] = {roomid = roomid, room = map.createRoom(roomid, map.rooms), 
 		isFinal = mainMap[y][x].isFinal, isInitial = mainMap[y][x].isInitial,
 		isCompleted = mainMap[y][x].isCompleted}
 	if y == mapy and x == mapx then
@@ -1030,51 +1019,40 @@ function love.keypressed(key, unicode)
 			toolMode = 1
 		end
 	end]]
-	if editorMode and key=="p" then
-		print("[")
-		for i = 1, roomHeight do
-			prt = "["
-			for j =1, roomLength do
-				if room[i][j]~=nil then
-					for k = 1, 100 do
-						if tiles[k]~=nil and room[i][j]~=nil and tiles[k].name == room[i][j].name then
-							addk = k
-							if k == 1 then
-								addk=0
-							end
-							prt = prt..addk
-							if(room[i][j].rotation ~= 0) then
-								prt = prt..'.'..room[i][j].rotation
-							end
-							break
+	if editorMode then
+		editor.keypressed(key, unicode)
+	else
+		if key == 'r' then
+			if loadTutorial then
+				player.dead = false
+				player.y = (player.enterY-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
+				player.tileY = player.enterY
+				player.x = (player.enterX-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10
+				player.tileX = player.enterX
+				player.prevy = player.y
+				player.prevTileY = player.enterY
+				player.prevx = player.x
+				player.prevTileX = player.enterX
+				for i = 1,7 do
+					if (completedRooms[mapy][mapx] == 1) then
+						player.totalItemsGiven[i] = player.totalItemsGiven[i] - map.getItemsGiven(mainMap[mapy][mapx].roomid)[1][i]
+						player.totalItemsNeeded[i] = player.totalItemsNeeded[i] - map.getItemsNeeded(mainMap[mapy][mapx].roomid)[1][i]
+					end
+					inventory[i] = player.totalItemsGiven[i] - player.totalItemsNeeded[i]
+					if inventory[i] < 0 then inventory[i] = 0 end
+				end
+				completedRooms[mapy][mapx] = 0
+				for i = 0, mainMap.height do
+					for j = 0, mainMap.height do
+						if completedRooms[i][j] == 0 then
+							hackEnterRoom(mainMap[i][j].roomid, i, j)
 						end
 					end
-				else
-					prt = prt..0
 				end
-				if j ~= roomLength then
-					prt = prt..","
-				end
+			else
+				love.load()
 			end
-			prt = prt.."]"
-			print(prt)
 		end
-		print("]")
-	end
-	if editorMode and roomHack < 1 and key=='h' then
-		roomHack = mainMap[mapy][mapx].roomid
-		log('Room Hack: '..roomHack)
-	elseif roomHack >= 1 and key=='h' then
-		hackEnterRoom(roomHack)
-		roomHack = 0
-		log()
-	end
-	if roomHack >= 1 and key =='right' then
-		roomHack = roomHack + 1
-		log('Room Hack: '..roomHack)
-	elseif roomHack >= 2 and key == 'left' then
-		roomHack = roomHack - 1
-		log('Room Hack: '..roomHack)
 	end
 	beforePressX = player.x
 	beforePressY = player.y
@@ -1083,61 +1061,6 @@ function love.keypressed(key, unicode)
     if player.dead and (key == "w" or key == "a" or key == "s" or key == "d") then
     	return
     end
-
-    if key == "r" then
-    	if editorMode then
-    		--player.dead = false
-    		for i = 1, roomHeight do
-    			for j = 1, roomLength do
-    				room[i][j] = nil
-    			end
-    		end
-    		animals = {}
-    		animalCounter = 1
-    	elseif loadTutorial then
-    		player.dead = false
-			player.y = (player.enterY-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
-			player.tileY = player.enterY
-			player.x = (player.enterX-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10
-			player.tileX = player.enterX
-			player.prevy = player.y
-			player.prevTileY = player.enterY
-			player.prevx = player.x
-			player.prevTileX = player.enterX
-			for i = 1,7 do
-				if (completedRooms[mapy][mapx] == 1) then
-					player.totalItemsGiven[i] = player.totalItemsGiven[i] - map.getItemsGiven(mainMap[mapy][mapx].roomid)[1][i]
-					player.totalItemsNeeded[i] = player.totalItemsNeeded[i] - map.getItemsNeeded(mainMap[mapy][mapx].roomid)[1][i]
-				end
-				inventory[i] = player.totalItemsGiven[i] - player.totalItemsNeeded[i]
-				if inventory[i] < 0 then inventory[i] = 0 end
-			end
-			completedRooms[mapy][mapx] = 0
-			for i = 0, mainMap.height do
-				for j = 0, mainMap.height do
-					if completedRooms[i][j] == 0 then
-						hackEnterRoom(mainMap[i][j].roomid, i, j)
-					end
-				end
-			end
-    	else
-    		love.load()
-    	end
-    elseif key == "z" and editorMode and prevRoom~=nil then
-    	room = prevRoom
-    	animals = prevAnimals
-    	animalCounter = 1
-    	for i = 1, 100 do
-    		if animals[i]~=nil then
-    			animalCounter = animalCounter+1
-    		end
-    	end
-    	--print(room[1][1].name)
-	elseif key == "f" and editorMode then
-		for i = 1, 7 do
-			inventory[i] = inventory[i]+1
-		end
-	end
 
 	if keyTimer.timeLeft > 0 then
 		return
@@ -1504,17 +1427,7 @@ end
 
 function love.mousepressed(x, y, button, istouch)
 	if editorMode then
-		prevRoom = {}
-		for i = 1, roomHeight do
-			prevRoom[i] = {}
-			for j = 1, roomLength do
-				prevRoom[i][j] = room[i][j]
-			end
-		end
-		prevAnimals = {}
-		for i = 1, animalCounter - 1 do
-			prevAnimals[i] = animals[i]
-		end
+		editor.mousepressed(x, y, button, istouch)
 	end
 	mouseDown = mouseDown+1
 	--mouseX = x-width2/2+16*screenScale/2
@@ -1617,44 +1530,6 @@ function love.mousepressed(x, y, button, istouch)
 	if not clickActivated then
 		tool = 0
 	end
-	if button == 'l' or button == 1 then
-		tempAdd = editorAdd
-	elseif button == 'r' or button == 2 then
-		tempAdd = 1
-	end
-	if editorMode then
-		if mouseY>height-width/45 then
-			editorAdd = math.floor(mouseX/(width/45))+1
-		elseif tempAdd>0 and tileLocX>=1 and tileLocX<=24 and tileLocY>=1 and tileLocY<=12 then
-			if(room[tileLocY][tileLocX] ~= nil and room[tileLocY][tileLocX].name == tiles[tempAdd].name) then
-				room[tileLocY][tileLocX]:rotate(1)
-			else
-				room[tileLocY][tileLocX] = tiles[tempAdd]:new()
-			end
-			for i = 1, animalCounter-1 do
-				if animals[i]~=nil and animals[i].tileX == tileLocX and animals[i].tileY == tileLocY then
-					animals[i] = nil
-					for j = i+1, animalCounter do
-						animals[j-1] = animals[j]
-					end
-					animalCounter = animalCounter-1
-				end
-			end
-			if tempAdd == 21 or tempAdd == 22 or tempAdd == 23 then
-				animalToSpawn = room[tileLocY][tileLocX].animal
-				if not animalToSpawn.dead then
-					animals[animalCounter] = animalList[tempAdd-19]:new()
-					animals[animalCounter].y = (tileLocY-1)*floor.sprite:getWidth()*scale+wallSprite.height
-					animals[animalCounter].x = (tileLocX-1)*floor.sprite:getHeight()*scale+wallSprite.width
-					animals[animalCounter].tileX = tileLocX
-					animals[animalCounter].tileY = tileLocY
-					animalCounter = animalCounter+1
-				end
-			end
-			updateLight()
-			updatePower()
-		end
-	end
 	updateLight()
 	updatePower()
 end
@@ -1670,11 +1545,7 @@ function love.mousemoved(x, y, dx, dy)
 	mouseY = y-(height2-height)/2
 	tileLocX = math.ceil((mouseX-wallSprite.width)/(scale*floor.sprite:getWidth()))
 	tileLocY = math.ceil((mouseY-wallSprite.height)/(scale*floor.sprite:getHeight()))
-	if editorMode and mouseDown>0 then
-		if tempAdd>0 and tileLocX>=1 and tileLocX<=24 and tileLocY>=1 and tileLocY<=12 then
-			room[tileLocY][tileLocX] = tiles[tempAdd]:new()
-			updateLight()
-			updatePower()
-		end
+	if editorMode then
+		editor.mousemoved(x, y, dx, dy)
 	end
 end
