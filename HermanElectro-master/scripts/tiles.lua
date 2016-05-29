@@ -572,12 +572,12 @@ function P.treasureTile:onEnter()
 		end
 	elseif reward<990 then
 		--give one special tool
-		slot = math.floor(math.random()*7)+1
+		slot = math.floor(math.random()*5)+1
 		inventorySpecial[slot] = inventorySpecial[slot]+1
 	else
 		--give two special tools
 		for i = 1, 2 do
-			slot = math.floor(math.random()*7)+1
+			slot = math.floor(math.random()*5)+1
 			tools[slot].numHeld = tools[slot].numHeld+1
 		end
 	end

@@ -1,6 +1,8 @@
 local P = {}
 editor = P
 
+P.stealInput = false
+
 function P.draw()
 	barLength = 660
 	love.graphics.setColor(255,255,255)
@@ -49,19 +51,9 @@ function P.keypressed(key, unicode)
 		end
 		print("]")
 	end
-	if roomHack < 1 and key=='h' then
-		roomHack = mainMap[mapy][mapx].roomid
-		log('Room Hack: '..roomHack)
-	elseif roomHack >= 1 and key=='h' then
-		hackEnterRoom(roomHack)
-		roomHack = 0
-		log()
-	end
-	if roomHack >= 1 and key =='right' then
-		roomHack = roomHack + 1
-		log('Room Hack: '..roomHack)
-	elseif roomHack >= 2 and key == 'left' then
-		roomHack = roomHack - 1
+	if key=='tab' then
+		roomHack = mainMap[mapy][mapx].roomid .. ''
+		P.stealInput = true
 		log('Room Hack: '..roomHack)
 	end
 	if key == 'r' then
@@ -87,6 +79,29 @@ function P.keypressed(key, unicode)
 		for i = 1, 7 do
 			tools[i].numHeld = tools[i].numHeld+1
 		end
+	end
+end
+
+function P.inputSteal(key, unicode)
+	if key=='backspace' then
+		roomHack = roomHack:sub(1, -2)
+		log('Room Hack: '..roomHack)
+	end
+	if key=='return' then
+		P.stealInput = false
+		if hackEnterRoom(roomHack) then
+			log('Teleported to room: '..roomHack)
+		else
+			log('Could not find room: '..roomHack)
+		end
+		roomHack = nil
+	end
+end
+
+function P.textinput(text)
+	if roomHack~=nil then
+		roomHack = roomHack .. text
+		log('Room Hack: '..roomHack)
 	end
 end
 

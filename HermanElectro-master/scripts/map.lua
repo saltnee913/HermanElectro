@@ -11,6 +11,17 @@ P.finalRooms = {}
 
 local MapInfo = Object:new{floor = 1, height = 0, numRooms = 0}
 function P.createRoom(inRoom, arr)
+	if arr == nil then
+		if P.rooms[inRoom] ~= nil then
+			arr = P.rooms
+		elseif P.treasureRooms[inRoom] ~= nil then
+			arr = P.treasureRooms
+		elseif P.finalRooms[inRoom] ~= nil then
+			arr = P.finalRooms
+		else
+			return nil
+		end
+	end
 	local roomToLoad = arr[inRoom].layout
 	local loadedRoom = {}
 	for i = 1, #roomToLoad do
@@ -36,7 +47,15 @@ function P.createRoom(inRoom, arr)
 end
 
 function P.getFieldForRoom(inRoom, inField)
-	return P.rooms[tonumber(inRoom)][inField]
+	if P.rooms[inRoom] ~= nil then
+		return P.rooms[inRoom][inField]
+	elseif P.treasureRooms[inRoom] ~= nil then
+		return P.treasureRooms[inRoom][inField]
+	elseif P.finalRooms[inRoom] ~= nil then
+		return P.finalRooms[inRoom][inField]
+	end
+	log('invalid room id')
+	return nil
 end
 
 function P.getItemsNeeded(inRoom)
@@ -90,9 +109,6 @@ local function printMap(inMap)
 				p = p .. '-  '
 			else
 				p = p .. inMap[i][j].roomid .. ' '
-				if(inMap[i][j].roomid < 10) then
-					p = p .. ' '
-				end
 			end
 		end
 		print(p)
@@ -105,11 +121,12 @@ function P.generateMap(height, numRooms, seed)
 	for i = 0, height+1 do
 		newmap[i] = {}
 	end
-	newmap[height/2][height/2] = {roomid = 1, room = P.createRoom(1, P.rooms), isFinal = false, isInitial = true, isCompleted = false}
+	newmap[height/2][height/2] = {roomid = 1, room = P.createRoom('1', P.rooms), isFinal = false, isInitial = true, isCompleted = false}
 	newmap.initialY = height/2
 	newmap.initialX = height/2
 	treasureX = 0
 	treasureY = 0
+	local randomRoomArray = util.createRandomKeyArray(P.rooms)
 	for i = 0, numRooms-1 do
 		available = {}
 		local a = 0
@@ -154,21 +171,18 @@ function P.generateMap(height, numRooms, seed)
 		--numRooms=0
 		local choice = available[math.floor(math.random()*a)]
 		--local roomNum = math.floor(math.random()*#(P.rooms)) -- what we will actually do, with some editing
-		local roomNum = i+2 -- for testing purposes
 		arr = P.rooms
+		local roomid = randomRoomArray[i+2]
 		if i == numRooms-2 then
 			arr = P.treasureRooms
-			roomNum = math.floor(math.random()*#arr)+1
+			roomid = util.chooseRandomKey(arr)
 			treasureX = choice.y
 			treasureY = choice.x
 		elseif i == numRooms-1 then
 			arr = P.finalRooms
-			roomNum = math.floor(math.random()*#arr)+1
+			roomid = util.chooseRandomKey(arr)
 		end
-		prefix = ""
-		if i == numRooms-2 then prefix = "t"
-		elseif i == numRooms-1 then prefix = "f" end
-		newmap[choice.x][choice.y] = {roomid = prefix..roomNum, room = P.createRoom(roomNum, arr), isFinal = false, isInitial = false}
+		newmap[choice.x][choice.y] = {roomid = roomid, room = P.createRoom(roomid, arr), isFinal = false, isInitial = false}
 	end
 	--printMap(newmap)
 	return newmap
@@ -210,7 +224,7 @@ function P.generateMapFromJSON(mapFile)
 			if newmap[i] ~= nil and newmap[i][j] ~= nil and newmap[i][j] ~= 0 then
 				newmap.numRooms = newmap.numRooms + 1
 				newmap[i][j] = {roomid = newmap[i][j], room = P.createRoom(newmap[i][j], P.rooms), isFinal = false, isInitial = false, isCompleted = false}
-				if newmap[i][j].roomid == 1 then
+				if P.getFieldForRoom(newmap[i][j].roomid, "isInitial") == true then
 					newmap[i][j].isInitial = true
 					newmap.initialX = j
 					newmap.initialY = i

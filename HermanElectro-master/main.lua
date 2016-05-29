@@ -19,15 +19,15 @@ loadedOnce = false
 
 
 function love.load()
+	typingCallback = nil
 	debugText = nil
 	tempAdd = 1
 	editorMode = false
-	roomHack = 0
 	editorAdd = 0
+
 	--[[local json = require('scripts.dkjson')
-	io.input('RoomData/rooms.json')
+	io.input('RoomData/finalrooms.json')
 	local roomsToFix
-	local itemsNeededToFix
 	local str = io.read('*all')
 	local obj, pos, err = json.decode(str, 1, nil)
 	if err then
@@ -35,28 +35,16 @@ function love.load()
 	else
 		roomsToFix = obj.rooms
 	end
-	io.input('RoomData/itemsNeeded.json')
-	local itemsNeededToFix
-	local str = io.read('*all')
-	local obj, pos, err = json.decode(str, 1, nil)
-	if err then
-		print('Error:', err)
-	else
-		itemsNeededToFix = obj.itemsNeeded
-	end
 	local outputPrint = {rooms = {}}
 	local outputFixed = outputPrint.rooms
+	local keyOrder = {}
 	local i=1
 	while roomsToFix[i] ~= nil do
-		outputFixed[i] = {id = ''..i, layout = roomsToFix[i]}
-		outputFixed[i].itemsNeeded = {}
-		outputFixed[i].itemsNeeded[1] = {0,0,0,0,0,0,0}
-		if itemsNeededToFix[i] ~= nil then
-			outputFixed[i].itemsNeeded = itemsNeededToFix[i]
-		end
+		keyOrder[#keyOrder + 1] = roomsToFix[i].id
+		outputFixed[roomsToFix[i].id] = {layout = roomsToFix[i].layout, itemsNeeded = roomsToFix[i].itemsNeeded}
 		i = i+1
 	end
-	local state = {indent = true}
+	local state = {indent = true, keyorder = keyOrder}
 	print(json.encode(outputPrint, state))
 	game.crash()]]
 
@@ -699,7 +687,11 @@ end
 function hackEnterRoom(roomid, y, x)
 	if y == nil then y = mapy end
 	if x == nil then x = mapx end
-	mainMap[y][x] = {roomid = roomid, room = map.createRoom(roomid, map.rooms), 
+	local loadedRoom = map.createRoom(roomid)
+	if loadedRoom == nil then
+		return false
+	end
+	mainMap[y][x] = {roomid = roomid, room = loadedRoom, 
 		isFinal = mainMap[y][x].isFinal, isInitial = mainMap[y][x].isInitial,
 		isCompleted = mainMap[y][x].isCompleted}
 	if y == mapy and x == mapx then
@@ -723,7 +715,7 @@ function hackEnterRoom(roomid, y, x)
 		end
 	end
 	updateGameState()
-	
+	return true
 end
 
 function enterRoom(dir)
@@ -904,7 +896,15 @@ function love.update(dt)
 	keyTimer.timeLeft = keyTimer.timeLeft - dt
 end
 
+function love.textinput(text)
+	editor.textinput(text)
+end
+
 function love.keypressed(key, unicode)
+	if editor.stealInput then
+		editor.inputSteal(key, unicode)
+		return
+	end
 	if key=="e" then
 		editorMode = not editorMode
 	end
