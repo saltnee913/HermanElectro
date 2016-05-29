@@ -85,7 +85,7 @@ function P.keypressed(key, unicode)
     	--print(room[1][1].name)
 	elseif key == "f" then
 		for i = 1, 7 do
-			inventory[i] = inventory[i]+1
+			tools[i].numHeld = tools[i].numHeld+1
 		end
 	end
 end
@@ -139,16 +139,16 @@ function P.mousepressed(x, y, button, istouch)
 				animalCounter = animalCounter+1
 			end
 		end
-		updateLight()
-		updatePower()
+		
+		updateGameState()
 	end
 end
 
 function P.mousemoved(x, y, dx, dy)
 	if mouseDown > 0 and tempAdd>0 and tileLocX>=1 and tileLocX<=24 and tileLocY>=1 and tileLocY<=12 then
 		room[tileLocY][tileLocX] = tiles[tempAdd]:new()
-		updateLight()
-		updatePower()
+		
+		updateGameState()
 	end
 end
 

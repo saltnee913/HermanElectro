@@ -5,12 +5,14 @@ screenScale = 70
 debug = true
 loadTutorial = false
 
-require('scripts.tiles')
-require('scripts.map')
+util = require('scripts.util')
+tiles = require('scripts.tiles')
+map = require('scripts.map')
 
-require('scripts.boundaries')
+boundaries = require('scripts.boundaries')
 --require('scripts.tools')
-require('scripts.animals')
+animalList = require('scripts.animals')
+tools = require('scripts.tools')
 editor = require('scripts.editor')
 
 loadedOnce = false
@@ -132,15 +134,7 @@ function love.load()
 		gray = love.graphics.newImage('Graphics/gray.png')
 		floortile = love.graphics.newImage('Graphics/cavesfloor.png')
 		doorwaybg = love.graphics.newImage('Graphics/doorwaybackground.png')
-		saw = love.graphics.newImage('Graphics/saw.png')
-		ladder = love.graphics.newImage('Graphics/ladder.png')
-		wirecutters = love.graphics.newImage('Graphics/wirecutters.png')
-		waterbottle = love.graphics.newImage('Graphics/waterbottle.png')
 		deathscreen = love.graphics.newImage('Graphics/deathscreen.png')
-		cuttingtorch = love.graphics.newImage('Graphics/cuttingtorch.png')
-		brick = love.graphics.newImage('Graphics/brick.png')
-		gun = love.graphics.newImage('Graphics/gun.png')
-		inventory = {0,0,0,0,0,0,0}
 		inventorySpecial = {0,0,0,0,0}
 	end
 	number1 = love.math.random()*-200
@@ -234,7 +228,7 @@ function updatePower()
 	for i=1, roomHeight do
 		for j=1, roomLength do
 			--power starts at power sources: powerSupply and notGate
-			if room[i]~=nil and room[i][j]~=nil and room[i][j].name == "powerSupply" and not room[i][j].wet then
+			if room[i]~=nil and room[i][j]~=nil and room[i][j].name == "powerSupply" and not room[i][j].destroyed then
 				room[i][j].powered = true
 			end
 			if room[i]~=nil and room[i][j]~=nil and room[i][j].name == "notGate" then
@@ -275,7 +269,7 @@ function updatePower()
 		for i = 1, roomHeight do
 			for j = 1, roomLength do
 				if room[i]~=nil and room[i][j]~=nil and room[i][j].name == "notGate" then
-					local offset = room[i][j]:getOffsetsByDir(3)
+					local offset = room[i][j]:getCorrectedOffset(3)
 					if room[i+offset.y]~=nil and room[i+offset.y][j+offset.x]~=nil and room[i+offset.y][j+offset.x].powered==false then
 						room[i][j].poweredNeighbors[room[i][j]:cfr(3)]=0
 						room[i][j]:updateTile(0)
@@ -533,97 +527,27 @@ function love.draw()
 				if (room[j][i]~=nil and room[j][i].name~="pitbull" and room[j][i].name~="cat" and room[j][i].name~="pup") or litTiles[j][i]==0 then
 					love.graphics.draw(toDraw, (tempi-1)*floor.sprite:getWidth()*scale+wallSprite.width, (tempj-1)*floor.sprite:getHeight()*scale+wallSprite.height, rot * math.pi / 2, scale, scale)
 				end
-				if tool~="" then
-					if tool~=7 and tool~=6 then
-						if room[j][i]~=nil and adjacent(i,j) then
-							if tool==1 then
-								if room[j][i].name == "wall" and not room[j][i].sawed then
-									love.graphics.draw(green, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
-								end
-							elseif tool==2 then
-								if (room[j][i].name == "poweredFloor" and not room[j][i].ladder) or (room[j][i].name == "pit" and not room[j][i].ladder)
-								or (room[j][i].name == "breakablePit" and not room[j][i].ladder and room[j][i].strength ==0) then
-									love.graphics.draw(green, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
-								end
-							elseif tool==3 then
-								if (room[j][i].name == "electricfloor" or room[j][i].name == "horizontalWire" or room[j][i].name == "verticalWire" or room[j][i].name == "wire") and not room[j][i].cut then
-									love.graphics.draw(green, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
-								end
-							elseif tool==4 then
-								if (room[j][i].name == "powerSupply" and not room[j][i].wet) or (room[j][i].name == "electricfloor" and not room[j][i].cut) then
-									love.graphics.draw(green, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
-								end
-							elseif tool==5 then
-								if room[j][i].name == "metalwall" and not room[j][i].sawed then
-									love.graphics.draw(green, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
-								end
-							end
-						end
-					elseif tool==6 then
-						if room[j][i]~=nil and ((room[j][i].name == "glasswall" and not room[j][i].sawed) or (room[j][i].name == "button" and not room[j][i].bricked)) and
-						(j == player.tileY and (math.abs(i-player.tileX)<=3) or (i == player.tileX and math.abs(j-player.tileY)<=3)) then
-							canThrow = true
-							diffx = 0
-							diffy = 0
-							if j == player.tileY then
-								if i>player.tileX then diffx = 1
-								else diffx = -1 end
-							else
-								if j>player.tileY then diffy = 1
-								else diffy = -1 end
-							end
-
-							for k = 0, 3 do
-								xTest = player.tileX+diffx*k
-								yTest = player.tileY+diffy*k
-								if room[yTest][xTest]~=nil then
-									if yTest == j and xTest == i then break
-									elseif room[yTest][xTest].blocksProjectiles and not room[yTest][xTest].sawed then
-										canThrow = false
-									end
-								end
-							end
-							if canThrow then
-								love.graphics.draw(green, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
-							end
-						end
-					elseif tool==7 then
-						canShoot = false
-						if ((j == player.tileY and math.abs(i-player.tileX)<=3) or (i == player.tileX and math.abs(j-player.tileY)<=3)) then
-							for h = 1, animalCounter-1 do
-								if animals[h].tileY == j and animals[h].tileX == i and (not animals[h].dead) then
-									canShoot = true
-								end
-							end
-							diffx = 0
-							diffy = 0
-							if j == player.tileY then
-								if i>player.tileX then diffx = 1
-								else diffx = -1 end
-							else
-								if j>player.tileY then diffy = 1
-								else diffy = -1 end
-							end
-
-							for k = 0, 3 do
-								xTest = player.tileX+diffx*k
-								yTest = player.tileY+diffy*k
-								if yTest == j and xTest == i then break
-								elseif room[yTest]~=nil and room[yTest][xTest]~=nil and room[yTest][xTest].blocksProjectiles  and not room[yTest][xTest].sawed then
-									canShoot = false
-								elseif k~=0 then
-									for l = 1, animalCounter-1 do
-										if animals[l].tileY == yTest and animals[l].tileX ==xTest and not animals[l].dead then
-											canShoot = false
-										end
-									end
-								end
-							end
-							if canShoot then
-								love.graphics.draw(green, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
-							end
-						end
-					end
+			end
+		end
+	end
+	if tools.toolableAnimals~=nil then
+		for dir = 1, 4 do
+			for i = 1, #(tools.toolableAnimals[dir]) do
+				local tx = tools.toolableAnimals[dir][i].tileX
+				local ty = tools.toolableAnimals[dir][i].tileY
+				if dir == 1 or tools.toolableAnimals[1][1] == nil or not (tx == tools.toolableAnimals[1][1].tileX and ty == tools.toolableAnimals[1][1].tileY) then
+					love.graphics.draw(green, (tx-1)*floor.sprite:getWidth()*scale+wallSprite.width, (ty-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
+				end
+			end
+		end
+	end
+	if tools.toolableTiles~=nil then
+		for dir = 1, 4 do
+			for i = 1, #(tools.toolableTiles[dir]) do
+				local tx = tools.toolableTiles[dir][i].x
+				local ty = tools.toolableTiles[dir][i].y
+				if dir == 1 or tools.toolableTiles[1][1] == nil or not (tx == tools.toolableTiles[1][1].x and ty == tools.toolableTiles[1][1].y) then
+					love.graphics.draw(green, (tx-1)*floor.sprite:getWidth()*scale+wallSprite.width, (ty-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
 				end
 			end
 		end
@@ -685,26 +609,12 @@ function love.draw()
 		love.graphics.setColor(0,0,0)
 		love.graphics.rectangle("line", i*width/18, 0, width/18, width/18)
 		love.graphics.setColor(255,255,255)
-		if i==0 then
-			love.graphics.draw(saw, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
-		elseif i==1 then
-			love.graphics.draw(ladder, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
-		elseif i==2 then
-			love.graphics.draw(wirecutters, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
-		elseif i==3 then
-			love.graphics.draw(waterbottle, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
-		elseif i==4 then
-			love.graphics.draw(cuttingtorch, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
-		elseif i == 5 then
-			love.graphics.draw(brick, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
-		elseif i == 6 then
-			love.graphics.draw(gun, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
-		end
-		if inventory[i+1]==0 then
+		love.graphics.draw(tools[i+1].image, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
+		if tools[i+1].numHeld==0 then
 			love.graphics.draw(gray, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
 		end
 		love.graphics.setColor(0,0,0)
-		love.graphics.print(inventory[i+1], i*width/18+3, 0)
+		love.graphics.print(tools[i+1].numHeld, i*width/18+3, 0)
 	end
 	for i = 0, 4 do
 		love.graphics.setColor(255,255,255)
@@ -715,22 +625,8 @@ function love.draw()
 		love.graphics.setColor(0,0,0)
 		love.graphics.rectangle("line", (i+11)*width/18, 0, width/18, width/18)
 		love.graphics.setColor(255,255,255)
-		if i==0 then
-			love.graphics.draw(saw, (i+11)*width/18, 0, 0, (width/18)/32, (width/18)/32)
-		elseif i==1 then
-			love.graphics.draw(ladder, (i+11)*width/18, 0, 0, (width/18)/32, (width/18)/32)
-		elseif i==2 then
-			love.graphics.draw(wirecutters, (i+11)*width/18, 0, 0, (width/18)/32, (width/18)/32)
-		elseif i==3 then
-			love.graphics.draw(waterbottle, (i+11)*width/18, 0, 0, (width/18)/32, (width/18)/32)
-		elseif i==4 then
-			love.graphics.draw(cuttingtorch, (i+11)*width/18, 0, 0, (width/18)/32, (width/18)/32)
-		elseif i == 5 then
-			love.graphics.draw(brick, (i+11)*width/18, 0, 0, (width/18)/32, (width/18)/32)
-		elseif i == 6 then
-			love.graphics.draw(gun, (i+11)*width/18, 0, 0, (width/18)/32, (width/18)/32)
-		end
-		if inventory[i+1]==0 then
+		love.graphics.draw(tools[i+1].image, (i+11)*width/18, 0, 0, (width/18)/32, (width/18)/32)
+		if tools[i+1].numHeld==0 then
 			love.graphics.draw(gray, (i+11)*width/18, 0, 0, (width/18)/32, (width/18)/32)
 		end
 		love.graphics.setColor(0,0,0)
@@ -826,8 +722,8 @@ function hackEnterRoom(roomid, y, x)
 			end
 		end
 	end
-	updatePower()
-	updateLight()
+	updateGameState()
+	
 end
 
 function enterRoom(dir)
@@ -910,8 +806,8 @@ function enterRoom(dir)
 		end
 	end
 	visibleMap[mapy][mapx] = 1
-	updatePower()
-	updateLight()
+	updateGameState()
+	
 end
 
 oldTilesOn = {}
@@ -1038,8 +934,8 @@ function love.keypressed(key, unicode)
 						player.totalItemsGiven[i] = player.totalItemsGiven[i] - map.getItemsGiven(mainMap[mapy][mapx].roomid)[1][i]
 						player.totalItemsNeeded[i] = player.totalItemsNeeded[i] - map.getItemsNeeded(mainMap[mapy][mapx].roomid)[1][i]
 					end
-					inventory[i] = player.totalItemsGiven[i] - player.totalItemsNeeded[i]
-					if inventory[i] < 0 then inventory[i] = 0 end
+					tools[i].numHeld = player.totalItemsGiven[i] - player.totalItemsNeeded[i]
+					if tools[i].numHeld < 0 then tools[i].numHeld = 0 end
 				end
 				completedRooms[mapy][mapx] = 0
 				for i = 0, mainMap.height do
@@ -1113,68 +1009,21 @@ function love.keypressed(key, unicode)
 		end
 	elseif key == "1" or key == "2" or key == "3" or key == "4" or key == "5" or key == "6" or key == "7" then
 		numPressed = tonumber(key)
-		if inventory[numPressed]>0 then
+		if tools[numPressed].numHeld>0 then
 			tool = numPressed
 		end
+		tools.updateToolableTiles(tool)
     end
-    local useTool = false
     local tileLocXDelta = 0
     local tileLocYDelta = 0
-    if key == 'up' then tileLocYDelta = -1
-    elseif key == 'down' then tileLocYDelta = 1
-    elseif key == 'left' then tileLocXDelta = -1
-    elseif key == 'right' then tileLocXDelta = 1 end
-    if tileLocXDelta ~= 0 or tileLocYDelta ~= 0 or key == 'space' then
-    	useTool = true
-    end
-    if useTool then
-    	local tileLocX = player.tileX + tileLocXDelta
-    	local tileLocY = player.tileY + tileLocYDelta
-		if tool==7 then
-			for mult = 1, 3 do
-				tileLocX = player.tileX + tileLocXDelta*mult
-				tileLocY = player.tileY+tileLocYDelta*mult
-				local killedAnimal = false
-				for i = 1, animalCounter-1 do
-					if animals[i].tileX == tileLocX and animals[i].tileY == tileLocY and not animals[i].dead then
-						animals[i]:kill()
-						inventory[tool] = inventory[tool]-1
-						if inventory[tool] == 0 then
-							tool = 0
-						end
-						killedAnimal = true
-					end
-				end
-				if killedAnimal then break end
-				if room[tileLocY]~=nil and room[tileLocY][tileLocX]~=nil and
-				room[tileLocY][tileLocX].blocksProjectiles and not room[tileLocY][tileLocX].sawed then break end
-			end
-		elseif tool==6 then
-			for mult = 1, 3 do
-				tileLocX = player.tileX + tileLocXDelta*mult
-				tileLocY = player.tileY+tileLocYDelta*mult
-				if room[tileLocY]~=nil and room[tileLocY][tileLocX]~=nil then
-					if room[tileLocY][tileLocX]:useTool(tool) then
-						clickActivated = true
-						inventory[tool] = inventory[tool]-1
-						if inventory[tool]==0 then
-							tool = 0
-						end
-						break
-					end
-				end
-			end	
-		elseif tool~=0 and room[tileLocY]~=nil and room[tileLocY][tileLocX]~=nil and adjacent(tileLocX, tileLocY) then
-			if room[tileLocY][tileLocX]:useTool(tool) then
-				clickActivated = true
-				inventory[tool] = inventory[tool]-1
-				if inventory[tool]==0 then
-					tool = 0
-				end
-			end
-		end
-		updateLight()
-		updatePower()
+    local dirUse = 0
+    if key == 'up' then dirUse = 1
+    elseif key == 'right' then dirUse = 2
+    elseif key == 'down' then dirUse = 3
+    elseif key == 'left' then dirUse = 4 end
+    if dirUse ~= 0 then
+		log((tools.useToolDir(tool, dirUse) and 'true' or 'false')..' '..tool..' '..dirUse)
+		updateGameState()
 	end
     if (key=="w" or key=="a" or key=="s" or key=="d") then
     	for i = 1, roomHeight do
@@ -1186,8 +1035,8 @@ function love.keypressed(key, unicode)
     	end
     	checkBoundaries()
 	    if beforePressY~=player.y or beforePressX~=player.x then
-	    	updateLight()
-	    	updatePower()
+	    	
+	    	updateGameState()
 	    	for i = 1, animalCounter-1 do
 	    		if animals[i].name == "pitbull" and not animals[i].dead and (litTiles[animals[i].tileY][animals[i].tileX]==1 or animals[i].triggered) then
 	    			--animalMove(i)
@@ -1235,13 +1084,9 @@ function love.keypressed(key, unicode)
     	local itemsForRoom = map.getItemsNeeded(roomid)
     	if itemsForRoom~=nil then
     		for i=1,#itemsForRoom do
-    			if itemsForRoom[i][1]~=0 then toPrint = toPrint..' '..itemsForRoom[i][1]..' saw' end
-    			if itemsForRoom[i][2]~=0 then toPrint = toPrint..' '..itemsForRoom[i][2]..' ladder' end
-    			if itemsForRoom[i][3]~=0 then toPrint = toPrint..' '..itemsForRoom[i][3]..' wire-cutters' end
-    			if itemsForRoom[i][4]~=0 then toPrint = toPrint..' '..itemsForRoom[i][4]..' water-bottle' end
-    			if itemsForRoom[i][5]~=0 then toPrint = toPrint..' '..itemsForRoom[i][5]..' cutting-torch' end
-    			if itemsForRoom[i][6]~=0 then toPrint = toPrint..' '..itemsForRoom[i][6]..' brick' end
-    			if itemsForRoom[i][7]~=0 then toPrint = toPrint..' '..itemsForRoom[i][7]..' gun' end
+    			for toolIndex=1,#tools do
+    				if itemsForRoom[i][toolIndex]~=0 then toPrint = toPrint..' '..itemsForRoom[i][toolIndex]..' '..tools[toolIndex].name end
+    			end
     			if i~=#itemsForRoom then toPrint = toPrint..' or ' end
     		end
     	end
@@ -1332,11 +1177,7 @@ function checkDeath()
 	end
 	if room[player.tileY][player.tileX]~=nil then
 		t = room[player.tileY][player.tileX]
-		if t.name == "electricfloor" and t.powered and not t.cut then
-			kill()
-		elseif t.name == "poweredFloor" and not t.powered and not t.ladder then
-			kill()
-		elseif (t.name == "pit" or (t.name == "breakablePit" and t.strength ==0)) and not t.ladder then
+		if t:willKillPlayer() then
 			kill()
 		end
 	end
@@ -1370,7 +1211,7 @@ function love.updateOld(dt)
 		end
 		checkBoundaries()
 		if player.prevy~=player.y then
-			updateLight()
+			
 			for i = 1, 100 do
 				if animals[i]~=nil then
 					animals[i]:move(player.x, player.y, dt)
@@ -1404,7 +1245,7 @@ function love.updateOld(dt)
 		end
 		checkBoundaries()
 		if player.x~=player.prevx then
-			updateLight()
+			
 			for i = 1, 100 do
 				if animals[i]~=nil then
 					animals[i]:move(player.x, player.y, dt)
@@ -1443,95 +1284,21 @@ function love.mousepressed(x, y, button, istouch)
 			clickActivated = true
 			if tool==inventoryX+1 then
 				tool=0
-			elseif inventory[inventoryX+1]>0 then
+			elseif tools[inventoryX+1].numHeld>0 then
 				tool=inventoryX+1
 			end
 		end
+		log(tool)
+		tools.updateToolableTiles(tool)
 	end
 
 	tileLocX = math.ceil((mouseX-wallSprite.width)/(scale*floor.sprite:getWidth()))
 	tileLocY = math.ceil((mouseY-wallSprite.height)/(scale*floor.sprite:getHeight()))
-	if tool==7 then
-		if ((tileLocY == player.tileY and math.abs(tileLocX-player.tileX)<=3) or (tileLocX == player.tileX and math.abs(tileLocY-player.tileY)<=3)) then
-			canShoot = true
-			diffx = 0
-			diffy = 0
-			if tileLocY == player.tileY then
-				if tileLocX>player.tileX then diffx = 1
-				else diffx = -1 end
-			else
-				if tileLocY>player.tileY then diffy = 1
-				else diffy = -1 end
-			end
-
-			for k = 0, 3 do
-				xTest = player.tileX+diffx*k
-				yTest = player.tileY+diffy*k
-				if yTest == tileLocY and xTest == tileLocX then break
-				elseif room[yTest]~=nil and room[yTest][xTest]~=nil and room[yTest][xTest].blocksProjectiles and not room[yTest][xTest].sawed then
-					canShoot = false
-				elseif k~=0 then
-					for l = 1, animalCounter-1 do
-						if animals[l].tileY == yTest and animals[l].tileX ==xTest and not animals[l].dead then
-							canShoot = false
-						end
-					end
-				end
-			end
-			if canShoot then
-				for i = 1, animalCounter-1 do
-					if animals[i].tileX == tileLocX and animals[i].tileY == tileLocY and not animals[i].dead then
-						animals[i]:kill()
-						inventory[tool] = inventory[tool]-1
-						if inventory[tool] == 0 then
-							tool = 0
-						end
-					end
-				end
-			end
-		end
-	elseif tool==6 then
-		if room[tileLocY]~=nil and room[tileLocY][tileLocX]~=nil and ((room[tileLocY][tileLocX].name == "glasswall" and not room[tileLocY][tileLocX].sawed) or (room[tileLocY][tileLocX].name == "button" and not room[tileLocY][tileLocX].bricked)) and
-		(tileLocY == player.tileY and (math.abs(tileLocX-player.tileX)<=3) or (tileLocX == player.tileX and math.abs(tileLocY-player.tileY)<=3)) then
-			canThrow = true
-			diffx = 0
-			diffy = 0
-			if tileLocY == player.tileY then
-				if tileLocX>player.tileX then diffx = 1
-				else diffx = -1 end
-			else
-				if tileLocY>player.tileY then diffy = 1
-				else diffy = -1 end
-			end
-
-			for k = 0, 3 do
-				xTest = player.tileX+diffx*k
-				yTest = player.tileY+diffy*k
-				if room[yTest][xTest]~=nil then
-					if yTest == tileLocY and xTest == tileLocX then break
-					elseif room[yTest][xTest].blocksProjectiles and not room[yTest][xTest].sawed then
-						canThrow = false
-					end
-				end
-			end
-			if canThrow then
-				room[tileLocY][tileLocX]:useTool(tool)
-			end
-		end
-	elseif tool~=0 and room[tileLocY]~=nil and room[tileLocY][tileLocX]~=nil and adjacent(tileLocX, tileLocY) then
-		if room[tileLocY][tileLocX]:useTool(tool) then
-			clickActivated = true
-			inventory[tool] = inventory[tool]-1
-			if inventory[tool]==0 then
-				tool = 0
-			end
-		end
-	end
-	if not clickActivated then
+	if not clickActivated and not tools.useToolTile(tool, tileLocY, tileLocX) then
 		tool = 0
 	end
-	updateLight()
-	updatePower()
+	
+	updateGameState()
 end
 
 function love.mousereleased(x, y, button, istouch)
@@ -1548,4 +1315,12 @@ function love.mousemoved(x, y, dx, dy)
 	if editorMode then
 		editor.mousemoved(x, y, dx, dy)
 	end
+end
+
+
+function updateGameState()
+	updatePower()
+	updateLight()
+	tools.updateToolableTiles(tool)
+	if tool ~= 0 and tool ~= nil and tools[tool].numHeld == 0 then tool = 0 end
 end

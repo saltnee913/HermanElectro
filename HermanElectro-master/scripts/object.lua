@@ -5,3 +5,12 @@ function Object:new(o)
 	self.__index = self
 	return o
 end
+
+function Object:instanceof(super)
+	metatable = getmetatable(self)
+	while metatable ~= nil do
+		if metatable == super then return true end
+		metatable = getmetatable(metatable)
+	end
+	return false
+end
