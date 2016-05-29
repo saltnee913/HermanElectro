@@ -181,12 +181,14 @@ P.stickyButton.onLeaveAnimal = P.stickyButton.onLeave
 
 P.stayButton = P.button:new{name = "stayButton"}
 function P.stayButton:onEnter(player)
+	if self.bricked then return end
 	self.down = true
 	self.dirAccept = {1,1,1,1}
 	updateGameState()
 	self:updateSprite()
 end
 function P.stayButton:onLeave(player)
+	if self.bricked then return end
 	self.down = false
 	self.dirAccept = {0,0,0,0}
 	updateGameState()
