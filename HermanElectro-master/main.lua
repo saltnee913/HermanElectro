@@ -60,7 +60,7 @@ function love.load()
 	if loadTutorial then
 		mainMap = map.generateTutorial()
 	else
-		mainMap = map.generateMap(8, 3, os.time())
+		mainMap = map.generateMap(8, 8, os.time())
 	end
 	mapHeight = mainMap.height
 	mapx = mainMap.initialX
