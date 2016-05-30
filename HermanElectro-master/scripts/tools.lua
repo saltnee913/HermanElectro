@@ -198,6 +198,12 @@ function P.gun:usableOnAnimal(animal)
 	return not animal.dead
 end
 
+P.specialToolA = P.tool:new{image = love.graphics.newImage('Graphics/saw.png')}
+P.specialToolB = P.tool:new{image = love.graphics.newImage('Graphics/gun.png')}
+P.specialToolC = P.tool:new{image = love.graphics.newImage('Graphics/cuttingtorch.png')}
+P.specialToolD = P.tool:new{image = love.graphics.newImage('Graphics/brick.png')}
+P.specialToolE = P.tool:new{image = love.graphics.newImage('Graphics/waterbottle.png')}
+
 P[1] = P.saw
 P[2] = P.ladder
 P[3] = P.wireCutters
@@ -205,5 +211,10 @@ P[4] = P.waterBottle
 P[5] = P.cuttingTorch
 P[6] = P.brick
 P[7] = P.gun
+P[8] = P.specialToolA
+P[9] = P.specialToolB
+P[10] = P.specialToolC
+P[11] = P.specialToolD
+P[12] = P.specialToolE
 
 return tools

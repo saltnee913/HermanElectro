@@ -1,6 +1,7 @@
 require('scripts.object')
 require('scripts.boundaries')
 require('scripts.animals')
+tools = require('scripts.tools')
 
 local P = {}
 tiles = P
@@ -574,12 +575,50 @@ function P.treasureTile:onEnter()
 		end
 	elseif reward<990 then
 		--give one special tool
-		slot = math.floor(math.random()*5)+1
-		inventorySpecial[slot] = inventorySpecial[slot]+1
+		filledSlots = {0,0,0}
+		slot = 1
+		for i = 8, 12 do
+			if tools[i].numHeld>0 then
+				filledSlots[slot] = i
+				slot = slot+1
+			end
+		end
+		goodSlot = false
+		while (not goodSlot) do
+			slot = math.floor(math.random()*5)+8
+			if filledSlots[3]==0 then
+				goodSlot = true
+			end
+			for i = 1, 3 do
+				if filledSlots[i]==slot then
+					goodSlot = true
+				end
+			end
+		end
+		tools[slot].numHeld = tools[slot].numHeld+1
 	else
 		--give two special tools
-		for i = 1, 2 do
-			slot = math.floor(math.random()*5)+1
+		for j = 1, 2 do
+			filledSlots = {0,0,0}
+			slot = 1
+			for i = 8, 12 do
+				if tools[i].numHeld>0 then
+					filledSlots[slot] = i
+					slot = slot+1
+				end
+			end
+			goodSlot = false
+			while (not goodSlot) do
+				slot = math.floor(math.random()*5)+8
+				if filledSlots[3]==0 then
+					goodSlot = true
+				end
+				for i = 1, 3 do
+					if filledSlots[i]==slot then
+						goodSlot = true
+					end
+				end
+			end
 			tools[slot].numHeld = tools[slot].numHeld+1
 		end
 	end
