@@ -936,7 +936,7 @@ function love.keypressed(key, unicode)
 				player.prevTileY = player.enterY
 				player.prevx = player.x
 				player.prevTileX = player.enterX
-				for i = 1,7 do
+				for i = 1,#tools do
 					if (completedRooms[mapy][mapx] == 1) then
 						player.totalItemsGiven[i] = player.totalItemsGiven[i] - map.getItemsGiven(mainMap[mapy][mapx].roomid)[1][i]
 						player.totalItemsNeeded[i] = player.totalItemsNeeded[i] - map.getItemsNeeded(mainMap[mapy][mapx].roomid)[1][i]
@@ -1092,7 +1092,7 @@ function love.keypressed(key, unicode)
     	local itemsForRoom = map.getItemsNeeded(roomid)
     	if itemsForRoom~=nil then
     		for i=1,#itemsForRoom do
-    			for toolIndex=1,#tools do
+    			for toolIndex=1,7 do
     				if itemsForRoom[i][toolIndex]~=0 then toPrint = toPrint..' '..itemsForRoom[i][toolIndex]..' '..tools[toolIndex].name end
     			end
     			if i~=#itemsForRoom then toPrint = toPrint..' or ' end
