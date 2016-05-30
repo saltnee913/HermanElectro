@@ -94,10 +94,6 @@ function love.load()
 	--1=saw
 	--toolMode = 1
 	tool = 0
-	for i = 1, 12 do
-		tools[i].numHeld = 0
-	end
-	specialTools = {0,0,0}
 	animals = {}
 	--width = 16*screenScale
 	--height = 9*screenScale
@@ -127,6 +123,7 @@ function love.load()
 		floortile = love.graphics.newImage('Graphics/cavesfloor.png')
 		doorwaybg = love.graphics.newImage('Graphics/doorwaybackground.png')
 		deathscreen = love.graphics.newImage('Graphics/deathscreen.png')
+		inventorySpecial = {0,0,0,0,0}
 	end
 	number1 = love.math.random()*-200
 	number2 = love.math.random()*-200
@@ -607,25 +604,21 @@ function love.draw()
 		love.graphics.setColor(0,0,0)
 		love.graphics.print(tools[i+1].numHeld, i*width/18+3, 0)
 	end
-	for i = 0, 2 do
+	for i = 0, 4 do
 		love.graphics.setColor(255,255,255)
-		if tool == specialTools[i+1] and tool~=0 then
+		if tool == i+1 then
 			love.graphics.setColor(50, 200, 50)
 		end
-		love.graphics.rectangle("fill", (i+13)*width/18, 0, width/18, width/18)
+		love.graphics.rectangle("fill", (i+11)*width/18, 0, width/18, width/18)
 		love.graphics.setColor(0,0,0)
-		love.graphics.rectangle("line", (i+13)*width/18, 0, width/18, width/18)
+		love.graphics.rectangle("line", (i+11)*width/18, 0, width/18, width/18)
 		love.graphics.setColor(255,255,255)
-		if specialTools~=nil and specialTools[i+1]~=0 then
-			love.graphics.draw(tools[specialTools[i+1]].image, (i+13)*width/18, 0, 0, (width/18)/32, (width/18)/32)
-		end
-		if specialTools[i+1]==0 then
-			love.graphics.draw(gray, (i+13)*width/18, 0, 0, (width/18)/32, (width/18)/32)
+		love.graphics.draw(tools[i+1].image, (i+11)*width/18, 0, 0, (width/18)/32, (width/18)/32)
+		if tools[i+1].numHeld==0 then
+			love.graphics.draw(gray, (i+11)*width/18, 0, 0, (width/18)/32, (width/18)/32)
 		end
 		love.graphics.setColor(0,0,0)
-		if specialTools[i+1]~=0 then
-			love.graphics.print(tools[specialTools[i+1]].numHeld, (i+13)*width/18+3, 0)
-		end
+		love.graphics.print(inventorySpecial[i+1], i*width/18+3, 0)
 	end
 	love.graphics.setColor(255,255,255)
 	if player.dead then
@@ -1014,9 +1007,8 @@ function love.keypressed(key, unicode)
     	elseif player.tileX == roomLength and player.y < height/2+50 and player.y > height/2-20 then
 				enterRoom(1)
 		end
-	elseif key == "1" or key == "2" or key == "3" or key == "4" or key == "5" or key == "6" or key == "7" or key == "8" or key == "9" or key == "0" then
+	elseif key == "1" or key == "2" or key == "3" or key == "4" or key == "5" or key == "6" or key == "7" then
 		numPressed = tonumber(key)
-		if numPressed == 0 then numPressed = 10 end
 		if tools[numPressed].numHeld>0 then
 			tool = numPressed
 		end
@@ -1092,7 +1084,7 @@ function love.keypressed(key, unicode)
     	local itemsForRoom = map.getItemsNeeded(roomid)
     	if itemsForRoom~=nil then
     		for i=1,#itemsForRoom do
-    			for toolIndex=1,#tools do
+    			for toolIndex=1,7 do
     				if itemsForRoom[i][toolIndex]~=0 then toPrint = toPrint..' '..itemsForRoom[i][toolIndex]..' '..tools[toolIndex].name end
     			end
     			if i~=#itemsForRoom then toPrint = toPrint..' or ' end
@@ -1329,24 +1321,6 @@ end
 function updateGameState()
 	updatePower()
 	updateLight()
-	updateTools()
 	tools.updateToolableTiles(tool)
 	if tool ~= 0 and tool ~= nil and tools[tool].numHeld == 0 then tool = 0 end
-end
-
-function updateTools()
-	for i = 1, 3 do
-		if specialTools[i]~=0 and tools[specialTools[i]].numHeld==0 then
-			for j = i, 2 do
-				specialTools[j] = specialTools[j+1]
-			end
-		end
-	end
-	for i = 8, 12 do
-		if tools[i].numHeld>0 and not (specialTools[1]==i or specialTools[2]==i or specialTools[3]==i) then
-			if specialTools[1]==0 then specialTools[1] = i
-			elseif specialTools[2]==0 then specialTools[2] = i
-			else specialTools[3] = i end
-		end
-	end
 end
