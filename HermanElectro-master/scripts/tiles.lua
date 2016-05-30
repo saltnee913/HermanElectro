@@ -286,7 +286,7 @@ function P.glassWall:destroy()
 	self.blocksMovement = false
 end
 
-P.gate = P.wire:new{name = "gate", dirSend = {0,0,0,0}, dirAccept = {0,0,0,0}, gotten = {0,0,0,0}}
+P.gate = P.conductiveTile:new{name = "gate", dirSend = {0,0,0,0}, dirAccept = {0,0,0,0}, gotten = {0,0,0,0}}
 function P.gate:updateTile(dir)
 	self.gotten[dir] = 1
 end
