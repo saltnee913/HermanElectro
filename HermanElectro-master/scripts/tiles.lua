@@ -420,71 +420,17 @@ end
 P.endTile = P.tile:new{name = "endTile", canBePowered = false, dirAccept = {0,0,0,0}, sprite = love.graphics.newImage('Graphics/end.png'), done = false}
 function P.endTile:onEnter(player)
 	if self.done then return end
-	completedRooms[mapy][mapx] = 1
-	if mapy>0 then
-		visibleMap[mapy-1][mapx] = 1
-	end
-	if mapy<mapHeight then
-		visibleMap[mapy+1][mapx] = 1
-	end
-	if mapx>0 then
-		visibleMap[mapy][mapx-1] = 1
-	end
-	if mapx<mapHeight then
-		visibleMap[mapy][mapx+1] = 1
-	end
-	if loadTutorial then
-		for i = 1, #tools do
-			player.totalItemsGiven[i] = player.totalItemsGiven[i] + map.getItemsGiven(mainMap[mapy][mapx].roomid)[1][i]
-			player.totalItemsNeeded[i] = player.totalItemsNeeded[i] + map.getItemsNeeded(mainMap[mapy][mapx].roomid)[1][i]
-			tools[i].numHeld = player.totalItemsGiven[i] - player.totalItemsNeeded[i]
-			if tools[i].numHeld < 0 then tools[i].numHeld = 0 end
-		end
-		self.done = true
-	else
-		local checkedRooms = {}
-		for i = 0, mapHeight do
-			checkedRooms[i] = {}
-		end
-		local amtChecked = 0
-		while (self.done == false) do
-			y = math.floor(math.random()*(mapHeight+1))
-			x = math.floor(math.random()*(mapHeight+1))
-			if checkedRooms[y][x] == nil then
-				checkedRooms[y][x] = 1
-				if completedRooms[y]~=nil and completedRooms[y][x]~=nil and completedRooms[y][x] == 0 then
-					if ((completedRooms[y-1]~=nil and completedRooms[y-1][x] ~=nil and completedRooms[y-1][x] == 1) or
-					(completedRooms[y+1]~=nil and completedRooms[y+1][x] ~=nil and completedRooms[y+1][x] ==1) or
-					(completedRooms[y][x-1]~=nil and completedRooms[y][x-1]==1) or
-					(completedRooms[y][x+1]~=nil and completedRooms[y][x+1]==1)) then
-						id = tostring(mainMap[y][x].roomid)
-						if id:sub(1,1)~="t" and id:sub(1,1)~="f" then
-							listOfItemsNeeded = map.getItemsNeeded(mainMap[y][x].roomid)
-							numLists = 0
-							for j = 1, 10 do
-								if listOfItemsNeeded[j]~=nil then
-									numLists = numLists+1
-								end
-							end
-							listChoose = math.random(numLists)
-							for i=1,7 do
-								--print(listChoose)
-								--tools[i].numHeld = tools[i].numHeld+itemsNeeded[mainMap[x][y].roomid][i]
-								tools[i].numHeld = tools[i].numHeld+listOfItemsNeeded[listChoose][i]
-								if listOfItemsNeeded[listChoose][i]>0 then
-									self.done = true
-								end
-							end
-						end
-					end
-				end
-				amtChecked = amtChecked + 1
-				if amtChecked == (mapHeight + 1)*(mapHeight + 1) then
-					break
-				end
-			end
-		end
-	end
+	beatRoom()
+	self.done = true
+	self.isCompleted = true
+	self.isVisible = false
+end
+
+P.poweredEnd = P.endTile:new{name = "poweredEnd", canBePowered = true, dirAccept = {1,1,1,1}, sprite = love.graphics.newImage('Graphics/endOff.png'), poweredSprite = love.graphics.newImage('Graphics/end.png')}
+function P.poweredEnd:onEnter(player)
+	if self.done or not self.powered then return end
+	beatRoom()
+	self.done = true
 	self.isCompleted = true
 	self.isVisible = false
 end
@@ -664,5 +610,6 @@ tiles[33] = P.breakablePit
 tiles[34] = P.treasureTile
 tiles[35] = P.maskedWire
 tiles[36] = P.maskedMetalWall
+tiles[37] = P.poweredEnd
 
 return tiles

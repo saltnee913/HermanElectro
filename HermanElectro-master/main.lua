@@ -1350,3 +1350,71 @@ function updateTools()
 		end
 	end
 end
+
+function beatRoom()
+	completedRooms[mapy][mapx] = 1
+	if mapy>0 then
+		visibleMap[mapy-1][mapx] = 1
+	end
+	if mapy<mapHeight then
+		visibleMap[mapy+1][mapx] = 1
+	end
+	if mapx>0 then
+		visibleMap[mapy][mapx-1] = 1
+	end
+	if mapx<mapHeight then
+		visibleMap[mapy][mapx+1] = 1
+	end
+	if loadTutorial then
+		for i = 1, #tools do
+			player.totalItemsGiven[i] = player.totalItemsGiven[i] + map.getItemsGiven(mainMap[mapy][mapx].roomid)[1][i]
+			player.totalItemsNeeded[i] = player.totalItemsNeeded[i] + map.getItemsNeeded(mainMap[mapy][mapx].roomid)[1][i]
+			tools[i].numHeld = player.totalItemsGiven[i] - player.totalItemsNeeded[i]
+			if tools[i].numHeld < 0 then tools[i].numHeld = 0 end
+		end
+	else
+		local checkedRooms = {}
+		for i = 0, mapHeight do
+			checkedRooms[i] = {}
+		end
+		local amtChecked = 0
+		local done = false
+		while (not done) do
+			y = math.floor(math.random()*(mapHeight+1))
+			x = math.floor(math.random()*(mapHeight+1))
+			if checkedRooms[y][x] == nil then
+				checkedRooms[y][x] = 1
+				if completedRooms[y]~=nil and completedRooms[y][x]~=nil and completedRooms[y][x] == 0 then
+					if ((completedRooms[y-1]~=nil and completedRooms[y-1][x] ~=nil and completedRooms[y-1][x] == 1) or
+					(completedRooms[y+1]~=nil and completedRooms[y+1][x] ~=nil and completedRooms[y+1][x] ==1) or
+					(completedRooms[y][x-1]~=nil and completedRooms[y][x-1]==1) or
+					(completedRooms[y][x+1]~=nil and completedRooms[y][x+1]==1)) then
+						id = tostring(mainMap[y][x].roomid)
+						if id:sub(1,1)~="t" and id:sub(1,1)~="f" then
+							listOfItemsNeeded = map.getItemsNeeded(mainMap[y][x].roomid)
+							numLists = 0
+							for j = 1, 10 do
+								if listOfItemsNeeded[j]~=nil then
+									numLists = numLists+1
+								end
+							end
+							listChoose = math.random(numLists)
+							for i=1,7 do
+								--print(listChoose)
+								--tools[i].numHeld = tools[i].numHeld+itemsNeeded[mainMap[x][y].roomid][i]
+								tools[i].numHeld = tools[i].numHeld+listOfItemsNeeded[listChoose][i]
+								if listOfItemsNeeded[listChoose][i]>0 then
+									done = true
+								end
+							end
+						end
+					end
+				end
+				amtChecked = amtChecked + 1
+				if amtChecked == (mapHeight + 1)*(mapHeight + 1) then
+					break
+				end
+			end
+		end
+	end
+end
