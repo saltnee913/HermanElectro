@@ -1039,8 +1039,10 @@ function love.keypressed(key, unicode)
 	elseif key == "1" or key == "2" or key == "3" or key == "4" or key == "5" or key == "6" or key == "7" or key == "8" or key == "9" or key == "0" then
 		numPressed = tonumber(key)
 		if numPressed == 0 then numPressed = 10 end
-		if tools[numPressed].numHeld>0 then
+		if tools[numPressed].numHeld>0 and numPressed<=tools.numNormalTools then
 			tool = numPressed
+		else
+			tool = specialTools[numPressed-7]
 		end
 		tools.updateToolableTiles(tool)
     end
@@ -1361,6 +1363,7 @@ function updateTools()
 		if specialTools[i]~=0 and tools[specialTools[i]].numHeld==0 then
 			for j = i, 2 do
 				specialTools[j] = specialTools[j+1]
+				specialTools[j+1]=0
 			end
 		end
 	end
