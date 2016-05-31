@@ -482,6 +482,9 @@ P.concreteWall = P.wall:new{name = "concreteWall", sprite = love.graphics.newIma
 P.tunnel = P.tile:new{name = "tunnel"}
 
 P.pit = P.tile:new{name = "pit", laddered = false, sprite = love.graphics.newImage('Graphics/pit.png'), destroyedSprite = love.graphics.newImage('Graphics/ladderedPit.png')}
+function P.pit:onEnterAnimal(animal)
+	animal:kill()
+end
 function P.pit:ladder()
 	self.sprite = self.destroyedSprite
 	self.laddered = true
@@ -503,7 +506,12 @@ function P.breakablePit:onEnter(player)
 		self.sprite = self.destroyedSprite
 	end
 end
-P.breakablePit.onEnterAnimal = P.breakablePit.onEnter
+function P.breakablePit:onEnterAnimal(animal)
+	self:onEnter()
+	if self.strength <= 0 then
+		animal:kill()
+	end
+end
 function P.breakablePit:willKillPlayer()
 	return not self.laddered and self.strength == 0
 end
