@@ -48,6 +48,71 @@ function love.load()
 	print(json.encode(outputPrint, state))
 	game.crash()]]
 
+	level = 0
+	loadNextLevel()
+	--1=saw
+	--toolMode = 1
+	tool = 0
+	for i = 1, #tools do
+		tools[i].numHeld = 0
+	end
+	specialTools = {0,0,0}
+	animals = {}
+	--width = 16*screenScale
+	--height = 9*screenScale
+	--wallSprite = {width = 78*screenScale/50, height = 72*screenScale/50, heightForHitbox = 62*screenScale/50}
+	wallSprite = {width = 187*width/1920, height = 170*height/1080, heightBottom = 150*height/1080}
+	--image = love.graphics.newImage("cake.jpg")
+	love.graphics.setNewFont(12)
+	love.graphics.setColor(255,255,255)
+	love.graphics.setBackgroundColor(255,255,255)
+	if not loadedOnce then
+		mouseDown = 0
+		f1 = love.graphics.newImage('Graphics/concretewalls.png')
+		walls = love.graphics.newImage('Graphics/walls3.png')
+		rocks = love.graphics.newImage('Graphics/pen16.png')
+		rocksQuad = love.graphics.newQuad(mapy*14*screenScale,mapx*8*screenScale, width, height, rocks:getWidth(), rocks:getHeight())
+		black = love.graphics.newImage('Graphics/dark.png')
+		green = love.graphics.newImage('Graphics/green.png')
+		gray = love.graphics.newImage('Graphics/gray.png')
+		floortile = love.graphics.newImage('Graphics/cavesfloor.png')
+		doorwaybg = love.graphics.newImage('Graphics/doorwaybackground.png')
+		deathscreen = love.graphics.newImage('Graphics/deathscreen.png')
+		width2, height2 = love.graphics.getDimensions()
+		if width2>height2*16/9 then
+			height = height2
+			width = height2*16/9
+		else
+			width = width2
+			height = width2*9/16
+		end
+		loadedOnce = true
+	end
+	number1 = love.math.random()*-200
+	number2 = love.math.random()*-200
+	--print(love.graphics.getWidth(f1))
+	scale = (width - 2*wallSprite.width)/(20.3 * 16)*5/6
+	floor = tiles.tile
+	player = { dead = false, tileX = 1, tileY = 6, x = (1-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10, 
+		y = (6-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10, prevTileX = 3, prevTileY = 10,
+		prevx = (3-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10,
+		prevy = (10-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10,
+		width = 20, height = 20, speed = 250, sprite = love.graphics.newImage('Graphics/herman_sketch.png'), scale = 0.25 * width/1200}
+	if loadTutorial then
+		player.enterX = player.tileX
+		player.enterY = player.tileY
+		player.totalItemsGiven = {0,0,0,0,0,0,0}
+		player.totalItemsNeeded = {0,0,0,0,0,0,0}
+	end
+	function player:getTileLoc()
+		return {x = self.x/(floor.sprite:getWidth()*scale), y = self.y/(floor.sprite:getWidth()*scale)}
+	end
+	enterRoom(-1)
+end
+
+function loadNextLevel()
+	level = level+1
+
 	local roomsPath = 'RoomData/rooms.json'
 	local treasureRoomsPath = 'RoomData/treasurerooms.json'
 	local finalRoomsPath = 'RoomData/finalrooms.json'
@@ -60,7 +125,7 @@ function love.load()
 	if loadTutorial then
 		mainMap = map.generateTutorial()
 	else
-		mainMap = map.generateMap(8, 8, os.time())
+		mainMap = map.generateMap(8, level+2, os.time())
 	end
 	mapHeight = mainMap.height
 	mapx = mainMap.initialX
@@ -91,64 +156,6 @@ function love.load()
 			end
 		end
 	end
-	--1=saw
-	--toolMode = 1
-	tool = 0
-	for i = 1, #tools do
-		tools[i].numHeld = 0
-	end
-	specialTools = {0,0,0}
-	animals = {}
-	--width = 16*screenScale
-	--height = 9*screenScale
-	width2, height2 = love.graphics.getDimensions()
-	if width2>height2*16/9 then
-		height = height2
-		width = height2*16/9
-	else
-		width = width2
-		height = width2*9/16
-	end
-	--wallSprite = {width = 78*screenScale/50, height = 72*screenScale/50, heightForHitbox = 62*screenScale/50}
-	wallSprite = {width = 187*width/1920, height = 170*height/1080, heightBottom = 150*height/1080}
-	--image = love.graphics.newImage("cake.jpg")
-	love.graphics.setNewFont(12)
-	love.graphics.setColor(255,255,255)
-	love.graphics.setBackgroundColor(255,255,255)
-	if not loadedOnce then
-		mouseDown = 0
-		f1 = love.graphics.newImage('Graphics/concretewalls.png')
-		walls = love.graphics.newImage('Graphics/walls3.png')
-		rocks = love.graphics.newImage('Graphics/pen16.png')
-		rocksQuad = love.graphics.newQuad(mapy*14*screenScale,mapx*8*screenScale, width, height, rocks:getWidth(), rocks:getHeight())
-		black = love.graphics.newImage('Graphics/dark.png')
-		green = love.graphics.newImage('Graphics/green.png')
-		gray = love.graphics.newImage('Graphics/gray.png')
-		floortile = love.graphics.newImage('Graphics/cavesfloor.png')
-		doorwaybg = love.graphics.newImage('Graphics/doorwaybackground.png')
-		deathscreen = love.graphics.newImage('Graphics/deathscreen.png')
-	end
-	number1 = love.math.random()*-200
-	number2 = love.math.random()*-200
-	--print(love.graphics.getWidth(f1))
-	scale = (width - 2*wallSprite.width)/(20.3 * 16)*5/6
-	floor = tiles.tile
-	player = { dead = false, tileX = 1, tileY = 6, x = (1-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10, 
-		y = (6-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10, prevTileX = 3, prevTileY = 10,
-		prevx = (3-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10,
-		prevy = (10-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10,
-		width = 20, height = 20, speed = 250, sprite = love.graphics.newImage('Graphics/herman_sketch.png'), scale = 0.25 * width/1200}
-	if loadTutorial then
-		player.enterX = player.tileX
-		player.enterY = player.tileY
-		player.totalItemsGiven = {0,0,0,0,0,0,0}
-		player.totalItemsNeeded = {0,0,0,0,0,0,0}
-	end
-	function player:getTileLoc()
-		return {x = self.x/(floor.sprite:getWidth()*scale), y = self.y/(floor.sprite:getWidth()*scale)}
-	end
-	enterRoom(-1)
-	loadedOnce = true
 end
 
 function kill()
@@ -1118,7 +1125,7 @@ function love.keypressed(key, unicode)
     	log(nil)
     end
     if room[player.tileY][player.tileX]~=nil and room[player.tileY][player.tileX].name == "tunnel" then
-    	love.load()
+    	loadNextLevel()
     end
 end
 
