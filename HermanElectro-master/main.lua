@@ -1365,6 +1365,7 @@ function beatRoom()
 	if mapx<mapHeight then
 		visibleMap[mapy][mapx+1] = 1
 	end
+	local dropOverride = map.getFieldForRoom(mainMap[mapy][mapx].roomid, 'itemsGivenOverride')
 	if loadTutorial then
 		for i = 1, #tools do
 			player.totalItemsGiven[i] = player.totalItemsGiven[i] + map.getItemsGiven(mainMap[mapy][mapx].roomid)[1][i]
@@ -1372,7 +1373,7 @@ function beatRoom()
 			tools[i].numHeld = player.totalItemsGiven[i] - player.totalItemsNeeded[i]
 			if tools[i].numHeld < 0 then tools[i].numHeld = 0 end
 		end
-	else
+	elseif dropOverride == nil then
 		local checkedRooms = {}
 		for i = 0, mapHeight do
 			checkedRooms[i] = {}
@@ -1389,8 +1390,8 @@ function beatRoom()
 					(completedRooms[y+1]~=nil and completedRooms[y+1][x] ~=nil and completedRooms[y+1][x] ==1) or
 					(completedRooms[y][x-1]~=nil and completedRooms[y][x-1]==1) or
 					(completedRooms[y][x+1]~=nil and completedRooms[y][x+1]==1)) then
-						id = tostring(mainMap[y][x].roomid)
-						if id:sub(1,1)~="t" and id:sub(1,1)~="f" then
+						local id = tostring(mainMap[y][x].roomid)
+						if dropOverride == nil then
 							listOfItemsNeeded = map.getItemsNeeded(mainMap[y][x].roomid)
 							numLists = 0
 							for j = 1, 10 do
@@ -1415,6 +1416,10 @@ function beatRoom()
 					break
 				end
 			end
+		end
+	else
+		for i=1,7 do
+			tools[i].numHeld = tools[i].numHeld + dropOverride[i]
 		end
 	end
 end
