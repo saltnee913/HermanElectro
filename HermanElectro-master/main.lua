@@ -1041,7 +1041,7 @@ function love.keypressed(key, unicode)
 		if numPressed == 0 then numPressed = 10 end
 		if tools[numPressed].numHeld>0 and numPressed<=tools.numNormalTools then
 			tool = numPressed
-		else
+		elseif numPressed>tools.numNormalTools then
 			tool = specialTools[numPressed-7]
 		end
 		tools.updateToolableTiles(tool)
