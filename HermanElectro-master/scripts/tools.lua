@@ -18,7 +18,11 @@ function P.useToolDir(toolid, dir)
 		return true
 	end
 	if P.toolableTiles ~= nil and P.toolableTiles[dir][1] ~= nil then
-		tools[toolid]:useToolTile(room[P.toolableTiles[dir][1].y][P.toolableTiles[dir][1].x])
+		if room[P.toolableTiles[dir][1].y][P.toolableTiles[dir][1].x] == nil then
+			tools[tool]:useToolNothing(P.toolableTiles[dir][1].y, P.toolableTiles[dir][1].x)
+		else
+			tools[tool]:useToolTile(room[P.toolableTiles[dir][1].y][P.toolableTiles[dir][1].x])
+		end
 		return true
 	end
 	return false
@@ -40,7 +44,11 @@ function P.useToolTile(toolid, tileY, tileX)
 		for dir = 1, 4 do
 			for i = 1, #(P.toolableTiles[dir]) do
 				if P.toolableTiles[dir][i].y == tileY and P.toolableTiles[dir][i].x == tileX then
-					tools[tool]:useToolTile(room[tileY][tileX])
+					if room[tileY][tileX] == nil then
+						tools[tool]:useToolNothing(tileY, tileX)
+					else
+						tools[tool]:useToolTile(room[tileY][tileX])
+					end
 					return true
 				end
 			end
@@ -56,14 +64,19 @@ end
 function P.tool:usableOnAnimal()
 	return false
 end
+function P.tool:usableOnNothing()
+	return false
+end
 function P.tool:useToolTile(tile)
-	log(tile.tileY)
 	self.numHeld = self.numHeld - 1
 	tile:destroy()
 end
 function P.tool:useToolAnimal(animal)
 	self.numHeld = self.numHeld - 1
 	animal:kill()
+end
+function P.waterBottle:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld - 1
 end
 
 --returns a table of tables of coordinates by direction
@@ -74,11 +87,12 @@ function P.tool:getToolableTiles()
 		local offset = util.getOffsetByDir(dir)
 		for dist = 0, self.range do
 			local tileToCheck = {y = player.tileY + offset.y*dist, x = player.tileX + offset.x*dist}
-			if room[tileToCheck.y]~=nil and room[tileToCheck.y][tileToCheck.x] ~= nil then
-				if self:usableOnTile(room[tileToCheck.y][tileToCheck.x], dist) then
+			if room[tileToCheck.y]~=nil then
+				if (room[tileToCheck.y][tileToCheck.x] == nil and self:usableOnNothing())
+					or (room[tileToCheck.y][tileToCheck.x] ~= nil and self:usableOnTile(room[tileToCheck.y][tileToCheck.x], dist)) then
 					usableTiles[dir][#(usableTiles[dir])+1] = tileToCheck
 				end
-				if room[tileToCheck.y][tileToCheck.x].blocksProjectiles == true then
+				if room[tileToCheck.y][tileToCheck.x] ~= nil and room[tileToCheck.y][tileToCheck.x].blocksProjectiles == true then
 					break
 				end
 			end
@@ -170,6 +184,13 @@ end
 P.waterBottle = P.tool:new{name = 'water-bottle', image = love.graphics.newImage('Graphics/waterbottle.png')}
 function P.waterBottle:usableOnTile(tile)
 	return not tile.destroyed and (tile:instanceof(tiles.powerSupply) or tile:instanceof(tiles.electricFloor))
+end
+function P.waterBottle:usableOnNothing()
+	return true
+end
+function P.waterBottle:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld - 1
+	room[tileY][tileX] = tiles.electricFloor:new()
 end
 P.cuttingTorch = P.tool:new{name = 'cutting-torch', image = love.graphics.newImage('Graphics/cuttingtorch.png')}
 function P.cuttingTorch:usableOnTile(tile)
