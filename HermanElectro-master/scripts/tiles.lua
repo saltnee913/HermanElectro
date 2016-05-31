@@ -6,7 +6,7 @@ tools = require('scripts.tools')
 local P = {}
 tiles = P
 
-P.tile = Object:new{destroyed = false, blocksProjectiles = false, isVisible = true, rotation = 0, powered = false, blocksMovement = false, poweredNeighbors = {0,0,0,0}, blocksVision = false, dirSend = {1,1,1,1}, dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile", sprite = love.graphics.newImage('Graphics/cavesfloor.png'), poweredSprite = love.graphics.newImage('Graphics/cavesfloor.png')}
+P.tile = Object:new{formerPowered = false, destroyed = false, blocksProjectiles = false, isVisible = true, rotation = 0, powered = false, blocksMovement = false, poweredNeighbors = {0,0,0,0}, blocksVision = false, dirSend = {1,1,1,1}, dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile", sprite = love.graphics.newImage('Graphics/cavesfloor.png'), poweredSprite = love.graphics.newImage('Graphics/cavesfloor.png')}
 function P.tile:onEnter(player) 
 	--self.name = "fuckyou"
 end
@@ -26,6 +26,8 @@ function P.tile:updateTile(dir)
 	elseif self.name ~= "powerSupply" then
 		self.powered = false
 	end
+end
+function P.tile:postPowerUpdate()
 end
 function P.tile:getCorrectedOffset(dir)
 	dir = dir + self.rotation
@@ -49,6 +51,7 @@ end
 function P.tile:willKillPlayer()
 	return false
 end
+P.tile.willKillAnimal = P.tile.willKillPlayer
 function P.tile:electrify()
 	self.canBePowered = true
 	self.dirSend = {1,1,1,1}
@@ -218,7 +221,7 @@ function P.electricFloor:onEnter(player)
 end
 function P.electricFloor:onEnterAnimal(animal)
 	if self.powered and not self.destroyed then
-		animal:kill()
+		--animal:kill()
 	end
 end
 function P.electricFloor:destroy()
@@ -231,6 +234,7 @@ end
 function P.electricFloor:willKillPlayer()
 	return not self.destroyed and self.powered
 end
+P.electricFloor.willKillAnimal = P.electricFloor.willKillPlayer
 
 P.poweredFloor = P.conductiveTile:new{name = "poweredFloor", laddered = false, destroyedSprite = love.graphics.newImage('Graphics/trapdoorwithladder.png'), destroyedPoweredSprite = love.graphics.newImage('Graphics/trapdoorclosedwithladder.png'), sprite = love.graphics.newImage('Graphics/trapdoor.png'), poweredSprite = love.graphics.newImage('Graphics/trapdoorclosed.png')}
 function P.poweredFloor:onEnter(player)
@@ -240,7 +244,7 @@ function P.poweredFloor:onEnter(player)
 end
 function P.poweredFloor:onEnterAnimal(animal)
 	if not self.powered and not self.laddered then
-		animal:kill()
+		--animal:kill()
 	end
 end
 function P.poweredFloor:ladder()
@@ -251,6 +255,7 @@ end
 function P.poweredFloor:willKillPlayer()
 	return not self.powered and not self.laddered
 end
+P.poweredFloor.willKillAnimal = P.poweredFloor.willKillPlayer
 
 P.wall = P.tile:new{electrified = false, blocksProjectiles = true, blocksMovement = true, canBePowered = false, name = "wall", blocksVision = true, electrifiedSprite = love.graphics.newImage('Graphics/woodwallelectrified.png'), destroyedSprite = love.graphics.newImage('Graphics/woodwallbroken.png'), sprite = love.graphics.newImage('Graphics/woodwall.png'), poweredSprite = love.graphics.newImage('Graphics/woodwallpowered.png'), sawable = true}
 function P.wall:onEnter(player)	
@@ -408,6 +413,10 @@ function P.vPoweredDoor:onEnter(player)
 	end
 end
 P.vPoweredDoor.onStay = P.vPoweredDoor.onEnter
+function P.vPoweredDoor:willKillPlayer(player)
+	return t.blocksMovement
+end
+P.vPoweredDoor.willKillAnimal = P.vPoweredDoor.willKillPlayer
 
 P.hPoweredDoor = P.vPoweredDoor:new{name = "hPoweredDoor", dirSend = {0,1,0,1}, dirAccept = {0,1,0,1}}
 function P.hPoweredDoor:updateTile(player)
@@ -489,6 +498,7 @@ end
 function P.pit:willKillPlayer()
 	return not self.laddered
 end
+P.pit.willKillAnimal = P.pit.willKillPlayer
 
 P.breakablePit = P.pit:new{strength = 2, name = "breakablePit", sprite = love.graphics.newImage('Graphics/pitcovered.png'), halfBrokenSprite = love.graphics.newImage('Graphics/pithalfcovered.png'), brokenSprite = love.graphics.newImage('Graphics/pit.png')}
 function P.breakablePit:onEnter(player)
@@ -507,6 +517,7 @@ P.breakablePit.onEnterAnimal = P.breakablePit.onEnter
 function P.breakablePit:willKillPlayer()
 	return not self.laddered and self.strength == 0
 end
+P.breakablePit.willKillAnimal = P.breakablePit.willKillPlayer
 
 P.treasureTile = P.tile:new{name = "treasureTile", sprite = love.graphics.newImage('Graphics/treasuretile.png'), done = false}
 function P.treasureTile:onEnter()
@@ -584,6 +595,30 @@ function P.treasureTile:onEnter()
 	self.isVisible = false
 end
 
+P.mousetrap = P.conductiveTile:new{name = "mousetrap", safe = false, sprite = love.graphics.newImage('Graphics/mousetrap.png'), poweredSprite = love.graphics.newImage('Graphics/mousetrap.png'), safeSprite = love.graphics.newImage('Graphics/mousetrapsafe.png'), deadlySprite = love.graphics.newImage('Graphics/mousetrap.png')}
+function P.mousetrap:updateTile(dir)
+	if self.poweredNeighbors[1]==1 or self.poweredNeighbors[2]==1 or self.poweredNeighbors[3]==1 or self.poweredNeighbors[4]==1 then
+		self.powered = true
+	else
+		self.powered = false
+	end
+end
+function P.mousetrap:updateSprite()
+	if self.safe then self.sprite = self.safeSprite
+	else self.sprite = self.deadlySprite end
+	self.poweredSprite = self.sprite
+end
+function P.mousetrap:willKillPlayer()
+	return self.safe == false
+end
+function P.mousetrap:postPowerUpdate()
+	if formerPowered~=self.powered and self.safe then
+		self.safe = false
+		self:updateSprite()
+	end
+end
+P.mousetrap.willKillAnimal = P.mousetrap.willKillPlayer
+
 
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
@@ -622,5 +657,6 @@ tiles[34] = P.treasureTile
 tiles[35] = P.maskedWire
 tiles[36] = P.maskedMetalWall
 tiles[37] = P.poweredEnd
+tiles[38] = P.mousetrap
 
 return tiles

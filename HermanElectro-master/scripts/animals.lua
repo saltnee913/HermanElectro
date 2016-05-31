@@ -87,14 +87,12 @@ end
 function P.animal:checkDeath()
 	if room[self.tileY][self.tileX]~=nil then
 		t = room[self.tileY][self.tileX]
-		if t.name == "electricfloor" and t.powered and not t.cut then
+		if self.dead == false and t:willKillAnimal() then
 			self:kill()
-		elseif t.name == "poweredFloor" and not t.powered and not t.ladder then
-			self:kill()
-		elseif t.name == "vPoweredDoor" and t.blocksMovement then
-			self:kill()
-		elseif (t.name == "pit" or (t.name == "breakablePit" and t.strength ==0)) and not t.ladder then
-			self:kill()
+			if t:instanceof(tiles.mousetrap) then
+				t.safe = true
+				t:updateSprite()
+			end
 		end
 	end
 end

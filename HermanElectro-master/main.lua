@@ -213,6 +213,7 @@ function updatePower()
 	for i=1, roomHeight do
 		for j=1, roomLength do
 			if room[i]~=nil and room[i][j]~=nil then
+				room[i][j].formerPowered = room[i][j].powered
 				room[i][j].powered = false
 				room[i][j].poweredNeighbors = {0,0,0,0}
 			end
@@ -273,6 +274,13 @@ function updatePower()
 						room[i][j]:updateTile(0)
 					end
 				end
+			end
+		end
+	end
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]~=nil then
+				room[i][j]:postPowerUpdate()
 			end
 		end
 	end
@@ -1194,6 +1202,10 @@ function checkDeath()
 		t = room[player.tileY][player.tileX]
 		if t:willKillPlayer() then
 			kill()
+			if t:instanceof(tiles.mousetrap) then
+				t.safe = true
+				t:updateSprite()
+			end
 		end
 	end
 	for i = 1, animalCounter-1 do
