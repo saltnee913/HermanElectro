@@ -89,10 +89,6 @@ function P.animal:checkDeath()
 		t = room[self.tileY][self.tileX]
 		if self.dead == false and t:willKillAnimal() then
 			self:kill()
-			if t:instanceof(tiles.mousetrap) then
-				t.safe = true
-				t:updateSprite()
-			end
 		end
 	end
 end

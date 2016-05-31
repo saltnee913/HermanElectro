@@ -535,25 +535,25 @@ function P.treasureTile:onEnter()
 		--do nothing
 	elseif reward<500 then
 		--give one tool
-		slot = math.floor(math.random()*7)+1
+		slot = math.floor(math.random()*tools.numNormalTools)+1
 		tools[slot].numHeld = tools[slot].numHeld+1
 	elseif reward<800 then
 		--give two tools
 		for i = 1, 2 do
-			slot = math.floor(math.random()*7)+1
+			slot = math.floor(math.random()*tools.numNormalTools)+1
 			tools[slot].numHeld = tools[slot].numHeld+1
 		end
 	elseif reward<900 then
 		--give three tools
 		for i = 1, 3 do
-			slot = math.floor(math.random()*7)+1
+			slot = math.floor(math.random()*tools.numNormalTools)+1
 			tools[slot].numHeld = tools[slot].numHeld+1
 		end
 	elseif reward<990 then
 		--give one special tool
 		filledSlots = {0,0,0}
 		slot = 1
-		for i = 8, 12 do
+		for i = tools.numNormalTools + 1, #tools do
 			if tools[i].numHeld>0 then
 				filledSlots[slot] = i
 				slot = slot+1
@@ -577,7 +577,7 @@ function P.treasureTile:onEnter()
 		for j = 1, 2 do
 			filledSlots = {0,0,0}
 			slot = 1
-			for i = 8, 12 do
+			for i = tools.numNormalTools + 1, #tools do
 				if tools[i].numHeld>0 then
 					filledSlots[slot] = i
 					slot = slot+1
@@ -603,7 +603,14 @@ function P.treasureTile:onEnter()
 	self.isVisible = false
 end
 
-P.mousetrap = P.conductiveTile:new{name = "mousetrap", safe = false, sprite = love.graphics.newImage('Graphics/mousetrap.png'), poweredSprite = love.graphics.newImage('Graphics/mousetrap.png'), safeSprite = love.graphics.newImage('Graphics/mousetrapsafe.png'), deadlySprite = love.graphics.newImage('Graphics/mousetrap.png')}
+P.mousetrap = P.conductiveTile:new{name = "mousetrap", triggered = false, safe = false, sprite = love.graphics.newImage('Graphics/mousetrap.png'), poweredSprite = love.graphics.newImage('Graphics/mousetrap.png'), safeSprite = love.graphics.newImage('Graphics/mousetrapsafe.png'), deadlySprite = love.graphics.newImage('Graphics/mousetrap.png')}
+function P.mousetrap:onEnterPlayer()
+	if not self.safe then
+		self.triggered = true
+		self:updateSprite()
+	end
+end
+P.mousetrap.onEnterAnimal = P.mousetrap.onEnterPlayer
 function P.mousetrap:updateTile(dir)
 	if self.poweredNeighbors[1]==1 or self.poweredNeighbors[2]==1 or self.poweredNeighbors[3]==1 or self.poweredNeighbors[4]==1 then
 		self.powered = true
@@ -617,7 +624,12 @@ function P.mousetrap:updateSprite()
 	self.poweredSprite = self.sprite
 end
 function P.mousetrap:willKillPlayer()
-	return self.safe == false
+	if self.triggered then
+		self.triggered = false
+		self.safe = true
+		return true
+	end
+	return false
 end
 function P.mousetrap:postPowerUpdate()
 	if formerPowered~=self.powered and self.safe then

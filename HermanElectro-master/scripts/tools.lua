@@ -228,6 +228,8 @@ P.specialToolC = P.tool:new{image = love.graphics.newImage('Graphics/cuttingtorc
 P.specialToolD = P.tool:new{image = love.graphics.newImage('Graphics/brick.png')}
 P.specialToolE = P.tool:new{image = love.graphics.newImage('Graphics/waterbottle.png')}
 
+P.numNormalTools = 7
+
 P[1] = P.saw
 P[2] = P.ladder
 P[3] = P.wireCutters

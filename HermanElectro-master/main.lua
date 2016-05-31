@@ -94,7 +94,7 @@ function love.load()
 	--1=saw
 	--toolMode = 1
 	tool = 0
-	for i = 1, 12 do
+	for i = 1, #tools do
 		tools[i].numHeld = 0
 	end
 	specialTools = {0,0,0}
@@ -1107,7 +1107,7 @@ function love.keypressed(key, unicode)
     	local itemsForRoom = map.getItemsNeeded(roomid)
     	if itemsForRoom~=nil then
     		for i=1,#itemsForRoom do
-    			for toolIndex=1,7 do
+    			for toolIndex=1,tools.numNormalTools do
     				if itemsForRoom[i][toolIndex]~=0 then toPrint = toPrint..' '..itemsForRoom[i][toolIndex]..' '..tools[toolIndex].name end
     			end
     			if i~=#itemsForRoom then toPrint = toPrint..' or ' end
@@ -1202,10 +1202,6 @@ function checkDeath()
 		t = room[player.tileY][player.tileX]
 		if t:willKillPlayer() then
 			kill()
-			if t:instanceof(tiles.mousetrap) then
-				t.safe = true
-				t:updateSprite()
-			end
 		end
 	end
 	for i = 1, animalCounter-1 do
@@ -1307,7 +1303,7 @@ function love.mousepressed(x, y, button, istouch)
 	if mouseY<width/18 and mouseY>0 then
 		inventoryX = math.floor(mouseX/(width/18))
 		--print(inventoryX)
-		if inventoryX>-1 and inventoryX<7 then
+		if inventoryX>-1 and inventoryX<tools.numNormalTools then
 			clickActivated = true
 			if tool==inventoryX+1 then
 				tool=0
@@ -1361,7 +1357,7 @@ function updateTools()
 			end
 		end
 	end
-	for i = 8, 12 do
+	for i = tools.numNormalTools+1, #tools do
 		if tools[i].numHeld>0 and not (specialTools[1]==i or specialTools[2]==i or specialTools[3]==i) then
 			if specialTools[1]==0 then specialTools[1] = i
 			elseif specialTools[2]==0 then specialTools[2] = i
@@ -1419,7 +1415,7 @@ function beatRoom()
 								end
 							end
 							listChoose = math.random(numLists)
-							for i=1,7 do
+							for i=1,tools.numNormalTools do
 								--print(listChoose)
 								--tools[i].numHeld = tools[i].numHeld+itemsNeeded[mainMap[x][y].roomid][i]
 								tools[i].numHeld = tools[i].numHeld+listOfItemsNeeded[listChoose][i]
@@ -1437,7 +1433,7 @@ function beatRoom()
 			end
 		end
 	else
-		for i=1,7 do
+		for i=1,tools.numNormalTools do
 			tools[i].numHeld = tools[i].numHeld + dropOverride[i]
 		end
 	end
