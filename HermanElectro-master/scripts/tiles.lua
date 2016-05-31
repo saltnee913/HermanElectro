@@ -49,6 +49,17 @@ end
 function P.tile:willKillPlayer()
 	return false
 end
+function P.tile:electrify()
+	self.canBePowered = true
+	self.dirSend = {1,1,1,1}
+	self.dirAccept = {1,1,1,1}
+	self.electrified = true
+	self.sprite = self.electrifiedSprite
+end
+function P.tile:allowVision()
+	self.blocksVision = false
+end
+
 P.invisibleTile = P.tile:new{isVisible = false}
 local bounds = {}
 
@@ -241,7 +252,7 @@ function P.poweredFloor:willKillPlayer()
 	return not self.powered and not self.laddered
 end
 
-P.wall = P.tile:new{blocksProjectiles = true, blocksMovement = true, canBePowered = false, name = "wall", blocksVision = true, destroyedSprite = love.graphics.newImage('Graphics/woodwallbroken.png'), sprite = love.graphics.newImage('Graphics/woodwall.png'), poweredSprite = love.graphics.newImage('Graphics/woodwall.png'), sawable = true }
+P.wall = P.tile:new{electrified = false, blocksProjectiles = true, blocksMovement = true, canBePowered = false, name = "wall", blocksVision = true, electrifiedSprite = love.graphics.newImage('Graphics/woodwallelectrified.png'), destroyedSprite = love.graphics.newImage('Graphics/woodwallbroken.png'), sprite = love.graphics.newImage('Graphics/woodwall.png'), poweredSprite = love.graphics.newImage('Graphics/woodwallpowered.png'), sawable = true}
 function P.wall:onEnter(player)	
 	if not self.destroyed then
 		player.x = player.prevx
@@ -278,7 +289,7 @@ end
 
 P.maskedMetalWall = P.metalWall:new{sprite = love.graphics.newImage('Graphics/maskedMetalWall.png'), poweredSprite = love.graphics.newImage('Graphics/maskedMetalWall.png')}
 
-P.glassWall = P.wall:new{canBePowered = false, dirAccept = {0,0,0,0}, dirSend = {0,0,0,0}, bricked = false, name = "glasswall", blocksVision = false, destroyedSprite = love.graphics.newImage('Graphics/glassbroken.png'), sprite = love.graphics.newImage('Graphics/glass.png'), poweredSprite = love.graphics.newImage('Graphics/metalwallpowered.png'), sawable = false }
+P.glassWall = P.wall:new{canBePowered = false, dirAccept = {0,0,0,0}, dirSend = {0,0,0,0}, bricked = false, name = "glasswall", blocksVision = false, electrifiedSprite = love.graphics.newImage('Graphics/glasswallelectrified.png'), destroyedSprite = love.graphics.newImage('Graphics/glassbroken.png'), sprite = love.graphics.newImage('Graphics/glass.png'), poweredSprite = love.graphics.newImage('Graphics/glasswallpowered.png'), sawable = false }
 function P.glassWall:destroy()
 	self.blocksProjectiles = false
 	self.sprite = self.destroyedSprite
@@ -520,7 +531,7 @@ end
 P.rotater.onEnterAnimal = P.rotater.onEnter
 P.rotater.onLeaveAnimal = P.rotater.onLeave
 
-P.concreteWall = P.wall:new{name = "concreteWall", sprite = love.graphics.newImage('Graphics/concreteWall.png'), sawable = false}
+P.concreteWall = P.wall:new{name = "concreteWall", sprite = love.graphics.newImage('Graphics/concreteWall.png'), poweredSprite = love.graphics.newImage('Graphics/concretewallpowered.png'), electrifiedSprite = love.graphics.newImage('Graphics/concretewallelectrified.png'), sawable = false}
 
 P.tunnel = P.tile:new{name = "tunnel"}
 

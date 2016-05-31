@@ -208,6 +208,8 @@ function checkLight(i, j, x, y)
 end
 
 function updatePower()
+	powerCount = 0
+
 	for i=1, roomHeight do
 		for j=1, roomLength do
 			if room[i]~=nil and room[i][j]~=nil then
@@ -329,6 +331,11 @@ function lightTest(x, y)
 end
 
 function powerTest(x, y, lastDir)
+	powerCount = powerCount+1
+	if powerCount>1000 then
+		kill()
+		return
+	end
 	--x refers to y-direction and vice versa
 	--1 for up, 2 for right, 3 for down, 4 for left
 	if room[x] == nil or room[x][y] == nil then

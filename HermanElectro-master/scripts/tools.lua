@@ -198,6 +198,30 @@ function P.gun:usableOnAnimal(animal)
 	return not animal.dead
 end
 
+P.electrifier = P.tool:new{name = 'electrifier', range = 1, image = love.graphics.newImage('Graphics/electrifier.png')}
+function P.electrifier:usableOnTile(tile)
+	if not tile.destroyed and tile:instanceof(tiles.wall) and not tile:instanceof(tiles.metalWall) and not tile.electrified then
+		return true
+	end
+	return false
+end
+function P.electrifier:useToolTile(tile)
+	self.numHeld = self.numHeld - 1
+	tile:electrify()
+end
+
+P.visionChanger = P.tool:new{name = 'visionChanger', range = 1, image = love.graphics.newImage('Graphics/visionChanger.png')}
+function P.visionChanger:usableOnTile(tile)
+	if tile.blocksVision then
+		return true
+	end
+	return false
+end
+function P.visionChanger:useToolTile(tile)
+	self.numHeld = self.numHeld-1
+	tile:allowVision()
+end
+
 P.specialToolA = P.tool:new{image = love.graphics.newImage('Graphics/saw.png')}
 P.specialToolB = P.tool:new{image = love.graphics.newImage('Graphics/gun.png')}
 P.specialToolC = P.tool:new{image = love.graphics.newImage('Graphics/cuttingtorch.png')}
@@ -211,8 +235,8 @@ P[4] = P.waterBottle
 P[5] = P.cuttingTorch
 P[6] = P.brick
 P[7] = P.gun
-P[8] = P.specialToolA
-P[9] = P.specialToolB
+P[8] = P.electrifier
+P[9] = P.visionChanger
 P[10] = P.specialToolC
 P[11] = P.specialToolD
 P[12] = P.specialToolE
