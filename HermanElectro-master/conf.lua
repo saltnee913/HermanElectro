@@ -1,8 +1,8 @@
 function love.conf(t)
 	t.title = "Herman the Electrician"
 	local scale = 70
-	--t.window.width=16*scale
-	--t.window.height=9*scale
+	t.window.width=1600
+	t.window.height=900
 	t.window.fullscreen = true
 	t.console=false
 end
