@@ -603,14 +603,14 @@ function P.treasureTile:onEnter()
 	self.isVisible = false
 end
 
-P.mousetrap = P.conductiveTile:new{name = "mousetrap", triggered = false, safe = false, sprite = love.graphics.newImage('Graphics/mousetrap.png'), poweredSprite = love.graphics.newImage('Graphics/mousetrap.png'), safeSprite = love.graphics.newImage('Graphics/mousetrapsafe.png'), deadlySprite = love.graphics.newImage('Graphics/mousetrap.png')}
-function P.mousetrap:onEnterPlayer()
+P.mousetrap = P.conductiveTile:new{name = "mousetrap", formerPowered = false, triggered = false, safe = false, sprite = love.graphics.newImage('Graphics/mousetrap.png'), poweredSprite = love.graphics.newImage('Graphics/mousetrap.png'), safeSprite = love.graphics.newImage('Graphics/mousetrapsafe.png'), deadlySprite = love.graphics.newImage('Graphics/mousetrap.png')}
+function P.mousetrap:onEnter()
 	if not self.safe then
 		self.triggered = true
 		self:updateSprite()
 	end
 end
-P.mousetrap.onEnterAnimal = P.mousetrap.onEnterPlayer
+P.mousetrap.onEnterAnimal = P.mousetrap.onEnter
 function P.mousetrap:updateTile(dir)
 	if self.poweredNeighbors[1]==1 or self.poweredNeighbors[2]==1 or self.poweredNeighbors[3]==1 or self.poweredNeighbors[4]==1 then
 		self.powered = true
@@ -627,12 +627,13 @@ function P.mousetrap:willKillPlayer()
 	if self.triggered then
 		self.triggered = false
 		self.safe = true
+		self:updateSprite()
 		return true
 	end
 	return false
 end
 function P.mousetrap:postPowerUpdate()
-	if formerPowered~=self.powered and self.safe then
+	if self.formerPowered~=self.powered and self.safe then
 		self.safe = false
 		self:updateSprite()
 	end
