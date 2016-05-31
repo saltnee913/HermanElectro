@@ -222,6 +222,8 @@ function P.visionChanger:useToolTile(tile)
 	tile:allowVision()
 end
 
+P.bomb = P.tool:new{name = "bomb", range = 1, image = love.graphics.newImage('Graphics/bomb.png')}
+
 P.specialToolA = P.tool:new{image = love.graphics.newImage('Graphics/saw.png')}
 P.specialToolB = P.tool:new{image = love.graphics.newImage('Graphics/gun.png')}
 P.specialToolC = P.tool:new{image = love.graphics.newImage('Graphics/cuttingtorch.png')}
@@ -239,7 +241,7 @@ P[6] = P.brick
 P[7] = P.gun
 P[8] = P.electrifier
 P[9] = P.visionChanger
-P[10] = P.specialToolC
+P[10] = P.bomb
 P[11] = P.specialToolD
 P[12] = P.specialToolE
 
