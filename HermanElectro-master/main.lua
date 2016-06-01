@@ -1393,6 +1393,12 @@ function stepTrigger()
 				room[i][j]:onStep()
 				if room[i][j].gone then
 					room = room[i][j]:onEnd(room, i, j)
+					if room[i][j]:instanceof(tiles.bomb) then
+						if math.abs(i-player.tileY)+math.abs(j-player.tileX)<3 then kill() end
+						for k = 1, animalCounter-1 do
+							if math.abs(i-animals[k].tileY)+math.abs(j-animals[k].tileX)<3 then animals[k]:kill() end
+						end
+					end
 					room[i][j] = nil
 				end
 			end
