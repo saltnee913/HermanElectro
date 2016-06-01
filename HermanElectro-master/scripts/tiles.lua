@@ -678,6 +678,11 @@ function P.bomb:onEnd(map, x, y)
 	return map
 end
 
+--[[Other special tool ideas:
+	-poisonous gas to kill all animals
+	-fire to burn all adjacent wood pieces
+]]
+
 
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile

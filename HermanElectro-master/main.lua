@@ -604,6 +604,11 @@ function love.draw()
 						love.graphics.setColor(0,255,0)
 					elseif completedRooms[i][j]==1 then
 						love.graphics.setColor(255,255,255)
+						if tostring(mainMap[i][j].roomid):sub(1,1)=="t" then
+							love.graphics.setColor(200, 200, 0)
+						elseif tostring(mainMap[i][j].roomid):sub(1,1)=="f" then
+							love.graphics.setColor(200, 0, 200)
+						end
 					else
 						love.graphics.setColor(100,100,100)
 					end
@@ -803,6 +808,8 @@ function enterRoom(dir)
 			end
 		end
 	end
+	currentid = tostring(mainMap[mapy][mapx].roomid)
+	if currentid:sub(1,1)=="t" or currentid:sub(1,1)=="f" then completedRooms[mapy][mapx] = 1 end
 	if loadTutorial then
 		player.enterX = player.tileX
 		player.enterY = player.tileY
