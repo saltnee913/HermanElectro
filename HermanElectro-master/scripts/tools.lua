@@ -13,15 +13,15 @@ end
 
 --prioritizes animals, matters if we want a tool to work on both animals and tiles
 function P.useToolDir(toolid, dir)
-	if P.toolableAnimals ~= nil and P.toolableAnimals[dir][1] ~= nil then
+	if P.toolableAnimals ~= nil and P.toolableAnimals[dir][1] ~= nil and tools[toolid]~=nil then
 		tools[toolid]:useToolAnimal(P.toolableAnimals[dir][1])
 		return true
 	end
 	if P.toolableTiles ~= nil and P.toolableTiles[dir][1] ~= nil then
 		if room[P.toolableTiles[dir][1].y][P.toolableTiles[dir][1].x] == nil then
-			tools[tool]:useToolNothing(P.toolableTiles[dir][1].y, P.toolableTiles[dir][1].x)
+			tools[toolid]:useToolNothing(P.toolableTiles[dir][1].y, P.toolableTiles[dir][1].x)
 		else
-			tools[tool]:useToolTile(room[P.toolableTiles[dir][1].y][P.toolableTiles[dir][1].x])
+			tools[toolid]:useToolTile(room[P.toolableTiles[dir][1].y][P.toolableTiles[dir][1].x])
 		end
 		return true
 	end
@@ -75,17 +75,17 @@ function P.tool:useToolAnimal(animal)
 	self.numHeld = self.numHeld - 1
 	animal:kill()
 end
-function P.waterBottle:useToolNothing(tileY, tileX)
+function P.tool:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld - 1
 end
 
 --returns a table of tables of coordinates by direction
 function P.tool:getToolableTiles()
 	local usableTiles = {}
-	for dir = 1, 4 do
+	for dir = 1, 5 do
 		usableTiles[dir] = {}
 		local offset = util.getOffsetByDir(dir)
-		for dist = 0, self.range do
+		for dist = 1, self.range do
 			local tileToCheck = {y = player.tileY + offset.y*dist, x = player.tileX + offset.x*dist}
 			if room[tileToCheck.y]~=nil then
 				if (room[tileToCheck.y][tileToCheck.x] == nil and self:usableOnNothing())
@@ -104,44 +104,50 @@ end
 --returns a table of tables of the animals themselves by direction
 function P.tool:getToolableAnimals()
 	local usableAnimals = {}
-	local closestAnimals = {{dist = 1000}, {dist = 1000}, {dist = 1000}, {dist = 1000}}
+	local closestAnimals = {{dist = 1000}, {dist = 1000}, {dist = 1000}, {dist = 1000}, {dist = 1000}}
 	for animalIndex = 1, #animals do
 		local animal = animals[animalIndex]
-		if animal.tileY == player.tileY and animal.tileX == player.tileX and self:usableOnAnimal(animal) then
+		--[[if animal.tileY == player.tileY and animal.tileX == player.tileX and self:usableOnAnimal(animal) then
 			usableAnimals[1] = {animal}
 			for i = 2, 4 do usableAnimals[i] = usableAnimals[1] end
 			return usableAnimals
-		end
-		if self:usableOnAnimal(animal) then
-			if animal.tileX == player.tileX then
-				if player.tileY > animal.tileY then
-					if player.tileY-animal.tileY < closestAnimals[1].dist then
-						closestAnimals[1] = {dist = player.tileY - animal.tileY, ani = animal}
-					end
+		end]]
+		if not animal.dead then
+			if self:usableOnAnimal(animal) then
+				if animal.tileX == player.tileX and animal.tileY == player.tileY then
+					closestAnimals[5] = {dist = 0, ani = animal}
 				else
-					if animal.tileY-player.tileY < closestAnimals[3].dist then
-						closestAnimals[3] = {dist = animal.tileY - player.tileY, ani = animal}
-					end
-				end
-			elseif animal.tileY == player.tileY then
-				if player.tileX > animal.tileX then
-					if player.tileX - animal.tileX < closestAnimals[4].dist then
-						closestAnimals[4] = {dist = player.tileX - animal.tileX, ani = animal}
-					end
-				else
-					if animal.tileX - player.tileX < closestAnimals[2].dist then
-						closestAnimals[2] = {dist = animal.tileX - player.tileX, ani = animal}
+					if animal.tileX == player.tileX then
+						if player.tileY > animal.tileY then
+							if player.tileY-animal.tileY < closestAnimals[1].dist then
+								closestAnimals[1] = {dist = player.tileY - animal.tileY, ani = animal}
+							end
+						else
+							if animal.tileY-player.tileY < closestAnimals[3].dist then
+								closestAnimals[3] = {dist = animal.tileY - player.tileY, ani = animal}
+							end
+						end
+					elseif animal.tileY == player.tileY then
+						if player.tileX > animal.tileX then
+							if player.tileX - animal.tileX < closestAnimals[4].dist then
+								closestAnimals[4] = {dist = player.tileX - animal.tileX, ani = animal}
+							end
+						else
+							if animal.tileX - player.tileX < closestAnimals[2].dist then
+								closestAnimals[2] = {dist = animal.tileX - player.tileX, ani = animal}
+							end
+						end
 					end
 				end
 			end
 		end
 	end
-	for dir = 1, 4 do
+	for dir = 1, 5 do
 		usableAnimals[dir] = {}
 		if closestAnimals[dir].dist <= self.range then
 			local offset = util.getOffsetByDir(dir)
 			local isBlocked = false
-			for dist = 0, closestAnimals[dir].dist do
+			for dist = 1, closestAnimals[dir].dist do
 				if room[player.tileY + offset.y*dist] ~= nil then
 					local tile = room[player.tileY + offset.y*dist][player.tileX + offset.x*dist]
 					if tile~=nil and tile.blocksProjectiles == true then
@@ -198,7 +204,7 @@ function P.cuttingTorch:usableOnTile(tile)
 end
 P.brick = P.tool:new{name = 'brick', range = 3, image = love.graphics.newImage('Graphics/brick.png')}
 function P.brick:usableOnTile(tile, dist)
-	if not tile.bricked and tile:instanceof(tiles.button) and dist <= 1 then
+	if not tile.bricked and tile:instanceof(tiles.button) and dist <= 3 then
 		return true
 	end
 	if not tile.destroyed and tile:instanceof(tiles.glassWall) then
@@ -244,6 +250,15 @@ function P.visionChanger:useToolTile(tile)
 end
 
 P.bomb = P.tool:new{name = "bomb", range = 1, image = love.graphics.newImage('Graphics/bomb.png')}
+function P.bomb:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld - 1
+	t = tiles.bomb:new()
+	t.counter = 3
+	room[tileY][tileX] = t
+end
+function P.bomb:usableOnNothing()
+	return true
+end
 
 P.specialToolA = P.tool:new{image = love.graphics.newImage('Graphics/saw.png')}
 P.specialToolB = P.tool:new{image = love.graphics.newImage('Graphics/gun.png')}
@@ -263,7 +278,7 @@ P[7] = P.gun
 P[8] = P.electrifier
 P[9] = P.visionChanger
 P[10] = P.bomb
-P[11] = P.specialToolD
-P[12] = P.specialToolE
+P[11] = P.bomb
+P[12] = P.bomb
 
 return tools

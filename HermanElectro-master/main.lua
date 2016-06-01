@@ -544,18 +544,20 @@ function love.draw()
 		end
 	end
 	if tools.toolableAnimals~=nil then
-		for dir = 1, 4 do
-			for i = 1, #(tools.toolableAnimals[dir]) do
-				local tx = tools.toolableAnimals[dir][i].tileX
-				local ty = tools.toolableAnimals[dir][i].tileY
-				if dir == 1 or tools.toolableAnimals[1][1] == nil or not (tx == tools.toolableAnimals[1][1].tileX and ty == tools.toolableAnimals[1][1].tileY) then
-					love.graphics.draw(green, (tx-1)*floor.sprite:getWidth()*scale+wallSprite.width, (ty-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
+		for dir = 1, 5 do
+			if tools.toolableAnimals[dir]~=nil then
+				for i = 1, #(tools.toolableAnimals[dir]) do
+					local tx = tools.toolableAnimals[dir][i].tileX
+					local ty = tools.toolableAnimals[dir][i].tileY
+					if dir == 1 or tools.toolableAnimals[1][1] == nil or not (tx == tools.toolableAnimals[1][1].tileX and ty == tools.toolableAnimals[1][1].tileY) then
+						love.graphics.draw(green, (tx-1)*floor.sprite:getWidth()*scale+wallSprite.width, (ty-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
+					end
 				end
 			end
 		end
 	end
 	if tools.toolableTiles~=nil then
-		for dir = 1, 4 do
+		for dir = 1, 5 do
 			for i = 1, #(tools.toolableTiles[dir]) do
 				local tx = tools.toolableTiles[dir][i].x
 				local ty = tools.toolableTiles[dir][i].y
@@ -1052,7 +1054,8 @@ function love.keypressed(key, unicode)
     if key == 'up' then dirUse = 1
     elseif key == 'right' then dirUse = 2
     elseif key == 'down' then dirUse = 3
-    elseif key == 'left' then dirUse = 4 end
+    elseif key == 'left' then dirUse = 4
+    elseif key == "space" then dirUse = 5 end
     if dirUse ~= 0 then
 		log((tools.useToolDir(tool, dirUse) and 'true' or 'false')..' '..tool..' '..dirUse)
 		updateGameState()
@@ -1067,7 +1070,7 @@ function love.keypressed(key, unicode)
     	end
     	checkBoundaries()
 	    if beforePressY~=player.y or beforePressX~=player.x then
-	    	
+	   		stepTrigger()
 	    	updateGameState()
 	    	for i = 1, animalCounter-1 do
 	    		if animals[i].name == "pitbull" and not animals[i].dead and (litTiles[animals[i].tileY][animals[i].tileX]==1 or animals[i].triggered) then
@@ -1372,6 +1375,19 @@ function updateTools()
 			if specialTools[1]==0 then specialTools[1] = i
 			elseif specialTools[2]==0 then specialTools[2] = i
 			else specialTools[3] = i end
+		end
+	end
+end
+
+function stepTrigger()
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]~=nil then
+				room[i][j]:onStep()
+				if room[i][j].gone then
+					room[i][j] = nil
+				end
+			end
 		end
 	end
 end

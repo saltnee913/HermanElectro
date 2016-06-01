@@ -6,7 +6,7 @@ tools = require('scripts.tools')
 local P = {}
 tiles = P
 
-P.tile = Object:new{formerPowered = false, destroyed = false, blocksProjectiles = false, isVisible = true, rotation = 0, powered = false, blocksMovement = false, poweredNeighbors = {0,0,0,0}, blocksVision = false, dirSend = {1,1,1,1}, dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile", sprite = love.graphics.newImage('Graphics/cavesfloor.png'), poweredSprite = love.graphics.newImage('Graphics/cavesfloor.png')}
+P.tile = Object:new{formerPowered = false, gone = false, destroyed = false, blocksProjectiles = false, isVisible = true, rotation = 0, powered = false, blocksMovement = false, poweredNeighbors = {0,0,0,0}, blocksVision = false, dirSend = {1,1,1,1}, dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile", sprite = love.graphics.newImage('Graphics/cavesfloor.png'), poweredSprite = love.graphics.newImage('Graphics/cavesfloor.png')}
 function P.tile:onEnter(player) 
 	--self.name = "fuckyou"
 end
@@ -19,6 +19,8 @@ end
 function P.tile:onEnterAnimal(animal)
 end
 function P.tile:onLeaveAnimal(animal)
+end
+function P.tile:onStep()
 end
 function P.tile:updateTile(dir)
 	if self.poweredNeighbors[1]==1 or self.poweredNeighbors[2]==1 or self.poweredNeighbors[3]==1 or self.poweredNeighbors[4]==1 then
@@ -640,6 +642,18 @@ function P.mousetrap:postPowerUpdate()
 end
 P.mousetrap.willKillAnimal = P.mousetrap.willKillPlayer
 
+P.bomb = P.tile:new{name = "bomb", counter = 3, sprite = love.graphics.newImage('Graphics/bomb3.png'), sprite2 = love.graphics.newImage('Graphics/bomb2.png'), sprite1 = love.graphics.newImage('Graphics/bomb1.png')}
+function P.bomb:onStep()
+	self.counter = self.counter-1
+	if self.counter == 2 then
+		self.sprite = self.sprite2
+	elseif self.counter == 1 then
+		self.sprite = self.sprite1
+	else
+		self.gone = true
+	end
+end
+
 
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
@@ -679,5 +693,6 @@ tiles[35] = P.maskedWire
 tiles[36] = P.maskedMetalWall
 tiles[37] = P.poweredEnd
 tiles[38] = P.mousetrap
+tiles[39] = P.bomb
 
 return tiles
