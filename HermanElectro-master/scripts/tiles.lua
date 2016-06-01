@@ -22,6 +22,11 @@ function P.tile:onLeaveAnimal(animal)
 end
 function P.tile:onStep()
 end
+function P.tile:onEnd(map, x, y)
+	return map
+end
+function P.tile:destroy()
+end
 function P.tile:updateTile(dir)
 	if self.poweredNeighbors[1]==1 or self.poweredNeighbors[2]==1 or self.poweredNeighbors[3]==1 or self.poweredNeighbors[4]==1 then
 		self.powered = true
@@ -446,6 +451,7 @@ function P.endTile:onEnter(player)
 	self.done = true
 	self.isCompleted = true
 	self.isVisible = false
+	self.gone = true
 end
 
 P.poweredEnd = P.endTile:new{name = "poweredEnd", canBePowered = true, dirAccept = {1,1,1,1}, sprite = love.graphics.newImage('Graphics/endOff.png'), poweredSprite = love.graphics.newImage('Graphics/end.png')}
@@ -455,11 +461,12 @@ function P.poweredEnd:onEnter(player)
 	self.done = true
 	self.isCompleted = true
 	self.isVisible = false
+	self.gone = true
 end
 
-P.pitbullTile = P.tile:new{name = "pitbull", animal = animalList[2]:new()}
-P.pupTile = P.tile:new{name = "pup", animal = animalList[3]:new()}
-P.catTile = P.tile:new{name = "cat", animal = animalList[4]:new()}
+P.pitbullTile = P.tile:new{name = "pitbull", animal = animalList[2]:new(), sprite = love.graphics.newImage('Graphics/animalstartingtile.png')}
+P.pupTile = P.pitbullTile:new{name = "pup", animal = animalList[3]:new()}
+P.catTile = P.pitbullTile:new{name = "cat", animal = animalList[4]:new()}
 
 P.vDoor= P.hDoor:new{name = "vDoor", sprite = love.graphics.newImage('Graphics/door.png'), closedSprite = love.graphics.newImage('Graphics/door.png'), openSprite = love.graphics.newImage('Graphics/doorsopen.png')}
 P.vDoor.onEnter = P.hDoor.onEnter
@@ -488,7 +495,16 @@ end
 P.rotater.onEnterAnimal = P.rotater.onEnter
 P.rotater.onLeaveAnimal = P.rotater.onLeave
 
-P.concreteWall = P.wall:new{name = "concreteWall", sprite = love.graphics.newImage('Graphics/concreteWall.png'), poweredSprite = love.graphics.newImage('Graphics/concretewallpowered.png'), electrifiedSprite = love.graphics.newImage('Graphics/concretewallelectrified.png'), sawable = false}
+P.concreteWall = P.wall:new{name = "concreteWall", sprite = love.graphics.newImage('Graphics/concreteWall.png'), poweredSprite = love.graphics.newImage('Graphics/concretewallpowered.png'), electrifiedSprite = love.graphics.newImage('Graphics/concretewallelectrified.png'), destroyedSprite = love.graphics.newImage('Graphics/concretewallbroken.png'), sawable = false}
+function P.concreteWall:destroy()
+	self.blocksProjectiles = false
+	self.blocksVision = false
+	self.sprite = self.destroyedSprite
+	self.destroyed = true
+	self.blocksMovement = false
+end
+
+P.concreteWallConductive = P.concreteWall:new{name = "concreteWallConductive", sprite = love.graphics.newImage('Graphics/concretewallconductive.png'), poweredSprite = love.graphics.newImage('Graphics/concretewallconductive.png'), canBePowered = true, dirAccept = {1,1,1,1}, dirSend = {1,1,1,1}}
 
 P.tunnel = P.tile:new{name = "tunnel"}
 
@@ -653,6 +669,14 @@ function P.bomb:onStep()
 		self.gone = true
 	end
 end
+function P.bomb:onEnd(map, x, y)
+	for i = -1, 1 do
+		for j = -1, 1 do
+			if map[x+i]~=nil and map[x+i][y+j]~=nil then map[x+i][y+j]:destroy() end
+		end
+	end
+	return map
+end
 
 
 tiles[1] = P.invisibleTile
@@ -694,5 +718,6 @@ tiles[36] = P.maskedMetalWall
 tiles[37] = P.poweredEnd
 tiles[38] = P.mousetrap
 tiles[39] = P.bomb
+tiles[40] = P.concreteWallConductive
 
 return tiles

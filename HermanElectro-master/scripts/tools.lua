@@ -31,7 +31,7 @@ end
 --prioritizes animals
 function P.useToolTile(toolid, tileY, tileX)
 	if P.toolableAnimals ~= nil then
-		for dir = 1, 4 do
+		for dir = 1, 5 do
 			for i = 1, #(P.toolableAnimals[dir]) do
 				if P.toolableAnimals[dir][i].tileY == tileY and P.toolableAnimals[dir][i].tileX == tileX then
 					tools[tool]:useToolAnimal(P.toolableAnimals[dir][i])
@@ -41,7 +41,7 @@ function P.useToolTile(toolid, tileY, tileX)
 		end
 	end
 	if P.toolableTiles ~= nil then
-		for dir = 1, 4 do
+		for dir = 1, 5 do
 			for i = 1, #(P.toolableTiles[dir]) do
 				if P.toolableTiles[dir][i].y == tileY and P.toolableTiles[dir][i].x == tileX then
 					if room[tileY][tileX] == nil then
@@ -278,7 +278,7 @@ P[7] = P.gun
 P[8] = P.electrifier
 P[9] = P.visionChanger
 P[10] = P.bomb
-P[11] = P.bomb
-P[12] = P.bomb
+P[11] = P.specialToolA
+P[12] = P.specialToolB
 
 return tools

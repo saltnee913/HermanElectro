@@ -537,7 +537,7 @@ function love.draw()
 						tempj = tempj + 1
 					end
 				end
-				if (room[j][i]~=nil and room[j][i].name~="pitbull" and room[j][i].name~="cat" and room[j][i].name~="pup") or litTiles[j][i]==0 then
+				if (room[j][i]~=nil --[[and room[j][i].name~="pitbull" and room[j][i].name~="cat" and room[j][i].name~="pup"]]) or litTiles[j][i]==0 then
 					love.graphics.draw(toDraw, (tempi-1)*floor.sprite:getWidth()*scale+wallSprite.width, (tempj-1)*floor.sprite:getHeight()*scale+wallSprite.height, rot * math.pi / 2, scale, scale)
 				end
 			end
@@ -1322,6 +1322,12 @@ function love.mousepressed(x, y, button, istouch)
 			elseif tools[inventoryX+1].numHeld>0 then
 				tool=inventoryX+1
 			end
+		elseif inventoryX>=13 and inventoryX<=15 then
+			clickActivated = true
+			if specialTools[inventoryX-12]~=0 then
+				tool = specialTools[inventoryX-12]
+			else tool = 0
+			end
 		end
 		log(tool)
 		tools.updateToolableTiles(tool)
@@ -1364,6 +1370,7 @@ end
 function updateTools()
 	for i = 1, 3 do
 		if specialTools[i]~=0 and tools[specialTools[i]].numHeld==0 then
+			specialTools[3]=0
 			for j = i, 2 do
 				specialTools[j] = specialTools[j+1]
 				specialTools[j+1]=0
@@ -1385,6 +1392,7 @@ function stepTrigger()
 			if room[i][j]~=nil then
 				room[i][j]:onStep()
 				if room[i][j].gone then
+					room = room[i][j]:onEnd(room, i, j)
 					room[i][j] = nil
 				end
 			end
