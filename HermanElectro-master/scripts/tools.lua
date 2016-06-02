@@ -92,7 +92,7 @@ function P.tool:getToolableTiles()
 					or (room[tileToCheck.y][tileToCheck.x] ~= nil and self:usableOnTile(room[tileToCheck.y][tileToCheck.x], dist)) then
 					usableTiles[dir][#(usableTiles[dir])+1] = tileToCheck
 				end
-				if room[tileToCheck.y][tileToCheck.x] ~= nil and room[tileToCheck.y][tileToCheck.x].blocksProjectiles == true then
+				if room[tileToCheck.y][tileToCheck.x] ~= nil and room[tileToCheck.y][tileToCheck.x].blocksProjectiles then
 					break
 				end
 			end
@@ -150,7 +150,7 @@ function P.tool:getToolableAnimals()
 			for dist = 1, closestAnimals[dir].dist do
 				if room[player.tileY + offset.y*dist] ~= nil then
 					local tile = room[player.tileY + offset.y*dist][player.tileX + offset.x*dist]
-					if tile~=nil and tile.blocksProjectiles == true then
+					if tile~=nil and tile.blocksProjectiles then
 						isBlocked = true
 						break
 					end
@@ -260,6 +260,29 @@ function P.bomb:usableOnNothing()
 	return true
 end
 
+P.flame = P.tool:new{name = "flame", range = 1, image = love.graphics.newImage('Graphics/flame.png')}
+function P.flame:usableOnTile(tile)
+	if tile:instanceof(tiles.wall) and tile.sawable and not tile:instanceof(tiles.metalWall) and not tile.destroyed then
+		return true
+	end
+	return false
+end
+function P.flame:useToolTile(tile)
+	self.numHeld = self.numHeld - 1
+	tile.onFire = true
+	updateFire()
+end
+
+P.unsticker = P.tool:new{name = "unsticker", range = 1, image = love.graphics.newImage('Graphics/unsticker.png')}
+function P.unsticker:usableOnTile(tile)
+	if tile:instanceof(tiles.stickyButton) and tile.down then return true end
+	return false
+end
+function P.unsticker:useToolTile(tile)
+	self.numHeld = self.numHeld - 1
+	tile:unstick()
+end
+
 P.specialToolA = P.tool:new{image = love.graphics.newImage('Graphics/saw.png')}
 P.specialToolB = P.tool:new{image = love.graphics.newImage('Graphics/gun.png')}
 P.specialToolC = P.tool:new{image = love.graphics.newImage('Graphics/cuttingtorch.png')}
@@ -272,7 +295,7 @@ P[1] = P.saw
 P[2] = P.ladder
 P[3] = P.wireCutters
 P[4] = P.waterBottle
-P[5] = P.cuttingTorch
+P[5] = P.unsticker
 P[6] = P.brick
 P[7] = P.gun
 P[8] = P.electrifier

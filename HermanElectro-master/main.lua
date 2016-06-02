@@ -593,27 +593,24 @@ function love.draw()
 	for i = 0, mapHeight do
 		for j = 0, mapHeight do
 			if visibleMap[i][j] == 1 then
-				if mainMap[i][j] == nil then
-					--love.graphics.setColor(255,255,255)
-					--love.graphics.rectangle("line", width - 18*(mapHeight-j+1), 9*i, 18, 9 )
-				end
-				--else
-					if mainMap[i][j]==nil then
-						love.graphics.setColor(0, 0, 0)
-					elseif (i == mapy and j == mapx) then
+				if mainMap[i][j]==nil then
+					love.graphics.setColor(0, 0, 0)
+				else
+					currentid = tostring(mainMap[i][j].roomid)
+					if (i == mapy and j == mapx) then
 						love.graphics.setColor(0,255,0)
 					elseif completedRooms[i][j]==1 then
 						love.graphics.setColor(255,255,255)
-						if tostring(mainMap[i][j].roomid):sub(1,1)=="t" then
-							love.graphics.setColor(200, 200, 0)
-						elseif tostring(mainMap[i][j].roomid):sub(1,1)=="f" then
+						if map.getRoomType(currentid)=="treasure" then
+							love.graphics.setColor(250, 250, 0)
+						elseif map.getRoomType(currentid)=="final" then
 							love.graphics.setColor(200, 0, 200)
 						end
 					else
 						love.graphics.setColor(100,100,100)
 					end
-					love.graphics.rectangle("fill", width - 18*(mapHeight-j+1), 9*i, 18, 9 )
-				--end
+				end
+				love.graphics.rectangle("fill", width - 18*(mapHeight-j+1), 9*i, 18, 9 )
 			else
 				--love.graphics.setColor(255,255,255)
 				--love.graphics.rectangle("line", width - 18*(mapHeight-j+1), 9*i, 18, 9 )
@@ -809,7 +806,7 @@ function enterRoom(dir)
 		end
 	end
 	currentid = tostring(mainMap[mapy][mapx].roomid)
-	if currentid:sub(1,1)=="t" or currentid:sub(1,1)=="f" then completedRooms[mapy][mapx] = 1 end
+	if map.getRoomType(currentid)=="treasure" or map.getRoomType(currentid)=="final" then completedRooms[mapy][mapx] = 1 end
 	if loadTutorial then
 		player.enterX = player.tileX
 		player.enterY = player.tileY
@@ -1372,6 +1369,28 @@ function updateGameState()
 	updateTools()
 	tools.updateToolableTiles(tool)
 	if tool ~= 0 and tool ~= nil and tools[tool].numHeld == 0 then tool = 0 end
+end
+
+function updateFire()
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]~=nil and room[i][j]:instanceof(tiles.wall) and room[i][j].onFire then
+				burn(i,j)
+			end
+		end
+	end
+end
+
+function burn(x,y)
+	room[x][y]:destroy()
+	for i = -1, 1 do
+		for j = -1, 1 do
+			if room[x+i]~=nil and room[x+i][y+j]~=nil and tools.flame:usableOnTile(room[x+i][y+j]) and not room[x+i][y+j].onFire then
+				room[x+i][y+j].onFire = true
+				burn(x+i, y+j)
+			end
+		end
+	end
 end
 
 function updateTools()

@@ -48,6 +48,12 @@ function P.createRoom(inRoom, arr)
 	return loadedRoom
 end
 
+function P.getRoomType(inRoom)
+	if P.rooms[inRoom]~=nil then return "basic"
+	elseif P.treasureRooms[inRoom]~=nil then return "treasure"
+	elseif P.finalRooms[inRoom]~=nil then return "final" end
+end
+
 function P.getFieldForRoom(inRoom, inField)
 	if P.rooms[inRoom] ~= nil then
 		return P.rooms[inRoom][inField]

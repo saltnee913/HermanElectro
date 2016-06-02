@@ -80,9 +80,9 @@ function P.keypressed(key, unicode)
 		for i = 1, 7 do
 			tools[i].numHeld = tools[i].numHeld+1
 		end
-		for i = 1, 3 do
+		--[[for i = 1, 3 do
 			tools[i+7].numHeld = tools[i+7].numHeld+1
-		end
+		end]]
 	end
 end
 

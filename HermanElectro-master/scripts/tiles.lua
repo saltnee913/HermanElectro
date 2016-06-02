@@ -186,17 +186,22 @@ function P.button:updateTile(dir)
 	end
 end
 
-P.stickyButton = P.button:new{name = "stickyButton", downSprite = love.graphics.newImage('Graphics/stickyButtonPressed.png'), sprite = love.graphics.newImage('Graphics/stickyButton.png')}
+P.stickyButton = P.button:new{name = "stickyButton", downSprite = love.graphics.newImage('Graphics/stickyButtonPressed.png'), sprite = love.graphics.newImage('Graphics/stickyButton.png'), upSprite = love.graphics.newImage('Graphics/stickyButton.png')}
 function P.stickyButton:onEnter(player)
-	--if not self.justPressed then
-		self.justPressed = true
-		self.down = true
-		self.dirAccept = {1,1,1,1}
-		updateGameState()
-		self:updateSprite()
-	--end
+	self.justPressed = true
+	self.down = true
+	self.dirAccept = {1,1,1,1}
+	updateGameState()
+	self:updateSprite()
 end
 function P.stickyButton:onLeave(player)
+end
+function P.stickyButton:unstick()
+	self.justPressed = false
+	self.down = false
+	self.dirAccept = {0,0,0,0}
+	updateGameState()
+	self:updateSprite()
 end
 P.stickyButton.onEnterAnimal = P.stickyButton.onEnter
 P.stickyButton.onLeaveAnimal = P.stickyButton.onLeave
@@ -264,7 +269,7 @@ function P.poweredFloor:willKillPlayer()
 end
 P.poweredFloor.willKillAnimal = P.poweredFloor.willKillPlayer
 
-P.wall = P.tile:new{electrified = false, blocksProjectiles = true, blocksMovement = true, canBePowered = false, name = "wall", blocksVision = true, electrifiedSprite = love.graphics.newImage('Graphics/woodwallelectrified.png'), destroyedSprite = love.graphics.newImage('Graphics/woodwallbroken.png'), sprite = love.graphics.newImage('Graphics/woodwall.png'), poweredSprite = love.graphics.newImage('Graphics/woodwallpowered.png'), sawable = true}
+P.wall = P.tile:new{electrified = false, onFire = false, blocksProjectiles = true, blocksMovement = true, canBePowered = false, name = "wall", blocksVision = true, electrifiedSprite = love.graphics.newImage('Graphics/woodwallelectrified.png'), destroyedSprite = love.graphics.newImage('Graphics/woodwallbroken.png'), sprite = love.graphics.newImage('Graphics/woodwall.png'), poweredSprite = love.graphics.newImage('Graphics/woodwallpowered.png'), sawable = true}
 function P.wall:onEnter(player)	
 	if not self.destroyed then
 		player.x = player.prevx
@@ -301,7 +306,7 @@ end
 
 P.maskedMetalWall = P.metalWall:new{sprite = love.graphics.newImage('Graphics/maskedMetalWall.png'), poweredSprite = love.graphics.newImage('Graphics/maskedMetalWall.png')}
 
-P.glassWall = P.wall:new{canBePowered = false, dirAccept = {0,0,0,0}, dirSend = {0,0,0,0}, bricked = false, name = "glasswall", blocksVision = false, electrifiedSprite = love.graphics.newImage('Graphics/glasswallelectrified.png'), destroyedSprite = love.graphics.newImage('Graphics/glassbroken.png'), sprite = love.graphics.newImage('Graphics/glass.png'), poweredSprite = love.graphics.newImage('Graphics/glasswallpowered.png'), sawable = false }
+P.glassWall = P.wall:new{sawable = false, canBePowered = false, dirAccept = {0,0,0,0}, dirSend = {0,0,0,0}, bricked = false, name = "glasswall", blocksVision = false, electrifiedSprite = love.graphics.newImage('Graphics/glasswallelectrified.png'), destroyedSprite = love.graphics.newImage('Graphics/glassbroken.png'), sprite = love.graphics.newImage('Graphics/glass.png'), poweredSprite = love.graphics.newImage('Graphics/glasswallpowered.png'), sawable = false }
 function P.glassWall:destroy()
 	self.blocksProjectiles = false
 	self.sprite = self.destroyedSprite
@@ -495,7 +500,7 @@ end
 P.rotater.onEnterAnimal = P.rotater.onEnter
 P.rotater.onLeaveAnimal = P.rotater.onLeave
 
-P.concreteWall = P.wall:new{name = "concreteWall", sprite = love.graphics.newImage('Graphics/concreteWall.png'), poweredSprite = love.graphics.newImage('Graphics/concretewallpowered.png'), electrifiedSprite = love.graphics.newImage('Graphics/concretewallelectrified.png'), destroyedSprite = love.graphics.newImage('Graphics/concretewallbroken.png'), sawable = false}
+P.concreteWall = P.wall:new{sawable = false, name = "concreteWall", sprite = love.graphics.newImage('Graphics/concreteWall.png'), poweredSprite = love.graphics.newImage('Graphics/concretewallpowered.png'), electrifiedSprite = love.graphics.newImage('Graphics/concretewallelectrified.png'), destroyedSprite = love.graphics.newImage('Graphics/concretewallbroken.png'), sawable = false}
 function P.concreteWall:destroy()
 	self.blocksProjectiles = false
 	self.blocksVision = false
