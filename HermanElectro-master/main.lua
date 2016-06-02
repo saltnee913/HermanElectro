@@ -232,8 +232,11 @@ function updatePower()
 			if room[i]~=nil and room[i][j]~=nil and room[i][j].name == "powerSupply" and not room[i][j].destroyed then
 				room[i][j].powered = true
 			end
-			if room[i]~=nil and room[i][j]~=nil and room[i][j].name == "notGate" then
+			if room[i]~=nil and room[i][j]~=nil and room[i][j].name == "notGate" and not room[i][j].destroyed then
 				--room[i][j].powered = true
+			end
+			if room[i][j]~=nil and room[i][j].charged and not room[i][j].destroyed then
+				room[i][j].powered = true
 			end
 		end
 	end
@@ -251,7 +254,7 @@ function updatePower()
 	for k = 1, 10 do
 		for i = 1, roomHeight do
 			for j = 1, roomLength do
-				if room[i]~=nil and room[i][j]~=nil and not (room[i][j].name == "powerSupply" or room[i][j].name == "notGate") then
+				if room[i]~=nil and room[i][j]~=nil and not (room[i][j].name == "powerSupply" or room[i][j].name == "notGate") and not room[i][j].charged then
 					room[i][j].poweredNeighbors = {0,0,0,0}
 					room[i][j].powered = false
 					room[i][j]:updateTile(0)
@@ -261,7 +264,7 @@ function updatePower()
 		for i = 1, roomHeight do
 			for j = 1, roomLength do
 				if room[i]~=nil and room[i][j]~=nil then
-					if (room[i][j].name == "powerSupply" or room[i][j].name == "notGate") and room[i][j].powered then
+					if (room[i][j].name == "powerSupply" or room[i][j].name == "notGate" or room[i][j].charged) and room[i][j].powered then
 						powerTestSpecial(i,j,0)
 					end
 				end

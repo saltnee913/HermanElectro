@@ -237,6 +237,27 @@ function P.electrifier:useToolTile(tile)
 	tile:electrify()
 end
 
+P.delectrifier = P.tool:new{name = 'delectrifier', range = 1, image = love.graphics.newImage('Graphics/electrifier2.png')}
+function P.delectrifier:usableOnTile(tile)
+	if tile.canBePowered then return true end
+	return false
+end
+function P.delectrifier:useToolTile(tile)
+	self.numHeld = self.numHeld - 1
+	tile.canBePowered = false
+	if tile:instanceof(tiles.powerSupply) or tile:instanceof(tiles.notGate) or tile:instanceof(tiles.wire) then tile:destroy() end
+end
+
+P.charger = P.tool:new{name = 'charger', range = 1, image = love.graphics.newImage('Graphics/charger.png')}
+function P.charger:usableOnTile(tile)
+	if tile.canBePowered then return true end
+	return false
+end
+function P.charger:useToolTile(tile)
+	self.numHeld = self.numHeld - 1
+	tile.charged = true
+end
+
 P.visionChanger = P.tool:new{name = 'visionChanger', range = 1, image = love.graphics.newImage('Graphics/visionChanger.png')}
 function P.visionChanger:usableOnTile(tile)
 	if tile.blocksVision then
@@ -283,11 +304,17 @@ function P.unsticker:useToolTile(tile)
 	tile:unstick()
 end
 
-P.specialToolA = P.tool:new{image = love.graphics.newImage('Graphics/saw.png')}
-P.specialToolB = P.tool:new{image = love.graphics.newImage('Graphics/gun.png')}
-P.specialToolC = P.tool:new{image = love.graphics.newImage('Graphics/cuttingtorch.png')}
-P.specialToolD = P.tool:new{image = love.graphics.newImage('Graphics/brick.png')}
-P.specialToolE = P.tool:new{image = love.graphics.newImage('Graphics/waterbottle.png')}
+P.doorstop = P.tool:new{name = "doorstop", range = 1, image = love.graphics.newImage('Graphics/unsticker.png')}
+function P.doorstop:usableOnTile(tile)
+	if tile:instanceof(tiles.vPoweredDoor) and not tile.stopped then return true end
+	return false
+end
+function P.doorstop:useToolTile(tile)
+	self.numHeld = self.numHeld - 1
+	tile.open = true
+	tile.stopped = true
+end
+
 
 P.numNormalTools = 7
 
@@ -295,13 +322,15 @@ P[1] = P.saw
 P[2] = P.ladder
 P[3] = P.wireCutters
 P[4] = P.waterBottle
-P[5] = P.unsticker
+P[5] = P.doorstop
 P[6] = P.brick
 P[7] = P.gun
 P[8] = P.electrifier
 P[9] = P.visionChanger
 P[10] = P.bomb
-P[11] = P.specialToolA
-P[12] = P.specialToolB
+P[11] = P.charger
+P[12] = P.delectrifier
+P[13] = P.unsticker
+
 
 return tools
