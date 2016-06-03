@@ -21,7 +21,10 @@ function P.useToolDir(toolid, dir)
 		if room[P.toolableTiles[dir][1].y][P.toolableTiles[dir][1].x] == nil then
 			tools[toolid]:useToolNothing(P.toolableTiles[dir][1].y, P.toolableTiles[dir][1].x)
 		else
-			tools[toolid]:useToolTile(room[P.toolableTiles[dir][1].y][P.toolableTiles[dir][1].x])
+			--sometimes next line has  error "attempt to index a nil value"
+			if tools[toolid]~=nil and room[P.toolableTiles[dir][1].y][P.toolableTiles[dir][1].x]~=nil then
+				tools[toolid]:useToolTile(room[P.toolableTiles[dir][1].y][P.toolableTiles[dir][1].x])
+			end
 		end
 		return true
 	end
@@ -101,6 +104,27 @@ function P.tool:getToolableTiles()
 	return usableTiles
 end
 
+--for tools that can be used in more than four basic directions
+function P.tool:getToolableTilesBox()
+	local usableTiles = {{},{},{},{},{}}
+	dir = 1
+	for i=-1*self.range, self.range do
+		for j = -1*self.range, self.range do
+			local offset = {x = i, y = j}
+			local tileToCheck = {y = player.tileY + offset.y, x = player.tileX + offset.x}
+			if room[tileToCheck.y]~=nil then
+				if (room[tileToCheck.y][tileToCheck.x] == nil and self:usableOnNothing())
+				or (room[tileToCheck.y][tileToCheck.x] ~= nil and self:usableOnTile(room[tileToCheck.y][tileToCheck.x], dist)) then
+					if math.abs(tileToCheck.y-player.tileY)+math.abs(tileToCheck.x-player.tileX)<=self.range then
+						usableTiles[dir][#(usableTiles[dir])+1] = tileToCheck
+					end
+				end
+			end
+		end
+	end
+	return usableTiles
+end
+
 --returns a table of tables of the animals themselves by direction
 function P.tool:getToolableAnimals()
 	local usableAnimals = {}
@@ -159,6 +183,17 @@ function P.tool:getToolableAnimals()
 			if not isBlocked then
 				usableAnimals[dir][#(usableAnimals[dir]) + 1] = closestAnimals[dir].ani
 			end
+		end
+	end
+	return usableAnimals
+end
+
+--for tools that can be used in more than four basic directions
+function P.tool:getToolableAnimalsBox()
+	local usableAnimals = {{},{},{},{},{}}
+	for animalIndex = 1, #animals do
+		if not animals[animalIndex].dead and math.abs(animals[animalIndex].tileY - player.tileY)+math.abs(animals[animalIndex].tileX - player.tileX)<=self.range then
+			usableAnimals[1][#usableAnimals[1]+1] = animals[animalIndex]
 		end
 	end
 	return usableAnimals
@@ -250,7 +285,7 @@ end
 
 P.charger = P.tool:new{name = 'charger', range = 1, image = love.graphics.newImage('Graphics/charger.png')}
 function P.charger:usableOnTile(tile)
-	if tile.canBePowered then return true end
+	if tile.canBePowered and not tile.charged then return true end
 	return false
 end
 function P.charger:useToolTile(tile)
@@ -304,17 +339,36 @@ function P.unsticker:useToolTile(tile)
 	tile:unstick()
 end
 
-P.doorstop = P.tool:new{name = "doorstop", range = 1, image = love.graphics.newImage('Graphics/unsticker.png')}
-function P.doorstop:usableOnTile(tile)
-	if tile:instanceof(tiles.vPoweredDoor) and not tile.stopped then return true end
+P.crowbar = P.tool:new{name = "crowbar", range = 1, image = love.graphics.newImage('Graphics/unsticker.png')}
+function P.crowbar:usableOnTile(tile)
+	if tile:instanceof(tiles.vPoweredDoor) or tile:instanceof(tiles.hDoor) and not tile.stopped then return true end
 	return false
 end
-function P.doorstop:useToolTile(tile)
+function P.crowbar:useToolTile(tile)
 	self.numHeld = self.numHeld - 1
 	tile.open = true
 	tile.stopped = true
 end
 
+P.doorstop = P.tool:new{name = "doorstop", range = 1, image = love.graphics.newImage('Graphics/unsticker.png')}
+function P.doorstop:usableOnTile(tile)
+	if tile:instanceof(tiles.vPoweredDoor) and (not tile.stopped) and (not tile.blocksMovement) then return true end
+	return false
+end
+function P.doorstop:useToolTile(tile)
+	self.numHeld = self.numHeld - 1
+	tile.stopped = true
+end
+
+P.missile = P.tool:new{name = "missile", range = 10, image = love.graphics.newImage('Graphics/missile.png')}
+function P.missile:usableOnTile(tile)
+	return (tile:instanceof(tiles.conductiveTile) or tile:instanceof(tiles.wall)) and not tile.destroyed
+end
+function P.missile:usableOnAnimal(animal)
+	return not animal.dead
+end
+P.missile.getToolableTiles = P.tool.getToolableTilesBox
+P.missile.getToolableAnimals = P.tool.getToolableAnimalsBox
 
 P.numNormalTools = 7
 
@@ -322,15 +376,17 @@ P[1] = P.saw
 P[2] = P.ladder
 P[3] = P.wireCutters
 P[4] = P.waterBottle
-P[5] = P.doorstop
+P[5] = P.missile
 P[6] = P.brick
 P[7] = P.gun
-P[8] = P.electrifier
+P[8] = P.crowbar
 P[9] = P.visionChanger
 P[10] = P.bomb
-P[11] = P.charger
+P[11] = P.electrifier
 P[12] = P.delectrifier
 P[13] = P.unsticker
+P[14] = P.doorstop
+P[15] = P.charger
 
 
 return tools

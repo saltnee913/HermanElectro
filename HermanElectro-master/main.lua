@@ -243,7 +243,7 @@ function updatePower()
 	for i=1, roomHeight do
 		for j=1, roomLength do
 			--power starts at power sources: powerSupply and notGate
-			if room[i]~=nil and room[i][j]~=nil and (room[i][j].name == "powerSupply" or room[i][j].name == "notGate") then
+			if room[i]~=nil and room[i][j]~=nil and (room[i][j].charged or room[i][j].name == "powerSupply" or room[i][j].name == "notGate") then
 				room[i][j]:updateTile(0)
 				powerTest(i,j,0)
 			end
