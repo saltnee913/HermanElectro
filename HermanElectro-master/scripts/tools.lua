@@ -116,7 +116,9 @@ function P.tool:getToolableTilesBox()
 				if (room[tileToCheck.y][tileToCheck.x] == nil and self:usableOnNothing())
 				or (room[tileToCheck.y][tileToCheck.x] ~= nil and self:usableOnTile(room[tileToCheck.y][tileToCheck.x], dist)) then
 					if math.abs(tileToCheck.y-player.tileY)+math.abs(tileToCheck.x-player.tileX)<=self.range then
-						usableTiles[dir][#(usableTiles[dir])+1] = tileToCheck
+						if litTiles[tileToCheck.y][tileToCheck.x]~=0 then
+							usableTiles[dir][#(usableTiles[dir])+1] = tileToCheck
+						end
 					end
 				end
 			end
@@ -193,7 +195,9 @@ function P.tool:getToolableAnimalsBox()
 	local usableAnimals = {{},{},{},{},{}}
 	for animalIndex = 1, #animals do
 		if not animals[animalIndex].dead and math.abs(animals[animalIndex].tileY - player.tileY)+math.abs(animals[animalIndex].tileX - player.tileX)<=self.range then
-			usableAnimals[1][#usableAnimals[1]+1] = animals[animalIndex]
+			if litTiles[animals[animalIndex].tileY][animals[animalIndex].tileX]~=0 then
+				usableAnimals[1][#usableAnimals[1]+1] = animals[animalIndex]
+			end
 		end
 	end
 	return usableAnimals
@@ -362,7 +366,7 @@ end
 
 P.missile = P.tool:new{name = "missile", range = 10, image = love.graphics.newImage('Graphics/missile.png')}
 function P.missile:usableOnTile(tile)
-	return (tile:instanceof(tiles.wire) or tile:instanceof(tiles.electricFloor) or tile:instanceof(tiles.wall)) or tile:instanceof(tiles.powerSupply) and not tile.destroyed
+	return not tile.destroyed and (tile:instanceof(tiles.wire) or tile:instanceof(tiles.electricFloor) or tile:instanceof(tiles.wall)) or tile:instanceof(tiles.powerSupply) and not tile.destroyed
 end
 function P.missile:usableOnAnimal(animal)
 	return not animal.dead

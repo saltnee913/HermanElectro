@@ -29,6 +29,7 @@ function P.tile:destroy()
 	self.destroyed = true
 end
 function P.tile:getInfoText()
+	return nil
 end
 function P.tile:updateTile(dir)
 	if self.poweredNeighbors[1]==1 or self.poweredNeighbors[2]==1 or self.poweredNeighbors[3]==1 or self.poweredNeighbors[4]==1 then
@@ -78,7 +79,7 @@ local bounds = {}
 
 P.boundedTile = P.tile:new{boundary = boundaries.Boundary}
 
-P.conductiveTile = P.tile:new{charged = false, powered = false, dirSend = {1,1,1,1}, dirAccept = {1,1,1,1}, canBePowered = true, name = "conductiveTile", sprite = love.graphics.newImage('Graphics/electricfloor.png'), poweredSprite = love.graphics.newImage('Graphics/spikes.png')}
+P.conductiveTile = P.tile:new{charged = false, powered = false, dirSend = {1,1,1,1}, dirAccept = {1,1,1,1}, canBePowered = true, name = "conductiveTile", sprite = love.graphics.newImage('Graphics/lightoff.png'), poweredSprite = love.graphics.newImage('Graphics/lighton.png')}
 function P.conductiveTile:updateTile(dir)
 	if self.charged then
 		self.powered = true
