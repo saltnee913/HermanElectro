@@ -374,13 +374,21 @@ end
 P.missile.getToolableTiles = P.tool.getToolableTilesBox
 P.missile.getToolableAnimals = P.tool.getToolableAnimalsBox
 
+P.shovel = P.tool:new{name = "shovel", range = 1, image = love.graphics.newImage('Graphics/shovel.png')}
+function P.shovel:usableOnNothing()
+	return true
+end
+function P.shovel:useToolNothing(tileY, tileX)
+	room[tileY][tileX] = tiles.pit:new()
+end
+
 P.numNormalTools = 7
 
 P[1] = P.saw
 P[2] = P.ladder
 P[3] = P.wireCutters
 P[4] = P.waterBottle
-P[5] = P.missile
+P[5] = P.shovel
 P[6] = P.brick
 P[7] = P.gun
 P[8] = P.crowbar
@@ -391,6 +399,7 @@ P[12] = P.delectrifier
 P[13] = P.unsticker
 P[14] = P.doorstop
 P[15] = P.charger
+P[16] = P.missile
 
 
 return tools
