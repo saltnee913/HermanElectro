@@ -362,7 +362,7 @@ end
 
 P.missile = P.tool:new{name = "missile", range = 10, image = love.graphics.newImage('Graphics/missile.png')}
 function P.missile:usableOnTile(tile)
-	return (tile:instanceof(tiles.conductiveTile) or tile:instanceof(tiles.wall)) and not tile.destroyed
+	return (tile:instanceof(tiles.wire) or tile:instanceof(tiles.electricFloor) or tile:instanceof(tiles.wall)) or tile:instanceof(tiles.powerSupply) and not tile.destroyed
 end
 function P.missile:usableOnAnimal(animal)
 	return not animal.dead

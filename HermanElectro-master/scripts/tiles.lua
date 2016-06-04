@@ -28,6 +28,8 @@ end
 function P.tile:destroy()
 	self.destroyed = true
 end
+function P.tile:getInfoText()
+end
 function P.tile:updateTile(dir)
 	if self.poweredNeighbors[1]==1 or self.poweredNeighbors[2]==1 or self.poweredNeighbors[3]==1 or self.poweredNeighbors[4]==1 then
 		self.powered = true
@@ -735,6 +737,50 @@ function P.bomb:onEnd(map, x, y)
 	return map
 end
 
+P.capacitor = P.conductiveTile:new{name = "capacitor", counter = 3, maxCounter = 3, dirAccept = {1,0,1,0}, sprite = love.graphics.newImage('Graphics/capacitor.png'), poweredSprite = love.graphics.newImage('Graphics/capacitor.png')}
+function P.capacitor:updateTile(dir)
+	if self.charged then
+		self.powered = true
+		self.dirSend = shiftArray({1,0,1,0}, self.rotation)
+		return
+	end
+	if self.counter>0 then
+		self.powered = true
+		self.dirSend = shiftArray({1,0,1,0}, self.rotation)
+	else
+		self.powered = false
+		self.dirSend = {0,0,0,0}
+	end
+end
+function P.capacitor:onStep()
+	if not (self.poweredNeighbors[1]==0 and self.poweredNeighbors[2]==0 and self.poweredNeighbors[3]==0 and self.poweredNeighbors[4]==0) then
+		if self.counter>0 then
+			self.counter = self.counter - 1
+		end
+	elseif self.counter<self.maxCounter then
+		self.counter = self.counter+1
+	end
+end
+function P.capacitor:getInfoText()
+	return self.counter
+end
+
+P.inductor = P.conductiveTile:new{name = "inductor", counter = 3, maxCounter = 3, dirAccept = {1,0,1,0}, sprite = love.graphics.newImage('Graphics/inductor.png'), poweredSprite = love.graphics.newImage('Graphics/inductor.png')}
+function P.inductor:updateTile(dir)	if self.charged then
+		self.powered = true
+		self.dirSend = shiftArray({1,0,1,0}, self.rotation)
+		return
+	end
+	if self.counter == 0 then
+		self.powered = true
+		self.dirSend = shiftArray({1,0,1,0}, self.rotation)
+	else
+		self.powered = false
+		self.dirSend = {0,0,0,0}
+	end
+end
+P.inductor.onStep = P.capacitor.onStep
+P.inductor.getInfoText = P.capacitor.getInfoText
 
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
@@ -776,5 +822,7 @@ tiles[37] = P.poweredEnd
 tiles[38] = P.mousetrap
 tiles[39] = P.bomb
 tiles[40] = P.concreteWallConductive
+tiles[41] = P.capacitor
+tiles[42] = P.inductor
 
 return tiles
