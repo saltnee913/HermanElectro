@@ -7,14 +7,20 @@ P.stealInput = false
 function P.draw()
 	barLength = 660
 	love.graphics.setColor(255,255,255)
-	for i = 1, 45 do
+	for i = 1, 90 do
 		if tiles[i]~=nil then
 			toDraw = tiles[i].sprite
+			addx = 0
+			addy = 0
+			if i>45 then
+				addx = -width
+				addy = width/45
+			end
 			--love.graphics.rectangle("fill", (i-1)*width/25, height-width/25, width/25, width/25)
 			--sprite width: floor.sprite:getWidth()
-			love.graphics.draw(toDraw, (i-1)*width/45, height-width/45, 0, (width/45)/(floor.sprite:getWidth()), (width/45)/(floor.sprite:getWidth()))
+			love.graphics.draw(toDraw, (i-1)*width/45+addx, height-2*width/45+addy, 0, (width/45)/(floor.sprite:getWidth()), (width/45)/(floor.sprite:getWidth()))
 			if editorAdd == i then
-				love.graphics.draw(green, (i-1)*width/45, height-width/45, 0, (width/45)/(floor.sprite:getWidth()), (width/45)/(floor.sprite:getWidth()))
+				love.graphics.draw(green, (i-1)*width/45+addx, height-2*width/45+addy, 0, (width/45)/(floor.sprite:getWidth()), (width/45)/(floor.sprite:getWidth()))
 			end
 		end
 	end
@@ -130,8 +136,11 @@ function P.mousepressed(x, y, button, istouch)
 	elseif button == 'r' or button == 2 then
 		tempAdd = 1
 	end
-	if mouseY>height-width/45 then
+	if mouseY>height-2*width/45 then
 		editorAdd = math.floor(mouseX/(width/45))+1
+		if mouseY>height-width/45 then
+			editorAdd = editorAdd+45
+		end
 	elseif tempAdd>0 and tileLocX>=1 and tileLocX<=24 and tileLocY>=1 and tileLocY<=12 then
 		if(room[tileLocY][tileLocX] ~= nil and room[tileLocY][tileLocX].name == tiles[tempAdd].name) then
 			room[tileLocY][tileLocX]:rotate(1)

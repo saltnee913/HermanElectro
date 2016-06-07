@@ -676,9 +676,9 @@ function love.draw()
 		editor.draw()
 	end
 	love.graphics.setColor(0,0,0)
-	love.graphics.rectangle("fill", 5, height-width/30-20, barLength, 15)
+	love.graphics.rectangle("fill", 5, height-2.5*width/30, barLength, 15)
 	love.graphics.setColor(255,255,255)
-	love.graphics.print(botText, 10, height-width/30-20)
+	love.graphics.print(botText, 10, height-2.5*width/30)
 	if debugText ~= nil then
 		love.graphics.setColor(0,255,0,255)
 		love.graphics.print(debugText, 0, 100)
