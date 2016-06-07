@@ -1079,6 +1079,7 @@ function love.keypressed(key, unicode)
     if dirUse ~= 0 then
 		log((tools.useToolDir(tool, dirUse) and 'true' or 'false')..' '..tool..' '..dirUse)
 		updateGameState()
+		log(tool)
 	end
     if (key=="w" or key=="a" or key=="s" or key=="d") then
     	for i = 1, roomHeight do
@@ -1397,8 +1398,8 @@ function updateGameState()
 	updatePower()
 	updateLight()
 	updateTools()
-	tools.updateToolableTiles(tool)
 	if tool ~= 0 and tool ~= nil and tools[tool].numHeld == 0 then tool = 0 end
+	tools.updateToolableTiles(tool)
 end
 
 function updateFire()

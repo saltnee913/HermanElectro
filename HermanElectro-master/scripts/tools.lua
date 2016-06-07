@@ -87,7 +87,12 @@ function P.tool:getToolableTiles()
 	local usableTiles = {}
 	for dir = 1, 5 do
 		usableTiles[dir] = {}
-		local offset = util.getOffsetByDir(dir)
+		local offset
+		if dir == 5 then
+			offset = {y = 0, x = 0}
+		else
+			offset = util.getOffsetByDir(dir)
+		end
 		for dist = 1, self.range do
 			local tileToCheck = {y = player.tileY + offset.y*dist, x = player.tileX + offset.x*dist}
 			if room[tileToCheck.y]~=nil then
@@ -171,7 +176,12 @@ function P.tool:getToolableAnimals()
 	for dir = 1, 5 do
 		usableAnimals[dir] = {}
 		if closestAnimals[dir].dist <= self.range then
-			local offset = util.getOffsetByDir(dir)
+			local offset
+			if dir == 5 then
+				offset = {y = 0, x = 0}
+			else
+				offset = util.getOffsetByDir(dir)
+			end
 			local isBlocked = false
 			for dist = 1, closestAnimals[dir].dist do
 				if room[player.tileY + offset.y*dist] ~= nil then
