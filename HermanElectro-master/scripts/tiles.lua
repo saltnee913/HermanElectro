@@ -725,7 +725,7 @@ function P.bomb:onStep()
 		self.sprite = self.sprite2
 	elseif self.counter == 1 then
 		self.sprite = self.sprite1
-	else
+	elseif self.counter == 0 then
 		self.gone = true
 	end
 end
@@ -783,6 +783,44 @@ end
 P.inductor.onStep = P.capacitor.onStep
 P.inductor.getInfoText = P.capacitor.getInfoText
 
+P.slime = P.tile:new{name = "slime", sprite = love.graphics.newImage('Graphics/slime.png')}
+function P.slime:onEnter(player)
+	player.waitCounter = player.waitCounter+1
+end
+function P.slime:onEnterAnimal(animal)
+	if animal.waitCounter<=0 then
+		animal.waitCounter = animal.waitCounter+1
+	end
+end
+
+P.unactivatedBomb = P.tile:new{name = "unactivatedBomb", counter = 4, triggered = false, sprite = love.graphics.newImage('Graphics/bomb3.png'), sprite2 = love.graphics.newImage('Graphics/bomb2.png'), sprite1 = love.graphics.newImage('Graphics/bomb1.png')}
+function P.unactivatedBomb:onStep()
+	if self.triggered then
+		self.counter = self.counter-1
+		if self.counter == 2 then
+			self.sprite = self.sprite2
+		elseif self.counter == 1 then
+			self.sprite = self.sprite1
+		elseif self.counter == 0 then
+			self.gone = true
+		end
+	end
+end
+function P.unactivatedBomb:onEnd(map, x, y)
+	for i = -1, 1 do
+		for j = -1, 1 do
+			if map[x+i]~=nil and map[x+i][y+j]~=nil then map[x+i][y+j]:destroy() end
+		end
+	end
+	return map
+end
+function P.unactivatedBomb:onEnter(player)
+	self.triggered = true
+end
+function P.unactivatedBomb:onEnterAnimal(animal)
+	self.triggered = true
+end
+
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
 tiles[3] = P.powerSupply
@@ -825,5 +863,7 @@ tiles[39] = P.bomb
 tiles[40] = P.concreteWallConductive
 tiles[41] = P.capacitor
 tiles[42] = P.inductor
+tiles[43] = P.slime
+tiles[44] = P.unactivatedBomb
 
 return tiles

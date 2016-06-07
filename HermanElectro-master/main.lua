@@ -94,7 +94,7 @@ function love.load()
 	--print(love.graphics.getWidth(f1))
 	scale = (width - 2*wallSprite.width)/(20.3 * 16)*5/6
 	floor = tiles.tile
-	player = { dead = false, tileX = 1, tileY = 6, x = (1-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10, 
+	player = { dead = false, waitCounter = 0, tileX = 1, tileY = 6, x = (1-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10, 
 		y = (6-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10, prevTileX = 3, prevTileY = 10,
 		prevx = (3-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10,
 		prevy = (10-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10,
@@ -1007,51 +1007,60 @@ function love.keypressed(key, unicode)
 	end
 	keyTimer.timeLeft = keyTimer.base
     -- ignore non-printable characters (see http://www.ascii-code.com/)
-    if key == "w" then
-    	if player.tileY>1 then
-    		player.prevx = player.x
-    		player.prevy = player.y
-    		player.prevTileX = player.tileX
-    		player.prevTileY = player.tileY
-    		player.tileY = player.tileY-1
-    		player.y = player.y-floor.sprite:getHeight()*scale
-		elseif player.tileY==1 and player.x+player.width/2 < width/2+40 and player.x+player.width/2 > width/2-110 then
-			enterRoom(0)
-		end
-    elseif key == "s" then
-    	if player.tileY<roomHeight then
-    		player.prevx = player.x
-    		player.prevy = player.y
-    		player.prevTileX = player.tileX
-    		player.prevTileY = player.tileY
-    		player.tileY = player.tileY+1
-    		player.y = player.y+floor.sprite:getHeight()*scale
-		elseif player.tileY == roomHeight and player.x < width/2+40 and player.x > width/2-110 then
-			enterRoom(2)
-    	end
-    elseif key == "a" then
-    	if player.tileX>1 then
-    		player.prevx = player.x
-    		player.prevy = player.y
-    		player.prevTileX = player.tileX
-    		player.prevTileY = player.tileY
-    		player.tileX = player.tileX-1
-    		player.x = player.x-floor.sprite:getHeight()*scale
-		elseif player.tileX == 1 and player.y < height/2+50 and player.y > height/2-20 then
-			enterRoom(3)
-    	end
-    elseif key == "d" then
-    	if player.tileX<roomLength then
-    		player.prevx = player.x
-    		player.prevy = player.y
-    		player.prevTileX = player.tileX
-    		player.prevTileY = player.tileY
-    		player.tileX = player.tileX+1
-    		player.x = player.x+floor.sprite:getHeight()*scale
-    	elseif player.tileX == roomLength and player.y < height/2+50 and player.y > height/2-20 then
+   	if player.waitCounter<=0 then
+	    if key == "w" then
+	    	if player.tileY>1 then
+	    		player.prevx = player.x
+	    		player.prevy = player.y
+	    		player.prevTileX = player.tileX
+	    		player.prevTileY = player.tileY
+	    		player.tileY = player.tileY-1
+	    		player.y = player.y-floor.sprite:getHeight()*scale
+			elseif player.tileY==1 and player.x+player.width/2 < width/2+40 and player.x+player.width/2 > width/2-110 then
+				enterRoom(0)
+			end
+	    elseif key == "s" then
+	    	if player.tileY<roomHeight then
+	    		player.prevx = player.x
+	    		player.prevy = player.y
+	    		player.prevTileX = player.tileX
+	    		player.prevTileY = player.tileY
+	    		player.tileY = player.tileY+1
+	    		player.y = player.y+floor.sprite:getHeight()*scale
+			elseif player.tileY == roomHeight and player.x < width/2+40 and player.x > width/2-110 then
+				enterRoom(2)
+	    	end
+	    elseif key == "a" then
+	    	if player.tileX>1 then
+	    		player.prevx = player.x
+	    		player.prevy = player.y
+	    		player.prevTileX = player.tileX
+	    		player.prevTileY = player.tileY
+	    		player.tileX = player.tileX-1
+	    		player.x = player.x-floor.sprite:getHeight()*scale
+			elseif player.tileX == 1 and player.y < height/2+50 and player.y > height/2-20 then
+				enterRoom(3)
+	    	end
+	    elseif key == "d" then
+	    	if player.tileX<roomLength then
+	    		player.prevx = player.x
+	    		player.prevy = player.y
+	    		player.prevTileX = player.tileX
+	    		player.prevTileY = player.tileY
+	    		player.tileX = player.tileX+1
+	    		player.x = player.x+floor.sprite:getHeight()*scale
+	    	elseif player.tileX == roomLength and player.y < height/2+50 and player.y > height/2-20 then
+				
 				enterRoom(1)
+			end
 		end
-	elseif key == "1" or key == "2" or key == "3" or key == "4" or key == "5" or key == "6" or key == "7" or key == "8" or key == "9" or key == "0" then
+	end
+	waitTurn = false
+	if player.waitCounter>0 then
+		waitTurn = true
+    	player.waitCounter = player.waitCounter-1
+    end
+	if key == "1" or key == "2" or key == "3" or key == "4" or key == "5" or key == "6" or key == "7" or key == "8" or key == "9" or key == "0" then
 		numPressed = tonumber(key)
 		if numPressed == 0 then numPressed = 10 end
 		if tools[numPressed].numHeld>0 and numPressed<=tools.numNormalTools then
@@ -1082,7 +1091,7 @@ function love.keypressed(key, unicode)
     		end
     	end
     	checkBoundaries()
-	    if beforePressY~=player.y or beforePressX~=player.x then
+	    if beforePressY~=player.y or beforePressX~=player.x or waitTurn then
 	   		stepTrigger()
 	    	updateGameState()
 	    	for i = 1, animalCounter-1 do
