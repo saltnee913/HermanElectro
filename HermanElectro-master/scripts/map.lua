@@ -129,7 +129,8 @@ function P.generateMap(height, numRooms, seed)
 	for i = 0, height+1 do
 		newmap[i] = {}
 	end
-	newmap[height/2][height/2] = {roomid = 1, room = P.createRoom('1', P.rooms), isFinal = false, isInitial = true, isCompleted = false}
+	local startRoomId = '1'
+	newmap[height/2][height/2] = {roomid = startRoomId, room = P.createRoom(startRoomId, P.rooms), isFinal = false, isInitial = true, isCompleted = false}
 	newmap.initialY = height/2
 	newmap.initialX = height/2
 	treasureX = 0

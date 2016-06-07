@@ -207,6 +207,7 @@ P.saw = P.tool:new{name = 'saw', image = love.graphics.newImage('Graphics/saw.pn
 function P.saw:usableOnTile(tile)
 	return tile:instanceof(tiles.wall) and not tile.destroyed and tile.sawable
 end
+
 P.ladder = P.tool:new{name = 'ladder', image = love.graphics.newImage('Graphics/ladder.png')}
 function P.ladder:usableOnTile(tile)
 	if not tile.laddered then
@@ -222,10 +223,12 @@ function P.ladder:useToolTile(tile)
 	self.numHeld = self.numHeld - 1
 	tile:ladder()
 end
+
 P.wireCutters = P.tool:new{name = 'wire-cutters', image = love.graphics.newImage('Graphics/wirecutters.png')}
 function P.wireCutters:usableOnTile(tile)
 	return not tile.destroyed and (tile:instanceof(tiles.wire) or tile:instanceof(tiles.electricFloor))
 end
+
 P.waterBottle = P.tool:new{name = 'water-bottle', image = love.graphics.newImage('Graphics/waterbottle.png')}
 function P.waterBottle:usableOnTile(tile)
 	return not tile.destroyed and (tile:instanceof(tiles.powerSupply) or tile:instanceof(tiles.electricFloor))
@@ -237,10 +240,20 @@ function P.waterBottle:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld - 1
 	room[tileY][tileX] = tiles.electricFloor:new()
 end
+
 P.cuttingTorch = P.tool:new{name = 'cutting-torch', image = love.graphics.newImage('Graphics/cuttingtorch.png')}
 function P.cuttingTorch:usableOnTile(tile)
 	return false
 end
+
+P.shovel = P.tool:new{name = "shovel", range = 1, image = love.graphics.newImage('Graphics/shovel.png')}
+function P.shovel:usableOnNothing()
+	return true
+end
+function P.shovel:useToolNothing(tileY, tileX)
+	room[tileY][tileX] = tiles.pit:new()
+end
+
 P.brick = P.tool:new{name = 'brick', range = 3, image = love.graphics.newImage('Graphics/brick.png')}
 function P.brick:usableOnTile(tile, dist)
 	if not tile.bricked and tile:instanceof(tiles.button) and dist <= 3 then
@@ -259,12 +272,18 @@ function P.brick:useToolTile(tile)
 		tile:lockInState(true)
 	end
 end
+
 P.gun = P.tool:new{name = 'gun', range = 3, image = love.graphics.newImage('Graphics/gun.png')}
 function P.gun:usableOnAnimal(animal)
 	return not animal.dead
 end
 
-P.electrifier = P.tool:new{name = 'electrifier', range = 1, image = love.graphics.newImage('Graphics/electrifier.png')}
+
+
+
+P.superTool = P.tool:new{name = 'superTool', range = 10, rarity = 1}
+
+P.electrifier = P.superTool:new{name = 'electrifier', range = 1, image = love.graphics.newImage('Graphics/electrifier.png')}
 function P.electrifier:usableOnTile(tile)
 	if not tile.destroyed and tile:instanceof(tiles.wall) and not tile:instanceof(tiles.metalWall) and not tile.electrified then
 		return true
@@ -276,7 +295,7 @@ function P.electrifier:useToolTile(tile)
 	tile:electrify()
 end
 
-P.delectrifier = P.tool:new{name = 'delectrifier', range = 1, image = love.graphics.newImage('Graphics/electrifier2.png')}
+P.delectrifier = P.superTool:new{name = 'delectrifier', range = 1, image = love.graphics.newImage('Graphics/electrifier2.png')}
 function P.delectrifier:usableOnTile(tile)
 	if tile.canBePowered then return true end
 	return false
@@ -287,7 +306,7 @@ function P.delectrifier:useToolTile(tile)
 	if tile:instanceof(tiles.powerSupply) or tile:instanceof(tiles.notGate) or tile:instanceof(tiles.wire) then tile:destroy() end
 end
 
-P.charger = P.tool:new{name = 'charger', range = 1, image = love.graphics.newImage('Graphics/charger.png')}
+P.charger = P.superTool:new{name = 'charger', range = 1, image = love.graphics.newImage('Graphics/charger.png')}
 function P.charger:usableOnTile(tile)
 	if tile.canBePowered and not tile.charged then return true end
 	return false
@@ -297,7 +316,7 @@ function P.charger:useToolTile(tile)
 	tile.charged = true
 end
 
-P.visionChanger = P.tool:new{name = 'visionChanger', range = 1, image = love.graphics.newImage('Graphics/visionChanger.png')}
+P.visionChanger = P.superTool:new{name = 'visionChanger', range = 1, image = love.graphics.newImage('Graphics/visionChanger.png')}
 function P.visionChanger:usableOnTile(tile)
 	if tile.blocksVision then
 		return true
@@ -309,7 +328,7 @@ function P.visionChanger:useToolTile(tile)
 	tile:allowVision()
 end
 
-P.bomb = P.tool:new{name = "bomb", range = 1, image = love.graphics.newImage('Graphics/bomb.png')}
+P.bomb = P.superTool:new{name = "bomb", range = 1, image = love.graphics.newImage('Graphics/bomb.png')}
 function P.bomb:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld - 1
 	t = tiles.bomb:new()
@@ -320,7 +339,7 @@ function P.bomb:usableOnNothing()
 	return true
 end
 
-P.flame = P.tool:new{name = "flame", range = 1, image = love.graphics.newImage('Graphics/flame.png')}
+P.flame = P.superTool:new{name = "flame", range = 1, image = love.graphics.newImage('Graphics/flame.png')}
 function P.flame:usableOnTile(tile)
 	if tile:instanceof(tiles.wall) and tile.sawable and not tile:instanceof(tiles.metalWall) and not tile.destroyed then
 		return true
@@ -333,7 +352,7 @@ function P.flame:useToolTile(tile)
 	updateFire()
 end
 
-P.unsticker = P.tool:new{name = "unsticker", range = 1, image = love.graphics.newImage('Graphics/unsticker.png')}
+P.unsticker = P.superTool:new{name = "unsticker", range = 1, image = love.graphics.newImage('Graphics/unsticker.png')}
 function P.unsticker:usableOnTile(tile)
 	if tile:instanceof(tiles.stickyButton) and tile.down then return true end
 	return false
@@ -343,7 +362,7 @@ function P.unsticker:useToolTile(tile)
 	tile:unstick()
 end
 
-P.crowbar = P.tool:new{name = "crowbar", range = 1, image = love.graphics.newImage('Graphics/unsticker.png')}
+P.crowbar = P.superTool:new{name = "crowbar", range = 1, image = love.graphics.newImage('Graphics/unsticker.png')}
 function P.crowbar:usableOnTile(tile)
 	if tile:instanceof(tiles.vPoweredDoor) or tile:instanceof(tiles.hDoor) and not tile.stopped then return true end
 	return false
@@ -354,7 +373,7 @@ function P.crowbar:useToolTile(tile)
 	tile.stopped = true
 end
 
-P.doorstop = P.tool:new{name = "doorstop", range = 1, image = love.graphics.newImage('Graphics/unsticker.png')}
+P.doorstop = P.superTool:new{name = "doorstop", range = 1, image = love.graphics.newImage('Graphics/unsticker.png')}
 function P.doorstop:usableOnTile(tile)
 	if tile:instanceof(tiles.vPoweredDoor) and (not tile.stopped) and (not tile.blocksMovement) then return true end
 	return false
@@ -364,7 +383,7 @@ function P.doorstop:useToolTile(tile)
 	tile.stopped = true
 end
 
-P.missile = P.tool:new{name = "missile", range = 10, image = love.graphics.newImage('Graphics/missile.png')}
+P.missile = P.superTool:new{name = "missile", range = 10, image = love.graphics.newImage('Graphics/missile.png')}
 function P.missile:usableOnTile(tile)
 	return not tile.destroyed and (tile:instanceof(tiles.wire) or tile:instanceof(tiles.electricFloor) or tile:instanceof(tiles.wall)) or tile:instanceof(tiles.powerSupply) and not tile.destroyed
 end
@@ -374,13 +393,6 @@ end
 P.missile.getToolableTiles = P.tool.getToolableTilesBox
 P.missile.getToolableAnimals = P.tool.getToolableAnimalsBox
 
-P.shovel = P.tool:new{name = "shovel", range = 1, image = love.graphics.newImage('Graphics/shovel.png')}
-function P.shovel:usableOnNothing()
-	return true
-end
-function P.shovel:useToolNothing(tileY, tileX)
-	room[tileY][tileX] = tiles.pit:new()
-end
 
 P.numNormalTools = 7
 
