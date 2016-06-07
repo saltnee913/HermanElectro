@@ -20,7 +20,7 @@ function P.tile:onEnterAnimal(animal)
 end
 function P.tile:onLeaveAnimal(animal)
 end
-function P.tile:onStep()
+function P.tile:onStep(x, y)
 end
 function P.tile:onEnd(map, x, y)
 	return map
@@ -191,7 +191,24 @@ end
 function P.button:onLeave(player)
 	self.justPressed = false
 end
-P.button.onEnterAnimal = P.button.onEnter
+function P.button:onEnterAnimal(animal)
+	if self.bricked then
+		return
+	end
+	if not animal.flying and not self.justPressed then
+		self.justPressed = true
+		self.down = not self.down
+		if self.dirAccept[1]==1 then
+			self.powered = false
+			self.dirAccept = {0,0,0,0}
+		else
+			self.dirAccept = {1,1,1,1}
+		end
+		updateGameState()
+		self:updateSprite()
+		--self.name = "onbutton"
+	end
+end
 P.button.onLeaveAnimal = P.button.onLeave
 
 function P.button:updateTile(dir)
@@ -299,7 +316,18 @@ function P.wall:onEnter(player)
 	end
 end
 P.wall.onStay = P.wall.onEnter
-P.wall.onEnterAnimal = P.wall.onEnter
+function P.wall:onEnterAnimal(animal)
+	if not self.destroyed and not animal.flying then
+		animal.x = animal.prevx
+		animal.y = animal.prevy
+		animal.tileX = animal.prevTileX
+		animal.tileY = animal.prevTileY
+		animal.prevx = animal.x
+		animal.prevy = animal.y
+		animal.prevTileX = animal.tileX
+		animal.prevTileY = animal.tileY
+	end
+end
 function P.wall:destroy()
 	self.blocksProjectiles = false
 	self.blocksVision = false
@@ -524,9 +552,9 @@ function P.poweredEnd:onEnter(player)
 	self.gone = true
 end
 
-P.pitbullTile = P.tile:new{name = "pitbull", animal = animalList[2]:new(), sprite = love.graphics.newImage('Graphics/animalstartingtile.png')}
-P.pupTile = P.pitbullTile:new{name = "pup", animal = animalList[3]:new()}
-P.catTile = P.pitbullTile:new{name = "cat", animal = animalList[4]:new()}
+P.pitbullTile = P.tile:new{name = "pitbull", animal = animalList[2]:new(), sprite = love.graphics.newImage('Graphics/animalstartingtile.png'), listIndex = 2}
+P.pupTile = P.pitbullTile:new{name = "pup", animal = animalList[3]:new(), listIndex = 3}
+P.catTile = P.pitbullTile:new{name = "cat", animal = animalList[4]:new(), listIndex = 4}
 
 P.vDoor= P.hDoor:new{name = "vDoor", sprite = love.graphics.newImage('Graphics/door.png'), closedSprite = love.graphics.newImage('Graphics/door.png'), openSprite = love.graphics.newImage('Graphics/doorsopen.png')}
 P.vDoor.onEnter = P.hDoor.onEnter
@@ -719,7 +747,7 @@ end
 P.mousetrap.willKillAnimal = P.mousetrap.willKillPlayer
 
 P.bomb = P.tile:new{name = "bomb", counter = 3, sprite = love.graphics.newImage('Graphics/bomb3.png'), sprite2 = love.graphics.newImage('Graphics/bomb2.png'), sprite1 = love.graphics.newImage('Graphics/bomb1.png')}
-function P.bomb:onStep()
+function P.bomb:onStep(x, y)
 	self.counter = self.counter-1
 	if self.counter == 2 then
 		self.sprite = self.sprite2
@@ -753,7 +781,7 @@ function P.capacitor:updateTile(dir)
 		self.dirSend = {0,0,0,0}
 	end
 end
-function P.capacitor:onStep()
+function P.capacitor:onStep(x, y)
 	if not (self.poweredNeighbors[1]==0 and self.poweredNeighbors[2]==0 and self.poweredNeighbors[3]==0 and self.poweredNeighbors[4]==0) then
 		if self.counter>0 then
 			self.counter = self.counter - 1
@@ -794,7 +822,7 @@ function P.slime:onEnterAnimal(animal)
 end
 
 P.unactivatedBomb = P.tile:new{name = "unactivatedBomb", counter = 4, triggered = false, sprite = love.graphics.newImage('Graphics/bomb3.png'), sprite2 = love.graphics.newImage('Graphics/bomb2.png'), sprite1 = love.graphics.newImage('Graphics/bomb1.png')}
-function P.unactivatedBomb:onStep()
+function P.unactivatedBomb:onStep(x, y)
 	if self.triggered then
 		self.counter = self.counter-1
 		if self.counter == 2 then
@@ -820,6 +848,24 @@ end
 function P.unactivatedBomb:onEnterAnimal(animal)
 	self.triggered = true
 end
+
+P.snailTile = P.pitbullTile:new{name = "snail", animal = animalList[5]:new(), listIndex = 5}
+
+P.doghouse = P.pitbullTile:new{name = "doghouse", sprite = love.graphics.newImage('Graphics/doghouse.png')}
+function P.doghouse:onStep(x, y)
+	if player.tileX == y and player.tileY == x then return end
+	for i = 1, #animals do
+		if animals[i].tileY == x and animals[i].tileX == y then return end
+	end
+	animals[animalCounter] = animalList[2]:new()
+	animals[animalCounter].y = y*floor.sprite:getWidth()*scale+wallSprite.height
+	animals[animalCounter].x = x*floor.sprite:getHeight()*scale+wallSprite.width
+	animals[animalCounter].tileX = y
+	animals[animalCounter].tileY = x
+	animalCounter=animalCounter+1
+end
+
+P.batTile = P.pitbullTile:new{name = "bat", animal = animalList[6]:new(), listIndex = 6}
 
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
@@ -865,5 +911,8 @@ tiles[41] = P.capacitor
 tiles[42] = P.inductor
 tiles[43] = P.slime
 tiles[44] = P.unactivatedBomb
+tiles[45] = P.snailTile
+tiles[46] = P.doghouse
+tiles[47] = P.batTile
 
 return tiles

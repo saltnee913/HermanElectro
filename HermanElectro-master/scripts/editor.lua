@@ -156,10 +156,10 @@ function P.mousepressed(x, y, button, istouch)
 				animalCounter = animalCounter-1
 			end
 		end
-		if tempAdd == 21 or tempAdd == 22 or tempAdd == 23 then
+		if tiles[tempAdd].animal~=nil then
 			animalToSpawn = room[tileLocY][tileLocX].animal
 			if not animalToSpawn.dead then
-				animals[animalCounter] = animalList[tempAdd-19]:new()
+				animals[animalCounter] = animalList[tiles[tempAdd].listIndex]:new()
 				animals[animalCounter].y = (tileLocY-1)*floor.sprite:getWidth()*scale+wallSprite.height
 				animals[animalCounter].x = (tileLocX-1)*floor.sprite:getHeight()*scale+wallSprite.width
 				animals[animalCounter].tileX = tileLocX

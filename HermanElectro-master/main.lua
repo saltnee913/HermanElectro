@@ -590,9 +590,7 @@ function love.draw()
 		love.graphics.draw(doorwaybg, 2, height/2-150, 0, scale*0.45, scale)
 	end
 	love.graphics.draw(walls, 0, 0, 0, width/walls:getWidth(), height/walls:getHeight())
-	for i = 1, 100 do
-		if animals[i]~=nil then
-		end
+	for i = 1, #animals do
 		if animals[i]~=nil and litTiles[animals[i].tileY][animals[i].tileX]==1 then
 			love.graphics.draw(animals[i].sprite, animals[i].x, animals[i].y, 0, scale, scale)
 		end
@@ -1112,8 +1110,20 @@ function love.keypressed(key, unicode)
 	    			animals[i]:move(player.tileX, player.tileY, room)
 	    		end
 	    	end
+			for i = 1, animalCounter-1 do
+	    		if animals[i].name == "snail"  and not animals[i].dead and (litTiles[animals[i].tileY][animals[i].tileX]==1 or animals[i].triggered) then
+	    			--animalMove(i)
+	    			animals[i]:move(player.tileX, player.tileY, room)
+	    		end
+	    	end
+			for i = 1, animalCounter-1 do
+	    		if animals[i].name == "bat"  and not animals[i].dead and (litTiles[animals[i].tileY][animals[i].tileX]==1 or animals[i].triggered) then
+	    			--animalMove(i)
+	    			animals[i]:move(player.tileX, player.tileY, room)
+	    		end
+	    	end	   	
 	    	resolveConflicts()
-	    	for i = 1, animalCounter-1 do
+	    	for i = 1, #animals do
 	    		animals[i].x = (animals[i].tileX-1)*floor.sprite:getHeight()*scale+wallSprite.width
 	    		animals[i].y = (animals[i].tileY-1)*floor.sprite:getWidth()*scale+wallSprite.height
 	    		if animals[i]:hasMoved() and not animals[i].dead then
@@ -1122,6 +1132,8 @@ function love.keypressed(key, unicode)
 					end
 					if room[animals[i].prevTileY]~=nil and room[animals[i].prevTileY][animals[i].prevTileX]~=nil then
 						room[animals[i].prevTileY][animals[i].prevTileX]:onLeaveAnimal(animals[i])
+					elseif animals[i]:onNullLeave()~=nil then
+						room[animals[i].prevTileY][animals[i].prevTileX] = animals[i]:onNullLeave()
 					end
 				end
 			end
@@ -1239,7 +1251,7 @@ function checkDeath()
 		end
 	end
 	for i = 1, animalCounter-1 do
-		if player.tileX == animals[i].tileX and player.tileY == animals[i].tileY and animals[i].name == "pitbull" and not animals[i].dead then
+		if player.tileX == animals[i].tileX and player.tileY == animals[i].tileY and (animals[i].name == "pitbull" or animals[i].name == "bat") and not animals[i].dead then
 			kill()
 		end
 	end
@@ -1434,7 +1446,7 @@ function stepTrigger()
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
 			if room[i][j]~=nil then
-				room[i][j]:onStep()
+				room[i][j]:onStep(i, j)
 				if room[i][j].gone then
 					room = room[i][j]:onEnd(room, i, j)
 					if room[i][j]:instanceof(tiles.bomb) then

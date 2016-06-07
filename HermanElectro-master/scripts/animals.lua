@@ -22,7 +22,7 @@ scale = (width - 2*wallSprite.width)/(20.3 * 16)*5/6
 --floor = tiles.tile
 
 --speed same as player (250)
-P.animal = Object:new{triggered = false, waitCounter = 0, dead = false, name == "animal", tileX, tileY, prevx, prevy, prevTileX, prevTileY, x, y, speed = 250, width = 16*scale, height = 16*scale, sprite = love.graphics.newImage('Graphics/pitbull.png'), deadSprite = love.graphics.newImage('Graphics/pitbulldead.png'), tilesOn = {}, oldTilesOn = {}}
+P.animal = Object:new{flying = false, triggered = false, waitCounter = 0, dead = false, name == "animal", tileX, tileY, prevx, prevy, prevTileX, prevTileY, x, y, speed = 250, width = 16*scale, height = 16*scale, sprite = love.graphics.newImage('Graphics/pitbull.png'), deadSprite = love.graphics.newImage('Graphics/pitbulldead.png'), tilesOn = {}, oldTilesOn = {}}
 function P.animal:move(playerx, playery, room)
 	diffx = playerx-self.tileX
 	diffy = playery-self.tileY
@@ -99,7 +99,8 @@ end
 function P.animal:hasMoved()
 	return self.prevTileX ~= self.tileX or self.prevTileY ~= self.tileY
 end
-
+function P.animal:onNullLeave()
+end
 function P.animal:kill()
 	self.dead = true
 	self.sprite = self.deadSprite
@@ -110,7 +111,46 @@ end
 
 
 P.pitbull = P.animal:new{name = "pitbull"}
+
 P.pup = P.animal:new{name = "pup", sprite = love.graphics.newImage('Graphics/pup.png'), deadSprite = love.graphics.newImage('Graphics/pupdead.png')}
+
+P.snail = P.animal:new{name = "snail", sprite = love.graphics.newImage('Graphics/snail.png'), deadSprite = love.graphics.newImage('Graphics/pupdead.png')}
+function P.snail:onNullLeave()
+	return tiles.slime:new()
+end
+
+P.bat = P.animal:new{flying = true, name = "bat", sprite = love.graphics.newImage('Graphics/bat.png'), deadSprite = love.graphics.newImage('Graphics/pupdead.png')}
+function P.bat:move(playerx, playery, room)
+	diffx = playerx-self.tileX
+	diffy = playery-self.tileY
+	self.prevx = self.x
+	self.prevy = self.y
+	self.prevTileX = self.tileX
+	self.prevTileY = self.tileY
+	if diffx==0 and diffy==0 then
+		return
+	end
+	if math.abs(diffx)>math.abs(diffy) then
+		if playerx>self.tileX then
+			--self.x = self.x+floor.sprite:getHeight()*scale
+			self.tileX = self.tileX+1
+		else
+			--self.x = self.x-floor.sprite:getHeight()*scale
+			self.tileX = self.tileX-1
+		end
+	else
+		if playery>self.tileY then
+			--self.y = self.y+floor.sprite:getHeight()*scale
+			self.tileY = self.tileY+1
+		else
+			--self.y = self.y-floor.sprite:getHeight()*scale
+			self.tileY = self.tileY-1
+		end
+	end
+end
+function P.bat:checkDeath()
+end
+
 P.cat = P.animal:new{name = "cat", sprite = love.graphics.newImage('Graphics/cat.png'), deadSprite = love.graphics.newImage('Graphics/catdead.png')}
 function P.cat:move(playerx, playery, room)
 	diffx = playerx-self.tileX
@@ -190,5 +230,7 @@ animalList[1] = P.animal
 animalList[2] = P.pitbull
 animalList[3] = P.pup
 animalList[4] = P.cat
+animalList[5] = P.snail
+animalList[6] = P.bat
 
 return animalList
