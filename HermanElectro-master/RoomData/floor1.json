@@ -1,0 +1,35 @@
+{
+	"loadRooms":
+	{
+		"rooms": 
+		{
+			"filePath": "RoomData/rooms.json",
+			"requirements":
+			{
+
+			}
+		},
+		"treasureRooms": 
+		{
+			"filePath": "RoomData/treasurerooms.json",
+			"requirements":
+			{
+				
+			}
+		},
+		"finalRooms": 
+		{
+			"filePath": "RoomData/finalrooms.json",
+			"requirements":
+			{
+				
+			}
+		},
+	},
+	"data":
+	{
+		"height": 5,
+		"numRooms": 5,
+		"generateFunction": "generateMapStandard"
+	}
+}

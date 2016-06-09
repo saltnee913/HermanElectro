@@ -22,5 +22,10 @@
           [0,0,0,0,0,0,0]],
       "itemsGivenOverride": [0,0,0,0,0,0,0]
     }
+  },
+  "superFields":
+  {
+    "autowin": true,
+    "minimapColor": [250, 250, 0]
   }
 }

@@ -1,3 +1,5 @@
+local json = require('scripts.dkjson')
+
 local P = {}
 util = P
 
@@ -41,6 +43,18 @@ function P.shuffle(arr)
 		shuffledArr[index] = arr[i]
 	end
 	return shuffledArr
+end
+
+function P.readJSON(filePath)
+	io.input(filePath)
+	local str = io.read('*all')
+	local obj, pos, err = json.decode(str, 1, nil)
+	if err then
+		print('Error:', err)
+		return nil
+	else
+		return obj
+	end
 end
 
 return util

@@ -3,7 +3,7 @@ roomLength = 24
 screenScale = 70
 
 debug = true
-loadTutorial = false
+loadTutorial = true
 
 util = require('scripts.util')
 tiles = require('scripts.tiles')
@@ -114,20 +114,12 @@ end
 function loadNextLevel()
 	level = level+1
 
-	local roomsPath = 'RoomData/rooms.json'
-	local treasureRoomsPath = 'RoomData/treasurerooms.json'
-	local finalRoomsPath = 'RoomData/finalrooms.json'
+	local floorPath = 'RoomData/floor1.json'
 	if loadTutorial then
-		roomsPath = 'RoomData/tut_rooms.json'
+		floorPath = 'RoomData/tut_map.json'
 	end
-	map.loadRooms(roomsPath)
-	map.loadTreasureRooms(treasureRoomsPath)
-	map.loadFinalRooms(finalRoomsPath)
-	if loadTutorial then
-		mainMap = map.generateTutorial()
-	else
-		mainMap = map.generateMap(8, level+2, os.time())
-	end
+	map.loadFloor(floorPath)
+	mainMap = map.generateMap(os.time())
 	mapHeight = mainMap.height
 	mapx = mainMap.initialX
 	mapy = mainMap.initialY
@@ -608,10 +600,8 @@ function love.draw()
 						love.graphics.setColor(0,255,0)
 					elseif completedRooms[i][j]==1 then
 						love.graphics.setColor(255,255,255)
-						if map.getRoomType(currentid)=="treasure" then
-							love.graphics.setColor(250, 250, 0)
-						elseif map.getRoomType(currentid)=="final" then
-							love.graphics.setColor(200, 0, 200)
+						if map.getFieldForRoom(currentid, 'minimapColor') ~= nil then
+							love.graphics.setColor(map.getFieldForRoom(currentid, 'minimapColor'))
 						end
 					else
 						love.graphics.setColor(100,100,100)
@@ -813,7 +803,7 @@ function enterRoom(dir)
 		end
 	end
 	currentid = tostring(mainMap[mapy][mapx].roomid)
-	if map.getRoomType(currentid)=="treasure" or map.getRoomType(currentid)=="final" then completedRooms[mapy][mapx] = 1 end
+	if map.getFieldForRoom(currentid, 'autowin') then completedRooms[mapy][mapx] = 1 end
 	if loadTutorial then
 		player.enterX = player.tileX
 		player.enterY = player.tileY
@@ -1447,7 +1437,7 @@ function beatRoom()
 	end
 	local dropOverride = map.getFieldForRoom(mainMap[mapy][mapx].roomid, 'itemsGivenOverride')
 	if loadTutorial then
-		for i = 1, #tools do
+		for i = 1, tools.numNormalTools do
 			player.totalItemsGiven[i] = player.totalItemsGiven[i] + map.getItemsGiven(mainMap[mapy][mapx].roomid)[1][i]
 			player.totalItemsNeeded[i] = player.totalItemsNeeded[i] + map.getItemsNeeded(mainMap[mapy][mapx].roomid)[1][i]
 			tools[i].numHeld = player.totalItemsGiven[i] - player.totalItemsNeeded[i]

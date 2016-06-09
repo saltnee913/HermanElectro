@@ -1,24 +1,54 @@
 require('scripts.object')
 require('scripts.tiles')
+local util = require('scripts.util')
 local json = require('scripts.dkjson')
 
 local P = {}
 map = P
 
-P.rooms = {}
-P.treasureRooms = {}
-P.finalRooms = {}
-
 local MapInfo = Object:new{floor = 1, height = 0, numRooms = 0}
+
+function P.loadFloor(inFloorFile)
+	local floorData = util.readJSON(inFloorFile)
+	P.floorInfo = {rooms = {}}
+	for k, v in pairs(floorData.data) do
+		P.floorInfo[k] = v
+	end
+	local loadRooms = floorData.loadRooms
+	for k, v in pairs(loadRooms) do
+		local roomsData = util.readJSON(v.filePath)
+		P.floorInfo.rooms[k] = roomsData.rooms
+		P.filterRoomSet(P.floorInfo.rooms[k], v.requirements)
+		for k1, v1 in pairs(P.floorInfo.rooms[k]) do
+			if roomsData.superFields ~= nil then
+				for k2, v2 in pairs(roomsData.superFields) do
+					if v1[k2] == nil then v1[k2] = v2 end
+				end
+			end
+		end
+	end
+end
+
+function P.filterRoomSet(arr, requirements)
+	for k, v in pairs(arr) do
+		if not P.roomMeetsRequirements(v) then
+			arr[k] = nil
+		end
+	end
+end
+
+function P.roomMeetsRequirements(roomData, requirements)
+	return true
+end
+
 function P.createRoom(inRoom, arr)
 	if arr == nil then
-		if P.rooms[inRoom] ~= nil then
-			arr = P.rooms
-		elseif P.treasureRooms[inRoom] ~= nil then
-			arr = P.treasureRooms
-		elseif P.finalRooms[inRoom] ~= nil then
-			arr = P.finalRooms
-		else
+		for k, v in pairs(P.floorInfo.rooms) do
+			if v[inRoom] ~= nil then
+				arr = v
+			end
+		end
+		if arr == nil then
 			return nil
 		end
 	end
@@ -48,19 +78,11 @@ function P.createRoom(inRoom, arr)
 	return loadedRoom
 end
 
-function P.getRoomType(inRoom)
-	if P.rooms[inRoom]~=nil then return "basic"
-	elseif P.treasureRooms[inRoom]~=nil then return "treasure"
-	elseif P.finalRooms[inRoom]~=nil then return "final" end
-end
-
 function P.getFieldForRoom(inRoom, inField)
-	if P.rooms[inRoom] ~= nil then
-		return P.rooms[inRoom][inField]
-	elseif P.treasureRooms[inRoom] ~= nil then
-		return P.treasureRooms[inRoom][inField]
-	elseif P.finalRooms[inRoom] ~= nil then
-		return P.finalRooms[inRoom][inField]
+	for k, v in pairs(P.floorInfo.rooms) do
+		if v[inRoom] ~= nil then
+			return v[inRoom][inField]
+		end
 	end
 	log('invalid room id')
 	return nil
@@ -73,40 +95,8 @@ function P.getItemsGiven(inRoom)
 	return P.getFieldForRoom(inRoom, 'itemsGiven')
 end
 
-function P.loadRooms(roomPath)
-	--super hacky, will do json later
-	io.input(roomPath)
-	local str = io.read('*all')
-	local obj, pos, err = json.decode(str, 1, nil)
-	if err then
-		print('Error:', err)
-	else
-		P.rooms = obj.rooms
-	end
-end
-
-function P.loadTreasureRooms(roomPath)
-	--super hacky, will do json later
-	io.input(roomPath)
-	local str = io.read('*all')
-	local obj, pos, err = json.decode(str, 1, nil)
-	if err then
-		print('Error:', err)
-	else
-		P.treasureRooms = obj.rooms
-	end
-end
-
-function P.loadFinalRooms(roomPath)
-	--super hacky, will do json later
-	io.input(roomPath)
-	local str = io.read('*all')
-	local obj, pos, err = json.decode(str, 1, nil)
-	if err then
-		print('Error:', err)
-	else
-		P.finalRooms = obj.rooms
-	end
+function P.loadRooms(roomBuffer, roomPath)
+	P[roomBuffer] = util.readJSON(roomPath).rooms
 end
 
 local function printMap(inMap)
@@ -123,19 +113,25 @@ local function printMap(inMap)
 	end
 end
 
-function P.generateMap(height, numRooms, seed)
+function P.generateMap(seed)
 	math.randomseed(seed)
+	return P[P.floorInfo.generateFunction]()
+end
+
+function P.generateMapStandard()
+	local height = P.floorInfo.height
+	local numRooms = P.floorInfo.numRooms
 	local newmap = MapInfo:new{height = height, numRooms = numRooms}
 	for i = 0, height+1 do
 		newmap[i] = {}
 	end
 	local startRoomId = '1'
-	newmap[height/2][height/2] = {roomid = startRoomId, room = P.createRoom(startRoomId, P.rooms), isFinal = false, isInitial = true, isCompleted = false}
-	newmap.initialY = height/2
-	newmap.initialX = height/2
+	newmap[math.floor(height/2)][math.floor(height/2)] = {roomid = startRoomId, room = P.createRoom(startRoomId, P.floorInfo.rooms.rooms), isFinal = false, isInitial = true, isCompleted = false}
+	newmap.initialY = math.floor(height/2)
+	newmap.initialX = math.floor(height/2)
 	treasureX = 0
 	treasureY = 0
-	local randomRoomArray = util.createRandomKeyArray(P.rooms)
+	local randomRoomArray = util.createRandomKeyArray(P.floorInfo.rooms.rooms)
 	for i = 0, numRooms-1 do
 		available = {}
 		local a = 0
@@ -180,15 +176,15 @@ function P.generateMap(height, numRooms, seed)
 		--numRooms=0
 		local choice = available[math.floor(math.random()*a)]
 		--local roomNum = math.floor(math.random()*#(P.rooms)) -- what we will actually do, with some editing
-		arr = P.rooms
+		arr = P.floorInfo.rooms.rooms
 		local roomid = randomRoomArray[i+2]
 		if i == numRooms-2 then
-			arr = P.treasureRooms
+			arr = P.floorInfo.rooms.treasureRooms
 			roomid = util.chooseRandomKey(arr)
 			treasureX = choice.y
 			treasureY = choice.x
 		elseif i == numRooms-1 then
-			arr = P.finalRooms
+			arr = P.floorInfo.rooms.finalRooms
 			roomid = util.chooseRandomKey(arr)
 		end
 		newmap[choice.x][choice.y] = {roomid = roomid, room = P.createRoom(roomid, arr), isFinal = false, isInitial = false}
@@ -216,23 +212,15 @@ function P.generateTutorial()
 	return newmap]]
 end
 
-function P.generateMapFromJSON(mapFile)
-	local newmap
-	io.input(mapFile)
-	local str = io.read('*all')
-	local obj, pos, err = json.decode(str, 1, nil)
-	if err then
-		print('Error:', err)
-	else
-		newmap = obj.map
-	end
+function P.generateMapFromJSON()
+	local newmap = P.floorInfo.map
 	newmap.height = #newmap
 	newmap.numRooms = 0
 	for i = 1, newmap.height do
 		for j = 1, newmap.height do
 			if newmap[i] ~= nil and newmap[i][j] ~= nil and newmap[i][j] ~= 0 then
 				newmap.numRooms = newmap.numRooms + 1
-				newmap[i][j] = {roomid = newmap[i][j], room = P.createRoom(newmap[i][j], P.rooms), isFinal = false, isInitial = false, isCompleted = false}
+				newmap[i][j] = {roomid = newmap[i][j], room = P.createRoom(newmap[i][j], P.floorInfo.rooms.rooms), isFinal = false, isInitial = false, isCompleted = false}
 				if P.getFieldForRoom(newmap[i][j].roomid, "isInitial") == true then
 					newmap[i][j].isInitial = true
 					newmap.initialX = j

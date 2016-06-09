@@ -1,9 +1,20 @@
 {
-  "map":
-    [
-      [0 			   ,"tut_2_trapdoors" ,"tut_5_ladder" ,"tut_6_pitbull" ,0			  , 0 ],
-      [0 			   ,"tut_1_endpoint"  ,0 			  ,0 			   ,0			  , 0 ],
-      ["tut_4_buttons" ,"tut_3_walls"	  ,"tut_7_stack"  ,"tut_8_srdt1"   ,"tut_9_srdt2" , 0 ],
-      [0 			   ,0 				  ,0 			  ,0 			   ,0			  , 0 ]
-    ]
+  	"loadRooms":
+  	{
+  		"rooms":
+  		{
+  			"filePath": "RoomData/tut_rooms.json"
+  		}
+  	},
+  	"data":
+  	{
+  		"map":
+  		[
+  			[0 			   ,"tut_2_trapdoors" ,"tut_5_ladder" ,"tut_6_pitbull" ,0			  , 0 ],
+  			[0 			   ,"tut_1_endpoint"  ,0 			  ,0 			   ,0			  , 0 ],
+  			["tut_4_buttons" ,"tut_3_walls"	  ,"tut_7_stack"  ,"tut_8_srdt1"   ,"tut_9_srdt2" , 0 ],
+  			[0 			   ,0 				  ,0 			  ,0 			   ,0			  , 0 ]
+  		],
+  		"generateFunction": "generateMapFromJSON"
+  	}
 }
