@@ -1084,6 +1084,7 @@ function love.keypressed(key, unicode)
     if (key=="w" or key=="a" or key=="s" or key=="d") then
     	for i = 1, roomHeight do
     		for j = 1, roomLength do
+    			--what is the point of this?
     			if room[i][j]~=nil and room[i][j].name == "button" then
     				room[i][j].justPressed = false
     			end
@@ -1094,35 +1095,8 @@ function love.keypressed(key, unicode)
 	   		stepTrigger()
 	    	updateGameState()
 	    	for i = 1, animalCounter-1 do
-	    		if animals[i].name == "pitbull" and not animals[i].dead and (litTiles[animals[i].tileY][animals[i].tileX]==1 or animals[i].triggered) then
-	    			--animalMove(i)
-	    			animals[i]:move(player.tileX, player.tileY, room)
-	    		end
-	    	end
-	    	  for i = 1, animalCounter-1 do
-	    		if animals[i].name == "pup"  and not animals[i].dead and (litTiles[animals[i].tileY][animals[i].tileX]==1 or animals[i].triggered) then
-	    			--animalMove(i)
-	    			animals[i]:move(player.tileX, player.tileY, room)
-	    		end
-	    	end
-	    	for i = 1, animalCounter-1 do
-	    		if animals[i].name == "cat"  and not animals[i].dead and (litTiles[animals[i].tileY][animals[i].tileX]==1 or animals[i].triggered) then
-	    			--animalMove(i)
-	    			animals[i]:move(player.tileX, player.tileY, room)
-	    		end
-	    	end
-			for i = 1, animalCounter-1 do
-	    		if animals[i].name == "snail"  and not animals[i].dead and (litTiles[animals[i].tileY][animals[i].tileX]==1 or animals[i].triggered) then
-	    			--animalMove(i)
-	    			animals[i]:move(player.tileX, player.tileY, room)
-	    		end
-	    	end
-			for i = 1, animalCounter-1 do
-	    		if animals[i].name == "bat"  and not animals[i].dead and (litTiles[animals[i].tileY][animals[i].tileX]==1 or animals[i].triggered) then
-	    			--animalMove(i)
-	    			animals[i]:move(player.tileX, player.tileY, room)
-	    		end
-	    	end	   	
+	    		animals[i]:move(player.tileX, player.tileY, room, litTiles[animals[i].tileY][animals[i].tileX]==1)
+	    	end   	
 	    	resolveConflicts()
 	    	for i = 1, #animals do
 	    		animals[i].x = (animals[i].tileX-1)*floor.sprite:getHeight()*scale+wallSprite.width
@@ -1142,9 +1116,6 @@ function love.keypressed(key, unicode)
     end
     checkDeath()
     for i = 1, animalCounter-1 do
-    	if litTiles[animals[i].tileY][animals[i].tileX]==1 then
-    		animals[i].triggered = true
-    	end
     	animals[i]:checkDeath(room)
     end
     --Debug console stuff
@@ -1163,9 +1134,6 @@ function love.keypressed(key, unicode)
     	log(toPrint)
     elseif key == 'c' then
     	log(nil)
-    end
-    if room[player.tileY][player.tileX]~=nil and room[player.tileY][player.tileX].name == "tunnel" then
-    	loadNextLevel()
     end
 end
 
@@ -1252,7 +1220,7 @@ function checkDeath()
 		end
 	end
 	for i = 1, animalCounter-1 do
-		if player.tileX == animals[i].tileX and player.tileY == animals[i].tileY and (animals[i].name == "pitbull" or animals[i].name == "bat") and not animals[i].dead then
+		if animals[i]:willKillPlayer(player) then
 			kill()
 		end
 	end

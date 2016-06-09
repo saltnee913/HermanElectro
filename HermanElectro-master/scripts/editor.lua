@@ -33,7 +33,7 @@ function P.keypressed(key, unicode)
 			prt = "["
 			for j =1, roomLength do
 				if room[i][j]~=nil then
-					for k = 1, 100 do
+					for k = 1, #tiles do
 						if tiles[k]~=nil and room[i][j]~=nil and tiles[k].name == room[i][j].name then
 							addk = k
 							if k == 1 then

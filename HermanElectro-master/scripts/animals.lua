@@ -22,8 +22,12 @@ scale = (width - 2*wallSprite.width)/(20.3 * 16)*5/6
 --floor = tiles.tile
 
 --speed same as player (250)
-P.animal = Object:new{flying = false, triggered = false, waitCounter = 0, dead = false, name == "animal", tileX, tileY, prevx, prevy, prevTileX, prevTileY, x, y, speed = 250, width = 16*scale, height = 16*scale, sprite = love.graphics.newImage('Graphics/pitbull.png'), deadSprite = love.graphics.newImage('Graphics/pitbulldead.png'), tilesOn = {}, oldTilesOn = {}}
-function P.animal:move(playerx, playery, room)
+P.animal = Object:new{flying = false, triggered = false, waitCounter = 0, dead = false, name = "animal", tileX, tileY, prevx, prevy, prevTileX, prevTileY, x, y, speed = 250, width = 16*scale, height = 16*scale, sprite = love.graphics.newImage('Graphics/pitbull.png'), deadSprite = love.graphics.newImage('Graphics/pitbulldead.png'), tilesOn = {}, oldTilesOn = {}}
+function P.animal:move(playerx, playery, room, isLit)
+	if self.dead or (not isLit and not self.triggered) then
+		return
+	end
+	triggered = true
 	diffx = playerx-self.tileX
 	diffy = playery-self.tileY
 	self.prevx = self.x
@@ -108,9 +112,15 @@ end
 function P.animal:update()
 	--checkBoundaries()
 end
+function P.animal:willKillPlayer(player)
+	return false
+end
 
 
 P.pitbull = P.animal:new{name = "pitbull"}
+function P.pitbull:willKillPlayer()
+	return player.tileX == self.tileX and player.tileY == self.tileY and not self.dead
+end
 
 P.pup = P.animal:new{name = "pup", sprite = love.graphics.newImage('Graphics/pup.png'), deadSprite = love.graphics.newImage('Graphics/pupdead.png')}
 
@@ -120,7 +130,11 @@ function P.snail:onNullLeave()
 end
 
 P.bat = P.animal:new{flying = true, name = "bat", sprite = love.graphics.newImage('Graphics/bat.png'), deadSprite = love.graphics.newImage('Graphics/pupdead.png')}
-function P.bat:move(playerx, playery, room)
+function P.bat:move(playerx, playery, room, isLit)
+	if self.dead or (not isLit and not self.triggered) then
+		return
+	end
+	triggered = true
 	diffx = playerx-self.tileX
 	diffy = playery-self.tileY
 	self.prevx = self.x
@@ -150,9 +164,14 @@ function P.bat:move(playerx, playery, room)
 end
 function P.bat:checkDeath()
 end
+P.bat.willKillPlayer = P.pitbull.willKillPlayer
 
 P.cat = P.animal:new{name = "cat", sprite = love.graphics.newImage('Graphics/cat.png'), deadSprite = love.graphics.newImage('Graphics/catdead.png')}
-function P.cat:move(playerx, playery, room)
+function P.cat:move(playerx, playery, room, isLit)
+	if self.dead or (not isLit and not self.triggered) then
+		return
+	end
+	triggered = true
 	diffx = playerx-self.tileX
 	diffy = playery-self.tileY
 	--self.prevx = self.x

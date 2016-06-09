@@ -595,6 +595,9 @@ end
 P.concreteWallConductive = P.concreteWall:new{name = "concreteWallConductive", sprite = love.graphics.newImage('Graphics/concretewallconductive.png'), poweredSprite = love.graphics.newImage('Graphics/concretewallconductive.png'), canBePowered = true, dirAccept = {1,1,1,1}, dirSend = {1,1,1,1}}
 
 P.tunnel = P.tile:new{name = "tunnel"}
+function P.tunnel:onEnter(player)
+	loadNextLevel()
+end
 
 P.pit = P.tile:new{name = "pit", laddered = false, sprite = love.graphics.newImage('Graphics/pit.png'), destroyedSprite = love.graphics.newImage('Graphics/ladderedPit.png')}
 function P.pit:onEnterAnimal(animal)
