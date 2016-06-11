@@ -6,6 +6,9 @@ local json = require('scripts.dkjson')
 local P = {}
 map = P
 
+--Temporary variable, we have to do this a better way later
+P.floorOrder = {'RoomData/floor1.json', 'RoomData/floor2.json', 'RoomData/floor3.json', 'RoomData/floor4.json', 'RoomData/floor5.json'}
+
 local MapInfo = Object:new{floor = 1, height = 0, numRooms = 0}
 
 function P.loadFloor(inFloorFile)

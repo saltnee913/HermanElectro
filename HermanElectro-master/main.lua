@@ -111,13 +111,21 @@ function love.load()
 	enterRoom(-1)
 end
 
+floorIndex = 1
 function loadNextLevel()
-	level = level+1
-
-	local floorPath = 'RoomData/floor1.json'
 	if loadTutorial then
-		floorPath = 'RoomData/tut_map.json'
+		loadLevel('RoomData/tut_map.json')
+	else
+		if floorIndex > #map.floorOrder then
+			floorIndex = 1
+		end
+		loadLevel(map.floorOrder[floorIndex])
+		floorIndex = floorIndex + 1
 	end
+end
+
+function loadLevel(floorPath)
+	level = level+1
 	map.loadFloor(floorPath)
 	mainMap = map.generateMap(os.time())
 	mapHeight = mainMap.height
