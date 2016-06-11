@@ -30,6 +30,7 @@
 	{
 		"height": 5,
 		"numRooms": 5,
-		"generateFunction": "generateMapStandard"
+		"generateFunction": "generateMapStandard",
+		"startRoomID": "1"
 	}
 }
