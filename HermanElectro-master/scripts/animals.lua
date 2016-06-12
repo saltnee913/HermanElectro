@@ -27,7 +27,7 @@ function P.animal:move(playerx, playery, room, isLit)
 	if self.dead or (not isLit and not self.triggered) then
 		return
 	end
-	triggered = true
+	self.triggered = true
 	diffx = playerx-self.tileX
 	diffy = playery-self.tileY
 	self.prevx = self.x
@@ -134,7 +134,7 @@ function P.bat:move(playerx, playery, room, isLit)
 	if self.dead or (not isLit and not self.triggered) then
 		return
 	end
-	triggered = true
+	self.triggered = true
 	diffx = playerx-self.tileX
 	diffy = playery-self.tileY
 	self.prevx = self.x
@@ -171,7 +171,7 @@ function P.cat:move(playerx, playery, room, isLit)
 	if self.dead or (not isLit and not self.triggered) then
 		return
 	end
-	triggered = true
+	self.triggered = true
 	diffx = playerx-self.tileX
 	diffy = playery-self.tileY
 	--self.prevx = self.x

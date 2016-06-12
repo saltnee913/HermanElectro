@@ -34,14 +34,82 @@ end
 
 function P.filterRoomSet(arr, requirements)
 	for k, v in pairs(arr) do
-		if not P.roomMeetsRequirements(v) then
+		if not P.roomMeetsRequirements(v, requirements) then
 			arr[k] = nil
 		end
 	end
 end
 
-function P.roomMeetsRequirements(roomData, requirements)
+local function tilesWhitelistHelper(arr, tiles)
+	for i = 1, #arr do
+		for j = 1, #(arr[i]) do
+			if not util.deepContains(tiles, arr[i][j], true) and arr[i][j] ~= 0 and arr[i][j] ~= nil then
+				return false
+			end
+		end
+	end
 	return true
+end
+
+local function requirementsHelper(roomData, key, value)
+	if key == 'and' then
+		for k, v in pairs(value) do
+			if not requirementsHelper(roomData, k, v) then
+				return false
+			end
+		end
+		return true
+	elseif key == 'or' then
+		for k, v in pairs(value) do
+			if requirementsHelper(roomData, k, v) then
+				return true
+			end
+		end
+		return false
+	elseif key == 'not' then
+		return not requirementsHelper(roomData, key, value)
+	elseif key == 'contains' then
+		return util.deepContains(roomData[value.table], value.value)
+	elseif key == 'equals' then
+		return roomData[value.key] == value.value
+	elseif key == 'greater' then
+		return roomData[value.key] > value.value
+	elseif key == 'less' then
+		return roomData[value.key] < value.value
+	elseif key == 'containsTile' then
+		return util.deepContains(roomData.layout, value.value, true) or util.deepContains(roomData.layouts, value.value, true)
+	elseif key == 'tilesWhitelist' then
+		if roomData.layout == nil then
+			for i = 1, #roomData.layouts do
+				if not tilesWhitelistHelper(roomData.layouts[i], value) then
+					return false
+				end
+			end
+			return true
+		else
+			return tilesWhitelistHelper(roomData.layout, value)
+		end
+	elseif key == 'hasKey' then
+		return roomData[value] ~= nil
+	elseif key == 'solvableWithTools' then
+		for i = 1, #roomData.itemsNeeded do
+			local works = true
+			for j = 1, #(roomData.itemsNeeded[i]) do
+				if roomData.itemsNeeded[i][j] > value[j] then
+					works = false
+				end
+			end
+			if works then return true end
+		end
+		return false
+	end
+	return true
+end
+
+
+function P.roomMeetsRequirements(roomData, requirements)
+	if requirements == nil then return true end
+	return requirementsHelper(roomData, 'and', requirements)
 end
 
 function P.createRoom(inRoom, arr)
@@ -134,7 +202,8 @@ function P.generateMapStandard()
 	newmap.initialX = math.floor(height/2)
 	treasureX = 0
 	treasureY = 0
-	local randomRoomArray = util.createRandomKeyArray(P.floorInfo.rooms.rooms)
+	local blacklist = {startRoomID}
+	local randomRoomArray = util.createRandomKeyArray(P.floorInfo.rooms.rooms, blacklist)
 	for i = 0, numRooms-1 do
 		available = {}
 		local a = 0

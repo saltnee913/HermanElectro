@@ -17,17 +17,19 @@ function P.chooseRandomKey(arr)
 end
 
 --you must seed first!
-function P.createRandomKeyArray(arr)
-	local keyArray = P.createIndexArray(arr)
+function P.createRandomKeyArray(arr, blacklist)
+	local keyArray = P.createIndexArray(arr, blacklist)
 	table.sort(keyArray)
 	return P.shuffle(keyArray)
 end
 
 --this is the ultra hacky part, we should remove it later
-function P.createIndexArray(arr)
+function P.createIndexArray(arr, blacklist)
 	local keyArray = {}
 	for k in pairs(arr) do
-		keyArray[#keyArray+1] = k
+		if blacklist == nil or not P.deepContains(blacklist, k) then
+			keyArray[#keyArray+1] = k
+		end
 	end
 	return keyArray
 end
@@ -54,6 +56,21 @@ function P.readJSON(filePath)
 		return nil
 	else
 		return obj
+	end
+end
+
+function P.deepContains(arr, value, floor)
+	if type(arr) == 'table' then
+		for i = 1, #arr do
+			if(P.deepContains(arr[i], value, floor)) then
+				return true
+			end
+		end
+		return false
+	elseif floor ~= nil and arr ~= nil and value ~= nil then
+		return math.floor(arr) == math.floor(value)
+	else
+		return arr == value
 	end
 end
 
