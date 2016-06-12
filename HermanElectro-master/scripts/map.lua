@@ -67,7 +67,7 @@ local function requirementsHelper(roomData, key, value)
 		end
 		return false
 	elseif key == 'not' then
-		return not requirementsHelper(roomData, key, value)
+		return not requirementsHelper(roomData, 'and', value)
 	elseif key == 'contains' then
 		return util.deepContains(roomData[value.table], value.value)
 	elseif key == 'equals' then
@@ -77,7 +77,7 @@ local function requirementsHelper(roomData, key, value)
 	elseif key == 'less' then
 		return roomData[value.key] < value.value
 	elseif key == 'containsTile' then
-		return util.deepContains(roomData.layout, value.value, true) or util.deepContains(roomData.layouts, value.value, true)
+		return util.deepContains(roomData.layout, value, true) or util.deepContains(roomData.layouts, value, true)
 	elseif key == 'tilesWhitelist' then
 		if roomData.layout == nil then
 			for i = 1, #roomData.layouts do
