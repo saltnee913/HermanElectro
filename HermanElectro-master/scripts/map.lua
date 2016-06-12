@@ -6,6 +6,9 @@ local json = require('scripts.dkjson')
 local P = {}
 map = P
 
+--Temporary variable, we have to do this a better way later
+P.floorOrder = {'RoomData/floor1.json', 'RoomData/floor2.json', 'RoomData/floor3.json', 'RoomData/floor4.json', 'RoomData/floor5.json'}
+
 local MapInfo = Object:new{floor = 1, height = 0, numRooms = 0}
 
 function P.loadFloor(inFloorFile)
@@ -125,8 +128,8 @@ function P.generateMapStandard()
 	for i = 0, height+1 do
 		newmap[i] = {}
 	end
-	local startRoomId = '1'
-	newmap[math.floor(height/2)][math.floor(height/2)] = {roomid = startRoomId, room = P.createRoom(startRoomId, P.floorInfo.rooms.rooms), isFinal = false, isInitial = true, isCompleted = false}
+	local startRoomID = P.floorInfo.startRoomID
+	newmap[math.floor(height/2)][math.floor(height/2)] = {roomid = startRoomID, room = P.createRoom(startRoomID, P.floorInfo.rooms.rooms), isFinal = false, isInitial = true, isCompleted = false}
 	newmap.initialY = math.floor(height/2)
 	newmap.initialX = math.floor(height/2)
 	treasureX = 0

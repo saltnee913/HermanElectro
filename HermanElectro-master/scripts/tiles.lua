@@ -117,7 +117,7 @@ function P.wire:destroy()
 	dirSend = {0,0,0,0}
 end
 
-P.maskedWire = P.wire:new{sprite = love.graphics.newImage('Graphics/maskedWire.png'), poweredSprite = love.graphics.newImage('Graphics/maskedWire.png')}
+P.maskedWire = P.wire:new{name = 'maskedWire', sprite = love.graphics.newImage('Graphics/maskedWire.png'), poweredSprite = love.graphics.newImage('Graphics/maskedWire.png')}
 
 
 P.crossWire = P.wire:new{dirSend = {0,0,0,0}, dirAccept = {1,1,1,1}, name = "crossWire", sprite = love.graphics.newImage('Graphics/crosswires.png'), poweredSprite = love.graphics.newImage('Graphics/crosswires.png')}
@@ -593,6 +593,7 @@ function P.concreteWall:destroy()
 end
 
 P.concreteWallConductive = P.concreteWall:new{name = "concreteWallConductive", sprite = love.graphics.newImage('Graphics/concretewallconductive.png'), poweredSprite = love.graphics.newImage('Graphics/concretewallconductive.png'), canBePowered = true, dirAccept = {1,1,1,1}, dirSend = {1,1,1,1}}
+P.concreteWallConductiveDirected = P.concreteWallConductive:new{name = "concreteWallConductiveDirected", sprite = love.graphics.newImage('Graphics/concretewallconductivedirected.png'), poweredSprite = love.graphics.newImage('Graphics/concretewallconductivedirected.png'), canBePowered = true, dirAccept = {1,0,1,0}, dirSend = {1,0,1,0}}
 
 P.tunnel = P.tile:new{name = "tunnel"}
 function P.tunnel:onEnter(player)
@@ -917,5 +918,6 @@ tiles[44] = P.unactivatedBomb
 tiles[45] = P.snailTile
 tiles[46] = P.doghouse
 tiles[47] = P.batTile
+tiles[48] = P.concreteWallConductiveDirected
 
 return tiles
