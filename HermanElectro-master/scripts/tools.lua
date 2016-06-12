@@ -274,6 +274,9 @@ function P.brick:usableOnTile(tile, dist)
 	end
 	return false
 end
+function P.brick:usableOnAnimal(animal)
+	return not animal.dead and animal.waitCounter==0
+end
 function P.brick:useToolTile(tile)
 	self.numHeld = self.numHeld - 1
 	if tile:instanceof(tiles.glassWall) then
@@ -281,6 +284,10 @@ function P.brick:useToolTile(tile)
 	else
 		tile:lockInState(true)
 	end
+end
+function P.brick:useToolAnimal(animal)
+	self.numHeld = self.numHeld-1
+	animal.waitCounter = animal.waitCounter+1
 end
 
 P.gun = P.tool:new{name = 'gun', range = 3, image = love.graphics.newImage('Graphics/gun.png')}
