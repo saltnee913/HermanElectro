@@ -256,14 +256,6 @@ function P.cuttingTorch:usableOnTile(tile)
 	return false
 end
 
-P.shovel = P.tool:new{name = "shovel", range = 1, image = love.graphics.newImage('Graphics/shovel.png')}
-function P.shovel:usableOnNothing()
-	return true
-end
-function P.shovel:useToolNothing(tileY, tileX)
-	room[tileY][tileX] = tiles.pit:new()
-end
-
 P.brick = P.tool:new{name = 'brick', range = 3, image = love.graphics.newImage('Graphics/brick.png')}
 function P.brick:usableOnTile(tile, dist)
 	if not tile.bricked and tile:instanceof(tiles.button) and dist <= 3 then
@@ -299,6 +291,14 @@ end
 
 
 P.superTool = P.tool:new{name = 'superTool', range = 10, rarity = 1}
+
+P.shovel = P.superTool:new{name = "shovel", range = 1, image = love.graphics.newImage('Graphics/shovel.png')}
+function P.shovel:usableOnNothing()
+	return true
+end
+function P.shovel:useToolNothing(tileY, tileX)
+	room[tileY][tileX] = tiles.pit:new()
+end
 
 P.electrifier = P.superTool:new{name = 'electrifier', range = 1, image = love.graphics.newImage('Graphics/electrifier.png')}
 function P.electrifier:usableOnTile(tile)
@@ -410,6 +410,13 @@ end
 P.missile.getToolableTiles = P.tool.getToolableTilesBox
 P.missile.getToolableAnimals = P.tool.getToolableAnimalsBox
 
+P.meat = P.superTool:new{name = "meat", range = 1, image = love.graphics.newImage('Graphics/meat.png')}
+function P.meat:usableOnNothing()
+	return true
+end
+function P.meat:useToolNothing(tileY, tileX)
+	room[tileY][tileX] = tiles.meat:new()
+end
 
 P.numNormalTools = 7
 
@@ -417,7 +424,7 @@ P[1] = P.saw
 P[2] = P.ladder
 P[3] = P.wireCutters
 P[4] = P.waterBottle
-P[5] = P.shovel
+P[5] = P.meat
 P[6] = P.brick
 P[7] = P.gun
 P[8] = P.crowbar
@@ -429,6 +436,7 @@ P[13] = P.unsticker
 P[14] = P.doorstop
 P[15] = P.charger
 P[16] = P.missile
+P[17] = P.shovel
 
 
 return tools

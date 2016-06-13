@@ -871,6 +871,8 @@ end
 
 P.batTile = P.pitbullTile:new{name = "bat", animal = animalList[6]:new(), listIndex = 6}
 
+P.meat = P.tile:new{name = "meat", sprite = love.graphics.newImage('Graphics/meat.png')}
+
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
 tiles[3] = P.powerSupply
@@ -919,5 +921,6 @@ tiles[45] = P.snailTile
 tiles[46] = P.doghouse
 tiles[47] = P.batTile
 tiles[48] = P.concreteWallConductiveDirected
+tiles[49] = P.meat
 
 return tiles
