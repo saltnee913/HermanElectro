@@ -591,7 +591,7 @@ function love.draw()
 	end
 	love.graphics.draw(walls, 0, 0, 0, width/walls:getWidth(), height/walls:getHeight())
 	for i = 1, #animals do
-		if animals[i]~=nil and litTiles[animals[i].tileY][animals[i].tileX]==1 then
+		if animals[i]~=nil and litTiles[animals[i].tileY][animals[i].tileX]==1 and not animals[i].pickedUp then
 			love.graphics.draw(animals[i].sprite, animals[i].x, animals[i].y, 0, scale, scale)
 		end
 	end

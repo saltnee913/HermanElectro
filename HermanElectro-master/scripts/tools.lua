@@ -143,30 +143,28 @@ function P.tool:getToolableAnimals()
 			for i = 2, 4 do usableAnimals[i] = usableAnimals[1] end
 			return usableAnimals
 		end]]
-		if not animal.dead then
-			if self:usableOnAnimal(animal) then
-				if animal.tileX == player.tileX and animal.tileY == player.tileY then
-					closestAnimals[5] = {dist = 0, ani = animal}
-				else
-					if animal.tileX == player.tileX then
-						if player.tileY > animal.tileY then
-							if player.tileY-animal.tileY < closestAnimals[1].dist then
-								closestAnimals[1] = {dist = player.tileY - animal.tileY, ani = animal}
-							end
-						else
-							if animal.tileY-player.tileY < closestAnimals[3].dist then
-								closestAnimals[3] = {dist = animal.tileY - player.tileY, ani = animal}
-							end
+		if self:usableOnAnimal(animal) then
+			if animal.tileX == player.tileX and animal.tileY == player.tileY then
+				closestAnimals[5] = {dist = 0, ani = animal}
+			else
+				if animal.tileX == player.tileX then
+					if player.tileY > animal.tileY then
+						if player.tileY-animal.tileY < closestAnimals[1].dist then
+							closestAnimals[1] = {dist = player.tileY - animal.tileY, ani = animal}
 						end
-					elseif animal.tileY == player.tileY then
-						if player.tileX > animal.tileX then
-							if player.tileX - animal.tileX < closestAnimals[4].dist then
-								closestAnimals[4] = {dist = player.tileX - animal.tileX, ani = animal}
-							end
-						else
-							if animal.tileX - player.tileX < closestAnimals[2].dist then
-								closestAnimals[2] = {dist = animal.tileX - player.tileX, ani = animal}
-							end
+					else
+						if animal.tileY-player.tileY < closestAnimals[3].dist then
+							closestAnimals[3] = {dist = animal.tileY - player.tileY, ani = animal}
+						end
+					end
+				elseif animal.tileY == player.tileY then
+					if player.tileX > animal.tileX then
+						if player.tileX - animal.tileX < closestAnimals[4].dist then
+							closestAnimals[4] = {dist = player.tileX - animal.tileX, ani = animal}
+						end
+					else
+						if animal.tileX - player.tileX < closestAnimals[2].dist then
+							closestAnimals[2] = {dist = animal.tileX - player.tileX, ani = animal}
 						end
 					end
 				end
@@ -418,6 +416,24 @@ function P.meat:useToolNothing(tileY, tileX)
 	room[tileY][tileX] = tiles.meat:new()
 end
 
+--[[P.corpseGrabber = P.superTool:new{name = "corpseGrabber", range = 1, image = love.graphics.newImage('Graphics/corpseGrabber.png')}
+function P.corpseGrabber:usableOnAnimal(animal)
+	return animal.dead and not animal.pickedUp
+end
+function P.corpseGrabber:useOnAnimal(animal)
+	animal.pickedUp = true
+	--add three meats
+end
+
+P.woodGrabber = P.superTool:new{name = "woodGrabber", range = 1, image = love.graphics.newImage('Graphics/woodGrabber.png')}
+function P.woodGrabber:usableOnTile(tile)
+	return tile:instanceof(tiles.wall) and tile.destroyed
+end
+function P.woodGrabber:useOnTile(tile)
+	--make tile nil
+	--add three ladders
+end--]]
+
 P.numNormalTools = 7
 
 P[1] = P.saw
@@ -437,6 +453,8 @@ P[14] = P.doorstop
 P[15] = P.charger
 P[16] = P.missile
 P[17] = P.shovel
+P[18] = P.corpseGrabber
+P[19] = P.woodGrabber
 
 
 return tools
