@@ -1095,7 +1095,7 @@ function love.keypressed(key, unicode)
 	    	for k = 1, animalCounter-1 do
 	    		local movex = player.tileX
 	    		local movey = player.tileY
-	    		local animalDist = 100
+	    		local animalDist = math.abs(movey-animals[k].tileY)+math.abs(movex-animals[k].tileX)
 	    		for i = 1, roomHeight do
 	    			for j = 1, roomLength do
 	    				if room[i][j]~=nil and room[i][j]:instanceof(tiles.meat) then
