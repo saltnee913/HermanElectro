@@ -1057,10 +1057,10 @@ function love.keypressed(key, unicode)
 			end
 		end
     end
-    checkDeath()
     for i = 1, animalCounter-1 do
     	animals[i]:checkDeath(room)
     end
+    checkDeath()
     --Debug console stuff
     if key=='p' then
     	local roomid = mainMap[mapy][mapx].roomid

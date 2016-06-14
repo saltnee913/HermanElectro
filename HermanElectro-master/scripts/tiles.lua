@@ -876,15 +876,16 @@ P.batTile = P.pitbullTile:new{name = "bat", animal = animalList[6]:new(), listIn
 
 P.meat = P.tile:new{name = "meat", sprite = love.graphics.newImage('Graphics/meat.png')}
 
-P.beggar = P.tile:new{name = "beggar", counter = 0, sprite = love.graphics.newImage('Graphics/beggar.png')}
+P.beggar = P.tile:new{name = "beggar", alive = true, counter = 0, sprite = love.graphics.newImage('Graphics/beggar.png'), deadSprite = love.graphics.newImage('Graphics/beggardead.png')}
 function P.beggar:onEnter(player)
 	if tool==0 or tool>7 then return end
-
+	if not self.alive then return end
 	tools[tool].numHeld = tools[tool].numHeld - 1
 	self.counter = self.counter+1
-	probabilityOfPayout = math.atan(self.counter-1)*1/math.pi
+	probabilityOfPayout = math.atan(self.counter)*1/math.pi
 	randomNum = math.random()
 	if randomNum<probabilityOfPayout then
+		self.counter = 0
 		filledSlots = {0,0,0}
 		slot = 1
 		for i = tools.numNormalTools + 1, #tools do
@@ -906,10 +907,18 @@ function P.beggar:onEnter(player)
 			end
 		end
 		tools[slot].numHeld = tools[slot].numHeld+1
+		local killBeggar = math.random()
+		if killBeggar<0.5 then self:destroy() end
 	end
+end
+function P.beggar:destroy()
+	self.sprite = self.deadSprite
+	self.alive = false
 end
 
 P.ladder = P.tile:new{name = "ladder", sprite = love.graphics.newImage('Graphics/laddertile.png'), blocksAnimalMovement = true}
+
+P.mousetrapOff = P.mousetrap:new{safe = true, sprite = love.graphics.newImage('Graphics/mousetrapsafe.png')}
 
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
@@ -962,5 +971,6 @@ tiles[48] = P.concreteWallConductiveDirected
 tiles[49] = P.meat
 tiles[50] = P.beggar
 tiles[51] = P.ladder
+tiles[52] = P.mousetrapOff
 
 return tiles
