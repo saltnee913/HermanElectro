@@ -243,11 +243,13 @@ end
 
 P.waterBottle = P.tool:new{name = 'water-bottle', image = love.graphics.newImage('Graphics/waterbottle.png')}
 function P.waterBottle:usableOnTile(tile)
-	if not tile.laddered then
-		if tile:instanceof(tiles.breakablePit) and tile.strength == 0 then
-			return true
-		elseif (tile:instanceof(tiles.poweredFloor) and not tile.powered) or tile:instanceof(tiles.pit) then
-			return true
+	if tile:instanceof(tiles.poweredFloor) or tile:instanceof(tiles.pit) or tile:instanceof(tiles.breakablePit) then
+		if not tile.laddered then
+			if tile:instanceof(tiles.breakablePit) and tile.strength == 0 then
+				return true
+			elseif (tile:instanceof(tiles.poweredFloor) and not tile.powered) or tile:instanceof(tiles.pit) then
+				return true
+			end
 		end
 	elseif not tile.destroyed and (tile:instanceof(tiles.powerSupply) or tile:instanceof(tiles.electricFloor)) then
 		return true
