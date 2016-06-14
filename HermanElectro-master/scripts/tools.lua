@@ -294,11 +294,44 @@ function P.gun:usableOnAnimal(animal)
 	return not animal.dead
 end
 function P.gun:usableOnTile(tile)
-	return tile:instanceof(tiles.wall) and not tile:instanceof(tiles.concreteWall) and not tile:instanceof(tiles.glassWall)
+	if tile:instanceof(tiles.wall) and not tile:instanceof(tiles.concreteWall) and not tile:instanceof(tiles.glassWall) then
+		return true
+	elseif tile:instanceof(tiles.beggar) and tile.alive then
+		return true
+	end
+	return false
 end
 function P.gun:useToolTile(tile)
 	self.numHeld = self.numHeld-1
-	tile:allowVision()
+	if tile:instanceof(tiles.beggar) then
+		tile.alive = false
+		tile:destroy()
+		local paysOut = math.random()
+		if paysOut<0.5 then return end
+		filledSlots = {0,0,0}
+		slot = 1
+		for i = tools.numNormalTools + 1, #tools do
+			if tools[i].numHeld>0 then
+				filledSlots[slot] = i
+				slot = slot+1
+			end
+		end
+		goodSlot = false
+		while (not goodSlot) do
+			slot = math.floor(math.random()*5)+8
+			if filledSlots[3]==0 then
+				goodSlot = true
+			end
+			for i = 1, 3 do
+				if filledSlots[i]==slot then
+					goodSlot = true
+				end
+			end
+		end
+		tools[slot].numHeld = tools[slot].numHeld+1
+	else
+		tile:allowVision()
+	end
 end
 
 
@@ -460,6 +493,26 @@ function P.woodGrabber:useToolTile(tile, tileY, tileX)
 	room[tileY][tileX] = nil
 end
 
+P.pitbullChanger = P.tool:new{name = "pitbullChanger", range = 3, image = love.graphics.newImage('Graphics/pitbullChanger.png')}
+function P.pitbullChanger:usableOnAnimal(animal)
+	return not animal.dead and animal:instanceof(animalList.pitbull)
+end
+function P.pitbullChanger:useToolAnimal(animal)
+	for i = 1, #animals do
+		if animal.tileX == animals[i].tileX and animal.tileY == animals[i].tileY then
+			animals[i] = animalList.pup:new()
+			animals[i].tileX = animal.tileX
+			animals[i].tileY = animal.tileY
+			animals[i].prevTileX = animal.prevTileX
+			animals[i].prevTileY = animal.prevTileY
+			animals[i].x = animal.x
+			animals[i].prevx = animal.prevx
+			animals[i].y = animal.y
+			animals[i].prevy = animal.y
+		end
+	end
+end
+
 P.numNormalTools = 7
 
 P[1] = P.saw
@@ -481,5 +534,6 @@ P[16] = P.missile
 P[17] = P.shovel
 P[18] = P.woodGrabber
 P[19] = P.corpseGrabber
+P[2] = P.pitbullChanger
 
 return tools
