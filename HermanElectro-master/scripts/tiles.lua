@@ -6,7 +6,7 @@ tools = require('scripts.tools')
 local P = {}
 tiles = P
 
-P.tile = Object:new{formerPowered = false, gone = false, destroyed = false, blocksProjectiles = false, isVisible = true, rotation = 0, powered = false, blocksMovement = false, poweredNeighbors = {0,0,0,0}, blocksVision = false, dirSend = {1,1,1,1}, dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile", sprite = love.graphics.newImage('Graphics/cavesfloor.png'), poweredSprite = love.graphics.newImage('Graphics/cavesfloor.png')}
+P.tile = Object:new{formerPowered = false, gone = false, destroyed = false, blocksProjectiles = false, isVisible = true, rotation = 0, powered = false, blocksMovement = false, blocksAnimalMovement = false, poweredNeighbors = {0,0,0,0}, blocksVision = false, dirSend = {1,1,1,1}, dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile", sprite = love.graphics.newImage('Graphics/cavesfloor.png'), poweredSprite = love.graphics.newImage('Graphics/cavesfloor.png')}
 function P.tile:onEnter(player) 
 	--self.name = "fuckyou"
 end
@@ -39,6 +39,9 @@ function P.tile:updateTile(dir)
 	end
 end
 function P.tile:postPowerUpdate()
+end
+function P.tile:blocksMovementAnimal()
+	return self.blocksMovement or self.blocksAnimalMovement
 end
 function P.tile:getCorrectedOffset(dir)
 	dir = dir + self.rotation
@@ -906,6 +909,8 @@ function P.beggar:onEnter(player)
 	end
 end
 
+P.ladder = P.tile:new{name = "ladder", sprite = love.graphics.newImage('Graphics/laddertile.png'), blocksAnimalMovement = true}
+
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
 tiles[3] = P.powerSupply
@@ -956,5 +961,6 @@ tiles[47] = P.batTile
 tiles[48] = P.concreteWallConductiveDirected
 tiles[49] = P.meat
 tiles[50] = P.beggar
+tiles[51] = P.ladder
 
 return tiles

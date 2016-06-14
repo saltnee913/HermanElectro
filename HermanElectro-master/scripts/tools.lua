@@ -231,6 +231,12 @@ function P.ladder:useToolTile(tile)
 	self.numHeld = self.numHeld - 1
 	tile:ladder()
 end
+function P.ladder:usableOnNothing()
+	return true
+end
+function P.ladder:useToolNothing(tileY, tileX)
+	room[tileY][tileX] = tiles.ladder:new()
+end
 
 P.wireCutters = P.tool:new{name = 'wire-cutters', image = love.graphics.newImage('Graphics/wirecutters.png')}
 function P.wireCutters:usableOnTile(tile)
@@ -239,15 +245,7 @@ end
 
 P.waterBottle = P.tool:new{name = 'water-bottle', image = love.graphics.newImage('Graphics/waterbottle.png')}
 function P.waterBottle:usableOnTile(tile)
-	if tile:instanceof(tiles.poweredFloor) or tile:instanceof(tiles.pit) or tile:instanceof(tiles.breakablePit) then
-		if not tile.laddered then
-			if tile:instanceof(tiles.breakablePit) and tile.strength == 0 then
-				return true
-			elseif (tile:instanceof(tiles.poweredFloor) and not tile.powered) or tile:instanceof(tiles.pit) then
-				return true
-			end
-		end
-	elseif not tile.destroyed and (tile:instanceof(tiles.powerSupply) or tile:instanceof(tiles.electricFloor)) then
+	if not tile.destroyed and (tile:instanceof(tiles.powerSupply) or tile:instanceof(tiles.electricFloor)) then
 		return true
 	end
 	return false
@@ -258,15 +256,6 @@ end
 function P.waterBottle:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld - 1
 	room[tileY][tileX] = tiles.electricFloor:new()
-end
-function P.waterBottle:useToolTile(tile)
-	self.numHeld = self.numHeld - 1
-	if tile:instanceof(tiles.pit) or tile:instanceof(tiles.poweredFloor) or tile:instanceof(tiles.breakablePit) then
-		tile:ladder()
-	else
-		tile:destroy()
-	end
-
 end
 
 P.cuttingTorch = P.tool:new{name = 'cutting-torch', image = love.graphics.newImage('Graphics/cuttingtorch.png')}
@@ -304,8 +293,13 @@ P.gun = P.tool:new{name = 'gun', range = 3, image = love.graphics.newImage('Grap
 function P.gun:usableOnAnimal(animal)
 	return not animal.dead
 end
-
-
+function P.gun:usableOnTile(tile)
+	return tile:instanceof(tiles.wall) and not tile:instanceof(tiles.concreteWall) and not tile:instanceof(tiles.glassWall)
+end
+function P.gun:useToolTile(tile)
+	self.numHeld = self.numHeld-1
+	tile:allowVision()
+end
 
 
 P.superTool = P.tool:new{name = 'superTool', range = 10, rarity = 1}
