@@ -44,48 +44,48 @@ function P.animal:move(playerx, playery, room, isLit)
 	local unableToMove = false
 	if math.abs(diffx)>math.abs(diffy) then
 		if playerx>self.tileX then
-			if not (room[self.tileY][self.tileX+1]~=nil and room[self.tileY][self.tileX+1].blocksMovement) then
+			if not (room[self.tileY][self.tileX+1]~=nil and room[self.tileY][self.tileX+1]:blocksMovementAnimal()) then
 				--self.x = self.x+floor.sprite:getHeight()*scale
 				self.tileX = self.tileX+1
-			elseif room[self.tileY][self.tileX+1].blocksMovement then
+			elseif room[self.tileY][self.tileX+1]:blocksMovementAnimal() then
 				unableToMove = true
 			end
 		else
-			if not (room[self.tileY][self.tileX-1]~=nil and room[self.tileY][self.tileX-1].blocksMovement) then
+			if not (room[self.tileY][self.tileX-1]~=nil and room[self.tileY][self.tileX-1]:blocksMovementAnimal()) then
 				--self.x = self.x-floor.sprite:getHeight()*scale
 				self.tileX = self.tileX-1
-			elseif room[self.tileY][self.tileX-1].blocksMovement then
+			elseif room[self.tileY][self.tileX-1]:blocksMovementAnimal() then
 				unableToMove = true
 			end
 		end
 	end
 	if math.abs(diffx)<=math.abs(diffy) or (unableToMove and math.abs(diffy)>0) then
 		if playery>self.tileY then
-			if not (room[self.tileY+1][self.tileX]~=nil and room[self.tileY+1][self.tileX].blocksMovement) then
+			if not (room[self.tileY+1][self.tileX]~=nil and room[self.tileY+1][self.tileX]:blocksMovementAnimal()) then
 				--self.y = self.y+floor.sprite:getHeight()*scale
 				self.tileY = self.tileY+1
 				unableToMove = false
-			elseif room[self.tileY+1][self.tileX].blocksMovement then
+			elseif room[self.tileY+1][self.tileX]:blocksMovementAnimal() then
 				unableToMove = true
 			end
 		else
-			if not (room[self.tileY-1][self.tileX]~=nil and room[self.tileY-1][self.tileX].blocksMovement) then
+			if not (room[self.tileY-1][self.tileX]~=nil and room[self.tileY-1][self.tileX]:blocksMovementAnimal()) then
 				--self.y = self.y-floor.sprite:getHeight()*scale
 				self.tileY = self.tileY-1
 				unableToMove = false
-			elseif room[self.tileY-1][self.tileX].blocksMovement then
+			elseif room[self.tileY-1][self.tileX]:blocksMovementAnimal() then
 				unableToMove = true
 			end
 		end
 	end
 	if unableToMove then
 		if playerx>self.tileX then
-			if not (room[self.tileY][self.tileX+1]~=nil and room[self.tileY][self.tileX+1].blocksMovement) then
+			if not (room[self.tileY][self.tileX+1]~=nil and room[self.tileY][self.tileX+1]:blocksMovementAnimal()) then
 				--self.x = self.x+floor.sprite:getHeight()*scale
 				self.tileX = self.tileX+1
 			end
 		elseif playerx<self.tileX then
-			if not (room[self.tileY][self.tileX-1]~=nil and room[self.tileY][self.tileX-1].blocksMovement) then
+			if not (room[self.tileY][self.tileX-1]~=nil and room[self.tileY][self.tileX-1]:blocksMovementAnimal()) then
 				--self.x = self.x-floor.sprite:getHeight()*scale
 				self.tileX = self.tileX-1
 			end
@@ -188,7 +188,7 @@ function P.cat:move(playerx, playery, room, isLit)
 	local unableToMove = false
 	if math.abs(diffy)>math.abs(diffx) then
 		if playerx>=self.tileX then
-			if self.tileX>1 and not (room[self.tileY][self.tileX-1]~=nil and room[self.tileY][self.tileX-1].blocksMovement) then
+			if self.tileX>1 and not (room[self.tileY][self.tileX-1]~=nil and room[self.tileY][self.tileX-1]:blocksMovementAnimal()) then
 				--self.x = self.x-floor.sprite:getHeight()*scale
 				self.tileX = self.tileX-1
 				return
@@ -197,7 +197,7 @@ function P.cat:move(playerx, playery, room, isLit)
 			end
 		end
 		if playerx<=self.tileX then
-			if self.tileX<roomLength and not (room[self.tileY][self.tileX+1]~=nil and room[self.tileY][self.tileX+1].blocksMovement) then
+			if self.tileX<roomLength and not (room[self.tileY][self.tileX+1]~=nil and room[self.tileY][self.tileX+1]:blocksMovementAnimal()) then
 				--self.x = self.x+floor.sprite:getHeight()*scale
 				self.tileX = self.tileX+1
 				return
@@ -208,7 +208,7 @@ function P.cat:move(playerx, playery, room, isLit)
 	end
 	if math.abs(diffy)<=math.abs(diffx) or unableToMove then
 		if playery>=self.tileY then
-			if self.tileY>1 and not (room[self.tileY-1][self.tileX]~=nil and room[self.tileY-1][self.tileX].blocksMovement) then
+			if self.tileY>1 and not (room[self.tileY-1][self.tileX]~=nil and room[self.tileY-1][self.tileX]:blocksMovementAnimal()) then
 				--self.y = self.y-floor.sprite:getHeight()*scale
 				self.tileY = self.tileY-1
 				return
@@ -217,7 +217,7 @@ function P.cat:move(playerx, playery, room, isLit)
 			end
 		end
 		if playery<=self.tileY then
-			if self.tileY<roomHeight and not (room[self.tileY+1][self.tileX]~=nil and room[self.tileY+1][self.tileX].blocksMovement) then
+			if self.tileY<roomHeight and not (room[self.tileY+1][self.tileX]~=nil and room[self.tileY+1][self.tileX]:blocksMovementAnimal()) then
 				--self.y = self.y+floor.sprite:getHeight()*scale
 				self.tileY = self.tileY+1
 				return
@@ -228,14 +228,14 @@ function P.cat:move(playerx, playery, room, isLit)
 	end
 	if unableToMove then
 		if playerx>=self.tileX then
-			if self.tileX>1 and not (room[self.tileY][self.tileX-1]~=nil and room[self.tileY][self.tileX-1].blocksMovement) then
+			if self.tileX>1 and not (room[self.tileY][self.tileX-1]~=nil and room[self.tileY][self.tileX-1]:blocksMovementAnimal()) then
 				--self.x = self.x-floor.sprite:getHeight()*scale
 				self.tileX = self.tileX-1
 				return
 			end
 		end
 		if playerx<=self.tileX then
-			if self.tileX<roomLength and not (room[self.tileY][self.tileX+1]~=nil and room[self.tileY][self.tileX+1].blocksMovement) then
+			if self.tileX<roomLength and not (room[self.tileY][self.tileX+1]~=nil and room[self.tileY][self.tileX+1]:blocksMovementAnimal()) then
 				--self.x = self.x+floor.sprite:getHeight()*scale
 				self.tileX = self.tileX+1
 				return
