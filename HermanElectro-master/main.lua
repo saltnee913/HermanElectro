@@ -49,7 +49,7 @@ function love.load()
 	game.crash()]]
 
 	level = 0
-	loadNextLevel()
+	loadFirstLevel()
 	--1=saw
 	--toolMode = 1
 	tool = 0
@@ -122,6 +122,11 @@ function loadNextLevel()
 		loadLevel(map.floorOrder[floorIndex])
 		floorIndex = floorIndex + 1
 	end
+end
+
+function loadFirstLevel()
+	floorIndex = 1
+	loadNextLevel()
 end
 
 function loadLevel(floorPath)
@@ -1331,10 +1336,11 @@ function beatRoom()
 			if checkedRooms[y][x] == nil then
 				checkedRooms[y][x] = 1
 				if completedRooms[y]~=nil and completedRooms[y][x]~=nil and completedRooms[y][x] == 0 then
-					if ((completedRooms[y-1]~=nil and completedRooms[y-1][x] ~=nil and completedRooms[y-1][x] == 1) or
-					(completedRooms[y+1]~=nil and completedRooms[y+1][x] ~=nil and completedRooms[y+1][x] ==1) or
-					(completedRooms[y][x-1]~=nil and completedRooms[y][x-1]==1) or
-					(completedRooms[y][x+1]~=nil and completedRooms[y][x+1]==1)) then
+					local dirEnter = map.getFieldForRoom(mainMap[y][x].roomid, "dirEnter")
+					if ((dirEnter[1] == 1 and completedRooms[y-1]~=nil and completedRooms[y-1][x] ~=nil and completedRooms[y-1][x] == 1) or
+					(dirEnter[3] == 1 and completedRooms[y+1]~=nil and completedRooms[y+1][x] ~=nil and completedRooms[y+1][x] ==1) or
+					(dirEnter[4] == 1 and completedRooms[y][x-1]~=nil and completedRooms[y][x-1]==1) or
+					(dirEnter[2] == 1 and completedRooms[y][x+1]~=nil and completedRooms[y][x+1]==1)) then
 						local id = tostring(mainMap[y][x].roomid)
 						if dropOverride == nil then
 							listOfItemsNeeded = map.getItemsNeeded(mainMap[y][x].roomid)

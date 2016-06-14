@@ -110,6 +110,7 @@
   "superFields":
   {
     "autowin": true,
-    "minimapColor": [200, 0, 200]
+    "minimapColor": [200, 0, 200],
+    "dirEnter": [1,1,1,1]
   }
 }
