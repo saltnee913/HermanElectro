@@ -262,16 +262,6 @@ P.stayButton.onLeaveAnimal = P.stayButton.onLeave
 --P.stayButton.onLeave = P.stayButton.onEnter
 
 P.electricFloor = P.conductiveTile:new{name = "electricfloor", sprite = love.graphics.newImage('Graphics/electricfloor.png'), destroyedSprite = love.graphics.newImage('Graphics/electricfloorcut.png'), poweredSprite = love.graphics.newImage('Graphics/electricfloorpowered.png')}
-function P.electricFloor:onEnter(player)
-	if self.powered and not self.destroyed then
-		--kill()
-	end
-end
-function P.electricFloor:onEnterAnimal(animal)
-	if self.powered and not self.destroyed then
-		--animal:kill()
-	end
-end
 function P.electricFloor:destroy()
 	self.sprite = self.destroyedSprite
 	self.canBePowered = false
@@ -285,16 +275,6 @@ end
 P.electricFloor.willKillAnimal = P.electricFloor.willKillPlayer
 
 P.poweredFloor = P.conductiveTile:new{name = "poweredFloor", laddered = false, destroyedSprite = love.graphics.newImage('Graphics/trapdoorwithladder.png'), destroyedPoweredSprite = love.graphics.newImage('Graphics/trapdoorclosedwithladder.png'), sprite = love.graphics.newImage('Graphics/trapdoor.png'), poweredSprite = love.graphics.newImage('Graphics/trapdoorclosed.png')}
-function P.poweredFloor:onEnter(player)
-	if not self.powered and not self.laddered then
-		--kill()
-	end
-end
-function P.poweredFloor:onEnterAnimal(animal)
-	if not self.powered and not self.laddered then
-		--animal:kill()
-	end
-end
 function P.poweredFloor:ladder()
 	self.sprite = self.destroyedSprite
 	self.poweredSprite = self.destroyedPoweredSprite
@@ -604,9 +584,6 @@ function P.tunnel:onEnter(player)
 end
 
 P.pit = P.tile:new{name = "pit", laddered = false, sprite = love.graphics.newImage('Graphics/pit.png'), destroyedSprite = love.graphics.newImage('Graphics/ladderedPit.png')}
-function P.pit:onEnterAnimal(animal)
-	animal:kill()
-end
 function P.pit:ladder()
 	self.sprite = self.destroyedSprite
 	self.laddered = true

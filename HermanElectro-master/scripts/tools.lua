@@ -534,6 +534,6 @@ P[16] = P.missile
 P[17] = P.shovel
 P[18] = P.woodGrabber
 P[19] = P.corpseGrabber
-P[2] = P.pitbullChanger
+P[20] = P.pitbullChanger
 
 return tools
