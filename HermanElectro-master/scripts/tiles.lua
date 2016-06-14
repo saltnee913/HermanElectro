@@ -295,7 +295,7 @@ end
 function P.poweredFloor:ladder()
 	self.sprite = self.destroyedSprite
 	self.poweredSprite = self.destroyedPoweredSprite
-	self.laddered= true
+	self.laddered = true
 end
 function P.poweredFloor:willKillPlayer()
 	return not self.powered and not self.laddered

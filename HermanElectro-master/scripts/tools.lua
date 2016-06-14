@@ -243,7 +243,16 @@ end
 
 P.waterBottle = P.tool:new{name = 'water-bottle', image = love.graphics.newImage('Graphics/waterbottle.png')}
 function P.waterBottle:usableOnTile(tile)
-	return not tile.destroyed and (tile:instanceof(tiles.powerSupply) or tile:instanceof(tiles.electricFloor))
+	if not tile.laddered then
+		if tile:instanceof(tiles.breakablePit) and tile.strength == 0 then
+			return true
+		elseif (tile:instanceof(tiles.poweredFloor) and not tile.powered) or tile:instanceof(tiles.pit) then
+			return true
+		end
+	elseif not tile.destroyed and (tile:instanceof(tiles.powerSupply) or tile:instanceof(tiles.electricFloor)) then
+		return true
+	end
+	return false
 end
 function P.waterBottle:usableOnNothing()
 	return true
@@ -251,6 +260,15 @@ end
 function P.waterBottle:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld - 1
 	room[tileY][tileX] = tiles.electricFloor:new()
+end
+function P.waterBottle:useToolTile(tile)
+	self.numHeld = self.numHeld - 1
+	if tile:instanceof(tiles.pit) or tile:instanceof(tiles.poweredFloor) or tile:instanceof(tiles.breakablePit) then
+		tile:ladder()
+	else
+		tile:destroy()
+	end
+
 end
 
 P.cuttingTorch = P.tool:new{name = 'cutting-torch', image = love.graphics.newImage('Graphics/cuttingtorch.png')}
@@ -412,12 +430,22 @@ end
 P.missile.getToolableTiles = P.tool.getToolableTilesBox
 P.missile.getToolableAnimals = P.tool.getToolableAnimalsBox
 
-P.meat = P.superTool:new{name = "meat", range = 1, image = love.graphics.newImage('Graphics/meat.png')}
+P.meat = P.tool:new{name = "meat", range = 1, image = love.graphics.newImage('Graphics/meat.png')}
 function P.meat:usableOnNothing()
 	return true
 end
 function P.meat:useToolNothing(tileY, tileX)
 	room[tileY][tileX] = tiles.meat:new()
+end
+function P.meat:usableOnTile(tile)
+	if not tile.bricked and tile:instanceof(tiles.button) then
+		return true
+	end
+	return false
+end
+function P.meat:useToolTile(tile)
+	self.numHeld = self.numHeld - 1
+	tile:lockInState(true)
 end
 
 P.corpseGrabber = P.superTool:new{name = "corpseGrabber", range = 1, image = love.graphics.newImage('Graphics/corpseGrabber.png')}
