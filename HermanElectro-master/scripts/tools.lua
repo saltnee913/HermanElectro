@@ -24,6 +24,7 @@ function P.useToolDir(toolid, dir)
 			--sometimes next line has  error "attempt to index a nil value"
 			if tools[toolid]~=nil and room[P.toolableTiles[dir][1].y][P.toolableTiles[dir][1].x]~=nil then
 				tools[toolid]:useToolTile(room[P.toolableTiles[dir][1].y][P.toolableTiles[dir][1].x])
+				tools[toolid]:postUseOperation(P.toolableTiles[dir][1].y, P.toolableTiles[dir][1].x)
 			end
 		end
 		return true
@@ -51,6 +52,7 @@ function P.useToolTile(toolid, tileY, tileX)
 						tools[tool]:useToolNothing(tileY, tileX)
 					else
 						tools[tool]:useToolTile(room[tileY][tileX])
+						tools[tool]:postUseOperation(tileY, tileX)
 					end
 					return true
 				end
@@ -80,6 +82,8 @@ function P.tool:useToolAnimal(animal)
 end
 function P.tool:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld - 1
+end
+function P.tool:postUseOperation(tileY, tileX)
 end
 
 --returns a table of tables of coordinates by direction
@@ -143,30 +147,28 @@ function P.tool:getToolableAnimals()
 			for i = 2, 4 do usableAnimals[i] = usableAnimals[1] end
 			return usableAnimals
 		end]]
-		if not animal.dead then
-			if self:usableOnAnimal(animal) then
-				if animal.tileX == player.tileX and animal.tileY == player.tileY then
-					closestAnimals[5] = {dist = 0, ani = animal}
-				else
-					if animal.tileX == player.tileX then
-						if player.tileY > animal.tileY then
-							if player.tileY-animal.tileY < closestAnimals[1].dist then
-								closestAnimals[1] = {dist = player.tileY - animal.tileY, ani = animal}
-							end
-						else
-							if animal.tileY-player.tileY < closestAnimals[3].dist then
-								closestAnimals[3] = {dist = animal.tileY - player.tileY, ani = animal}
-							end
+		if self:usableOnAnimal(animal) then
+			if animal.tileX == player.tileX and animal.tileY == player.tileY then
+				closestAnimals[5] = {dist = 0, ani = animal}
+			else
+				if animal.tileX == player.tileX then
+					if player.tileY > animal.tileY then
+						if player.tileY-animal.tileY < closestAnimals[1].dist then
+							closestAnimals[1] = {dist = player.tileY - animal.tileY, ani = animal}
 						end
-					elseif animal.tileY == player.tileY then
-						if player.tileX > animal.tileX then
-							if player.tileX - animal.tileX < closestAnimals[4].dist then
-								closestAnimals[4] = {dist = player.tileX - animal.tileX, ani = animal}
-							end
-						else
-							if animal.tileX - player.tileX < closestAnimals[2].dist then
-								closestAnimals[2] = {dist = animal.tileX - player.tileX, ani = animal}
-							end
+					else
+						if animal.tileY-player.tileY < closestAnimals[3].dist then
+							closestAnimals[3] = {dist = animal.tileY - player.tileY, ani = animal}
+						end
+					end
+				elseif animal.tileY == player.tileY then
+					if player.tileX > animal.tileX then
+						if player.tileX - animal.tileX < closestAnimals[4].dist then
+							closestAnimals[4] = {dist = player.tileX - animal.tileX, ani = animal}
+						end
+					else
+						if animal.tileX - player.tileX < closestAnimals[2].dist then
+							closestAnimals[2] = {dist = animal.tileX - player.tileX, ani = animal}
 						end
 					end
 				end
@@ -241,7 +243,16 @@ end
 
 P.waterBottle = P.tool:new{name = 'water-bottle', image = love.graphics.newImage('Graphics/waterbottle.png')}
 function P.waterBottle:usableOnTile(tile)
-	return not tile.destroyed and (tile:instanceof(tiles.powerSupply) or tile:instanceof(tiles.electricFloor))
+	if not tile.laddered then
+		if tile:instanceof(tiles.breakablePit) and tile.strength == 0 then
+			return true
+		elseif (tile:instanceof(tiles.poweredFloor) and not tile.powered) or tile:instanceof(tiles.pit) then
+			return true
+		end
+	elseif not tile.destroyed and (tile:instanceof(tiles.powerSupply) or tile:instanceof(tiles.electricFloor)) then
+		return true
+	end
+	return false
 end
 function P.waterBottle:usableOnNothing()
 	return true
@@ -250,18 +261,19 @@ function P.waterBottle:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld - 1
 	room[tileY][tileX] = tiles.electricFloor:new()
 end
+function P.waterBottle:useToolTile(tile)
+	self.numHeld = self.numHeld - 1
+	if tile:instanceof(tiles.pit) or tile:instanceof(tiles.poweredFloor) or tile:instanceof(tiles.breakablePit) then
+		tile:ladder()
+	else
+		tile:destroy()
+	end
+
+end
 
 P.cuttingTorch = P.tool:new{name = 'cutting-torch', image = love.graphics.newImage('Graphics/cuttingtorch.png')}
 function P.cuttingTorch:usableOnTile(tile)
 	return false
-end
-
-P.shovel = P.tool:new{name = "shovel", range = 1, image = love.graphics.newImage('Graphics/shovel.png')}
-function P.shovel:usableOnNothing()
-	return true
-end
-function P.shovel:useToolNothing(tileY, tileX)
-	room[tileY][tileX] = tiles.pit:new()
 end
 
 P.brick = P.tool:new{name = 'brick', range = 3, image = love.graphics.newImage('Graphics/brick.png')}
@@ -274,6 +286,9 @@ function P.brick:usableOnTile(tile, dist)
 	end
 	return false
 end
+function P.brick:usableOnAnimal(animal)
+	return not animal.dead and animal.waitCounter==0
+end
 function P.brick:useToolTile(tile)
 	self.numHeld = self.numHeld - 1
 	if tile:instanceof(tiles.glassWall) then
@@ -281,6 +296,10 @@ function P.brick:useToolTile(tile)
 	else
 		tile:lockInState(true)
 	end
+end
+function P.brick:useToolAnimal(animal)
+	self.numHeld = self.numHeld-1
+	animal.waitCounter = animal.waitCounter+1
 end
 
 P.gun = P.tool:new{name = 'gun', range = 3, image = love.graphics.newImage('Graphics/gun.png')}
@@ -292,6 +311,14 @@ end
 
 
 P.superTool = P.tool:new{name = 'superTool', range = 10, rarity = 1}
+
+P.shovel = P.superTool:new{name = "shovel", range = 1, image = love.graphics.newImage('Graphics/shovel.png')}
+function P.shovel:usableOnNothing()
+	return true
+end
+function P.shovel:useToolNothing(tileY, tileX)
+	room[tileY][tileX] = tiles.pit:new()
+end
 
 P.electrifier = P.superTool:new{name = 'electrifier', range = 1, image = love.graphics.newImage('Graphics/electrifier.png')}
 function P.electrifier:usableOnTile(tile)
@@ -403,6 +430,45 @@ end
 P.missile.getToolableTiles = P.tool.getToolableTilesBox
 P.missile.getToolableAnimals = P.tool.getToolableAnimalsBox
 
+P.meat = P.tool:new{name = "meat", range = 1, image = love.graphics.newImage('Graphics/meat.png')}
+function P.meat:usableOnNothing()
+	return true
+end
+function P.meat:useToolNothing(tileY, tileX)
+	room[tileY][tileX] = tiles.meat:new()
+end
+function P.meat:usableOnTile(tile)
+	if not tile.bricked and tile:instanceof(tiles.button) then
+		return true
+	end
+	return false
+end
+function P.meat:useToolTile(tile)
+	self.numHeld = self.numHeld - 1
+	tile:lockInState(true)
+end
+
+P.corpseGrabber = P.superTool:new{name = "corpseGrabber", range = 1, image = love.graphics.newImage('Graphics/corpseGrabber.png')}
+function P.corpseGrabber:usableOnAnimal(animal)
+	return animal.dead and not animal.pickedUp
+end
+function P.corpseGrabber:useToolAnimal(animal)
+	self.numHeld = self.numHeld-1
+	animal.pickedUp = true
+	P.meat.numHeld = P.meat.numHeld+3
+end
+
+P.woodGrabber = P.superTool:new{name = "woodGrabber", range = 1, image = love.graphics.newImage('Graphics/woodGrabber.png')}
+function P.woodGrabber:usableOnTile(tile)
+	return tile:instanceof(tiles.wall) and tile.destroyed
+end
+function P.woodGrabber:useToolTile(tile)
+	self.numHeld = self.numHeld-1
+	P.ladder.numHeld = P.ladder.numHeld+2
+end
+function P.woodGrabber:postUseOperation(tileY, tileX)
+	room[tileY][tileX] = nil
+end
 
 P.numNormalTools = 7
 
@@ -410,7 +476,7 @@ P[1] = P.saw
 P[2] = P.ladder
 P[3] = P.wireCutters
 P[4] = P.waterBottle
-P[5] = P.shovel
+P[5] = P.meat
 P[6] = P.brick
 P[7] = P.gun
 P[8] = P.crowbar
@@ -422,6 +488,8 @@ P[13] = P.unsticker
 P[14] = P.doorstop
 P[15] = P.charger
 P[16] = P.missile
-
+P[17] = P.shovel
+P[18] = P.woodGrabber
+P[19] = P.corpseGrabber
 
 return tools

@@ -591,7 +591,7 @@ function love.draw()
 	end
 	love.graphics.draw(walls, 0, 0, 0, width/walls:getWidth(), height/walls:getHeight())
 	for i = 1, #animals do
-		if animals[i]~=nil and litTiles[animals[i].tileY][animals[i].tileX]==1 then
+		if animals[i]~=nil and litTiles[animals[i].tileY][animals[i].tileX]==1 and not animals[i].pickedUp then
 			love.graphics.draw(animals[i].sprite, animals[i].x, animals[i].y, 0, scale, scale)
 		end
 	end
@@ -1092,8 +1092,22 @@ function love.keypressed(key, unicode)
 	    if beforePressY~=player.y or beforePressX~=player.x or waitTurn then
 	   		stepTrigger()
 	    	updateGameState()
-	    	for i = 1, animalCounter-1 do
-	    		animals[i]:move(player.tileX, player.tileY, room, litTiles[animals[i].tileY][animals[i].tileX]==1)
+	    	for k = 1, animalCounter-1 do
+	    		local movex = player.tileX
+	    		local movey = player.tileY
+	    		local animalDist = math.abs(movey-animals[k].tileY)+math.abs(movex-animals[k].tileX)
+	    		for i = 1, roomHeight do
+	    			for j = 1, roomLength do
+	    				if room[i][j]~=nil and room[i][j]:instanceof(tiles.meat) then
+	    					if math.abs(i-animals[k].tileY)+math.abs(j-animals[k].tileX)<animalDist then
+	    						animalDist = math.abs(i-animals[k].tileY)+math.abs(j-animals[k].tileX)
+	    						movex = j
+	    						movey = i
+	    					end
+	    				end
+	    			end
+	    		end
+	    		animals[k]:move(movex, movey, room, litTiles[animals[k].tileY][animals[k].tileX]==1)
 	    	end   	
 	    	resolveConflicts()
 	    	for i = 1, #animals do
