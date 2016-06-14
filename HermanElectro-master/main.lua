@@ -930,6 +930,7 @@ function love.keypressed(key, unicode)
 		return
 	end
 	keyTimer.timeLeft = keyTimer.base
+	waitTurn = false
     -- ignore non-printable characters (see http://www.ascii-code.com/)
    	if player.waitCounter<=0 then
 	    if key == "w" then
@@ -974,13 +975,15 @@ function love.keypressed(key, unicode)
 	    		player.tileX = player.tileX+1
 	    		player.x = player.x+floor.sprite:getHeight()*scale
 	    	elseif player.tileX == roomLength and player.y < height/2+50 and player.y > height/2-20 then
-				
 				enterRoom(1)
 			end
 		end
 	end
-	waitTurn = false
-	if player.waitCounter>0 then
+	if (key == "w" or key == "a" or key == "s" or key == "d") and player.waitCounter>0 then
+		player.prevx = player.x
+		player.prevy = player.y
+		player.prevTileX = player.tileX
+		player.prevTileY = player.tileY
 		waitTurn = true
     	player.waitCounter = player.waitCounter-1
     end
