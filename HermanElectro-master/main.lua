@@ -844,93 +844,21 @@ end
 
 oldTilesOn = {}
 
-function checkBoundaries()
---tile locations: (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, starts at (0,0)
---hitbox: bottom left (player.x, player.y), height player.height, width player.width
-	tilesOn = {}
-	tileLocs = {}
-	xCorner = player.x
-	yCorner = player.y
-	--xCorner = player.x+player.width/2
-	--yCorner = player.y-player.height/2
-	tileLoc1 = math.ceil((xCorner-wallSprite.width)/(scale*floor.sprite:getWidth()))
-	tileLoc2 = math.ceil((yCorner-wallSprite.height)/(scale*floor.sprite:getHeight()))
-	--tileLoc1 = math.ceil((xCorner-wallSprite.width)/(scale*floor.sprite:getWidth()))
-	--tileLoc2 = math.ceil((yCorner-wallSprite.height)/(scale*floor.sprite:getHeight()))
-	if room[tileLoc2] ~= nil then
-		tilesOn[1] = room[tileLoc2][tileLoc1]
-		tileLocs[1] = {x=tileLoc1, y=tileLoc2}
-	end
-
-	xCorner = player.x+player.width
-	yCorner = player.y-player.height
-	tileLoc1 = math.ceil((xCorner-wallSprite.width)/(scale*floor.sprite:getWidth()))
-	tileLoc2 = math.ceil((yCorner-wallSprite.height)/(scale*floor.sprite:getHeight()))
-	if room[tileLoc2] ~= nil then
-		tilesOn[2] = room[tileLoc2][tileLoc1]
-		tileLocs[2] = {x=tileLoc1, y=tileLoc2}
-	end
-	
-
-	xCorner = player.x
-	yCorner = player.y-player.height
-	tileLoc1 = math.ceil((xCorner-wallSprite.width)/(scale*floor.sprite:getWidth()))
-	tileLoc2 = math.ceil((yCorner-wallSprite.height)/(scale*floor.sprite:getHeight()))
-	if room[tileLoc2] ~= nil then
-		tilesOn[3] = room[tileLoc2][tileLoc1]
-		tileLocs[3] = {x=tileLoc1, y=tileLoc2}
-	end
-
-	xCorner = player.x+player.width
-	yCorner = player.y
-	tileLoc1 = math.ceil((xCorner-wallSprite.width)/(scale*floor.sprite:getWidth()))
-	tileLoc2 = math.ceil((yCorner-wallSprite.height)/(scale*floor.sprite:getHeight()))
-	if room[tileLoc2] ~= nil then
-		tilesOn[4] = room[tileLoc2][tileLoc1]
-		tileLocs[4] = {x=tileLoc1, y=tileLoc2}
-	end
-
-	for j = 1, 4 do
-		local isOnNow = false
-		for i = 1, 4 do
-			if tilesOn[i] == oldTilesOn[j] then
-				isOnNow = true
-			end
-		end
-		if oldTilesOn[j] ~= nil and not isOnNow then
-			oldTilesOn[j]:onLeave(player)
+function enterMove()
+	if room[player.tileY][player.tileX]~=nil then
+		if player.prevTileY == player.tileY and player.prevTileX == player.tileX then
+			room[player.tileY][player.tileX]:onStay(player)
+		else
+			room[player.tileY][player.tileX]:onEnter(player)
 		end
 	end
-	for i = 1, 1 do
-		local t = tilesOn[i]
-		for j = 1, i-1 do
-			if tilesOn[i] == tilesOn[j] then
-				tilesOn[i] = nil
-				t = nil
-			end
+	if not (player.prevTileY == player.tileY and player.prevTileX == player.tileX) then
+		if room[player.prevTileY][player.prevTileX]~=nil then
+			room[player.prevTileY][player.prevTileX]:onLeave(player)
 		end
-		if t ~= nil then
-			local isOnStay  = false
-			for j = 1, 1 do
-				if oldTilesOn[j] == t then
-					isOnStay = true
-				end
-			end
-			if isOnStay then
-				t:onStay(player, tileLocs[i])
-			else										
-				t:onEnter(player, tileLocs[i])
-			end
-		end
-
-	end
-	for i = 1, 4 do
-		oldTilesOn[i] = tilesOn[i]
-	end
-	if tilesOn[1]~=nil then
-		--print(tilesOn[1].name..tilesOn[2]..tilesOn[3]..tilesOn[4])
 	end
 end
+
 keyTimer = {base = .05, timeLeft = .05}
 function love.update(dt)
 	keyTimer.timeLeft = keyTimer.timeLeft - dt
@@ -1088,7 +1016,7 @@ function love.keypressed(key, unicode)
     			end
     		end
     	end
-    	checkBoundaries()
+    	enterMove()
 	    if beforePressY~=player.y or beforePressX~=player.x or waitTurn then
 	   		stepTrigger()
 	    	updateGameState()
@@ -1237,84 +1165,6 @@ function checkDeath()
 		end
 	end
 end
-
---change to update(dt) for non-tile movement
-function love.updateOld(dt)
-	if not player.dead then
-		if love.keyboard.isDown("w") then 
-			if player.y == wallSprite.height+player.height*player.scale and player.x+player.width/2 < width/2+40 and player.x+player.width/2 > width/2-110 then
-				enterRoom(0)
-			end
-			player.y = player.y - player.speed * dt
-		end
-		if love.keyboard.isDown("s") then 
-			if player.y == height - wallSprite.heightBottom and player.x < width/2+40 and player.x > width/2-110 then
-				enterRoom(2)
-			end
-			player.y = player.y + player.speed * dt
-		end
-		if player.y < wallSprite.height+player.height*player.scale then
-			player.y = wallSprite.height+player.height*player.scale
-		end
-		if player.y > height-wallSprite.heightBottom then
-			player.y = height-wallSprite.heightBottom
-		end
-		checkBoundaries()
-		if player.prevy~=player.y then
-			
-			for i = 1, 100 do
-				if animals[i]~=nil then
-					animals[i]:move(player.x, player.y, dt)
-				else
-					break
-				end
-			end
-		end
-		player.prevy = player.y
-		if love.keyboard.isDown("a") then 
-			if player.x == wallSprite.width and player.y < height/2+50 and player.y > height/2-20 then
-				enterRoom(3)
-			end
-			player.x = player.x - player.speed * dt
-			
-		end
-		if love.keyboard.isDown("d") then 
-			if player.x == width-wallSprite.width-player.width and player.y < height/2+50 and player.y > height/2-20 then
-				enterRoom(1)
-			end
-			player.x = player.x + player.speed * dt
-		end
-		if player.x < 0 then
-			player.x = 0
-		end
-		if player.x < wallSprite.width then
-			player.x = wallSprite.width
-		end
-		if player.x > width-wallSprite.width-player.width then
-			player.x = width-wallSprite.width-player.width
-		end
-		checkBoundaries()
-		if player.x~=player.prevx then
-			
-			for i = 1, 100 do
-				if animals[i]~=nil then
-					animals[i]:move(player.x, player.y, dt)
-				else
-					break
-				end
-			end
-		end
-		player.prevx = player.x
-	end
-	for i = 1, 100 do
-		if animals[i]~=nil then
-			animals[i].update()
-		else
-			break
-		end
-	end
-end
-
 
 function love.mousepressed(x, y, button, istouch)
 	if editorMode then
