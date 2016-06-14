@@ -969,7 +969,7 @@ function love.keypressed(key, unicode)
 				player.prevTileY = player.enterY
 				player.prevx = player.x
 				player.prevTileX = player.enterX
-				for i = 1,#tools do
+				for i = 1,tools.numNormalTools do
 					if (completedRooms[mapy][mapx] == 1) then
 						player.totalItemsGiven[i] = player.totalItemsGiven[i] - map.getItemsGiven(mainMap[mapy][mapx].roomid)[1][i]
 						player.totalItemsNeeded[i] = player.totalItemsNeeded[i] - map.getItemsNeeded(mainMap[mapy][mapx].roomid)[1][i]
