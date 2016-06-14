@@ -25,6 +25,8 @@ function love.load()
 	editorMode = false
 	editorAdd = 0
 
+	donations = 0
+
 	--[[local json = require('scripts.dkjson')
 	io.input('RoomData/finalrooms.json')
 	local roomsToFix
@@ -351,7 +353,7 @@ end
 
 function powerTest(x, y, lastDir)
 	powerCount = powerCount+1
-	if powerCount>1000 then
+	if powerCount>3000 then
 		kill()
 		return
 	end

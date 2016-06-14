@@ -920,6 +920,16 @@ P.ladder = P.tile:new{name = "ladder", sprite = love.graphics.newImage('Graphics
 
 P.mousetrapOff = P.mousetrap:new{safe = true, sprite = love.graphics.newImage('Graphics/mousetrapsafe.png')}
 
+P.donationMachine = P.tile:new{sprite = love.graphics.newImage('Graphics/donationmachine.png')}
+function P.donationMachine:getInfoText()
+	return donations
+end
+function P.donationMachine:onEnter(player)
+	if tool==0 or tool>7 then return end
+	tools[tool].numHeld = tools[tool].numHeld - 1
+	donations = donations+1
+end
+
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
 tiles[3] = P.powerSupply
@@ -972,5 +982,6 @@ tiles[49] = P.meat
 tiles[50] = P.beggar
 tiles[51] = P.ladder
 tiles[52] = P.mousetrapOff
+tiles[53] = P.donationMachine
 
 return tiles

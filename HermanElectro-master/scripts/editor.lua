@@ -144,7 +144,7 @@ function P.mousepressed(x, y, button, istouch)
 	elseif tempAdd>0 and tileLocX>=1 and tileLocX<=24 and tileLocY>=1 and tileLocY<=12 then
 		if(room[tileLocY][tileLocX] ~= nil and room[tileLocY][tileLocX].name == tiles[tempAdd].name) then
 			room[tileLocY][tileLocX]:rotate(1)
-		else
+		elseif tiles[tempAdd]~=nil then
 			room[tileLocY][tileLocX] = tiles[tempAdd]:new()
 		end
 		for i = 1, animalCounter-1 do
@@ -156,7 +156,7 @@ function P.mousepressed(x, y, button, istouch)
 				animalCounter = animalCounter-1
 			end
 		end
-		if tiles[tempAdd].animal~=nil then
+		if tiles[tempAdd]~=nil and tiles[tempAdd].animal~=nil then
 			animalToSpawn = room[tileLocY][tileLocX].animal
 			if not animalToSpawn.dead then
 				animals[animalCounter] = animalList[tiles[tempAdd].listIndex]:new()
@@ -173,7 +173,7 @@ function P.mousepressed(x, y, button, istouch)
 end
 
 function P.mousemoved(x, y, dx, dy)
-	if mouseDown > 0 and tempAdd>0 and tileLocX>=1 and tileLocX<=24 and tileLocY>=1 and tileLocY<=12 then
+	if mouseDown > 0 and tempAdd>0 and tiles[tempAdd]~=nil and tileLocX>=1 and tileLocX<=24 and tileLocY>=1 and tileLocY<=12 then
 		room[tileLocY][tileLocX] = tiles[tempAdd]:new()
 		
 		updateGameState()

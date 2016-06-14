@@ -493,6 +493,26 @@ function P.woodGrabber:useToolTile(tile, tileY, tileX)
 	room[tileY][tileX] = nil
 end
 
+P.pitbullChanger = P.tool:new{name = "pitbullChanger", range = 3, image = love.graphics.newImage('Graphics/pitbullChanger.png')}
+function P.pitbullChanger:usableOnAnimal(animal)
+	return not animal.dead and animal:instanceof(animalList.pitbull)
+end
+function P.pitbullChanger:useToolAnimal(animal)
+	for i = 1, #animals do
+		if animal.tileX == animals[i].tileX and animal.tileY == animals[i].tileY then
+			animals[i] = animalList.pup:new()
+			animals[i].tileX = animal.tileX
+			animals[i].tileY = animal.tileY
+			animals[i].prevTileX = animal.prevTileX
+			animals[i].prevTileY = animal.prevTileY
+			animals[i].x = animal.x
+			animals[i].prevx = animal.prevx
+			animals[i].y = animal.y
+			animals[i].prevy = animal.y
+		end
+	end
+end
+
 P.numNormalTools = 7
 
 P[1] = P.saw
@@ -514,5 +534,6 @@ P[16] = P.missile
 P[17] = P.shovel
 P[18] = P.woodGrabber
 P[19] = P.corpseGrabber
+P[2] = P.pitbullChanger
 
 return tools
