@@ -189,6 +189,19 @@ function P.generateMap(seed)
 	return P[P.floorInfo.generateFunction]()
 end
 
+local function canPlaceRoom(dirEnters, map, mapy, mapx)
+	if dirEnters == nil then return true end
+	for i = 1, 4 do
+		if dirEnters[i] == 1 then
+			local offset = util.getOffsetByDir(i)
+			if map[mapy + offset.y][mapx + offset.x] ~= nil then
+				return true
+			end
+		end
+	end
+	return false
+end
+
 function P.generateMapStandard()
 	local height = P.floorInfo.height
 	local numRooms = P.floorInfo.numRooms
@@ -204,6 +217,8 @@ function P.generateMapStandard()
 	treasureY = 0
 	local blacklist = {startRoomID}
 	local randomRoomArray = util.createRandomKeyArray(P.floorInfo.rooms.rooms, blacklist)
+	local skippedRooms = {}
+	local skippedRoomsIndex = 1
 	for i = 0, numRooms-1 do
 		available = {}
 		local a = 0
@@ -250,14 +265,28 @@ function P.generateMapStandard()
 		--local roomNum = math.floor(math.random()*#(P.rooms)) -- what we will actually do, with some editing
 		arr = P.floorInfo.rooms.rooms
 		local roomid = randomRoomArray[i+2]
+		local loadedRoom = P.createRoom(roomid, arr)
+		if skippedRooms[skippedRoomsIndex] ~= nil then
+			roomid = skippedRooms[skippedRoomsIndex]
+			loadedRoom = P.createRoom(roomid, arr)
+			skippedRoomsIndex = skippedRoomsIndex + 1
+		end
+		local skipped = 1
+		while(not canPlaceRoom(loadedRoom.dirEnter)) do
+			skippedRooms[#skippedRooms+1] = randomRoomArray[i+2+skipped-1]
+			roomid = randomRoomArray[i+2+skipped]
+			loadedRoom = P.createRoom(roomid, arr)
+		end
 		if i == numRooms-2 then
 			arr = P.floorInfo.rooms.treasureRooms
 			roomid = util.chooseRandomKey(arr)
+			loadedRoom = P.createRoom(roomid, arr)
 			treasureX = choice.y
 			treasureY = choice.x
 		elseif i == numRooms-1 then
 			arr = P.floorInfo.rooms.finalRooms
 			roomid = util.chooseRandomKey(arr)
+			loadedRoom = P.createRoom(roomid, arr)
 		end
 		newmap[choice.x][choice.y] = {roomid = roomid, room = P.createRoom(roomid, arr), isFinal = false, isInitial = false}
 	end
