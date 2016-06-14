@@ -23,8 +23,7 @@ function P.useToolDir(toolid, dir)
 		else
 			--sometimes next line has  error "attempt to index a nil value"
 			if tools[toolid]~=nil and room[P.toolableTiles[dir][1].y][P.toolableTiles[dir][1].x]~=nil then
-				tools[toolid]:useToolTile(room[P.toolableTiles[dir][1].y][P.toolableTiles[dir][1].x])
-				tools[toolid]:postUseOperation(P.toolableTiles[dir][1].y, P.toolableTiles[dir][1].x)
+				tools[toolid]:useToolTile(room[P.toolableTiles[dir][1].y][P.toolableTiles[dir][1].x], P.toolableTiles[dir][1].y, P.toolableTiles[dir][1].x)
 			end
 		end
 		return true
@@ -51,8 +50,7 @@ function P.useToolTile(toolid, tileY, tileX)
 					if room[tileY][tileX] == nil then
 						tools[tool]:useToolNothing(tileY, tileX)
 					else
-						tools[tool]:useToolTile(room[tileY][tileX])
-						tools[tool]:postUseOperation(tileY, tileX)
+						tools[tool]:useToolTile(room[tileY][tileX], tileY, tileX)
 					end
 					return true
 				end
@@ -82,8 +80,6 @@ function P.tool:useToolAnimal(animal)
 end
 function P.tool:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld - 1
-end
-function P.tool:postUseOperation(tileY, tileX)
 end
 
 --returns a table of tables of coordinates by direction
@@ -464,11 +460,9 @@ P.woodGrabber = P.superTool:new{name = "woodGrabber", range = 1, image = love.gr
 function P.woodGrabber:usableOnTile(tile)
 	return tile:instanceof(tiles.wall) and tile.destroyed
 end
-function P.woodGrabber:useToolTile(tile)
+function P.woodGrabber:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld-1
 	P.ladder.numHeld = P.ladder.numHeld+2
-end
-function P.woodGrabber:postUseOperation(tileY, tileX)
 	room[tileY][tileX] = nil
 end
 
