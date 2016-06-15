@@ -579,6 +579,8 @@ end
 
 P.concreteWallConductive = P.concreteWall:new{name = "concreteWallConductive", sprite = love.graphics.newImage('Graphics/concretewallconductive.png'), poweredSprite = love.graphics.newImage('Graphics/concretewallconductive.png'), canBePowered = true, dirAccept = {1,1,1,1}, dirSend = {1,1,1,1}}
 P.concreteWallConductiveDirected = P.concreteWallConductive:new{name = "concreteWallConductiveDirected", sprite = love.graphics.newImage('Graphics/concretewallconductivedirected.png'), poweredSprite = love.graphics.newImage('Graphics/concretewallconductivedirected.png'), canBePowered = true, dirAccept = {1,0,1,0}, dirSend = {1,0,1,0}}
+P.concreteWallConductiveCorner = P.concreteWallConductive:new{name = "concreteWallConductiveCorner", sprite = love.graphics.newImage('Graphics/concretewallconductivecorner.png'), poweredSprite = love.graphics.newImage('Graphics/concretewallconductivecorner.png'), canBePowered = true, dirAccept = {1,1,0,0}, dirSend = {1,1,0,0}}
+P.concreteWallConductiveT = P.concreteWallConductive:new{name = "concreteWallConductiveT", sprite = love.graphics.newImage('Graphics/concretewallconductivet.png'), poweredSprite = love.graphics.newImage('Graphics/concretewallconductivet.png'), canBePowered = true, dirAccept = {1,1,1,0}, dirSend = {1,1,1,0}}
 
 P.tunnel = P.tile:new{name = "tunnel"}
 function P.tunnel:onEnter(player)
@@ -971,5 +973,7 @@ tiles[50] = P.beggar
 tiles[51] = P.ladder
 tiles[52] = P.mousetrapOff
 tiles[53] = P.donationMachine
+tiles[54] = P.concreteWallConductiveCorner
+tiles[55] = P.concreteWallConductiveT
 
 return tiles
