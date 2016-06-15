@@ -945,9 +945,11 @@ P.treasureTile3 = P.treasureTile:new{name = "treasureTile3", sprite = love.graph
 
 P.treasureTile4 = P.treasureTile:new{name = "treasureTile4", sprite = love.graphics.newImage('Graphics/treasuretile4.png')}
 
-P.conductiveSlime = P.conductiveTile:new{name = "conductiveSlime", sprite = love.graphics.newImage('Graphics/conductiveslime.png')}
-P.conductiveSlime:onEnter = P.slime.onEnter
+P.conductiveSlime = P.conductiveTile:new{name = "conductiveSlime", sprite = love.graphics.newImage('Graphics/conductiveslime.png'), poweredSprite = love.graphics.newImage('Graphics/conductiveslimepowered.png')}
+P.conductiveSlime.onEnter = P.slime.onEnter
 P.conductiveSlime.onEnterAnimal = P.slime.onEnterAnimal
+
+P.conductiveSnailTile = P.pitbullTile:new{name = "conductiveSnail", animal = animalList[7]:new(), listIndex = 7} 
 
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
@@ -1009,5 +1011,7 @@ tiles[57] = P.exitPortal
 tiles[58] = P.treasureTile2
 tiles[59] = P.treasureTile3
 tiles[60] = P.treasureTile4
+tiles[61] = P.conductiveSlime
+tiles[62] = P.conductiveSnailTile
 
 return tiles

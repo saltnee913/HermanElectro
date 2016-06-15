@@ -129,6 +129,11 @@ function P.snail:onNullLeave()
 	return tiles.slime:new()
 end
 
+P.conductiveSnail = P.snail:new{name = "conductiveSnail", sprite = love.graphics.newImage('Graphics/conductivesnail.png')}
+function P.snail:onNullLeave()
+	return tiles.conductiveSlime:new()
+end
+
 P.bat = P.animal:new{flying = true, name = "bat", sprite = love.graphics.newImage('Graphics/bat.png'), deadSprite = love.graphics.newImage('Graphics/pupdead.png')}
 function P.bat:move(playerx, playery, room, isLit)
 	if self.dead or (not isLit and not self.triggered) then
@@ -251,5 +256,6 @@ animalList[3] = P.pup
 animalList[4] = P.cat
 animalList[5] = P.snail
 animalList[6] = P.bat
+animalList[7] = P.conductiveSnail
 
 return animalList
