@@ -964,6 +964,8 @@ function P.untriggeredPowerSupply:updateTile(dir)
 	end
 end
 
+P.reinforcedGlass = P.concreteWall:new{name = "reinforcedGlass", blocksVision = false,sprite = love.graphics.newImage('Graphics/reinforcedglass.png'), poweredSprite = love.graphics.newImage('Graphics/reinforcedglass.png')}
+
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
 tiles[3] = P.powerSupply
@@ -1027,5 +1029,6 @@ tiles[60] = P.treasureTile4
 tiles[61] = P.conductiveSlime
 tiles[62] = P.conductiveSnailTile
 tiles[63] = P.untriggeredPowerSupply
+tiles[64] = P.reinforcedGlass
 
 return tiles
