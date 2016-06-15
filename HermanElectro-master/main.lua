@@ -237,10 +237,10 @@ function updatePower()
 	for i=1, roomHeight do
 		for j=1, roomLength do
 			--power starts at power sources: powerSupply and notGate
-			if room[i]~=nil and room[i][j]~=nil and room[i][j].name == "powerSupply" and not room[i][j].destroyed then
+			if room[i]~=nil and room[i][j]~=nil and room[i][j]:instanceof(tiles.powerSupply) and not room[i][j].destroyed then
 				room[i][j].powered = true
 			end
-			if room[i]~=nil and room[i][j]~=nil and room[i][j].name == "notGate" and not room[i][j].destroyed then
+			if room[i]~=nil and room[i][j]~=nil and room[i][j]:instanceof(tiles.notGate) and not room[i][j].destroyed then
 				--room[i][j].powered = true
 			end
 			if room[i][j]~=nil and room[i][j].charged and not room[i][j].destroyed then
@@ -251,7 +251,7 @@ function updatePower()
 	for i=1, roomHeight do
 		for j=1, roomLength do
 			--power starts at power sources: powerSupply and notGate
-			if room[i]~=nil and room[i][j]~=nil and (room[i][j].charged or room[i][j].name == "powerSupply" or room[i][j].name == "notGate") then
+			if room[i]~=nil and room[i][j]~=nil and (room[i][j].charged or room[i][j]:instanceof(tiles.powerSupply) or room[i][j]:instanceof(tiles.notGate)) then
 				room[i][j]:updateTile(0)
 				powerTest(i,j,0)
 			end
@@ -262,7 +262,7 @@ function updatePower()
 	for k = 1, 10 do
 		for i = 1, roomHeight do
 			for j = 1, roomLength do
-				if room[i]~=nil and room[i][j]~=nil and not (room[i][j].name == "powerSupply" or room[i][j].name == "notGate") and not room[i][j].charged then
+				if room[i]~=nil and room[i][j]~=nil and not (room[i][j]:instanceof(tiles.powerSupply) or room[i][j]:instanceof(tiles.notGate)) and not room[i][j].charged then
 					room[i][j].poweredNeighbors = {0,0,0,0}
 					room[i][j].powered = false
 					room[i][j]:updateTile(0)
@@ -272,7 +272,7 @@ function updatePower()
 		for i = 1, roomHeight do
 			for j = 1, roomLength do
 				if room[i]~=nil and room[i][j]~=nil then
-					if (room[i][j].name == "powerSupply" or room[i][j].name == "notGate" or room[i][j].charged) and room[i][j].powered then
+					if (room[i][j]:instanceof(tiles.powerSupply) or room[i][j]:instanceof(tiles.notGate) or room[i][j].charged) and room[i][j].powered then
 						powerTestSpecial(i,j,0)
 					end
 				end
@@ -280,7 +280,7 @@ function updatePower()
 		end
 		for i = 1, roomHeight do
 			for j = 1, roomLength do
-				if room[i]~=nil and room[i][j]~=nil and room[i][j].name == "notGate" then
+				if room[i]~=nil and room[i][j]~=nil and room[i][j]:instanceof(tiles.notGate) then
 					local offset = room[i][j]:getCorrectedOffset(3)
 					if room[i+offset.y]~=nil and room[i+offset.y][j+offset.x]~=nil and room[i+offset.y][j+offset.x].powered==false then
 						room[i][j].poweredNeighbors[room[i][j]:cfr(3)]=0

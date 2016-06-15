@@ -949,7 +949,14 @@ P.conductiveSlime = P.conductiveTile:new{name = "conductiveSlime", sprite = love
 P.conductiveSlime.onEnter = P.slime.onEnter
 P.conductiveSlime.onEnterAnimal = P.slime.onEnterAnimal
 
-P.conductiveSnailTile = P.pitbullTile:new{name = "conductiveSnail", animal = animalList[7]:new(), listIndex = 7} 
+P.conductiveSnailTile = P.pitbullTile:new{name = "conductiveSnail", animal = animalList[7]:new(), listIndex = 7}
+
+P.untriggeredPowerSupply = P.conductiveTile:new{name = "untriggeredPowerSupply", sprite = love.graphics.newImage('Graphics/untriggeredPowerSupply.png'), poweredSprite = love.graphics.newImage('Graphics/powersupply.png')}
+function P.untriggeredPowerSupply:updateTile(dir)
+	if self.poweredNeighbors[1]==1 or self.poweredNeighbors[2]==1 or self.poweredNeighbors[3]==1 or self.poweredNeighbors[4]==1 then
+		self.charged = true
+	end
+end
 
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
@@ -1013,5 +1020,6 @@ tiles[59] = P.treasureTile3
 tiles[60] = P.treasureTile4
 tiles[61] = P.conductiveSlime
 tiles[62] = P.conductiveSnailTile
+tiles[63] = P.untriggeredPowerSupply
 
 return tiles
