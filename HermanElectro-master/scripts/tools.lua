@@ -298,7 +298,7 @@ function P.gun:usableOnAnimal(animal)
 	return not animal.dead
 end
 function P.gun:usableOnTile(tile)
-	if tile:instanceof(tiles.wall) and not tile:instanceof(tiles.concreteWall) and not tile:instanceof(tiles.glassWall) then
+	if tile:instanceof(tiles.wall) and not tile:instanceof(tiles.concreteWall) and not tile:instanceof(tiles.glassWall) and not tile.destroyed then
 		return true
 	elseif tile:instanceof(tiles.beggar) and tile.alive then
 		return true
