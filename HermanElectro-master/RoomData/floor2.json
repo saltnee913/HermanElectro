@@ -18,6 +18,14 @@
 						}
 					},
 					"solvableWithTools": [0, 0, 0, 0, 0, 0, 0]
+				},
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
 				}
 			}
 		},

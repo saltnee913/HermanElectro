@@ -6,9 +6,9 @@
 			"filePath": "RoomData/rooms.json",
 			"requirements":
 			{
-				"or":
+				"tilesWhitelist": [3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 15, 16, 17, 18, 19, 20, 21, 24, 25, 31, 32, 40],
+				"not":
 				{
-					"tilesWhitelist": [3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 15, 16, 17, 18, 19, 20, 21, 24, 25, 31, 32, 40],
 					"equals":
 					{
 						"key": "dumb",
