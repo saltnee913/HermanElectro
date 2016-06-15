@@ -346,6 +346,7 @@ function P.shovel:usableOnNothing()
 	return true
 end
 function P.shovel:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
 	room[tileY][tileX] = tiles.pit:new()
 end
 
@@ -464,6 +465,7 @@ function P.meat:usableOnNothing()
 	return true
 end
 function P.meat:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
 	room[tileY][tileX] = tiles.meat:new()
 end
 function P.meat:usableOnTile(tile)
@@ -502,6 +504,7 @@ function P.pitbullChanger:usableOnAnimal(animal)
 	return not animal.dead and animal:instanceof(animalList.pitbull)
 end
 function P.pitbullChanger:useToolAnimal(animal)
+	self.numHeld = self.numHeld-1
 	for i = 1, #animals do
 		if animal.tileX == animals[i].tileX and animal.tileY == animals[i].tileY then
 			animals[i] = animalList.pup:new()
