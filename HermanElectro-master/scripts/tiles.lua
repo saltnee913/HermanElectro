@@ -945,6 +945,10 @@ P.treasureTile3 = P.treasureTile:new{name = "treasureTile3", sprite = love.graph
 
 P.treasureTile4 = P.treasureTile:new{name = "treasureTile4", sprite = love.graphics.newImage('Graphics/treasuretile4.png')}
 
+P.conductiveSlime = P.conductiveTile:new{name = "conductiveSlime", sprite = love.graphics.newImage('Graphics/conductiveslime.png')}
+P.conductiveSlime:onEnter = P.slime.onEnter
+P.conductiveSlime.onEnterAnimal = P.slime.onEnterAnimal
+
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
 tiles[3] = P.powerSupply
