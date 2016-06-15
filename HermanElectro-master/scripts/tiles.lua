@@ -920,6 +920,25 @@ function P.donationMachine:onEnter(player)
 	donations = donations+1
 end
 
+P.entrancePortal = P.tile:new{name = "entrancePortal", sprite = love.graphics.newImage('Graphics/entrancePortal.png')}
+function P.entrancePortal:onEnter(player)
+	for i = 1, roomHeight do
+		shouldBreak = false
+		for j = 1, roomLength do
+			if room[i][j]~=nil and room[i][j]:instanceof(tiles.exitPortal) then
+				player.tileX = j
+				player.tileY = i
+				shouldBreak = true
+				break
+			end
+		end
+		if shouldBreak then break end
+	end
+
+end
+
+P.exitPortal = P.tile:new{name = "exitPortal", sprite = love.graphics.newImage('Graphics/exitPortal.png')}
+
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
 tiles[3] = P.powerSupply
@@ -975,5 +994,7 @@ tiles[52] = P.mousetrapOff
 tiles[53] = P.donationMachine
 tiles[54] = P.concreteWallConductiveCorner
 tiles[55] = P.concreteWallConductiveT
+tiles[56] = P.entrancePortal
+tiles[57] = P.exitPortal
 
 return tiles

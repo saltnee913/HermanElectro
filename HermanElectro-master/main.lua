@@ -602,6 +602,8 @@ function love.draw()
 			love.graphics.draw(animals[i].sprite, animals[i].x, animals[i].y, 0, scale, scale)
 		end
 	end
+	player.x = (player.tileX-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
+	player.y = (player.tileY-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
 	love.graphics.draw(player.sprite, player.x-player.sprite:getWidth()*player.scale/2, player.y-player.sprite:getHeight()*player.scale, 0, player.scale, player.scale)
 	love.graphics.print(player:getTileLoc().x .. ":" .. player:getTileLoc().y, 0, 0);
 	for i = 0, mapHeight do
