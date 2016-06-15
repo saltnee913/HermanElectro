@@ -28,6 +28,9 @@ end
 
 function P.keypressed(key, unicode)
 	if key=="p" then
+		print("\"name\":")
+		print("{")
+		print("\"layout\":")
 		print("[")
 		for i = 1, roomHeight do
 			prt = "["
@@ -56,7 +59,12 @@ function P.keypressed(key, unicode)
 			prt = prt.."]"
 			print(prt)
 		end
+		print("],")
+		print("\"itemsNeeded\":")
+		print("[")
+		print("[saws, ladders, wireCutters, waterBottles, meats, bricks, guns]")
 		print("]")
+		print("},")
 	end
 	if key=='tab' then
 		roomHack = mainMap[mapy][mapx].roomid .. ''
