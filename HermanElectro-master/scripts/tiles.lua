@@ -939,6 +939,12 @@ end
 
 P.exitPortal = P.tile:new{name = "exitPortal", sprite = love.graphics.newImage('Graphics/exitPortal.png')}
 
+P.treasureTile2 = P.treasureTile:new{name = "treasureTile2", sprite = love.graphics.newImage('Graphics/treasuretile2.png')}
+
+P.treasureTile3 = P.treasureTile:new{name = "treasureTile3", sprite = love.graphics.newImage('Graphics/treasuretile3.png')}
+
+P.treasureTile4 = P.treasureTile:new{name = "treasureTile4", sprite = love.graphics.newImage('Graphics/treasuretile4.png')}
+
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
 tiles[3] = P.powerSupply
@@ -996,5 +1002,8 @@ tiles[54] = P.concreteWallConductiveCorner
 tiles[55] = P.concreteWallConductiveT
 tiles[56] = P.entrancePortal
 tiles[57] = P.exitPortal
+tiles[58] = P.treasureTile2
+tiles[59] = P.treasureTile3
+tiles[60] = P.treasureTile4
 
 return tiles
