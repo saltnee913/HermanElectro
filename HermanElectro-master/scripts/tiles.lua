@@ -697,7 +697,7 @@ function P.treasureTile:onEnter()
 	self.isVisible = false
 end
 
-P.mousetrap = P.conductiveTile:new{name = "mousetrap", bricked = false, formerPowered = nil, triggered = false, safe = false, sprite = love.graphics.newImage('Graphics/mousetrap.png'), poweredSprite = love.graphics.newImage('Graphics/mousetrap.png'), safeSprite = love.graphics.newImage('Graphics/mousetrapsafe.png'), deadlySprite = love.graphics.newImage('Graphics/mousetrap.png'), brickedSprite = love.graphics.newImage('Graphics/mousetrapbricked.png')}
+P.mousetrap = P.conductiveTile:new{name = "mousetrap", bricked = false, formerPowered = nil, triggered = false, safe = false, sprite = love.graphics.newImage('Graphics/mousetrap.png'), safeSprite = love.graphics.newImage('Graphics/mousetrapsafe.png'), deadlySprite = love.graphics.newImage('Graphics/mousetrap.png'), brickedSprite = love.graphics.newImage('Graphics/mousetrapbricked.png')}
 function P.mousetrap:onEnter()
 	if self.bricked then return end
 	if not self.safe then
@@ -712,6 +712,7 @@ function P.mousetrap:updateTile(dir)
 	else
 		self.powered = false
 	end
+	self:updateSprite()
 end
 function P.mousetrap:updateSprite()
 	if self.bricked then self.sprite = self.brickedSprite
@@ -729,9 +730,7 @@ function P.mousetrap:willKillPlayer()
 	return false
 end
 function P.mousetrap:postPowerUpdate()
-	print("a")
 	if self.bricked then return end
-	print(self.formerPowered.."   "..self.powered)
 	if self.formerPowered~=nil and self.formerPowered~=self.powered and self.safe then
 		self.safe = false
 		self:updateSprite()
@@ -964,8 +963,6 @@ function P.untriggeredPowerSupply:updateTile(dir)
 	end
 end
 
-P.reinforcedGlass = P.concreteWall:new{name = "reinforcedGlass", blocksVision = false,sprite = love.graphics.newImage('Graphics/reinforcedglass.png'), poweredSprite = love.graphics.newImage('Graphics/reinforcedglass.png')}
-
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
 tiles[3] = P.powerSupply
@@ -1029,6 +1026,5 @@ tiles[60] = P.treasureTile4
 tiles[61] = P.conductiveSlime
 tiles[62] = P.conductiveSnailTile
 tiles[63] = P.untriggeredPowerSupply
-tiles[64] = P.reinforcedGlass
 
 return tiles
