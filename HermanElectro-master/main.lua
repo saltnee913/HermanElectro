@@ -599,7 +599,7 @@ function love.draw()
 	love.graphics.draw(walls, 0, 0, 0, width/walls:getWidth(), height/walls:getHeight())
 	for i = 1, #animals do
 		if animals[i]~=nil and litTiles[animals[i].tileY][animals[i].tileX]==1 and not animals[i].pickedUp then
-			love.graphics.draw(animals[i].sprite, animals[i].x, animals[i].y, 0, scale, scale)
+			love.graphics.draw(animals[i].sprite, animals[i].dx, animals[i].y, 0, scale, scale)
 		end
 	end
 	love.graphics.draw(player.sprite, player.x-player.sprite:getWidth()*player.scale/2, player.y-player.sprite:getHeight()*player.scale, 0, player.scale, player.scale)
@@ -940,12 +940,12 @@ function love.keypressed(key, unicode)
 	waitTurn = false
     -- ignore non-printable characters (see http://www.ascii-code.com/)
    	if player.waitCounter<=0 then
+		player.prevx = player.x
+		player.prevy = player.y
+		player.prevTileX = player.tileX
+		player.prevTileY = player.tileY
 	    if key == "w" then
 	    	if player.tileY>1 then
-	    		player.prevx = player.x
-	    		player.prevy = player.y
-	    		player.prevTileX = player.tileX
-	    		player.prevTileY = player.tileY
 	    		player.tileY = player.tileY-1
 	    		player.y = player.y-floor.sprite:getHeight()*scale
 			elseif player.tileY==1 and player.x+player.width/2 < width/2+40 and player.x+player.width/2 > width/2-110 then
@@ -953,10 +953,6 @@ function love.keypressed(key, unicode)
 			end
 	    elseif key == "s" then
 	    	if player.tileY<roomHeight then
-	    		player.prevx = player.x
-	    		player.prevy = player.y
-	    		player.prevTileX = player.tileX
-	    		player.prevTileY = player.tileY
 	    		player.tileY = player.tileY+1
 	    		player.y = player.y+floor.sprite:getHeight()*scale
 			elseif player.tileY == roomHeight and player.x < width/2+40 and player.x > width/2-110 then
@@ -964,10 +960,6 @@ function love.keypressed(key, unicode)
 	    	end
 	    elseif key == "a" then
 	    	if player.tileX>1 then
-	    		player.prevx = player.x
-	    		player.prevy = player.y
-	    		player.prevTileX = player.tileX
-	    		player.prevTileY = player.tileY
 	    		player.tileX = player.tileX-1
 	    		player.x = player.x-floor.sprite:getHeight()*scale
 			elseif player.tileX == 1 and player.y < height/2+50 and player.y > height/2-20 then
@@ -975,10 +967,6 @@ function love.keypressed(key, unicode)
 	    	end
 	    elseif key == "d" then
 	    	if player.tileX<roomLength then
-	    		player.prevx = player.x
-	    		player.prevy = player.y
-	    		player.prevTileX = player.tileX
-	    		player.prevTileY = player.tileY
 	    		player.tileX = player.tileX+1
 	    		player.x = player.x+floor.sprite:getHeight()*scale
 	    	elseif player.tileX == roomLength and player.y < height/2+50 and player.y > height/2-20 then

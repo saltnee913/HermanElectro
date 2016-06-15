@@ -235,6 +235,7 @@ function P.ladder:usableOnNothing()
 	return true
 end
 function P.ladder:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld - 1
 	room[tileY][tileX] = tiles.ladder:new()
 end
 
