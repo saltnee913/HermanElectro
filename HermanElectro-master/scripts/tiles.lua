@@ -31,6 +31,8 @@ end
 function P.tile:getInfoText()
 	return nil
 end
+function P.tile:lockInState(state)
+end
 function P.tile:updateTile(dir)
 	if self.poweredNeighbors[1]==1 or self.poweredNeighbors[2]==1 or self.poweredNeighbors[3]==1 or self.poweredNeighbors[4]==1 then
 		self.powered = true
@@ -693,8 +695,9 @@ function P.treasureTile:onEnter()
 	self.isVisible = false
 end
 
-P.mousetrap = P.conductiveTile:new{name = "mousetrap", formerPowered = false, triggered = false, safe = false, sprite = love.graphics.newImage('Graphics/mousetrap.png'), poweredSprite = love.graphics.newImage('Graphics/mousetrap.png'), safeSprite = love.graphics.newImage('Graphics/mousetrapsafe.png'), deadlySprite = love.graphics.newImage('Graphics/mousetrap.png')}
+P.mousetrap = P.conductiveTile:new{name = "mousetrap", bricked = false, formerPowered = false, triggered = false, safe = false, sprite = love.graphics.newImage('Graphics/mousetrap.png'), poweredSprite = love.graphics.newImage('Graphics/mousetrap.png'), safeSprite = love.graphics.newImage('Graphics/mousetrapsafe.png'), deadlySprite = love.graphics.newImage('Graphics/mousetrap.png'), brickedSprite = love.graphics.newImage('Graphics/mousetrapbricked.png')}
 function P.mousetrap:onEnter()
+	if self.bricked then return end
 	if not self.safe then
 		self.triggered = true
 		self:updateSprite()
@@ -709,7 +712,8 @@ function P.mousetrap:updateTile(dir)
 	end
 end
 function P.mousetrap:updateSprite()
-	if self.safe then self.sprite = self.safeSprite
+	if self.bricked then self.sprite = self.brickedSprite
+	elseif self.safe then self.sprite = self.safeSprite
 	else self.sprite = self.deadlySprite end
 	self.poweredSprite = self.sprite
 end
@@ -723,12 +727,19 @@ function P.mousetrap:willKillPlayer()
 	return false
 end
 function P.mousetrap:postPowerUpdate()
+	if self.bricked then return end
 	if self.formerPowered~=self.powered and self.safe then
 		self.safe = false
 		self:updateSprite()
 	end
 end
 P.mousetrap.willKillAnimal = P.mousetrap.willKillPlayer
+function P.mousetrap:lockInState(state)
+	self.bricked = true
+	self.safe = true
+	self.triggered = false
+	self:updateSprite()
+end
 
 P.bomb = P.tile:new{name = "bomb", counter = 3, sprite = love.graphics.newImage('Graphics/bomb3.png'), sprite2 = love.graphics.newImage('Graphics/bomb2.png'), sprite1 = love.graphics.newImage('Graphics/bomb1.png')}
 function P.bomb:onStep(x, y)

@@ -272,6 +272,9 @@ function P.brick:usableOnTile(tile, dist)
 	if not tile.destroyed and tile:instanceof(tiles.glassWall) then
 		return true
 	end
+	if tile:instanceof(tiles.mousetrap) and not tile.bricked then
+		return true
+	end
 	return false
 end
 function P.brick:usableOnAnimal(animal)
