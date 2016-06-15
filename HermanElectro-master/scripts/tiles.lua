@@ -6,7 +6,7 @@ tools = require('scripts.tools')
 local P = {}
 tiles = P
 
-P.tile = Object:new{formerPowered = false, gone = false, destroyed = false, blocksProjectiles = false, isVisible = true, rotation = 0, powered = false, blocksMovement = false, blocksAnimalMovement = false, poweredNeighbors = {0,0,0,0}, blocksVision = false, dirSend = {1,1,1,1}, dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile", sprite = love.graphics.newImage('Graphics/cavesfloor.png'), poweredSprite = love.graphics.newImage('Graphics/cavesfloor.png')}
+P.tile = Object:new{formerPowered = nil, gone = false, destroyed = false, blocksProjectiles = false, isVisible = true, rotation = 0, powered = false, blocksMovement = false, blocksAnimalMovement = false, poweredNeighbors = {0,0,0,0}, blocksVision = false, dirSend = {1,1,1,1}, dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile", sprite = love.graphics.newImage('Graphics/cavesfloor.png'), poweredSprite = love.graphics.newImage('Graphics/cavesfloor.png')}
 function P.tile:onEnter(player) 
 	--self.name = "fuckyou"
 end
@@ -697,7 +697,7 @@ function P.treasureTile:onEnter()
 	self.isVisible = false
 end
 
-P.mousetrap = P.conductiveTile:new{name = "mousetrap", bricked = false, formerPowered = false, triggered = false, safe = false, sprite = love.graphics.newImage('Graphics/mousetrap.png'), poweredSprite = love.graphics.newImage('Graphics/mousetrap.png'), safeSprite = love.graphics.newImage('Graphics/mousetrapsafe.png'), deadlySprite = love.graphics.newImage('Graphics/mousetrap.png'), brickedSprite = love.graphics.newImage('Graphics/mousetrapbricked.png')}
+P.mousetrap = P.conductiveTile:new{name = "mousetrap", bricked = false, formerPowered = nil, triggered = false, safe = false, sprite = love.graphics.newImage('Graphics/mousetrap.png'), poweredSprite = love.graphics.newImage('Graphics/mousetrap.png'), safeSprite = love.graphics.newImage('Graphics/mousetrapsafe.png'), deadlySprite = love.graphics.newImage('Graphics/mousetrap.png'), brickedSprite = love.graphics.newImage('Graphics/mousetrapbricked.png')}
 function P.mousetrap:onEnter()
 	if self.bricked then return end
 	if not self.safe then
@@ -729,8 +729,10 @@ function P.mousetrap:willKillPlayer()
 	return false
 end
 function P.mousetrap:postPowerUpdate()
+	print("a")
 	if self.bricked then return end
-	if self.formerPowered~=self.powered and self.safe then
+	print(self.formerPowered.."   "..self.powered)
+	if self.formerPowered~=nil and self.formerPowered~=self.powered and self.safe then
 		self.safe = false
 		self:updateSprite()
 	end
@@ -948,6 +950,10 @@ P.treasureTile4 = P.treasureTile:new{name = "treasureTile4", sprite = love.graph
 P.conductiveSlime = P.conductiveTile:new{name = "conductiveSlime", sprite = love.graphics.newImage('Graphics/conductiveslime.png'), poweredSprite = love.graphics.newImage('Graphics/conductiveslimepowered.png')}
 P.conductiveSlime.onEnter = P.slime.onEnter
 P.conductiveSlime.onEnterAnimal = P.slime.onEnterAnimal
+function P.conductiveSlime:willKillPlayer()
+	return self.powered
+end
+P.conductiveSlime.willKillAnimal = P.conductiveSlime.willKillPlayer
 
 P.conductiveSnailTile = P.pitbullTile:new{name = "conductiveSnail", animal = animalList[7]:new(), listIndex = 7}
 

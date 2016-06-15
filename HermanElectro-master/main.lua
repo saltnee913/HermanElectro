@@ -228,12 +228,12 @@ function updatePower()
 	for i=1, roomHeight do
 		for j=1, roomLength do
 			if room[i]~=nil and room[i][j]~=nil then
-				room[i][j].formerPowered = room[i][j].powered
 				room[i][j].powered = false
 				room[i][j].poweredNeighbors = {0,0,0,0}
 			end
 		end 
 	end
+
 	for i=1, roomHeight do
 		for j=1, roomLength do
 			--power starts at power sources: powerSupply and notGate
@@ -301,6 +301,14 @@ function updatePower()
 				room[i][j]:postPowerUpdate()
 			end
 		end
+	end
+
+	for i=1, roomHeight do
+		for j=1, roomLength do
+			if room[i]~=nil and room[i][j]~=nil then
+				room[i][j].formerPowered = room[i][j].powered
+			end
+		end 
 	end
 	--if room[player.tileY][player.tileX]~=nil then
 		--t = room[player.tileY][player.tileX]
@@ -848,7 +856,6 @@ function enterRoom(dir)
 	end
 	visibleMap[mapy][mapx] = 1
 	updateGameState()
-	
 end
 
 oldTilesOn = {}
@@ -1222,7 +1229,6 @@ function love.mousemoved(x, y, dx, dy)
 		editor.mousemoved(x, y, dx, dy)
 	end
 end
-
 
 function updateGameState()
 	updatePower()
