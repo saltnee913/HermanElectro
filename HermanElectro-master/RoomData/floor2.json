@@ -6,19 +6,6 @@
 			"filePath": "RoomData/rooms.json",
 			"requirements":
 			{
-				"solvableWithTools": [2, 2, 2, 2, 0, 0, 0],
-				"or":
-				{
-					"not":
-					{
-						"or":
-						{
-							"solvableWithTools": [1, 0, 0, 0, 0, 0, 0],
-							"containsTile": 9
-						}
-					},
-					"solvableWithTools": [0, 0, 0, 0, 0, 0, 0]
-				},
 				"not":
 				{
 					"equals":
