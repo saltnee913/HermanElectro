@@ -647,6 +647,8 @@ function love.draw()
 
 	for i = 1, #animals do
 		if animals[i]~=nil and litTiles[animals[i].tileY][animals[i].tileX]==1 and not animals[i].pickedUp then
+			animals[i].x = (animals[i].tileX-1)*floor.sprite:getHeight()*scale+wallSprite.width
+	    	animals[i].y = (animals[i].tileY-1)*floor.sprite:getWidth()*scale+wallSprite.height
 			love.graphics.draw(animals[i].sprite, animals[i].x, animals[i].y, 0, scale, scale)
 		end
 	end
@@ -810,6 +812,8 @@ function hackEnterRoom(roomid, y, x)
 		end
 	end
 	updateGameState()
+	roomHeight = room.height
+	roomLength = room.length
 	return true
 end
 
@@ -896,6 +900,10 @@ function enterRoom(dir)
 	end
 	visibleMap[mapy][mapx] = 1
 	updateGameState()
+	if dir~=-1 then
+		--roomHeight = room.height
+		--roomLength = room.length
+	end
 end
 
 oldTilesOn = {}
@@ -1065,7 +1073,6 @@ function love.keypressed(key, unicode)
     	end
     	enterMove()
 	    if beforePressY~=player.y or beforePressX~=player.x or waitTurn then
-	   		stepTrigger()
 	    	updateGameState()
 	    	for k = 1, #animals do
 	    		local movex = player.tileX
@@ -1099,6 +1106,7 @@ function love.keypressed(key, unicode)
 					end
 				end
 			end
+			stepTrigger()
 		end
     end
     for i = 1, #animals do

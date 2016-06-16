@@ -744,8 +744,9 @@ function P.mousetrap:lockInState(state)
 	self:updateSprite()
 end
 
-P.bomb = P.tile:new{name = "bomb", counter = 3, sprite = love.graphics.newImage('Graphics/bomb3.png'), sprite2 = love.graphics.newImage('Graphics/bomb2.png'), sprite1 = love.graphics.newImage('Graphics/bomb1.png')}
+P.bomb = P.tile:new{name = "bomb", triggered = true, counter = 3, sprite = love.graphics.newImage('Graphics/bomb3.png'), sprite2 = love.graphics.newImage('Graphics/bomb2.png'), sprite1 = love.graphics.newImage('Graphics/bomb1.png')}
 function P.bomb:onStep(x, y)
+	if not self.triggered then return end
 	self.counter = self.counter-1
 	if self.counter == 2 then
 		self.sprite = self.sprite2
@@ -819,7 +820,7 @@ function P.slime:onEnterAnimal(animal)
 	end
 end
 
-P.unactivatedBomb = P.tile:new{name = "unactivatedBomb", counter = 4, triggered = false, sprite = love.graphics.newImage('Graphics/bomb3.png'), sprite2 = love.graphics.newImage('Graphics/bomb2.png'), sprite1 = love.graphics.newImage('Graphics/bomb1.png')}
+P.unactivatedBomb = P.bomb:new{name = "unactivatedBomb", counter = 4, triggered = false, sprite = love.graphics.newImage('Graphics/bomb3.png'), sprite2 = love.graphics.newImage('Graphics/bomb2.png'), sprite1 = love.graphics.newImage('Graphics/bomb1.png')}
 function P.unactivatedBomb:onStep(x, y)
 	if self.triggered then
 		self.counter = self.counter-1
@@ -935,8 +936,8 @@ function P.entrancePortal:onEnter(player)
 		end
 		if shouldBreak then break end
 	end
-
 end
+P.entrancePortal.onEnterAnimal = P.entrancePortal.onEnter
 
 P.exitPortal = P.tile:new{name = "exitPortal", sprite = love.graphics.newImage('Graphics/exitPortal.png')}
 
@@ -964,6 +965,13 @@ function P.untriggeredPowerSupply:updateTile(dir)
 end
 
 P.reinforcedGlass = P.concreteWall:new{name = "reinforcedGlass", blocksVision = false,sprite = love.graphics.newImage('Graphics/reinforcedglass.png'), poweredSprite = love.graphics.newImage('Graphics/reinforcedglass.png')}
+
+P.powerTriggeredBomb = P.unactivatedBomb:new{canBePowered = true, powered = false, dirAccept = {1,1,1,1}, dirSend = {0,0,0,0}}
+function P.powerTriggeredBomb:updateTile(dir)
+	if self.poweredNeighbors[1]==1 or self.poweredNeighbors[2]==1 or self.poweredNeighbors[3]==1 or self.poweredNeighbors[4]==1 then
+		self.triggered = true
+	end 
+end
 
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
@@ -1029,5 +1037,6 @@ tiles[61] = P.conductiveSlime
 tiles[62] = P.conductiveSnailTile
 tiles[63] = P.untriggeredPowerSupply
 tiles[64] = P.reinforcedGlass
+tiles[65] = P.powerTriggeredBomb
 
 return tiles

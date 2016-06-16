@@ -127,6 +127,8 @@ function P.createRoom(inRoom, arr)
 	roomToLoad = (roomToLoad ~= nil) and roomToLoad 
 		or arr[inRoom].layouts[math.floor(math.random()*#(arr[inRoom].layouts))+1]
 	local loadedRoom = {}
+	loadedRoom.height = #roomToLoad
+	loadedRoom.length = #roomToLoad[1]
 	for i = 1, #roomToLoad do
 		loadedRoom[i] = {}
 		for j = 1, #(roomToLoad[i]) do
