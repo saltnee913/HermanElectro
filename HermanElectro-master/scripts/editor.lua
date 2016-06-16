@@ -4,6 +4,8 @@ tools = require('scripts.tools')
 
 P.stealInput = false
 
+roomsDesigned = 0
+
 function P.draw()
 	barLength = 660
 	love.graphics.setColor(255,255,255)
@@ -28,6 +30,17 @@ end
 
 function P.keypressed(key, unicode)
 	if key=="p" then
+		savedRoom = {}
+		for i = 1, roomHeight do
+			savedRoom[i] = {}
+			for j = 1, roomLength do
+				savedRoom[i][j] = room[i][j]
+			end
+		end
+		savedAnimals = {}
+		for i = 1, animalCounter - 1 do
+			savedAnimals[i] = animals[i]
+		end
 		print("\"name\":")
 		print("{")
 		print("\"layout\":")
@@ -64,14 +77,14 @@ function P.keypressed(key, unicode)
 		print("[")
 		print("[saws, ladders, wireCutters, waterBottles, meats, bricks, guns]")
 		print("]")
-		print("},")
+		print("},\n")
 	end
 	if key=='tab' then
 		roomHack = mainMap[mapy][mapx].roomid .. ''
 		P.stealInput = true
 		log('Room Hack: '..roomHack)
 	end
-	if key == 'r' then
+	if key == 'c' then
 		for i = 1, roomHeight do
     		for j = 1, roomLength do
     			room[i][j] = nil
@@ -97,7 +110,19 @@ function P.keypressed(key, unicode)
 		--[[for i = 1, 3 do
 			tools[i+7].numHeld = tools[i+7].numHeld+1
 		end]]
-	end
+	elseif key == "b" then
+		roomsDesigned = roomsDesigned+1
+		print("\n\n---End of Room "..roomsDesigned.."---\n\n")
+	elseif key == "r" and savedRoom~=nil then
+		room = savedRoom
+    	animals = savedAnimals
+    	animalCounter = 1
+    	for i = 1, 100 do
+    		if animals[i]~=nil then
+    			animalCounter = animalCounter+1
+    		end
+    	end
+    end
 end
 
 function P.inputSteal(key, unicode)

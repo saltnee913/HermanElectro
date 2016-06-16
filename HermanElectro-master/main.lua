@@ -1067,7 +1067,7 @@ function love.keypressed(key, unicode)
 	    if beforePressY~=player.y or beforePressX~=player.x or waitTurn then
 	   		stepTrigger()
 	    	updateGameState()
-	    	for k = 1, animalCounter-1 do
+	    	for k = 1, #animals do
 	    		local movex = player.tileX
 	    		local movey = player.tileY
 	    		local animalDist = math.abs(movey-animals[k].tileY)+math.abs(movex-animals[k].tileX)
@@ -1101,7 +1101,7 @@ function love.keypressed(key, unicode)
 			end
 		end
     end
-    for i = 1, animalCounter-1 do
+    for i = 1, #animals do
     	animals[i]:checkDeath(room)
     end
     checkDeath()
@@ -1165,7 +1165,7 @@ end
 function resolveConflicts()
 	conflicts = true
 	while conflicts do
-		for i = 1, animalCounter-1 do
+		for i = 1, #animals do
 			for j = 1, i-1 do
 				if (not animals[i].dead) and (not animals[j].dead) and animals[i].tileX == animals[j].tileX and animals[i].tileY == animals[j].tileY then
 					if animals[i].tileX~=animals[i].prevTileX then
@@ -1186,7 +1186,7 @@ function resolveConflicts()
 		end
 
 		conflicts = false
-		for i = 1, animalCounter-1 do
+		for i = 1, #animals do
 			for j = 1, i-1 do
 				if (not animals[i].dead) and (not animals[j].dead) and animals[i].tileX == animals[j].tileX and animals[i].tileY == animals[j].tileY then
 					conflicts = true
@@ -1206,7 +1206,7 @@ function checkDeath()
 			kill()
 		end
 	end
-	for i = 1, animalCounter-1 do
+	for i = 1, #animals do
 		if animals[i]:willKillPlayer(player) then
 			kill()
 		end
@@ -1328,7 +1328,7 @@ function stepTrigger()
 					room = room[i][j]:onEnd(room, i, j)
 					if room[i][j]:instanceof(tiles.bomb) then
 						if not editorMode and math.abs(i-player.tileY)+math.abs(j-player.tileX)<3 then kill() end
-						for k = 1, animalCounter-1 do
+						for k = 1, #animals do
 							if math.abs(i-animals[k].tileY)+math.abs(j-animals[k].tileX)<3 then animals[k]:kill() end
 						end
 					end
