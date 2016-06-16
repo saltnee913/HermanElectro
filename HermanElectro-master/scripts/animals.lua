@@ -7,8 +7,6 @@ animalList = P
 
 playerheight = 20
 playerwidth = 20
-roomHeight = 12
-roomLength = 24
 width2, height2 = love.graphics.getDimensions()
 if width2>height2*16/9 then
 	height = height2

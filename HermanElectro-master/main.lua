@@ -81,6 +81,8 @@ function love.load()
 		floortile = love.graphics.newImage('Graphics/cavesfloor.png')
 		doorwaybg = love.graphics.newImage('Graphics/doorwaybackground.png')
 		deathscreen = love.graphics.newImage('Graphics/deathscreen.png')
+		bottomwall = love.graphics.newImage('Graphics/bottomwall.png')
+		cornerwall = love.graphics.newImage('Graphics/toprightcorner.png')
 		width2, height2 = love.graphics.getDimensions()
 		if width2>height2*16/9 then
 			height = height2
@@ -167,8 +169,7 @@ function loadLevel(floorPath)
 end
 
 function kill()
-	--player.x = 0
-	--player.y = 0
+	if editorMode then return end
 	player.dead = true
 end
 
@@ -529,8 +530,14 @@ function love.draw()
 	love.graphics.setBackgroundColor(0,0,0)
 	--love.graphics.translate(width2/2-16*screenScale/2, height2/2-9*screenScale/2)
 	love.graphics.translate((width2-width)/2, (height2-height)/2)
-	love.graphics.draw(rocks, rocksQuad, 0, 0)
+	--love.graphics.draw(rocks, rocksQuad, 0, 0)
 	--love.graphics.draw(rocks, -mapx * width, -mapy * height, 0, 1, 1)
+
+	for i = 1, roomLength do
+		for j = 1, roomHeight do
+			love.graphics.draw(floortile, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
+		end
+	end
 	for i = 1, roomLength do
 		for j = 1, roomHeight do
 			if (room[j] ~= nil and room[j][i] ~= nil and room[j][i].isVisible) or (room[j]~=nil and room[j][i]==nil) then
@@ -567,6 +574,50 @@ function love.draw()
 			end
 		end
 	end
+	for i = 1, roomLength do
+		if not (i==math.floor(roomLength/2) or i==math.floor(roomLength/2)+1) then
+			love.graphics.draw(bottomwall, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (roomHeight)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
+			love.graphics.draw(bottomwall, (i)*floor.sprite:getWidth()*scale+wallSprite.width, (0)*floor.sprite:getHeight()*scale+wallSprite.height, math.pi, scale, scale)
+		else
+			if mapy<=0 or mainMap[mapy-1][mapx]==nil or (completedRooms[mapy][mapx]==0 and completedRooms[mapy-1][mapx]==0) then
+				love.graphics.draw(bottomwall, (i)*floor.sprite:getWidth()*scale+wallSprite.width, (0)*floor.sprite:getHeight()*scale+wallSprite.height, math.pi, scale, scale)
+			end
+			if mapy>=mapHeight or mainMap[mapy+1][mapx]==nil or (completedRooms[mapy][mapx]==0 and completedRooms[mapy+1][mapx]==0) then
+				love.graphics.draw(bottomwall, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (roomHeight)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
+			end		
+		end
+	end
+	for i = 1, roomHeight do
+		if not (i==math.floor(roomHeight/2) or i==math.floor(roomHeight/2)+1) then		
+			love.graphics.draw(bottomwall, (0)*floor.sprite:getWidth()*scale+wallSprite.width, (i-1)*floor.sprite:getHeight()*scale+wallSprite.height, math.pi/2, scale, scale)
+			love.graphics.draw(bottomwall, (roomLength)*floor.sprite:getWidth()*scale+wallSprite.width, (i)*floor.sprite:getHeight()*scale+wallSprite.height, -1*math.pi/2, scale, scale)
+		else
+			if mapx>=mapHeight or mainMap[mapy][mapx+1]==nil or (completedRooms[mapy][mapx]==0 and completedRooms[mapy][mapx+1]==0) then
+				love.graphics.draw(bottomwall, (roomLength)*floor.sprite:getWidth()*scale+wallSprite.width, (i)*floor.sprite:getHeight()*scale+wallSprite.height, -1*math.pi/2, scale, scale)
+			end
+			if mapx<=0 or mainMap[mapy][mapx-1]==nil or (completedRooms[mapy][mapx]==0 and completedRooms[mapy][mapx-1]==0) then
+				love.graphics.draw(bottomwall, (0)*floor.sprite:getWidth()*scale+wallSprite.width, (i-1)*floor.sprite:getHeight()*scale+wallSprite.height, math.pi/2, scale, scale)
+			end
+		end
+	end
+	for i = 1, 4 do
+		local cornerX, cornerY
+		if i == 1 then
+			cornerX = 0
+			cornerY = 1
+		elseif i == 2 then
+			cornerX = roomLength+1
+			cornerY = 0
+		elseif i == 3 then
+			cornerX = roomLength+2
+			cornerY = roomHeight+1
+		elseif i == 4 then
+			cornerX = 1
+			cornerY = roomHeight+2
+		end
+		love.graphics.draw(cornerwall, (cornerX-1)*floor.sprite:getWidth()*scale+wallSprite.width, (cornerY-1)*floor.sprite:getHeight()*scale+wallSprite.height, (i-2)*math.pi/2, scale, scale)
+	end
+
 	if tools.toolableAnimals~=nil then
 		for dir = 1, 5 do
 			if tools.toolableAnimals[dir]~=nil then
@@ -592,19 +643,8 @@ function love.draw()
 		end
 	end
 	
-	if mapy<=0 or mainMap[mapy-1][mapx]==nil or (completedRooms[mapy][mapx]==0 and completedRooms[mapy-1][mapx]==0) then
-		love.graphics.draw(doorwaybg, width/2-150, 0, 0, scale, scale*0.42)
-	end
-	if mapx>=mapHeight or mainMap[mapy][mapx+1]==nil or (completedRooms[mapy][mapx]==0 and completedRooms[mapy][mapx+1]==0) then
-		love.graphics.draw(doorwaybg, width-wallSprite.width-9, height/2-150, 0, scale*0.42, scale)
-	end
-	if mapy>=mapHeight or mainMap[mapy+1][mapx]==nil or (completedRooms[mapy][mapx]==0 and completedRooms[mapy+1][mapx]==0) then
-		love.graphics.draw(doorwaybg, width/2-150, height-scale*0.42*doorwaybg:getHeight()+11, 0, scale, scale*0.36)
-	end		
-	if mapx<=0 or mainMap[mapy][mapx-1]==nil or (completedRooms[mapy][mapx]==0 and completedRooms[mapy][mapx-1]==0) then
-		love.graphics.draw(doorwaybg, 2, height/2-150, 0, scale*0.45, scale)
-	end
-	love.graphics.draw(walls, 0, 0, 0, width/walls:getWidth(), height/walls:getHeight())
+	--love.graphics.draw(walls, 0, 0, 0, width/walls:getWidth(), height/walls:getHeight())
+
 	for i = 1, #animals do
 		if animals[i]~=nil and litTiles[animals[i].tileY][animals[i].tileX]==1 and not animals[i].pickedUp then
 			love.graphics.draw(animals[i].sprite, animals[i].x, animals[i].y, 0, scale, scale)
@@ -957,28 +997,28 @@ function love.keypressed(key, unicode)
 	    	if player.tileY>1 then
 	    		player.tileY = player.tileY-1
 	    		player.y = player.y-floor.sprite:getHeight()*scale
-			elseif player.tileY==1 and player.x+player.width/2 < width/2+40 and player.x+player.width/2 > width/2-110 then
+			elseif player.tileY==1 and (player.tileX==math.floor(roomLength/2) or player.tileX==math.floor(roomLength/2)+1) then
 				enterRoom(0)
 			end
 	    elseif key == "s" then
 	    	if player.tileY<roomHeight then
 	    		player.tileY = player.tileY+1
 	    		player.y = player.y+floor.sprite:getHeight()*scale
-			elseif player.tileY == roomHeight and player.x < width/2+40 and player.x > width/2-110 then
+			elseif player.tileY == roomHeight and (player.tileX==math.floor(roomLength/2) or player.tileX==math.floor(roomLength/2)+1) then
 				enterRoom(2)
 	    	end
 	    elseif key == "a" then
 	    	if player.tileX>1 then
 	    		player.tileX = player.tileX-1
 	    		player.x = player.x-floor.sprite:getHeight()*scale
-			elseif player.tileX == 1 and player.y < height/2+50 and player.y > height/2-20 then
+			elseif player.tileX == 1 and (player.tileY==math.floor(roomHeight/2) or player.tileY==math.floor(roomHeight/2)+1) then
 				enterRoom(3)
 	    	end
 	    elseif key == "d" then
 	    	if player.tileX<roomLength then
 	    		player.tileX = player.tileX+1
 	    		player.x = player.x+floor.sprite:getHeight()*scale
-	    	elseif player.tileX == roomLength and player.y < height/2+50 and player.y > height/2-20 then
+	    	elseif player.tileX == roomLength and (player.tileY==math.floor(roomHeight/2) or player.tileY==math.floor(roomHeight/2)+1) then
 				enterRoom(1)
 			end
 		end
