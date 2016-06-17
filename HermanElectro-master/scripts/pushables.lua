@@ -27,11 +27,15 @@ function P.pushable:move(player)
 		end
 	end
 	if sameSpotCounter>=2 then
+		self.tileX = self.prevTileX
+		self.tileY = self.prevTileY
 		return false
 	end
 
 	for i = 1, #animals do
-		if animal.tileX == self.tileX and animal.tileY == self.tileY then
+		if animals[i].tileX == self.tileX and animals[i].tileY == self.tileY then
+			self.tileX = self.prevTileX
+			self.tileY = self.prevTileY
 			return false
 		end
 	end
