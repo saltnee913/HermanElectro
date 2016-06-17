@@ -189,6 +189,17 @@ function P.mousepressed(x, y, button, istouch)
 				animalCounter = animalCounter-1
 			end
 		end
+
+		local pushableLen = #pushables
+		for i = 1, pushableLen do
+			if pushables[i]~=nil and pushables[i].tileX == tileLocX and pushables[i].tileY == tileLocY then
+				pushables[i] = nil
+				for j = i+1, pushableLen+1 do
+					pushables[j-1] = pushables[j]
+				end
+			end
+		end
+
 		if tiles[tempAdd]~=nil and tiles[tempAdd].animal~=nil then
 			animalToSpawn = room[tileLocY][tileLocX].animal
 			if not animalToSpawn.dead then
@@ -205,6 +216,8 @@ function P.mousepressed(x, y, button, istouch)
 			pushables[#pushables+1] = pushableList[tiles[tempAdd].listIndex]:new()
 			pushables[#pushables].tileX = tileLocX
 			pushables[#pushables].tileY = tileLocY
+			pushables[#pushables].prevTileX = pushables[#pushables].tileX
+			pushables[#pushables].prevTileY = pushables[#pushables].tileY
 		end
 		
 		updateGameState()

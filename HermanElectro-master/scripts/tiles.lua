@@ -68,6 +68,9 @@ end
 function P.tile:willKillPlayer()
 	return false
 end
+function P.tile:willDestroyPushable()
+	return false
+end
 P.tile.willKillAnimal = P.tile.willKillPlayer
 function P.tile:electrify()
 	self.canBePowered = true
@@ -287,16 +290,17 @@ function P.poweredFloor:willKillPlayer()
 	return not self.powered and not self.laddered
 end
 P.poweredFloor.willKillAnimal = P.poweredFloor.willKillPlayer
+P.poweredFloor.willDestroyPushable = P.poweredFloor.willKillPlayer
 
 P.wall = P.tile:new{electrified = false, onFire = false, blocksProjectiles = true, blocksMovement = true, canBePowered = false, name = "wall", blocksVision = true, electrifiedSprite = love.graphics.newImage('Graphics/woodwallelectrified.png'), destroyedSprite = love.graphics.newImage('Graphics/woodwallbroken.png'), sprite = love.graphics.newImage('Graphics/woodwall.png'), poweredSprite = love.graphics.newImage('Graphics/woodwallpowered.png'), sawable = true}
 function P.wall:onEnter(player)	
 	if not self.destroyed then
-		player.x = player.prevx
-		player.y = player.prevy
+		--player.x = player.prevx
+		--player.y = player.prevy
 		player.tileX = player.prevTileX
 		player.tileY = player.prevTileY
-		player.prevx = player.x
-		player.prevy = player.y
+		--player.prevx = player.x
+		--player.prevy = player.y
 		player.prevTileX = player.tileX
 		player.prevTileY = player.tileY
 	end
@@ -597,6 +601,7 @@ function P.pit:willKillPlayer()
 	return not self.laddered
 end
 P.pit.willKillAnimal = P.pit.willKillPlayer
+P.pit.willDestroyPushable = P.pit.willKillPlayer
 
 P.breakablePit = P.pit:new{strength = 2, name = "breakablePit", sprite = love.graphics.newImage('Graphics/pitcovered.png'), halfBrokenSprite = love.graphics.newImage('Graphics/pithalfcovered.png'), brokenSprite = love.graphics.newImage('Graphics/pit.png')}
 function P.breakablePit:onEnter(player)
@@ -621,6 +626,7 @@ function P.breakablePit:willKillPlayer()
 	return not self.laddered and self.strength == 0
 end
 P.breakablePit.willKillAnimal = P.breakablePit.willKillPlayer
+P.breakablePit.willDestroyPushable = P.breakablePit.willKillPlayer
 
 P.treasureTile = P.tile:new{name = "treasureTile", sprite = love.graphics.newImage('Graphics/treasuretile.png'), done = false}
 function P.treasureTile:onEnter()

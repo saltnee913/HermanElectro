@@ -841,6 +841,8 @@ function createPushables()
 				pushables[#pushables+1] = pushableToSpawn
 				pushables[#pushables].tileY = i
 				pushables[#pushables].tileX = j
+				pushables[#pushables].prevTileX = pushables[#pushables].tileX
+				pushables[#pushables].prevTileY = pushables[#pushables].tileY
 			end
 		end
 	end
@@ -930,6 +932,18 @@ function enterMove()
 			room[player.tileY][player.tileX]:onEnter(player)
 		end
 	end
+
+	if not (player.prevTileY == player.tileY and player.prevTileX == player.tileX) then
+		for i = 1, #pushables do
+			if pushables[i].tileX == player.tileX and pushables[i].tileY == player.tileY then
+				if not pushables[i]:move() then
+					player.tileX = player.prevTileX
+					player.tileY = player.prevTileY
+				end
+			end
+		end
+	end
+
 	if not (player.prevTileY == player.tileY and player.prevTileX == player.tileX) then
 		if room[player.prevTileY][player.prevTileX]~=nil then
 			room[player.prevTileY][player.prevTileX]:onLeave(player)
