@@ -60,6 +60,7 @@ function love.load()
 	end
 	specialTools = {0,0,0}
 	animals = {}
+	pushables = {}
 	--width = 16*screenScale
 	--height = 9*screenScale
 	--wallSprite = {width = 78*screenScale/50, height = 72*screenScale/50, heightForHitbox = 62*screenScale/50}
@@ -652,6 +653,15 @@ function love.draw()
 			love.graphics.draw(animals[i].sprite, animals[i].x, animals[i].y, 0, scale, scale)
 		end
 	end
+
+	for i = 1, #pushables do
+		if pushables[i]~=nil and not pushables[i].destroyed then
+	    	pushablex = (pushables[i].tileX-1)*floor.sprite:getHeight()*scale+wallSprite.width
+	    	pushabley = (pushables[i].tileY-1)*floor.sprite:getWidth()*scale+wallSprite.height
+			love.graphics.draw(pushables[i].sprite, pushablex, pushabley, 0, scale, scale)
+		end
+	end
+
 	player.x = (player.tileX-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
 	player.y = (player.tileY-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
 	love.graphics.draw(player.sprite, player.x-player.sprite:getWidth()*player.scale/2, player.y-player.sprite:getHeight()*player.scale, 0, player.scale, player.scale)
@@ -794,6 +804,15 @@ function hackEnterRoom(roomid, y, x)
 	if y == mapy and x == mapx then
 		room = mainMap[y][x].room
 	end
+	createAnimals()
+	createPushables()
+	updateGameState()
+	roomHeight = room.height
+	roomLength = room.length
+	return true
+end
+
+function createAnimals()
 	animalCounter = 1
 	animals = {}
 	for i = 1, roomHeight do
@@ -811,10 +830,20 @@ function hackEnterRoom(roomid, y, x)
 			end
 		end
 	end
-	updateGameState()
-	roomHeight = room.height
-	roomLength = room.length
-	return true
+end
+
+function createPushables()
+	pushables = {}
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i]~=nil and room[i][j]~=nil and room[i][j].name~=nil and room[i][j].pushable~=nil then
+				pushableToSpawn = room[i][j].pushable
+				pushables[#pushables+1] = pushableToSpawn
+				pushables[#pushables].tileY = i
+				pushables[#pushables].tileX = j
+			end
+		end
+	end
 end
 
 function enterRoom(dir)
@@ -880,23 +909,8 @@ function enterRoom(dir)
 
 	rocksQuad = love.graphics.newQuad(mapy*14*screenScale,mapx*8*screenScale, width, height, rocks:getWidth(), rocks:getHeight())
 	if (prevMapX~=mapx or prevMapY~=mapy) or dir == -1 then
-		animalCounter = 1
-		animals = {}
-		for i = 1, roomHeight do
-			for j = 1, roomLength do
-				if room[i]~=nil and room[i][j]~=nil and room[i][j].name~=nil and (room[i][j].animal~=nil) then
-					animalToSpawn = room[i][j].animal
-					if not animalToSpawn.dead then
-						animals[animalCounter] = animalToSpawn
-						animals[animalCounter].y = (i-1)*floor.sprite:getWidth()*scale+wallSprite.height
-						animals[animalCounter].x = (j-1)*floor.sprite:getHeight()*scale+wallSprite.width
-						animals[animalCounter].tileX = j
-						animals[animalCounter].tileY = i
-						animalCounter=animalCounter+1
-					end
-				end
-			end
-		end
+		createAnimals()
+		createPushables()
 	end
 	visibleMap[mapy][mapx] = 1
 	updateGameState()

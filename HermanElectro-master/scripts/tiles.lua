@@ -1,6 +1,7 @@
 require('scripts.object')
 require('scripts.boundaries')
 require('scripts.animals')
+require('scripts.pushables')
 tools = require('scripts.tools')
 
 local P = {}
@@ -964,7 +965,7 @@ function P.untriggeredPowerSupply:updateTile(dir)
 	end
 end
 
-P.reinforcedGlass = P.concreteWall:new{name = "reinforcedGlass", blocksVision = false,sprite = love.graphics.newImage('Graphics/reinforcedglass.png'), poweredSprite = love.graphics.newImage('Graphics/reinforcedglass.png')}
+P.reinforcedGlass = P.concreteWall:new{name = "reinforcedGlass", blocksVision = false, sprite = love.graphics.newImage('Graphics/reinforcedglass.png'), poweredSprite = love.graphics.newImage('Graphics/reinforcedglass.png')}
 
 P.powerTriggeredBomb = P.unactivatedBomb:new{canBePowered = true, powered = false, dirAccept = {1,1,1,1}, dirSend = {0,0,0,0}}
 function P.powerTriggeredBomb:updateTile(dir)
@@ -972,6 +973,8 @@ function P.powerTriggeredBomb:updateTile(dir)
 		self.triggered = true
 	end 
 end
+
+P.boxTile = P.tile:new{name = "boxTile", pushable = pushableList[2]:new(), listIndex = 2}
 
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
@@ -1038,5 +1041,6 @@ tiles[62] = P.conductiveSnailTile
 tiles[63] = P.untriggeredPowerSupply
 tiles[64] = P.reinforcedGlass
 tiles[65] = P.powerTriggeredBomb
+tiles[66] = P.boxTile
 
 return tiles

@@ -5,8 +5,6 @@ require('scripts.object')
 local P = {}
 animalList = P
 
-playerheight = 20
-playerwidth = 20
 width2, height2 = love.graphics.getDimensions()
 if width2>height2*16/9 then
 	height = height2
@@ -128,7 +126,7 @@ function P.snail:onNullLeave()
 end
 
 P.conductiveSnail = P.snail:new{name = "conductiveSnail", sprite = love.graphics.newImage('Graphics/conductivesnail.png')}
-function P.snail:onNullLeave()
+function P.conductiveSnail:onNullLeave()
 	return tiles.conductiveSlime:new()
 end
 

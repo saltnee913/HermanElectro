@@ -200,6 +200,12 @@ function P.mousepressed(x, y, button, istouch)
 				animalCounter = animalCounter+1
 			end
 		end
+
+		if tiles[tempAdd]~=nil and tiles[tempAdd].pushable~=nil then
+			pushables[#pushables+1] = pushableList[tiles[tempAdd].listIndex]:new()
+			pushables[#pushables].tileX = tileLocX
+			pushables[#pushables].tileY = tileLocY
+		end
 		
 		updateGameState()
 	end
