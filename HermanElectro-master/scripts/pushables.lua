@@ -30,6 +30,12 @@ function P.pushable:move(player)
 		return false
 	end
 
+	for i = 1, #animals do
+		if animal.tileX == self.tileX and animal.tileY == self.tileY then
+			return false
+		end
+	end
+
 	if room[self.tileY][self.tileX]~=nil and not room[self.tileY][self.tileX]:instanceof(tiles.endTile) then
 		room[self.tileY][self.tileX]:onEnter(self)
 	end
