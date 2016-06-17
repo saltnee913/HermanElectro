@@ -191,7 +191,7 @@ function P.generateMap(seed)
 	return P[P.floorInfo.generateFunction]()
 end
 
-local function canPlaceRoom(dirEnters, map, mapy, mapx)
+local function canPlaceRoom(dirEnters, map, mapx, mapy)
 	if dirEnters == nil then return true end
 	for i = 1, 4 do
 		if dirEnters[i] == 1 then
@@ -266,7 +266,7 @@ function P.generateMapStandard()
 		local choice = available[math.floor(math.random()*a)]
 		--local roomNum = math.floor(math.random()*#(P.rooms)) -- what we will actually do, with some editing
 		arr = P.floorInfo.rooms.rooms
-		local roomid = randomRoomArray[i+2]
+		local roomid = randomRoomArray[i+2+skippedRoomsIndex]
 		local loadedRoom = P.createRoom(roomid, arr)
 		if skippedRooms[skippedRoomsIndex] ~= nil then
 			roomid = skippedRooms[skippedRoomsIndex]
@@ -274,10 +274,11 @@ function P.generateMapStandard()
 			skippedRoomsIndex = skippedRoomsIndex + 1
 		end
 		local skipped = 1
-		while(not canPlaceRoom(loadedRoom.dirEnter)) do
-			skippedRooms[#skippedRooms+1] = randomRoomArray[i+2+skipped-1]
-			roomid = randomRoomArray[i+2+skipped]
+		while(not canPlaceRoom(arr[roomid].dirEnter, newmap, choice.y, choice.x)) do
+			skippedRooms[#skippedRooms+1] = randomRoomArray[i+2+skippedRoomsIndex+skipped-1]
+			roomid = randomRoomArray[i+2+skippedRoomsIndex+skipped]
 			loadedRoom = P.createRoom(roomid, arr)
+			skipped = skipped + 1
 		end
 		if i == numRooms-2 then
 			arr = P.floorInfo.rooms.treasureRooms
