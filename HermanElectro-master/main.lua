@@ -1122,13 +1122,17 @@ function love.keypressed(key, unicode)
 	    		animals[i].x = (animals[i].tileX-1)*floor.sprite:getHeight()*scale+wallSprite.width
 	    		animals[i].y = (animals[i].tileY-1)*floor.sprite:getWidth()*scale+wallSprite.height
 	    		if animals[i]:hasMoved() and not animals[i].dead then
-					if room[animals[i].tileY][animals[i].tileX]~=nil then
-						room[animals[i].tileY][animals[i].tileX]:onEnterAnimal(animals[i])
-					end
 					if room[animals[i].prevTileY]~=nil and room[animals[i].prevTileY][animals[i].prevTileX]~=nil then
 						room[animals[i].prevTileY][animals[i].prevTileX]:onLeaveAnimal(animals[i])
 					elseif animals[i]:onNullLeave()~=nil then
 						room[animals[i].prevTileY][animals[i].prevTileX] = animals[i]:onNullLeave()
+					end
+				end
+			end
+			for i = 1, #animals do
+				if animals[i]:hasMoved() and not animals[i].dead then
+					if room[animals[i].tileY][animals[i].tileX]~=nil then
+						room[animals[i].tileY][animals[i].tileX]:onEnterAnimal(animals[i])
 					end
 				end
 			end
