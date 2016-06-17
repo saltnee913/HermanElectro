@@ -19,7 +19,6 @@ function P.pushable:move(player)
 		self.tileY = self.prevTileY
 		return false
 	end
-
 	local sameSpotCounter = 0
 	for i = 1, #pushables do
 		if pushables[i].tileX == self.tileX and pushables[i].tileY==self.tileY and not pushables[i].destroyed then
@@ -56,6 +55,7 @@ function P.pushable:move(player)
 	elseif room[self.tileY][self.tileY]~=nil then
 		room[self.tileY][self.tileX]:onStay(self)
 	end
+	
 	return false
 end
 
