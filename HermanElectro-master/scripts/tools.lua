@@ -308,31 +308,7 @@ end
 function P.gun:useToolTile(tile)
 	self.numHeld = self.numHeld-1
 	if tile:instanceof(tiles.beggar) then
-		tile.alive = false
 		tile:destroy()
-		local paysOut = math.random()
-		if paysOut<0.5 then return end
-		filledSlots = {0,0,0}
-		slot = 1
-		for i = tools.numNormalTools + 1, #tools do
-			if tools[i].numHeld>0 then
-				filledSlots[slot] = i
-				slot = slot+1
-			end
-		end
-		goodSlot = false
-		while (not goodSlot) do
-			slot = math.floor(math.random()*5)+8
-			if filledSlots[3]==0 then
-				goodSlot = true
-			end
-			for i = 1, 3 do
-				if filledSlots[i]==slot then
-					goodSlot = true
-				end
-			end
-		end
-		tools[slot].numHeld = tools[slot].numHeld+1
 	else
 		tile:allowVision()
 	end
