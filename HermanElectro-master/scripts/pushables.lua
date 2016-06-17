@@ -6,7 +6,7 @@ local P = {}
 pushableList = P
 
 P.pushable = Object:new{name = "pushable", prevTileX = 0, prevTileY = 0, tileX = 0, tileY = 0, destroyed = false, sprite = love.graphics.newImage('Graphics/box.png')}
-function P.pushable:move()
+function P.pushable:move(player)
 	self.prevTileX = self.tileX
 	self.prevTileY = self.tileY
 	if player.tileX~=player.prevTileX then
@@ -30,7 +30,7 @@ function P.pushable:move()
 		return false
 	end
 
-	if room[self.tileY][self.tileX]~=nil then
+	if room[self.tileY][self.tileX]~=nil and not room[self.tileY][self.tileX]:instanceof(tiles.endTile) then
 		room[self.tileY][self.tileX]:onEnter(self)
 	end
 
@@ -40,6 +40,7 @@ function P.pushable:move()
 		end
 		if room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX]:willDestroyPushable() then
 			self.destroyed = true
+			room[self.tileY][self.tileX]:destroyPushable()
 		end
 		return true
 	elseif room[self.tileY][self.tileY]~=nil then

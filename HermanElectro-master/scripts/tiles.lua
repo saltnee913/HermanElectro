@@ -43,8 +43,8 @@ function P.tile:updateTile(dir)
 end
 function P.tile:postPowerUpdate()
 end
-function P.tile:blocksMovementAnimal()
-	return self.blocksMovement or self.blocksAnimalMovement
+function P.tile:blocksMovementAnimal(animal)
+	return not animal.flying and (self.blocksMovement or self.blocksAnimalMovement)
 end
 function P.tile:getCorrectedOffset(dir)
 	dir = dir + self.rotation
@@ -70,6 +70,8 @@ function P.tile:willKillPlayer()
 end
 function P.tile:willDestroyPushable()
 	return false
+end
+function P.tile:destroyPushable()
 end
 P.tile.willKillAnimal = P.tile.willKillPlayer
 function P.tile:electrify()
@@ -288,6 +290,9 @@ function P.poweredFloor:ladder()
 end
 function P.poweredFloor:willKillPlayer()
 	return not self.powered and not self.laddered
+end
+function P.poweredFloor:destroyPushable()
+	self:ladder()
 end
 P.poweredFloor.willKillAnimal = P.poweredFloor.willKillPlayer
 P.poweredFloor.willDestroyPushable = P.poweredFloor.willKillPlayer
@@ -599,6 +604,10 @@ function P.pit:ladder()
 end
 function P.pit:willKillPlayer()
 	return not self.laddered
+end
+function P.pit:destroyPushable()
+	self.sprite = self.destroyedSprite
+	self.laddered = true
 end
 P.pit.willKillAnimal = P.pit.willKillPlayer
 P.pit.willDestroyPushable = P.pit.willKillPlayer
