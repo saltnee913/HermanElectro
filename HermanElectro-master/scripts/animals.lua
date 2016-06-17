@@ -80,13 +80,13 @@ function P.animal:secondaryMove()
 	local diffx = math.abs(player.tileX - self.tileX)
 	local diffy = math.abs(player.tileY - self.tileY)
 
-	if diffy>diffx then
+	if diffy>diffx and not (self.tileX==player.tileX) then
 		if player.tileX>self.tileX then
 			self.tileX = self.tileX+1
 		else
 			self.tileX = self.tileX-1
 		end
-	else
+	elseif (self.tileY~=player.tileY) then
 		if player.tileY>self.tileY then
 			self.tileY = self.tileY+1
 		else

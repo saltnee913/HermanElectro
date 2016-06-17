@@ -1010,8 +1010,6 @@ function love.keypressed(key, unicode)
 			end
 		end
 	end
-	beforePressX = player.x
-	beforePressY = player.y
 	love.keyboard.setKeyRepeat(true)
     -- ignore non-printable characters (see http://www.ascii-code.com/)
     if player.dead and (key == "w" or key == "a" or key == "s" or key == "d") then
@@ -1100,7 +1098,7 @@ function love.keypressed(key, unicode)
     		end
     	end
     	enterMove()
-	    if beforePressY~=player.y or beforePressX~=player.x or waitTurn then
+	    if player.tileY~=player.prevTileY or player.tileX~=player.prevTileX or waitTurn then
 	    	updateGameState()
 	    	for k = 1, #animals do
 	    		local movex = player.tileX
@@ -1158,44 +1156,6 @@ function love.keypressed(key, unicode)
     elseif key == 'c' then
     	log(nil)
     end
-end
-
-function animalMove(i)
-	animalDir = ""
-	diffx = player.tileX-animals[i].tileX
-	diffy = player.tileY-animals[i].tileY
-	if math.abs(diffx)>math.abs(diffy) then
-		if player.tileX>animals[i].tileX then
-			if room[animals[i].tileY][animals[i].tileX+1]~=nil and room[animals[i].tileY][animals[i].tileX+1].blocksMovement then
-				animalDir = "y"
-			end
-		else
-			if room[animals[i].tileY][animals[i].tileX-1]~=nil and room[animals[i].tileY][animals[i].tileX-1].blocksMovement then
-				animalDir = "y"
-			end
-		end
-	else
-		if player.tileY>animals[i].tileY then
-			if room[animals[i].tileY+1][animals[i].tileX]~=nil and room[animals[i].tileY+1][animals[i].tileX].blocksMovement then
-				animalDir = "x"
-			end
-		else
-			if room[animals[i].tileY-1][animals[i].tileX]~=nil and room[animals[i].tileY-1][animals[i].tileX].blocksMovement then
-				animalDir = "x"
-			end
-		end
-	end
-	if (player.prevx~=player.x or player.prevy~=player.y) and not animals[i].dead then
-		animals[i]:move(player.tileX, player.tileY, animalDir)
-		if animals[i]:hasMoved() then
-			if room[animals[i].tileY][animals[i].tileX]~=nil then
-				room[animals[i].tileY][animals[i].tileX]:onEnterAnimal(animals[i])
-			end
-			if room[animals[i].prevTileY][animals[i].prevTileX]~=nil then
-				room[animals[i].prevTileY][animals[i].prevTileX]:onLeaveAnimal(animals[i])
-			end
-		end
-	end
 end
 
 function resolveConflicts()
