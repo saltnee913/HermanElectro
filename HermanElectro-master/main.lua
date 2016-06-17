@@ -1166,16 +1166,12 @@ function resolveConflicts()
 				if (not animals[i].dead) and (not animals[j].dead) and animals[i].tileX == animals[j].tileX and animals[i].tileY == animals[j].tileY then
 					if animals[i].tileX~=animals[i].prevTileX then
 						animals[i].tileX = animals[i].prevTileX
-						animals[i].x = animals[i].prevx
 					elseif animals[i].tileY~=animals[i].prevTileY then
 						animals[i].tileY = animals[i].prevTileY
-						animals[i].y = animals[i].prevy
 					elseif animals[j].tileX~=animals[j].prevTileX then
 						animals[j].tileX = animals[j].prevTileX
-						animals[j].x = animals[j].prevx
 					elseif animals[j].tileY~=animals[j].prevTileY then
 						animals[j].tileY = animals[j].prevTileY
-						animals[j].y = animals[j].prevy
 					end
 				end
 			end
