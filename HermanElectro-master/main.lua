@@ -809,6 +809,8 @@ function createAnimals()
 					animals[animalCounter].x = (j-1)*floor.sprite:getHeight()*scale+wallSprite.width
 					animals[animalCounter].tileX = j
 					animals[animalCounter].tileY = i
+					animals[animalCounter].prevTileX = j
+					animals[animalCounter].prevTileY = i
 					animalCounter=animalCounter+1
 				end
 			end
