@@ -248,8 +248,26 @@ P.waterBottle = P.tool:new{name = 'water-bottle', image = love.graphics.newImage
 function P.waterBottle:usableOnTile(tile)
 	if not tile.destroyed and (tile:instanceof(tiles.powerSupply) or tile:instanceof(tiles.electricFloor)) then
 		return true
+	elseif not tile.laddered then
+		if tile:instanceof(tiles.breakablePit) and tile.strength == 0 then
+			return true
+		elseif tile:instanceof(tiles.poweredFloor) or tile:instanceof(tiles.pit) then
+			return true
+		end
 	end
 	return false
+end
+function P.waterBottle:useToolTile(tile)
+	self.numHeld = self.numHeld-1
+	if not tile.destroyed and (tile:instanceof(tiles.powerSupply) or tile:instanceof(tiles.electricFloor)) then
+		tile:destroy()
+	elseif not tile.laddered then
+		if tile:instanceof(tiles.breakablePit) and tile.strength == 0 then
+			tile:ladder()
+		elseif tile:instanceof(tiles.poweredFloor) or tile:instanceof(tiles.pit) then
+			tile:ladder()
+		end
+	end
 end
 function P.waterBottle:usableOnNothing()
 	return true
