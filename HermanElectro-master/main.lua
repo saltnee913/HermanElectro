@@ -1256,6 +1256,10 @@ function updateGameState()
 	updateTools()
 	if tool ~= 0 and tool ~= nil and tools[tool].numHeld == 0 then tool = 0 end
 	tools.updateToolableTiles(tool)
+	checkDeath()
+	for i = 1, #animals do
+		animals[i]:checkDeath()
+	end
 end
 
 function updateFire()
