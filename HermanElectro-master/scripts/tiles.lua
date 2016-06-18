@@ -831,6 +831,7 @@ function P.slime:onEnter(player)
 	player.waitCounter = player.waitCounter+1
 end
 function P.slime:onEnterAnimal(animal)
+	if animal:instanceof(animalList.snail) then return end
 	if animal.waitCounter<=0 then
 		animal.waitCounter = animal.waitCounter+1
 	end
@@ -1014,6 +1015,20 @@ end
 
 P.boxTile = P.tile:new{name = "boxTile", pushable = pushableList[2]:new(), listIndex = 2}
 
+P.gate = P.conductiveTile:new{name = "gate", dirSend = {0,0,0,0}, sprite = love.graphics.newImage('Graphics/gate.png'), poweredSprite = love.graphics.newImage('Graphics/gate.png')}
+function P.gate:onEnter(player)
+	if (player.prevTileX<player.tileX and self.rotation == 0) or (player.prevTileX>player.tileX and self.rotation == 2) or
+	(player.prevTileY<player.tileY and self.rotation == 1) or (player.prevTileY>player.tileY and self.rotation == 3) then
+		self.dirSend = {1,1,1,1}
+	elseif (player.prevTileX<player.tileX and self.rotation == 2) or (player.prevTileX>player.tileX and self.rotation == 0) or
+	(player.prevTileY<player.tileY and self.rotation == 3) or (player.prevTileY>player.tileY and self.rotation == 1) then
+		self.dirSend = {0,0,0,0}
+	end
+end
+P.gate.onEnterAnimal = P.gate.onEnter
+
+P.gate2 = P.gate:new{name = "gate2", dirSend = {1,1,1,1}}
+
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
 tiles[3] = P.powerSupply
@@ -1080,5 +1095,7 @@ tiles[63] = P.untriggeredPowerSupply
 tiles[64] = P.reinforcedGlass
 tiles[65] = P.powerTriggeredBomb
 tiles[66] = P.boxTile
+tiles[67] = P.gate
+tiles[68] = P.gate2
 
 return tiles

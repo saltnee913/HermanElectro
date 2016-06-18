@@ -180,23 +180,7 @@ function updateLight()
 			litTiles[i][j]=0
 		end
 	end
-	xCorner = player.x+player.width/2
-	yCorner = player.y-player.height/2
-	tileLoc1 = math.ceil((xCorner-wallSprite.width)/(scale*floor.sprite:getWidth()))
-	tileLoc2 = math.ceil((yCorner-wallSprite.height)/(scale*floor.sprite:getHeight()))
-	if tileLoc2>roomHeight then
-		tileLoc2 = roomHeight
-	end
-	if tileLoc1>roomLength then
-		tileLoc1 = roomLength
-	end
-	if tileLoc1<1 then
-		tileLoc1=1
-	end
-	if tileLoc2<1 then
-		tileLoc2=1
-	end
-	lightTest(tileLoc2, tileLoc1)
+	lightTest(player.tileY, player.tileX)
 	for i=1,roomHeight do
 		for j=1,roomLength do
 			--checkLight(i,j, tileLoc2, tileLoc1)
@@ -541,7 +525,7 @@ function love.draw()
 	end
 	for i = 1, roomLength do
 		for j = 1, roomHeight do
-			if (room[j] ~= nil and room[j][i] ~= nil and room[j][i].isVisible) or (room[j]~=nil and room[j][i]==nil) then
+			if (room[j][i]~=nil and room[j][i].isVisible) or litTiles[j][i]==0 then
 				local rot = 0
 				local tempi = i
 				local tempj = j
