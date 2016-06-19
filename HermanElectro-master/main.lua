@@ -922,7 +922,7 @@ function enterMove()
 	if not (player.prevTileY == player.tileY and player.prevTileX == player.tileX) then
 		for i = 1, #pushables do
 			if pushables[i].tileX == player.tileX and pushables[i].tileY == player.tileY then
-				if not pushables[i]:move(player) then
+				if not pushables[i]:playerCanMove() or not pushables[i]:move(player) then
 					player.tileX = player.prevTileX
 					player.tileY = player.prevTileY
 				end

@@ -1029,6 +1029,9 @@ P.gate.onEnterAnimal = P.gate.onEnter
 
 P.gate2 = P.gate:new{name = "gate2", dirSend = {1,1,1,1}}
 
+P.playerBoxTile = P.boxTile:new{name = "playerBoxTile", pushable = pushableList[3]:new(), listIndex = 3}
+P.animalBoxTile = P.boxTile:new{name = "animalBoxTile", pushable = pushableList[4]:new(), listIndex = 4}
+
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
 tiles[3] = P.powerSupply
@@ -1097,5 +1100,7 @@ tiles[65] = P.powerTriggeredBomb
 tiles[66] = P.boxTile
 tiles[67] = P.gate
 tiles[68] = P.gate2
+tiles[69] = P.playerBoxTile
+tiles[70] = P.animalBoxTile
 
 return tiles

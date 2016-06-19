@@ -6,13 +6,13 @@ local P = {}
 pushableList = P
 
 P.pushable = Object:new{name = "pushable", prevTileX = 0, prevTileY = 0, tileX = 0, tileY = 0, destroyed = false, sprite = love.graphics.newImage('Graphics/box.png')}
-function P.pushable:move(player)
+function P.pushable:move(mover)
 	self.prevTileX = self.tileX
 	self.prevTileY = self.tileY
-	if player.tileX~=player.prevTileX then
-		self.tileX = self.tileX+(player.tileX-player.prevTileX)
+	if mover.tileX~=mover.prevTileX then
+		self.tileX = self.tileX+(mover.tileX-mover.prevTileX)
 	else
-		self.tileY = self.tileY+(player.tileY-player.prevTileY)
+		self.tileY = self.tileY+(mover.tileY-mover.prevTileY)
 	end
 	if room[self.tileY]==nil or self.tileX>roomLength or self.tileX<1 then
 		self.tileX = self.prevTileX
@@ -26,6 +26,12 @@ function P.pushable:move(player)
 		end
 	end
 	if sameSpotCounter>=2 then
+		self.tileX = self.prevTileX
+		self.tileY = self.prevTileY
+		return false
+	end
+
+	if player.tileX == self.tileX and player.tileY == self.tileY then
 		self.tileX = self.prevTileX
 		self.tileY = self.prevTileY
 		return false
@@ -58,10 +64,28 @@ function P.pushable:move(player)
 	
 	return false
 end
+function P.pushable:animalCanMove()
+	return true
+end
+function P.pushable:playerCanMove()
+	return true
+end
 
 P.box = P.pushable:new{name = "box", sprite = love.graphics.newImage('Graphics/box.png')}
 
+P.playerBox = P.box:new{name = "playerBox"}
+function P.playerBox:animalCanMove()
+	return false
+end
+
+P.animalBox = P.box:new{name = "animalBox"}
+function P.animalBox:playerCanMove()
+	return false
+end
+
 pushableList[1] = P.pushable
 pushableList[2] = P.box
+pushableList[3] = P.playerBox
+pushableList[4] = P.animalBox
 
 return pushableList

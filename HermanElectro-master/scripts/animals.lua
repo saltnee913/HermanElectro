@@ -74,7 +74,7 @@ function P.animal:pushableCheck()
 	if not (self.prevTileY == self.tileY and self.prevTileX == self.tileX) then
 		for i = 1, #pushables do
 			if pushables[i].tileX == self.tileX and pushables[i].tileY == self.tileY then
-				if not pushables[i]:move(self) then
+				if not pushables[i]:animalCanMove() or not pushables[i]:move(self) then
 					return false
 				end
 			end
@@ -228,15 +228,9 @@ function P.cat:tryMove(diffx, diffy)
 		self.tileX = self.prevTileX
 	end
 
-	if not (self.prevTileY == self.tileY and self.prevTileX == self.tileX) then
-		for i = 1, #pushables do
-			if pushables[i].tileX == self.tileX and pushables[i].tileY == self.tileY then
-				if not pushables[i]:move(self) then
-					self.tileX = self.prevTileX
-					self.tileY = self.prevTileY
-				end
-			end
-		end
+	if not self:pushableCheck() then
+		self.tileX = self.prevTileX
+		self.tileY = self.prevTileY
 	end
 end
 
