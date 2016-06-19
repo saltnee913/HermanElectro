@@ -1012,6 +1012,9 @@ function P.powerTriggeredBomb:updateTile(dir)
 		self.triggered = true
 	end 
 end
+function P.powerTriggeredBomb:onEnter(player)
+end
+P.powerTriggeredBomb.onEnterAnimal = P.powerTriggeredBomb.onEnter
 
 P.boxTile = P.tile:new{name = "boxTile", pushable = pushableList[2]:new(), listIndex = 2}
 
