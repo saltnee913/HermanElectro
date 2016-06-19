@@ -22,13 +22,16 @@ function P.loadFloor(inFloorFile)
 		local roomsData = util.readJSON(v.filePath)
 		P.floorInfo.rooms[k] = roomsData.rooms
 		P.filterRoomSet(P.floorInfo.rooms[k], v.requirements)
+		local amt = 0
 		for k1, v1 in pairs(P.floorInfo.rooms[k]) do
 			if roomsData.superFields ~= nil then
 				for k2, v2 in pairs(roomsData.superFields) do
 					if v1[k2] == nil then v1[k2] = v2 end
 				end
 			end
+			amt = amt + 1
 		end
+		--print(k..': '..amt)
 	end
 end
 
@@ -113,6 +116,7 @@ function P.roomMeetsRequirements(roomData, requirements)
 end
 
 function P.createRoom(inRoom, arr)
+	if inRoom == nil then inRoom = '1' end
 	if arr == nil then
 		for k, v in pairs(P.floorInfo.rooms) do
 			if v[inRoom] ~= nil then
@@ -266,7 +270,7 @@ function P.generateMapStandard()
 		local choice = available[math.floor(math.random()*a)]
 		--local roomNum = math.floor(math.random()*#(P.rooms)) -- what we will actually do, with some editing
 		arr = P.floorInfo.rooms.rooms
-		local roomid = randomRoomArray[i+2+skippedRoomsIndex]
+		local roomid = randomRoomArray[i+skippedRoomsIndex]
 		local loadedRoom = P.createRoom(roomid, arr)
 		if skippedRooms[skippedRoomsIndex] ~= nil then
 			roomid = skippedRooms[skippedRoomsIndex]

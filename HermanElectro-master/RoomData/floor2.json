@@ -6,6 +6,7 @@
 			"filePath": "RoomData/rooms.json",
 			"requirements":
 			{
+				"tilesWhitelist": [3, 4, 5, 6, 7, 8, 11, 12, 13, 18, 19, 20, 21, 24, 25, 30, 32, 34, 50, 53, 58, 59, 60],
 				"not":
 				{
 					"equals":
@@ -35,8 +36,8 @@
 	},
 	"data":
 	{
-		"height": 7,
-		"numRooms": 10,
+		"height": 6,
+		"numRooms": 3,
 		"generateFunction": "generateMapStandard",
 		"startRoomID": "1"
 	}
