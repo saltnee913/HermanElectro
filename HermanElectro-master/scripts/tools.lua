@@ -97,7 +97,7 @@ function P.tool:getToolableTiles()
 			local tileToCheck = {y = player.tileY + offset.y*dist, x = player.tileX + offset.x*dist}
 			if room[tileToCheck.y]~=nil then
 				if (room[tileToCheck.y][tileToCheck.x] == nil and (tileToCheck.x>0 and tileToCheck.x<=roomLength) and self:usableOnNothing())
-					or (room[tileToCheck.y][tileToCheck.x] ~= nil and self:usableOnTile(room[tileToCheck.y][tileToCheck.x], dist)) then
+				or (room[tileToCheck.y][tileToCheck.x] ~= nil and self:usableOnTile(room[tileToCheck.y][tileToCheck.x], dist)) then
 					usableTiles[dir][#(usableTiles[dir])+1] = tileToCheck
 				end
 				if room[tileToCheck.y][tileToCheck.x] ~= nil and room[tileToCheck.y][tileToCheck.x].blocksProjectiles then

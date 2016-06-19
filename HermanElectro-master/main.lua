@@ -1069,6 +1069,9 @@ function love.keypressed(key, unicode)
     elseif key == 'down' then dirUse = 3
     elseif key == 'left' then dirUse = 4
     elseif key == "space" then dirUse = 5 end
+    if dirUse~=0 then
+    	tools.updateToolableTiles(tool)
+    end
     if dirUse ~= 0 then
 		log((tools.useToolDir(tool, dirUse) and 'true' or 'false')..' '..tool..' '..dirUse)
 		updateGameState()
@@ -1123,6 +1126,7 @@ function love.keypressed(key, unicode)
 				end
 			end
 			stepTrigger()
+			updateGameState()
 		end
     end
     for i = 1, #animals do
@@ -1168,10 +1172,23 @@ function resolveConflicts()
 			end
 		end
 
+		--code below semi-fixes animal "bouncing" -- kind of hacky
 		if firstRun then
 			for i = 1, #animals do
 				if animals[i].tileX==animals[i].prevTileX and animals[i].tileY==animals[i].prevTileY then
-					animals[i]:secondaryMove()
+					tryMove = true
+					if animals[i].dead or not animals[i].triggered then
+						tryMove = false
+					end
+					if animals[i].waitCounter>0 then
+						tryMove = false
+					end
+					if not animals[i]:instanceof(animalList.cat) and player.tileX-animals[i].tileX==0 and player.tileY-animals[i].tileY==0 then
+						tryMove = false
+					end
+					if tryMove then
+						animals[i]:secondaryMove()
+					end
 				end
 			end
 		end
@@ -1234,8 +1251,9 @@ function love.mousepressed(x, y, button, istouch)
 			end
 		end
 		log(tool)
-		tools.updateToolableTiles(tool)
 	end
+
+	tools.updateToolableTiles(tool)
 
 	tileLocX = math.ceil((mouseX-wallSprite.width)/(scale*floor.sprite:getWidth()))
 	tileLocY = math.ceil((mouseY-wallSprite.height)/(scale*floor.sprite:getHeight()))
