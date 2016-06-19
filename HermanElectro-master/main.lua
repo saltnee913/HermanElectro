@@ -1149,6 +1149,7 @@ function love.keypressed(key, unicode)
 end
 
 function resolveConflicts()
+	local firstRun = true
 	conflicts = true
 	while conflicts do
 		for i = 1, #animals do
@@ -1167,11 +1168,20 @@ function resolveConflicts()
 			end
 		end
 
+		if firstRun then
+			for i = 1, #animals do
+				if animals[i].tileX==animals[i].prevTileX and animals[i].tileY==animals[i].prevTileY then
+					animals[i]:secondaryMove()
+				end
+			end
+		end
+
 		conflicts = false
 		for i = 1, #animals do
 			for j = 1, i-1 do
 				if (not animals[i].dead) and (not animals[j].dead) and animals[i].tileX == animals[j].tileX and animals[i].tileY == animals[j].tileY then
 					conflicts = true
+					firstRun = false
 				end
 			end
 		end
