@@ -1040,6 +1040,14 @@ P.gate2 = P.gate:new{name = "gate2", dirSend = {1,1,1,1}}
 P.playerBoxTile = P.boxTile:new{name = "playerBoxTile", pushable = pushableList[3]:new(), listIndex = 3}
 P.animalBoxTile = P.boxTile:new{name = "animalBoxTile", pushable = pushableList[4]:new(), listIndex = 4}
 
+P.puddle = P.conductiveTile:new{name = "puddle", sprite = love.graphics.newImage('Graphics/puddle.png'), poweredSprite = love.graphics.newImage('Graphics/puddlelectrified.png')}
+function P.puddle:willKillPlayer()
+	return not self.destroyed and self.powered
+end
+P.electricFloor.willKillAnimal = P.electricFloor.willKillPlayer
+
+P.dustyGlassWall = P.glassWall:new{name = "dustyGlassWall", blocksVision = true, sprite = love.graphics.newImage('Graphics/dustyGlass.png'), cleanSprite = love.graphics.newImage('Graphics/glass.png')}
+
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
 tiles[3] = P.powerSupply
@@ -1110,5 +1118,7 @@ tiles[67] = P.gate
 tiles[68] = P.gate2
 tiles[69] = P.playerBoxTile
 tiles[70] = P.animalBoxTile
+tiles[71] = P.puddle
+tiles[72] = P.dustyGlassWall
 
 return tiles

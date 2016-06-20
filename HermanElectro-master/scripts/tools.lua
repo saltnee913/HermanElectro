@@ -274,7 +274,7 @@ function P.waterBottle:usableOnNothing()
 end
 function P.waterBottle:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld - 1
-	room[tileY][tileX] = tiles.electricFloor:new()
+	room[tileY][tileX] = tiles.puddle:new()
 end
 
 P.cuttingTorch = P.tool:new{name = 'cutting-torch', image = love.graphics.newImage('Graphics/cuttingtorch.png')}
@@ -514,13 +514,31 @@ function P.pitbullChanger:useToolAnimal(animal)
 	end
 end
 
+P.sponge = P.tool:new{name = "sponge", range = 1, image = love.graphics.newImage('Graphics/sponge.png')}
+function P.sponge:usableOnTile(tile)
+	if tile:instanceof(tiles.dustyGlassWall) and tile.blocksVision then
+		return true
+	elseif tile:instanceof(tiles.puddle) then return true
+	end
+	return false
+end
+function P.sponge:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld - 1
+	if tile:instanceof(tiles.dustyGlassWall) then
+		tile.blocksVision = false
+		tile.sprite = tile.cleanSprite
+	elseif tile:instanceof(tiles.puddle) then
+		room[tileY][tileX] = nil
+	end
+end
+
 P.numNormalTools = 7
 
 P[1] = P.saw
 P[2] = P.ladder
 P[3] = P.wireCutters
 P[4] = P.waterBottle
-P[5] = P.meat
+P[5] = P.sponge
 P[6] = P.brick
 P[7] = P.gun
 P[8] = P.crowbar
@@ -536,5 +554,6 @@ P[17] = P.shovel
 P[18] = P.woodGrabber
 P[19] = P.corpseGrabber
 P[20] = P.pitbullChanger
+P[21] = P.meat
 
 return tools
