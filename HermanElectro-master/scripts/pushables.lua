@@ -7,6 +7,9 @@ pushableList = P
 
 P.pushable = Object:new{name = "pushable", prevTileX = 0, prevTileY = 0, tileX = 0, tileY = 0, destroyed = false, sprite = love.graphics.newImage('Graphics/box.png')}
 function P.pushable:move(mover)
+	if self.destroyed then
+		return false
+	end
 	self.prevTileX = self.tileX
 	self.prevTileY = self.tileY
 	if mover.tileX~=mover.prevTileX then
@@ -56,6 +59,9 @@ function P.pushable:move(mover)
 		if room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX]:willDestroyPushable() then
 			self.destroyed = true
 			room[self.tileY][self.tileX]:destroyPushable()
+			self.tileX = -1
+			self.tileY = -1
+			
 		end
 		return true
 	elseif room[self.tileY][self.tileY]~=nil then
