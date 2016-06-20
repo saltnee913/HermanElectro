@@ -96,7 +96,9 @@ function P.keypressed(key, unicode)
     end
 	if key == "z" and prevRoom~=nil then
     	room = prevRoom
-    	animals = prevAnimals
+    	if prevAnimals~=nil then
+    		animals = prevAnimals
+    	end
     	animalCounter = 1
     	for i = 1, 100 do
     		if animals[i]~=nil then
