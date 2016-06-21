@@ -133,6 +133,14 @@ function P.inputSteal(key, unicode)
 		roomHack = roomHack:sub(1, -2)
 		log('Room Hack: '..roomHack)
 	end
+	if key=='right' then
+		roomHack = map.getNextRoom(roomHack)
+		log('Room Hack: '..roomHack)
+	end
+	if key == 'left' then
+		roomHack = map.getPrevRoom(roomHack)
+		log('Room Hack: '..roomHack)
+	end
 	if key=='return' then
 		P.stealInput = false
 		if hackEnterRoom(roomHack) then

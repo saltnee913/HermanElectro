@@ -13,15 +13,20 @@ local MapInfo = Object:new{floor = 1, height = 0, numRooms = 0}
 
 function P.loadFloor(inFloorFile)
 	local floorData = util.readJSON(inFloorFile)
-	P.floorInfo = {rooms = {}}
+	P.floorInfo = {rooms = {}, roomsArray = {}}
 	for k, v in pairs(floorData.data) do
 		P.floorInfo[k] = v
 	end
 	local loadRooms = floorData.loadRooms
 	for k, v in pairs(loadRooms) do
-		local roomsData = util.readJSON(v.filePath)
+		local roomsData, roomsArray = util.readJSON(v.filePath, true)
 		P.floorInfo.rooms[k] = roomsData.rooms
 		P.filterRoomSet(P.floorInfo.rooms[k], v.requirements)
+		for i = 1, #roomsArray do
+			if P.floorInfo.rooms[k][roomsArray[i]] ~= nil then
+				P.floorInfo.roomsArray[#(P.floorInfo.roomsArray)+1] = roomsArray[i]
+			end
+		end
 		local amt = 0
 		for k1, v1 in pairs(P.floorInfo.rooms[k]) do
 			if roomsData.superFields ~= nil then
@@ -33,6 +38,25 @@ function P.loadFloor(inFloorFile)
 		end
 		--print(k..': '..amt)
 	end
+end
+
+function P.getNextRoom(roomid)
+	local roomsArray = P.floorInfo.roomsArray
+	for i = 1, #roomsArray-1 do
+		if roomsArray[i] == roomid then
+			return roomsArray[i+1]
+		end
+	end
+	return roomid
+end
+function P.getPrevRoom(roomid)
+	local roomsArray = P.floorInfo.roomsArray
+	for i = 2, #roomsArray do
+		if roomsArray[i] == roomid then
+			return roomsArray[i-1]
+		end
+	end
+	return roomid
 end
 
 function P.filterRoomSet(arr, requirements)

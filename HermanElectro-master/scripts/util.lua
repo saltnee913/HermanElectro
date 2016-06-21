@@ -47,15 +47,15 @@ function P.shuffle(arr)
 	return shuffledArr
 end
 
-function P.readJSON(filePath)
+function P.readJSON(filePath, askForRooms)
 	io.input(filePath)
 	local str = io.read('*all')
-	local obj, pos, err = json.decode(str, 1, nil)
+	local obj, pos, err, roomsArray = json.decode(str, 1, nil, askForRooms and 'rooms' or nil)
 	if err then
 		print('Error:', err)
 		return nil
 	else
-		return obj
+		return obj, roomsArray
 	end
 end
 
