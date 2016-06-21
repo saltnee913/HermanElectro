@@ -1088,7 +1088,6 @@ function love.keypressed(key, unicode)
     	end
     	enterMove()
 	    if player.tileY~=player.prevTileY or player.tileX~=player.prevTileX or waitTurn then
-	    	updateGameState()
 	    	for k = 1, #animals do
 	    		local movex = player.tileX
 	    		local movey = player.tileY
