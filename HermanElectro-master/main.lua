@@ -823,12 +823,13 @@ function createPushables()
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
 			if room[i]~=nil and room[i][j]~=nil and room[i][j].name~=nil and room[i][j].pushable~=nil then
-				pushableToSpawn = room[i][j].pushable
-				pushables[#pushables+1] = pushableToSpawn
-				pushables[#pushables].tileY = i
-				pushables[#pushables].tileX = j
-				pushables[#pushables].prevTileX = pushables[#pushables].tileX
-				pushables[#pushables].prevTileY = pushables[#pushables].tileY
+				pushableToSpawn = pushableList[room[i][j].listIndex]:new()
+				index = #pushables+1
+				pushables[index] = pushableToSpawn
+				pushables[index].tileY = i
+				pushables[index].tileX = j
+				pushables[index].prevTileX = pushables[index].tileX
+				pushables[index].prevTileY = pushables[index].tileY
 			end
 		end
 	end
