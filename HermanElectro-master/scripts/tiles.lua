@@ -1044,7 +1044,7 @@ P.puddle = P.conductiveTile:new{name = "puddle", sprite = love.graphics.newImage
 function P.puddle:willKillPlayer()
 	return not self.destroyed and self.powered
 end
-P.electricFloor.willKillAnimal = P.electricFloor.willKillPlayer
+P.puddle.willKillAnimal = P.puddle.willKillPlayer
 
 P.dustyGlassWall = P.glassWall:new{name = "dustyGlassWall", blocksVision = true, sprite = love.graphics.newImage('Graphics/dustyGlass.png'), cleanSprite = love.graphics.newImage('Graphics/glass.png')}
 
