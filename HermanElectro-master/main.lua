@@ -1088,7 +1088,6 @@ function love.keypressed(key, unicode)
     	end
     	enterMove()
 	    if player.tileY~=player.prevTileY or player.tileX~=player.prevTileX or waitTurn then
-	    	updateGameState()
 	    	for k = 1, #animals do
 	    		local movex = player.tileX
 	    		local movey = player.tileY
@@ -1129,10 +1128,6 @@ function love.keypressed(key, unicode)
 			updateGameState()
 		end
     end
-    for i = 1, #animals do
-    	animals[i]:checkDeath(room)
-    end
-    checkDeath()
     --Debug console stuff
     if key=='p' then
     	local roomid = mainMap[mapy][mapx].roomid
@@ -1150,7 +1145,6 @@ function love.keypressed(key, unicode)
     elseif key == 'c' then
     	log(nil)
     end
-    checkAllDeath()
 end
 
 function resolveConflicts()
@@ -1288,6 +1282,7 @@ function updateGameState()
 	updateTools()
 	if tool ~= 0 and tool ~= nil and tools[tool].numHeld == 0 then tool = 0 end
 	tools.updateToolableTiles(tool)
+	checkAllDeath()
 end
 
 function checkAllDeath()
