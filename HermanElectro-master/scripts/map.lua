@@ -305,6 +305,7 @@ function P.generateMapStandard()
 		while(not canPlaceRoom(arr[roomid].dirEnter, newmap, choice.y, choice.x)) do
 			skippedRooms[#skippedRooms+1] = randomRoomArray[i+2+skippedRoomsIndex+skipped-1]
 			roomid = randomRoomArray[i+2+skippedRoomsIndex+skipped]
+			if roomid == nil then roomid = '1' end
 			loadedRoom = P.createRoom(roomid, arr)
 			skipped = skipped + 1
 		end
