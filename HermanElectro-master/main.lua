@@ -1149,6 +1149,7 @@ function love.keypressed(key, unicode)
     elseif key == 'c' then
     	log(nil)
     end
+    checkAllDeath()
 end
 
 function resolveConflicts()
@@ -1261,6 +1262,7 @@ function love.mousepressed(x, y, button, istouch)
 	end
 	
 	updateGameState()
+	checkAllDeath()
 end
 
 function love.mousereleased(x, y, button, istouch)
@@ -1285,6 +1287,9 @@ function updateGameState()
 	updateTools()
 	if tool ~= 0 and tool ~= nil and tools[tool].numHeld == 0 then tool = 0 end
 	tools.updateToolableTiles(tool)
+end
+
+function checkAllDeath()
 	checkDeath()
 	for i = 1, #animals do
 		animals[i]:checkDeath()
