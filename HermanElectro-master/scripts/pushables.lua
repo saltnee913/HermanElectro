@@ -76,7 +76,7 @@ end
 
 P.box = P.pushable:new{name = "box", sprite = love.graphics.newImage('Graphics/box.png')}
 
-P.playerBox = P.box:new{name = "playerBox"}
+P.playerBox = P.box:new{name = "playerBox", sprite = love.graphics.newImage('Graphics/playerBox.png')}
 function P.playerBox:animalCanMove()
 	return false
 end
