@@ -84,6 +84,10 @@ function love.load()
 		deathscreen = love.graphics.newImage('Graphics/deathscreen.png')
 		bottomwall = love.graphics.newImage('Graphics/bottomwall.png')
 		cornerwall = love.graphics.newImage('Graphics/toprightcorner.png')
+
+		music = love.audio.newSource('Audio/hermantheme.mp3')
+		music:play()
+
 		width2, height2 = love.graphics.getDimensions()
 		if width2>height2*16/9 then
 			height = height2
