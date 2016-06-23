@@ -38,17 +38,6 @@ function P.animal:move(playerx, playery, room, isLit)
 	if not self:primaryMove() then
 		self:secondaryMove()
 	end
-
-	if not (self.prevTileY == self.tileY and self.prevTileX == self.tileX) then
-		for i = 1, #pushables do
-			if pushables[i].tileX == self.tileX and pushables[i].tileY == self.tileY then
-				if not pushables[i]:move(self) then
-					self.tileX = self.prevTileX
-					self.tileY = self.prevTileY
-				end
-			end
-		end
-	end
 end
 function P.animal:primaryMove()
 	local diffx = math.abs(player.tileX - self.tileX)
@@ -73,6 +62,24 @@ function P.animal:primaryMove()
 		self.tileX = self.prevTileX
 		return false
 	end
+	if not self:pushableCheck() then
+		self.tileX = self.prevTileX
+		self.tileY = self.prevTileY
+		return false
+	end
+	return true
+end
+
+function P.animal:pushableCheck()
+	if not (self.prevTileY == self.tileY and self.prevTileX == self.tileX) then
+		for i = 1, #pushables do
+			if pushables[i].tileX == self.tileX and pushables[i].tileY == self.tileY then
+				if not pushables[i]:animalCanMove() or not pushables[i]:move(self) then
+					return false
+				end
+			end
+		end
+	end
 	return true
 end
 
@@ -80,7 +87,7 @@ function P.animal:secondaryMove()
 	local diffx = math.abs(player.tileX - self.tileX)
 	local diffy = math.abs(player.tileY - self.tileY)
 
-	if diffy>diffx and not (self.tileX==player.tileX) then
+	if diffy>=diffx and not (self.tileX==player.tileX) then
 		if player.tileX>self.tileX then
 			self.tileX = self.tileX+1
 		else
@@ -99,6 +106,13 @@ function P.animal:secondaryMove()
 		self.tileX = self.prevTileX
 		return false
 	end
+
+	if not self:pushableCheck() then
+		self.tileX = self.prevTileX
+		self.tileY = self.prevTileY
+		return false
+	end
+
 	return true
 end
 
@@ -151,6 +165,9 @@ P.bat.willKillPlayer = P.pitbull.willKillPlayer
 
 P.cat = P.animal:new{name = "cat", sprite = love.graphics.newImage('Graphics/cat.png'), deadSprite = love.graphics.newImage('Graphics/catdead.png')}
 function P.cat:move(playerx, playery, room, isLit)
+	local diffCatx = math.abs(player.tileX - self.tileX)
+	local diffCaty = math.abs(player.tileY - self.tileY)
+
 	if self.dead or (not isLit and not self.triggered) then
 		return
 	end
@@ -176,7 +193,19 @@ function P.cat:move(playerx, playery, room, isLit)
 				local temp = setOfMoves[i]
 				setOfMoves[i] = setOfMoves[j]
 				setOfMoves[j] = temp
+			--new AI beginning
+			elseif i~=j and setOfMoves[j].dist == setOfMoves[i].dist then
+				if diffCatx>diffCaty and math.abs(setOfMoves[j].diffy)>math.abs(setOfMoves[i].diffy) then
+					local temp = setOfMoves[i]
+					setOfMoves[i] = setOfMoves[j]
+					setOfMoves[j] = temp
+				elseif diffCaty>diffCatx and math.abs(setOfMoves[j].diffx)>math.abs(setOfMoves[i].diffx) then
+					local temp = setOfMoves[i]
+					setOfMoves[i] = setOfMoves[j]
+					setOfMoves[j] = temp
+				end
 			end
+			--new AI end
 		end
 	end
 
@@ -199,16 +228,43 @@ function P.cat:tryMove(diffx, diffy)
 		self.tileX = self.prevTileX
 	end
 
-	if not (self.prevTileY == self.tileY and self.prevTileX == self.tileX) then
-		for i = 1, #pushables do
-			if pushables[i].tileX == self.tileX and pushables[i].tileY == self.tileY then
-				if not pushables[i]:move(self) then
-					self.tileX = self.prevTileX
-					self.tileY = self.prevTileY
-				end
-			end
+	if not self:pushableCheck() then
+		self.tileX = self.prevTileX
+		self.tileY = self.prevTileY
+	end
+end
+
+function P.cat:secondaryMove()
+	local diffx = math.abs(player.tileX - self.tileX)
+	local diffy = math.abs(player.tileY - self.tileY)
+
+	if diffy>diffx then
+		if player.tileX>self.tileX then
+			self.tileX = self.tileX-1
+		else
+			self.tileX = self.tileX+1
+		end
+	else
+		if player.tileY>self.tileY then
+			self.tileY = self.tileY-1
+		else
+			self.tileY = self.tileY+1
 		end
 	end
+
+	if room[self.tileY]==nil or (room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX]:blocksMovementAnimal(self)) then
+		self.tileY = self.prevTileY
+		self.tileX = self.prevTileX
+		return false
+	end
+
+	if not self:pushableCheck() then
+		self.tileX = self.prevTileX
+		self.tileY = self.prevTileY
+		return false
+	end
+
+	return true
 end
 
 

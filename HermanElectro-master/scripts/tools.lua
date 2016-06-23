@@ -96,8 +96,8 @@ function P.tool:getToolableTiles()
 		for dist = 1, self.range do
 			local tileToCheck = {y = player.tileY + offset.y*dist, x = player.tileX + offset.x*dist}
 			if room[tileToCheck.y]~=nil then
-				if (room[tileToCheck.y][tileToCheck.x] == nil and self:usableOnNothing())
-					or (room[tileToCheck.y][tileToCheck.x] ~= nil and self:usableOnTile(room[tileToCheck.y][tileToCheck.x], dist)) then
+				if (room[tileToCheck.y][tileToCheck.x] == nil and (tileToCheck.x>0 and tileToCheck.x<=roomLength) and self:usableOnNothing())
+				or (room[tileToCheck.y][tileToCheck.x] ~= nil and self:usableOnTile(room[tileToCheck.y][tileToCheck.x], dist)) then
 					usableTiles[dir][#(usableTiles[dir])+1] = tileToCheck
 				end
 				if room[tileToCheck.y][tileToCheck.x] ~= nil and room[tileToCheck.y][tileToCheck.x].blocksProjectiles then
@@ -248,12 +248,12 @@ P.waterBottle = P.tool:new{name = 'water-bottle', image = love.graphics.newImage
 function P.waterBottle:usableOnTile(tile)
 	if not tile.destroyed and (tile:instanceof(tiles.powerSupply) or tile:instanceof(tiles.electricFloor)) then
 		return true
-	elseif not tile.laddered then
+	--[[elseif not tile.laddered then
 		if tile:instanceof(tiles.breakablePit) and tile.strength == 0 then
 			return true
 		elseif tile:instanceof(tiles.poweredFloor) or tile:instanceof(tiles.pit) then
 			return true
-		end
+		end]]
 	end
 	return false
 end
@@ -261,12 +261,12 @@ function P.waterBottle:useToolTile(tile)
 	self.numHeld = self.numHeld-1
 	if not tile.destroyed and (tile:instanceof(tiles.powerSupply) or tile:instanceof(tiles.electricFloor)) then
 		tile:destroy()
-	elseif not tile.laddered then
+	--[[elseif not tile.laddered then
 		if tile:instanceof(tiles.breakablePit) and tile.strength == 0 then
 			tile:ladder()
 		elseif tile:instanceof(tiles.poweredFloor) or tile:instanceof(tiles.pit) then
 			tile:ladder()
-		end
+		end]]
 	end
 end
 function P.waterBottle:usableOnNothing()
@@ -274,7 +274,7 @@ function P.waterBottle:usableOnNothing()
 end
 function P.waterBottle:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld - 1
-	room[tileY][tileX] = tiles.electricFloor:new()
+	room[tileY][tileX] = tiles.puddle:new()
 end
 
 P.cuttingTorch = P.tool:new{name = 'cutting-torch', image = love.graphics.newImage('Graphics/cuttingtorch.png')}
@@ -514,13 +514,31 @@ function P.pitbullChanger:useToolAnimal(animal)
 	end
 end
 
+P.sponge = P.tool:new{name = "sponge", range = 1, image = love.graphics.newImage('Graphics/sponge.png')}
+function P.sponge:usableOnTile(tile)
+	if tile:instanceof(tiles.dustyGlassWall) and tile.blocksVision then
+		return true
+	elseif tile:instanceof(tiles.puddle) then return true
+	end
+	return false
+end
+function P.sponge:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld - 1
+	if tile:instanceof(tiles.dustyGlassWall) then
+		tile.blocksVision = false
+		tile.sprite = tile.cleanSprite
+	elseif tile:instanceof(tiles.puddle) then
+		room[tileY][tileX] = nil
+	end
+end
+
 P.numNormalTools = 7
 
 P[1] = P.saw
 P[2] = P.ladder
 P[3] = P.wireCutters
 P[4] = P.waterBottle
-P[5] = P.meat
+P[5] = P.sponge
 P[6] = P.brick
 P[7] = P.gun
 P[8] = P.crowbar
@@ -536,5 +554,6 @@ P[17] = P.shovel
 P[18] = P.woodGrabber
 P[19] = P.corpseGrabber
 P[20] = P.pitbullChanger
+P[21] = P.meat
 
 return tools

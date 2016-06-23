@@ -84,6 +84,10 @@ function love.load()
 		deathscreen = love.graphics.newImage('Graphics/deathscreen.png')
 		bottomwall = love.graphics.newImage('Graphics/bottomwall.png')
 		cornerwall = love.graphics.newImage('Graphics/toprightcorner.png')
+
+		music = love.audio.newSource('Audio/hermantheme.mp3')
+		--music:play()
+
 		width2, height2 = love.graphics.getDimensions()
 		if width2>height2*16/9 then
 			height = height2
@@ -436,7 +440,7 @@ function powerTestSpecial(x, y, lastDir)
 		return
 	end
 
-	if x>1 and room[x-1][y] ~=nil and room[x-1][y].name~="notGate" and canBePowered(x-1,y,3) and lastDir~=1 then
+	if x>1 and room[x-1][y]~=nil and room[x-1][y].name~="notGate" and canBePowered(x-1,y,3) and lastDir~=1 then
 		formerPowered = room[x-1][y].powered
 		formerSend = room[x-1][y].dirSend
 		formerAccept = room[x-1][y].dirAccept
@@ -453,7 +457,7 @@ function powerTestSpecial(x, y, lastDir)
 	end
 
 
-	if x<roomHeight and room[x+1][y] ~=nil and room[x+1][y].name~="notGate" and canBePowered(x+1,y,1) and lastDir~=3 then
+	if x<roomHeight and room[x+1][y]~=nil and room[x+1][y].name~="notGate" and canBePowered(x+1,y,1) and lastDir~=3 then
 		--powered[x+1][y] = 1
 		formerPowered = room[x+1][y].powered
 		formerSend = room[x+1][y].dirSend
@@ -469,7 +473,7 @@ function powerTestSpecial(x, y, lastDir)
 		end
 	end
 
-	if y>1 and room[x][y-1] ~=nil and room[x][y-1].name~="notGate" and canBePowered(x,y-1,2) and lastDir~=4 then
+	if y>1 and room[x][y-1]~=nil and room[x][y-1].name~="notGate" and canBePowered(x,y-1,2) and lastDir~=4 then
 		formerPowered = room[x][y-1].powered
 		formerSend = room[x][y-1].dirSend
 		formerAccept = room[x][y-1].dirAccept
@@ -485,7 +489,7 @@ function powerTestSpecial(x, y, lastDir)
 		end
 	end
 
-	if y<roomLength and room[x][y+1] ~=nil and room[x][y+1].name~="notGate" and canBePowered(x,y+1,4) and lastDir~=2 then
+	if y<roomLength and room[x][y+1]~=nil and room[x][y+1].name~="notGate" and canBePowered(x,y+1,4) and lastDir~=2 then
 		formerPowered = room[x][y+1].powered
 		formerSend = room[x][y+1].dirSend
 		formerAccept = room[x][y+1].dirAccept
@@ -639,7 +643,7 @@ function love.draw()
 	end
 
 	for i = 1, #pushables do
-		if pushables[i]~=nil and not pushables[i].destroyed then
+		if pushables[i]~=nil and not pushables[i].destroyed and litTiles[pushables[i].tileY][pushables[i].tileX]==1 then
 	    	pushablex = (pushables[i].tileX-1)*floor.sprite:getHeight()*scale+wallSprite.width
 	    	pushabley = (pushables[i].tileY-1)*floor.sprite:getWidth()*scale+wallSprite.height
 			love.graphics.draw(pushables[i].sprite, pushablex, pushabley, 0, scale, scale)
@@ -823,12 +827,13 @@ function createPushables()
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
 			if room[i]~=nil and room[i][j]~=nil and room[i][j].name~=nil and room[i][j].pushable~=nil then
-				pushableToSpawn = room[i][j].pushable
-				pushables[#pushables+1] = pushableToSpawn
-				pushables[#pushables].tileY = i
-				pushables[#pushables].tileX = j
-				pushables[#pushables].prevTileX = pushables[#pushables].tileX
-				pushables[#pushables].prevTileY = pushables[#pushables].tileY
+				pushableToSpawn = pushableList[room[i][j].listIndex]:new()
+				index = #pushables+1
+				pushables[index] = pushableToSpawn
+				pushables[index].tileY = i
+				pushables[index].tileX = j
+				pushables[index].prevTileX = pushables[index].tileX
+				pushables[index].prevTileY = pushables[index].tileY
 			end
 		end
 	end
@@ -922,7 +927,7 @@ function enterMove()
 	if not (player.prevTileY == player.tileY and player.prevTileX == player.tileX) then
 		for i = 1, #pushables do
 			if pushables[i].tileX == player.tileX and pushables[i].tileY == player.tileY then
-				if not pushables[i]:move(player) then
+				if not pushables[i]:playerCanMove() or not pushables[i]:move(player) then
 					player.tileX = player.prevTileX
 					player.tileY = player.prevTileY
 				end
@@ -1069,6 +1074,9 @@ function love.keypressed(key, unicode)
     elseif key == 'down' then dirUse = 3
     elseif key == 'left' then dirUse = 4
     elseif key == "space" then dirUse = 5 end
+    if dirUse~=0 then
+    	tools.updateToolableTiles(tool)
+    end
     if dirUse ~= 0 then
 		log((tools.useToolDir(tool, dirUse) and 'true' or 'false')..' '..tool..' '..dirUse)
 		updateGameState()
@@ -1085,7 +1093,6 @@ function love.keypressed(key, unicode)
     	end
     	enterMove()
 	    if player.tileY~=player.prevTileY or player.tileX~=player.prevTileX or waitTurn then
-	    	updateGameState()
 	    	for k = 1, #animals do
 	    		local movex = player.tileX
 	    		local movey = player.tileY
@@ -1123,12 +1130,9 @@ function love.keypressed(key, unicode)
 				end
 			end
 			stepTrigger()
+			updateGameState()
 		end
     end
-    for i = 1, #animals do
-    	animals[i]:checkDeath(room)
-    end
-    checkDeath()
     --Debug console stuff
     if key=='p' then
     	local roomid = mainMap[mapy][mapx].roomid
@@ -1149,6 +1153,7 @@ function love.keypressed(key, unicode)
 end
 
 function resolveConflicts()
+	local firstRun = true
 	conflicts = true
 	while conflicts do
 		for i = 1, #animals do
@@ -1167,11 +1172,33 @@ function resolveConflicts()
 			end
 		end
 
+		--code below semi-fixes animal "bouncing" -- kind of hacky
+		if firstRun then
+			for i = 1, #animals do
+				if animals[i].tileX==animals[i].prevTileX and animals[i].tileY==animals[i].prevTileY then
+					tryMove = true
+					if animals[i].dead or not animals[i].triggered then
+						tryMove = false
+					end
+					if animals[i].waitCounter>0 then
+						tryMove = false
+					end
+					if not animals[i]:instanceof(animalList.cat) and player.tileX-animals[i].tileX==0 and player.tileY-animals[i].tileY==0 then
+						tryMove = false
+					end
+					if tryMove then
+						animals[i]:secondaryMove()
+					end
+				end
+			end
+		end
+
 		conflicts = false
 		for i = 1, #animals do
 			for j = 1, i-1 do
 				if (not animals[i].dead) and (not animals[j].dead) and animals[i].tileX == animals[j].tileX and animals[i].tileY == animals[j].tileY then
 					conflicts = true
+					firstRun = false
 				end
 			end
 		end
@@ -1224,8 +1251,9 @@ function love.mousepressed(x, y, button, istouch)
 			end
 		end
 		log(tool)
-		tools.updateToolableTiles(tool)
 	end
+
+	tools.updateToolableTiles(tool)
 
 	tileLocX = math.ceil((mouseX-wallSprite.width)/(scale*floor.sprite:getWidth()))
 	tileLocY = math.ceil((mouseY-wallSprite.height)/(scale*floor.sprite:getHeight()))
@@ -1234,6 +1262,7 @@ function love.mousepressed(x, y, button, istouch)
 	end
 	
 	updateGameState()
+	checkAllDeath()
 end
 
 function love.mousereleased(x, y, button, istouch)
@@ -1258,6 +1287,10 @@ function updateGameState()
 	updateTools()
 	if tool ~= 0 and tool ~= nil and tools[tool].numHeld == 0 then tool = 0 end
 	tools.updateToolableTiles(tool)
+	checkAllDeath()
+end
+
+function checkAllDeath()
 	checkDeath()
 	for i = 1, #animals do
 		animals[i]:checkDeath()

@@ -92,10 +92,13 @@ function P.keypressed(key, unicode)
     	end
     	animals = {}
     	animalCounter = 1
+    	pushables = {}
     end
 	if key == "z" and prevRoom~=nil then
     	room = prevRoom
-    	animals = prevAnimals
+    	if prevAnimals~=nil then
+    		animals = prevAnimals
+    	end
     	animalCounter = 1
     	for i = 1, 100 do
     		if animals[i]~=nil then
@@ -128,6 +131,14 @@ end
 function P.inputSteal(key, unicode)
 	if key=='backspace' then
 		roomHack = roomHack:sub(1, -2)
+		log('Room Hack: '..roomHack)
+	end
+	if key=='right' then
+		roomHack = map.getNextRoom(roomHack)
+		log('Room Hack: '..roomHack)
+	end
+	if key == 'left' then
+		roomHack = map.getPrevRoom(roomHack)
 		log('Room Hack: '..roomHack)
 	end
 	if key=='return' then

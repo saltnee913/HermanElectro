@@ -848,6 +848,7 @@ function P.unactivatedBomb:onStep(x, y)
 		elseif self.counter == 0 then
 			self.gone = true
 		end
+		self.poweredSprite = self.sprite
 	end
 end
 function P.unactivatedBomb:onEnd(map, x, y)
@@ -1006,12 +1007,19 @@ end
 
 P.reinforcedGlass = P.concreteWall:new{name = "reinforcedGlass", blocksVision = false, sprite = love.graphics.newImage('Graphics/reinforcedglass.png'), poweredSprite = love.graphics.newImage('Graphics/reinforcedglass.png')}
 
-P.powerTriggeredBomb = P.unactivatedBomb:new{canBePowered = true, powered = false, dirAccept = {1,1,1,1}, dirSend = {0,0,0,0}}
-function P.powerTriggeredBomb:updateTile(dir)
+P.powerTriggeredBomb = P.unactivatedBomb:new{name = "powerTriggeredBomb", canBePowered = true, powered = false, dirAccept = {1,1,1,1}, dirSend = {0,0,0,0}}
+function P.powerTriggeredBomb:postPowerUpdate()
 	if self.poweredNeighbors[1]==1 or self.poweredNeighbors[2]==1 or self.poweredNeighbors[3]==1 or self.poweredNeighbors[4]==1 then
-		self.triggered = true
-	end 
+		if not self.triggered then
+			self.counter = 3
+			self.triggered = true
+		end
+	end
+	self.poweredSprite = self.sprite
 end
+function P.powerTriggeredBomb:onEnter(player)
+end
+P.powerTriggeredBomb.onEnterAnimal = P.powerTriggeredBomb.onEnter
 
 P.boxTile = P.tile:new{name = "boxTile", pushable = pushableList[2]:new(), listIndex = 2}
 
@@ -1028,6 +1036,17 @@ end
 P.gate.onEnterAnimal = P.gate.onEnter
 
 P.gate2 = P.gate:new{name = "gate2", dirSend = {1,1,1,1}}
+
+P.playerBoxTile = P.boxTile:new{name = "playerBoxTile", pushable = pushableList[3]:new(), listIndex = 3}
+P.animalBoxTile = P.boxTile:new{name = "animalBoxTile", pushable = pushableList[4]:new(), listIndex = 4}
+
+P.puddle = P.conductiveTile:new{name = "puddle", sprite = love.graphics.newImage('Graphics/puddle.png'), poweredSprite = love.graphics.newImage('Graphics/puddlelectrified.png')}
+function P.puddle:willKillPlayer()
+	return not self.destroyed and self.powered
+end
+P.puddle.willKillAnimal = P.puddle.willKillPlayer
+
+P.dustyGlassWall = P.glassWall:new{name = "dustyGlassWall", blocksVision = true, sprite = love.graphics.newImage('Graphics/dustyGlass.png'), cleanSprite = love.graphics.newImage('Graphics/glass.png')}
 
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
@@ -1097,5 +1116,9 @@ tiles[65] = P.powerTriggeredBomb
 tiles[66] = P.boxTile
 tiles[67] = P.gate
 tiles[68] = P.gate2
+tiles[69] = P.playerBoxTile
+tiles[70] = P.animalBoxTile
+tiles[71] = P.puddle
+tiles[72] = P.dustyGlassWall
 
 return tiles
