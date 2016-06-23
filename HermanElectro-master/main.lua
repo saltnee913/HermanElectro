@@ -1131,6 +1131,7 @@ function love.keypressed(key, unicode)
 			end
 			stepTrigger()
 			updateGameState()
+			checkAllDeath()
 		end
     end
     --Debug console stuff
@@ -1287,7 +1288,7 @@ function updateGameState()
 	updateTools()
 	if tool ~= 0 and tool ~= nil and tools[tool].numHeld == 0 then tool = 0 end
 	tools.updateToolableTiles(tool)
-	checkAllDeath()
+	--checkAllDeath()
 end
 
 function checkAllDeath()
