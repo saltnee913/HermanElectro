@@ -252,7 +252,8 @@ function P.cat:secondaryMove()
 		end
 	end
 
-	if room[self.tileY]==nil or (room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX]:blocksMovementAnimal(self)) then
+	if room[self.tileY]==nil or self.tileX<1 or self.tileX>roomLength or
+	(room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX]:blocksMovementAnimal(self)) then
 		self.tileY = self.prevTileY
 		self.tileX = self.prevTileX
 		return false
