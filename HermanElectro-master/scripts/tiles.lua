@@ -1046,7 +1046,7 @@ function P.puddle:willKillPlayer()
 end
 P.puddle.willKillAnimal = P.puddle.willKillPlayer
 
-P.dustyGlassWall = P.glassWall:new{name = "dustyGlassWall", blocksVision = true, sprite = love.graphics.newImage('Graphics/dustyGlass.png'), cleanSprite = love.graphics.newImage('Graphics/glass.png')}
+P.dustyGlassWall = P.glassWall:new{name = "dustyGlassWall", blocksVision = true, sprite = love.graphics.newImage('Graphics/dustyglass.png'), cleanSprite = love.graphics.newImage('Graphics/glass.png')}
 
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
