@@ -353,6 +353,7 @@ function P.glassWall:destroy()
 	self.sprite = self.destroyedSprite
 	self.destroyed = true
 	self.blocksMovement = false
+	self.blocksVision = false
 end
 
 P.gate = P.conductiveTile:new{name = "gate", dirSend = {0,0,0,0}, dirAccept = {0,0,0,0}, gotten = {0,0,0,0}}
