@@ -61,7 +61,7 @@ function P.pushable:move(mover)
 			room[self.tileY][self.tileX]:destroyPushable()
 		end
 		return true
-	elseif room[self.tileY][self.tileY]~=nil then
+	elseif room[self.tileY][self.tileX]~=nil then
 		room[self.tileY][self.tileX]:onStay(self)
 	end
 	
