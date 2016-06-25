@@ -84,6 +84,9 @@ end
 function P.tile:allowVision()
 	self.blocksVision = false
 end
+function P.tile:usableOnNothing()
+	return self.destroyed
+end
 
 P.invisibleTile = P.tile:new{isVisible = false}
 local bounds = {}
@@ -185,7 +188,7 @@ function P.button:onEnter(player)
 		else
 			self.dirAccept = {1,1,1,1}
 		end
-		updateGameState()
+		----updateGameState()
 		self:updateSprite()
 		--self.name = "onbutton"
 	end
@@ -196,7 +199,7 @@ function P.button:lockInState(state)
 	self.dirAccept = state and {1,1,1,1} or {0,0,0,0}
 	self.dirSend = state and {1,1,1,1} or {0,0,0,0}
 	self.canBePowered = state
-	updateGameState()
+	----updateGameState()
 	self:updateSprite()
 end
 function P.button:onLeave(player)
@@ -215,7 +218,7 @@ function P.button:onEnterAnimal(animal)
 		else
 			self.dirAccept = {1,1,1,1}
 		end
-		updateGameState()
+		--updateGameState()
 		self:updateSprite()
 		--self.name = "onbutton"
 	end
@@ -235,7 +238,7 @@ function P.stickyButton:onEnter(player)
 	self.justPressed = true
 	self.down = true
 	self.dirAccept = {1,1,1,1}
-	updateGameState()
+	--updateGameState()
 	self:updateSprite()
 end
 function P.stickyButton:onLeave(player)
@@ -244,7 +247,7 @@ function P.stickyButton:unstick()
 	self.justPressed = false
 	self.down = false
 	self.dirAccept = {0,0,0,0}
-	updateGameState()
+	--updateGameState()
 	self:updateSprite()
 end
 P.stickyButton.onEnterAnimal = P.stickyButton.onEnter
@@ -255,14 +258,14 @@ function P.stayButton:onEnter(player)
 	if self.bricked then return end
 	self.down = true
 	self.dirAccept = {1,1,1,1}
-	updateGameState()
+	--updateGameState()
 	self:updateSprite()
 end
 function P.stayButton:onLeave(player)
 	if self.bricked then return end
 	self.down = false
 	self.dirAccept = {0,0,0,0}
-	updateGameState()
+	--updateGameState()
 	self:updateSprite()
 end
 P.stayButton.onEnterAnimal = P.stayButton.onEnter
