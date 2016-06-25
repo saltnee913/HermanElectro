@@ -18,7 +18,8 @@ function P.useToolDir(toolid, dir)
 		return true
 	end
 	if P.toolableTiles ~= nil and P.toolableTiles[dir][1] ~= nil then
-		if room[P.toolableTiles[dir][1].y][P.toolableTiles[dir][1].x] == nil then
+		if room[P.toolableTiles[dir][1].y][P.toolableTiles[dir][1].x] == nil 
+			or room[P.toolableTiles[dir][1].y][P.toolableTiles[dir][1].x]:usableOnNothing() then
 			tools[toolid]:useToolNothing(P.toolableTiles[dir][1].y, P.toolableTiles[dir][1].x)
 		else
 			--sometimes next line has  error "attempt to index a nil value"
@@ -47,7 +48,7 @@ function P.useToolTile(toolid, tileY, tileX)
 		for dir = 1, 5 do
 			for i = 1, #(P.toolableTiles[dir]) do
 				if P.toolableTiles[dir][i].y == tileY and P.toolableTiles[dir][i].x == tileX then
-					if room[tileY][tileX] == nil then
+					if room[tileY][tileX] == nil or room[tileY][tileX]:usableOnNothing() then
 						tools[tool]:useToolNothing(tileY, tileX)
 					else
 						tools[tool]:useToolTile(room[tileY][tileX], tileY, tileX)
@@ -96,7 +97,7 @@ function P.tool:getToolableTiles()
 		for dist = 1, self.range do
 			local tileToCheck = {y = player.tileY + offset.y*dist, x = player.tileX + offset.x*dist}
 			if room[tileToCheck.y]~=nil then
-				if (room[tileToCheck.y][tileToCheck.x] == nil and (tileToCheck.x>0 and tileToCheck.x<=roomLength) and self:usableOnNothing())
+				if ((room[tileToCheck.y][tileToCheck.x] == nil or room[tileToCheck.y][tileToCheck.x]:usableOnNothing()) and (tileToCheck.x>0 and tileToCheck.x<=roomLength) and self:usableOnNothing())
 				or (room[tileToCheck.y][tileToCheck.x] ~= nil and self:usableOnTile(room[tileToCheck.y][tileToCheck.x], dist)) then
 					usableTiles[dir][#(usableTiles[dir])+1] = tileToCheck
 				end

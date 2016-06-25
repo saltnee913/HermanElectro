@@ -36,7 +36,7 @@ function P.loadFloor(inFloorFile)
 			end
 			amt = amt + 1
 		end
-		--print(k..': '..amt)
+		print(k..': '..amt)
 	end
 end
 
