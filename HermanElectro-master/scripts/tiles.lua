@@ -84,6 +84,9 @@ end
 function P.tile:allowVision()
 	self.blocksVision = false
 end
+function P.tile:usableOnNothing()
+	return self.destroyed
+end
 
 P.invisibleTile = P.tile:new{isVisible = false}
 local bounds = {}
