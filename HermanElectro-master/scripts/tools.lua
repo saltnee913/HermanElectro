@@ -519,7 +519,7 @@ function P.sponge:usableOnTile(tile)
 	if tile:instanceof(tiles.dustyGlassWall) and tile.blocksVision then
 		return true
 	elseif tile:instanceof(tiles.puddle) then return true
-	end
+	elseif tile:instanceof(tiles.stickyButton) then return true end
 	return false
 end
 function P.sponge:useToolTile(tile, tileY, tileX)
@@ -529,6 +529,9 @@ function P.sponge:useToolTile(tile, tileY, tileX)
 		tile.sprite = tile.cleanSprite
 	elseif tile:instanceof(tiles.puddle) then
 		room[tileY][tileX] = nil
+	elseif tile:instanceof(tiles.stickyButton) then
+		local down = tile.down
+		room[tileY][tileX] = tiles.button:new()
 	end
 end
 
