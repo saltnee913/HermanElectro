@@ -1052,6 +1052,18 @@ P.puddle.willKillAnimal = P.puddle.willKillPlayer
 
 P.dustyGlassWall = P.glassWall:new{name = "dustyGlassWall", blocksVision = true, sprite = love.graphics.newImage('Graphics/dustyglass.png'), cleanSprite = love.graphics.newImage('Graphics/glass.png')}
 
+P.trap = P.tile:new{name = "trap", triggered = false, sprite = love.graphics.newImage('Graphics/trap.png')}
+function P.trap:onEnter(player)
+	if self.triggered then return end
+	self.triggered = true
+	kill()
+end
+function P.trap:onEnterAnimal(animal)
+	if self.triggered or animal.flying then return end
+	self.triggered = true
+	animal:kill()
+end
+
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
 tiles[3] = P.powerSupply
@@ -1124,5 +1136,6 @@ tiles[69] = P.playerBoxTile
 tiles[70] = P.animalBoxTile
 tiles[71] = P.puddle
 tiles[72] = P.dustyGlassWall
+tiles[73] = P.trap
 
 return tiles

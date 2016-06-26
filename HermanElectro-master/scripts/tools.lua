@@ -536,6 +536,23 @@ function P.sponge:useToolTile(tile, tileY, tileX)
 	end
 end
 
+P.rotater = P.tool:new{name = "rotater", range = 1, image = love.graphics.newImage('Graphics/rotatetool.png')}
+function P.rotater:usableOnTile(tile)
+	return true
+end
+function P.rotater:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
+	tile:rotate(1)
+end
+
+P.trap = P.tool:new{name = "trap", range = 1, image = love.graphics.newImage('Graphics/trap.png')}
+function P.trap:usableOnNothing()
+	return true
+end
+function P.trap:useToolNothing(tileY, tileX)
+	room[tileY][tileX] = tiles.trap:new()
+end
+
 P.numNormalTools = 7
 
 P[1] = P.saw
@@ -559,5 +576,7 @@ P[18] = P.woodGrabber
 P[19] = P.corpseGrabber
 P[20] = P.pitbullChanger
 P[21] = P.meat
+P[22] = P.rotater
+P[23] = P.trap
 
 return tools
