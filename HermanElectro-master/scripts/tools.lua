@@ -5,6 +5,7 @@ function P.updateToolableTiles(toolid)
 	if toolid ~= 0 then
 		P.toolableAnimals = tools[toolid]:getToolableAnimals()
 		P.toolableTiles = tools[toolid]:getToolableTiles()
+		P.toolablePushables = tools[toolid]:getToolablePushables()
 	else
 		P.toolableAnimals = nil
 		P.toolableTiles = nil
@@ -13,18 +14,21 @@ end
 
 --prioritizes animals, matters if we want a tool to work on both animals and tiles
 function P.useToolDir(toolid, dir)
+	if P.toolablePushables~=nil and P.toolablePushables[dir][1]~=nil and tools[toolid]~=nil then
+		tools[toolid]:useToolPushable(P.toolablePushables[dir][1])
+	end
 	if P.toolableAnimals ~= nil and P.toolableAnimals[dir][1] ~= nil and tools[toolid]~=nil then
 		tools[toolid]:useToolAnimal(P.toolableAnimals[dir][1])
 		return true
 	end
 	if P.toolableTiles ~= nil and P.toolableTiles[dir][1] ~= nil then
-		if room[P.toolableTiles[dir][1].y][P.toolableTiles[dir][1].x] == nil then
+		if room[P.toolableTiles[dir][1].y][P.toolableTiles[dir][1].x] == nil 
+			or room[P.toolableTiles[dir][1].y][P.toolableTiles[dir][1].x]:usableOnNothing() then
 			tools[toolid]:useToolNothing(P.toolableTiles[dir][1].y, P.toolableTiles[dir][1].x)
 		else
 			--sometimes next line has  error "attempt to index a nil value"
 			if tools[toolid]~=nil and room[P.toolableTiles[dir][1].y][P.toolableTiles[dir][1].x]~=nil then
-				tools[toolid]:useToolTile(room[P.toolableTiles[dir][1].y][P.toolableTiles[dir][1].x])
-				tools[toolid]:postUseOperation(P.toolableTiles[dir][1].y, P.toolableTiles[dir][1].x)
+				tools[toolid]:useToolTile(room[P.toolableTiles[dir][1].y][P.toolableTiles[dir][1].x], P.toolableTiles[dir][1].y, P.toolableTiles[dir][1].x)
 			end
 		end
 		return true
@@ -44,15 +48,24 @@ function P.useToolTile(toolid, tileY, tileX)
 			end
 		end
 	end
+	if P.toolablePushables ~= nil then
+		for dir = 1, 5 do
+			for i = 1, #(P.toolablePushables[dir]) do
+				if P.toolablePushables[dir][i].tileY == tileY and P.toolablePushables[dir][i].tileX == tileX then
+					tools[tool]:useToolPushable(P.toolablePushables[dir][i])
+					return true
+				end
+			end
+		end
+	end
 	if P.toolableTiles ~= nil then
 		for dir = 1, 5 do
 			for i = 1, #(P.toolableTiles[dir]) do
 				if P.toolableTiles[dir][i].y == tileY and P.toolableTiles[dir][i].x == tileX then
-					if room[tileY][tileX] == nil then
+					if room[tileY][tileX] == nil or room[tileY][tileX]:usableOnNothing() then
 						tools[tool]:useToolNothing(tileY, tileX)
 					else
-						tools[tool]:useToolTile(room[tileY][tileX])
-						tools[tool]:postUseOperation(tileY, tileX)
+						tools[tool]:useToolTile(room[tileY][tileX], tileY, tileX)
 					end
 					return true
 				end
@@ -69,6 +82,9 @@ end
 function P.tool:usableOnAnimal()
 	return false
 end
+function P.tool:usableOnPushable()
+	return false
+end
 function P.tool:usableOnNothing()
 	return false
 end
@@ -80,10 +96,10 @@ function P.tool:useToolAnimal(animal)
 	self.numHeld = self.numHeld - 1
 	animal:kill()
 end
+function P.tool:useToolPushable(pushable)
+end
 function P.tool:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld - 1
-end
-function P.tool:postUseOperation(tileY, tileX)
 end
 
 --returns a table of tables of coordinates by direction
@@ -100,8 +116,8 @@ function P.tool:getToolableTiles()
 		for dist = 1, self.range do
 			local tileToCheck = {y = player.tileY + offset.y*dist, x = player.tileX + offset.x*dist}
 			if room[tileToCheck.y]~=nil then
-				if (room[tileToCheck.y][tileToCheck.x] == nil and self:usableOnNothing())
-					or (room[tileToCheck.y][tileToCheck.x] ~= nil and self:usableOnTile(room[tileToCheck.y][tileToCheck.x], dist)) then
+				if ((room[tileToCheck.y][tileToCheck.x] == nil or room[tileToCheck.y][tileToCheck.x]:usableOnNothing()) and (tileToCheck.x>0 and tileToCheck.x<=roomLength) and self:usableOnNothing())
+				or (room[tileToCheck.y][tileToCheck.x] ~= nil and self:usableOnTile(room[tileToCheck.y][tileToCheck.x], dist)) then
 					usableTiles[dir][#(usableTiles[dir])+1] = tileToCheck
 				end
 				if room[tileToCheck.y][tileToCheck.x] ~= nil and room[tileToCheck.y][tileToCheck.x].blocksProjectiles then
@@ -215,6 +231,84 @@ function P.tool:getToolableAnimalsBox()
 	return usableAnimals
 end
 
+function P.tool:getToolablePushables()
+	local usablePushables = {}
+	local closestPushables = {{dist = 1000}, {dist = 1000}, {dist = 1000}, {dist = 1000}, {dist = 1000}}
+	for pushableIndex = 1, #pushables do
+		local pushable = pushables[pushableIndex]
+		--[[if pushable.tileY == player.tileY and pushable.tileX == player.tileX and self:usableOnpushable(pushable) then
+			usablepushables[1] = {pushable}
+			for i = 2, 4 do usablepushables[i] = usablepushables[1] end
+			return usablepushables
+		end]]
+		if self:usableOnPushable(pushable) then
+			if pushable.tileX == player.tileX and pushable.tileY == player.tileY then
+				closestPushables[5] = {dist = 0, ani = pushable}
+			else
+				if pushable.tileX == player.tileX then
+					if player.tileY > pushable.tileY then
+						if player.tileY-pushable.tileY < closestPushables[1].dist then
+							closestPushables[1] = {dist = player.tileY - pushable.tileY, ani = pushable}
+						end
+					else
+						if pushable.tileY-player.tileY < closestPushables[3].dist then
+							closestPushables[3] = {dist = pushable.tileY - player.tileY, ani = pushable}
+						end
+					end
+				elseif pushable.tileY == player.tileY then
+					if player.tileX > pushable.tileX then
+						if player.tileX - pushable.tileX < closestPushables[4].dist then
+							closestPushables[4] = {dist = player.tileX - pushable.tileX, ani = pushable}
+						end
+					else
+						if pushable.tileX - player.tileX < closestPushables[2].dist then
+							closestPushables[2] = {dist = pushable.tileX - player.tileX, ani = pushable}
+						end
+					end
+				end
+			end
+		end
+	end
+	for dir = 1, 5 do
+		usablePushables[dir] = {}
+		if closestPushables[dir].dist <= self.range then
+			local offset
+			if dir == 5 then
+				offset = {y = 0, x = 0}
+			else
+				offset = util.getOffsetByDir(dir)
+			end
+			local isBlocked = false
+			for dist = 1, closestPushables[dir].dist do
+				if room[player.tileY + offset.y*dist] ~= nil then
+					local tile = room[player.tileY + offset.y*dist][player.tileX + offset.x*dist]
+					if tile~=nil and tile.blocksProjectiles then
+						isBlocked = true
+						break
+					end
+				end
+			end
+			if not isBlocked then
+				usablePushables[dir][#(usablePushables[dir]) + 1] = closestPushables[dir].ani
+			end
+		end
+	end
+	return usablePushables
+end
+
+--for tools that can be used in more than four basic directions
+function P.tool:getToolablePushablesBox()
+	local usablePushables = {{},{},{},{},{}}
+	for pushableIndex = 1, #pushables do
+		if not pushables[pushableIndex].dead and math.abs(pushables[pushableIndex].tileY - player.tileY)+math.abs(pushables[pushableIndex].tileX - player.tileX)<=self.range then
+			if litTiles[pushables[pushableIndex].tileY][pushables[pushableIndex].tileX]~=0 then
+				usablePushables[1][#usablePushables[1]+1] = pushables[pushableIndex]
+			end
+		end
+	end
+	return usablePushables
+end
+
 P.saw = P.tool:new{name = 'saw', image = love.graphics.newImage('Graphics/saw.png')}
 function P.saw:usableOnTile(tile)
 	return tile:instanceof(tiles.wall) and not tile.destroyed and tile.sawable
@@ -235,6 +329,13 @@ function P.ladder:useToolTile(tile)
 	self.numHeld = self.numHeld - 1
 	tile:ladder()
 end
+function P.ladder:usableOnNothing()
+	return true
+end
+function P.ladder:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld - 1
+	room[tileY][tileX] = tiles.ladder:new()
+end
 
 P.wireCutters = P.tool:new{name = 'wire-cutters', image = love.graphics.newImage('Graphics/wirecutters.png')}
 function P.wireCutters:usableOnTile(tile)
@@ -243,32 +344,35 @@ end
 
 P.waterBottle = P.tool:new{name = 'water-bottle', image = love.graphics.newImage('Graphics/waterbottle.png')}
 function P.waterBottle:usableOnTile(tile)
-	if not tile.laddered then
+	if not tile.destroyed and (tile:instanceof(tiles.powerSupply) or tile:instanceof(tiles.electricFloor)) then
+		return true
+	--[[elseif not tile.laddered then
 		if tile:instanceof(tiles.breakablePit) and tile.strength == 0 then
 			return true
-		elseif (tile:instanceof(tiles.poweredFloor) and not tile.powered) or tile:instanceof(tiles.pit) then
+		elseif tile:instanceof(tiles.poweredFloor) or tile:instanceof(tiles.pit) then
 			return true
-		end
-	elseif not tile.destroyed and (tile:instanceof(tiles.powerSupply) or tile:instanceof(tiles.electricFloor)) then
-		return true
+		end]]
 	end
 	return false
+end
+function P.waterBottle:useToolTile(tile)
+	self.numHeld = self.numHeld-1
+	if not tile.destroyed and (tile:instanceof(tiles.powerSupply) or tile:instanceof(tiles.electricFloor)) then
+		tile:destroy()
+	--[[elseif not tile.laddered then
+		if tile:instanceof(tiles.breakablePit) and tile.strength == 0 then
+			tile:ladder()
+		elseif tile:instanceof(tiles.poweredFloor) or tile:instanceof(tiles.pit) then
+			tile:ladder()
+		end]]
+	end
 end
 function P.waterBottle:usableOnNothing()
 	return true
 end
 function P.waterBottle:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld - 1
-	room[tileY][tileX] = tiles.electricFloor:new()
-end
-function P.waterBottle:useToolTile(tile)
-	self.numHeld = self.numHeld - 1
-	if tile:instanceof(tiles.pit) or tile:instanceof(tiles.poweredFloor) or tile:instanceof(tiles.breakablePit) then
-		tile:ladder()
-	else
-		tile:destroy()
-	end
-
+	room[tileY][tileX] = tiles.puddle:new()
 end
 
 P.cuttingTorch = P.tool:new{name = 'cutting-torch', image = love.graphics.newImage('Graphics/cuttingtorch.png')}
@@ -282,6 +386,9 @@ function P.brick:usableOnTile(tile, dist)
 		return true
 	end
 	if not tile.destroyed and tile:instanceof(tiles.glassWall) then
+		return true
+	end
+	if tile:instanceof(tiles.mousetrap) and not tile.bricked then
 		return true
 	end
 	return false
@@ -306,8 +413,22 @@ P.gun = P.tool:new{name = 'gun', range = 3, image = love.graphics.newImage('Grap
 function P.gun:usableOnAnimal(animal)
 	return not animal.dead
 end
-
-
+function P.gun:usableOnTile(tile)
+	if tile:instanceof(tiles.wall) and not tile:instanceof(tiles.concreteWall) and not tile:instanceof(tiles.glassWall) and not tile.destroyed then
+		return true
+	elseif tile:instanceof(tiles.beggar) and tile.alive then
+		return true
+	end
+	return false
+end
+function P.gun:useToolTile(tile)
+	self.numHeld = self.numHeld-1
+	if tile:instanceof(tiles.beggar) then
+		tile:destroy()
+	else
+		tile:allowVision()
+	end
+end
 
 
 P.superTool = P.tool:new{name = 'superTool', range = 10, rarity = 1}
@@ -317,6 +438,7 @@ function P.shovel:usableOnNothing()
 	return true
 end
 function P.shovel:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
 	room[tileY][tileX] = tiles.pit:new()
 end
 
@@ -435,6 +557,7 @@ function P.meat:usableOnNothing()
 	return true
 end
 function P.meat:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
 	room[tileY][tileX] = tiles.meat:new()
 end
 function P.meat:usableOnTile(tile)
@@ -462,13 +585,84 @@ P.woodGrabber = P.superTool:new{name = "woodGrabber", range = 1, image = love.gr
 function P.woodGrabber:usableOnTile(tile)
 	return tile:instanceof(tiles.wall) and tile.destroyed
 end
-function P.woodGrabber:useToolTile(tile)
+function P.woodGrabber:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld-1
 	P.ladder.numHeld = P.ladder.numHeld+2
-end
-function P.woodGrabber:postUseOperation(tileY, tileX)
 	room[tileY][tileX] = nil
 end
+
+P.pitbullChanger = P.tool:new{name = "pitbullChanger", range = 3, image = love.graphics.newImage('Graphics/pitbullChanger.png')}
+function P.pitbullChanger:usableOnAnimal(animal)
+	return not animal.dead and animal:instanceof(animalList.pitbull)
+end
+function P.pitbullChanger:useToolAnimal(animal)
+	self.numHeld = self.numHeld-1
+	for i = 1, #animals do
+		if animal.tileX == animals[i].tileX and animal.tileY == animals[i].tileY then
+			animals[i] = animalList.pup:new()
+			animals[i].tileX = animal.tileX
+			animals[i].tileY = animal.tileY
+			animals[i].prevTileX = animal.prevTileX
+			animals[i].prevTileY = animal.prevTileY
+			animals[i].x = animal.x
+			animals[i].prevx = animal.prevx
+			animals[i].y = animal.y
+			animals[i].prevy = animal.y
+		end
+	end
+end
+
+P.sponge = P.tool:new{name = "sponge", range = 1, image = love.graphics.newImage('Graphics/sponge.png')}
+function P.sponge:usableOnTile(tile)
+	if tile:instanceof(tiles.dustyGlassWall) and tile.blocksVision then
+		return true
+	elseif tile:instanceof(tiles.puddle) then return true
+	elseif tile:instanceof(tiles.stickyButton) then return true end
+	return false
+end
+function P.sponge:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld - 1
+	if tile:instanceof(tiles.dustyGlassWall) then
+		tile.blocksVision = false
+		tile.sprite = tile.cleanSprite
+	elseif tile:instanceof(tiles.puddle) then
+		room[tileY][tileX] = nil
+	elseif tile:instanceof(tiles.stickyButton) then
+		local down = tile.down
+		room[tileY][tileX] = tiles.button:new()
+	end
+end
+
+P.rotater = P.tool:new{name = "rotater", range = 1, image = love.graphics.newImage('Graphics/rotatetool.png')}
+function P.rotater:usableOnTile(tile)
+	return true
+end
+function P.rotater:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
+	tile:rotate(1)
+end
+
+P.trap = P.tool:new{name = "trap", range = 1, image = love.graphics.newImage('Graphics/trap.png')}
+function P.trap:usableOnNothing()
+	return true
+end
+function P.trap:useToolNothing(tileY, tileX)
+	room[tileY][tileX] = tiles.trap:new()
+end
+
+P.boxCutter = P.tool:new{name = "boxCutter", range = 1, image = love.graphics.newImage('Graphics/boxcutter.png')}
+function P.boxCutter:usableOnPushable(pushable)
+	return true
+end
+function P.boxCutter:useToolPushable(pushable)
+	self.numHeld = self.numHeld - 1
+	pushable.destroyed = true
+	for i = 1, 3 do
+		local slot = math.floor(math.random()*tools.numNormalTools)+1
+		tools[slot].numHeld = tools[slot].numHeld+1
+	end
+end
+
 
 P.numNormalTools = 7
 
@@ -476,7 +670,7 @@ P[1] = P.saw
 P[2] = P.ladder
 P[3] = P.wireCutters
 P[4] = P.waterBottle
-P[5] = P.meat
+P[5] = P.sponge
 P[6] = P.brick
 P[7] = P.gun
 P[8] = P.crowbar
@@ -491,5 +685,10 @@ P[16] = P.missile
 P[17] = P.shovel
 P[18] = P.woodGrabber
 P[19] = P.corpseGrabber
+P[20] = P.pitbullChanger
+P[21] = P.meat
+P[22] = P.rotater
+P[23] = P.trap
+P[24] = P.boxCutter
 
 return tools

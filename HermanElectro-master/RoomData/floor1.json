@@ -6,7 +6,15 @@
 			"filePath": "RoomData/rooms.json",
 			"requirements":
 			{
-
+				//"tilesWhitelist": [3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 15, 16, 17, 18, 19, 20, 21, 24, 25, 31, 32, 40],
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
+				}
 			}
 		},
 		"treasureRooms": 
@@ -25,11 +33,19 @@
 				
 			}
 		},
+		"donationRooms":
+		{
+			"filePath": "RoomData/donationrooms.json",
+			"requirements":
+			{
+				
+			}
+		}
 	},
 	"data":
 	{
-		"height": 3,
-		"numRooms": 3,
+		"height": 6,
+		"numRooms": 6,
 		"generateFunction": "generateMapStandard",
 		"startRoomID": "1"
 	}

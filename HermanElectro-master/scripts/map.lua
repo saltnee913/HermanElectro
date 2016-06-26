@@ -13,38 +13,134 @@ local MapInfo = Object:new{floor = 1, height = 0, numRooms = 0}
 
 function P.loadFloor(inFloorFile)
 	local floorData = util.readJSON(inFloorFile)
-	P.floorInfo = {rooms = {}}
+	P.floorInfo = {rooms = {}, roomsArray = {}}
 	for k, v in pairs(floorData.data) do
 		P.floorInfo[k] = v
 	end
 	local loadRooms = floorData.loadRooms
 	for k, v in pairs(loadRooms) do
-		local roomsData = util.readJSON(v.filePath)
+		local roomsData, roomsArray = util.readJSON(v.filePath, true)
 		P.floorInfo.rooms[k] = roomsData.rooms
 		P.filterRoomSet(P.floorInfo.rooms[k], v.requirements)
+		for i = 1, #roomsArray do
+			if P.floorInfo.rooms[k][roomsArray[i]] ~= nil then
+				P.floorInfo.roomsArray[#(P.floorInfo.roomsArray)+1] = roomsArray[i]
+			end
+		end
+		local amt = 0
 		for k1, v1 in pairs(P.floorInfo.rooms[k]) do
 			if roomsData.superFields ~= nil then
 				for k2, v2 in pairs(roomsData.superFields) do
 					if v1[k2] == nil then v1[k2] = v2 end
 				end
 			end
+			amt = amt + 1
+		end
+		print(k..': '..amt)
+	end
+end
+
+function P.getNextRoom(roomid)
+	local roomsArray = P.floorInfo.roomsArray
+	for i = 1, #roomsArray-1 do
+		if roomsArray[i] == roomid then
+			return roomsArray[i+1]
 		end
 	end
+	return roomid
+end
+function P.getPrevRoom(roomid)
+	local roomsArray = P.floorInfo.roomsArray
+	for i = 2, #roomsArray do
+		if roomsArray[i] == roomid then
+			return roomsArray[i-1]
+		end
+	end
+	return roomid
 end
 
 function P.filterRoomSet(arr, requirements)
 	for k, v in pairs(arr) do
-		if not P.roomMeetsRequirements(v) then
+		if not P.roomMeetsRequirements(v, requirements) then
 			arr[k] = nil
 		end
 	end
 end
 
-function P.roomMeetsRequirements(roomData, requirements)
+local function tilesWhitelistHelper(arr, tiles)
+	for i = 1, #arr do
+		for j = 1, #(arr[i]) do
+			if not util.deepContains(tiles, arr[i][j], true) and arr[i][j] ~= 0 and arr[i][j] ~= nil then
+				return false
+			end
+		end
+	end
 	return true
 end
 
+local function requirementsHelper(roomData, key, value)
+	if key == 'and' then
+		for k, v in pairs(value) do
+			if not requirementsHelper(roomData, k, v) then
+				return false
+			end
+		end
+		return true
+	elseif key == 'or' then
+		for k, v in pairs(value) do
+			if requirementsHelper(roomData, k, v) then
+				return true
+			end
+		end
+		return false
+	elseif key == 'not' then
+		return not requirementsHelper(roomData, 'and', value)
+	elseif key == 'contains' then
+		return util.deepContains(roomData[value.table], value.value)
+	elseif key == 'equals' then
+		return roomData[value.key] == value.value
+	elseif key == 'greater' then
+		return roomData[value.key] > value.value
+	elseif key == 'less' then
+		return roomData[value.key] < value.value
+	elseif key == 'containsTile' then
+		return util.deepContains(roomData.layout, value, true) or util.deepContains(roomData.layouts, value, true)
+	elseif key == 'tilesWhitelist' then
+		if roomData.layout == nil then
+			for i = 1, #roomData.layouts do
+				if not tilesWhitelistHelper(roomData.layouts[i], value) then
+					return false
+				end
+			end
+			return true
+		else
+			return tilesWhitelistHelper(roomData.layout, value)
+		end
+	elseif key == 'hasKey' then
+		return roomData[value] ~= nil
+	elseif key == 'solvableWithTools' then
+		for i = 1, #roomData.itemsNeeded do
+			local works = true
+			for j = 1, #(roomData.itemsNeeded[i]) do
+				if roomData.itemsNeeded[i][j] > value[j] then
+					works = false
+				end
+			end
+			if works then return true end
+		end
+		return false
+	end
+	return true
+end
+
+
+function P.roomMeetsRequirements(roomData, requirements)
+	if requirements == nil then return true end
+	return requirementsHelper(roomData, 'and', requirements)
+end
+
 function P.createRoom(inRoom, arr)
+	if inRoom == nil then inRoom = '1' end
 	if arr == nil then
 		for k, v in pairs(P.floorInfo.rooms) do
 			if v[inRoom] ~= nil then
@@ -59,6 +155,8 @@ function P.createRoom(inRoom, arr)
 	roomToLoad = (roomToLoad ~= nil) and roomToLoad 
 		or arr[inRoom].layouts[math.floor(math.random()*#(arr[inRoom].layouts))+1]
 	local loadedRoom = {}
+	loadedRoom.height = #roomToLoad
+	loadedRoom.length = #roomToLoad[1]
 	for i = 1, #roomToLoad do
 		loadedRoom[i] = {}
 		for j = 1, #(roomToLoad[i]) do
@@ -121,6 +219,19 @@ function P.generateMap(seed)
 	return P[P.floorInfo.generateFunction]()
 end
 
+local function canPlaceRoom(dirEnters, map, mapx, mapy)
+	if dirEnters == nil then return true end
+	for i = 1, 4 do
+		if dirEnters[i] == 1 then
+			local offset = util.getOffsetByDir(i)
+			if map[mapy + offset.y][mapx + offset.x] ~= nil then
+				return true
+			end
+		end
+	end
+	return false
+end
+
 function P.generateMapStandard()
 	local height = P.floorInfo.height
 	local numRooms = P.floorInfo.numRooms
@@ -134,7 +245,12 @@ function P.generateMapStandard()
 	newmap.initialX = math.floor(height/2)
 	treasureX = 0
 	treasureY = 0
-	local randomRoomArray = util.createRandomKeyArray(P.floorInfo.rooms.rooms)
+	donationX = 0
+	donationY = 0
+	local blacklist = {startRoomID}
+	local randomRoomArray = util.createRandomKeyArray(P.floorInfo.rooms.rooms, blacklist)
+	local skippedRooms = {}
+	local skippedRoomsIndex = 1
 	for i = 0, numRooms-1 do
 		available = {}
 		local a = 0
@@ -163,7 +279,14 @@ function P.generateMapStandard()
 						works = true
 						if i == numRooms - 1 then
 							if (j+1 == treasureY and k == treasureX) or (j-1 == treasureY and k == treasureX)
-							or (j == treasureY and k+1 == treasureX) or (j == treasureY and k-1 == treasureX) then
+							or (j == treasureY and k+1 == treasureX) or (j == treasureY and k-1 == treasureX)
+							or (j+1 == donationY and k == donationX) or (j-1 == donationY and k == donationX)
+							or (j == donationY and k+1 == donationX) or (j == donationY and k-1 == donationX) then
+								works = false
+							end
+						elseif i == numRooms - 2 then
+							if (j+1 == donationY and k == donationX) or (j-1 == donationY and k == donationX)
+							or (j == donationY and k+1 == donationX) or (j == donationY and k-1 == donationX) then
 								works = false
 							end
 						end
@@ -180,15 +303,37 @@ function P.generateMapStandard()
 		local choice = available[math.floor(math.random()*a)]
 		--local roomNum = math.floor(math.random()*#(P.rooms)) -- what we will actually do, with some editing
 		arr = P.floorInfo.rooms.rooms
-		local roomid = randomRoomArray[i+2]
+		local roomid = randomRoomArray[i+skippedRoomsIndex]
+		local loadedRoom = P.createRoom(roomid, arr)
+		if skippedRooms[skippedRoomsIndex] ~= nil then
+			roomid = skippedRooms[skippedRoomsIndex]
+			loadedRoom = P.createRoom(roomid, arr)
+			skippedRoomsIndex = skippedRoomsIndex + 1
+		end
+		local skipped = 1
+		while(not canPlaceRoom(arr[roomid].dirEnter, newmap, choice.y, choice.x)) do
+			skippedRooms[#skippedRooms+1] = randomRoomArray[i+2+skippedRoomsIndex+skipped-1]
+			roomid = randomRoomArray[i+2+skippedRoomsIndex+skipped]
+			if roomid == nil then roomid = '1' end
+			loadedRoom = P.createRoom(roomid, arr)
+			skipped = skipped + 1
+		end
 		if i == numRooms-2 then
 			arr = P.floorInfo.rooms.treasureRooms
 			roomid = util.chooseRandomKey(arr)
+			loadedRoom = P.createRoom(roomid, arr)
 			treasureX = choice.y
 			treasureY = choice.x
 		elseif i == numRooms-1 then
 			arr = P.floorInfo.rooms.finalRooms
 			roomid = util.chooseRandomKey(arr)
+			loadedRoom = P.createRoom(roomid, arr)
+		elseif i == numRooms-3 then
+			arr = P.floorInfo.rooms.donationRooms
+			roomid = util.chooseRandomKey(arr)
+			loadedRoom = P.createRoom(roomid, arr)
+			donationX = choice.y
+			donationY = choice.x
 		end
 		newmap[choice.x][choice.y] = {roomid = roomid, room = P.createRoom(roomid, arr), isFinal = false, isInitial = false}
 	end

@@ -4,6 +4,8 @@ tools = require('scripts.tools')
 
 P.stealInput = false
 
+roomsDesigned = 0
+
 function P.draw()
 	barLength = 660
 	love.graphics.setColor(255,255,255)
@@ -28,6 +30,20 @@ end
 
 function P.keypressed(key, unicode)
 	if key=="p" then
+		savedRoom = {}
+		for i = 1, roomHeight do
+			savedRoom[i] = {}
+			for j = 1, roomLength do
+				savedRoom[i][j] = room[i][j]
+			end
+		end
+		savedAnimals = {}
+		for i = 1, animalCounter - 1 do
+			savedAnimals[i] = animals[i]
+		end
+		print("\"name\":")
+		print("{")
+		print("\"layout\":")
 		print("[")
 		for i = 1, roomHeight do
 			prt = "["
@@ -56,14 +72,19 @@ function P.keypressed(key, unicode)
 			prt = prt.."]"
 			print(prt)
 		end
+		print("],")
+		print("\"itemsNeeded\":")
+		print("[")
+		print("[saws, ladders, wireCutters, waterBottles, meats, bricks, guns]")
 		print("]")
+		print("},\n")
 	end
 	if key=='tab' then
 		roomHack = mainMap[mapy][mapx].roomid .. ''
 		P.stealInput = true
 		log('Room Hack: '..roomHack)
 	end
-	if key == 'r' then
+	if key == 'c' then
 		for i = 1, roomHeight do
     		for j = 1, roomLength do
     			room[i][j] = nil
@@ -71,10 +92,13 @@ function P.keypressed(key, unicode)
     	end
     	animals = {}
     	animalCounter = 1
+    	pushables = {}
     end
 	if key == "z" and prevRoom~=nil then
     	room = prevRoom
-    	animals = prevAnimals
+    	if prevAnimals~=nil then
+    		animals = prevAnimals
+    	end
     	animalCounter = 1
     	for i = 1, 100 do
     		if animals[i]~=nil then
@@ -89,12 +113,32 @@ function P.keypressed(key, unicode)
 		--[[for i = 1, 3 do
 			tools[i+7].numHeld = tools[i+7].numHeld+1
 		end]]
-	end
+	elseif key == "b" then
+		roomsDesigned = roomsDesigned+1
+		print("\n\n---End of Room "..roomsDesigned.."---\n\n")
+	elseif key == "r" and savedRoom~=nil then
+		room = savedRoom
+    	animals = savedAnimals
+    	animalCounter = 1
+    	for i = 1, 100 do
+    		if animals[i]~=nil then
+    			animalCounter = animalCounter+1
+    		end
+    	end
+    end
 end
 
 function P.inputSteal(key, unicode)
 	if key=='backspace' then
 		roomHack = roomHack:sub(1, -2)
+		log('Room Hack: '..roomHack)
+	end
+	if key=='right' then
+		roomHack = map.getNextRoom(roomHack)
+		log('Room Hack: '..roomHack)
+	end
+	if key == 'left' then
+		roomHack = map.getPrevRoom(roomHack)
 		log('Room Hack: '..roomHack)
 	end
 	if key=='return' then
@@ -144,7 +188,7 @@ function P.mousepressed(x, y, button, istouch)
 	elseif tempAdd>0 and tileLocX>=1 and tileLocX<=24 and tileLocY>=1 and tileLocY<=12 then
 		if(room[tileLocY][tileLocX] ~= nil and room[tileLocY][tileLocX].name == tiles[tempAdd].name) then
 			room[tileLocY][tileLocX]:rotate(1)
-		else
+		elseif tiles[tempAdd]~=nil then
 			room[tileLocY][tileLocX] = tiles[tempAdd]:new()
 		end
 		for i = 1, animalCounter-1 do
@@ -156,7 +200,18 @@ function P.mousepressed(x, y, button, istouch)
 				animalCounter = animalCounter-1
 			end
 		end
-		if tiles[tempAdd].animal~=nil then
+
+		local pushableLen = #pushables
+		for i = 1, pushableLen do
+			if pushables[i]~=nil and pushables[i].tileX == tileLocX and pushables[i].tileY == tileLocY then
+				pushables[i] = nil
+				for j = i+1, pushableLen+1 do
+					pushables[j-1] = pushables[j]
+				end
+			end
+		end
+
+		if tiles[tempAdd]~=nil and tiles[tempAdd].animal~=nil then
 			animalToSpawn = room[tileLocY][tileLocX].animal
 			if not animalToSpawn.dead then
 				animals[animalCounter] = animalList[tiles[tempAdd].listIndex]:new()
@@ -167,13 +222,21 @@ function P.mousepressed(x, y, button, istouch)
 				animalCounter = animalCounter+1
 			end
 		end
+
+		if tiles[tempAdd]~=nil and tiles[tempAdd].pushable~=nil then
+			pushables[#pushables+1] = pushableList[tiles[tempAdd].listIndex]:new()
+			pushables[#pushables].tileX = tileLocX
+			pushables[#pushables].tileY = tileLocY
+			pushables[#pushables].prevTileX = pushables[#pushables].tileX
+			pushables[#pushables].prevTileY = pushables[#pushables].tileY
+		end
 		
 		updateGameState()
 	end
 end
 
 function P.mousemoved(x, y, dx, dy)
-	if mouseDown > 0 and tempAdd>0 and tileLocX>=1 and tileLocX<=24 and tileLocY>=1 and tileLocY<=12 then
+	if mouseDown > 0 and tempAdd>0 and tiles[tempAdd]~=nil and tileLocX>=1 and tileLocX<=24 and tileLocY>=1 and tileLocY<=12 then
 		room[tileLocY][tileLocX] = tiles[tempAdd]:new()
 		
 		updateGameState()
