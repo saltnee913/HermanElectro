@@ -253,7 +253,7 @@ end
 P.stickyButton.onEnterAnimal = P.stickyButton.onEnter
 P.stickyButton.onLeaveAnimal = P.stickyButton.onLeave
 
-P.stayButton = P.button:new{name = "stayButton"}
+P.stayButton = P.button:new{name = "stayButton", sprite = love.graphics.newImage('Graphics/staybutton.png')}
 function P.stayButton:onEnter(player)
 	self.justPressed = true
 	if self.bricked then return end

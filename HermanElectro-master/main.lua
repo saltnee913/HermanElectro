@@ -833,7 +833,7 @@ function createAnimals()
 					animals[animalCounter].prevTileX = j
 					animals[animalCounter].prevTileY = i
 					animalCounter=animalCounter+1
-					room[i][j] = nil
+					--room[i][j] = nil
 				end
 			end
 		end

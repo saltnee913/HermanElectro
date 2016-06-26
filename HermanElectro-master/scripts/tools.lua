@@ -689,6 +689,6 @@ P[20] = P.pitbullChanger
 P[21] = P.meat
 P[22] = P.rotater
 P[23] = P.trap
-P[2] = P.boxCutter
+P[24] = P.boxCutter
 
 return tools
