@@ -1128,6 +1128,9 @@ function love.keypressed(key, unicode)
 						room[animals[i].tileY][animals[i].tileX]:onEnterAnimal(animals[i])
 					end
 				end
+				if animals[i].waitCounter>0 then
+					animals[i].waitCounter = animals[i].waitCounter-1
+				end
 			end
 			stepTrigger()
 			updateGameState()
