@@ -42,6 +42,8 @@ end
 function P.animal:primaryMove()
 	local diffx = math.abs(player.tileX - self.tileX)
 	local diffy = math.abs(player.tileY - self.tileY)
+	print(diffx.."   "..diffy)
+	print(player.tileX.."   "..self.tileY)
 
 	if diffx>diffy then
 		if player.tileX>self.tileX then

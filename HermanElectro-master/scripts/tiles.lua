@@ -957,7 +957,7 @@ P.ladder = P.tile:new{name = "ladder", sprite = love.graphics.newImage('Graphics
 
 P.mousetrapOff = P.mousetrap:new{safe = true, sprite = love.graphics.newImage('Graphics/mousetrapsafe.png')}
 
-P.donationMachine = P.tile:new{sprite = love.graphics.newImage('Graphics/donationmachine.png')}
+P.donationMachine = P.tile:new{name = "donationMachine", sprite = love.graphics.newImage('Graphics/donationmachine.png')}
 function P.donationMachine:getInfoText()
 	return donations
 end
