@@ -188,7 +188,7 @@ function P.button:onEnter(player)
 		else
 			self.dirAccept = {1,1,1,1}
 		end
-		----updateGameState()
+		--updateGameState()
 		self:updateSprite()
 		--self.name = "onbutton"
 	end
@@ -199,7 +199,7 @@ function P.button:lockInState(state)
 	self.dirAccept = state and {1,1,1,1} or {0,0,0,0}
 	self.dirSend = state and {1,1,1,1} or {0,0,0,0}
 	self.canBePowered = state
-	----updateGameState()
+	--updateGameState()
 	self:updateSprite()
 end
 function P.button:onLeave(player)
@@ -255,6 +255,7 @@ P.stickyButton.onLeaveAnimal = P.stickyButton.onLeave
 
 P.stayButton = P.button:new{name = "stayButton"}
 function P.stayButton:onEnter(player)
+	self.justPressed = true
 	if self.bricked then return end
 	self.down = true
 	self.dirAccept = {1,1,1,1}
@@ -263,10 +264,13 @@ function P.stayButton:onEnter(player)
 end
 function P.stayButton:onLeave(player)
 	if self.bricked then return end
-	self.down = false
-	self.dirAccept = {0,0,0,0}
-	--updateGameState()
-	self:updateSprite()
+	if not self.justPressed then
+		self.down = false
+		self.dirAccept = {0,0,0,0}
+		--updateGameState()
+		self:updateSprite()
+	end
+	self.justPressed = true
 end
 P.stayButton.onEnterAnimal = P.stayButton.onEnter
 P.stayButton.onLeaveAnimal = P.stayButton.onLeave
@@ -1025,7 +1029,7 @@ function P.powerTriggeredBomb:onEnter(player)
 end
 P.powerTriggeredBomb.onEnterAnimal = P.powerTriggeredBomb.onEnter
 
-P.boxTile = P.tile:new{name = "boxTile", pushable = pushableList[2]:new(), listIndex = 2}
+P.boxTile = P.tile:new{name = "boxTile", pushable = pushableList[2]:new(), listIndex = 2, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
 
 P.gate = P.conductiveTile:new{name = "gate", dirSend = {0,0,0,0}, sprite = love.graphics.newImage('Graphics/gate.png'), poweredSprite = love.graphics.newImage('Graphics/gate.png')}
 function P.gate:onEnter(player)
