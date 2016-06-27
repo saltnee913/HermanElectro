@@ -19,6 +19,8 @@ loadedOnce = false
 
 
 function love.load()
+	gameTime = 0
+
 	typingCallback = nil
 	debugText = nil
 	tempAdd = 1
@@ -620,6 +622,19 @@ function love.draw()
 			end
 		end
 	end
+	if tools.toolablePushables~=nil then
+		for dir = 1, 5 do
+			if tools.toolablePushables[dir]~=nil then
+				for i = 1, #(tools.toolablePushables[dir]) do
+					local tx = tools.toolablePushables[dir][i].tileX
+					local ty = tools.toolablePushables[dir][i].tileY
+					if dir == 1 or tools.toolablePushables[1][1] == nil or not (tx == tools.toolablePushables[1][1].tileX and ty == tools.toolablePushables[1][1].tileY) then
+						love.graphics.draw(green, (tx-1)*floor.sprite:getWidth()*scale+wallSprite.width, (ty-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
+					end
+				end
+			end
+		end
+	end
 	if tools.toolableTiles~=nil then
 		for dir = 1, 5 do
 			for i = 1, #(tools.toolableTiles[dir]) do
@@ -654,6 +669,7 @@ function love.draw()
 	player.y = (player.tileY-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
 	love.graphics.draw(player.sprite, player.x-player.sprite:getWidth()*player.scale/2, player.y-player.sprite:getHeight()*player.scale, 0, player.scale, player.scale)
 	love.graphics.print(player:getTileLoc().x .. ":" .. player:getTileLoc().y, 0, 0);
+	love.graphics.print(math.floor(gameTime), width/2-10, 20);
 	for i = 0, mapHeight do
 		for j = 0, mapHeight do
 			if visibleMap[i][j] == 1 then
@@ -802,6 +818,7 @@ end
 
 function createAnimals()
 	animalCounter = 1
+	--if room.animals~=nil then animals = room.animals return end
 	animals = {}
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
@@ -816,6 +833,7 @@ function createAnimals()
 					animals[animalCounter].prevTileX = j
 					animals[animalCounter].prevTileY = i
 					animalCounter=animalCounter+1
+					--room[i][j] = nil
 				end
 			end
 		end
@@ -823,23 +841,32 @@ function createAnimals()
 end
 
 function createPushables()
+	if room.pushables~=nil then pushables = room.pushables return end
 	pushables = {}
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
 			if room[i]~=nil and room[i][j]~=nil and room[i][j].name~=nil and room[i][j].pushable~=nil then
 				pushableToSpawn = pushableList[room[i][j].listIndex]:new()
-				index = #pushables+1
-				pushables[index] = pushableToSpawn
-				pushables[index].tileY = i
-				pushables[index].tileX = j
-				pushables[index].prevTileX = pushables[index].tileX
-				pushables[index].prevTileY = pushables[index].tileY
+				--pushableToSpawn = room[i][j].pushable
+				if not pushableToSpawn.destroyed then
+					index = #pushables+1
+					pushables[index] = pushableToSpawn
+					pushables[index].tileY = i
+					pushables[index].tileX = j
+					pushables[index].prevTileX = pushables[index].tileX
+					pushables[index].prevTileY = pushables[index].tileY
+				end
+				room[i][j]=nil
 			end
 		end
 	end
 end
 
 function enterRoom(dir)
+	--set pushables of prev. room to pushables array, saving for next entry
+	room.pushables = pushables
+	room.animals = animals
+
 	prevMapX = mapx
 	prevMapY = mapy
 	if dir == 0 then
@@ -945,6 +972,7 @@ end
 keyTimer = {base = .05, timeLeft = .05}
 function love.update(dt)
 	keyTimer.timeLeft = keyTimer.timeLeft - dt
+	gameTime = gameTime+dt
 end
 
 function love.textinput(text)
@@ -1127,6 +1155,9 @@ function love.keypressed(key, unicode)
 					if room[animals[i].tileY][animals[i].tileX]~=nil then
 						room[animals[i].tileY][animals[i].tileX]:onEnterAnimal(animals[i])
 					end
+				end
+				if animals[i].waitCounter>0 then
+					animals[i].waitCounter = animals[i].waitCounter-1
 				end
 			end
 			stepTrigger()

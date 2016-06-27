@@ -32,6 +32,14 @@
 				
 			}
 		},
+		"donationRooms":
+		{
+			"filePath": "RoomData/donationrooms.json",
+			"requirements":
+			{
+				
+			}
+		}
 	},
 	"data":
 	{

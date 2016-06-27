@@ -188,7 +188,7 @@ function P.button:onEnter(player)
 		else
 			self.dirAccept = {1,1,1,1}
 		end
-		----updateGameState()
+		--updateGameState()
 		self:updateSprite()
 		--self.name = "onbutton"
 	end
@@ -199,7 +199,7 @@ function P.button:lockInState(state)
 	self.dirAccept = state and {1,1,1,1} or {0,0,0,0}
 	self.dirSend = state and {1,1,1,1} or {0,0,0,0}
 	self.canBePowered = state
-	----updateGameState()
+	--updateGameState()
 	self:updateSprite()
 end
 function P.button:onLeave(player)
@@ -253,8 +253,9 @@ end
 P.stickyButton.onEnterAnimal = P.stickyButton.onEnter
 P.stickyButton.onLeaveAnimal = P.stickyButton.onLeave
 
-P.stayButton = P.button:new{name = "stayButton"}
+P.stayButton = P.button:new{name = "stayButton", sprite = love.graphics.newImage('Graphics/staybutton.png')}
 function P.stayButton:onEnter(player)
+	self.justPressed = true
 	if self.bricked then return end
 	self.down = true
 	self.dirAccept = {1,1,1,1}
@@ -263,10 +264,13 @@ function P.stayButton:onEnter(player)
 end
 function P.stayButton:onLeave(player)
 	if self.bricked then return end
-	self.down = false
-	self.dirAccept = {0,0,0,0}
-	--updateGameState()
-	self:updateSprite()
+	if not self.justPressed then
+		self.down = false
+		self.dirAccept = {0,0,0,0}
+		--updateGameState()
+		self:updateSprite()
+	end
+	self.justPressed = true
 end
 P.stayButton.onEnterAnimal = P.stayButton.onEnter
 P.stayButton.onLeaveAnimal = P.stayButton.onLeave
@@ -957,7 +961,7 @@ P.ladder = P.tile:new{name = "ladder", sprite = love.graphics.newImage('Graphics
 
 P.mousetrapOff = P.mousetrap:new{safe = true, sprite = love.graphics.newImage('Graphics/mousetrapsafe.png')}
 
-P.donationMachine = P.tile:new{sprite = love.graphics.newImage('Graphics/donationmachine.png')}
+P.donationMachine = P.tile:new{name = "donationMachine", sprite = love.graphics.newImage('Graphics/donationmachine.png')}
 function P.donationMachine:getInfoText()
 	return donations
 end
@@ -1025,7 +1029,7 @@ function P.powerTriggeredBomb:onEnter(player)
 end
 P.powerTriggeredBomb.onEnterAnimal = P.powerTriggeredBomb.onEnter
 
-P.boxTile = P.tile:new{name = "boxTile", pushable = pushableList[2]:new(), listIndex = 2}
+P.boxTile = P.tile:new{name = "boxTile", pushable = pushableList[2]:new(), listIndex = 2, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
 
 P.gate = P.conductiveTile:new{name = "gate", dirSend = {0,0,0,0}, sprite = love.graphics.newImage('Graphics/gate.png'), poweredSprite = love.graphics.newImage('Graphics/gate.png')}
 function P.gate:onEnter(player)
@@ -1051,6 +1055,18 @@ end
 P.puddle.willKillAnimal = P.puddle.willKillPlayer
 
 P.dustyGlassWall = P.glassWall:new{name = "dustyGlassWall", blocksVision = true, sprite = love.graphics.newImage('Graphics/dustyglass.png'), cleanSprite = love.graphics.newImage('Graphics/glass.png')}
+
+P.trap = P.tile:new{name = "trap", triggered = false, sprite = love.graphics.newImage('Graphics/trap.png')}
+function P.trap:onEnter(player)
+	if self.triggered then return end
+	self.triggered = true
+	kill()
+end
+function P.trap:onEnterAnimal(animal)
+	if self.triggered or animal.flying then return end
+	self.triggered = true
+	animal:kill()
+end
 
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
@@ -1124,5 +1140,6 @@ tiles[69] = P.playerBoxTile
 tiles[70] = P.animalBoxTile
 tiles[71] = P.puddle
 tiles[72] = P.dustyGlassWall
+tiles[73] = P.trap
 
 return tiles

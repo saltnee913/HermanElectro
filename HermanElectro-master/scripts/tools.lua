@@ -5,6 +5,7 @@ function P.updateToolableTiles(toolid)
 	if toolid ~= 0 then
 		P.toolableAnimals = tools[toolid]:getToolableAnimals()
 		P.toolableTiles = tools[toolid]:getToolableTiles()
+		P.toolablePushables = tools[toolid]:getToolablePushables()
 	else
 		P.toolableAnimals = nil
 		P.toolableTiles = nil
@@ -13,6 +14,9 @@ end
 
 --prioritizes animals, matters if we want a tool to work on both animals and tiles
 function P.useToolDir(toolid, dir)
+	if P.toolablePushables~=nil and P.toolablePushables[dir][1]~=nil and tools[toolid]~=nil then
+		tools[toolid]:useToolPushable(P.toolablePushables[dir][1])
+	end
 	if P.toolableAnimals ~= nil and P.toolableAnimals[dir][1] ~= nil and tools[toolid]~=nil then
 		tools[toolid]:useToolAnimal(P.toolableAnimals[dir][1])
 		return true
@@ -44,6 +48,16 @@ function P.useToolTile(toolid, tileY, tileX)
 			end
 		end
 	end
+	if P.toolablePushables ~= nil then
+		for dir = 1, 5 do
+			for i = 1, #(P.toolablePushables[dir]) do
+				if P.toolablePushables[dir][i].tileY == tileY and P.toolablePushables[dir][i].tileX == tileX then
+					tools[tool]:useToolPushable(P.toolablePushables[dir][i])
+					return true
+				end
+			end
+		end
+	end
 	if P.toolableTiles ~= nil then
 		for dir = 1, 5 do
 			for i = 1, #(P.toolableTiles[dir]) do
@@ -68,6 +82,9 @@ end
 function P.tool:usableOnAnimal()
 	return false
 end
+function P.tool:usableOnPushable()
+	return false
+end
 function P.tool:usableOnNothing()
 	return false
 end
@@ -78,6 +95,8 @@ end
 function P.tool:useToolAnimal(animal)
 	self.numHeld = self.numHeld - 1
 	animal:kill()
+end
+function P.tool:useToolPushable(pushable)
 end
 function P.tool:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld - 1
@@ -210,6 +229,84 @@ function P.tool:getToolableAnimalsBox()
 		end
 	end
 	return usableAnimals
+end
+
+function P.tool:getToolablePushables()
+	local usablePushables = {}
+	local closestPushables = {{dist = 1000}, {dist = 1000}, {dist = 1000}, {dist = 1000}, {dist = 1000}}
+	for pushableIndex = 1, #pushables do
+		local pushable = pushables[pushableIndex]
+		--[[if pushable.tileY == player.tileY and pushable.tileX == player.tileX and self:usableOnpushable(pushable) then
+			usablepushables[1] = {pushable}
+			for i = 2, 4 do usablepushables[i] = usablepushables[1] end
+			return usablepushables
+		end]]
+		if self:usableOnPushable(pushable) then
+			if pushable.tileX == player.tileX and pushable.tileY == player.tileY then
+				closestPushables[5] = {dist = 0, ani = pushable}
+			else
+				if pushable.tileX == player.tileX then
+					if player.tileY > pushable.tileY then
+						if player.tileY-pushable.tileY < closestPushables[1].dist then
+							closestPushables[1] = {dist = player.tileY - pushable.tileY, ani = pushable}
+						end
+					else
+						if pushable.tileY-player.tileY < closestPushables[3].dist then
+							closestPushables[3] = {dist = pushable.tileY - player.tileY, ani = pushable}
+						end
+					end
+				elseif pushable.tileY == player.tileY then
+					if player.tileX > pushable.tileX then
+						if player.tileX - pushable.tileX < closestPushables[4].dist then
+							closestPushables[4] = {dist = player.tileX - pushable.tileX, ani = pushable}
+						end
+					else
+						if pushable.tileX - player.tileX < closestPushables[2].dist then
+							closestPushables[2] = {dist = pushable.tileX - player.tileX, ani = pushable}
+						end
+					end
+				end
+			end
+		end
+	end
+	for dir = 1, 5 do
+		usablePushables[dir] = {}
+		if closestPushables[dir].dist <= self.range then
+			local offset
+			if dir == 5 then
+				offset = {y = 0, x = 0}
+			else
+				offset = util.getOffsetByDir(dir)
+			end
+			local isBlocked = false
+			for dist = 1, closestPushables[dir].dist do
+				if room[player.tileY + offset.y*dist] ~= nil then
+					local tile = room[player.tileY + offset.y*dist][player.tileX + offset.x*dist]
+					if tile~=nil and tile.blocksProjectiles then
+						isBlocked = true
+						break
+					end
+				end
+			end
+			if not isBlocked then
+				usablePushables[dir][#(usablePushables[dir]) + 1] = closestPushables[dir].ani
+			end
+		end
+	end
+	return usablePushables
+end
+
+--for tools that can be used in more than four basic directions
+function P.tool:getToolablePushablesBox()
+	local usablePushables = {{},{},{},{},{}}
+	for pushableIndex = 1, #pushables do
+		if not pushables[pushableIndex].dead and math.abs(pushables[pushableIndex].tileY - player.tileY)+math.abs(pushables[pushableIndex].tileX - player.tileX)<=self.range then
+			if litTiles[pushables[pushableIndex].tileY][pushables[pushableIndex].tileX]~=0 then
+				usablePushables[1][#usablePushables[1]+1] = pushables[pushableIndex]
+			end
+		end
+	end
+	return usablePushables
 end
 
 P.saw = P.tool:new{name = 'saw', image = love.graphics.newImage('Graphics/saw.png')}
@@ -536,6 +633,37 @@ function P.sponge:useToolTile(tile, tileY, tileX)
 	end
 end
 
+P.rotater = P.tool:new{name = "rotater", range = 1, image = love.graphics.newImage('Graphics/rotatetool.png')}
+function P.rotater:usableOnTile(tile)
+	return true
+end
+function P.rotater:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
+	tile:rotate(1)
+end
+
+P.trap = P.tool:new{name = "trap", range = 1, image = love.graphics.newImage('Graphics/trap.png')}
+function P.trap:usableOnNothing()
+	return true
+end
+function P.trap:useToolNothing(tileY, tileX)
+	room[tileY][tileX] = tiles.trap:new()
+end
+
+P.boxCutter = P.tool:new{name = "boxCutter", range = 1, image = love.graphics.newImage('Graphics/boxcutter.png')}
+function P.boxCutter:usableOnPushable(pushable)
+	return true
+end
+function P.boxCutter:useToolPushable(pushable)
+	self.numHeld = self.numHeld - 1
+	pushable.destroyed = true
+	for i = 1, 3 do
+		local slot = math.floor(math.random()*tools.numNormalTools)+1
+		tools[slot].numHeld = tools[slot].numHeld+1
+	end
+end
+
+
 P.numNormalTools = 7
 
 P[1] = P.saw
@@ -559,5 +687,8 @@ P[18] = P.woodGrabber
 P[19] = P.corpseGrabber
 P[20] = P.pitbullChanger
 P[21] = P.meat
+P[22] = P.rotater
+P[23] = P.trap
+P[24] = P.boxCutter
 
 return tools
