@@ -104,7 +104,6 @@ function P.conductiveTile:updateTile(dir)
 	elseif self.name ~= "powerSupply" then
 		self.powered = false
 	end
-	print(self.poweredNeighbors[3])
 end
 function P.conductiveTile:destroy()
 	self.destroyed = true
