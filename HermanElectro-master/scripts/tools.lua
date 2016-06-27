@@ -210,7 +210,7 @@ function P.tool:getToolableAnimals()
 					end
 				end
 			end
-			if not isBlocked then
+			if not isBlocked and litTiles[closestAnimals[dir].ani.tileY][closestAnimals[dir].ani.tileX]~=0 then
 				usableAnimals[dir][#(usableAnimals[dir]) + 1] = closestAnimals[dir].ani
 			end
 		end
@@ -288,7 +288,7 @@ function P.tool:getToolablePushables()
 					end
 				end
 			end
-			if not isBlocked then
+			if not isBlocked and litTiles[closestPushables[dir].ani.tileY][closestPushables[dir].ani.tileX]~=0 then
 				usablePushables[dir][#(usablePushables[dir]) + 1] = closestPushables[dir].ani
 			end
 		end
@@ -663,6 +663,31 @@ function P.boxCutter:useToolPushable(pushable)
 	end
 end
 
+P.broom = P.tool:new{name = "broom", image = love.graphics.newImage('Graphics/pitbullChanger.png')}
+function P.broom:usableOnTile(tile)
+	return tile:instanceof(tiles.slime) or tile:instanceof(tiles.conductiveSlime)
+end
+function P.broom:useToolTile(tile, tileY, tileX)
+	room[tileY][tileX]=nil
+end
+
+P.magnet = P.tool:new{name = "magnet", range = 5, image = love.graphics.newImage('Graphics/magnet.png')}
+function P.magnet:usableOnPushable(pushable)
+	return math.abs(player.tileX-pushable.tileX)+math.abs(player.tileY-pushable.tileY)>1
+end
+function P.magnet:useToolPushable(pushable)
+	local pushX = pushable.tileX
+	local pushY = pushable.tileY
+	mover = {tileX = pushX, tileY = pushY, prevTileX = pushX, prevTileY = pushY}
+
+	if pushX>player.tileX then mover.prevTileX = pushX+1
+	elseif pushX~=player.tileX then mover.prevTileX = pushX-1
+	elseif pushY>player.tileY then mover.prevTileY = pushY+1
+	else mover.prevTileY = pushY-1 end
+
+	pushable:move(mover)
+end
+
 
 P.numNormalTools = 7
 
@@ -690,5 +715,7 @@ P[21] = P.meat
 P[22] = P.rotater
 P[23] = P.trap
 P[24] = P.boxCutter
+P[25] = P.broom
+P[26] = P.magnet
 
 return tools
