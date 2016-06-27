@@ -1151,13 +1151,13 @@ function love.keypressed(key, unicode)
 				end
 			end
 			for i = 1, #animals do
+				if animals[i].waitCounter>0 then
+					animals[i].waitCounter = animals[i].waitCounter-1
+				end
 				if animals[i]:hasMoved() and not animals[i].dead then
 					if room[animals[i].tileY][animals[i].tileX]~=nil then
 						room[animals[i].tileY][animals[i].tileX]:onEnterAnimal(animals[i])
 					end
-				end
-				if animals[i].waitCounter>0 then
-					animals[i].waitCounter = animals[i].waitCounter-1
 				end
 			end
 			stepTrigger()
