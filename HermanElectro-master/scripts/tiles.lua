@@ -104,6 +104,7 @@ function P.conductiveTile:updateTile(dir)
 	elseif self.name ~= "powerSupply" then
 		self.powered = false
 	end
+	print(self.poweredNeighbors[3])
 end
 function P.conductiveTile:destroy()
 	self.destroyed = true
@@ -1076,6 +1077,8 @@ function P.trap:onEnterAnimal(animal)
 	animal:kill()
 end
 
+P.conductiveBoxTile = P.tile:new{name = "conductiveBoxTile", pushable = pushableList[5]:new(), listIndex = 5, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
+
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
 tiles[3] = P.powerSupply
@@ -1149,5 +1152,6 @@ tiles[70] = P.animalBoxTile
 tiles[71] = P.puddle
 tiles[72] = P.dustyGlassWall
 tiles[73] = P.trap
+tiles[74] = P.conductiveBoxTile
 
 return tiles

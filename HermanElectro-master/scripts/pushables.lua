@@ -5,7 +5,7 @@ require('scripts.object')
 local P = {}
 pushableList = P
 
-P.pushable = Object:new{name = "pushable", prevTileX = 0, prevTileY = 0, tileX = 0, tileY = 0, destroyed = false, sprite = love.graphics.newImage('Graphics/box.png')}
+P.pushable = Object:new{name = "pushable", conductive = false, prevTileX = 0, prevTileY = 0, tileX = 0, tileY = 0, destroyed = false, sprite = love.graphics.newImage('Graphics/box.png')}
 function P.pushable:move(mover)
 	if self.destroyed then
 		return true
@@ -81,14 +81,17 @@ function P.playerBox:animalCanMove()
 	return false
 end
 
-P.animalBox = P.box:new{name = "animalBox"}
+P.animalBox = P.box:new{name = "animalBox", sprite = love.graphics.newImage('Graphics/animalBox.png')}
 function P.animalBox:playerCanMove()
 	return false
 end
+
+P.conductiveBox = P.box:new{name = "conductiveBox", sprite = love.graphics.newImage('Graphics/conductiveBox.png'), conductive = true}
 
 pushableList[1] = P.pushable
 pushableList[2] = P.box
 pushableList[3] = P.playerBox
 pushableList[4] = P.animalBox
+pushableList[5] = P.conductiveBox
 
 return pushableList
