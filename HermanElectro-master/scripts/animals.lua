@@ -20,15 +20,16 @@ scale = (width - 2*wallSprite.width)/(20.3 * 16)*5/6
 --speed same as player (250)
 P.animal = Object:new{pickedUp = false, flying = false, triggered = false, waitCounter = 0, dead = false, name = "animal", tileX, tileY, prevx, prevy, prevTileX, prevTileY, x, y, speed = 250, width = 16*scale, height = 16*scale, sprite = love.graphics.newImage('Graphics/pitbull.png'), deadSprite = love.graphics.newImage('Graphics/pitbulldead.png'), tilesOn = {}, oldTilesOn = {}}
 function P.animal:move(playerx, playery, room, isLit)
+	if self.dead or (not isLit and not self.triggered) then
+		return
+	end
 	self.triggered = true
 	self.prevTileX = self.tileX
 	self.prevTileY = self.tileY
 	if self.waitCounter>0 then
 		return
 	end
-	if self.dead or (not isLit and not self.triggered) then
-		return
-	end
+	
 	if playerx-self.tileX==0 and playery-self.tileY==0 then
 		return
 	end
