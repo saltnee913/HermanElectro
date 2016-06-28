@@ -724,6 +724,13 @@ function P.spring:useToolNothing(tileY, tileX)
 end
 P.spring.getToolableTiles = P.tool.getToolableTilesBox
 
+P.glue = P.tool:new{name = "glue", image = love.graphics.newImage('Graphics/glue.png')}
+function P.glue:usableOnNothing()
+	return true
+end
+function P.glue:useToolNothing(tileY, tileX)
+	room[tileY][tileX] = tiles.glue:new()
+end
 
 
 P.numNormalTools = 7
@@ -755,5 +762,6 @@ P[24] = P.boxCutter
 P[25] = P.broom
 P[26] = P.magnet
 P[27] = P.spring
+P[2] = P.glue
 
 return tools

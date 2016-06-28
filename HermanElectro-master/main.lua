@@ -1206,6 +1206,15 @@ function love.keypressed(key, unicode)
 	    				end
 	    			end
 	    		end
+	    		for i = 1, #pushables do
+	    			if pushables[i]:instanceof(pushableList.boombox) then
+					    if math.abs(pushables[i].tileY-animals[k].tileY)+math.abs(pushables[i].tileX-animals[k].tileX)<animalDist then
+							animalDist = math.abs(pushables[i].tileY-animals[k].tileY)+math.abs(pushables[i].tileX-animals[k].tileX)
+							movex = pushables[i].tileX
+							movey = pushables[i].tileY
+						end
+	    			end
+	    		end
 	    		animals[k]:move(movex, movey, room, litTiles[animals[k].tileY][animals[k].tileX]==1)
 	    	end   	
 	    	resolveConflicts()
@@ -1228,6 +1237,8 @@ function love.keypressed(key, unicode)
 					if room[animals[i].tileY][animals[i].tileX]~=nil then
 						room[animals[i].tileY][animals[i].tileX]:onEnterAnimal(animals[i])
 					end
+				elseif room[animals[i].tileY][animals[i].tileX]~=nil then
+					room[animals[i].tileY][animals[i].tileX]:onStayAnimal(animals[i])
 				end
 			end
 			stepTrigger()
@@ -1288,8 +1299,31 @@ function resolveConflicts()
 					if not animals[i]:instanceof(animalList.cat) and player.tileX-animals[i].tileX==0 and player.tileY-animals[i].tileY==0 then
 						tryMove = false
 					end
-					if tryMove then
-						animals[i]:secondaryMove()
+					if tryMove and litTiles[animals[i].tileY][animals[i].tileX]~=0 then
+						local movex = player.tileX
+			    		local movey = player.tileY
+			    		local animalDist = math.abs(movey-animals[i].tileY)+math.abs(movex-animals[i].tileX)
+			    		for j = 1, roomHeight do
+			    			for k = 1, roomLength do
+			    				if room[j][k]~=nil and room[j][k]:instanceof(tiles.meat) then
+			    					if math.abs(j-animals[i].tileY)+math.abs(k-animals[i].tileX)<animalDist then
+			    						animalDist = math.abs(j-animals[i].tileY)+math.abs(k-animals[i].tileX)
+			    						movex = k
+			    						movey = j
+			    					end
+			    				end
+			    			end
+			    		end
+			    		for j = 1, #pushables do
+			    			if pushables[j]:instanceof(pushableList.boombox) then
+							    if math.abs(pushables[j].tileY-animals[i].tileY)+math.abs(pushables[j].tileX-animals[i].tileX)<animalDist then
+									animalDist = math.abs(pushables[j].tileY-animals[i].tileY)+math.abs(pushables[j].tileX-animals[i].tileX)
+									movex = pushables[j].tileX
+									movey = pushables[j].tileY
+								end
+			    			end
+			    		end
+						animals[i]:secondaryMove(movex, movey)
 					end
 				end
 			end

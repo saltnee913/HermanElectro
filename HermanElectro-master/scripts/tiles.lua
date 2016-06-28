@@ -17,6 +17,8 @@ end
 function P.tile:onStay(player) 
 	--player.x = player.x+1
 end
+function P.tile:onStayAnimal(animal)
+end
 function P.tile:onEnterAnimal(animal)
 end
 function P.tile:onLeaveAnimal(animal)
@@ -330,6 +332,7 @@ function P.wall:onEnterAnimal(animal)
 		animal.prevTileY = animal.tileY
 	end
 end
+P.wall.onStayAnimal = P.wall.onEnterAnimal
 function P.wall:destroy()
 	self.blocksProjectiles = false
 	self.blocksVision = false
@@ -1084,7 +1087,26 @@ function P.trap:onEnterAnimal(animal)
 	animal:kill()
 end
 
+P.glue = P.tile:new{name = "glue", sprite = love.graphics.newImage('Graphics/glue.png')}
+function P.glue:onEnter(player)
+	player.waitCounter = player.waitCounter+1
+end
+
+function P.glue:onStay(player)
+	player.waitCounter = player.waitCounter+1
+end
+function P.glue:onEnterAnimal(animal)
+	if animal.flying then return end
+	animal.waitCounter = animal.waitCounter+1
+end
+P.glue.onStayAnimal = P.glue.onEnterAnimal
+
 P.conductiveBoxTile = P.tile:new{name = "conductiveBoxTile", pushable = pushableList[5]:new(), listIndex = 5, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
+
+P.boomboxTile = P.tile:new{name = "boomboxTile", pushable = pushableList[6]:new(), listIndex = 6, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
+
+P.batteringRamTile = P.tile:new{name = "batteringRamTile", pushable = pushableList[7]:new(), listIndex = 7, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
+
 
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
@@ -1160,5 +1182,7 @@ tiles[71] = P.puddle
 tiles[72] = P.dustyGlassWall
 tiles[73] = P.trap
 tiles[74] = P.conductiveBoxTile
+tiles[75] = P.boomboxTile
+tiles[76] = P.batteringRamTile
 
 return tiles
