@@ -187,6 +187,13 @@ function updateLight()
 		end
 	end
 	lightTest(player.tileY, player.tileX)
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]~=nil and room[i][j].lit then
+				lightTest(i, j)
+			end
+		end
+	end
 	for i=1,roomHeight do
 		for j=1,roomLength do
 			--checkLight(i,j, tileLoc2, tileLoc1)

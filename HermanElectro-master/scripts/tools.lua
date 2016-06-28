@@ -113,7 +113,7 @@ function P.tool:getToolableTiles()
 		else
 			offset = util.getOffsetByDir(dir)
 		end
-		for dist = 1, self.range do
+		for dist = 0, self.range do
 			local tileToCheck = {y = player.tileY + offset.y*dist, x = player.tileX + offset.x*dist}
 			if room[tileToCheck.y]~=nil then
 				if ((room[tileToCheck.y][tileToCheck.x] == nil or room[tileToCheck.y][tileToCheck.x]:usableOnNothing()) and (tileToCheck.x>0 and tileToCheck.x<=roomLength) and self:usableOnNothing())
@@ -732,6 +732,32 @@ function P.glue:useToolNothing(tileY, tileX)
 	room[tileY][tileX] = tiles.glue:new()
 end
 
+P.endFinder = P.tool:new{name = "endFinder", range = 0, image = love.graphics.newImage('Graphics/endfinder.png')}
+function P.endFinder:usableOnNothing()
+	return true
+end
+function P.endFinder:usableOnTile()
+	return true
+end
+function P.endFinder:useToolTile()
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]~=nil and room[i][j]:instanceof(tiles.endTile) then
+				room[i][j].lit = true
+			end
+		end
+	end
+end
+P.endFinder.useToolNothing = P.endFinder.useToolTile
+
+P.lamp = P.tool:new{name = "lamp", range = 1, image = love.graphics.newImage('Graphics/lamp.png')}
+function P.lamp:usableOnNothing()
+	return true
+end
+function P.lamp:useToolNothing(tileY, tileX)
+	room[tileY][tileX] = tiles.lamp:new()
+end
+
 
 P.numNormalTools = 7
 
@@ -762,6 +788,8 @@ P[24] = P.boxCutter
 P[25] = P.broom
 P[26] = P.magnet
 P[27] = P.spring
-P[2] = P.glue
+P[28] = P.glue
+P[29] = P.endFinder
+P[30] = P.lamp
 
 return tools
