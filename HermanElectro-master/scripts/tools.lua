@@ -754,6 +754,6 @@ P[23] = P.trap
 P[24] = P.boxCutter
 P[25] = P.broom
 P[26] = P.magnet
-P[2] = P.spring
+P[27] = P.spring
 
 return tools
