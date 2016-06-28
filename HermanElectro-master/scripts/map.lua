@@ -67,6 +67,10 @@ function P.filterRoomSet(arr, requirements)
 	end
 end
 
+function P.blocksMovement(tileY, tileX)
+	return room[tileY] ~= nil and room[tileY][tileX] ~= nil and room[tileY][tileX].blocksMovement
+end
+
 local function tilesWhitelistHelper(arr, tiles)
 	for i = 1, #arr do
 		for j = 1, #(arr[i]) do
