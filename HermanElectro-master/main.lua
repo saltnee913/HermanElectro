@@ -275,9 +275,9 @@ function updatePower()
 				local pX = pushables[i].tileX
 				local pY = pushables[i].tileY
 				if (room[pY-1]~=nil and room[pY-1][pX]~=nil and room[pY-1][pX].powered and room[pY-1][pX].dirSend[3]==1) or
-				(room[pY+1]~=nil and room[pY+1][pX]~=nil and room[pY+1][pX].powered and room[pY+1][pX].dirSend[3]==1) or
-				(room[pY][pX-1]~=nil and room[pY][pX-1].powered and room[pY][pX-1].dirSend[3]==1) or
-				(room[pY][pX+1]~=nil and room[pY][pX+1].powered and room[pY][pX+1].dirSend[3]==1) then
+				(room[pY+1]~=nil and room[pY+1][pX]~=nil and room[pY+1][pX].powered and room[pY+1][pX].dirSend[1]==1) or
+				(room[pY][pX-1]~=nil and room[pY][pX-1].powered and room[pY][pX-1].dirSend[2]==1) or
+				(room[pY][pX+1]~=nil and room[pY][pX+1].powered and room[pY][pX+1].dirSend[4]==1) then
 					powerTestPushable(pY, pX, 0)
 				end
 			end
@@ -455,7 +455,7 @@ function powerTestPushable(x, y, lastDir)
 	--x refers to y-direction and vice versa
 	--1 for up, 2 for right, 3 for down, 4 for left
 
-	if x>1 and room[x-1][y]~=nil and canBePowered(x-1,y,3) and lastDir~=1 then
+	if x>1 and room[x-1][y]~=nil and canBePowered(x-1,y,3) then
 		formerPowered = room[x-1][y].powered
 		formerSend = room[x-1][y].dirSend
 		formerAccept = room[x-1][y].dirAccept
@@ -468,7 +468,7 @@ function powerTestPushable(x, y, lastDir)
 	end
 
 
-	if x<roomHeight and room[x+1][y]~=nil and canBePowered(x+1,y,1) and lastDir~=3 then
+	if x<roomHeight and room[x+1][y]~=nil and canBePowered(x+1,y,1) then
 		--powered[x+1][y] = 1
 		formerPowered = room[x+1][y].powered
 		formerSend = room[x+1][y].dirSend
@@ -480,7 +480,7 @@ function powerTestPushable(x, y, lastDir)
 		end
 	end
 
-	if y>1 and room[x][y-1]~=nil and canBePowered(x,y-1,2) and lastDir~=4 then
+	if y>1 and room[x][y-1]~=nil and canBePowered(x,y-1,2) then
 		formerPowered = room[x][y-1].powered
 		formerSend = room[x][y-1].dirSend
 		formerAccept = room[x][y-1].dirAccept
@@ -492,7 +492,7 @@ function powerTestPushable(x, y, lastDir)
 		end
 	end
 
-	if y<roomLength and room[x][y+1]~=nil and canBePowered(x,y+1,4) and lastDir~=2 then
+	if y<roomLength and room[x][y+1]~=nil and canBePowered(x,y+1,4) then
 		formerPowered = room[x][y+1].powered
 		formerSend = room[x][y+1].dirSend
 		formerAccept = room[x][y+1].dirAccept
@@ -1396,6 +1396,9 @@ function checkAllDeath()
 	checkDeath()
 	for i = 1, #animals do
 		animals[i]:checkDeath()
+	end
+	for i = 1, #pushables do
+		pushables[i]:checkDestruction()
 	end
 end
 

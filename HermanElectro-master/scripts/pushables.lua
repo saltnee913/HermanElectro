@@ -73,6 +73,15 @@ end
 function P.pushable:playerCanMove()
 	return true
 end
+function P.pushable:checkDestruction()
+	if room[self.tileY][self.tileX]~=nil then
+		t = room[self.tileY][self.tileX]
+		if self.destroyed == false and t.blocksMovement then
+			self.destroyed = true
+			room[self.tileY][self.tileX]:destroyPushable()
+		end
+	end
+end
 
 P.box = P.pushable:new{name = "box", sprite = love.graphics.newImage('Graphics/box.png')}
 

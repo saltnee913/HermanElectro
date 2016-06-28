@@ -118,7 +118,9 @@ function P.tool:getToolableTiles()
 			if room[tileToCheck.y]~=nil then
 				if ((room[tileToCheck.y][tileToCheck.x] == nil or room[tileToCheck.y][tileToCheck.x]:usableOnNothing()) and (tileToCheck.x>0 and tileToCheck.x<=roomLength) and self:usableOnNothing())
 				or (room[tileToCheck.y][tileToCheck.x] ~= nil and self:usableOnTile(room[tileToCheck.y][tileToCheck.x], dist)) then
-					usableTiles[dir][#(usableTiles[dir])+1] = tileToCheck
+					if litTiles[tileToCheck.y][tileToCheck.x]~=0 then
+						usableTiles[dir][#(usableTiles[dir])+1] = tileToCheck
+					end
 				end
 				if room[tileToCheck.y][tileToCheck.x] ~= nil and room[tileToCheck.y][tileToCheck.x].blocksProjectiles then
 					break
@@ -137,6 +139,7 @@ function P.tool:getToolableTilesBox()
 		for j = -1*self.range, self.range do
 			local offset = {x = i, y = j}
 			local tileToCheck = {y = player.tileY + offset.y, x = player.tileX + offset.x}
+			if tileToCheck.x<=0 or i>roomLength then break end
 			if room[tileToCheck.y]~=nil then
 				if (room[tileToCheck.y][tileToCheck.x] == nil and self:usableOnNothing())
 				or (room[tileToCheck.y][tileToCheck.x] ~= nil and self:usableOnTile(room[tileToCheck.y][tileToCheck.x], dist)) then
@@ -688,6 +691,40 @@ function P.magnet:useToolPushable(pushable)
 	pushable:move(mover)
 end
 
+P.spring = P.tool:new{name = "spring", range = 4, image = love.graphics.newImage('Graphics/spring.png')}
+function P.spring:usableOnTile(tile)
+	for i = 1, #pushables do
+		if pushables[i].tileX == tile.tileX and pushables[i].tileY == tile.tileY then return false end
+	end
+	return not tile.blocksMovement
+end
+function P.spring:usableOnNothing()
+	return true
+end
+function P.spring:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
+	player.prevTileX = player.tileX
+	player.prevTileY = player.tileY
+	player.tileX = tileX
+	player.tileY = tileY
+	room[tileY][tileX]:onEnter(player)
+	if room[player.prevTileY][player.prevTileX]~=nil then
+		room[player.prevTileY][player.prevTileX]:onLeave(player)
+	end
+end
+function P.spring:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
+	player.prevTileX = player.tileX
+	player.prevTileY = player.tileY
+	player.tileX = tileX
+	player.tileY = tileY
+	if room[player.prevTileY][player.prevTileX]~=nil then
+		room[player.prevTileY][player.prevTileX]:onLeave(player)
+	end
+end
+P.spring.getToolableTiles = P.tool.getToolableTilesBox
+
+
 
 P.numNormalTools = 7
 
@@ -717,5 +754,6 @@ P[23] = P.trap
 P[24] = P.boxCutter
 P[25] = P.broom
 P[26] = P.magnet
+P[2] = P.spring
 
 return tools

@@ -480,6 +480,7 @@ function P.vPoweredDoor:updateTile(player)
 		self.blocksVision = false
 		self.sprite = self.openSprite
 		self.blocksMovement = false
+		self.blocksProjectiles = false
 		self.canBePowered = false
 		return
 	end
@@ -487,11 +488,13 @@ function P.vPoweredDoor:updateTile(player)
 		self.blocksVision = true
 		self.sprite = self.closedSprite
 		self.blocksMovement = true
+		self.blocksProjectiles = true
 		self.powered = true
 	else
 		self.blocksVision = false
-		self.sprite = self.openSprite
+		self.blocksProjectiles = false
 		self.blocksMovement = false
+		self.sprite = self.openSprite
 	end
 end
 function P.vPoweredDoor:onEnter(player)
@@ -568,6 +571,7 @@ P.rotater = P.button:new{canBePowered = true, dirAccept = {1,0,1,0}, dirSend = {
 function P.rotater:updateSprite()
 end
 function P.rotater:onEnter(player)
+	if self.bricked then return end
 	if not self.justPressed then
 		self:rotate(1)
 		self.justPressed = true
@@ -582,6 +586,10 @@ function P.rotater:updateTile(dir)
 end
 function P.rotater:onLeave(player)
 	self.justPressed = false
+end
+function P.rotater:lockInState(state)
+	self:rotate(1)
+	self.bricked = true
 end
 P.rotater.onEnterAnimal = P.rotater.onEnter
 P.rotater.onLeaveAnimal = P.rotater.onLeave
