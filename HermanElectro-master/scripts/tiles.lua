@@ -36,6 +36,9 @@ function P.tile:getInfoText()
 end
 function P.tile:lockInState(state)
 end
+function P.tile:getYOffset()
+	return 0
+end
 function P.tile:updateTile(dir)
 	if self.poweredNeighbors[1]==1 or self.poweredNeighbors[2]==1 or self.poweredNeighbors[3]==1 or self.poweredNeighbors[4]==1 then
 		self.powered = true
@@ -306,7 +309,7 @@ end
 P.poweredFloor.willKillAnimal = P.poweredFloor.willKillPlayer
 P.poweredFloor.willDestroyPushable = P.poweredFloor.willKillPlayer
 
-P.wall = P.tile:new{electrified = false, onFire = false, blocksProjectiles = true, blocksMovement = true, canBePowered = false, name = "wall", blocksVision = true, electrifiedSprite = love.graphics.newImage('Graphics/woodwallelectrified.png'), destroyedSprite = love.graphics.newImage('Graphics/woodwallbroken.png'), sprite = love.graphics.newImage('Graphics/woodwall.png'), poweredSprite = love.graphics.newImage('Graphics/woodwallpowered.png'), sawable = true}
+P.wall = P.tile:new{electrified = false, onFire = false, blocksProjectiles = true, blocksMovement = true, canBePowered = false, name = "wall", blocksVision = true, electrifiedSprite = love.graphics.newImage('Graphics/woodwallelectrified.png'), destroyedSprite = love.graphics.newImage('Graphics/woodwallbroken.png'), sprite = love.graphics.newImage('Graphics3D/woodwall.png'), poweredSprite = love.graphics.newImage('Graphics/woodwallpowered.png'), sawable = true}
 function P.wall:onEnter(player)	
 	if not self.destroyed then
 		--player.x = player.prevx
@@ -333,6 +336,9 @@ function P.wall:onEnterAnimal(animal)
 	end
 end
 P.wall.onStayAnimal = P.wall.onEnterAnimal
+function P.wall:getYOffset()
+	return yOffset
+end
 function P.wall:destroy()
 	self.blocksProjectiles = false
 	self.blocksVision = false
@@ -358,6 +364,7 @@ end
 P.maskedMetalWall = P.metalWall:new{sprite = love.graphics.newImage('Graphics/maskedMetalWall.png'), poweredSprite = love.graphics.newImage('Graphics/maskedMetalWall.png')}
 
 P.glassWall = P.wall:new{sawable = false, canBePowered = false, dirAccept = {0,0,0,0}, dirSend = {0,0,0,0}, bricked = false, name = "glasswall", blocksVision = false, electrifiedSprite = love.graphics.newImage('Graphics/glasswallelectrified.png'), destroyedSprite = love.graphics.newImage('Graphics/glassbroken.png'), sprite = love.graphics.newImage('Graphics/glass.png'), poweredSprite = love.graphics.newImage('Graphics/glasswallpowered.png'), sawable = false }
+P.glassWall.getYOffset = P.wall.getYOffset
 function P.glassWall:destroy()
 	self.blocksProjectiles = false
 	self.sprite = self.destroyedSprite

@@ -72,6 +72,7 @@ function love.load()
 	love.graphics.setColor(255,255,255)
 	love.graphics.setBackgroundColor(255,255,255)
 	if not loadedOnce then
+		yOffset = -6
 		mouseDown = 0
 		f1 = love.graphics.newImage('Graphics/concretewalls.png')
 		walls = love.graphics.newImage('Graphics/walls3.png')
@@ -81,10 +82,11 @@ function love.load()
 		black = love.graphics.newImage('Graphics/dark.png')
 		green = love.graphics.newImage('Graphics/green.png')
 		gray = love.graphics.newImage('Graphics/gray.png')
-		floortile = love.graphics.newImage('Graphics/cavesfloor.png')
+		floortile = love.graphics.newImage('Graphics/floortile.png')
 		doorwaybg = love.graphics.newImage('Graphics/doorwaybackground.png')
 		deathscreen = love.graphics.newImage('Graphics/deathscreen.png')
-		bottomwall = love.graphics.newImage('Graphics/bottomwall.png')
+		bottomwall = love.graphics.newImage('Graphics3D/bottomwall.png')
+		topwall = love.graphics.newImage('Graphics3D/topwall.png')
 		cornerwall = love.graphics.newImage('Graphics/toprightcorner.png')
 
 		music = love.audio.newSource('Audio/hermantheme.mp3')
@@ -601,11 +603,24 @@ function love.draw()
 	--love.graphics.draw(rocks, rocksQuad, 0, 0)
 	--love.graphics.draw(rocks, -mapx * width, -mapy * height, 0, 1, 1)
 
+
 	for i = 1, roomLength do
 		for j = 1, roomHeight do
-			love.graphics.draw(floortile, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
+			love.graphics.draw(floortile, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height,
+			0, scale*16/floortile:getWidth(), scale*16/floortile:getWidth())
 		end
 	end
+
+	for i = 1, roomLength do
+		if not (i==math.floor(roomLength/2) or i==math.floor(roomLength/2)+1) then
+			love.graphics.draw(topwall, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (yOffset+(-1)*floor.sprite:getHeight())*scale+wallSprite.height, 0, scale*16/topwall:getWidth(), scale*16/topwall:getWidth())
+		else
+			if mapy<=0 or mainMap[mapy-1][mapx]==nil or (completedRooms[mapy][mapx]==0 and completedRooms[mapy-1][mapx]==0) then
+				love.graphics.draw(topwall, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (yOffset+(-1)*floor.sprite:getHeight())*scale+wallSprite.height, 0, scale*16/topwall:getWidth(), scale*16/topwall:getWidth())
+			end	
+		end
+	end
+
 	for i = 1, roomLength do
 		for j = 1, roomHeight do
 			if (room[j][i]~=nil and room[j][i].isVisible) or litTiles[j][i]==0 then
@@ -632,7 +647,12 @@ function love.draw()
 					end
 				end
 				if (room[j][i]~=nil --[[and room[j][i].name~="pitbull" and room[j][i].name~="cat" and room[j][i].name~="pup"]]) or litTiles[j][i]==0 then
-					love.graphics.draw(toDraw, (tempi-1)*floor.sprite:getWidth()*scale+wallSprite.width, (tempj-1)*floor.sprite:getHeight()*scale+wallSprite.height, rot * math.pi / 2, scale, scale)
+					local addY = 0
+					if room[j][i]~=nil then
+						addY = room[j][i]:getYOffset()
+					end
+					love.graphics.draw(toDraw, (tempi-1)*floor.sprite:getWidth()*scale+wallSprite.width, (addY+(tempj-1)*floor.sprite:getWidth())*scale+wallSprite.height,
+					rot * math.pi / 2, scale*toDraw:getWidth()/16, scale*toDraw:getWidth()/16)
 					if room[j][i]~=nil and room[j][i]:getInfoText()~=nil then
 						love.graphics.setColor(0,0,0)
 						love.graphics.print(room[j][i]:getInfoText(), (tempi-1)*floor.sprite:getWidth()*scale+wallSprite.width, (tempj-1)*floor.sprite:getHeight()*scale+wallSprite.height);
@@ -644,27 +664,23 @@ function love.draw()
 	end
 	for i = 1, roomLength do
 		if not (i==math.floor(roomLength/2) or i==math.floor(roomLength/2)+1) then
-			love.graphics.draw(bottomwall, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (roomHeight)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
-			love.graphics.draw(bottomwall, (i)*floor.sprite:getWidth()*scale+wallSprite.width, (0)*floor.sprite:getHeight()*scale+wallSprite.height, math.pi, scale, scale)
+			love.graphics.draw(bottomwall, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (yOffset+(roomHeight)*floor.sprite:getHeight())*scale+wallSprite.height, 0, scale, scale)
 		else
-			if mapy<=0 or mainMap[mapy-1][mapx]==nil or (completedRooms[mapy][mapx]==0 and completedRooms[mapy-1][mapx]==0) then
-				love.graphics.draw(bottomwall, (i)*floor.sprite:getWidth()*scale+wallSprite.width, (0)*floor.sprite:getHeight()*scale+wallSprite.height, math.pi, scale, scale)
-			end
 			if mapy>=mapHeight or mainMap[mapy+1][mapx]==nil or (completedRooms[mapy][mapx]==0 and completedRooms[mapy+1][mapx]==0) then
-				love.graphics.draw(bottomwall, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (roomHeight)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
+				love.graphics.draw(bottomwall, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (yOffset+(roomHeight)*floor.sprite:getHeight())*scale+wallSprite.height, 0, scale, scale)
 			end		
 		end
 	end
 	for i = 1, roomHeight do
 		if not (i==math.floor(roomHeight/2) or i==math.floor(roomHeight/2)+1) then		
-			love.graphics.draw(bottomwall, (0)*floor.sprite:getWidth()*scale+wallSprite.width, (i-1)*floor.sprite:getHeight()*scale+wallSprite.height, math.pi/2, scale, scale)
-			love.graphics.draw(bottomwall, (roomLength)*floor.sprite:getWidth()*scale+wallSprite.width, (i)*floor.sprite:getHeight()*scale+wallSprite.height, -1*math.pi/2, scale, scale)
+			love.graphics.draw(bottomwall, (0)*floor.sprite:getWidth()*scale+wallSprite.width, (yOffset+(i-1)*floor.sprite:getHeight())*scale+wallSprite.height, math.pi/2, scale, scale)
+			love.graphics.draw(bottomwall, (roomLength)*floor.sprite:getWidth()*scale+wallSprite.width, (yOffset+(i)*floor.sprite:getHeight())*scale+wallSprite.height, -1*math.pi/2, scale, scale)
 		else
 			if mapx>=mapHeight or mainMap[mapy][mapx+1]==nil or (completedRooms[mapy][mapx]==0 and completedRooms[mapy][mapx+1]==0) then
-				love.graphics.draw(bottomwall, (roomLength)*floor.sprite:getWidth()*scale+wallSprite.width, (i)*floor.sprite:getHeight()*scale+wallSprite.height, -1*math.pi/2, scale, scale)
+				love.graphics.draw(bottomwall, (roomLength)*floor.sprite:getWidth()*scale+wallSprite.width, (yOffset+(i)*floor.sprite:getHeight())*scale+wallSprite.height, -1*math.pi/2, scale, scale)
 			end
 			if mapx<=0 or mainMap[mapy][mapx-1]==nil or (completedRooms[mapy][mapx]==0 and completedRooms[mapy][mapx-1]==0) then
-				love.graphics.draw(bottomwall, (0)*floor.sprite:getWidth()*scale+wallSprite.width, (i-1)*floor.sprite:getHeight()*scale+wallSprite.height, math.pi/2, scale, scale)
+				love.graphics.draw(bottomwall, (0)*floor.sprite:getWidth()*scale+wallSprite.width, (yOffset+(i-1)*floor.sprite:getHeight())*scale+wallSprite.height, math.pi/2, scale, scale)
 			end
 		end
 	end
@@ -683,7 +699,7 @@ function love.draw()
 			cornerX = 1
 			cornerY = roomHeight+2
 		end
-		love.graphics.draw(cornerwall, (cornerX-1)*floor.sprite:getWidth()*scale+wallSprite.width, (cornerY-1)*floor.sprite:getHeight()*scale+wallSprite.height, (i-2)*math.pi/2, scale, scale)
+		love.graphics.draw(cornerwall, (cornerX-1)*floor.sprite:getWidth()*scale+wallSprite.width, (yOffset+(cornerY-1)*floor.sprite:getHeight())*scale+wallSprite.height, (i-2)*math.pi/2, scale, scale)
 	end
 
 	if tools.toolableAnimals~=nil then
@@ -1187,7 +1203,7 @@ function love.keypressed(key, unicode)
     if dirUse ~= 0 then
 		log((tools.useToolDir(tool, dirUse) and 'true' or 'false')..' '..tool..' '..dirUse)
 		updateGameState()
-		log(tool)
+		checkAllDeath()
 	end
     if (key=="w" or key=="a" or key=="s" or key=="d") then
     	for i = 1, roomHeight do
