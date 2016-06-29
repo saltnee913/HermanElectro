@@ -729,6 +729,7 @@ function P.glue:usableOnNothing()
 	return true
 end
 function P.glue:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
 	room[tileY][tileX] = tiles.glue:new()
 end
 
@@ -740,6 +741,7 @@ function P.endFinder:usableOnTile()
 	return true
 end
 function P.endFinder:useToolTile()
+	self.numHeld = self.numHeld-1
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
 			if room[i][j]~=nil and room[i][j]:instanceof(tiles.endTile) then
@@ -755,6 +757,7 @@ function P.lamp:usableOnNothing()
 	return true
 end
 function P.lamp:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
 	room[tileY][tileX] = tiles.lamp:new()
 end
 
@@ -780,12 +783,14 @@ function P.ramSpawner:usableOnTile(tile, tileY, tileX)
 	return not tile.blocksMovement
 end
 function P.ramSpawner:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
 	local toSpawn = pushableList[7]:new()
 	toSpawn.tileY = tileY
 	toSpawn.tileX = tileX
 	pushables[#pushables+1] = toSpawn
 end
 function P.ramSpawner:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
 	local toSpawn = pushableList[7]:new()
 	toSpawn.tileY = tileY
 	toSpawn.tileX = tileX
