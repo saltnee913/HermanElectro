@@ -75,7 +75,7 @@ function P.keypressed(key, unicode)
 		print("],")
 		print("\"itemsNeeded\":")
 		print("[")
-		print("[saws, ladders, wireCutters, waterBottles, meats, bricks, guns]")
+		print("[saws, ladders, wireCutters, waterBottles, sponges, bricks, guns]")
 		print("]")
 		print("},\n")
 	end
@@ -191,6 +191,7 @@ function P.mousepressed(x, y, button, istouch)
 		elseif tiles[tempAdd]~=nil then
 			room[tileLocY][tileLocX] = tiles[tempAdd]:new()
 		end
+		if tempAdd==1 then room[tileLocY][tileLocX]=nil end
 		for i = 1, animalCounter-1 do
 			if animals[i]~=nil and animals[i].tileX == tileLocX and animals[i].tileY == tileLocY then
 				animals[i] = nil

@@ -23,7 +23,7 @@ function P.useToolDir(toolid, dir)
 	end
 	if P.toolableTiles ~= nil and P.toolableTiles[dir][1] ~= nil then
 		if room[P.toolableTiles[dir][1].y][P.toolableTiles[dir][1].x] == nil 
-			or room[P.toolableTiles[dir][1].y][P.toolableTiles[dir][1].x]:usableOnNothing() then
+			or room[P.toolableTiles[dir][1].y][P.toolableTiles[dir][1].x]:usableOnNothing(P.toolableTiles[dir][1].y,P.toolableTiles[dir][1].x) then
 			tools[toolid]:useToolNothing(P.toolableTiles[dir][1].y, P.toolableTiles[dir][1].x)
 		else
 			--sometimes next line has  error "attempt to index a nil value"
@@ -62,7 +62,7 @@ function P.useToolTile(toolid, tileY, tileX)
 		for dir = 1, 5 do
 			for i = 1, #(P.toolableTiles[dir]) do
 				if P.toolableTiles[dir][i].y == tileY and P.toolableTiles[dir][i].x == tileX then
-					if room[tileY][tileX] == nil or room[tileY][tileX]:usableOnNothing() then
+					if room[tileY][tileX] == nil or room[tileY][tileX]:usableOnNothing(tileY, tileX) then
 						tools[tool]:useToolNothing(tileY, tileX)
 					else
 						tools[tool]:useToolTile(room[tileY][tileX], tileY, tileX)
@@ -113,12 +113,14 @@ function P.tool:getToolableTiles()
 		else
 			offset = util.getOffsetByDir(dir)
 		end
-		for dist = 1, self.range do
+		for dist = 0, self.range do
 			local tileToCheck = {y = player.tileY + offset.y*dist, x = player.tileX + offset.x*dist}
 			if room[tileToCheck.y]~=nil then
-				if ((room[tileToCheck.y][tileToCheck.x] == nil or room[tileToCheck.y][tileToCheck.x]:usableOnNothing()) and (tileToCheck.x>0 and tileToCheck.x<=roomLength) and self:usableOnNothing())
+				if ((room[tileToCheck.y][tileToCheck.x] == nil or room[tileToCheck.y][tileToCheck.x]:usableOnNothing(tileToCheck.y, tileToCheck.x)) and (tileToCheck.x>0 and tileToCheck.x<=roomLength) and self:usableOnNothing(tileToCheck.y, tileToCheck.x))
 				or (room[tileToCheck.y][tileToCheck.x] ~= nil and self:usableOnTile(room[tileToCheck.y][tileToCheck.x], dist)) then
-					usableTiles[dir][#(usableTiles[dir])+1] = tileToCheck
+					if litTiles[tileToCheck.y][tileToCheck.x]~=0 then
+						usableTiles[dir][#(usableTiles[dir])+1] = tileToCheck
+					end
 				end
 				if room[tileToCheck.y][tileToCheck.x] ~= nil and room[tileToCheck.y][tileToCheck.x].blocksProjectiles then
 					break
@@ -137,8 +139,9 @@ function P.tool:getToolableTilesBox()
 		for j = -1*self.range, self.range do
 			local offset = {x = i, y = j}
 			local tileToCheck = {y = player.tileY + offset.y, x = player.tileX + offset.x}
+			if tileToCheck.x<=0 or i>roomLength then break end
 			if room[tileToCheck.y]~=nil then
-				if (room[tileToCheck.y][tileToCheck.x] == nil and self:usableOnNothing())
+				if (room[tileToCheck.y][tileToCheck.x] == nil and self:usableOnNothing(tileToCheck.y, tileToCheck.x))
 				or (room[tileToCheck.y][tileToCheck.x] ~= nil and self:usableOnTile(room[tileToCheck.y][tileToCheck.x], dist)) then
 					if math.abs(tileToCheck.y-player.tileY)+math.abs(tileToCheck.x-player.tileX)<=self.range then
 						if litTiles[tileToCheck.y][tileToCheck.x]~=0 then
@@ -210,7 +213,7 @@ function P.tool:getToolableAnimals()
 					end
 				end
 			end
-			if not isBlocked then
+			if not isBlocked and litTiles[closestAnimals[dir].ani.tileY][closestAnimals[dir].ani.tileX]~=0 then
 				usableAnimals[dir][#(usableAnimals[dir]) + 1] = closestAnimals[dir].ani
 			end
 		end
@@ -288,7 +291,7 @@ function P.tool:getToolablePushables()
 					end
 				end
 			end
-			if not isBlocked then
+			if not isBlocked and litTiles[closestPushables[dir].ani.tileY][closestPushables[dir].ani.tileX]~=0 then
 				usablePushables[dir][#(usablePushables[dir]) + 1] = closestPushables[dir].ani
 			end
 		end
@@ -663,6 +666,131 @@ function P.boxCutter:useToolPushable(pushable)
 	end
 end
 
+P.broom = P.tool:new{name = "broom", image = love.graphics.newImage('Graphics/pitbullChanger.png')}
+function P.broom:usableOnTile(tile)
+	return tile:instanceof(tiles.slime) or tile:instanceof(tiles.conductiveSlime)
+end
+function P.broom:useToolTile(tile, tileY, tileX)
+	room[tileY][tileX]=nil
+end
+
+P.magnet = P.tool:new{name = "magnet", range = 5, image = love.graphics.newImage('Graphics/magnet.png')}
+function P.magnet:usableOnPushable(pushable)
+	return math.abs(player.tileX-pushable.tileX)+math.abs(player.tileY-pushable.tileY)>1
+end
+function P.magnet:useToolPushable(pushable)
+	local pushX = pushable.tileX
+	local pushY = pushable.tileY
+	mover = {tileX = pushX, tileY = pushY, prevTileX = pushX, prevTileY = pushY}
+
+	if pushX>player.tileX then mover.prevTileX = pushX+1
+	elseif pushX~=player.tileX then mover.prevTileX = pushX-1
+	elseif pushY>player.tileY then mover.prevTileY = pushY+1
+	else mover.prevTileY = pushY-1 end
+
+	pushable:move(mover)
+end
+
+P.spring = P.tool:new{name = "spring", range = 4, image = love.graphics.newImage('Graphics/spring.png')}
+function P.spring:usableOnTile(tile)
+	for i = 1, #pushables do
+		if pushables[i].tileX == tile.tileX and pushables[i].tileY == tile.tileY then return false end
+	end
+	return not tile.blocksMovement
+end
+function P.spring:usableOnNothing()
+	return true
+end
+function P.spring:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
+	player.prevTileX = player.tileX
+	player.prevTileY = player.tileY
+	player.tileX = tileX
+	player.tileY = tileY
+	room[tileY][tileX]:onEnter(player)
+	if room[player.prevTileY][player.prevTileX]~=nil then
+		room[player.prevTileY][player.prevTileX]:onLeave(player)
+	end
+end
+function P.spring:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
+	player.prevTileX = player.tileX
+	player.prevTileY = player.tileY
+	player.tileX = tileX
+	player.tileY = tileY
+	if room[player.prevTileY][player.prevTileX]~=nil then
+		room[player.prevTileY][player.prevTileX]:onLeave(player)
+	end
+end
+P.spring.getToolableTiles = P.tool.getToolableTilesBox
+
+P.glue = P.tool:new{name = "glue", image = love.graphics.newImage('Graphics/glue.png')}
+function P.glue:usableOnNothing()
+	return true
+end
+function P.glue:useToolNothing(tileY, tileX)
+	room[tileY][tileX] = tiles.glue:new()
+end
+
+P.endFinder = P.tool:new{name = "endFinder", range = 0, image = love.graphics.newImage('Graphics/endfinder.png')}
+function P.endFinder:usableOnNothing()
+	return true
+end
+function P.endFinder:usableOnTile()
+	return true
+end
+function P.endFinder:useToolTile()
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]~=nil and room[i][j]:instanceof(tiles.endTile) then
+				room[i][j].lit = true
+			end
+		end
+	end
+end
+P.endFinder.useToolNothing = P.endFinder.useToolTile
+
+P.lamp = P.tool:new{name = "lamp", range = 1, image = love.graphics.newImage('Graphics/lamp.png')}
+function P.lamp:usableOnNothing()
+	return true
+end
+function P.lamp:useToolNothing(tileY, tileX)
+	room[tileY][tileX] = tiles.lamp:new()
+end
+
+P.ramSpawner = P.tool:new{name = "ramSpawner", range = 1, image = love.graphics.newImage('Graphics/batteringram.png')}
+function P.ramSpawner:usableOnNothing(tileY, tileX)
+	if tileY==player.tileY and tileX==player.tileX then return false end
+	for i = 1, #animals do
+		if animals[i].tileY==tileY and animals[i].tileX==tileX then return false end
+	end
+	for i = 1, #pushables do
+		if pushables[i].tileY==tileY and pushables[i].tileX==tileX then return false end
+	end
+	return true
+end
+function P.ramSpawner:usableOnTile(tile, tileY, tileX)
+	if tileY==player.tileY and tileX==player.tileX then return false end
+	for i = 1, #animals do
+		if animals[i].tileY==tileY and animals[i].tileX==tileX then return false end
+	end
+	for i = 1, #pushables do
+		if pushables[i].tileY==tileY and pushables[i].tileX==tileX then return false end
+	end
+	return not tile.blocksMovement
+end
+function P.ramSpawner:useToolTile(tile, tileY, tileX)
+	local toSpawn = pushableList[7]:new()
+	toSpawn.tileY = tileY
+	toSpawn.tileX = tileX
+	pushables[#pushables+1] = toSpawn
+end
+function P.ramSpawner:useToolNothing(tileY, tileX)
+	local toSpawn = pushableList[7]:new()
+	toSpawn.tileY = tileY
+	toSpawn.tileX = tileX
+	pushables[#pushables+1] = toSpawn
+end
 
 P.numNormalTools = 7
 
@@ -690,5 +818,12 @@ P[21] = P.meat
 P[22] = P.rotater
 P[23] = P.trap
 P[24] = P.boxCutter
+P[25] = P.broom
+P[26] = P.magnet
+P[27] = P.spring
+P[28] = P.glue
+P[29] = P.endFinder
+P[30] = P.lamp
+P[31] = P.ramSpawner
 
 return tools
