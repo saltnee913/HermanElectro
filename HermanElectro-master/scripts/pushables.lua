@@ -99,7 +99,7 @@ P.conductiveBox = P.box:new{name = "conductiveBox", sprite = love.graphics.newIm
 
 P.boombox = P.box:new{name = "boombox", sprite = love.graphics.newImage('Graphics/boombox.png')}
 
-P.batteringRam = P.box:new{name = "batteringRam", sprite = love.graphics.newImage('Graphics/batteringRam.png')}
+P.batteringRam = P.box:new{name = "batteringRam", sprite = love.graphics.newImage('Graphics/batteringram.png')}
 function P.batteringRam:move(mover)
 	if self.destroyed then
 		return true
