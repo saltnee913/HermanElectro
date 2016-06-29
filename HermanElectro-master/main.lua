@@ -1123,33 +1123,35 @@ function love.keypressed(key, unicode)
 		player.prevy = player.y
 		player.prevTileX = player.tileX
 		player.prevTileY = player.tileY
-	    if key == "w" then
-	    	if player.tileY>1 then
-	    		player.tileY = player.tileY-1
-	    		player.y = player.y-floor.sprite:getHeight()*scale
-			elseif player.tileY==1 and (player.tileX==math.floor(roomLength/2) or player.tileX==math.floor(roomLength/2)+1) then
-				enterRoom(0)
-			end
-	    elseif key == "s" then
-	    	if player.tileY<roomHeight then
-	    		player.tileY = player.tileY+1
-	    		player.y = player.y+floor.sprite:getHeight()*scale
-			elseif player.tileY == roomHeight and (player.tileX==math.floor(roomLength/2) or player.tileX==math.floor(roomLength/2)+1) then
-				enterRoom(2)
-	    	end
-	    elseif key == "a" then
-	    	if player.tileX>1 then
-	    		player.tileX = player.tileX-1
-	    		player.x = player.x-floor.sprite:getHeight()*scale
-			elseif player.tileX == 1 and (player.tileY==math.floor(roomHeight/2) or player.tileY==math.floor(roomHeight/2)+1) then
-				enterRoom(3)
-	    	end
-	    elseif key == "d" then
-	    	if player.tileX<roomLength then
-	    		player.tileX = player.tileX+1
-	    		player.x = player.x+floor.sprite:getHeight()*scale
-	    	elseif player.tileX == roomLength and (player.tileY==math.floor(roomHeight/2) or player.tileY==math.floor(roomHeight/2)+1) then
-				enterRoom(1)
+		if not map.blocksMovement(player.tileY, player.tileX) then
+	    	if key == "w" then
+	    		if player.tileY>1 then
+	    			player.tileY = player.tileY-1
+	    			player.y = player.y-floor.sprite:getHeight()*scale
+				elseif player.tileY==1 and (player.tileX==math.floor(roomLength/2) or player.tileX==math.floor(roomLength/2)+1) then
+					enterRoom(0)
+				end
+	    	elseif key == "s" then
+	    		if player.tileY<roomHeight then
+	    			player.tileY = player.tileY+1
+	    			player.y = player.y+floor.sprite:getHeight()*scale
+				elseif player.tileY == roomHeight and (player.tileX==math.floor(roomLength/2) or player.tileX==math.floor(roomLength/2)+1) then
+					enterRoom(2)
+	    		end
+	    	elseif key == "a" then
+	    		if player.tileX>1 then
+	    			player.tileX = player.tileX-1
+	    			player.x = player.x-floor.sprite:getHeight()*scale
+				elseif player.tileX == 1 and (player.tileY==math.floor(roomHeight/2) or player.tileY==math.floor(roomHeight/2)+1) then
+					enterRoom(3)
+	    		end
+	    	elseif key == "d" then
+	    		if player.tileX<roomLength then
+	    			player.tileX = player.tileX+1
+	    			player.x = player.x+floor.sprite:getHeight()*scale
+	    		elseif player.tileX == roomLength and (player.tileY==math.floor(roomHeight/2) or player.tileY==math.floor(roomHeight/2)+1) then
+					enterRoom(1)
+				end
 			end
 		end
 	end
@@ -1197,32 +1199,36 @@ function love.keypressed(key, unicode)
     		end
     	end
     	enterMove()
+    	updateGameState()
 	    if player.tileY~=player.prevTileY or player.tileX~=player.prevTileX or waitTurn then
 	    	for k = 1, #animals do
-	    		local movex = player.tileX
-	    		local movey = player.tileY
-	    		local animalDist = math.abs(movey-animals[k].tileY)+math.abs(movex-animals[k].tileX)
-	    		for i = 1, roomHeight do
-	    			for j = 1, roomLength do
-	    				if room[i][j]~=nil and room[i][j]:instanceof(tiles.meat) then
-	    					if math.abs(i-animals[k].tileY)+math.abs(j-animals[k].tileX)<animalDist then
-	    						animalDist = math.abs(i-animals[k].tileY)+math.abs(j-animals[k].tileX)
-	    						movex = j
-	    						movey = i
+	    		local ani = animals[k]
+	    		if not map.blocksMovement(ani.tileY, ani.tileX) then
+	    			local movex = player.tileX
+	    			local movey = player.tileY
+	    			local animalDist = math.abs(movey-ani.tileY)+math.abs(movex-ani.tileX)
+	    			for i = 1, roomHeight do
+	    				for j = 1, roomLength do
+	    					if room[i][j]~=nil and room[i][j]:instanceof(tiles.meat) then
+	    						if math.abs(i-ani.tileY)+math.abs(j-ani.tileX)<animalDist then
+	    							animalDist = math.abs(i-ani.tileY)+math.abs(j-ani.tileX)
+	    							movex = j
+	    							movey = i
+	    						end
 	    					end
 	    				end
 	    			end
-	    		end
-	    		for i = 1, #pushables do
-	    			if pushables[i]:instanceof(pushableList.boombox) then
-					    if math.abs(pushables[i].tileY-animals[k].tileY)+math.abs(pushables[i].tileX-animals[k].tileX)<animalDist then
-							animalDist = math.abs(pushables[i].tileY-animals[k].tileY)+math.abs(pushables[i].tileX-animals[k].tileX)
-							movex = pushables[i].tileX
-							movey = pushables[i].tileY
-						end
+	    			for i = 1, #pushables do
+	    				if pushables[i]:instanceof(pushableList.boombox) then
+						    if math.abs(pushables[i].tileY-ani.tileY)+math.abs(pushables[i].tileX-ani.tileX)<animalDist then
+								animalDist = math.abs(pushables[i].tileY-ani.tileY)+math.abs(pushables[i].tileX-ani.tileX)
+								movex = pushables[i].tileX
+								movey = pushables[i].tileY
+							end
+	    				end
 	    			end
+	    			ani:move(movex, movey, room, litTiles[ani.tileY][ani.tileX]==1)
 	    		end
-	    		animals[k]:move(movex, movey, room, litTiles[animals[k].tileY][animals[k].tileX]==1)
 	    	end   	
 	    	resolveConflicts()
 	    	for i = 1, #animals do
