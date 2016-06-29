@@ -113,7 +113,7 @@ function P.tool:getToolableTiles()
 		else
 			offset = util.getOffsetByDir(dir)
 		end
-		for dist = 0, self.range do
+		for dist = 1, self.range do
 			local tileToCheck = {y = player.tileY + offset.y*dist, x = player.tileX + offset.x*dist}
 			if room[tileToCheck.y]~=nil then
 				if ((room[tileToCheck.y][tileToCheck.x] == nil or room[tileToCheck.y][tileToCheck.x]:usableOnNothing(tileToCheck.y, tileToCheck.x)) and (tileToCheck.x>0 and tileToCheck.x<=roomLength) and self:usableOnNothing(tileToCheck.y, tileToCheck.x))
