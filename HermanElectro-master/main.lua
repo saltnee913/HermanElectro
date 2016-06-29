@@ -621,8 +621,8 @@ function love.draw()
 		end
 	end
 
-	for i = 1, roomLength do
-		for j = 1, roomHeight do
+	for j = 1, roomHeight do
+		for i = 1, roomLength do
 			if (room[j][i]~=nil and room[j][i].isVisible) or litTiles[j][i]==0 then
 				local rot = 0
 				local tempi = i
@@ -639,6 +639,7 @@ function love.draw()
 					--else
 						--toDraw = floortile
 					end
+					if room[j][i]~=nil and room[j][i]:getYOffset()~=0 then rot = 0 end
 					if rot == 1 or rot == 2 then
 						tempi = tempi + 1
 					end
@@ -648,11 +649,12 @@ function love.draw()
 				end
 				if (room[j][i]~=nil --[[and room[j][i].name~="pitbull" and room[j][i].name~="cat" and room[j][i].name~="pup"]]) or litTiles[j][i]==0 then
 					local addY = 0
-					if room[j][i]~=nil then
+					if room[j][i]~=nil and litTiles[j][i]~=0 then
 						addY = room[j][i]:getYOffset()
 					end
 					love.graphics.draw(toDraw, (tempi-1)*floor.sprite:getWidth()*scale+wallSprite.width, (addY+(tempj-1)*floor.sprite:getWidth())*scale+wallSprite.height,
 					rot * math.pi / 2, scale*toDraw:getWidth()/16, scale*toDraw:getWidth()/16)
+
 					if room[j][i]~=nil and room[j][i]:getInfoText()~=nil then
 						love.graphics.setColor(0,0,0)
 						love.graphics.print(room[j][i]:getInfoText(), (tempi-1)*floor.sprite:getWidth()*scale+wallSprite.width, (tempj-1)*floor.sprite:getHeight()*scale+wallSprite.height);
@@ -661,6 +663,72 @@ function love.draw()
 				end
 			end
 		end
+		for i = 1, #animals do
+			if animals[i]~=nil and litTiles[animals[i].tileY][animals[i].tileX]==1 and not animals[i].pickedUp and animals[i].tileY==j then
+				animals[i].x = (animals[i].tileX-1)*floor.sprite:getHeight()*scale+wallSprite.width
+		    	animals[i].y = (animals[i].tileY-1)*floor.sprite:getWidth()*scale+wallSprite.height
+				love.graphics.draw(animals[i].sprite, animals[i].x, animals[i].y, 0, scale, scale)
+			end
+		end
+
+		for i = 1, #pushables do
+			if pushables[i]~=nil and not pushables[i].destroyed and litTiles[pushables[i].tileY][pushables[i].tileX]==1 and pushables[i].tileY==j then
+		    	pushablex = (pushables[i].tileX-1)*floor.sprite:getHeight()*scale+wallSprite.width
+		    	pushabley = (pushables[i].tileY-1)*floor.sprite:getWidth()*scale+wallSprite.height
+				love.graphics.draw(pushables[i].sprite, pushablex, pushabley, 0, scale, scale)
+			end
+		end
+		if tools.toolableAnimals~=nil then
+			for dir = 1, 5 do
+				if tools.toolableAnimals[dir]~=nil then
+					for i = 1, #(tools.toolableAnimals[dir]) do
+						local tx = tools.toolableAnimals[dir][i].tileX
+						local ty = tools.toolableAnimals[dir][i].tileY
+						if ty==j then
+							if dir == 1 or tools.toolableAnimals[1][1] == nil or not (tx == tools.toolableAnimals[1][1].tileX and ty == tools.toolableAnimals[1][1].tileY) then
+								love.graphics.draw(green, (tx-1)*floor.sprite:getWidth()*scale+wallSprite.width, (ty-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
+							end
+						end
+					end
+				end
+			end
+		end
+		if tools.toolablePushables~=nil then
+			for dir = 1, 5 do
+				if tools.toolablePushables[dir]~=nil then
+					for i = 1, #(tools.toolablePushables[dir]) do
+						local tx = tools.toolablePushables[dir][i].tileX
+						local ty = tools.toolablePushables[dir][i].tileY
+						if tY==j then
+							if dir == 1 or tools.toolablePushables[1][1] == nil or not (tx == tools.toolablePushables[1][1].tileX and ty == tools.toolablePushables[1][1].tileY) then
+								love.graphics.draw(green, (tx-1)*floor.sprite:getWidth()*scale+wallSprite.width, (ty-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
+							end
+						end
+					end
+				end
+			end
+		end
+		if tools.toolableTiles~=nil then
+			for dir = 1, 5 do
+				for i = 1, #(tools.toolableTiles[dir]) do
+					local tx = tools.toolableTiles[dir][i].x
+					local ty = tools.toolableTiles[dir][i].y
+					if ty==j then
+						if dir == 1 or tools.toolableTiles[1][1] == nil or not (tx == tools.toolableTiles[1][1].x and ty == tools.toolableTiles[1][1].y) then
+							love.graphics.draw(green, (tx-1)*floor.sprite:getWidth()*scale+wallSprite.width, (ty-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
+						end
+					end
+				end
+			end
+		end
+		if player.tileY==j then
+			player.x = (player.tileX-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
+			player.y = (player.tileY-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
+			love.graphics.draw(player.sprite, player.x-player.sprite:getWidth()*player.scale/2, player.y-player.sprite:getHeight()*player.scale, 0, player.scale, player.scale)
+			love.graphics.print(player:getTileLoc().x .. ":" .. player:getTileLoc().y, 0, 0);
+		end
+
+		--love.graphics.draw(walls, 0, 0, 0, width/walls:getWidth(), height/walls:getHeight())
 	end
 	for i = 1, roomLength do
 		if not (i==math.floor(roomLength/2) or i==math.floor(roomLength/2)+1) then
@@ -702,66 +770,6 @@ function love.draw()
 		love.graphics.draw(cornerwall, (cornerX-1)*floor.sprite:getWidth()*scale+wallSprite.width, (yOffset+(cornerY-1)*floor.sprite:getHeight())*scale+wallSprite.height, (i-2)*math.pi/2, scale, scale)
 	end
 
-	if tools.toolableAnimals~=nil then
-		for dir = 1, 5 do
-			if tools.toolableAnimals[dir]~=nil then
-				for i = 1, #(tools.toolableAnimals[dir]) do
-					local tx = tools.toolableAnimals[dir][i].tileX
-					local ty = tools.toolableAnimals[dir][i].tileY
-					if dir == 1 or tools.toolableAnimals[1][1] == nil or not (tx == tools.toolableAnimals[1][1].tileX and ty == tools.toolableAnimals[1][1].tileY) then
-						love.graphics.draw(green, (tx-1)*floor.sprite:getWidth()*scale+wallSprite.width, (ty-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
-					end
-				end
-			end
-		end
-	end
-	if tools.toolablePushables~=nil then
-		for dir = 1, 5 do
-			if tools.toolablePushables[dir]~=nil then
-				for i = 1, #(tools.toolablePushables[dir]) do
-					local tx = tools.toolablePushables[dir][i].tileX
-					local ty = tools.toolablePushables[dir][i].tileY
-					if dir == 1 or tools.toolablePushables[1][1] == nil or not (tx == tools.toolablePushables[1][1].tileX and ty == tools.toolablePushables[1][1].tileY) then
-						love.graphics.draw(green, (tx-1)*floor.sprite:getWidth()*scale+wallSprite.width, (ty-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
-					end
-				end
-			end
-		end
-	end
-	if tools.toolableTiles~=nil then
-		for dir = 1, 5 do
-			for i = 1, #(tools.toolableTiles[dir]) do
-				local tx = tools.toolableTiles[dir][i].x
-				local ty = tools.toolableTiles[dir][i].y
-				if dir == 1 or tools.toolableTiles[1][1] == nil or not (tx == tools.toolableTiles[1][1].x and ty == tools.toolableTiles[1][1].y) then
-					love.graphics.draw(green, (tx-1)*floor.sprite:getWidth()*scale+wallSprite.width, (ty-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
-				end
-			end
-		end
-	end
-	
-	--love.graphics.draw(walls, 0, 0, 0, width/walls:getWidth(), height/walls:getHeight())
-
-	for i = 1, #animals do
-		if animals[i]~=nil and litTiles[animals[i].tileY][animals[i].tileX]==1 and not animals[i].pickedUp then
-			animals[i].x = (animals[i].tileX-1)*floor.sprite:getHeight()*scale+wallSprite.width
-	    	animals[i].y = (animals[i].tileY-1)*floor.sprite:getWidth()*scale+wallSprite.height
-			love.graphics.draw(animals[i].sprite, animals[i].x, animals[i].y, 0, scale, scale)
-		end
-	end
-
-	for i = 1, #pushables do
-		if pushables[i]~=nil and not pushables[i].destroyed and litTiles[pushables[i].tileY][pushables[i].tileX]==1 then
-	    	pushablex = (pushables[i].tileX-1)*floor.sprite:getHeight()*scale+wallSprite.width
-	    	pushabley = (pushables[i].tileY-1)*floor.sprite:getWidth()*scale+wallSprite.height
-			love.graphics.draw(pushables[i].sprite, pushablex, pushabley, 0, scale, scale)
-		end
-	end
-
-	player.x = (player.tileX-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
-	player.y = (player.tileY-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
-	love.graphics.draw(player.sprite, player.x-player.sprite:getWidth()*player.scale/2, player.y-player.sprite:getHeight()*player.scale, 0, player.scale, player.scale)
-	love.graphics.print(player:getTileLoc().x .. ":" .. player:getTileLoc().y, 0, 0);
 	love.graphics.print(math.floor(gameTime), width/2-10, 20);
 	for i = 0, mapHeight do
 		for j = 0, mapHeight do

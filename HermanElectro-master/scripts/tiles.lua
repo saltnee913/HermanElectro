@@ -337,6 +337,7 @@ function P.wall:onEnterAnimal(animal)
 end
 P.wall.onStayAnimal = P.wall.onEnterAnimal
 function P.wall:getYOffset()
+	if self.destroyed then return 0 end
 	return yOffset
 end
 function P.wall:destroy()
@@ -346,8 +347,10 @@ function P.wall:destroy()
 	self.destroyed = true
 	self.blocksMovement = false
 end
+function P.wall:rotate(times)
+end
 
-P.metalWall = P.wall:new{dirAccept = {1,1,1,1}, dirSend = {1,1,1,1}, canBePowered = true, name = "metalwall", blocksVision = true, destroyedSprite = love.graphics.newImage('Graphics/metalwallbroken.png'), sprite = love.graphics.newImage('Graphics/metalwall.png'), poweredSprite = love.graphics.newImage('Graphics/metalwallpowered.png') }
+P.metalWall = P.wall:new{dirAccept = {1,1,1,1}, dirSend = {1,1,1,1}, canBePowered = true, name = "metalwall", blocksVision = true, destroyedSprite = love.graphics.newImage('Graphics/metalwallbroken.png'), sprite = love.graphics.newImage('Graphics3D/metalwall.png'), poweredSprite = love.graphics.newImage('Graphics3D/metalwallpowered.png') }
 P.metalWall.updateTile = P.conductiveTile.updateTile
 function P.metalWall:destroy()
 	self.blocksProjectiles = false
@@ -363,7 +366,7 @@ end
 
 P.maskedMetalWall = P.metalWall:new{sprite = love.graphics.newImage('Graphics/maskedMetalWall.png'), poweredSprite = love.graphics.newImage('Graphics/maskedMetalWall.png')}
 
-P.glassWall = P.wall:new{sawable = false, canBePowered = false, dirAccept = {0,0,0,0}, dirSend = {0,0,0,0}, bricked = false, name = "glasswall", blocksVision = false, electrifiedSprite = love.graphics.newImage('Graphics/glasswallelectrified.png'), destroyedSprite = love.graphics.newImage('Graphics/glassbroken.png'), sprite = love.graphics.newImage('Graphics/glass.png'), poweredSprite = love.graphics.newImage('Graphics/glasswallpowered.png'), sawable = false }
+P.glassWall = P.wall:new{sawable = false, canBePowered = false, dirAccept = {0,0,0,0}, dirSend = {0,0,0,0}, bricked = false, name = "glasswall", blocksVision = false, electrifiedSprite = love.graphics.newImage('Graphics/glasswallelectrified.png'), destroyedSprite = love.graphics.newImage('Graphics/glassbroken.png'), sprite = love.graphics.newImage('Graphics3D/glass.png'), poweredSprite = love.graphics.newImage('Graphics/glasswallpowered.png'), sawable = false }
 P.glassWall.getYOffset = P.wall.getYOffset
 function P.glassWall:destroy()
 	self.blocksProjectiles = false
@@ -604,7 +607,7 @@ end
 P.rotater.onEnterAnimal = P.rotater.onEnter
 P.rotater.onLeaveAnimal = P.rotater.onLeave
 
-P.concreteWall = P.wall:new{sawable = false, name = "concreteWall", sprite = love.graphics.newImage('Graphics/concretewall.png'), poweredSprite = love.graphics.newImage('Graphics/concretewallpowered.png'), electrifiedSprite = love.graphics.newImage('Graphics/concretewallelectrified.png'), destroyedSprite = love.graphics.newImage('Graphics/concretewallbroken.png'), sawable = false}
+P.concreteWall = P.wall:new{sawable = false, name = "concreteWall", sprite = love.graphics.newImage('Graphics3D/concretewall.png'), poweredSprite = love.graphics.newImage('Graphics/concretewallpowered.png'), electrifiedSprite = love.graphics.newImage('Graphics/concretewallelectrified.png'), destroyedSprite = love.graphics.newImage('Graphics/concretewallbroken.png'), sawable = false}
 function P.concreteWall:destroy()
 	self.blocksProjectiles = false
 	self.blocksVision = false
@@ -613,10 +616,45 @@ function P.concreteWall:destroy()
 	self.blocksMovement = false
 end
 
-P.concreteWallConductive = P.concreteWall:new{name = "concreteWallConductive", sprite = love.graphics.newImage('Graphics/concretewallconductive.png'), poweredSprite = love.graphics.newImage('Graphics/concretewallconductive.png'), canBePowered = true, dirAccept = {1,1,1,1}, dirSend = {1,1,1,1}}
-P.concreteWallConductiveDirected = P.concreteWallConductive:new{name = "concreteWallConductiveDirected", sprite = love.graphics.newImage('Graphics/concretewallconductivedirected.png'), poweredSprite = love.graphics.newImage('Graphics/concretewallconductivedirected.png'), canBePowered = true, dirAccept = {1,0,1,0}, dirSend = {1,0,1,0}}
-P.concreteWallConductiveCorner = P.concreteWallConductive:new{name = "concreteWallConductiveCorner", sprite = love.graphics.newImage('Graphics/concretewallconductivecorner.png'), poweredSprite = love.graphics.newImage('Graphics/concretewallconductivecorner.png'), canBePowered = true, dirAccept = {1,1,0,0}, dirSend = {1,1,0,0}}
-P.concreteWallConductiveT = P.concreteWallConductive:new{name = "concreteWallConductiveT", sprite = love.graphics.newImage('Graphics/concretewallconductivet.png'), poweredSprite = love.graphics.newImage('Graphics/concretewallconductivet.png'), canBePowered = true, dirAccept = {1,1,1,0}, dirSend = {1,1,1,0}}
+P.concreteWallConductive = P.concreteWall:new{name = "concreteWallConductive", sprite = love.graphics.newImage('Graphics3D/concretewallconductive.png'), poweredSprite = love.graphics.newImage('Graphics/concretewallconductive.png'), canBePowered = true, dirAccept = {1,1,1,1}, dirSend = {1,1,1,1}}
+
+P.concreteWallConductiveDirected = P.concreteWallConductive:new{name = "concreteWallConductiveDirected", sprite = love.graphics.newImage('Graphics3D/concretewallconductivedirected0.png'), poweredSprite = love.graphics.newImage('Graphics3D/concretewallconductivedirected0.png'),
+canBePowered = true, dirAccept = {1,0,1,0}, dirSend = {1,0,1,0}, sprite0 = love.graphics.newImage('Graphics3D/concretewallconductivedirected0.png'), sprite1 = love.graphics.newImage('Graphics3D/concretewallconductivedirected1.png')}
+function P.concreteWallConductiveDirected:rotate(times)
+	self.rotation = self.rotation + times
+	if self.rotation >= 4 then
+		self.rotation = self.rotation - 4
+	end
+	for i=1,times do
+		self.dirSend = shiftArray(self.dirSend)
+		self.dirAccept = shiftArray(self.dirAccept)
+	end
+	self:updateSprite()
+end
+
+function P.concreteWallConductiveDirected:updateSprite()
+	if self.destroyed then return end
+	if self.rotation==0 then self.sprite = self.sprite0
+	elseif self.rotation==1 then self.sprite = self.sprite1
+	elseif self.rotation==2 then self.sprite = self.sprite0
+	elseif self.rotation==3 then self.sprite = self.sprite1 end
+end
+
+P.concreteWallConductiveCorner = P.concreteWallConductive:new{name = "concreteWallConductiveCorner", sprite = love.graphics.newImage('Graphics3D/concretewallconductivecorner0.png'), poweredSprite = love.graphics.newImage('Graphics/concretewallconductivecorner.png'), canBePowered = true, dirAccept = {1,1,0,0}, dirSend = {1,1,0,0},
+sprite0 = love.graphics.newImage('Graphics3D/concretewallconductivecorner0.png'), sprite1 = love.graphics.newImage('Graphics3D/concretewallconductivecorner1.png'), sprite2 = love.graphics.newImage('Graphics3D/concretewallconductivecorner2.png'), sprite3 = love.graphics.newImage('Graphics3D/concretewallconductivecorner3.png')}
+P.concreteWallConductiveCorner.rotate = P.concreteWallConductiveDirected.rotate
+function P.concreteWallConductiveCorner:updateSprite()
+	if self.destroyed then return end
+	if self.rotation==0 then self.sprite = self.sprite0
+	elseif self.rotation==1 then self.sprite = self.sprite1
+	elseif self.rotation==2 then self.sprite = self.sprite2
+	elseif self.rotation==3 then self.sprite = self.sprite3 end
+end
+
+P.concreteWallConductiveT = P.concreteWallConductive:new{name = "concreteWallConductiveT", sprite = love.graphics.newImage('Graphics3D/concretewallconductivet0.png'), poweredSprite = love.graphics.newImage('Graphics/concretewallconductivet.png'), canBePowered = true, dirAccept = {1,1,1,0}, dirSend = {1,1,1,0},
+sprite0 = love.graphics.newImage('Graphics3D/concretewallconductivet0.png'), sprite1 = love.graphics.newImage('Graphics3D/concretewallconductivet1.png'), sprite2 = love.graphics.newImage('Graphics3D/concretewallconductivet2.png'), sprite3 = love.graphics.newImage('Graphics3D/concretewallconductivet3.png')}
+P.concreteWallConductiveT.rotate = P.concreteWallConductiveDirected.rotate
+P.concreteWallConductiveT.updateSprite = P.concreteWallConductiveCorner.updateSprite
 
 P.tunnel = P.tile:new{name = "tunnel"}
 function P.tunnel:onEnter(player)

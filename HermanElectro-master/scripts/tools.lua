@@ -113,17 +113,29 @@ function P.tool:getToolableTiles()
 		else
 			offset = util.getOffsetByDir(dir)
 		end
-		for dist = 1, self.range do
-			local tileToCheck = {y = player.tileY + offset.y*dist, x = player.tileX + offset.x*dist}
+		if dir==5 and self.range==0 then
+			local tileToCheck = {y = player.tileY, x = player.tileX}
 			if room[tileToCheck.y]~=nil then
 				if ((room[tileToCheck.y][tileToCheck.x] == nil or room[tileToCheck.y][tileToCheck.x]:usableOnNothing(tileToCheck.y, tileToCheck.x)) and (tileToCheck.x>0 and tileToCheck.x<=roomLength) and self:usableOnNothing(tileToCheck.y, tileToCheck.x))
 				or (room[tileToCheck.y][tileToCheck.x] ~= nil and self:usableOnTile(room[tileToCheck.y][tileToCheck.x], dist)) then
 					if litTiles[tileToCheck.y][tileToCheck.x]~=0 then
-						usableTiles[dir][#(usableTiles[dir])+1] = tileToCheck
+						usableTiles[5][#(usableTiles[5])+1] = tileToCheck
 					end
 				end
-				if room[tileToCheck.y][tileToCheck.x] ~= nil and room[tileToCheck.y][tileToCheck.x].blocksProjectiles then
-					break
+			end
+		else
+			for dist = 1, self.range do
+				local tileToCheck = {y = player.tileY + offset.y*dist, x = player.tileX + offset.x*dist}
+				if room[tileToCheck.y]~=nil then
+					if ((room[tileToCheck.y][tileToCheck.x] == nil or room[tileToCheck.y][tileToCheck.x]:usableOnNothing(tileToCheck.y, tileToCheck.x)) and (tileToCheck.x>0 and tileToCheck.x<=roomLength) and self:usableOnNothing(tileToCheck.y, tileToCheck.x))
+					or (room[tileToCheck.y][tileToCheck.x] ~= nil and self:usableOnTile(room[tileToCheck.y][tileToCheck.x], dist)) then
+						if litTiles[tileToCheck.y][tileToCheck.x]~=0 then
+							usableTiles[dir][#(usableTiles[dir])+1] = tileToCheck
+						end
+					end
+					if room[tileToCheck.y][tileToCheck.x] ~= nil and room[tileToCheck.y][tileToCheck.x].blocksProjectiles then
+						break
+					end
 				end
 			end
 		end
@@ -827,8 +839,8 @@ P[25] = P.broom
 P[26] = P.magnet
 P[27] = P.spring
 P[28] = P.glue
-P[29] = P.endFinder
-P[30] = P.lamp
-P[31] = P.ramSpawner
+P[2] = P.endFinder
+P[29] = P.lamp
+P[30] = P.ramSpawner
 
 return tools
