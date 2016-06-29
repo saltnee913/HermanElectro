@@ -1077,7 +1077,7 @@ function P.untriggeredPowerSupply:updateTile(dir)
 	end
 end
 
-P.reinforcedGlass = P.concreteWall:new{name = "reinforcedGlass", blocksVision = false, sprite = love.graphics.newImage('Graphics/reinforcedglass.png'), poweredSprite = love.graphics.newImage('Graphics/reinforcedglass.png')}
+P.reinforcedGlass = P.concreteWall:new{name = "reinforcedGlass", blocksVision = false, sprite = love.graphics.newImage('Graphics3D/reinforcedglass.png'), poweredSprite = love.graphics.newImage('Graphics3D/reinforcedglass.png')}
 
 P.powerTriggeredBomb = P.unactivatedBomb:new{name = "powerTriggeredBomb", canBePowered = true, powered = false, dirAccept = {1,1,1,1}, dirSend = {0,0,0,0}}
 function P.powerTriggeredBomb:postPowerUpdate()
@@ -1118,7 +1118,7 @@ function P.puddle:willKillPlayer()
 end
 P.puddle.willKillAnimal = P.puddle.willKillPlayer
 
-P.dustyGlassWall = P.glassWall:new{name = "dustyGlassWall", blocksVision = true, sprite = love.graphics.newImage('Graphics/dustyglass.png'), cleanSprite = love.graphics.newImage('Graphics/glass.png')}
+P.dustyGlassWall = P.glassWall:new{name = "dustyGlassWall", blocksVision = true, sprite = love.graphics.newImage('Graphics3D/dustyglass.png'), cleanSprite = love.graphics.newImage('Graphics/glass.png')}
 
 P.trap = P.tile:new{name = "trap", triggered = false, sprite = love.graphics.newImage('Graphics/trap.png')}
 function P.trap:onEnter(player)
