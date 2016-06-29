@@ -19,6 +19,8 @@ loadedOnce = false
 
 
 function love.load()
+	gameTime = 0
+
 	typingCallback = nil
 	debugText = nil
 	tempAdd = 1
@@ -185,6 +187,13 @@ function updateLight()
 		end
 	end
 	lightTest(player.tileY, player.tileX)
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]~=nil and room[i][j].lit then
+				lightTest(i, j)
+			end
+		end
+	end
 	for i=1,roomHeight do
 		for j=1,roomLength do
 			--checkLight(i,j, tileLoc2, tileLoc1)
@@ -268,6 +277,18 @@ function updatePower()
 				end
 			end
 		end
+		for i = 1, #pushables do
+			if pushables[i].conductive then
+				local pX = pushables[i].tileX
+				local pY = pushables[i].tileY
+				if (room[pY-1]~=nil and room[pY-1][pX]~=nil and room[pY-1][pX].powered and room[pY-1][pX].dirSend[3]==1) or
+				(room[pY+1]~=nil and room[pY+1][pX]~=nil and room[pY+1][pX].powered and room[pY+1][pX].dirSend[1]==1) or
+				(room[pY][pX-1]~=nil and room[pY][pX-1].powered and room[pY][pX-1].dirSend[2]==1) or
+				(room[pY][pX+1]~=nil and room[pY][pX+1].powered and room[pY][pX+1].dirSend[4]==1) then
+					powerTestPushable(pY, pX, 0)
+				end
+			end
+		end
 		for i = 1, roomHeight do
 			for j = 1, roomLength do
 				if room[i]~=nil and room[i][j]~=nil and room[i][j]:instanceof(tiles.notGate) then
@@ -276,8 +297,8 @@ function updatePower()
 						room[i][j].poweredNeighbors[room[i][j]:cfr(3)]=0
 						room[i][j]:updateTile(0)
 					elseif room[i+offset.y]~=nil and room[i+offset.y][j+offset.x]~=nil
-					  and room[i+offset.y][j+offset.x].powered==true
-					  and room[i+offset.y][j+offset.x].dirSend[room[i][j]:cfr(1)]==1 then
+					 and room[i+offset.y][j+offset.x].powered==true
+					 and room[i+offset.y][j+offset.x].dirSend[room[i][j]:cfr(1)]==1 then
 						room[i][j].poweredNeighbors[room[i][j]:cfr(3)]=1
 						room[i][j]:updateTile(0)
 					end
@@ -366,8 +387,7 @@ function powerTest(x, y, lastDir)
 		return
 	end
 
-
-	if x>1 and room[x-1][y] ~=nil and canBePowered(x-1,y,3) and lastDir~=1 then
+	if x>1 and room[x-1][y]~=nil and canBePowered(x-1,y,3) and lastDir~=1 then
 		formerPowered = room[x-1][y].powered
 		formerSend = room[x-1][y].dirSend
 		formerAccept = room[x-1][y].dirAccept
@@ -384,7 +404,7 @@ function powerTest(x, y, lastDir)
 	end
 
 
-	if x<roomHeight and room[x+1][y] ~=nil and canBePowered(x+1,y,1) and lastDir~=3 then
+	if x<roomHeight and room[x+1][y]~=nil and canBePowered(x+1,y,1) and lastDir~=3 then
 		--powered[x+1][y] = 1
 		formerPowered = room[x+1][y].powered
 		formerSend = room[x+1][y].dirSend
@@ -400,7 +420,7 @@ function powerTest(x, y, lastDir)
 		end
 	end
 
-	if y>1 and room[x][y-1] ~=nil and canBePowered(x,y-1,2) and lastDir~=4 then
+	if y>1 and room[x][y-1]~=nil and canBePowered(x,y-1,2) and lastDir~=4 then
 		formerPowered = room[x][y-1].powered
 		formerSend = room[x][y-1].dirSend
 		formerAccept = room[x][y-1].dirAccept
@@ -416,7 +436,7 @@ function powerTest(x, y, lastDir)
 		end
 	end
 
-	if y<roomLength and room[x][y+1] ~=nil and canBePowered(x,y+1,4) and lastDir~=2 then
+	if y<roomLength and room[x][y+1]~=nil and canBePowered(x,y+1,4) and lastDir~=2 then
 		formerPowered = room[x][y+1].powered
 		formerSend = room[x][y+1].dirSend
 		formerAccept = room[x][y+1].dirAccept
@@ -429,6 +449,65 @@ function powerTest(x, y, lastDir)
 		room[x][y+1]:updateTile(4)
 		if room[x][y+1].powered ~= formerPowered or room[x][y+1].dirSend ~= formerSend or room[x][y+1].dirAccept ~= formerAccept then
 			powerTest(x, y+1, 4)
+		end
+	end
+end
+
+function powerTestPushable(x, y, lastDir)
+	powerCount = powerCount+1
+	if powerCount>3000 then
+		kill()
+		return
+	end
+	--x refers to y-direction and vice versa
+	--1 for up, 2 for right, 3 for down, 4 for left
+
+	if x>1 and room[x-1][y]~=nil and canBePowered(x-1,y,3) then
+		formerPowered = room[x-1][y].powered
+		formerSend = room[x-1][y].dirSend
+		formerAccept = room[x-1][y].dirAccept
+		--powered[x-1][y] = 1
+		room[x-1][y].poweredNeighbors[3] = 1
+		room[x-1][y]:updateTile(3)
+		if room[x-1][y].powered ~= formerPowered or room[x-1][y].dirSend ~= formerSend or room[x-1][y].dirAccept ~= formerAccept then
+			powerTestSpecial(x-1,y,3)
+		end
+	end
+
+
+	if x<roomHeight and room[x+1][y]~=nil and canBePowered(x+1,y,1) then
+		--powered[x+1][y] = 1
+		formerPowered = room[x+1][y].powered
+		formerSend = room[x+1][y].dirSend
+		formerAccept = room[x+1][y].dirAccept
+		room[x+1][y].poweredNeighbors[1] = 1
+		room[x+1][y]:updateTile(1)
+		if room[x+1][y].powered ~= formerPowered or room[x+1][y].dirSend ~= formerSend or room[x+1][y].dirAccept ~= formerAccept then
+			powerTestSpecial(x+1,y,1)
+		end
+	end
+
+	if y>1 and room[x][y-1]~=nil and canBePowered(x,y-1,2) then
+		formerPowered = room[x][y-1].powered
+		formerSend = room[x][y-1].dirSend
+		formerAccept = room[x][y-1].dirAccept
+		--powered[x][y-1] = 1
+		room[x][y-1].poweredNeighbors[2] = 1
+		room[x][y-1]:updateTile(2)
+		if room[x][y-1].powered ~= formerPowered or room[x][y-1].dirSend ~= formerSend or room[x][y-1].dirAccept ~= formerAccept then
+			powerTestSpecial(x, y-1, 2)
+		end
+	end
+
+	if y<roomLength and room[x][y+1]~=nil and canBePowered(x,y+1,4) then
+		formerPowered = room[x][y+1].powered
+		formerSend = room[x][y+1].dirSend
+		formerAccept = room[x][y+1].dirAccept
+		--powered[x][y+1] = 1
+		room[x][y+1].poweredNeighbors[4] = 1
+		room[x][y+1]:updateTile(4)
+		if room[x][y+1].powered ~= formerPowered or room[x][y+1].dirSend ~= formerSend or room[x][y+1].dirAccept ~= formerAccept then
+			powerTestSpecial(x, y+1, 4)
 		end
 	end
 end
@@ -620,6 +699,19 @@ function love.draw()
 			end
 		end
 	end
+	if tools.toolablePushables~=nil then
+		for dir = 1, 5 do
+			if tools.toolablePushables[dir]~=nil then
+				for i = 1, #(tools.toolablePushables[dir]) do
+					local tx = tools.toolablePushables[dir][i].tileX
+					local ty = tools.toolablePushables[dir][i].tileY
+					if dir == 1 or tools.toolablePushables[1][1] == nil or not (tx == tools.toolablePushables[1][1].tileX and ty == tools.toolablePushables[1][1].tileY) then
+						love.graphics.draw(green, (tx-1)*floor.sprite:getWidth()*scale+wallSprite.width, (ty-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
+					end
+				end
+			end
+		end
+	end
 	if tools.toolableTiles~=nil then
 		for dir = 1, 5 do
 			for i = 1, #(tools.toolableTiles[dir]) do
@@ -654,6 +746,7 @@ function love.draw()
 	player.y = (player.tileY-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
 	love.graphics.draw(player.sprite, player.x-player.sprite:getWidth()*player.scale/2, player.y-player.sprite:getHeight()*player.scale, 0, player.scale, player.scale)
 	love.graphics.print(player:getTileLoc().x .. ":" .. player:getTileLoc().y, 0, 0);
+	love.graphics.print(math.floor(gameTime), width/2-10, 20);
 	for i = 0, mapHeight do
 		for j = 0, mapHeight do
 			if visibleMap[i][j] == 1 then
@@ -802,6 +895,7 @@ end
 
 function createAnimals()
 	animalCounter = 1
+	--if room.animals~=nil then animals = room.animals return end
 	animals = {}
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
@@ -816,6 +910,7 @@ function createAnimals()
 					animals[animalCounter].prevTileX = j
 					animals[animalCounter].prevTileY = i
 					animalCounter=animalCounter+1
+					--room[i][j] = nil
 				end
 			end
 		end
@@ -823,23 +918,32 @@ function createAnimals()
 end
 
 function createPushables()
+	if room.pushables~=nil then pushables = room.pushables return end
 	pushables = {}
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
 			if room[i]~=nil and room[i][j]~=nil and room[i][j].name~=nil and room[i][j].pushable~=nil then
 				pushableToSpawn = pushableList[room[i][j].listIndex]:new()
-				index = #pushables+1
-				pushables[index] = pushableToSpawn
-				pushables[index].tileY = i
-				pushables[index].tileX = j
-				pushables[index].prevTileX = pushables[index].tileX
-				pushables[index].prevTileY = pushables[index].tileY
+				--pushableToSpawn = room[i][j].pushable
+				if not pushableToSpawn.destroyed then
+					index = #pushables+1
+					pushables[index] = pushableToSpawn
+					pushables[index].tileY = i
+					pushables[index].tileX = j
+					pushables[index].prevTileX = pushables[index].tileX
+					pushables[index].prevTileY = pushables[index].tileY
+				end
+				room[i][j]=nil
 			end
 		end
 	end
 end
 
 function enterRoom(dir)
+	--set pushables of prev. room to pushables array, saving for next entry
+	room.pushables = pushables
+	room.animals = animals
+
 	prevMapX = mapx
 	prevMapY = mapy
 	if dir == 0 then
@@ -945,6 +1049,7 @@ end
 keyTimer = {base = .05, timeLeft = .05}
 function love.update(dt)
 	keyTimer.timeLeft = keyTimer.timeLeft - dt
+	gameTime = gameTime+dt
 end
 
 function love.textinput(text)
@@ -1113,7 +1218,16 @@ function love.keypressed(key, unicode)
 	    					end
 	    				end
 	    			end
-	    			ani:move(movex, movey, room, litTiles[animals[k].tileY][animals[k].tileX]==1)
+	    			for i = 1, #pushables do
+	    				if pushables[i]:instanceof(pushableList.boombox) then
+						    if math.abs(pushables[i].tileY-ani.tileY)+math.abs(pushables[i].tileX-ani.tileX)<animalDist then
+								animalDist = math.abs(pushables[i].tileY-ani.tileY)+math.abs(pushables[i].tileX-ani.tileX)
+								movex = pushables[i].tileX
+								movey = pushables[i].tileY
+							end
+	    				end
+	    			end
+	    			ani:move(movex, movey, room, litTiles[ani.tileY][ani.tileX]==1)
 	    		end
 	    	end   	
 	    	resolveConflicts()
@@ -1129,10 +1243,15 @@ function love.keypressed(key, unicode)
 				end
 			end
 			for i = 1, #animals do
+				if animals[i].waitCounter>0 then
+					animals[i].waitCounter = animals[i].waitCounter-1
+				end
 				if animals[i]:hasMoved() and not animals[i].dead then
 					if room[animals[i].tileY][animals[i].tileX]~=nil then
 						room[animals[i].tileY][animals[i].tileX]:onEnterAnimal(animals[i])
 					end
+				elseif room[animals[i].tileY][animals[i].tileX]~=nil then
+					room[animals[i].tileY][animals[i].tileX]:onStayAnimal(animals[i])
 				end
 			end
 			stepTrigger()
@@ -1193,8 +1312,31 @@ function resolveConflicts()
 					if not animals[i]:instanceof(animalList.cat) and player.tileX-animals[i].tileX==0 and player.tileY-animals[i].tileY==0 then
 						tryMove = false
 					end
-					if tryMove then
-						animals[i]:secondaryMove()
+					if tryMove and litTiles[animals[i].tileY][animals[i].tileX]~=0 then
+						local movex = player.tileX
+			    		local movey = player.tileY
+			    		local animalDist = math.abs(movey-animals[i].tileY)+math.abs(movex-animals[i].tileX)
+			    		for j = 1, roomHeight do
+			    			for k = 1, roomLength do
+			    				if room[j][k]~=nil and room[j][k]:instanceof(tiles.meat) then
+			    					if math.abs(j-animals[i].tileY)+math.abs(k-animals[i].tileX)<animalDist then
+			    						animalDist = math.abs(j-animals[i].tileY)+math.abs(k-animals[i].tileX)
+			    						movex = k
+			    						movey = j
+			    					end
+			    				end
+			    			end
+			    		end
+			    		for j = 1, #pushables do
+			    			if pushables[j]:instanceof(pushableList.boombox) then
+							    if math.abs(pushables[j].tileY-animals[i].tileY)+math.abs(pushables[j].tileX-animals[i].tileX)<animalDist then
+									animalDist = math.abs(pushables[j].tileY-animals[i].tileY)+math.abs(pushables[j].tileX-animals[i].tileX)
+									movex = pushables[j].tileX
+									movey = pushables[j].tileY
+								end
+			    			end
+			    		end
+						animals[i]:secondaryMove(movex, movey)
 					end
 				end
 			end
@@ -1301,6 +1443,9 @@ function checkAllDeath()
 	checkDeath()
 	for i = 1, #animals do
 		animals[i]:checkDeath()
+	end
+	for i = 1, #pushables do
+		pushables[i]:checkDestruction()
 	end
 end
 

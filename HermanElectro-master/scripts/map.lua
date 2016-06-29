@@ -249,6 +249,8 @@ function P.generateMapStandard()
 	newmap.initialX = math.floor(height/2)
 	treasureX = 0
 	treasureY = 0
+	donationX = 0
+	donationY = 0
 	local blacklist = {startRoomID}
 	local randomRoomArray = util.createRandomKeyArray(P.floorInfo.rooms.rooms, blacklist)
 	local skippedRooms = {}
@@ -281,7 +283,14 @@ function P.generateMapStandard()
 						works = true
 						if i == numRooms - 1 then
 							if (j+1 == treasureY and k == treasureX) or (j-1 == treasureY and k == treasureX)
-							or (j == treasureY and k+1 == treasureX) or (j == treasureY and k-1 == treasureX) then
+							or (j == treasureY and k+1 == treasureX) or (j == treasureY and k-1 == treasureX)
+							or (j+1 == donationY and k == donationX) or (j-1 == donationY and k == donationX)
+							or (j == donationY and k+1 == donationX) or (j == donationY and k-1 == donationX) then
+								works = false
+							end
+						elseif i == numRooms - 2 then
+							if (j+1 == donationY and k == donationX) or (j-1 == donationY and k == donationX)
+							or (j == donationY and k+1 == donationX) or (j == donationY and k-1 == donationX) then
 								works = false
 							end
 						end
@@ -323,6 +332,12 @@ function P.generateMapStandard()
 			arr = P.floorInfo.rooms.finalRooms
 			roomid = util.chooseRandomKey(arr)
 			loadedRoom = P.createRoom(roomid, arr)
+		elseif i == numRooms-3 then
+			arr = P.floorInfo.rooms.donationRooms
+			roomid = util.chooseRandomKey(arr)
+			loadedRoom = P.createRoom(roomid, arr)
+			donationX = choice.y
+			donationY = choice.x
 		end
 		newmap[choice.x][choice.y] = {roomid = roomid, room = P.createRoom(roomid, arr), isFinal = false, isInitial = false}
 	end

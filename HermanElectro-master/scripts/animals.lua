@@ -24,33 +24,32 @@ function P.animal:move(playerx, playery, room, isLit)
 		return
 	end
 	self.triggered = true
+	self.prevTileX = self.tileX
+	self.prevTileY = self.tileY
 	if self.waitCounter>0 then
-		self.waitCounter = self.waitCounter - 1
 		return
 	end
+	
 	if playerx-self.tileX==0 and playery-self.tileY==0 then
 		return
 	end
 
-	self.prevTileX = self.tileX
-	self.prevTileY = self.tileY
-
-	if not self:primaryMove() then
-		self:secondaryMove()
+	if not self:primaryMove(playerx, playery) then
+		self:secondaryMove(playerx, playery)
 	end
 end
-function P.animal:primaryMove()
-	local diffx = math.abs(player.tileX - self.tileX)
-	local diffy = math.abs(player.tileY - self.tileY)
+function P.animal:primaryMove(playerx, playery)
+	local diffx = math.abs(playerx - self.tileX)
+	local diffy = math.abs(playery - self.tileY)
 
 	if diffx>diffy then
-		if player.tileX>self.tileX then
+		if playerx>self.tileX then
 			self.tileX = self.tileX+1
 		else
 			self.tileX = self.tileX-1
 		end
 	else
-		if player.tileY>self.tileY then
+		if playery>self.tileY then
 			self.tileY = self.tileY+1
 		else
 			self.tileY = self.tileY-1
@@ -83,18 +82,18 @@ function P.animal:pushableCheck()
 	return true
 end
 
-function P.animal:secondaryMove()
-	local diffx = math.abs(player.tileX - self.tileX)
-	local diffy = math.abs(player.tileY - self.tileY)
+function P.animal:secondaryMove(playerx, playery)
+	local diffx = math.abs(playerx - self.tileX)
+	local diffy = math.abs(playery - self.tileY)
 
-	if diffy>=diffx and not (self.tileX==player.tileX) then
-		if player.tileX>self.tileX then
+	if diffy>=diffx and not (self.tileX==playerx) then
+		if playerx>self.tileX then
 			self.tileX = self.tileX+1
 		else
 			self.tileX = self.tileX-1
 		end
-	elseif (self.tileY~=player.tileY) then
-		if player.tileY>self.tileY then
+	elseif (self.tileY~=playery) then
+		if playery>self.tileY then
 			self.tileY = self.tileY+1
 		else
 			self.tileY = self.tileY-1
@@ -143,7 +142,7 @@ end
 
 P.pitbull = P.animal:new{name = "pitbull"}
 function P.pitbull:willKillPlayer()
-	return player.tileX == self.tileX and player.tileY == self.tileY and not self.dead
+	return playerx == self.tileX and playery == self.tileY and not self.dead
 end
 
 P.pup = P.animal:new{name = "pup", sprite = love.graphics.newImage('Graphics/pup.png'), deadSprite = love.graphics.newImage('Graphics/pupdead.png')}
@@ -165,8 +164,8 @@ P.bat.willKillPlayer = P.pitbull.willKillPlayer
 
 P.cat = P.animal:new{name = "cat", sprite = love.graphics.newImage('Graphics/cat.png'), deadSprite = love.graphics.newImage('Graphics/catdead.png')}
 function P.cat:move(playerx, playery, room, isLit)
-	local diffCatx = math.abs(player.tileX - self.tileX)
-	local diffCaty = math.abs(player.tileY - self.tileY)
+	local diffCatx = math.abs(playerx - self.tileX)
+	local diffCaty = math.abs(playery - self.tileY)
 
 	if self.dead or (not isLit and not self.triggered) then
 		return
@@ -181,11 +180,11 @@ function P.cat:move(playerx, playery, room, isLit)
 	self.prevTileY = self.tileY
 
 	local setOfMoves = {}
-	local currDist = math.abs(self.tileX-player.tileX)+math.abs(self.tileY-player.tileY)
-	setOfMoves[1] = {dist = math.abs(self.tileX+1-player.tileX)+math.abs(self.tileY-player.tileY), diffx = 1, diffy = 0}
-	setOfMoves[2] = {dist = math.abs(self.tileX-1-player.tileX)+math.abs(self.tileY-player.tileY), diffx = -1, diffy = 0}
-	setOfMoves[3] = {dist = math.abs(self.tileX-player.tileX)+math.abs(self.tileY+1-player.tileY), diffx = 0, diffy = 1}
-	setOfMoves[4] = {dist = math.abs(self.tileX-player.tileX)+math.abs(self.tileY-1-player.tileY), diffx = 0, diffy = -1}
+	local currDist = math.abs(self.tileX-playerx)+math.abs(self.tileY-playery)
+	setOfMoves[1] = {dist = math.abs(self.tileX+1-playerx)+math.abs(self.tileY-playery), diffx = 1, diffy = 0}
+	setOfMoves[2] = {dist = math.abs(self.tileX-1-playerx)+math.abs(self.tileY-playery), diffx = -1, diffy = 0}
+	setOfMoves[3] = {dist = math.abs(self.tileX-playerx)+math.abs(self.tileY+1-playery), diffx = 0, diffy = 1}
+	setOfMoves[4] = {dist = math.abs(self.tileX-playerx)+math.abs(self.tileY-1-playery), diffx = 0, diffy = -1}
 
 	for i = 1, 4 do
 		for j = i, 4 do
@@ -234,18 +233,18 @@ function P.cat:tryMove(diffx, diffy)
 	end
 end
 
-function P.cat:secondaryMove()
-	local diffx = math.abs(player.tileX - self.tileX)
-	local diffy = math.abs(player.tileY - self.tileY)
+function P.cat:secondaryMove(playerx, playery)
+	local diffx = math.abs(playerx - self.tileX)
+	local diffy = math.abs(playery - self.tileY)
 
 	if diffy>diffx then
-		if player.tileX>self.tileX then
+		if playerx>self.tileX then
 			self.tileX = self.tileX-1
 		else
 			self.tileX = self.tileX+1
 		end
 	else
-		if player.tileY>self.tileY then
+		if playery>self.tileY then
 			self.tileY = self.tileY-1
 		else
 			self.tileY = self.tileY+1
