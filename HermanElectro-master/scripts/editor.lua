@@ -20,7 +20,7 @@ function P.draw()
 			end
 			--love.graphics.rectangle("fill", (i-1)*width/25, height-width/25, width/25, width/25)
 			--sprite width: floor.sprite:getWidth()
-			love.graphics.draw(toDraw, (i-1)*width/45+addx, height-2*width/45+addy, 0, (width/45)/(floor.sprite:getWidth()), (width/45)/(floor.sprite:getWidth()))
+			love.graphics.draw(toDraw, (i-1)*width/45+addx, height-2*width/45+addy, 0, (width/45)/(floor.sprite:getWidth())*16/toDraw:getWidth(), (width/45)/(floor.sprite:getWidth())*16/toDraw:getWidth())
 			if editorAdd == i then
 				love.graphics.draw(green, (i-1)*width/45+addx, height-2*width/45+addy, 0, (width/45)/(floor.sprite:getWidth()), (width/45)/(floor.sprite:getWidth()))
 			end

@@ -111,7 +111,7 @@ function love.load()
 		y = (6-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10, prevTileX = 3, prevTileY = 10,
 		prevx = (3-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10,
 		prevy = (10-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10,
-		width = 20, height = 20, speed = 250, sprite = love.graphics.newImage('Graphics/herman_sketch.png'), scale = 0.25 * width/1200}
+		width = 20, height = 20, speed = 250, sprite = love.graphics.newImage('GraphicsTony/Ben.png'), scale = 0.6*width/1200--[[sprite = love.graphics.newImage('Graphics/herman_sketch.png'), scale = 0.25 * width/1200]]}
 	if loadTutorial then
 		player.enterX = player.tileX
 		player.enterY = player.tileY
@@ -653,7 +653,7 @@ function love.draw()
 						addY = room[j][i]:getYOffset()
 					end
 					love.graphics.draw(toDraw, (tempi-1)*floor.sprite:getWidth()*scale+wallSprite.width, (addY+(tempj-1)*floor.sprite:getWidth())*scale+wallSprite.height,
-					rot * math.pi / 2, scale*toDraw:getWidth()/16, scale*toDraw:getWidth()/16)
+					rot * math.pi / 2, scale*16/toDraw:getWidth(), scale*16/toDraw:getWidth())
 
 					if room[j][i]~=nil and room[j][i]:getInfoText()~=nil then
 						love.graphics.setColor(0,0,0)
