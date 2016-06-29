@@ -185,7 +185,7 @@ function P.mousepressed(x, y, button, istouch)
 		if mouseY>height-width/45 then
 			editorAdd = editorAdd+45
 		end
-	elseif tempAdd>0 and tileLocX>=1 and tileLocX<=24 and tileLocY>=1 and tileLocY<=12 then
+	elseif tempAdd>0 and tileLocX>=1 and tileLocX<=roomLength and tileLocY>=1 and tileLocY<=roomHeight then
 		if(room[tileLocY][tileLocX] ~= nil and room[tileLocY][tileLocX].name == tiles[tempAdd].name) then
 			room[tileLocY][tileLocX]:rotate(1)
 		elseif tiles[tempAdd]~=nil then
@@ -237,7 +237,7 @@ function P.mousepressed(x, y, button, istouch)
 end
 
 function P.mousemoved(x, y, dx, dy)
-	if mouseDown > 0 and tempAdd>0 and tiles[tempAdd]~=nil and tileLocX>=1 and tileLocX<=24 and tileLocY>=1 and tileLocY<=12 then
+	if mouseDown > 0 and tempAdd>0 and tiles[tempAdd]~=nil and tileLocX>=1 and tileLocX<=roomLength and tileLocY>=1 and tileLocY<=roomHeight then
 		room[tileLocY][tileLocX] = tiles[tempAdd]:new()
 		
 		updateGameState()

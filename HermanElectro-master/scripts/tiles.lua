@@ -46,6 +46,8 @@ function P.tile:updateTile(dir)
 		self.powered = false
 	end
 end
+function P.tile:updateSprite()
+end
 function P.tile:postPowerUpdate()
 end
 function P.tile:blocksMovementAnimal(animal)
@@ -489,7 +491,8 @@ function P.vDoor:onEnter(player)
 	
 end
 
-P.vPoweredDoor = P.tile:new{name = "vPoweredDoor", stopped = false, blocksMovement = false, blocksVision = false, canBePowered = true, dirSend = {1,0,1,0}, dirAccept = {1,0,1,0}, sprite = love.graphics.newImage('Graphics/powereddooropen.png'), closedSprite = love.graphics.newImage('Graphics/powereddoor.png'), openSprite = love.graphics.newImage('Graphics/powereddooropen.png'), poweredSprite = love.graphics.newImage('Graphics/powereddoor.png')}
+P.vPoweredDoor = P.tile:new{name = "vPoweredDoor", stopped = false, blocksMovement = false, blocksVision = false, canBePowered = true, dirSend = {1,0,1,0}, dirAccept = {1,0,1,0}, sprite = love.graphics.newImage('Graphics3D/powereddooropen.png'), closedSprite = love.graphics.newImage('Graphics3D/powereddoor.png'), openSprite = love.graphics.newImage('Graphics3D/powereddooropen.png'), poweredSprite = love.graphics.newImage('Graphics3D/powereddoor.png'),
+closedSprite2 = love.graphics.newImage('Graphics3D/powereddoor2.png'), openSprite2 = love.graphics.newImage('Graphics3D/powereddooropen2.png')}
 function P.vPoweredDoor:updateTile(player)
 	if self.stopped then
 		self.blocksVision = false
@@ -531,6 +534,29 @@ end
 function P.vPoweredDoor:destroy()
 	self.stopped = true
 	self.open = true
+end
+function P.vPoweredDoor:getYOffset()
+	return yOffset
+end
+function P.vPoweredDoor:rotate(times)
+	self.rotation = self.rotation + times
+	if self.rotation >= 4 then
+		self.rotation = self.rotation - 4
+	end
+	for i=1,times do
+		self.dirSend = shiftArray(self.dirSend)
+		self.dirAccept = shiftArray(self.dirAccept)
+	end
+	self:updateSprite()
+end
+function P.vPoweredDoor:updateSprite()
+	if self.rotation == 0 or self.rotation == 2 then
+		self.sprite = self.openSprite
+		self.poweredSprite = self.closedSprite
+	else
+		self.sprite = self.openSprite2
+		self.poweredSprite = self.closedSprite2
+	end
 end
 P.vPoweredDoor.willKillAnimal = P.vPoweredDoor.willKillPlayer
 
@@ -577,7 +603,7 @@ P.pitbullTile = P.tile:new{name = "pitbull", animal = animalList[2]:new(), sprit
 P.pupTile = P.pitbullTile:new{name = "pup", animal = animalList[3]:new(), listIndex = 3}
 P.catTile = P.pitbullTile:new{name = "cat", animal = animalList[4]:new(), listIndex = 4}
 
-P.vDoor= P.hDoor:new{name = "vDoor", sprite = love.graphics.newImage('Graphics/door.png'), closedSprite = love.graphics.newImage('Graphics/door.png'), openSprite = love.graphics.newImage('Graphics/doorsopen.png')}
+P.vDoor= P.hDoor:new{name = "vDoor", sprite = love.graphics.newImage('Graphics3D/door.png'), closedSprite = love.graphics.newImage('Graphics/door.png'), openSprite = love.graphics.newImage('Graphics/doorsopen.png')}
 P.vDoor.onEnter = P.hDoor.onEnter
 
 P.sign = P.tile:new{text = "", name = "sign"}
@@ -640,6 +666,7 @@ function P.concreteWallConductiveDirected:updateSprite()
 	elseif self.rotation==1 then self.sprite = self.sprite1
 	elseif self.rotation==2 then self.sprite = self.sprite0
 	elseif self.rotation==3 then self.sprite = self.sprite1 end
+	self.poweredSprite = self.sprite
 end
 
 P.concreteWallConductiveCorner = P.concreteWallConductive:new{name = "concreteWallConductiveCorner", sprite = love.graphics.newImage('Graphics3D/concretewallconductivecorner0.png'), poweredSprite = love.graphics.newImage('Graphics/concretewallconductivecorner.png'), canBePowered = true, dirAccept = {1,1,0,0}, dirSend = {1,1,0,0},
@@ -651,6 +678,7 @@ function P.concreteWallConductiveCorner:updateSprite()
 	elseif self.rotation==1 then self.sprite = self.sprite1
 	elseif self.rotation==2 then self.sprite = self.sprite2
 	elseif self.rotation==3 then self.sprite = self.sprite3 end
+	self.poweredSprite = self.sprite
 end
 
 P.concreteWallConductiveT = P.concreteWallConductive:new{name = "concreteWallConductiveT", sprite = love.graphics.newImage('Graphics3D/concretewallconductivet0.png'), poweredSprite = love.graphics.newImage('Graphics/concretewallconductivet.png'), canBePowered = true, dirAccept = {1,1,1,0}, dirSend = {1,1,1,0},
