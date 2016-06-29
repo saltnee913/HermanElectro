@@ -23,7 +23,7 @@ function P.useToolDir(toolid, dir)
 	end
 	if P.toolableTiles ~= nil and P.toolableTiles[dir][1] ~= nil then
 		if room[P.toolableTiles[dir][1].y][P.toolableTiles[dir][1].x] == nil 
-			or room[P.toolableTiles[dir][1].y][P.toolableTiles[dir][1].x]:usableOnNothing() then
+			or room[P.toolableTiles[dir][1].y][P.toolableTiles[dir][1].x]:usableOnNothing(P.toolableTiles[dir][1].y,P.toolableTiles[dir][1].x) then
 			tools[toolid]:useToolNothing(P.toolableTiles[dir][1].y, P.toolableTiles[dir][1].x)
 		else
 			--sometimes next line has  error "attempt to index a nil value"
@@ -62,7 +62,7 @@ function P.useToolTile(toolid, tileY, tileX)
 		for dir = 1, 5 do
 			for i = 1, #(P.toolableTiles[dir]) do
 				if P.toolableTiles[dir][i].y == tileY and P.toolableTiles[dir][i].x == tileX then
-					if room[tileY][tileX] == nil or room[tileY][tileX]:usableOnNothing() then
+					if room[tileY][tileX] == nil or room[tileY][tileX]:usableOnNothing(tileY, tileX) then
 						tools[tool]:useToolNothing(tileY, tileX)
 					else
 						tools[tool]:useToolTile(room[tileY][tileX], tileY, tileX)
@@ -116,7 +116,7 @@ function P.tool:getToolableTiles()
 		for dist = 0, self.range do
 			local tileToCheck = {y = player.tileY + offset.y*dist, x = player.tileX + offset.x*dist}
 			if room[tileToCheck.y]~=nil then
-				if ((room[tileToCheck.y][tileToCheck.x] == nil or room[tileToCheck.y][tileToCheck.x]:usableOnNothing()) and (tileToCheck.x>0 and tileToCheck.x<=roomLength) and self:usableOnNothing())
+				if ((room[tileToCheck.y][tileToCheck.x] == nil or room[tileToCheck.y][tileToCheck.x]:usableOnNothing(tileToCheck.y, tileToCheck.x)) and (tileToCheck.x>0 and tileToCheck.x<=roomLength) and self:usableOnNothing(tileToCheck.y, tileToCheck.x))
 				or (room[tileToCheck.y][tileToCheck.x] ~= nil and self:usableOnTile(room[tileToCheck.y][tileToCheck.x], dist)) then
 					if litTiles[tileToCheck.y][tileToCheck.x]~=0 then
 						usableTiles[dir][#(usableTiles[dir])+1] = tileToCheck
@@ -141,7 +141,7 @@ function P.tool:getToolableTilesBox()
 			local tileToCheck = {y = player.tileY + offset.y, x = player.tileX + offset.x}
 			if tileToCheck.x<=0 or i>roomLength then break end
 			if room[tileToCheck.y]~=nil then
-				if (room[tileToCheck.y][tileToCheck.x] == nil and self:usableOnNothing())
+				if (room[tileToCheck.y][tileToCheck.x] == nil and self:usableOnNothing(tileToCheck.y, tileToCheck.x))
 				or (room[tileToCheck.y][tileToCheck.x] ~= nil and self:usableOnTile(room[tileToCheck.y][tileToCheck.x], dist)) then
 					if math.abs(tileToCheck.y-player.tileY)+math.abs(tileToCheck.x-player.tileX)<=self.range then
 						if litTiles[tileToCheck.y][tileToCheck.x]~=0 then
@@ -758,6 +758,39 @@ function P.lamp:useToolNothing(tileY, tileX)
 	room[tileY][tileX] = tiles.lamp:new()
 end
 
+P.ramSpawner = P.tool:new{name = "ramSpawner", range = 1, image = love.graphics.newImage('Graphics/batteringram.png')}
+function P.ramSpawner:usableOnNothing(tileY, tileX)
+	if tileY==player.tileY and tileX==player.tileX then return false end
+	for i = 1, #animals do
+		if animals[i].tileY==tileY and animals[i].tileX==tileX then return false end
+	end
+	for i = 1, #pushables do
+		if pushables[i].tileY==tileY and pushables[i].tileX==tileX then return false end
+	end
+	return true
+end
+function P.ramSpawner:usableOnTile(tile, tileY, tileX)
+	if tileY==player.tileY and tileX==player.tileX then return false end
+	for i = 1, #animals do
+		if animals[i].tileY==tileY and animals[i].tileX==tileX then return false end
+	end
+	for i = 1, #pushables do
+		if pushables[i].tileY==tileY and pushables[i].tileX==tileX then return false end
+	end
+	return not tile.blocksMovement
+end
+function P.ramSpawner:useToolTile(tile, tileY, tileX)
+	local toSpawn = pushableList[7]:new()
+	toSpawn.tileY = tileY
+	toSpawn.tileX = tileX
+	pushables[#pushables+1] = toSpawn
+end
+function P.ramSpawner:useToolNothing(tileY, tileX)
+	local toSpawn = pushableList[7]:new()
+	toSpawn.tileY = tileY
+	toSpawn.tileX = tileX
+	pushables[#pushables+1] = toSpawn
+end
 
 P.numNormalTools = 7
 
@@ -791,5 +824,6 @@ P[27] = P.spring
 P[28] = P.glue
 P[29] = P.endFinder
 P[30] = P.lamp
+P[31] = P.ramSpawner
 
 return tools
