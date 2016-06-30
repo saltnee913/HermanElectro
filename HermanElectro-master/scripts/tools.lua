@@ -839,8 +839,8 @@ P[25] = P.broom
 P[26] = P.magnet
 P[27] = P.spring
 P[28] = P.glue
-P[2] = P.endFinder
-P[29] = P.lamp
-P[30] = P.ramSpawner
+P[29] = P.endFinder
+P[30] = P.lamp
+P[31] = P.ramSpawner
 
 return tools
