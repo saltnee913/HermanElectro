@@ -250,7 +250,7 @@ function updatePower()
 			if room[i]~=nil and room[i][j]~=nil and room[i][j]:instanceof(tiles.notGate) and not room[i][j].destroyed then
 				--room[i][j].powered = true
 			end
-			if room[i][j]~=nil and room[i][j].charged and not room[i][j].destroyed then
+			if room[i] ~= nil and room[i][j]~=nil and room[i][j].charged and not room[i][j].destroyed then
 				room[i][j].powered = true
 			end
 		end
@@ -873,31 +873,48 @@ function love.draw()
 	end
 end
 
+translation = {x = 0, y = 0}
 function getTranslation()
-	translation = {x = 0, y = 0}
+	translation.x = translation.x*-1
+	translation.y = translation.y*-1	
 	if roomLength>regularLength then
-		if player.tileX<roomLength-regularLength then
-			translation.x = player.tileX-1
-		else
+		--those 3s are hacky af
+		if player.tileX < translation.x - 2 then
+			translation.x = translation.x - regularLength
+		elseif player.tileX > translation.x + regularLength + 3 then
+			translation.x = translation.x + regularLength
+		end
+		if translation.x > roomLength - regularLength then
 			translation.x = roomLength-regularLength
+		elseif translation.x < 0 then
+			translation.x = 0
 		end
 	elseif roomLength<regularLength then
 		local lengthDiff = regularLength-roomLength
 		translation.x = -1*math.floor(lengthDiff/2)
 	end
 	if roomHeight>regularHeight then
-		if player.tileY<roomHeight-regularHeight then
-			translation.y = player.tileY-1
-		else
+		if player.tileY < translation.y - 2 then
+			translation.y = translation.y - regularHeight
+		elseif player.tileY > translation.y + regularHeight + 3 then
+			translation.y = translation.y + regularHeight
+		end
+		if translation.y > roomHeight - regularHeight then
 			translation.y = roomHeight-regularHeight
+		elseif translation.y < 0 then
+			translation.y = 0
 		end
 	elseif roomHeight<regularHeight then
 		local heightDiff = regularHeight-roomHeight
 		translation.y = -1*math.floor(heightDiff/2)
-	end
+	end		
 	translation.x = translation.x*-1
-	translation.y = translation.y*-1
+	translation.y = translation.y*-1	
 	return translation
+end
+
+function resetTranslation()
+	translation = {x = 0, y = 0}
 end
 
 function log(text)
@@ -941,6 +958,7 @@ function adjacent(xloc, yloc)
 end
 
 function hackEnterRoom(roomid, y, x)
+	resetTranslation()
 	if y == nil then y = mapy end
 	if x == nil then x = mapx end
 	local loadedRoom = map.createRoom(roomid)
@@ -1010,6 +1028,7 @@ function createPushables()
 end
 
 function enterRoom(dir)
+	resetTranslation()
 	--set pushables of prev. room to pushables array, saving for next entry
 	room.pushables = pushables
 	room.animals = animals
