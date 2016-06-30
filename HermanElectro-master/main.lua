@@ -806,7 +806,8 @@ function love.draw()
 						love.graphics.setColor(100,100,100)
 					end
 				end
-				love.graphics.rectangle("fill", width - 18*(mapHeight-j+1), 9*i, 18, 9 )
+				local minimapScale = 8/mapHeight
+				love.graphics.rectangle("fill", width - minimapScale*18*(mapHeight-j+1), minimapScale*9*i, minimapScale*18, minimapScale*9 )
 			else
 				--love.graphics.setColor(255,255,255)
 				--love.graphics.rectangle("line", width - 18*(mapHeight-j+1), 9*i, 18, 9 )
