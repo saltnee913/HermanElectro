@@ -88,7 +88,7 @@ function love.load()
 		doorwaybg = love.graphics.newImage('Graphics/doorwaybackground.png')
 		deathscreen = love.graphics.newImage('NewGraphics/Newdeathscreen.png')
 		bottomwall = love.graphics.newImage('Graphics3D/bottomwall.png')
-		topwall = love.graphics.newImage('Graphics3D/topwall.png')
+		topwall = love.graphics.newImage('Graphics/cave6_b.png')
 		cornerwall = love.graphics.newImage('Graphics/toprightcorner.png')
 
 		music = love.audio.newSource('Audio/hermantheme.mp3')
@@ -113,7 +113,7 @@ function love.load()
 		y = (6-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10, prevTileX = 3, prevTileY = 10,
 		prevx = (3-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10,
 		prevy = (10-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10,
-		width = 20, height = 20, speed = 250, sprite = love.graphics.newImage('GraphicsTony/Ben.png'), scale = 0.6*width/1200--[[sprite = love.graphics.newImage('Graphics/herman_sketch.png'), scale = 0.25 * width/1200]]}
+		width = 20, height = 20, speed = 250, sprite = love.graphics.newImage('Graphics/herman_sketch.png'), scale = 0.25 * width/1200}
 	if loadTutorial then
 		player.enterX = player.tileX
 		player.enterY = player.tileY
