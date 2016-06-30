@@ -142,7 +142,7 @@ end
 
 P.pitbull = P.animal:new{name = "pitbull"}
 function P.pitbull:willKillPlayer()
-	return playerx == self.tileX and playery == self.tileY and not self.dead
+	return player.tileX == self.tileX and player.tileY == self.tileY and not self.dead
 end
 
 P.pup = P.animal:new{name = "pup", sprite = love.graphics.newImage('Graphics/pup.png'), deadSprite = love.graphics.newImage('Graphics/pupdead.png')}
