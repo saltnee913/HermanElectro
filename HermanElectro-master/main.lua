@@ -1151,6 +1151,9 @@ keyTimer = {base = .05, timeLeft = .05}
 function love.update(dt)
 	keyTimer.timeLeft = keyTimer.timeLeft - dt
 	gameTime = gameTime+dt
+	if gameTime>1000 then
+		kill()
+	end
 end
 
 function love.textinput(text)
@@ -1172,6 +1175,12 @@ function love.keypressed(key, unicode)
 			toolMode = 1
 		end
 	end]]
+	if key=="k" then
+		if tool>tools.numNormalTools then
+			tools[tool].numHeld = tools[tool].numHeld-1
+			unlockDoors()
+		end
+	end
 	if editorMode then
 		editor.keypressed(key, unicode)
 	else
@@ -1286,7 +1295,11 @@ function love.keypressed(key, unicode)
     	tools.updateToolableTiles(tool)
     end
     if dirUse ~= 0 then
-		log((tools.useToolDir(tool, dirUse) and 'true' or 'false')..' '..tool..' '..dirUse)
+    	local usedTool = tools.useToolDir(tool, dirUse)
+		log(tostring(usedTool)..' '..tool..' '..dirUse)
+		if usedTool and tool>tools.numNormalTools then
+			gameTime = gameTime-100
+		end
 		updateGameState()
 		checkAllDeath()
 	end
@@ -1377,6 +1390,7 @@ function love.keypressed(key, unicode)
     elseif key == 'c' then
     	log(nil)
     end
+    updateGameState()
 end
 
 function resolveConflicts()
@@ -1614,7 +1628,7 @@ function stepTrigger()
 	end
 end
 
-function beatRoom()
+function unlockDoors()
 	completedRooms[mapy][mapx] = 1
 	if mapy>0 then
 		visibleMap[mapy-1][mapx] = 1
@@ -1628,6 +1642,9 @@ function beatRoom()
 	if mapx<mapHeight then
 		visibleMap[mapy][mapx+1] = 1
 	end
+end
+
+function dropTools()
 	local dropOverride = map.getFieldForRoom(mainMap[mapy][mapx].roomid, 'itemsGivenOverride')
 	if loadTutorial then
 		for i = 1, tools.numNormalTools do
@@ -1686,4 +1703,9 @@ function beatRoom()
 			tools[i].numHeld = tools[i].numHeld + dropOverride[i]
 		end
 	end
+end
+
+function beatRoom()
+	unlockDoors()
+	dropTools()
 end
