@@ -76,6 +76,7 @@ function love.load()
 		mouseDown = 0
 		regularLength = 24
 		regularHeight = 12
+		toolTime = 10
 		f1 = love.graphics.newImage('Graphics/concretewalls.png')
 		walls = love.graphics.newImage('Graphics/walls3.png')
 		rocks = love.graphics.newImage('Graphics/pen16.png')
@@ -1301,7 +1302,7 @@ function love.keypressed(key, unicode)
 			gameTime = gameTime-100
 		end]]
 		if usedTool and tool<=tools.numNormalTools then
-			gameTime = gameTime+10
+			gameTime = gameTime+toolTime
 		end
 		updateGameState()
 		checkAllDeath()
@@ -1530,7 +1531,7 @@ function love.mousepressed(x, y, button, istouch)
 		tool = 0
 	elseif not clickActivated then
 		if tool<=tools.numNormalTools then
-			gameTime = gameTime-25
+			gameTime = gameTime+toolTime
 		end
 	end
 	
