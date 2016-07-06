@@ -19,7 +19,7 @@ loadedOnce = false
 
 
 function love.load()
-	gameTime = 1000
+	gameTime = 60
 
 	typingCallback = nil
 	debugText = nil
@@ -1301,7 +1301,7 @@ function love.keypressed(key, unicode)
 			gameTime = gameTime-100
 		end]]
 		if usedTool and tool<=tools.numNormalTools then
-			gameTime = gameTime-25
+			gameTime = gameTime+10
 		end
 		updateGameState()
 		checkAllDeath()
@@ -1652,7 +1652,7 @@ function unlockDoors()
 end
 
 function dropTools()
-	gameTime = gameTime+200
+	gameTime = gameTime+30
 	local dropOverride = map.getFieldForRoom(mainMap[mapy][mapx].roomid, 'itemsGivenOverride')
 	if loadTutorial then
 		for i = 1, tools.numNormalTools do
