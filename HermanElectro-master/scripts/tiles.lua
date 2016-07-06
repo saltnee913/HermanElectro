@@ -1063,6 +1063,7 @@ function P.donationMachine:onEnter(player)
 	if tool==0 or tool>7 then return end
 	tools[tool].numHeld = tools[tool].numHeld - 1
 	donations = donations+1
+	gameTime = gameTime+20
 end
 
 P.entrancePortal = P.tile:new{name = "entrancePortal", sprite = love.graphics.newImage('Graphics/entrancePortal.png')}

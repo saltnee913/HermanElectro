@@ -19,7 +19,7 @@ loadedOnce = false
 
 
 function love.load()
-	gameTime = 0
+	gameTime = 60
 
 	typingCallback = nil
 	debugText = nil
@@ -76,6 +76,7 @@ function love.load()
 		mouseDown = 0
 		regularLength = 24
 		regularHeight = 12
+		toolTime = 10
 		f1 = love.graphics.newImage('Graphics/concretewalls.png')
 		walls = love.graphics.newImage('Graphics/walls3.png')
 		rocks = love.graphics.newImage('Graphics/pen16.png')
@@ -1150,8 +1151,8 @@ end
 keyTimer = {base = .05, timeLeft = .05}
 function love.update(dt)
 	keyTimer.timeLeft = keyTimer.timeLeft - dt
-	gameTime = gameTime+dt
-	if gameTime>1000 then
+	gameTime = gameTime-dt
+	if gameTime<=0 then
 		kill()
 	end
 end
@@ -1297,8 +1298,11 @@ function love.keypressed(key, unicode)
     if dirUse ~= 0 then
     	local usedTool = tools.useToolDir(tool, dirUse)
 		log(tostring(usedTool)..' '..tool..' '..dirUse)
-		if usedTool and tool>tools.numNormalTools then
+		--[[if usedTool and tool>tools.numNormalTools then
 			gameTime = gameTime-100
+		end]]
+		if usedTool and tool<=tools.numNormalTools then
+			gameTime = gameTime+toolTime
 		end
 		updateGameState()
 		checkAllDeath()
@@ -1525,6 +1529,10 @@ function love.mousepressed(x, y, button, istouch)
 
 	if not clickActivated and not tools.useToolTile(tool, tileLocY, tileLocX) then
 		tool = 0
+	elseif not clickActivated then
+		if tool<=tools.numNormalTools then
+			gameTime = gameTime+toolTime
+		end
 	end
 	
 	updateGameState()
@@ -1645,6 +1653,7 @@ function unlockDoors()
 end
 
 function dropTools()
+	gameTime = gameTime+30
 	local dropOverride = map.getFieldForRoom(mainMap[mapy][mapx].roomid, 'itemsGivenOverride')
 	if loadTutorial then
 		for i = 1, tools.numNormalTools do
