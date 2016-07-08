@@ -851,6 +851,6 @@ P[28] = P.glue
 P[29] = P.endFinder
 P[30] = P.lamp
 P[31] = P.ramSpawner
-P[3] = P.gateBreaker
+P[32] = P.gateBreaker
 
 return tools
