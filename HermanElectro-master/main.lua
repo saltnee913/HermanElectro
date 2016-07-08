@@ -1150,7 +1150,10 @@ end
 
 keyTimer = {base = .05, timeLeft = .05}
 function love.update(dt)
+	--key press
 	keyTimer.timeLeft = keyTimer.timeLeft - dt
+
+	--game timer
 	gameTime = gameTime-dt
 	if gameTime<=0 then
 		kill()
@@ -1168,6 +1171,7 @@ function love.keypressed(key, unicode)
 	end
 	if key=="e" then
 		editorMode = not editorMode
+		gameTime = gameTime+20000
 	end
 	--[[if key=='t' then
 		if toolMode == 1 then
@@ -1557,6 +1561,11 @@ function love.mousemoved(x, y, dx, dy)
 end
 
 function updateGameState()
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]~=nil then room[i][j]:resetState() end
+		end
+	end
 	updatePower()
 	updateLight()
 	updateTools()

@@ -28,6 +28,8 @@ end
 function P.tile:onEnd(map, x, y)
 	return map
 end
+function P.tile:resetState()
+end
 function P.tile:destroy()
 	self.destroyed = true
 end
@@ -169,6 +171,9 @@ end
 P.spikes.willKillAnimal = P.spikes.willKillPlayer
 
 P.button = P.tile:new{bricked = false, justPressed = false, down = false, powered = false, dirSend = {1,1,1,1}, dirAccept = {0,0,0,0}, canBePowered = true, name = "button", pressed = false, sprite = love.graphics.newImage('Graphics/button.png'), poweredSprite = love.graphics.newImage('Graphics/button.png'), downSprite = love.graphics.newImage('Graphics/buttonPressed.png'), brickedSprite = love.graphics.newImage('Graphics/brickedButton.png'), upSprite = love.graphics.newImage('Graphics/button.png')}
+function P.button:resetState()
+	self.justPressed = false
+end
 function P.button:updateSprite()
 	if self.bricked then
 		self.sprite = self.brickedSprite
@@ -271,13 +276,13 @@ function P.stayButton:onEnter(player)
 end
 function P.stayButton:onLeave(player)
 	if self.bricked then return end
-	--if not self.justPressed then
+	if not self.justPressed then
 		self.down = false
 		self.dirAccept = {0,0,0,0}
 		--updateGameState()
 		self:updateSprite()
-	--end
-	--self.justPressed = true
+	end
+	self.justPressed = false
 end
 P.stayButton.onEnterAnimal = P.stayButton.onEnter
 P.stayButton.onLeaveAnimal = P.stayButton.onLeave
