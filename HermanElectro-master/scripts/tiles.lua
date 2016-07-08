@@ -1126,8 +1126,8 @@ P.powerTriggeredBomb.onEnterAnimal = P.powerTriggeredBomb.onEnter
 
 P.boxTile = P.tile:new{name = "boxTile", pushable = pushableList[2]:new(), listIndex = 2, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
 
-P.gate = P.conductiveTile:new{name = "gate", dirSend = {0,0,0,0}, sprite = love.graphics.newImage('Graphics/gate.png'), poweredSprite = love.graphics.newImage('Graphics/gate.png')}
-function P.gate:onEnter(player)
+P.motionGate = P.conductiveTile:new{name = "gate", dirSend = {0,0,0,0}, sprite = love.graphics.newImage('Graphics/gate.png'), poweredSprite = love.graphics.newImage('Graphics/gate.png')}
+function P.motionGate:onEnter(player)
 	if (player.prevTileX<player.tileX and self.rotation == 0) or (player.prevTileX>player.tileX and self.rotation == 2) or
 	(player.prevTileY<player.tileY and self.rotation == 1) or (player.prevTileY>player.tileY and self.rotation == 3) then
 		self.dirSend = {1,1,1,1}
@@ -1136,9 +1136,9 @@ function P.gate:onEnter(player)
 		self.dirSend = {0,0,0,0}
 	end
 end
-P.gate.onEnterAnimal = P.gate.onEnter
+P.motionGate.onEnterAnimal = P.gate.onEnter
 
-P.gate2 = P.gate:new{name = "gate2", dirSend = {1,1,1,1}}
+P.motionGate2 = P.motionGate:new{name = "gate2", dirSend = {1,1,1,1}}
 
 P.playerBoxTile = P.boxTile:new{name = "playerBoxTile", pushable = pushableList[3]:new(), listIndex = 3}
 P.animalBoxTile = P.boxTile:new{name = "animalBoxTile", pushable = pushableList[4]:new(), listIndex = 4}

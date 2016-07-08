@@ -244,7 +244,7 @@ function updatePower()
 
 	for i=1, roomHeight do
 		for j=1, roomLength do
-			--power starts at power sources: powerSupply and notGate
+			--power starts at power sources: powerSupply and `ate
 			if room[i]~=nil and room[i][j]~=nil and room[i][j]:instanceof(tiles.powerSupply) and not room[i][j].destroyed then
 				room[i][j].powered = true
 			end

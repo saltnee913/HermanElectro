@@ -809,6 +809,15 @@ function P.ramSpawner:useToolNothing(tileY, tileX)
 	pushables[#pushables+1] = toSpawn
 end
 
+
+P.gateBreaker = P.tool:new{name = "gateBreaker", range = 1, image = love.graphics.newImage('Graphics/shovel.png')}
+function P.gateBreaker:usableOnTile(tile)
+	return tile:instanceof(tiles.gate)
+end
+function P.gateBreaker:useToolTile(tile)
+	tile.destroyed = true
+	tile.canBePowered = false
+end
 P.numNormalTools = 7
 
 P[1] = P.saw
@@ -842,5 +851,6 @@ P[28] = P.glue
 P[29] = P.endFinder
 P[30] = P.lamp
 P[31] = P.ramSpawner
+P[3] = P.gateBreaker
 
 return tools
