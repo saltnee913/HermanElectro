@@ -13,7 +13,8 @@
 						"key": "dumb",
 						"value": true
 					}
-				}
+				},
+				"toolRange": [2,4]
 			}
 		},
 		"treasureRooms": 
@@ -44,7 +45,7 @@
 	"data":
 	{
 		"height": 17,
-		"numRooms": 9,
+		"numRooms": 14,
 		"generateFunction": "generateMapStandard",
 		"startRoomID": "1"
 	}
