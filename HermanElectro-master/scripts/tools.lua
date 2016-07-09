@@ -448,6 +448,10 @@ end
 
 P.superTool = P.tool:new{name = 'superTool', range = 10, rarity = 1}
 
+function P.chooseSupertool()
+	return math.floor(math.random()*(#tools-tools.numNormalTools))+tools.numNormalTools+1
+end
+
 P.shovel = P.superTool:new{name = "shovel", range = 1, image = love.graphics.newImage('Graphics/shovel.png')}
 function P.shovel:usableOnNothing()
 	return true
