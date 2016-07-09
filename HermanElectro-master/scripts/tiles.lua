@@ -778,7 +778,7 @@ function P.treasureTile:onEnter()
 		end
 		goodSlot = false
 		while (not goodSlot) do
-			slot = math.floor(math.random()*5)+8
+			slot = tools.chooseSupertool()
 			if filledSlots[3]==0 then
 				goodSlot = true
 			end
@@ -802,7 +802,7 @@ function P.treasureTile:onEnter()
 			end
 			goodSlot = false
 			while (not goodSlot) do
-				slot = math.floor(math.random()*5)+8
+				slot = tools.chooseSupertool()
 				if filledSlots[3]==0 then
 					goodSlot = true
 				end
@@ -1013,7 +1013,7 @@ function P.beggar:onEnter(player)
 		end
 		goodSlot = false
 		while (not goodSlot) do
-			slot = math.floor(math.random()*5)+8
+			slot = tools.chooseSupertool()
 			if filledSlots[3]==0 then
 				goodSlot = true
 			end
