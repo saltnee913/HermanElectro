@@ -18,7 +18,7 @@ scale = (width - 2*wallSprite.width)/(20.3 * 16)*5/6
 --floor = tiles.tile
 
 --speed same as player (250)
-P.animal = Object:new{pickedUp = false, flying = false, triggered = false, waitCounter = 0, dead = false, name = "animal", tileX, tileY, prevx, prevy, prevTileX, prevTileY, x, y, speed = 250, width = 16*scale, height = 16*scale, sprite = love.graphics.newImage('Graphics/pitbull.png'), deadSprite = love.graphics.newImage('Graphics/pitbulldead.png'), tilesOn = {}, oldTilesOn = {}}
+P.animal = Object:new{pickedUp = false, flying = false, triggered = false, waitCounter = 0, dead = false, name = "animal", tileX, tileY, prevx, prevy, prevTileX, prevTileY, x, y, speed = 250, width = 16*scale, height = 16*scale, sprite = love.graphics.newImage('NewGraphics/pitbullDesign.png'), deadSprite = love.graphics.newImage('Graphics/pitbulldead.png'), tilesOn = {}, oldTilesOn = {}}
 function P.animal:move(playerx, playery, room, isLit)
 	if self.dead or (not isLit and not self.triggered) then
 		return
@@ -145,14 +145,14 @@ function P.pitbull:willKillPlayer()
 	return player.tileX == self.tileX and player.tileY == self.tileY and not self.dead
 end
 
-P.pup = P.animal:new{name = "pup", sprite = love.graphics.newImage('Graphics/pup.png'), deadSprite = love.graphics.newImage('Graphics/pupdead.png')}
+P.pup = P.animal:new{name = "pup", sprite = love.graphics.newImage('NewGraphics/pupDesign.png'), deadSprite = love.graphics.newImage('Graphics/pupdead.png')}
 
-P.snail = P.animal:new{name = "snail", sprite = love.graphics.newImage('Graphics/snail.png'), deadSprite = love.graphics.newImage('Graphics/pupdead.png')}
+P.snail = P.animal:new{name = "snail", sprite = love.graphics.newImage('NewGraphics/snailDesign.png'), deadSprite = love.graphics.newImage('Graphics/pupdead.png')}
 function P.snail:onNullLeave()
 	return tiles.slime:new()
 end
 
-P.conductiveSnail = P.snail:new{name = "conductiveSnail", sprite = love.graphics.newImage('Graphics/conductivesnail.png')}
+P.conductiveSnail = P.snail:new{name = "conductiveSnail", sprite = love.graphics.newImage('NewGraphics/snailCDesign.png')}
 function P.conductiveSnail:onNullLeave()
 	return tiles.conductiveSlime:new()
 end
@@ -162,7 +162,7 @@ function P.bat:checkDeath()
 end
 P.bat.willKillPlayer = P.pitbull.willKillPlayer
 
-P.cat = P.animal:new{name = "cat", sprite = love.graphics.newImage('Graphics/cat.png'), deadSprite = love.graphics.newImage('Graphics/catdead.png')}
+P.cat = P.animal:new{name = "cat", sprite = love.graphics.newImage('NewGraphics/catDesign.png'), deadSprite = love.graphics.newImage('Graphics/catdead.png')}
 function P.cat:move(playerx, playery, room, isLit)
 	local diffCatx = math.abs(playerx - self.tileX)
 	local diffCaty = math.abs(playery - self.tileY)
