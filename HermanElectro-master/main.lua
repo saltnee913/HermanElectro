@@ -1116,6 +1116,7 @@ function enterRoom(dir)
 		createPushables()
 	end
 	visibleMap[mapy][mapx] = 1
+	keyTimer.timeLeft = keyTimer.suicideDelay
 	updateGameState()
 end
 
@@ -1148,7 +1149,7 @@ function enterMove()
 	end
 end
 
-keyTimer = {base = .05, timeLeft = .05}
+keyTimer = {base = .05, timeLeft = .05, suicideDelay = .5}
 function love.update(dt)
 	--key press
 	keyTimer.timeLeft = keyTimer.timeLeft - dt
