@@ -1376,6 +1376,12 @@ function love.keypressed(key, unicode)
 					room[animals[i].tileY][animals[i].tileX]:onStayAnimal(animals[i])
 				end
 			end
+			resolveConflicts()
+			for i = 1, #animals do
+				if room[animals[i].tileY][animals[i].tileX]~=nil then
+					room[animals[i].tileY][animals[i].tileX]:onStayAnimal(animals[i])
+				end
+			end
 			stepTrigger()
 			updateGameState()
 			checkAllDeath()
