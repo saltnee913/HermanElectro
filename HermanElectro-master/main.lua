@@ -244,7 +244,7 @@ function updatePower()
 
 	for i=1, roomHeight do
 		for j=1, roomLength do
-			--power starts at power sources: powerSupply and notGate
+			--power starts at power sources: powerSupply and `ate
 			if room[i]~=nil and room[i][j]~=nil and room[i][j]:instanceof(tiles.powerSupply) and not room[i][j].destroyed then
 				room[i][j].powered = true
 			end
@@ -1116,6 +1116,7 @@ function enterRoom(dir)
 		createPushables()
 	end
 	visibleMap[mapy][mapx] = 1
+	keyTimer.timeLeft = keyTimer.suicideDelay
 	updateGameState()
 end
 
@@ -1148,9 +1149,12 @@ function enterMove()
 	end
 end
 
-keyTimer = {base = .05, timeLeft = .05}
+keyTimer = {base = .05, timeLeft = .05, suicideDelay = .5}
 function love.update(dt)
+	--key press
 	keyTimer.timeLeft = keyTimer.timeLeft - dt
+
+	--game timer
 	gameTime = gameTime-dt
 	if gameTime<=0 then
 		kill()
@@ -1168,6 +1172,7 @@ function love.keypressed(key, unicode)
 	end
 	if key=="e" then
 		editorMode = not editorMode
+		gameTime = gameTime+20000
 	end
 	--[[if key=='t' then
 		if toolMode == 1 then
@@ -1372,6 +1377,12 @@ function love.keypressed(key, unicode)
 					room[animals[i].tileY][animals[i].tileX]:onStayAnimal(animals[i])
 				end
 			end
+			resolveConflicts()
+			for i = 1, #animals do
+				if room[animals[i].tileY][animals[i].tileX]~=nil then
+					room[animals[i].tileY][animals[i].tileX]:onStayAnimal(animals[i])
+				end
+			end
 			stepTrigger()
 			updateGameState()
 			checkAllDeath()
@@ -1557,6 +1568,11 @@ function love.mousemoved(x, y, dx, dy)
 end
 
 function updateGameState()
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]~=nil then room[i][j]:resetState() end
+		end
+	end
 	updatePower()
 	updateLight()
 	updateTools()

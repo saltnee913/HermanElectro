@@ -28,6 +28,8 @@ end
 function P.tile:onEnd(map, x, y)
 	return map
 end
+function P.tile:resetState()
+end
 function P.tile:destroy()
 	self.destroyed = true
 end
@@ -169,6 +171,9 @@ end
 P.spikes.willKillAnimal = P.spikes.willKillPlayer
 
 P.button = P.tile:new{bricked = false, justPressed = false, down = false, powered = false, dirSend = {1,1,1,1}, dirAccept = {0,0,0,0}, canBePowered = true, name = "button", pressed = false, sprite = love.graphics.newImage('Graphics/button.png'), poweredSprite = love.graphics.newImage('Graphics/button.png'), downSprite = love.graphics.newImage('Graphics/buttonPressed.png'), brickedSprite = love.graphics.newImage('Graphics/brickedButton.png'), upSprite = love.graphics.newImage('Graphics/button.png')}
+function P.button:resetState()
+	self.justPressed = false
+end
 function P.button:updateSprite()
 	if self.bricked then
 		self.sprite = self.brickedSprite
@@ -271,13 +276,13 @@ function P.stayButton:onEnter(player)
 end
 function P.stayButton:onLeave(player)
 	if self.bricked then return end
-	--if not self.justPressed then
+	if not self.justPressed then
 		self.down = false
 		self.dirAccept = {0,0,0,0}
 		--updateGameState()
 		self:updateSprite()
-	--end
-	--self.justPressed = true
+	end
+	self.justPressed = false
 end
 P.stayButton.onEnterAnimal = P.stayButton.onEnter
 P.stayButton.onLeaveAnimal = P.stayButton.onLeave
@@ -644,7 +649,7 @@ function P.concreteWall:destroy()
 	self.blocksMovement = false
 end
 
-P.concreteWallConductive = P.concreteWall:new{name = "concreteWallConductive", sprite = love.graphics.newImage('Graphics3D/concretewallconductive.png'), poweredSprite = love.graphics.newImage('Graphics/concretewallconductive.png'), canBePowered = true, dirAccept = {1,1,1,1}, dirSend = {1,1,1,1}}
+P.concreteWallConductive = P.concreteWall:new{name = "concreteWallConductive", sprite = love.graphics.newImage('Graphics3D/concretewallconductive.png'), poweredSprite = love.graphics.newImage('Graphics3D/concretewallconductive.png'), canBePowered = true, dirAccept = {1,1,1,1}, dirSend = {1,1,1,1}}
 
 P.concreteWallConductiveDirected = P.concreteWallConductive:new{name = "concreteWallConductiveDirected", sprite = love.graphics.newImage('Graphics3D/concretewallconductivedirected0.png'), poweredSprite = love.graphics.newImage('Graphics3D/concretewallconductivedirected0.png'),
 canBePowered = true, dirAccept = {1,0,1,0}, dirSend = {1,0,1,0}, sprite0 = love.graphics.newImage('Graphics3D/concretewallconductivedirected0.png'), sprite1 = love.graphics.newImage('Graphics3D/concretewallconductivedirected1.png')}
@@ -1126,8 +1131,8 @@ P.powerTriggeredBomb.onEnterAnimal = P.powerTriggeredBomb.onEnter
 
 P.boxTile = P.tile:new{name = "boxTile", pushable = pushableList[2]:new(), listIndex = 2, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
 
-P.gate = P.conductiveTile:new{name = "gate", dirSend = {0,0,0,0}, sprite = love.graphics.newImage('Graphics/gate.png'), poweredSprite = love.graphics.newImage('Graphics/gate.png')}
-function P.gate:onEnter(player)
+P.motionGate = P.conductiveTile:new{name = "gate", dirSend = {0,0,0,0}, sprite = love.graphics.newImage('Graphics/gate.png'), poweredSprite = love.graphics.newImage('Graphics/gate.png')}
+function P.motionGate:onEnter(player)
 	if (player.prevTileX<player.tileX and self.rotation == 0) or (player.prevTileX>player.tileX and self.rotation == 2) or
 	(player.prevTileY<player.tileY and self.rotation == 1) or (player.prevTileY>player.tileY and self.rotation == 3) then
 		self.dirSend = {1,1,1,1}
@@ -1136,9 +1141,9 @@ function P.gate:onEnter(player)
 		self.dirSend = {0,0,0,0}
 	end
 end
-P.gate.onEnterAnimal = P.gate.onEnter
+P.motionGate.onEnterAnimal = P.gate.onEnter
 
-P.gate2 = P.gate:new{name = "gate2", dirSend = {1,1,1,1}}
+P.motionGate2 = P.motionGate:new{name = "gate2", dirSend = {1,1,1,1}}
 
 P.playerBoxTile = P.boxTile:new{name = "playerBoxTile", pushable = pushableList[3]:new(), listIndex = 3}
 P.animalBoxTile = P.boxTile:new{name = "animalBoxTile", pushable = pushableList[4]:new(), listIndex = 4}
@@ -1251,8 +1256,8 @@ tiles[63] = P.untriggeredPowerSupply
 tiles[64] = P.reinforcedGlass
 tiles[65] = P.powerTriggeredBomb
 tiles[66] = P.boxTile
-tiles[67] = P.gate
-tiles[68] = P.gate2
+tiles[67] = P.motionGate
+tiles[68] = P.motionGate2
 tiles[69] = P.playerBoxTile
 tiles[70] = P.animalBoxTile
 tiles[71] = P.puddle
