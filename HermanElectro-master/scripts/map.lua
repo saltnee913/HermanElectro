@@ -206,6 +206,10 @@ function P.getFieldForRoom(inRoom, inField)
 	return nil
 end
 
+function P.isRoomType(inRoom, roomType)
+	return P.floorInfo.rooms[roomType][inRoom] ~= nil
+end
+
 function P.getItemsNeeded(inRoom)
 	return P.getFieldForRoom(inRoom, 'itemsNeeded')
 end
@@ -346,6 +350,119 @@ function P.generateMapStandard()
 			roomid = util.chooseRandomKey(arr)
 			loadedRoom = P.createRoom(roomid, arr)
 		elseif i == numRooms-3 then
+			arr = P.floorInfo.rooms.donationRooms
+			roomid = util.chooseRandomKey(arr)
+			loadedRoom = P.createRoom(roomid, arr)
+			donationX = choice.y
+			donationY = choice.x
+		end
+		newmap[choice.x][choice.y] = {roomid = roomid, room = P.createRoom(roomid, arr), isFinal = false, isInitial = false}
+	end
+	--printMap(newmap)
+	return newmap
+end
+
+function P.generateOneFloor()
+	local height = P.floorInfo.height
+	local numRooms = P.floorInfo.numRooms
+	local newmap = MapInfo:new{height = height, numRooms = numRooms}
+	for i = 0, height+1 do
+		newmap[i] = {}
+	end
+	local startRoomID = P.floorInfo.startRoomID
+	newmap[math.floor(height/2)][math.floor(height/2)] = {roomid = startRoomID, room = P.createRoom(startRoomID, P.floorInfo.rooms.rooms), isFinal = false, isInitial = true, isCompleted = false}
+	newmap.initialY = math.floor(height/2)
+	newmap.initialX = math.floor(height/2)
+	local blacklist = {startRoomID}
+	local randomRoomArray = util.createRandomKeyArray(P.floorInfo.rooms.rooms, blacklist)
+	local skippedRooms = {}
+	local skippedRoomsIndex = 1
+	for i = 0, numRooms-1 do
+		available = {}
+		local a = 0
+		for j = 1, height do
+			for k = 1, height do
+				if newmap[j][k]==nil then
+					--numNil = newmap[j+1][k] ~= nil and 1 or 0 + newmap[j-1][k] ~= nil and 1 or 0 + newmap[j][k+1] ~= nil and 1 or 0 + newmap[j][k-1] ~= nil and 1 or 0
+					local e = newmap[j+1][k]
+					local b = newmap[j-1][k]
+					local c = newmap[j][k+1]
+					local d = newmap[j][k-1]
+					numNil = 0;
+					if (e==nil) then
+						numNil=numNil+1
+					elseif P.isRoomType(e.roomid, "treasureRooms") or P.isRoomType(e.roomid, "donationRooms") then
+						numNil = numNil-1
+					end
+					if (b==nil) then
+						numNil=numNil+1
+					elseif P.isRoomType(b.roomid, "treasureRooms") or P.isRoomType(b.roomid, "donationRooms") then
+						numNil = numNil-1
+					end
+					if (c==nil) then
+						numNil=numNil+1
+					elseif P.isRoomType(c.roomid, "treasureRooms") or P.isRoomType(c.roomid, "donationRooms") then
+						numNil = numNil-1
+					end
+					if (d==nil) then
+						numNil=numNil+1
+					elseif P.isRoomType(d.roomid, "treasureRooms") or P.isRoomType(d.roomid, "donationRooms") then
+						numNil = numNil-1
+					end
+					if (numNil == 3) then
+						works = true
+						--[[if i == numRooms - 1 then
+							if (j+1 == treasureY and k == treasureX) or (j-1 == treasureY and k == treasureX)
+							or (j == treasureY and k+1 == treasureX) or (j == treasureY and k-1 == treasureX)
+							or (j+1 == donationY and k == donationX) or (j-1 == donationY and k == donationX)
+							or (j == donationY and k+1 == donationX) or (j == donationY and k-1 == donationX) then
+								works = false
+							end
+						elseif i == numRooms - 2 then
+							if (j+1 == donationY and k == donationX) or (j-1 == donationY and k == donationX)
+							or (j == donationY and k+1 == donationX) or (j == donationY and k-1 == donationX) then
+								works = false
+							end
+						end]]
+						if works then
+							available[a] = {x=j,y=k}
+							a=a+1
+						end
+					end
+				end
+			end
+		end
+
+		--numRooms=0
+		local choice = available[math.floor(math.random()*a)]
+		--local roomNum = math.floor(math.random()*#(P.rooms)) -- what we will actually do, with some editing
+		arr = P.floorInfo.rooms.rooms
+		local roomid = randomRoomArray[i+skippedRoomsIndex]
+		local loadedRoom = P.createRoom(roomid, arr)
+		if skippedRooms[skippedRoomsIndex] ~= nil then
+			roomid = skippedRooms[skippedRoomsIndex]
+			loadedRoom = P.createRoom(roomid, arr)
+			skippedRoomsIndex = skippedRoomsIndex + 1
+		end
+		local skipped = 1
+		while(not canPlaceRoom(arr[roomid].dirEnter, newmap, choice.y, choice.x)) do
+			skippedRooms[#skippedRooms+1] = randomRoomArray[i+2+skippedRoomsIndex+skipped-1]
+			roomid = randomRoomArray[i+2+skippedRoomsIndex+skipped]
+			if roomid == nil then roomid = '1' end
+			loadedRoom = P.createRoom(roomid, arr)
+			skipped = skipped + 1
+		end
+		if i == numRooms-1 then
+			arr = P.floorInfo.rooms.finalRooms
+			roomid = util.chooseRandomKey(arr)
+			loadedRoom = P.createRoom(roomid, arr)
+		elseif i>numRooms-5 then
+			arr = P.floorInfo.rooms.treasureRooms
+			roomid = util.chooseRandomKey(arr)
+			loadedRoom = P.createRoom(roomid, arr)
+			treasureX = choice.y
+			treasureY = choice.x
+		elseif i>numRooms-10 then
 			arr = P.floorInfo.rooms.donationRooms
 			roomid = util.chooseRandomKey(arr)
 			loadedRoom = P.createRoom(roomid, arr)
