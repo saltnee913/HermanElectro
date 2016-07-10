@@ -740,33 +740,33 @@ P.treasureTile = P.tile:new{name = "treasureTile", sprite = love.graphics.newIma
 function P.treasureTile:onEnter()
 	if self.done then return end
 	reward =  math.floor(math.random()*1000)
-	if self.name == "treasureTile2" then
+	--[[if self.name == "treasureTile2" then
 		reward = reward + 200
 		if reward > 1010 then
 			reward = 500
 		end
-	end
+	end]]
 
-	if reward<200 then
+	if reward<333-donations*25 then
 
 		--do nothing
-	elseif reward<500 then
+	elseif reward<850-donations*12 then
 		--give one tool
 		slot = math.floor(math.random()*tools.numNormalTools)+1
 		tools[slot].numHeld = tools[slot].numHeld+1
-	elseif reward<800 then
+	elseif reward<950-donations*6 then
 		--give two tools
 		for i = 1, 2 do
 			slot = math.floor(math.random()*tools.numNormalTools)+1
 			tools[slot].numHeld = tools[slot].numHeld+1
 		end
-	elseif reward<900 then
+	elseif reward<980-donations*3 then
 		--give three tools
 		for i = 1, 3 do
 			slot = math.floor(math.random()*tools.numNormalTools)+1
 			tools[slot].numHeld = tools[slot].numHeld+1
 		end
-	elseif reward<990 then
+	elseif reward<990-donations then
 		--give one special tool
 		filledSlots = {0,0,0}
 		slot = 1
