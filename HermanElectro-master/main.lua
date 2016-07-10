@@ -72,6 +72,7 @@ function love.load()
 	love.graphics.setColor(255,255,255)
 	love.graphics.setBackgroundColor(255,255,255)
 	if not loadedOnce then
+		started = false
 		yOffset = -6
 		mouseDown = 0
 		regularLength = 24
@@ -607,6 +608,12 @@ end
 
 function love.draw()
 	love.graphics.setBackgroundColor(0,0,0)
+	if not started then
+		startscreen = love.graphics.newImage('Graphics/startscreen.png')
+		love.graphics.draw(startscreen, 0, 0, 0, width/startscreen:getWidth(), height/startscreen:getHeight())
+		return
+	end
+
 	--love.graphics.translate(width2/2-16*screenScale/2, height2/2-9*screenScale/2)
 	love.graphics.translate((width2-width)/2, (height2-height)/2)
 	local bigRoomTranslation = getTranslation()
@@ -1168,6 +1175,11 @@ function love.textinput(text)
 end
 
 function love.keypressed(key, unicode)
+	if key=="s" and not started then
+		started = true
+		return
+	end
+
 	if editor.stealInput then
 		editor.inputSteal(key, unicode)
 		return
