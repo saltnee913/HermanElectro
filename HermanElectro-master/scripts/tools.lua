@@ -359,7 +359,7 @@ end
 
 P.waterBottle = P.tool:new{name = 'water-bottle', image = love.graphics.newImage('Graphics/waterbottle.png')}
 function P.waterBottle:usableOnTile(tile)
-	if not tile.destroyed and (tile:instanceof(tiles.powerSupply) or tile:instanceof(tiles.electricFloor)) then
+	if not tile.destroyed and (tile:instanceof(tiles.powerSupply) or tile:instanceof(tiles.electricFloor) or tile:instanceof(tiles.untriggeredPowerSupply)) then
 		return true
 	--[[elseif not tile.laddered then
 		if tile:instanceof(tiles.breakablePit) and tile.strength == 0 then
@@ -372,7 +372,7 @@ function P.waterBottle:usableOnTile(tile)
 end
 function P.waterBottle:useToolTile(tile)
 	self.numHeld = self.numHeld-1
-	if not tile.destroyed and (tile:instanceof(tiles.powerSupply) or tile:instanceof(tiles.electricFloor)) then
+	if not tile.destroyed then
 		tile:destroy()
 	--[[elseif not tile.laddered then
 		if tile:instanceof(tiles.breakablePit) and tile.strength == 0 then
@@ -424,7 +424,7 @@ function P.brick:useToolAnimal(animal)
 	animal.waitCounter = animal.waitCounter+1
 end
 
-P.gun = P.tool:new{name = 'gun', range = 3, image = love.graphics.newImage('Graphics/gun.png')}
+P.gun = P.tool:new{name = 'gun', range = 3, image = love.graphics.newImage('NewGraphics/gun copy.png')}
 function P.gun:usableOnAnimal(animal)
 	return not animal.dead
 end
@@ -631,7 +631,7 @@ function P.pitbullChanger:useToolAnimal(animal)
 	end
 end
 
-P.sponge = P.tool:new{name = "sponge", range = 1, image = love.graphics.newImage('Graphics/sponge.png')}
+P.sponge = P.tool:new{name = "sponge", range = 1, image = love.graphics.newImage('NewGraphics/sponge copy.png')}
 function P.sponge:usableOnTile(tile)
 	if tile:instanceof(tiles.dustyGlassWall) and tile.blocksVision then
 		return true

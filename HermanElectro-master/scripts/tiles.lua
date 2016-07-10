@@ -1112,6 +1112,10 @@ function P.untriggeredPowerSupply:updateTile(dir)
 		self.charged = true
 	end
 end
+function P.untriggeredPowerSupply:destroy()
+	self.charged = false
+	self.dirAccept = {0,0,0,0}
+end
 
 P.reinforcedGlass = P.concreteWall:new{name = "reinforcedGlass", blocksVision = false, sprite = love.graphics.newImage('Graphics3D/reinforcedglass.png'), poweredSprite = love.graphics.newImage('Graphics3D/reinforcedglass.png')}
 
@@ -1132,7 +1136,7 @@ P.powerTriggeredBomb.onEnterAnimal = P.powerTriggeredBomb.onEnter
 P.boxTile = P.tile:new{name = "boxTile", pushable = pushableList[2]:new(), listIndex = 2, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
 
 P.motionGate = P.conductiveTile:new{name = "gate", dirSend = {0,0,0,0}, sprite = love.graphics.newImage('Graphics/gate.png'), poweredSprite = love.graphics.newImage('Graphics/gate.png')}
-function P.motionGate:onEnter(player)
+function P.motionGate:onLeave(player)
 	if (player.prevTileX<player.tileX and self.rotation == 0) or (player.prevTileX>player.tileX and self.rotation == 2) or
 	(player.prevTileY<player.tileY and self.rotation == 1) or (player.prevTileY>player.tileY and self.rotation == 3) then
 		self.dirSend = {1,1,1,1}
@@ -1267,5 +1271,6 @@ tiles[74] = P.conductiveBoxTile
 tiles[75] = P.boomboxTile
 tiles[76] = P.batteringRamTile
 tiles[77] = P.lamp
+tiles[78] = P.glue
 
 return tiles
