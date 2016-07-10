@@ -94,6 +94,7 @@ function love.load()
 		--topwall = love.graphics.newImage('Graphics/cave6_b.png')
 		topwall = love.graphics.newImage('Graphics3D/topwall.png')
 		cornerwall = love.graphics.newImage('Graphics/toprightcorner.png')
+		startscreen = love.graphics.newImage('Graphics/startscreen.png')
 
 		music = love.audio.newSource('Audio/hermantheme.mp3')
 		--music:play()
@@ -611,7 +612,6 @@ end
 function love.draw()
 	love.graphics.setBackgroundColor(0,0,0)
 	if not started then
-		startscreen = love.graphics.newImage('Graphics/startscreen.png')
 		love.graphics.draw(startscreen, 0, 0, 0, width/startscreen:getWidth(), height/startscreen:getHeight())
 		return
 	end
