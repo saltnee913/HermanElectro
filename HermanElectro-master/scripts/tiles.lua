@@ -1267,5 +1267,6 @@ tiles[74] = P.conductiveBoxTile
 tiles[75] = P.boomboxTile
 tiles[76] = P.batteringRamTile
 tiles[77] = P.lamp
+tiles[78] = P.glue
 
 return tiles
