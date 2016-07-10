@@ -45,8 +45,8 @@
 	},
 	"data":
 	{
-		"height": 6,
-		"numRooms": 8,
+		"height": 20,
+		"numRooms": 50,
 		"generateFunction": "generateOneFloor",
 		"startRoomID": "1"
 	}
