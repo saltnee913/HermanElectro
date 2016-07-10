@@ -631,7 +631,7 @@ function P.pitbullChanger:useToolAnimal(animal)
 	end
 end
 
-P.sponge = P.tool:new{name = "sponge", range = 1, image = love.graphics.newImage('Graphics/sponge.png')}
+P.sponge = P.tool:new{name = "sponge", range = 1, image = love.graphics.newImage('NewGraphics/sponge copy.png')}
 function P.sponge:usableOnTile(tile)
 	if tile:instanceof(tiles.dustyGlassWall) and tile.blocksVision then
 		return true
