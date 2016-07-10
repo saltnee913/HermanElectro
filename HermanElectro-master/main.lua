@@ -3,7 +3,7 @@ roomLength = 24
 screenScale = 70
 
 debug = true
-loadTutorial = false
+loadTutorial = true
 
 util = require('scripts.util')
 tiles = require('scripts.tiles')
