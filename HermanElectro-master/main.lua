@@ -149,6 +149,8 @@ function loadFirstLevel()
 end
 
 function loadLevel(floorPath)
+	animals = {}
+	pushables = {}
 	level = level+1
 	map.loadFloor(floorPath)
 	mainMap = map.generateMap(os.time())
