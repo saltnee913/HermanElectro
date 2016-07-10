@@ -424,7 +424,7 @@ function P.brick:useToolAnimal(animal)
 	animal.waitCounter = animal.waitCounter+1
 end
 
-P.gun = P.tool:new{name = 'gun', range = 3, image = love.graphics.newImage('Graphics/gun.png')}
+P.gun = P.tool:new{name = 'gun', range = 3, image = love.graphics.newImage('NewGraphics/gun copy.png')}
 function P.gun:usableOnAnimal(animal)
 	return not animal.dead
 end
