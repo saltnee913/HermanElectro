@@ -80,9 +80,6 @@ function love.load()
 		toolTime = 10
 		f1 = love.graphics.newImage('Graphics/concretewalls.png')
 		walls = love.graphics.newImage('Graphics/walls3.png')
-		rocks = love.graphics.newImage('Graphics/pen16.png')
-		--rocks = love.graphics.newImage('Graphics/cavesfloor.png')
-		rocksQuad = love.graphics.newQuad(mapy*14*screenScale,mapx*8*screenScale, width, height, rocks:getWidth(), rocks:getHeight())
 		black = love.graphics.newImage('Graphics/dark.png')
 		green = love.graphics.newImage('Graphics/green.png')
 		gray = love.graphics.newImage('Graphics/gray.png')
@@ -1132,7 +1129,6 @@ function enterRoom(dir)
 		player.enterY = player.tileY
 	end
 
-	rocksQuad = love.graphics.newQuad(mapy*14*screenScale,mapx*8*screenScale, width, height, rocks:getWidth(), rocks:getHeight())
 	if (prevMapX~=mapx or prevMapY~=mapy) or dir == -1 then
 		createAnimals()
 		createPushables()
