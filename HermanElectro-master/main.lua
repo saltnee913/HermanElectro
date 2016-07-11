@@ -799,7 +799,9 @@ function love.draw()
 	--everything after this will be drawn regardless of bigRoomTranslation
 	love.graphics.translate(-1*bigRoomTranslation.x*floor.sprite:getWidth()*scale, -1*bigRoomTranslation.y*floor.sprite:getHeight()*scale)
 
-	love.graphics.print(math.floor(gameTime), width/2-10, 20);
+	if not loadTutorial then
+		love.graphics.print(math.floor(gameTime), width/2-10, 20);
+	end
 	for i = 0, mapHeight do
 		for j = 0, mapHeight do
 			if visibleMap[i][j] == 1 then
@@ -1166,7 +1168,7 @@ function love.update(dt)
 
 	--game timer
 	gameTime = gameTime-dt
-	if gameTime<=0 then
+	if gameTime<=0 and not loadTutorial then
 		kill()
 	end
 end
