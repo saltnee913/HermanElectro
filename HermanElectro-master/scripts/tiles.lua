@@ -1196,6 +1196,8 @@ P.lamp = P.tile:new{name = "lamp", sprite = love.graphics.newImage('Graphics/lam
 
 P.conductiveGlass = P.glassWall:new{name = "conductiveGlass", sprite = love.graphics.newImage('Graphics3D/conductiveglass.png'), poweredSprite = love.graphics.newImage('Graphics3D/conductiveglass.png'), canBePowered = true, dirAccept = {1,1,1,1}, dirSend = {1,1,1,1}}
 
+P.reinforcedConductiveGlass = P.reinforcedGlass:new{name = "reinforcedConductiveGlass", sprite = love.graphics.newImage('Graphics3D/reinforcedconductiveglass.png'), poweredSprite = love.graphics.newImage('Graphics3D/reinforcedconductiveglass.png'), canBePowered = true, dirAccept = {1,1,1,1}, dirSend = {1,1,1,1}}
+
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
 tiles[3] = P.powerSupply
@@ -1275,5 +1277,6 @@ tiles[76] = P.batteringRamTile
 tiles[77] = P.lamp
 tiles[78] = P.glue
 tiles[79] = P.conductiveGlass
+tiles[80] = P.reinforcedConductiveGlass
 
 return tiles
