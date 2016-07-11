@@ -357,6 +357,7 @@ function P.wireCutters:usableOnTile(tile)
 	return not tile.destroyed and (tile:instanceof(tiles.wire) or tile:instanceof(tiles.conductiveGlass) or tile:instanceof(tiles.reinforcedConductiveGlass) or tile:instanceof(tiles.electricFloor))
 end
 function P.wireCutters:useToolTile(tile)
+	self.numHeld = self.numHeld - 1
 	if tile:instanceof(tiles.conductiveGlass) or tile:instanceof(tiles.reinforcedConductiveGlass) then tile.canBePowered = false
 	else tile:destroy() end
 end

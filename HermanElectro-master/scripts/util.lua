@@ -48,8 +48,7 @@ function P.shuffle(arr)
 end
 
 function P.readJSON(filePath, askForRooms)
-	io.input(filePath)
-	local str = io.read('*all')
+	local str = love.filesystem.read(filePath)
 	local obj, pos, err, roomsArray = json.decode(str, 1, nil, askForRooms and 'rooms' or nil)
 	if err then
 		print('Error:', err)
