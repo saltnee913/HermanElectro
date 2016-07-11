@@ -1036,7 +1036,6 @@ function createPushables()
 					pushables[index].prevTileX = pushables[index].tileX
 					pushables[index].prevTileY = pushables[index].tileY
 				end
-				room[i][j]=nil
 			end
 		end
 	end
