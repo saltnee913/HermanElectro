@@ -359,6 +359,7 @@ end
 function P.wireCutters:useToolTile(tile)
 	if tile:instanceof(tiles.conductiveGlass) or tile:instanceof(tiles.reinforcedConductiveGlass) then tile.canBePowered = false
 	else tile:destroy() end
+	self.numHeld = self.numHeld-1
 end
 
 P.waterBottle = P.tool:new{name = 'water-bottle', image = love.graphics.newImage('Graphics/waterbottle.png')}
