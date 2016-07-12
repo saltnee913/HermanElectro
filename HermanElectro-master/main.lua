@@ -211,6 +211,10 @@ function updateLight()
 			litTiles[i][j]=0
 		end
 	end
+	if room[player.tileY][player.tileX]~=nil and room[player.tileY][player.tileX].blocksVisionInside then
+		litTiles[player.tileY][player.tileX]=1
+		return
+	end
 	lightTest(player.tileY, player.tileX)
 	for i = 1, roomHeight do
 		for j = 1, roomLength do

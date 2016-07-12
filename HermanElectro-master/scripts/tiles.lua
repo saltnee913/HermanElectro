@@ -7,7 +7,7 @@ tools = require('scripts.tools')
 local P = {}
 tiles = P
 
-P.tile = Object:new{formerPowered = nil, gone = false, lit = false, destroyed = false, blocksProjectiles = false, isVisible = true, rotation = 0, powered = false, blocksMovement = false, blocksAnimalMovement = false, poweredNeighbors = {0,0,0,0}, blocksVision = false, dirSend = {1,1,1,1}, dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile", sprite = love.graphics.newImage('Graphics/cavesfloor.png'), poweredSprite = love.graphics.newImage('Graphics/cavesfloor.png')}
+P.tile = Object:new{formerPowered = nil, gone = false, lit = false, destroyed = false, blocksProjectiles = false, isVisible = true, rotation = 0, powered = false, blocksMovement = false, blocksAnimalMovement = false, poweredNeighbors = {0,0,0,0}, blocksVision = false, blocksVisionInside = false, dirSend = {1,1,1,1}, dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile", sprite = love.graphics.newImage('Graphics/cavesfloor.png'), poweredSprite = love.graphics.newImage('Graphics/cavesfloor.png')}
 function P.tile:onEnter(player) 
 	--self.name = "fuckyou"
 end
@@ -1198,6 +1198,8 @@ P.conductiveGlass = P.glassWall:new{name = "conductiveGlass", sprite = love.grap
 
 P.reinforcedConductiveGlass = P.reinforcedGlass:new{name = "reinforcedConductiveGlass", sprite = love.graphics.newImage('Graphics3D/reinforcedconductiveglass.png'), poweredSprite = love.graphics.newImage('Graphics3D/reinforcedconductiveglass.png'), canBePowered = true, dirAccept = {1,1,1,1}, dirSend = {1,1,1,1}}
 
+P.fog = P.tile:new{name = "fog", sprite = love.graphics.newImage('Graphics/fog.png'), blocksVisionInside = true, blocksVision = true}
+
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
 tiles[3] = P.powerSupply
@@ -1278,5 +1280,6 @@ tiles[77] = P.lamp
 tiles[78] = P.glue
 tiles[79] = P.conductiveGlass
 tiles[80] = P.reinforcedConductiveGlass
+tiles[81] = P.fog
 
 return tiles
