@@ -144,6 +144,16 @@ function loadNextLevel()
 	end
 end
 
+function startTutorial()
+	loadTutorial = true
+	player.enterX = player.tileX
+	player.enterY = player.tileY
+	player.totalItemsGiven = {0,0,0,0,0,0,0}
+	player.totalItemsNeeded = {0,0,0,0,0,0,0}
+	loadNextLevel()
+	started = true
+end
+
 function loadFirstLevel()
 	floorIndex = 1
 	loadNextLevel()
@@ -1178,8 +1188,14 @@ function love.textinput(text)
 end
 
 function love.keypressed(key, unicode)
-	if key=="s" and not started then
-		started = true
+	if not started then
+		if key=="s" then
+			started = true
+			return
+		elseif key == "t" then
+			startTutorial()
+			return
+		end
 		return
 	end
 
