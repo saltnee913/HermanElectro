@@ -691,26 +691,25 @@ sprite0 = love.graphics.newImage('Graphics3D/concretewallconductivet0.png'), spr
 P.concreteWallConductiveT.rotate = P.concreteWallConductiveDirected.rotate
 P.concreteWallConductiveT.updateSprite = P.concreteWallConductiveCorner.updateSprite
 
-P.tunnel = P.tile:new{name = "tunnel"}
+P.tunnel = P.tile:new{name = "tunnel", toolsNeeded = -1, toolsEntered = 0}
 function P.tunnel:onEnter(player)
-	local needToRemove = toolMax
-	while needToRemove>0 do
-		local noNormalTools = true
-		for i = 1, tools.numNormalTools do
-			if tools[i].numHeld>0 then noNormalTools = false end
-		end
-		if noNormalTools then break end
-
-		local slot = math.floor(math.random()*tools.numNormalTools)+1
-		if tools[slot].numHeld>0 then
-			tools[slot].numHeld = tools[slot].numHeld-1
-			needToRemove = needToRemove-1
-		end
-	end
-	loadNextLevel()
+	if self.toolsNeeded==0 then loadNextLevel() return end
+	if tool==0 or tool>7 then return end
+	tools[tool].numHeld = tools[tool].numHeld - 1
+	self.toolsNeeded = self.toolsNeeded-1
+	self.toolsEntered = self.toolsEntered+1
 end
 function P.tunnel:getInfoText()
-	return toolMax
+	return self.toolsNeeded
+end
+function P.tunnel:postPowerUpdate()
+	local noNormalTools = true
+	for i = 1, tools.numNormalTools do
+		if tools[i].numHeld>0 then noNormalTools = false end
+	end
+	if noNormalTools then self.toolsNeeded = 0
+	elseif self.toolsNeeded == -1 then self.toolsNeeded = toolMin
+	elseif self.toolsNeeded==0 and toolMin~=0 and toolsEntered~=toolMin then self.toolsNeeded = toolMin-self.toolsEntered end
 end
 
 P.pit = P.tile:new{name = "pit", laddered = false, sprite = love.graphics.newImage('Graphics/pit.png'), destroyedSprite = love.graphics.newImage('Graphics/ladderedPit.png')}

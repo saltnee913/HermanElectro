@@ -132,14 +132,16 @@ end
 
 floorIndex = 1
 function loadNextLevel()
+	toolMax = floorIndex+1
+	toolMin = floorIndex
 	if loadTutorial then
 		loadLevel('RoomData/tut_map.json')
 	else
 		if floorIndex > #map.floorOrder then
 			floorIndex = 1
 		end
-		loadLevel(map.floorOrder[floorIndex])
 		floorIndex = floorIndex + 1
+		loadLevel(map.floorOrder[floorIndex])
 	end
 end
 
@@ -154,7 +156,7 @@ function startTutorial()
 end
 
 function loadFirstLevel()
-	floorIndex = 1
+	floorIndex = 0
 	loadNextLevel()
 end
 
@@ -748,6 +750,9 @@ function love.draw()
 						if room[ty][tx]~=nil and litTiles[ty][tx]~=0 then
 							addY = room[ty][tx]:getYOffset()
 							yScale = scale*(16-addY)/16
+						else
+							addY = 0
+							yScale = scale
 						end
 						if dir == 1 or tools.toolableTiles[1][1] == nil or not (tx == tools.toolableTiles[1][1].x and ty == tools.toolableTiles[1][1].y) then
 							love.graphics.draw(green, (tx-1)*floor.sprite:getWidth()*scale+wallSprite.width, (addY+(ty-1)*floor.sprite:getHeight())*scale+wallSprite.height, 0, scale, yScale)
