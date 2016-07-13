@@ -53,6 +53,8 @@ function love.load()
 	game.crash()]]
 
 	level = 0
+	toolMin = 0
+	toolMax = 0
 	loadFirstLevel()
 	--1=saw
 	--toolMode = 1
@@ -80,8 +82,8 @@ function love.load()
 		toolTime = 10
 		f1 = love.graphics.newImage('Graphics/concretewalls.png')
 		walls = love.graphics.newImage('Graphics/walls3.png')
-		rocks = love.graphics.newImage('Graphics/pen16.png')
-		--rocks = love.graphics.newImage('Graphics/cavesfloor.png')
+		--rocks = love.graphics.newImage('Graphics/pen16.png')
+		rocks = love.graphics.newImage('Graphics/cavesfloor.png')
 		rocksQuad = love.graphics.newQuad(mapy*14*screenScale,mapx*8*screenScale, width, height, rocks:getWidth(), rocks:getHeight())
 		black = love.graphics.newImage('Graphics/dark.png')
 		green = love.graphics.newImage('Graphics/green.png')
@@ -1344,6 +1346,7 @@ function love.keypressed(key, unicode)
 		end
 		updateGameState()
 		checkAllDeath()
+		checkWin()
 	end
     if (key=="w" or key=="a" or key=="s" or key=="d") then
     	for i = 1, roomHeight do
@@ -1581,6 +1584,7 @@ function love.mousepressed(x, y, button, istouch)
 	
 	updateGameState()
 	checkAllDeath()
+	checkWin()
 end
 
 function love.mousereleased(x, y, button, istouch)
@@ -1606,7 +1610,6 @@ function updateGameState()
 			if room[i][j]~=nil then room[i][j]:resetState() end
 		end
 	end
-	checkWin()
 	updatePower()
 	updateLight()
 	updateTools()
