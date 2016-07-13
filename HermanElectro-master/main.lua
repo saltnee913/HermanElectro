@@ -1128,7 +1128,6 @@ function enterRoom(dir)
 		player.enterY = player.tileY
 	end
 
-	rocksQuad = love.graphics.newQuad(mapy*14*screenScale,mapx*8*screenScale, width, height, rocks:getWidth(), rocks:getHeight())
 	if (prevMapX~=mapx or prevMapY~=mapy) or dir == -1 then
 		createAnimals()
 		createPushables()
