@@ -671,6 +671,7 @@ function P.trap:usableOnNothing()
 	return true
 end
 function P.trap:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
 	room[tileY][tileX] = tiles.trap:new()
 end
 
@@ -692,6 +693,7 @@ function P.broom:usableOnTile(tile)
 	return tile:instanceof(tiles.slime) or tile:instanceof(tiles.conductiveSlime)
 end
 function P.broom:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
 	room[tileY][tileX]=nil
 end
 
@@ -700,6 +702,7 @@ function P.magnet:usableOnPushable(pushable)
 	return math.abs(player.tileX-pushable.tileX)+math.abs(player.tileY-pushable.tileY)>1
 end
 function P.magnet:useToolPushable(pushable)
+	self.numHeld = self.numHeld-1
 	local pushX = pushable.tileX
 	local pushY = pushable.tileY
 	mover = {tileX = pushX, tileY = pushY, prevTileX = pushX, prevTileY = pushY}
@@ -824,6 +827,7 @@ function P.gateBreaker:usableOnTile(tile)
 	return tile:instanceof(tiles.gate)
 end
 function P.gateBreaker:useToolTile(tile)
+	self.numHeld = self.numHeld-1
 	tile.destroyed = true
 	tile.canBePowered = false
 end
