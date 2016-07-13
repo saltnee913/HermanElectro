@@ -18,6 +18,8 @@ function P.loadFloor(inFloorFile)
 		P.floorInfo[k] = v
 	end
 	local loadRooms = floorData.loadRooms
+	toolMin = loadRooms.rooms.requirements.toolRange[1]
+	toolMax = loadRooms.rooms.requirements.toolRange[2]
 	for k, v in pairs(loadRooms) do
 		local roomsData, roomsArray = util.readJSON(v.filePath, true)
 		P.floorInfo.rooms[k] = roomsData.rooms

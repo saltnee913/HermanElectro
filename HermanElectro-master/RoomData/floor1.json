@@ -46,7 +46,7 @@
 	"data":
 	{
 		"height": 10,
-		"numRooms": 20,
+		"numRooms": 4,
 		"generateFunction": "generateMapStandard",
 		"startRoomID": "1"
 	}

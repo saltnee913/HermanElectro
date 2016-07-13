@@ -693,7 +693,24 @@ P.concreteWallConductiveT.updateSprite = P.concreteWallConductiveCorner.updateSp
 
 P.tunnel = P.tile:new{name = "tunnel"}
 function P.tunnel:onEnter(player)
+	local needToRemove = toolMax
+	while needToRemove>0 do
+		local noNormalTools = true
+		for i = 1, tools.numNormalTools do
+			if tools[i].numHeld>0 then noNormalTools = false end
+		end
+		if noNormalTools then break end
+
+		local slot = math.floor(math.random()*tools.numNormalTools)+1
+		if tools[slot].numHeld>0 then
+			tools[slot].numHeld = tools[slot].numHeld-1
+			needToRemove = needToRemove-1
+		end
+	end
 	loadNextLevel()
+end
+function P.tunnel:getInfoText()
+	return toolMax
 end
 
 P.pit = P.tile:new{name = "pit", laddered = false, sprite = love.graphics.newImage('Graphics/pit.png'), destroyedSprite = love.graphics.newImage('Graphics/ladderedPit.png')}

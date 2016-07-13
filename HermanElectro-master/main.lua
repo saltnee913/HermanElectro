@@ -53,6 +53,8 @@ function love.load()
 	game.crash()]]
 
 	level = 0
+	toolMin = 0
+	toolMax = 0
 	loadFirstLevel()
 	--1=saw
 	--toolMode = 1
@@ -1344,6 +1346,7 @@ function love.keypressed(key, unicode)
 		end
 		updateGameState()
 		checkAllDeath()
+		checkWin()
 	end
     if (key=="w" or key=="a" or key=="s" or key=="d") then
     	for i = 1, roomHeight do
@@ -1581,6 +1584,7 @@ function love.mousepressed(x, y, button, istouch)
 	
 	updateGameState()
 	checkAllDeath()
+	checkWin()
 end
 
 function love.mousereleased(x, y, button, istouch)
@@ -1606,7 +1610,6 @@ function updateGameState()
 			if room[i][j]~=nil then room[i][j]:resetState() end
 		end
 	end
-	checkWin()
 	updatePower()
 	updateLight()
 	updateTools()
