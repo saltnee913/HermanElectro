@@ -757,12 +757,12 @@ P.treasureTile = P.tile:new{name = "treasureTile", sprite = love.graphics.newIma
 function P.treasureTile:onEnter()
 	if self.done then return end
 	reward =  math.floor(math.random()*1000)
-	--[[if self.name == "treasureTile2" then
+	if self.name == "treasureTile2" then
 		reward = reward + 200
 		if reward > 1010 then
 			reward = 500
 		end
-	end]]
+	end
 
 	if reward<333-donations*25 then
 
