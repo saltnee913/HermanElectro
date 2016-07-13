@@ -693,7 +693,24 @@ P.concreteWallConductiveT.updateSprite = P.concreteWallConductiveCorner.updateSp
 
 P.tunnel = P.tile:new{name = "tunnel"}
 function P.tunnel:onEnter(player)
+	local needToRemove = toolMax
+	while needToRemove>0 do
+		local noNormalTools = true
+		for i = 1, tools.numNormalTools do
+			if tools[i].numHeld>0 then noNormalTools = false end
+		end
+		if noNormalTools then break end
+
+		local slot = math.floor(math.random()*tools.numNormalTools)+1
+		if tools[slot].numHeld>0 then
+			tools[slot].numHeld = tools[slot].numHeld-1
+			needToRemove = needToRemove-1
+		end
+	end
 	loadNextLevel()
+end
+function P.tunnel:getInfoText()
+	return toolMax
 end
 
 P.pit = P.tile:new{name = "pit", laddered = false, sprite = love.graphics.newImage('Graphics/pit.png'), destroyedSprite = love.graphics.newImage('Graphics/ladderedPit.png')}
@@ -1198,6 +1215,8 @@ P.conductiveGlass = P.glassWall:new{name = "conductiveGlass", sprite = love.grap
 
 P.reinforcedConductiveGlass = P.reinforcedGlass:new{name = "reinforcedConductiveGlass", sprite = love.graphics.newImage('Graphics3D/reinforcedconductiveglass.png'), poweredSprite = love.graphics.newImage('Graphics3D/reinforcedconductiveglass.png'), canBePowered = true, dirAccept = {1,1,1,1}, dirSend = {1,1,1,1}}
 
+P.fog = P.tile:new{name = "fog", sprite = love.graphics.newImage('Graphics/fog.png'), blocksVision = true}
+
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
 tiles[3] = P.powerSupply
@@ -1278,5 +1297,6 @@ tiles[77] = P.lamp
 tiles[78] = P.glue
 tiles[79] = P.conductiveGlass
 tiles[80] = P.reinforcedConductiveGlass
+tiles[81] = P.fog
 
 return tiles

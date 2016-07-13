@@ -18,6 +18,8 @@ function P.loadFloor(inFloorFile)
 		P.floorInfo[k] = v
 	end
 	local loadRooms = floorData.loadRooms
+	toolMin = loadRooms.rooms.requirements.toolRange[1]
+	toolMax = loadRooms.rooms.requirements.toolRange[2]
 	for k, v in pairs(loadRooms) do
 		local roomsData, roomsArray = util.readJSON(v.filePath, true)
 		P.floorInfo.rooms[k] = roomsData.rooms
@@ -130,6 +132,7 @@ local function requirementsHelper(roomData, key, value)
 		end
 		local avg = sum/#roomData.itemsNeeded
 		if avg<value[1] or avg>value[2] then works = false end
+		--why do we need to check sum==0? that shouldn't be the case, we don't want no tool rooms on 5 tool floors
 		if sum==0 then works = true end
 		if works then return true end
 		return false
@@ -324,6 +327,160 @@ function P.generateMapStandard()
 		local choice = available[math.floor(math.random()*a)]
 		--local roomNum = math.floor(math.random()*#(P.rooms)) -- what we will actually do, with some editing
 		arr = P.floorInfo.rooms.rooms
+		local roomid = randomRoomArray[i+skippedRoomsIndex]
+		local loadedRoom = P.createRoom(roomid, arr)
+		if skippedRooms[skippedRoomsIndex] ~= nil then
+			roomid = skippedRooms[skippedRoomsIndex]
+			loadedRoom = P.createRoom(roomid, arr)
+			skippedRoomsIndex = skippedRoomsIndex + 1
+		end
+		local skipped = 1
+		while(not canPlaceRoom(arr[roomid].dirEnter, newmap, choice.y, choice.x)) do
+			skippedRooms[#skippedRooms+1] = randomRoomArray[i+2+skippedRoomsIndex+skipped-1]
+			roomid = randomRoomArray[i+2+skippedRoomsIndex+skipped]
+			if roomid == nil then roomid = '1' end
+			loadedRoom = P.createRoom(roomid, arr)
+			skipped = skipped + 1
+		end
+		if i == numRooms-2 then
+			arr = P.floorInfo.rooms.treasureRooms
+			roomid = util.chooseRandomKey(arr)
+			loadedRoom = P.createRoom(roomid, arr)
+			treasureX = choice.y
+			treasureY = choice.x
+		elseif i == numRooms-1 then
+			arr = P.floorInfo.rooms.finalRooms
+			roomid = util.chooseRandomKey(arr)
+			loadedRoom = P.createRoom(roomid, arr)
+		elseif i == numRooms-3 then
+			arr = P.floorInfo.rooms.donationRooms
+			roomid = util.chooseRandomKey(arr)
+			loadedRoom = P.createRoom(roomid, arr)
+			donationX = choice.y
+			donationY = choice.x
+		end
+		newmap[choice.x][choice.y] = {roomid = roomid, room = P.createRoom(roomid, arr), isFinal = false, isInitial = false}
+	end
+	--printMap(newmap)
+	return newmap
+end
+
+function P.getRoomWeight(room)
+	return 1
+end
+
+--a-b does not always equal -(b-a)!!!!!!
+function P.compareItemsNeeded(a, b)
+	local sum = 0
+	for i = 1, #a do
+		for j = 1, #b do
+			--hardcoding is bad
+			for index = 1, 7 do
+				if a[index] > b[index] then
+					sum = sum + a[index] - b[index]
+				end
+			end
+		end
+	end
+	return sum/(#a*#b)
+end
+
+function P.generateMapWeighted()
+	--set up variables
+	local height = P.floorInfo.height
+	local numRooms = P.floorInfo.numRooms
+	local newmap = MapInfo:new{height = height, numRooms = numRooms}
+	for i = 0, height+1 do
+		newmap[i] = {}
+	end
+	local roomsArray = P.floorInfo.rooms.rooms
+
+	--create first room
+	local startRoomID = P.floorInfo.startRoomID
+	newmap[math.floor(height/2)][math.floor(height/2)] = {roomid = startRoomID, room = P.createRoom(startRoomID, roomsArray), isFinal = false, isInitial = true, isCompleted = false}
+	newmap.initialY = math.floor(height/2)
+	newmap.initialX = math.floor(height/2)
+
+	local usedRooms = {startRoomID}
+	while #usedRooms ~= numRooms do
+		--create list of available slots for room
+		available = {}
+		local a = 0
+		for j = 1, height do
+			for k = 1, height do
+				if newmap[j][k]==nil then
+					--numNil = newmap[j+1][k] ~= nil and 1 or 0 + newmap[j-1][k] ~= nil and 1 or 0 + newmap[j][k+1] ~= nil and 1 or 0 + newmap[j][k-1] ~= nil and 1 or 0
+					local e = newmap[j+1][k]
+					local b = newmap[j-1][k]
+					local c = newmap[j][k+1]
+					local d = newmap[j][k-1]
+					numNil = 0;
+					if (e==nil) then
+						numNil=numNil+1
+					elseif (roomsArray[e.roomid]==nil) then
+						numNil=numNil-1
+					end
+
+					if (b==nil) then
+						numNil=numNil+1
+					elseif (roomsArray[b.roomid]==nil) then
+						numNil=numNil-1
+					end
+
+					if (c==nil) then
+						numNil=numNil+1
+					elseif (roomsArray[c.roomid]==nil) then
+						numNil=numNil-1
+					end
+
+					if (d==nil) then
+						numNil=numNil+1
+					elseif (roomsArray[d.roomid]==nil) then
+						numNil=numNil-1
+					end
+
+					if (numNil == 3) then
+						available[a] = {y=j,x=k}
+						a=a+1
+					end
+				end
+			end
+		end
+		--choose a room slot
+		local choice = available[math.floor(math.random()*a)]
+
+		--creates an array of 5 possible choices with weights
+		local roomChoices = {}
+		local roomWeights = {}
+		for i = 1, P.floorInfo.numRoomsToCheck do
+			local roomChoice = roomsArray[math.floor(math.random()*#roomsArray)+1]
+			while not canPlaceRoom(roomChoice.dirEnter, newmap, choice.y, choice.x) do
+				roomChoice = roomsArray[math.floor(math.random()*#roomsArray)+1]
+			end
+			roomChoices[i] = roomChoice
+			local roomWeight = 0
+			local totalRoomsCompared = 0
+			for dir = 1, 4 do
+				local offset = util.getOffsetByDir(dir)
+				if newmap[choice.y+offset.y]~=nil and newmap[choice.y+offset.y][choice.x+offset.x] then
+					totalRoomsCompared = totalRoomsCompared + 1
+					local roomToCompare = newmap[choice.y+offset.y][choice.x+offset.x]
+					roomWeight = roomWeight + P.compareItemsNeeded(roomChoice.itemsNeeded, roomToCompare.itemsNeeded)
+					for dir2 = 1, 4 do
+						local offset2 = util.getOffsetByDir(dir2)
+						if newmap[roomToCompare.y+offset2.y]~=nil and newmap[roomToCompare.y+offset2.y][roomToCompare.x+offset2.x] then
+							totalRoomsCompared = totalRoomsCompared + 1
+							local roomToCompare2 = newmap[roomToCompare.y+offset2.y][roomToCompare.x+offset2.x]
+							roomWeight = roomWeight + P.compareItemsNeeded(roomChoice.itemsNeeded, roomToCompare2.itemsNeeded)
+						end
+					end
+				end
+			end
+			roomWeight = roomWeight + getRoomWeight(roomChoice)
+			roomWeights[i] = roomWeight
+		end
+
+
 		local roomid = randomRoomArray[i+skippedRoomsIndex]
 		local loadedRoom = P.createRoom(roomid, arr)
 		if skippedRooms[skippedRoomsIndex] ~= nil then

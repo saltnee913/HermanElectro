@@ -15,7 +15,7 @@
 						"value": true
 					}
 				},
-				"toolRange": [1,100]
+				"toolRange": [0,2]
 			}
 		},
 		"treasureRooms": 
@@ -48,6 +48,8 @@
 		"height": 10,
 		"numRooms": 20,
 		"generateFunction": "generateMapStandard",
-		"startRoomID": "1"
+		"startRoomID": "1",
+		//numRoomsToCheck is the amount of rooms to try when deciding a room's roomid, decreasing this increases rng
+		"numRoomsToCheck": 5
 	}
 }

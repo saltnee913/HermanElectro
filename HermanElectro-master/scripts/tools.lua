@@ -360,6 +360,7 @@ function P.wireCutters:useToolTile(tile)
 	self.numHeld = self.numHeld - 1
 	if tile:instanceof(tiles.conductiveGlass) or tile:instanceof(tiles.reinforcedConductiveGlass) then tile.canBePowered = false
 	else tile:destroy() end
+	self.numHeld = self.numHeld-1
 end
 
 P.waterBottle = P.tool:new{name = 'water-bottle', image = love.graphics.newImage('Graphics/waterbottle.png')}
@@ -641,7 +642,7 @@ function P.sponge:usableOnTile(tile)
 	if tile:instanceof(tiles.dustyGlassWall) and tile.blocksVision then
 		return true
 	elseif tile:instanceof(tiles.puddle) then return true
-	elseif tile:instanceof(tiles.stickyButton) then return true end
+	elseif tile:instanceof(tiles.stickyButton) or (tile:instanceof(tiles.button) and tile.bricked) then return true end
 	return false
 end
 function P.sponge:useToolTile(tile, tileY, tileX)
@@ -651,9 +652,9 @@ function P.sponge:useToolTile(tile, tileY, tileX)
 		tile.sprite = tile.cleanSprite
 	elseif tile:instanceof(tiles.puddle) then
 		room[tileY][tileX] = nil
-	elseif tile:instanceof(tiles.stickyButton) then
-		local down = tile.down
+	elseif tile:instanceof(tiles.stickyButton) or tile:instanceof(tiles.button) then
 		room[tileY][tileX] = tiles.button:new()
+		room[tileY][tileX].bricked = false
 	end
 end
 
