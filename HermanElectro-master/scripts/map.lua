@@ -18,25 +18,24 @@ function P.loadFloor(inFloorFile)
 		P.floorInfo[k] = v
 	end
 	local loadRooms = floorData.loadRooms
-	toolMin = loadRooms.rooms.requirements.toolRange[1]
-	toolMax = loadRooms.rooms.requirements.toolRange[2]
 	for k, v in pairs(loadRooms) do
 		local roomsData, roomsArray = util.readJSON(v.filePath, true)
 		P.floorInfo.rooms[k] = roomsData.rooms
-		P.filterRoomSet(P.floorInfo.rooms[k], v.requirements)
-		for i = 1, #roomsArray do
-			if P.floorInfo.rooms[k][roomsArray[i]] ~= nil then
-				P.floorInfo.roomsArray[#(P.floorInfo.roomsArray)+1] = roomsArray[i]
-			end
-		end
 		local amt = 0
 		for k1, v1 in pairs(P.floorInfo.rooms[k]) do
+			v1.roomid=k1
 			if roomsData.superFields ~= nil then
 				for k2, v2 in pairs(roomsData.superFields) do
 					if v1[k2] == nil then v1[k2] = v2 end
 				end
 			end
 			amt = amt + 1
+		end
+		P.filterRoomSet(P.floorInfo.rooms[k], v.requirements)
+		for i = 1, #roomsArray do
+			if P.floorInfo.rooms[k][roomsArray[i]] ~= nil then
+				P.floorInfo.roomsArray[#(P.floorInfo.roomsArray)+1] = roomsArray[i]
+			end
 		end
 		print(k..': '..amt)
 	end
@@ -123,7 +122,6 @@ local function requirementsHelper(roomData, key, value)
 			return tilesWhitelistHelper(roomData.layout, value)
 		end
 	elseif key == 'toolRange' then
-		local works = true
 		local sum = 0
 		for i = 1, #roomData.itemsNeeded do
 			for j = 1, #roomData.itemsNeeded[i] do
@@ -131,11 +129,8 @@ local function requirementsHelper(roomData, key, value)
 			end
 		end
 		local avg = sum/#roomData.itemsNeeded
-		if avg<value[1] or avg>value[2] then works = false end
-		--why do we need to check sum==0? that shouldn't be the case, we don't want no tool rooms on 5 tool floors
-		if sum==0 then works = true end
-		if works then return true end
-		return false
+		if avg<value[1] or avg>value[2] then return false end
+		return true
 	elseif key == 'hasKey' then
 		return roomData[value] ~= nil
 	elseif key == 'solvableWithTools' then

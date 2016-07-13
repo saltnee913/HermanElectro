@@ -14,7 +14,15 @@
 						"value": true
 					}
 				},
-				"toolRange": [3,4]
+				"or":
+				{
+					"toolRange": [3,4],
+					"equals":
+					{
+						"key": "roomid",
+						"value": "1"
+					}
+				}
 			}
 		},
 		"treasureRooms": 

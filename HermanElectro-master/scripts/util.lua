@@ -3,6 +3,11 @@ local json = require('scripts.dkjson')
 local P = {}
 util = P
 
+function P.printTable(tab)
+	local state = {indent = true, keyorder = keyOrder}
+	print(json.encode(tab, state))
+end
+
 function P.chooseWeightedRandom(arr)
 	local sum = 0
 	for i = 1, #arr do
