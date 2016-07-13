@@ -370,19 +370,28 @@ function P.getRoomWeight(room)
 end
 
 --a-b does not always equal -(b-a)!!!!!!
-function P.compareItemsNeeded(a, b)
+local function compareItemsNeeded(a, b)
 	local sum = 0
 	for i = 1, #a do
 		for j = 1, #b do
 			--hardcoding is bad
 			for index = 1, 7 do
-				if a[index] > b[index] then
-					sum = sum + a[index] - b[index]
+				if a[i][index] > b[j][index] then
+					sum = sum + a[i][index] - b[j][index]
 				end
 			end
 		end
 	end
 	return sum/(#a*#b)
+end
+
+local function isRoomAllowed(room, usedRooms, newmap, choice)
+	for i = 1, #usedRooms do
+		if room.roomid == usedRooms[i] then
+			return false
+		end
+	end
+	return canPlaceRoom(room.dirEnter, newmap, choice.x, choice.y)
 end
 
 function P.generateMapWeighted()
@@ -394,6 +403,10 @@ function P.generateMapWeighted()
 		newmap[i] = {}
 	end
 	local roomsArray = P.floorInfo.rooms.rooms
+	local randomRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.rooms)
+	local randomTreasureRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.treasureRooms)
+	local randomFinalRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.finalRooms)
+	local randomDonationRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.donationRooms)
 
 	--create first room
 	local startRoomID = P.floorInfo.startRoomID
@@ -404,8 +417,8 @@ function P.generateMapWeighted()
 	local usedRooms = {startRoomID}
 	while #usedRooms ~= numRooms do
 		--create list of available slots for room
-		available = {}
-		local a = 0
+		local available = {}
+
 		for j = 1, height do
 			for k = 1, height do
 				if newmap[j][k]==nil then
@@ -440,82 +453,80 @@ function P.generateMapWeighted()
 					end
 
 					if (numNil == 3) then
-						available[a] = {y=j,x=k}
-						a=a+1
+						available[#available+1] = {y=j,x=k}
 					end
 				end
 			end
 		end
 		--choose a room slot
-		local choice = available[math.floor(math.random()*a)]
+		local choice = util.chooseRandomElement(available)
+		local roomid
 
-		--creates an array of 5 possible choices with weights
-		local roomChoices = {}
-		local roomWeights = {}
-		for i = 1, P.floorInfo.numRoomsToCheck do
-			local roomChoice = roomsArray[math.floor(math.random()*#roomsArray)+1]
-			while not canPlaceRoom(roomChoice.dirEnter, newmap, choice.y, choice.x) do
-				roomChoice = roomsArray[math.floor(math.random()*#roomsArray)+1]
-			end
-			roomChoices[i] = roomChoice
-			local roomWeight = 0
-			local totalRoomsCompared = 0
-			for dir = 1, 4 do
-				local offset = util.getOffsetByDir(dir)
-				if newmap[choice.y+offset.y]~=nil and newmap[choice.y+offset.y][choice.x+offset.x] then
-					totalRoomsCompared = totalRoomsCompared + 1
-					local roomToCompare = newmap[choice.y+offset.y][choice.x+offset.x]
-					roomWeight = roomWeight + P.compareItemsNeeded(roomChoice.itemsNeeded, roomToCompare.itemsNeeded)
-					for dir2 = 1, 4 do
-						local offset2 = util.getOffsetByDir(dir2)
-						if newmap[roomToCompare.y+offset2.y]~=nil and newmap[roomToCompare.y+offset2.y][roomToCompare.x+offset2.x] then
+		if numRooms - #usedRooms == 1 then
+			roomid = util.chooseRandomElement(randomFinalRoomsArray)
+		elseif numRooms - #usedRooms == 2 then
+			roomid = util.chooseRandomElement(randomTreasureRoomsArray)
+		elseif numRooms - #usedRooms == 3 then
+			roomid = util.chooseRandomElement(randomDonationRoomsArray)
+		else
+			--creates an array of 5 possible choices with weights
+			local roomChoices = {}
+			local roomWeights = {}
+			for i = 1, P.floorInfo.numRoomsToCheck do
+				local roomChoiceid = util.chooseRandomElement(randomRoomsArray)
+				local roomChoice = roomsArray[roomChoiceid]
+				local infiniteLoopCheck = 0
+				while not isRoomAllowed(roomChoice, usedRooms, newmap, choice) do
+					infiniteLoopCheck = infiniteLoopCheck + 1
+					roomChoiceid = util.chooseRandomElement(randomRoomsArray)
+					roomChoice = roomsArray[roomChoiceid]
+					if infiniteLoopCheck > 1000 then
+						printMap()
+						roomChoiceid = randomRoomsArray[1]
+						roomChoice = roomsArray[roomChoiceid]
+						break
+					end
+				end
+				roomChoices[i] = roomChoiceid
+				local state = {indent = true, keyorder = keyOrder}
+	
+				local roomWeight = 0
+				local totalRoomsCompared = 0
+				for i = 1, height do
+					for j = 1, height do
+						if newmap[i][j]~=nil then
 							totalRoomsCompared = totalRoomsCompared + 1
-							local roomToCompare2 = newmap[roomToCompare.y+offset2.y][roomToCompare.x+offset2.x]
-							roomWeight = roomWeight + P.compareItemsNeeded(roomChoice.itemsNeeded, roomToCompare2.itemsNeeded)
+							local roomToCompare = newmap[i][j]
+							roomWeight = roomWeight + compareItemsNeeded(roomChoice.itemsNeeded, P.getItemsNeeded(roomToCompare.roomid))
 						end
 					end
 				end
+				--[[for dir = 1, 4 do
+					local offset = util.getOffsetByDir(dir)
+					if newmap[choice.y+offset.y]~=nil and newmap[choice.y+offset.y][choice.x+offset.x] then
+						totalRoomsCompared = totalRoomsCompared + 1
+						local roomToCompare = newmap[choice.y+offset.y][choice.x+offset.x]
+						roomWeight = roomWeight + compareItemsNeeded(roomChoice.itemsNeeded, roomToCompare.itemsNeeded)
+						for dir2 = 1, 4 do
+							local offset2 = util.getOffsetByDir(dir2)
+							if newmap[roomToCompare.y+offset2.y]~=nil and newmap[roomToCompare.y+offset2.y][roomToCompare.x+offset2.x] then
+								totalRoomsCompared = totalRoomsCompared + 1
+								local roomToCompare2 = newmap[roomToCompare.y+offset2.y][roomToCompare.x+offset2.x]
+								roomWeight = roomWeight + compareItemsNeeded(roomChoice.itemsNeeded, roomToCompare2.itemsNeeded)
+							end
+						end
+					end
+				end]]
+				roomWeight = roomWeight/totalRoomsCompared + P.getRoomWeight(roomChoice)
+				roomWeights[i] = roomWeight
 			end
-			roomWeight = roomWeight + getRoomWeight(roomChoice)
-			roomWeights[i] = roomWeight
+			roomid = roomChoices[util.chooseWeightedRandom(roomWeights)]
 		end
-
-
-		local roomid = randomRoomArray[i+skippedRoomsIndex]
-		local loadedRoom = P.createRoom(roomid, arr)
-		if skippedRooms[skippedRoomsIndex] ~= nil then
-			roomid = skippedRooms[skippedRoomsIndex]
-			loadedRoom = P.createRoom(roomid, arr)
-			skippedRoomsIndex = skippedRoomsIndex + 1
-		end
-		local skipped = 1
-		while(not canPlaceRoom(arr[roomid].dirEnter, newmap, choice.y, choice.x)) do
-			skippedRooms[#skippedRooms+1] = randomRoomArray[i+2+skippedRoomsIndex+skipped-1]
-			roomid = randomRoomArray[i+2+skippedRoomsIndex+skipped]
-			if roomid == nil then roomid = '1' end
-			loadedRoom = P.createRoom(roomid, arr)
-			skipped = skipped + 1
-		end
-		if i == numRooms-2 then
-			arr = P.floorInfo.rooms.treasureRooms
-			roomid = util.chooseRandomKey(arr)
-			loadedRoom = P.createRoom(roomid, arr)
-			treasureX = choice.y
-			treasureY = choice.x
-		elseif i == numRooms-1 then
-			arr = P.floorInfo.rooms.finalRooms
-			roomid = util.chooseRandomKey(arr)
-			loadedRoom = P.createRoom(roomid, arr)
-		elseif i == numRooms-3 then
-			arr = P.floorInfo.rooms.donationRooms
-			roomid = util.chooseRandomKey(arr)
-			loadedRoom = P.createRoom(roomid, arr)
-			donationX = choice.y
-			donationY = choice.x
-		end
-		newmap[choice.x][choice.y] = {roomid = roomid, room = P.createRoom(roomid, arr), isFinal = false, isInitial = false}
+		usedRooms[#usedRooms+1] = roomid
+		print(#usedRooms)
+		newmap[choice.y][choice.x] = {roomid = roomid, room = P.createRoom(roomid, arr), isFinal = false, isInitial = false}
 	end
-	--printMap(newmap)
+	printMap(newmap)
 	return newmap
 end
 

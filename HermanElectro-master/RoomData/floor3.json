@@ -49,7 +49,9 @@
 	{
 		"height": 15,
 		"numRooms": 10,
-		"generateFunction": "generateMapStandard",
-		"startRoomID": "1"
+		"generateFunction": "generateMapWeighted",
+		"startRoomID": "1",
+		//numRoomsToCheck is the amount of rooms to try when deciding a room's roomid, decreasing this increases rng
+		"numRoomsToCheck": 5
 	}
 }
