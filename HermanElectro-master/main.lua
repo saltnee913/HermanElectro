@@ -1180,7 +1180,9 @@ function love.update(dt)
 	keyTimer.timeLeft = keyTimer.timeLeft - dt
 
 	--game timer
-	gameTime = gameTime-dt
+	if started then
+		gameTime = gameTime-dt
+	end
 	if gameTime<=0 and not loadTutorial then
 		kill()
 	end
