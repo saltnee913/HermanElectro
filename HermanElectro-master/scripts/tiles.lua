@@ -755,14 +755,13 @@ P.breakablePit.willDestroyPushable = P.breakablePit.willKillPlayer
 P.treasureTile = P.tile:new{name = "treasureTile", sprite = love.graphics.newImage('Graphics/treasuretile.png'), done = false}
 function P.treasureTile:onEnter()
 	if self.done then return end
-	reward =  math.floor(math.random()*1000)
-	if self.name == "treasureTile2" then
-		reward = reward + 200
-		if reward > 1010 then
-			reward = 500
-		end
-	end
-
+	local reward = math.floor(math.random()*1000)
+	self:giveReward(reward)
+	self.done = true
+	self.isCompleted = true
+	self.isVisible = false
+end
+function P.treasureTile:giveReward(reward)
 	if reward<333-donations*25 then
 
 		--do nothing
@@ -831,9 +830,6 @@ function P.treasureTile:onEnter()
 			tools[slot].numHeld = tools[slot].numHeld+1
 		end
 	end
-	self.done = true
-	self.isCompleted = true
-	self.isVisible = false
 end
 
 P.mousetrap = P.conductiveTile:new{name = "mousetrap", bricked = false, formerPowered = nil, triggered = false, safe = false, sprite = love.graphics.newImage('Graphics/mousetrap.png'), safeSprite = love.graphics.newImage('Graphics/mousetrapsafe.png'), deadlySprite = love.graphics.newImage('Graphics/mousetrap.png'), brickedSprite = love.graphics.newImage('Graphics/mousetrapbricked.png')}
@@ -1107,6 +1103,15 @@ P.entrancePortal.onEnterAnimal = P.entrancePortal.onEnter
 P.exitPortal = P.tile:new{name = "exitPortal", sprite = love.graphics.newImage('Graphics/exitPortal.png')}
 
 P.treasureTile2 = P.treasureTile:new{name = "treasureTile2", sprite = love.graphics.newImage('Graphics/treasuretile2.png')}
+
+function P.treasureTile2:onEnter()
+	if self.done then return end
+	local reward = math.floor(math.random()*667)+333
+	self:giveReward(reward)
+	self.done = true
+	self.isCompleted = true
+	self.isVisible = false
+end
 
 P.treasureTile3 = P.treasureTile:new{name = "treasureTile3", sprite = love.graphics.newImage('Graphics/treasuretile3.png')}
 

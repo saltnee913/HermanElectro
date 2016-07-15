@@ -3,7 +3,7 @@ roomLength = 24
 screenScale = 70
 
 debug = true
-loadTutorial = false
+loadTutorial = falsei
 
 util = require('scripts.util')
 tiles = require('scripts.tiles')
@@ -53,8 +53,6 @@ function love.load()
 	game.crash()]]
 
 	level = 0
-	toolMin = 0
-	toolMax = 0
 	loadFirstLevel()
 	--1=saw
 	--toolMode = 1
@@ -81,8 +79,7 @@ function love.load()
 		regularHeight = 12
 		toolTime = 10
 		f1 = love.graphics.newImage('Graphics/concretewalls.png')
-		walls = love.graphics.newImage('Graphics/walls3.png')
-		black = love.graphics.newImage('Graphics/dark.png')
+		walls = love.graphics.newImage('Graphics/walls3.png')		black = love.graphics.newImage('Graphics/dark.png')
 		green = love.graphics.newImage('Graphics/green.png')
 		gray = love.graphics.newImage('Graphics/gray.png')
 		--floortile = love.graphics.newImage('Graphics/floortile.png')
@@ -132,16 +129,14 @@ end
 
 floorIndex = 1
 function loadNextLevel()
-	toolMax = floorIndex+1
-	toolMin = floorIndex
 	if loadTutorial then
 		loadLevel('RoomData/tut_map.json')
 	else
 		if floorIndex > #map.floorOrder then
 			floorIndex = 1
 		end
-		floorIndex = floorIndex + 1
 		loadLevel(map.floorOrder[floorIndex])
+		floorIndex = floorIndex + 1
 	end
 end
 
@@ -156,7 +151,7 @@ function startTutorial()
 end
 
 function loadFirstLevel()
-	floorIndex = 0
+	floorIndex = 1
 	loadNextLevel()
 end
 
@@ -750,9 +745,6 @@ function love.draw()
 						if room[ty][tx]~=nil and litTiles[ty][tx]~=0 then
 							addY = room[ty][tx]:getYOffset()
 							yScale = scale*(16-addY)/16
-						else
-							addY = 0
-							yScale = scale
 						end
 						if dir == 1 or tools.toolableTiles[1][1] == nil or not (tx == tools.toolableTiles[1][1].x and ty == tools.toolableTiles[1][1].y) then
 							love.graphics.draw(green, (tx-1)*floor.sprite:getWidth()*scale+wallSprite.width, (addY+(ty-1)*floor.sprite:getHeight())*scale+wallSprite.height, 0, scale, yScale)
@@ -1349,7 +1341,6 @@ function love.keypressed(key, unicode)
 		end
 		updateGameState()
 		checkAllDeath()
-		checkWin()
 	end
     if (key=="w" or key=="a" or key=="s" or key=="d") then
     	for i = 1, roomHeight do
@@ -1587,7 +1578,6 @@ function love.mousepressed(x, y, button, istouch)
 	
 	updateGameState()
 	checkAllDeath()
-	checkWin()
 end
 
 function love.mousereleased(x, y, button, istouch)
@@ -1613,6 +1603,7 @@ function updateGameState()
 			if room[i][j]~=nil then room[i][j]:resetState() end
 		end
 	end
+	checkWin()
 	updatePower()
 	updateLight()
 	updateTools()
