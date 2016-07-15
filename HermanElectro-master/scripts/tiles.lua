@@ -1216,6 +1216,9 @@ P.batteringRamTile = P.tile:new{name = "batteringRamTile", pushable = pushableLi
 P.lamp = P.tile:new{name = "lamp", sprite = love.graphics.newImage('Graphics/lamp.png'), lit = true}
 
 P.conductiveGlass = P.glassWall:new{name = "conductiveGlass", sprite = love.graphics.newImage('Graphics3D/conductiveglass.png'), poweredSprite = love.graphics.newImage('Graphics3D/conductiveglass.png'), canBePowered = true, dirAccept = {1,1,1,1}, dirSend = {1,1,1,1}}
+function P.conductiveGlass:getYOffset()
+	return yOffset
+end
 
 P.reinforcedConductiveGlass = P.reinforcedGlass:new{name = "reinforcedConductiveGlass", sprite = love.graphics.newImage('Graphics3D/reinforcedconductiveglass.png'), poweredSprite = love.graphics.newImage('Graphics3D/reinforcedconductiveglass.png'), canBePowered = true, dirAccept = {1,1,1,1}, dirSend = {1,1,1,1}}
 
