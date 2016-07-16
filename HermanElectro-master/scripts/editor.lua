@@ -51,6 +51,9 @@ function P.keypressed(key, unicode)
 				if room[i][j]~=nil then
 					for k = 1, #tiles do
 						if tiles[k]~=nil and room[i][j]~=nil and tiles[k].name == room[i][j].name then
+							if room[i][j].overlay ~= nil then
+								prt=prt..'['
+							end
 							addk = k
 							if k == 1 then
 								addk=0
@@ -58,6 +61,15 @@ function P.keypressed(key, unicode)
 							prt = prt..addk
 							if(room[i][j].rotation ~= 0) then
 								prt = prt..'.'..room[i][j].rotation
+							end
+							if room[i][j].overlay ~= nil then
+								prt=prt..','
+								for k = 1, #tiles do
+									if room[i][j].overlay.name == tiles[k].name then
+										prt=prt..k
+									end
+								end
+								prt=prt..']'
 							end
 							break
 						end

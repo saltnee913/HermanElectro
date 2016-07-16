@@ -175,8 +175,19 @@ function P.createRoom(inRoom, arr)
 	for i = 1, #roomToLoad do
 		loadedRoom[i] = {}
 		for j = 1, #(roomToLoad[i]) do
-			local ind = math.floor(roomToLoad[i][j])
-			if roomToLoad[i][j] == nil or ind == 0 then
+			local tileData = roomToLoad[i][j]
+			local overlayToPlace = nil
+			if type(tileData) ~= 'number' then
+				local overInd = math.floor(tileData[2])
+				overlayToPlace = tiles[overInd]:new()
+				local overRot = math.floor(10*(tileData[2]-overInd+0.01))
+				if overRot~=nil and overRot~=0 then
+					overlayToPlace:rotate(overRot)
+				end
+				tileData = tileData[1]
+			end
+			local ind = math.floor(tileData)
+			if tileData == nil or ind == 0 then
 				loadedRoom[i][j] = nil
 			elseif tiles[ind].animal ~= nil then
 				loadedRoom[i][j] = tiles[ind]:new()
@@ -184,9 +195,12 @@ function P.createRoom(inRoom, arr)
 			else
 				loadedRoom[i][j] = tiles[ind]:new()
 			end
-			local rot = math.floor(10*(roomToLoad[i][j]-ind+0.01))
+			local rot = math.floor(10*(tileData-ind+0.01))
 			if rot~=nil and rot ~= 0 and loadedRoom[i][j]~=nil then
 				loadedRoom[i][j]:rotate(rot)
+			end
+			if overlayToPlace ~= nil then
+				loadedRoom[i][j]:setOverlay(overlayToPlace)
 			end
 		end
 	end
