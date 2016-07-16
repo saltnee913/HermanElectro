@@ -253,6 +253,10 @@ function updatePower()
 			if room[i]~=nil and room[i][j]~=nil then
 				room[i][j].powered = false
 				room[i][j].poweredNeighbors = {0,0,0,0}
+				if room[i][j].overlay ~= nil then
+					room[i][j].powered = true
+					room[i][j].poweredNeighbors = {0,0,0,0}
+				end
 			end
 		end 
 	end
@@ -275,7 +279,7 @@ function updatePower()
 		for j=1, roomLength do
 			--power starts at power sources: powerSupply and notGate
 			if room[i]~=nil and room[i][j]~=nil and (room[i][j].charged or room[i][j]:instanceof(tiles.powerSupply) or room[i][j]:instanceof(tiles.notGate)) then
-				room[i][j]:updateTile(0)
+				room[i][j]:updateTileAndOverlay(0)
 				powerTest(i,j,0)
 			end
 		end
@@ -288,7 +292,7 @@ function updatePower()
 				if room[i]~=nil and room[i][j]~=nil and not (room[i][j]:instanceof(tiles.powerSupply) or room[i][j]:instanceof(tiles.notGate)) and not room[i][j].charged then
 					room[i][j].poweredNeighbors = {0,0,0,0}
 					room[i][j].powered = false
-					room[i][j]:updateTile(0)
+					room[i][j]:updateTileAndOverlay(0)
 				end
 			end
 		end
@@ -319,12 +323,12 @@ function updatePower()
 					local offset = room[i][j]:getCorrectedOffset(3)
 					if room[i+offset.y]~=nil and room[i+offset.y][j+offset.x]~=nil and room[i+offset.y][j+offset.x].powered==false then
 						room[i][j].poweredNeighbors[room[i][j]:cfr(3)]=0
-						room[i][j]:updateTile(0)
+						room[i][j]:updateTileAndOverlay(0)
 					elseif room[i+offset.y]~=nil and room[i+offset.y][j+offset.x]~=nil
 					 and room[i+offset.y][j+offset.x].powered==true
 					 and room[i+offset.y][j+offset.x].dirSend[room[i][j]:cfr(1)]==1 then
 						room[i][j].poweredNeighbors[room[i][j]:cfr(3)]=1
-						room[i][j]:updateTile(0)
+						room[i][j]:updateTileAndOverlay(0)
 					end
 				end
 			end
@@ -421,7 +425,7 @@ function powerTest(x, y, lastDir)
 		else
 			room[x-1][y].poweredNeighbors[3] = 0
 		end
-		room[x-1][y]:updateTile(3)
+		room[x-1][y]:updateTileAndOverlay(3)
 		if room[x-1][y].powered ~= formerPowered or room[x-1][y].dirSend ~= formerSend or room[x-1][y].dirAccept ~= formerAccept then
 			powerTest(x-1,y,3)
 		end
@@ -438,7 +442,7 @@ function powerTest(x, y, lastDir)
 		else
 			room[x+1][y].poweredNeighbors[1] = 0
 		end
-		room[x+1][y]:updateTile(1)
+		room[x+1][y]:updateTileAndOverlay(1)
 		if room[x+1][y].powered ~= formerPowered or room[x+1][y].dirSend ~= formerSend or room[x+1][y].dirAccept ~= formerAccept then
 			powerTest(x+1,y,1)
 		end
@@ -454,7 +458,7 @@ function powerTest(x, y, lastDir)
 		else
 			room[x][y-1].poweredNeighbors[2] = 0
 		end
-		room[x][y-1]:updateTile(2)
+		room[x][y-1]:updateTileAndOverlay(2)
 		if room[x][y-1].powered ~= formerPowered or room[x][y-1].dirSend ~= formerSend or room[x][y-1].dirAccept ~= formerAccept then
 			powerTest(x, y-1, 2)
 		end
@@ -470,7 +474,7 @@ function powerTest(x, y, lastDir)
 		else
 			room[x][y+1].poweredNeighbors[4] = 0
 		end
-		room[x][y+1]:updateTile(4)
+		room[x][y+1]:updateTileAndOverlay(4)
 		if room[x][y+1].powered ~= formerPowered or room[x][y+1].dirSend ~= formerSend or room[x][y+1].dirAccept ~= formerAccept then
 			powerTest(x, y+1, 4)
 		end
@@ -492,7 +496,7 @@ function powerTestPushable(x, y, lastDir)
 		formerAccept = room[x-1][y].dirAccept
 		--powered[x-1][y] = 1
 		room[x-1][y].poweredNeighbors[3] = 1
-		room[x-1][y]:updateTile(3)
+		room[x-1][y]:updateTileAndOverlay(3)
 		if room[x-1][y].powered ~= formerPowered or room[x-1][y].dirSend ~= formerSend or room[x-1][y].dirAccept ~= formerAccept then
 			powerTestSpecial(x-1,y,3)
 		end
@@ -505,7 +509,7 @@ function powerTestPushable(x, y, lastDir)
 		formerSend = room[x+1][y].dirSend
 		formerAccept = room[x+1][y].dirAccept
 		room[x+1][y].poweredNeighbors[1] = 1
-		room[x+1][y]:updateTile(1)
+		room[x+1][y]:updateTileAndOverlay(1)
 		if room[x+1][y].powered ~= formerPowered or room[x+1][y].dirSend ~= formerSend or room[x+1][y].dirAccept ~= formerAccept then
 			powerTestSpecial(x+1,y,1)
 		end
@@ -517,7 +521,7 @@ function powerTestPushable(x, y, lastDir)
 		formerAccept = room[x][y-1].dirAccept
 		--powered[x][y-1] = 1
 		room[x][y-1].poweredNeighbors[2] = 1
-		room[x][y-1]:updateTile(2)
+		room[x][y-1]:updateTileAndOverlay(2)
 		if room[x][y-1].powered ~= formerPowered or room[x][y-1].dirSend ~= formerSend or room[x][y-1].dirAccept ~= formerAccept then
 			powerTestSpecial(x, y-1, 2)
 		end
@@ -529,7 +533,7 @@ function powerTestPushable(x, y, lastDir)
 		formerAccept = room[x][y+1].dirAccept
 		--powered[x][y+1] = 1
 		room[x][y+1].poweredNeighbors[4] = 1
-		room[x][y+1]:updateTile(4)
+		room[x][y+1]:updateTileAndOverlay(4)
 		if room[x][y+1].powered ~= formerPowered or room[x][y+1].dirSend ~= formerSend or room[x][y+1].dirAccept ~= formerAccept then
 			powerTestSpecial(x, y+1, 4)
 		end
@@ -553,7 +557,7 @@ function powerTestSpecial(x, y, lastDir)
 		else
 			room[x-1][y].poweredNeighbors[3] = 0
 		end
-		room[x-1][y]:updateTile(3)
+		room[x-1][y]:updateTileAndOverlay(3)
 		if room[x-1][y].powered ~= formerPowered or room[x-1][y].dirSend ~= formerSend or room[x-1][y].dirAccept ~= formerAccept then
 			powerTestSpecial(x-1,y,3)
 		end
@@ -570,7 +574,7 @@ function powerTestSpecial(x, y, lastDir)
 		else
 			room[x+1][y].poweredNeighbors[1] = 0
 		end
-		room[x+1][y]:updateTile(1)
+		room[x+1][y]:updateTileAndOverlay(1)
 		if room[x+1][y].powered ~= formerPowered or room[x+1][y].dirSend ~= formerSend or room[x+1][y].dirAccept ~= formerAccept then
 			powerTestSpecial(x+1,y,1)
 		end
@@ -586,7 +590,7 @@ function powerTestSpecial(x, y, lastDir)
 		else
 			room[x][y-1].poweredNeighbors[2] = 0
 		end
-		room[x][y-1]:updateTile(2)
+		room[x][y-1]:updateTileAndOverlay(2)
 		if room[x][y-1].powered ~= formerPowered or room[x][y-1].dirSend ~= formerSend or room[x][y-1].dirAccept ~= formerAccept then
 			powerTestSpecial(x, y-1, 2)
 		end
@@ -602,7 +606,7 @@ function powerTestSpecial(x, y, lastDir)
 		else
 			room[x][y+1].poweredNeighbors[4] = 0
 		end
-		room[x][y+1]:updateTile(4)
+		room[x][y+1]:updateTileAndOverlay(4)
 		if room[x][y+1].powered ~= formerPowered or room[x][y+1].dirSend ~= formerSend or room[x][y+1].dirAccept ~= formerAccept then
 			powerTestSpecial(x, y+1, 4)
 		end
@@ -683,8 +687,34 @@ function love.draw()
 						addY = room[j][i]:getYOffset()
 					end
 					love.graphics.draw(toDraw, (tempi-1)*floor.sprite:getWidth()*scale+wallSprite.width, (addY+(tempj-1)*floor.sprite:getWidth())*scale+wallSprite.height,
-					rot * math.pi / 2, scale*16/toDraw:getWidth(), scale*16/toDraw:getWidth())
-
+					  rot * math.pi / 2, scale*16/toDraw:getWidth(), scale*16/toDraw:getWidth())
+					if litTiles[j][i]~=0 and room[j][i].overlay ~= nil then
+						local overlay = room[j][i].overlay
+						local toDraw2 = overlay.powered and overlay.poweredSprite or overlay.sprite
+						local rot2 = overlay.rotation
+						local tempi2 = i
+						local tempj2 = j
+						local addY2 = overlay:getYOffset() + addY
+						--if addY2~=0 then rot2 = 0 end
+						if rot2 == 1 or rot2 == 2 then
+							tempi2 = tempi2 + 1
+						end
+						if rot2 == 2 or rot2 == 3 then
+							tempj2 = tempj2 + 1
+						end
+						love.graphics.draw(toDraw2, (tempi2-1)*floor.sprite:getWidth()*scale+wallSprite.width, (addY2+(tempj2-1)*floor.sprite:getWidth())*scale+wallSprite.height,
+						  rot2 * math.pi / 2, scale*16/toDraw:getWidth(), scale*16/toDraw:getWidth())
+						if room[j][i].dirSend[3] == 1 or room[j][i].dirAccept[3] == 1 or (overlay.dirWireHack ~= nil and overlay.dirWireHack[3] == 1) then
+							local toDraw3
+							if room[j][i].powered and (room[j][i].dirSend[3] == 1 or room[j][i].dirAccept[3] == 1) then
+								toDraw3 = room[j][i].wireHackOn
+							else
+								toDraw3 = room[j][i].wireHackOff
+							end
+							love.graphics.draw(toDraw3, (tempi-1)*floor.sprite:getWidth()*scale+wallSprite.width, (addY+(tempj)*floor.sprite:getWidth())*scale+wallSprite.height,
+							  0, scale*16/toDraw:getWidth())
+						end
+					end
 					if room[j][i]~=nil and room[j][i]:getInfoText()~=nil then
 						love.graphics.setColor(0,0,0)
 						love.graphics.print(room[j][i]:getInfoText(), (tempi-1)*floor.sprite:getWidth()*scale+wallSprite.width, (tempj-1)*floor.sprite:getHeight()*scale+wallSprite.height);
