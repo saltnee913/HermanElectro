@@ -29,6 +29,9 @@ function love.load()
 
 	donations = 0
 
+	roomHeight = 12
+	roomLength = 24
+
 	--[[local json = require('scripts.dkjson')
 	io.input('RoomData/finalrooms.json')
 	local roomsToFix
@@ -834,40 +837,42 @@ function love.draw()
 			end
 		end
 	end
-	for i = 0, 6 do
-		love.graphics.setColor(255,255,255)
-		if tool == i+1 then
-			love.graphics.setColor(50, 200, 50)
+	if not editorMode then
+		for i = 0, 6 do
+			love.graphics.setColor(255,255,255)
+			if tool == i+1 then
+				love.graphics.setColor(50, 200, 50)
+			end
+			love.graphics.rectangle("fill", i*width/18, 0, width/18, width/18)
+			love.graphics.setColor(0,0,0)
+			love.graphics.rectangle("line", i*width/18, 0, width/18, width/18)
+			love.graphics.setColor(255,255,255)
+			love.graphics.draw(tools[i+1].image, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
+			if tools[i+1].numHeld==0 then
+				love.graphics.draw(gray, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
+			end
+			love.graphics.setColor(0,0,0)
+			love.graphics.print(tools[i+1].numHeld, i*width/18+3, 0)
 		end
-		love.graphics.rectangle("fill", i*width/18, 0, width/18, width/18)
-		love.graphics.setColor(0,0,0)
-		love.graphics.rectangle("line", i*width/18, 0, width/18, width/18)
-		love.graphics.setColor(255,255,255)
-		love.graphics.draw(tools[i+1].image, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
-		if tools[i+1].numHeld==0 then
-			love.graphics.draw(gray, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
-		end
-		love.graphics.setColor(0,0,0)
-		love.graphics.print(tools[i+1].numHeld, i*width/18+3, 0)
-	end
-	for i = 0, 2 do
-		love.graphics.setColor(255,255,255)
-		if tool == specialTools[i+1] and tool~=0 then
-			love.graphics.setColor(50, 200, 50)
-		end
-		love.graphics.rectangle("fill", (i+13)*width/18, 0, width/18, width/18)
-		love.graphics.setColor(0,0,0)
-		love.graphics.rectangle("line", (i+13)*width/18, 0, width/18, width/18)
-		love.graphics.setColor(255,255,255)
-		if specialTools~=nil and specialTools[i+1]~=0 then
-			love.graphics.draw(tools[specialTools[i+1]].image, (i+13)*width/18, 0, 0, (width/18)/32, (width/18)/32)
-		end
-		if specialTools[i+1]==0 then
-			love.graphics.draw(gray, (i+13)*width/18, 0, 0, (width/18)/32, (width/18)/32)
-		end
-		love.graphics.setColor(0,0,0)
-		if specialTools[i+1]~=0 then
-			love.graphics.print(tools[specialTools[i+1]].numHeld, (i+13)*width/18+3, 0)
+		for i = 0, 2 do
+			love.graphics.setColor(255,255,255)
+			if tool == specialTools[i+1] and tool~=0 then
+				love.graphics.setColor(50, 200, 50)
+			end
+			love.graphics.rectangle("fill", (i+13)*width/18, 0, width/18, width/18)
+			love.graphics.setColor(0,0,0)
+			love.graphics.rectangle("line", (i+13)*width/18, 0, width/18, width/18)
+			love.graphics.setColor(255,255,255)
+			if specialTools~=nil and specialTools[i+1]~=0 then
+				love.graphics.draw(tools[specialTools[i+1]].image, (i+13)*width/18, 0, 0, (width/18)/32, (width/18)/32)
+			end
+			if specialTools[i+1]==0 then
+				love.graphics.draw(gray, (i+13)*width/18, 0, 0, (width/18)/32, (width/18)/32)
+			end
+			love.graphics.setColor(0,0,0)
+			if specialTools[i+1]~=0 then
+				love.graphics.print(tools[specialTools[i+1]].numHeld, (i+13)*width/18+3, 0)
+			end
 		end
 	end
 	love.graphics.setColor(255,255,255)
@@ -896,7 +901,7 @@ end
 
 translation = {x = 0, y = 0}
 function getTranslation()
-	translation.x = translation.x*-1
+	--[[translation.x = translation.x*-1
 	translation.y = translation.y*-1	
 	if roomLength>regularLength then
 		--those 3s are hacky af
@@ -931,6 +936,30 @@ function getTranslation()
 	end		
 	translation.x = translation.x*-1
 	translation.y = translation.y*-1	
+	return translation]]
+		translation = {x = 0, y = 0}
+	if roomLength>regularLength then
+		if player.tileX<roomLength-regularLength then
+			translation.x = player.tileX-1
+		else
+			translation.x = roomLength-regularLength
+		end
+	elseif roomLength<regularLength then
+		local lengthDiff = regularLength-roomLength
+		translation.x = -1*math.floor(lengthDiff/2)
+	end
+	if roomHeight>regularHeight then
+		if player.tileY<roomHeight-regularHeight then
+			translation.y = player.tileY-1
+		else
+			translation.y = roomHeight-regularHeight
+		end
+	elseif roomHeight<regularHeight then
+		local heightDiff = regularHeight-roomHeight
+		translation.y = -1*math.floor(heightDiff/2)
+	end
+	translation.x = translation.x*-1
+	translation.y = translation.y*-1
 	return translation
 end
 
@@ -1600,7 +1629,7 @@ end
 function updateGameState()
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
-			if room[i][j]~=nil then room[i][j]:resetState() end
+			if room[i]~=nil and room[i][j]~=nil then room[i][j]:resetState() end
 		end
 	end
 	checkWin()

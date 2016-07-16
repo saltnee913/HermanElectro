@@ -180,6 +180,8 @@ function P.mousepressed(x, y, button, istouch)
 	elseif button == 'r' or button == 2 then
 		tempAdd = 1
 	end
+	tileLocX = math.ceil((x-wallSprite.width)/(scale*floor.sprite:getWidth()))-getTranslation().x
+	tileLocY = math.ceil((y-wallSprite.height)/(scale*floor.sprite:getHeight()))-getTranslation().y
 	if mouseY>height-2*width/45 then
 		editorAdd = math.floor(mouseX/(width/45))+1
 		if mouseY>height-width/45 then
@@ -237,6 +239,7 @@ function P.mousepressed(x, y, button, istouch)
 end
 
 function P.mousemoved(x, y, dx, dy)
+	if mouseY>height-2*width/45 then return end
 	if mouseDown > 0 and tempAdd>0 and tiles[tempAdd]~=nil and tileLocX>=1 and tileLocX<=roomLength and tileLocY>=1 and tileLocY<=roomHeight then
 		room[tileLocY][tileLocX] = tiles[tempAdd]:new()
 		
