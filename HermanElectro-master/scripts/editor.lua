@@ -189,7 +189,15 @@ function P.mousepressed(x, y, button, istouch)
 		if(room[tileLocY][tileLocX] ~= nil and room[tileLocY][tileLocX].name == tiles[tempAdd].name) then
 			room[tileLocY][tileLocX]:rotate(1)
 		elseif tiles[tempAdd]~=nil then
-			room[tileLocY][tileLocX] = tiles[tempAdd]:new()
+			if room[tileLocY] ~= nil and room[tileLocY][tileLocX] ~= nil and room[tileLocY][tileLocX].overlayable and tiles[tempAdd].overlaying then
+				if room[tileLocY][tileLocX].overlay ~= nil and room[tileLocY][tileLocX].overlay.name == tiles[tempAdd].name then
+					room[tileLocY][tileLocX].overlay:rotate(1)
+				else
+					room[tileLocY][tileLocX]:setOverlay(tiles[tempAdd]:new())
+				end
+			else
+				room[tileLocY][tileLocX] = tiles[tempAdd]:new()
+			end
 		end
 		if tempAdd==1 then room[tileLocY][tileLocX]=nil end
 		for i = 1, animalCounter-1 do
@@ -238,8 +246,13 @@ end
 
 function P.mousemoved(x, y, dx, dy)
 	if mouseDown > 0 and tempAdd>0 and tiles[tempAdd]~=nil and tileLocX>=1 and tileLocX<=roomLength and tileLocY>=1 and tileLocY<=roomHeight then
-		room[tileLocY][tileLocX] = tiles[tempAdd]:new()
-		
+		if room[tileLocY] ~= nil and room[tileLocY][tileLocX] ~= nil and room[tileLocY][tileLocX].overlayable and tiles[tempAdd].overlaying then
+			if not (room[tileLocY][tileLocX].overlay ~= nil and room[tileLocY][tileLocX].overlay.name == tiles[tempAdd].name) then
+				room[tileLocY][tileLocX]:setOverlay(tiles[tempAdd]:new())
+			end
+		else
+			room[tileLocY][tileLocX] = tiles[tempAdd]:new()
+		end
 		updateGameState()
 	end
 end
