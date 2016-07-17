@@ -713,12 +713,13 @@ function love.draw()
 						if room[j][i].dirSend[3] == 1 or room[j][i].dirAccept[3] == 1 or (overlay.dirWireHack ~= nil and overlay.dirWireHack[3] == 1) then
 							local toDraw3
 							if room[j][i].powered and (room[j][i].dirSend[3] == 1 or room[j][i].dirAccept[3] == 1) then
-								toDraw3 = room[j][i].wireHackOn
+								toDraw3 = room[j][i].overlay.wireHackOn
 							else
-								toDraw3 = room[j][i].wireHackOff
+								toDraw3 = room[j][i].overlay.wireHackOff
 							end
+							log(-1*addY/toDraw3:getHeight())
 							love.graphics.draw(toDraw3, (tempi-1)*floor.sprite:getWidth()*scale+wallSprite.width, (addY+(tempj)*floor.sprite:getWidth())*scale+wallSprite.height,
-							  0, scale*16/toDraw:getWidth())
+							  0, scale*16/toDraw3:getWidth(), -1*addY/toDraw3:getHeight()*(scale*16/toDraw3:getWidth()))
 						end
 					end
 					if room[j][i]~=nil and room[j][i]:getInfoText()~=nil then
