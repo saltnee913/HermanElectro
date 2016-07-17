@@ -3,7 +3,7 @@ roomLength = 24
 screenScale = 70
 
 debug = true
-loadTutorial = falsei
+loadTutorial = false
 
 util = require('scripts.util')
 tiles = require('scripts.tiles')
@@ -149,6 +149,12 @@ function startTutorial()
 	player.enterY = player.tileY
 	player.totalItemsGiven = {0,0,0,0,0,0,0}
 	player.totalItemsNeeded = {0,0,0,0,0,0,0}
+	loadNextLevel()
+	started = true
+end
+
+function startDebug()
+	map.floorOrder = {'RoomData/debugFloor.json'}
 	loadNextLevel()
 	started = true
 end
@@ -1251,6 +1257,9 @@ function love.keypressed(key, unicode)
 		elseif key == "t" then
 			startTutorial()
 			return
+		elseif key=="e" then
+			startDebug()
+			return
 		end
 		return
 	end
@@ -1594,6 +1603,9 @@ function love.mousepressed(x, y, button, istouch)
 	local bigRoomTranslation = getTranslation()
 	tileLocX = math.ceil((mouseX-wallSprite.width)/(scale*floor.sprite:getWidth()))-bigRoomTranslation.x
 	tileLocY = math.ceil((mouseY-wallSprite.height)/(scale*floor.sprite:getHeight()))-bigRoomTranslation.y
+	if room[tileLocY+1] ~= nil and room[tileLocY+1][tileLocX] ~= nil then
+		tileLocY = math.ceil((mouseY-wallSprite.height-room[tileLocY+1][tileLocX]:getYOffset()*scale)/(scale*floor.sprite:getHeight()))-bigRoomTranslation.y
+	end
 
 	if editorMode then
 		editor.mousepressed(x, y, button, istouch)
@@ -1651,6 +1663,10 @@ function love.mousemoved(x, y, dx, dy)
 	local bigRoomTranslation = getTranslation()
 	tileLocX = math.ceil((mouseX-wallSprite.width)/(scale*floor.sprite:getWidth()))-bigRoomTranslation.x
 	tileLocY = math.ceil((mouseY-wallSprite.height)/(scale*floor.sprite:getHeight()))-bigRoomTranslation.y
+	if room[tileLocY+1] ~= nil and room[tileLocY+1][tileLocX] ~= nil then
+		tileLocY = math.ceil((mouseY-wallSprite.height-room[tileLocY+1][tileLocX]:getYOffset()*scale)/(scale*floor.sprite:getHeight()))-bigRoomTranslation.y
+	end
+	log(tileLocY)
 	if editorMode then
 		editor.mousemoved(x, y, dx, dy)
 	end

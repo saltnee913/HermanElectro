@@ -192,8 +192,8 @@ function P.mousepressed(x, y, button, istouch)
 	elseif button == 'r' or button == 2 then
 		tempAdd = 1
 	end
-	tileLocX = math.ceil((x-wallSprite.width)/(scale*floor.sprite:getWidth()))-getTranslation().x
-	tileLocY = math.ceil((y-wallSprite.height)/(scale*floor.sprite:getHeight()))-getTranslation().y
+	--tileLocX = math.ceil((x-wallSprite.width)/(scale*floor.sprite:getWidth()))-getTranslation().x
+	--tileLocY = math.ceil((y-wallSprite.height)/(scale*floor.sprite:getHeight()))-getTranslation().y
 	if mouseY>height-2*width/45 then
 		editorAdd = math.floor(mouseX/(width/45))+1
 		if mouseY>height-width/45 then
