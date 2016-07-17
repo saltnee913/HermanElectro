@@ -390,6 +390,7 @@ function P.wall:destroy()
 	self.sprite = self.destroyedSprite
 	self.destroyed = true
 	self.blocksMovement = false
+	self.overlay = nil
 end
 function P.wall:rotate(times)
 end
@@ -406,6 +407,7 @@ function P.metalWall:destroy()
 	self.dirAccept = {0,0,0,0}
 	self.dirSend = {0,0,0,0}
 	self.blocksMovement = false
+	self.overlay = nil
 end
 
 P.maskedMetalWall = P.metalWall:new{sprite = love.graphics.newImage('Graphics/maskedMetalWall.png'), poweredSprite = love.graphics.newImage('Graphics/maskedMetalWall.png')}
@@ -418,6 +420,7 @@ function P.glassWall:destroy()
 	self.destroyed = true
 	self.blocksMovement = false
 	self.blocksVision = false
+	self.overlay = nil
 end
 
 P.gate = P.conductiveTile:new{overlaying = true, name = "gate", dirSend = {0,0,0,0}, dirAccept = {0,0,0,0}, dirWireHack = {0,0,0,0}, gotten = {0,0,0,0}}
@@ -693,6 +696,7 @@ function P.concreteWall:destroy()
 	self.sprite = self.destroyedSprite
 	self.destroyed = true
 	self.blocksMovement = false
+	self.overlay = nil
 end
 
 P.concreteWallConductive = P.concreteWall:new{name = "concreteWallConductive", sprite = love.graphics.newImage('Graphics3D/concretewallconductive.png'), poweredSprite = love.graphics.newImage('Graphics3D/concretewallconductive.png'), canBePowered = true, dirAccept = {1,1,1,1}, dirSend = {1,1,1,1}}
