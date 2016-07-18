@@ -51,6 +51,9 @@ function P.keypressed(key, unicode)
 				if room[i][j]~=nil then
 					for k = 1, #tiles do
 						if tiles[k]~=nil and room[i][j]~=nil and tiles[k].name == room[i][j].name then
+							if room[i][j].overlay ~= nil then
+								prt=prt..'['
+							end
 							addk = k
 							if k == 1 then
 								addk=0
@@ -58,6 +61,15 @@ function P.keypressed(key, unicode)
 							prt = prt..addk
 							if(room[i][j].rotation ~= 0) then
 								prt = prt..'.'..room[i][j].rotation
+							end
+							if room[i][j].overlay ~= nil then
+								prt=prt..','
+								for k = 1, #tiles do
+									if room[i][j].overlay.name == tiles[k].name then
+										prt=prt..k
+									end
+								end
+								prt=prt..']'
 							end
 							break
 						end
@@ -180,6 +192,8 @@ function P.mousepressed(x, y, button, istouch)
 	elseif button == 'r' or button == 2 then
 		tempAdd = 1
 	end
+	--tileLocX = math.ceil((x-wallSprite.width)/(scale*floor.sprite:getWidth()))-getTranslation().x
+	--tileLocY = math.ceil((y-wallSprite.height)/(scale*floor.sprite:getHeight()))-getTranslation().y
 	if mouseY>height-2*width/45 then
 		editorAdd = math.floor(mouseX/(width/45))+1
 		if mouseY>height-width/45 then
@@ -189,7 +203,15 @@ function P.mousepressed(x, y, button, istouch)
 		if(room[tileLocY][tileLocX] ~= nil and room[tileLocY][tileLocX].name == tiles[tempAdd].name) then
 			room[tileLocY][tileLocX]:rotate(1)
 		elseif tiles[tempAdd]~=nil then
-			room[tileLocY][tileLocX] = tiles[tempAdd]:new()
+			if room[tileLocY] ~= nil and room[tileLocY][tileLocX] ~= nil and room[tileLocY][tileLocX].overlayable and tiles[tempAdd].overlaying then
+				if room[tileLocY][tileLocX].overlay ~= nil and room[tileLocY][tileLocX].overlay.name == tiles[tempAdd].name then
+					room[tileLocY][tileLocX].overlay:rotate(1)
+				else
+					room[tileLocY][tileLocX]:setOverlay(tiles[tempAdd]:new())
+				end
+			else
+				room[tileLocY][tileLocX] = tiles[tempAdd]:new()
+			end
 		end
 		if tempAdd==1 then room[tileLocY][tileLocX]=nil end
 		for i = 1, animalCounter-1 do
@@ -237,9 +259,15 @@ function P.mousepressed(x, y, button, istouch)
 end
 
 function P.mousemoved(x, y, dx, dy)
+	if mouseY>height-2*width/45 then return end
 	if mouseDown > 0 and tempAdd>0 and tiles[tempAdd]~=nil and tileLocX>=1 and tileLocX<=roomLength and tileLocY>=1 and tileLocY<=roomHeight then
-		room[tileLocY][tileLocX] = tiles[tempAdd]:new()
-		
+		if room[tileLocY] ~= nil and room[tileLocY][tileLocX] ~= nil and room[tileLocY][tileLocX].overlayable and tiles[tempAdd].overlaying then
+			if not (room[tileLocY][tileLocX].overlay ~= nil and room[tileLocY][tileLocX].overlay.name == tiles[tempAdd].name) then
+				room[tileLocY][tileLocX]:setOverlay(tiles[tempAdd]:new())
+			end
+		else
+			room[tileLocY][tileLocX] = tiles[tempAdd]:new()
+		end
 		updateGameState()
 	end
 end

@@ -29,6 +29,9 @@ function love.load()
 
 	donations = 0
 
+	roomHeight = 12
+	roomLength = 24
+
 	--[[local json = require('scripts.dkjson')
 	io.input('RoomData/finalrooms.json')
 	local roomsToFix
@@ -79,11 +82,7 @@ function love.load()
 		regularHeight = 12
 		toolTime = 10
 		f1 = love.graphics.newImage('Graphics/concretewalls.png')
-		walls = love.graphics.newImage('Graphics/walls3.png')
-		rocks = love.graphics.newImage('Graphics/pen16.png')
-		--rocks = love.graphics.newImage('Graphics/cavesfloor.png')
-		rocksQuad = love.graphics.newQuad(mapy*14*screenScale,mapx*8*screenScale, width, height, rocks:getWidth(), rocks:getHeight())
-		black = love.graphics.newImage('Graphics/dark.png')
+		walls = love.graphics.newImage('Graphics/walls3.png')		black = love.graphics.newImage('Graphics/dark.png')
 		green = love.graphics.newImage('Graphics/green.png')
 		gray = love.graphics.newImage('Graphics/gray.png')
 		--floortile = love.graphics.newImage('Graphics/floortile.png')
@@ -150,6 +149,12 @@ function startTutorial()
 	player.enterY = player.tileY
 	player.totalItemsGiven = {0,0,0,0,0,0,0}
 	player.totalItemsNeeded = {0,0,0,0,0,0,0}
+	loadNextLevel()
+	started = true
+end
+
+function startDebug()
+	map.floorOrder = {'RoomData/debugFloor.json'}
 	loadNextLevel()
 	started = true
 end
@@ -254,6 +259,10 @@ function updatePower()
 			if room[i]~=nil and room[i][j]~=nil then
 				room[i][j].powered = false
 				room[i][j].poweredNeighbors = {0,0,0,0}
+				if room[i][j].overlay ~= nil then
+					room[i][j].powered = true
+					room[i][j].poweredNeighbors = {0,0,0,0}
+				end
 			end
 		end 
 	end
@@ -276,7 +285,7 @@ function updatePower()
 		for j=1, roomLength do
 			--power starts at power sources: powerSupply and notGate
 			if room[i]~=nil and room[i][j]~=nil and (room[i][j].charged or room[i][j]:instanceof(tiles.powerSupply) or room[i][j]:instanceof(tiles.notGate)) then
-				room[i][j]:updateTile(0)
+				room[i][j]:updateTileAndOverlay(0)
 				powerTest(i,j,0)
 			end
 		end
@@ -289,7 +298,7 @@ function updatePower()
 				if room[i]~=nil and room[i][j]~=nil and not (room[i][j]:instanceof(tiles.powerSupply) or room[i][j]:instanceof(tiles.notGate)) and not room[i][j].charged then
 					room[i][j].poweredNeighbors = {0,0,0,0}
 					room[i][j].powered = false
-					room[i][j]:updateTile(0)
+					room[i][j]:updateTileAndOverlay(0)
 				end
 			end
 		end
@@ -320,12 +329,12 @@ function updatePower()
 					local offset = room[i][j]:getCorrectedOffset(3)
 					if room[i+offset.y]~=nil and room[i+offset.y][j+offset.x]~=nil and room[i+offset.y][j+offset.x].powered==false then
 						room[i][j].poweredNeighbors[room[i][j]:cfr(3)]=0
-						room[i][j]:updateTile(0)
+						room[i][j]:updateTileAndOverlay(0)
 					elseif room[i+offset.y]~=nil and room[i+offset.y][j+offset.x]~=nil
 					 and room[i+offset.y][j+offset.x].powered==true
 					 and room[i+offset.y][j+offset.x].dirSend[room[i][j]:cfr(1)]==1 then
 						room[i][j].poweredNeighbors[room[i][j]:cfr(3)]=1
-						room[i][j]:updateTile(0)
+						room[i][j]:updateTileAndOverlay(0)
 					end
 				end
 			end
@@ -422,7 +431,7 @@ function powerTest(x, y, lastDir)
 		else
 			room[x-1][y].poweredNeighbors[3] = 0
 		end
-		room[x-1][y]:updateTile(3)
+		room[x-1][y]:updateTileAndOverlay(3)
 		if room[x-1][y].powered ~= formerPowered or room[x-1][y].dirSend ~= formerSend or room[x-1][y].dirAccept ~= formerAccept then
 			powerTest(x-1,y,3)
 		end
@@ -439,7 +448,7 @@ function powerTest(x, y, lastDir)
 		else
 			room[x+1][y].poweredNeighbors[1] = 0
 		end
-		room[x+1][y]:updateTile(1)
+		room[x+1][y]:updateTileAndOverlay(1)
 		if room[x+1][y].powered ~= formerPowered or room[x+1][y].dirSend ~= formerSend or room[x+1][y].dirAccept ~= formerAccept then
 			powerTest(x+1,y,1)
 		end
@@ -455,7 +464,7 @@ function powerTest(x, y, lastDir)
 		else
 			room[x][y-1].poweredNeighbors[2] = 0
 		end
-		room[x][y-1]:updateTile(2)
+		room[x][y-1]:updateTileAndOverlay(2)
 		if room[x][y-1].powered ~= formerPowered or room[x][y-1].dirSend ~= formerSend or room[x][y-1].dirAccept ~= formerAccept then
 			powerTest(x, y-1, 2)
 		end
@@ -471,7 +480,7 @@ function powerTest(x, y, lastDir)
 		else
 			room[x][y+1].poweredNeighbors[4] = 0
 		end
-		room[x][y+1]:updateTile(4)
+		room[x][y+1]:updateTileAndOverlay(4)
 		if room[x][y+1].powered ~= formerPowered or room[x][y+1].dirSend ~= formerSend or room[x][y+1].dirAccept ~= formerAccept then
 			powerTest(x, y+1, 4)
 		end
@@ -493,7 +502,7 @@ function powerTestPushable(x, y, lastDir)
 		formerAccept = room[x-1][y].dirAccept
 		--powered[x-1][y] = 1
 		room[x-1][y].poweredNeighbors[3] = 1
-		room[x-1][y]:updateTile(3)
+		room[x-1][y]:updateTileAndOverlay(3)
 		if room[x-1][y].powered ~= formerPowered or room[x-1][y].dirSend ~= formerSend or room[x-1][y].dirAccept ~= formerAccept then
 			powerTestSpecial(x-1,y,3)
 		end
@@ -506,7 +515,7 @@ function powerTestPushable(x, y, lastDir)
 		formerSend = room[x+1][y].dirSend
 		formerAccept = room[x+1][y].dirAccept
 		room[x+1][y].poweredNeighbors[1] = 1
-		room[x+1][y]:updateTile(1)
+		room[x+1][y]:updateTileAndOverlay(1)
 		if room[x+1][y].powered ~= formerPowered or room[x+1][y].dirSend ~= formerSend or room[x+1][y].dirAccept ~= formerAccept then
 			powerTestSpecial(x+1,y,1)
 		end
@@ -518,7 +527,7 @@ function powerTestPushable(x, y, lastDir)
 		formerAccept = room[x][y-1].dirAccept
 		--powered[x][y-1] = 1
 		room[x][y-1].poweredNeighbors[2] = 1
-		room[x][y-1]:updateTile(2)
+		room[x][y-1]:updateTileAndOverlay(2)
 		if room[x][y-1].powered ~= formerPowered or room[x][y-1].dirSend ~= formerSend or room[x][y-1].dirAccept ~= formerAccept then
 			powerTestSpecial(x, y-1, 2)
 		end
@@ -530,7 +539,7 @@ function powerTestPushable(x, y, lastDir)
 		formerAccept = room[x][y+1].dirAccept
 		--powered[x][y+1] = 1
 		room[x][y+1].poweredNeighbors[4] = 1
-		room[x][y+1]:updateTile(4)
+		room[x][y+1]:updateTileAndOverlay(4)
 		if room[x][y+1].powered ~= formerPowered or room[x][y+1].dirSend ~= formerSend or room[x][y+1].dirAccept ~= formerAccept then
 			powerTestSpecial(x, y+1, 4)
 		end
@@ -554,7 +563,7 @@ function powerTestSpecial(x, y, lastDir)
 		else
 			room[x-1][y].poweredNeighbors[3] = 0
 		end
-		room[x-1][y]:updateTile(3)
+		room[x-1][y]:updateTileAndOverlay(3)
 		if room[x-1][y].powered ~= formerPowered or room[x-1][y].dirSend ~= formerSend or room[x-1][y].dirAccept ~= formerAccept then
 			powerTestSpecial(x-1,y,3)
 		end
@@ -571,7 +580,7 @@ function powerTestSpecial(x, y, lastDir)
 		else
 			room[x+1][y].poweredNeighbors[1] = 0
 		end
-		room[x+1][y]:updateTile(1)
+		room[x+1][y]:updateTileAndOverlay(1)
 		if room[x+1][y].powered ~= formerPowered or room[x+1][y].dirSend ~= formerSend or room[x+1][y].dirAccept ~= formerAccept then
 			powerTestSpecial(x+1,y,1)
 		end
@@ -587,7 +596,7 @@ function powerTestSpecial(x, y, lastDir)
 		else
 			room[x][y-1].poweredNeighbors[2] = 0
 		end
-		room[x][y-1]:updateTile(2)
+		room[x][y-1]:updateTileAndOverlay(2)
 		if room[x][y-1].powered ~= formerPowered or room[x][y-1].dirSend ~= formerSend or room[x][y-1].dirAccept ~= formerAccept then
 			powerTestSpecial(x, y-1, 2)
 		end
@@ -603,7 +612,7 @@ function powerTestSpecial(x, y, lastDir)
 		else
 			room[x][y+1].poweredNeighbors[4] = 0
 		end
-		room[x][y+1]:updateTile(4)
+		room[x][y+1]:updateTileAndOverlay(4)
 		if room[x][y+1].powered ~= formerPowered or room[x][y+1].dirSend ~= formerSend or room[x][y+1].dirAccept ~= formerAccept then
 			powerTestSpecial(x, y+1, 4)
 		end
@@ -684,8 +693,35 @@ function love.draw()
 						addY = room[j][i]:getYOffset()
 					end
 					love.graphics.draw(toDraw, (tempi-1)*floor.sprite:getWidth()*scale+wallSprite.width, (addY+(tempj-1)*floor.sprite:getWidth())*scale+wallSprite.height,
-					rot * math.pi / 2, scale*16/toDraw:getWidth(), scale*16/toDraw:getWidth())
-
+					  rot * math.pi / 2, scale*16/toDraw:getWidth(), scale*16/toDraw:getWidth())
+					if litTiles[j][i]~=0 and room[j][i].overlay ~= nil then
+						local overlay = room[j][i].overlay
+						local toDraw2 = overlay.powered and overlay.poweredSprite or overlay.sprite
+						local rot2 = overlay.rotation
+						local tempi2 = i
+						local tempj2 = j
+						local addY2 = overlay:getYOffset() + addY
+						--if addY2~=0 then rot2 = 0 end
+						if rot2 == 1 or rot2 == 2 then
+							tempi2 = tempi2 + 1
+						end
+						if rot2 == 2 or rot2 == 3 then
+							tempj2 = tempj2 + 1
+						end
+						love.graphics.draw(toDraw2, (tempi2-1)*floor.sprite:getWidth()*scale+wallSprite.width, (addY2+(tempj2-1)*floor.sprite:getWidth())*scale+wallSprite.height,
+						  rot2 * math.pi / 2, scale*16/toDraw:getWidth(), scale*16/toDraw:getWidth())
+						if room[j][i].dirSend[3] == 1 or room[j][i].dirAccept[3] == 1 or (overlay.dirWireHack ~= nil and overlay.dirWireHack[3] == 1) then
+							local toDraw3
+							if room[j][i].powered and (room[j][i].dirSend[3] == 1 or room[j][i].dirAccept[3] == 1) then
+								toDraw3 = room[j][i].overlay.wireHackOn
+							else
+								toDraw3 = room[j][i].overlay.wireHackOff
+							end
+							log(-1*addY/toDraw3:getHeight())
+							love.graphics.draw(toDraw3, (tempi-1)*floor.sprite:getWidth()*scale+wallSprite.width, (addY+(tempj)*floor.sprite:getWidth())*scale+wallSprite.height,
+							  0, scale*16/toDraw3:getWidth(), -1*addY/toDraw3:getHeight()*(scale*16/toDraw3:getWidth()))
+						end
+					end
 					if room[j][i]~=nil and room[j][i]:getInfoText()~=nil then
 						love.graphics.setColor(0,0,0)
 						love.graphics.print(room[j][i]:getInfoText(), (tempi-1)*floor.sprite:getWidth()*scale+wallSprite.width, (tempj-1)*floor.sprite:getHeight()*scale+wallSprite.height);
@@ -838,40 +874,42 @@ function love.draw()
 			end
 		end
 	end
-	for i = 0, 6 do
-		love.graphics.setColor(255,255,255)
-		if tool == i+1 then
-			love.graphics.setColor(50, 200, 50)
+	if not editorMode then
+		for i = 0, 6 do
+			love.graphics.setColor(255,255,255)
+			if tool == i+1 then
+				love.graphics.setColor(50, 200, 50)
+			end
+			love.graphics.rectangle("fill", i*width/18, 0, width/18, width/18)
+			love.graphics.setColor(0,0,0)
+			love.graphics.rectangle("line", i*width/18, 0, width/18, width/18)
+			love.graphics.setColor(255,255,255)
+			love.graphics.draw(tools[i+1].image, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
+			if tools[i+1].numHeld==0 then
+				love.graphics.draw(gray, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
+			end
+			love.graphics.setColor(0,0,0)
+			love.graphics.print(tools[i+1].numHeld, i*width/18+3, 0)
 		end
-		love.graphics.rectangle("fill", i*width/18, 0, width/18, width/18)
-		love.graphics.setColor(0,0,0)
-		love.graphics.rectangle("line", i*width/18, 0, width/18, width/18)
-		love.graphics.setColor(255,255,255)
-		love.graphics.draw(tools[i+1].image, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
-		if tools[i+1].numHeld==0 then
-			love.graphics.draw(gray, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
-		end
-		love.graphics.setColor(0,0,0)
-		love.graphics.print(tools[i+1].numHeld, i*width/18+3, 0)
-	end
-	for i = 0, 2 do
-		love.graphics.setColor(255,255,255)
-		if tool == specialTools[i+1] and tool~=0 then
-			love.graphics.setColor(50, 200, 50)
-		end
-		love.graphics.rectangle("fill", (i+13)*width/18, 0, width/18, width/18)
-		love.graphics.setColor(0,0,0)
-		love.graphics.rectangle("line", (i+13)*width/18, 0, width/18, width/18)
-		love.graphics.setColor(255,255,255)
-		if specialTools~=nil and specialTools[i+1]~=0 then
-			love.graphics.draw(tools[specialTools[i+1]].image, (i+13)*width/18, 0, 0, (width/18)/32, (width/18)/32)
-		end
-		if specialTools[i+1]==0 then
-			love.graphics.draw(gray, (i+13)*width/18, 0, 0, (width/18)/32, (width/18)/32)
-		end
-		love.graphics.setColor(0,0,0)
-		if specialTools[i+1]~=0 then
-			love.graphics.print(tools[specialTools[i+1]].numHeld, (i+13)*width/18+3, 0)
+		for i = 0, 2 do
+			love.graphics.setColor(255,255,255)
+			if tool == specialTools[i+1] and tool~=0 then
+				love.graphics.setColor(50, 200, 50)
+			end
+			love.graphics.rectangle("fill", (i+13)*width/18, 0, width/18, width/18)
+			love.graphics.setColor(0,0,0)
+			love.graphics.rectangle("line", (i+13)*width/18, 0, width/18, width/18)
+			love.graphics.setColor(255,255,255)
+			if specialTools~=nil and specialTools[i+1]~=0 then
+				love.graphics.draw(tools[specialTools[i+1]].image, (i+13)*width/18, 0, 0, (width/18)/32, (width/18)/32)
+			end
+			if specialTools[i+1]==0 then
+				love.graphics.draw(gray, (i+13)*width/18, 0, 0, (width/18)/32, (width/18)/32)
+			end
+			love.graphics.setColor(0,0,0)
+			if specialTools[i+1]~=0 then
+				love.graphics.print(tools[specialTools[i+1]].numHeld, (i+13)*width/18+3, 0)
+			end
 		end
 	end
 	love.graphics.setColor(255,255,255)
@@ -900,7 +938,7 @@ end
 
 translation = {x = 0, y = 0}
 function getTranslation()
-	translation.x = translation.x*-1
+	--[[translation.x = translation.x*-1
 	translation.y = translation.y*-1	
 	if roomLength>regularLength then
 		--those 3s are hacky af
@@ -935,6 +973,30 @@ function getTranslation()
 	end		
 	translation.x = translation.x*-1
 	translation.y = translation.y*-1	
+	return translation]]
+		translation = {x = 0, y = 0}
+	if roomLength>regularLength then
+		if player.tileX<roomLength-regularLength then
+			translation.x = player.tileX-1
+		else
+			translation.x = roomLength-regularLength
+		end
+	elseif roomLength<regularLength then
+		local lengthDiff = regularLength-roomLength
+		translation.x = -1*math.floor(lengthDiff/2)
+	end
+	if roomHeight>regularHeight then
+		if player.tileY<roomHeight-regularHeight then
+			translation.y = player.tileY-1
+		else
+			translation.y = roomHeight-regularHeight
+		end
+	elseif roomHeight<regularHeight then
+		local heightDiff = regularHeight-roomHeight
+		translation.y = -1*math.floor(heightDiff/2)
+	end
+	translation.x = translation.x*-1
+	translation.y = translation.y*-1
 	return translation
 end
 
@@ -1132,7 +1194,6 @@ function enterRoom(dir)
 		player.enterY = player.tileY
 	end
 
-	rocksQuad = love.graphics.newQuad(mapy*14*screenScale,mapx*8*screenScale, width, height, rocks:getWidth(), rocks:getHeight())
 	if (prevMapX~=mapx or prevMapY~=mapy) or dir == -1 then
 		createAnimals()
 		createPushables()
@@ -1177,7 +1238,9 @@ function love.update(dt)
 	keyTimer.timeLeft = keyTimer.timeLeft - dt
 
 	--game timer
-	gameTime = gameTime-dt
+	if started then
+		gameTime = gameTime-dt
+	end
 	if gameTime<=0 and not loadTutorial then
 		kill()
 	end
@@ -1194,6 +1257,9 @@ function love.keypressed(key, unicode)
 			return
 		elseif key == "t" then
 			startTutorial()
+			return
+		elseif key=="e" then
+			startDebug()
 			return
 		end
 		return
@@ -1538,6 +1604,9 @@ function love.mousepressed(x, y, button, istouch)
 	local bigRoomTranslation = getTranslation()
 	tileLocX = math.ceil((mouseX-wallSprite.width)/(scale*floor.sprite:getWidth()))-bigRoomTranslation.x
 	tileLocY = math.ceil((mouseY-wallSprite.height)/(scale*floor.sprite:getHeight()))-bigRoomTranslation.y
+	if room[tileLocY+1] ~= nil and room[tileLocY+1][tileLocX] ~= nil then
+		tileLocY = math.ceil((mouseY-wallSprite.height-room[tileLocY+1][tileLocX]:getYOffset()*scale)/(scale*floor.sprite:getHeight()))-bigRoomTranslation.y
+	end
 
 	if editorMode then
 		editor.mousepressed(x, y, button, istouch)
@@ -1595,6 +1664,10 @@ function love.mousemoved(x, y, dx, dy)
 	local bigRoomTranslation = getTranslation()
 	tileLocX = math.ceil((mouseX-wallSprite.width)/(scale*floor.sprite:getWidth()))-bigRoomTranslation.x
 	tileLocY = math.ceil((mouseY-wallSprite.height)/(scale*floor.sprite:getHeight()))-bigRoomTranslation.y
+	if room[tileLocY+1] ~= nil and room[tileLocY+1][tileLocX] ~= nil then
+		tileLocY = math.ceil((mouseY-wallSprite.height-room[tileLocY+1][tileLocX]:getYOffset()*scale)/(scale*floor.sprite:getHeight()))-bigRoomTranslation.y
+	end
+	log(tileLocY)
 	if editorMode then
 		editor.mousemoved(x, y, dx, dy)
 	end
@@ -1603,7 +1676,7 @@ end
 function updateGameState()
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
-			if room[i][j]~=nil then room[i][j]:resetState() end
+			if room[i]~=nil and room[i][j]~=nil then room[i][j]:resetState() end
 		end
 	end
 	checkWin()

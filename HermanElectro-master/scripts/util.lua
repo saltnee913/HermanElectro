@@ -3,6 +3,30 @@ local json = require('scripts.dkjson')
 local P = {}
 util = P
 
+function P.printTable(tab)
+	local state = {indent = true, keyorder = keyOrder}
+	print(json.encode(tab, state))
+end
+
+function P.chooseWeightedRandom(arr)
+	local sum = 0
+	for i = 1, #arr do
+		sum = sum + arr[i]
+	end
+	local choice = (math.random()*sum)
+	for i = 1, #arr do
+		choice = choice - arr[i]
+		if choice <= 0 then
+			return i
+		end
+	end
+	return -1
+end
+
+function P.chooseRandomElement(arr)
+	return arr[math.floor(math.random()*#arr)+1]
+end
+
 function P.getOffsetByDir(dir)
 	while (dir > 4) do dir = dir - 4 end
 	if dir == 1 then return {y = -1, x = 0}
@@ -25,6 +49,9 @@ end
 
 --this is the ultra hacky part, we should remove it later
 function P.createIndexArray(arr, blacklist)
+	if blacklist == nil then
+		blacklist = {}
+	end
 	local keyArray = {}
 	for k in pairs(arr) do
 		if blacklist == nil or not P.deepContains(blacklist, k) then
@@ -48,8 +75,7 @@ function P.shuffle(arr)
 end
 
 function P.readJSON(filePath, askForRooms)
-	io.input(filePath)
-	local str = io.read('*all')
+	local str = love.filesystem.read(filePath)
 	local obj, pos, err, roomsArray = json.decode(str, 1, nil, askForRooms and 'rooms' or nil)
 	if err then
 		print('Error:', err)

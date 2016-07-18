@@ -354,9 +354,11 @@ end
 
 P.wireCutters = P.tool:new{name = 'wire-cutters', image = love.graphics.newImage('Graphics/wirecutters.png')}
 function P.wireCutters:usableOnTile(tile)
-	return not tile.destroyed and (tile:instanceof(tiles.wire) or tile:instanceof(tiles.conductiveGlass) or tile:instanceof(tiles.reinforcedConductiveGlass) or tile:instanceof(tiles.electricFloor))
+	return not tile.destroyed and ((tile:instanceof(tiles.wire) and not tile:instanceof(tiles.unbreakableWire))
+	or tile:instanceof(tiles.conductiveGlass) or tile:instanceof(tiles.reinforcedConductiveGlass) or tile:instanceof(tiles.electricFloor))
 end
 function P.wireCutters:useToolTile(tile)
+	self.numHeld = self.numHeld - 1
 	if tile:instanceof(tiles.conductiveGlass) or tile:instanceof(tiles.reinforcedConductiveGlass) then tile.canBePowered = false
 	else tile:destroy() end
 end
@@ -640,7 +642,7 @@ function P.sponge:usableOnTile(tile)
 	if tile:instanceof(tiles.dustyGlassWall) and tile.blocksVision then
 		return true
 	elseif tile:instanceof(tiles.puddle) then return true
-	elseif tile:instanceof(tiles.stickyButton) then return true end
+	elseif tile:instanceof(tiles.stickyButton) or (tile:instanceof(tiles.button) and tile.bricked) then return true end
 	return false
 end
 function P.sponge:useToolTile(tile, tileY, tileX)
@@ -650,9 +652,9 @@ function P.sponge:useToolTile(tile, tileY, tileX)
 		tile.sprite = tile.cleanSprite
 	elseif tile:instanceof(tiles.puddle) then
 		room[tileY][tileX] = nil
-	elseif tile:instanceof(tiles.stickyButton) then
-		local down = tile.down
+	elseif tile:instanceof(tiles.stickyButton) or tile:instanceof(tiles.button) then
 		room[tileY][tileX] = tiles.button:new()
+		room[tileY][tileX].bricked = false
 	end
 end
 
@@ -670,6 +672,7 @@ function P.trap:usableOnNothing()
 	return true
 end
 function P.trap:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
 	room[tileY][tileX] = tiles.trap:new()
 end
 
@@ -691,6 +694,7 @@ function P.broom:usableOnTile(tile)
 	return tile:instanceof(tiles.slime) or tile:instanceof(tiles.conductiveSlime)
 end
 function P.broom:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
 	room[tileY][tileX]=nil
 end
 
@@ -699,6 +703,7 @@ function P.magnet:usableOnPushable(pushable)
 	return math.abs(player.tileX-pushable.tileX)+math.abs(player.tileY-pushable.tileY)>1
 end
 function P.magnet:useToolPushable(pushable)
+	self.numHeld = self.numHeld-1
 	local pushX = pushable.tileX
 	local pushY = pushable.tileY
 	mover = {tileX = pushX, tileY = pushY, prevTileX = pushX, prevTileY = pushY}
@@ -823,6 +828,7 @@ function P.gateBreaker:usableOnTile(tile)
 	return tile:instanceof(tiles.gate)
 end
 function P.gateBreaker:useToolTile(tile)
+	self.numHeld = self.numHeld-1
 	tile.destroyed = true
 	tile.canBePowered = false
 end

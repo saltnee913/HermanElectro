@@ -1,0 +1,46 @@
+{
+	"loadRooms":
+	{
+		"rooms": 
+		{
+			"filePath": "RoomData/rooms.json",
+			"requirements":
+			{
+				
+			}
+		},
+		"treasureRooms": 
+		{
+			"filePath": "RoomData/treasurerooms.json",
+			"requirements":
+			{
+				
+			}
+		},
+		"finalRooms": 
+		{
+			"filePath": "RoomData/finalrooms.json",
+			"requirements":
+			{
+				
+			}
+		},
+		"donationRooms":
+		{
+			"filePath": "RoomData/donationrooms.json",
+			"requirements":
+			{
+				
+			}
+		}
+	},
+	"data":
+	{
+		"height": 10,
+		"numRooms": 6,
+		"generateFunction": "generateMapStandard",
+		"startRoomID": "1",
+		//numRoomsToCheck is the amount of rooms to try when deciding a room's roomid, decreasing this increases rng
+		"numRoomsToCheck": 5
+	}
+}
