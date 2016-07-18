@@ -635,6 +635,10 @@ end
 
 P.endTile = P.tile:new{name = "endTile", canBePowered = false, dirAccept = {0,0,0,0}, sprite = love.graphics.newImage('Graphics/end.png'), done = false}
 function P.endTile:onEnter(player)
+	if floorIndex-1==#map.floorOrder and roomHeight>12 then
+		win()
+		return
+	end
 	if self.done then return end
 	beatRoom()
 	self.done = true

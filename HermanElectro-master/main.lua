@@ -32,6 +32,8 @@ function love.load()
 	roomHeight = 12
 	roomLength = 24
 
+	won = false
+
 	--[[local json = require('scripts.dkjson')
 	io.input('RoomData/finalrooms.json')
 	local roomsToFix
@@ -89,6 +91,7 @@ function love.load()
 		floortile = love.graphics.newImage('Graphics/floortilemost.png')
 		doorwaybg = love.graphics.newImage('Graphics/doorwaybackground.png')
 		deathscreen = love.graphics.newImage('NewGraphics/Newdeathscreen.png')
+		winscreen = love.graphics.newImage('Graphics/winscreen.png')
 		bottomwall = love.graphics.newImage('Graphics3D/bottomwall.png')
 		--topwall = love.graphics.newImage('Graphics/cave6_b.png')
 		topwall = love.graphics.newImage('Graphics3D/topwall.png')
@@ -132,6 +135,9 @@ end
 
 floorIndex = 1
 function loadNextLevel()
+	--hacky way of getting info, but for now, it works
+	toolMax = floorIndex+1
+ 	toolMin = floorIndex
 	if loadTutorial then
 		loadLevel('RoomData/tut_map.json')
 	else
@@ -204,6 +210,10 @@ end
 function kill()
 	if editorMode then return end
 	player.dead = true
+end
+
+function win()
+	won = true
 end
 
 function updateLight()
@@ -915,6 +925,9 @@ function love.draw()
 	love.graphics.setColor(255,255,255)
 	if player.dead then
 		love.graphics.draw(deathscreen, width/2-width/2000*320, 10, 0, width/1000, width/1000)
+	end
+	if won then
+		love.graphics.draw(winscreen, width/2-width/2000*320, 10, 0, width/1000, width/1000)
 	end
 	if not editorMode then
 		botText = "e to toggle editor mode"
