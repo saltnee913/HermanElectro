@@ -1448,6 +1448,18 @@ function love.keypressed(key, unicode)
     			needToUpdate = true
     		end
     	end
+    	for i = 1, #pushables do
+	    	if room[pushables[i].tileY][pushables[i].tileX]~=nil then
+	    		if room[pushables[i].tileY][pushables[i].tileX]:instanceof(tiles.button) then
+	    			needToUpdate = true
+	    		end
+	    	end
+	    	if room[pushables[i].prevTileY][pushables[i].prevTileX]~=nil then
+	    		if room[pushables[i].prevTileY][pushables[i].prevTileX]:instanceof(tiles.stayButton) then
+	    			needToUpdate = true
+	    		end
+	    	end
+    	end
     	if needToUpdate then updateGameState() end
 	    if player.tileY~=player.prevTileY or player.tileX~=player.prevTileX or waitTurn then
 	    	for k = 1, #animals do
