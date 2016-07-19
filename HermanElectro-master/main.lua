@@ -1520,6 +1520,7 @@ function love.keypressed(key, unicode)
     	log(nil)
     end
     updateGameState()
+    checkAllDeath()
 end
 
 function resolveConflicts()
