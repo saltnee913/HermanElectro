@@ -50,6 +50,7 @@ function P.getNextRoom(roomid)
 	end
 	return roomid
 end
+
 function P.getPrevRoom(roomid)
 	local roomsArray = P.floorInfo.roomsArray
 	for i = 2, #roomsArray do
@@ -345,7 +346,7 @@ function P.generateMapStandard()
 			skippedRoomsIndex = skippedRoomsIndex + 1
 		end
 		local skipped = 1
-		while(not canPlaceRoom(arr[roomid].dirEnter, newmap, choice.y, choice.x)) do
+		while (not canPlaceRoom(arr[roomid].dirEnter, newmap, choice.y, choice.x)) do
 			skippedRooms[#skippedRooms+1] = randomRoomArray[i+2+skippedRoomsIndex+skipped-1]
 			roomid = randomRoomArray[i+2+skippedRoomsIndex+skipped]
 			if roomid == nil then roomid = '1' end

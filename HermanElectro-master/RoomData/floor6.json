@@ -3,7 +3,7 @@
 	{
 		"rooms": 
 		{
-			"filePath": "RoomData/bigrooms.json",
+			"filePath": "RoomData/rooms.json",
 			"requirements":
 			{
 				"not":
