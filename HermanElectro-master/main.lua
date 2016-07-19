@@ -82,7 +82,7 @@ function love.load()
 		mouseDown = 0
 		regularLength = 24
 		regularHeight = 12
-		toolTime = 10
+		toolTime = 0
 		f1 = love.graphics.newImage('Graphics/concretewalls.png')
 		walls = love.graphics.newImage('Graphics/walls3.png')		black = love.graphics.newImage('Graphics/dark.png')
 		green = love.graphics.newImage('Graphics/green.png')
@@ -138,6 +138,7 @@ function loadNextLevel()
 	--hacky way of getting info, but for now, it works
 	toolMax = floorIndex+1
  	toolMin = floorIndex
+ 	gameTime = gameTime+120
 	if loadTutorial then
 		loadLevel('RoomData/tut_map.json')
 	else
@@ -1792,7 +1793,6 @@ function unlockDoors()
 end
 
 function dropTools()
-	gameTime = gameTime+30
 	local dropOverride = map.getFieldForRoom(mainMap[mapy][mapx].roomid, 'itemsGivenOverride')
 	if loadTutorial then
 		for i = 1, tools.numNormalTools do
@@ -1854,6 +1854,7 @@ function dropTools()
 end
 
 function beatRoom()
+	gameTime = gameTime+15
 	unlockDoors()
 	dropTools()
 end
