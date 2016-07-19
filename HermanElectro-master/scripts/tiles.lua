@@ -481,7 +481,10 @@ function P.notGate:destroy()
 	self.powered = false
 end
 
-P.andGate = P.gate:new{name = "andGate", dirSend = {1,0,0,0}, dirAccept = {0,1,0,1}, dirWireHack = {1,0,0,0}, sprite = love.graphics.newImage('Graphics/andgate.png'), poweredSprite = love.graphics.newImage('Graphics/andgate.png') }
+P.andGate = P.gate:new{name = "andGate", dirSend = {1,0,0,0}, dirAccept = {0,1,0,1}, dirWireHack = {1,0,0,0}, sprite = love.graphics.newImage('Graphics/andgate.png'), poweredSprite = love.graphics.newImage('Graphics/andgateon.png'), 
+  off = love.graphics.newImage('Graphics/andgate.png'),
+  leftOn = love.graphics.newImage('Graphics/andgateleft.png'), 
+  rightOn = love.graphics.newImage('Graphics/andgateright.png') }
 function P.andGate:updateTile(dir)
 	if self.charged then
 		self.powered = true
@@ -492,13 +495,23 @@ function P.andGate:updateTile(dir)
 		self.powered = true
 		self.dirSend = shiftArray({1,0,0,0}, self.rotation)
 	else
+		if self.poweredNeighbors[self:cfr(2)]==1 then
+			self.sprite = self.rightOn
+		elseif self.poweredNeighbors[self:cfr(4)]==1 then
+			self.sprite = self.leftOn
+		else
+			self.sprite = self.off
+		end
 		self.powered = false
 		self.dirSend = {0,0,0,0}
 	end
 end
 P.andGate.destroy = P.conductiveTile.destroy
 
-P.orGate = P.gate:new{name = "orGate", dirSend = {1,0,0,0}, dirAccept = {0,1,0,1}, dirWireHack = {1,0,0,0}, sprite = love.graphics.newImage('Graphics/orgate.png'), poweredSprite = love.graphics.newImage('Graphics/orgate.png') }
+P.orGate = P.gate:new{name = "orGate", dirSend = {1,0,0,0}, dirAccept = {0,1,0,1}, dirWireHack = {1,0,0,0}, sprite = love.graphics.newImage('Graphics/orgate.png'), poweredSprite = love.graphics.newImage('Graphics/orgate.png'),
+  leftOn = love.graphics.newImage('Graphics/orgateleft.png'), 
+  rightOn = love.graphics.newImage('Graphics/orgateright.png'), 
+  bothOn = love.graphics.newImage('Graphics/orgateon.png') }
 function P.orGate:updateTile(dir)
 	if self.charged then
 		self.powered = true
@@ -508,6 +521,13 @@ function P.orGate:updateTile(dir)
 	if self.poweredNeighbors[self:cfr(2)]==1 or self.poweredNeighbors[self:cfr(4)]==1 then
 		self.powered = true
 		self.dirSend = shiftArray({1,0,0,0}, self.rotation)
+		if self.poweredNeighbors[self:cfr(2)]==1 and self.poweredNeighbors[self:cfr(4)]==1 then
+			self.poweredSprite = self.bothOn
+		elseif self.poweredNeighbors[self:cfr(2)]==1 then
+			self.poweredSprite = self.rightOn
+		else
+			self.poweredSprite = self.leftOn
+		end
 	else
 		self.powered = false
 		self.dirSend = {0,0,0,0}
