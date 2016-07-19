@@ -306,6 +306,7 @@ function updatePower()
 	for k = 1, 4 do
 		for i = 1, roomHeight do
 			for j = 1, roomLength do
+				if room[i][j]~=nil and room[i][j].charged then room[i][j].powered=true end
 				if room[i]~=nil and room[i][j]~=nil and not (room[i][j]:instanceof(tiles.powerSupply) or room[i][j]:instanceof(tiles.notGate)) and not room[i][j].charged then
 					room[i][j].poweredNeighbors = {0,0,0,0}
 					room[i][j].powered = false
@@ -1436,7 +1437,18 @@ function love.keypressed(key, unicode)
     		end
     	end
     	enterMove()
-    	--updateGameState()
+    	local needToUpdate = false
+    	if room[player.tileY][player.tileX]~=nil then
+    		if room[player.tileY][player.tileX]:instanceof(tiles.button) then
+    			needToUpdate = true
+    		end
+    	end
+    	if room[player.prevTileY][player.prevTileX]~=nil then
+    		if room[player.prevTileY][player.prevTileX]:instanceof(tiles.stayButton) then
+    			needToUpdate = true
+    		end
+    	end
+    	if needToUpdate then updateGameState() end
 	    if player.tileY~=player.prevTileY or player.tileX~=player.prevTileX or waitTurn then
 	    	for k = 1, #animals do
 	    		local ani = animals[k]
