@@ -96,7 +96,7 @@ function love.load()
 		--topwall = love.graphics.newImage('Graphics/cave6_b.png')
 		topwall = love.graphics.newImage('Graphics3D/topwall.png')
 		cornerwall = love.graphics.newImage('Graphics/toprightcorner.png')
-		startscreen = love.graphics.newImage('Graphics/startscreen.png')
+		startscreen = love.graphics.newImage('NewGraphics/startscreen2.png')
 
 		music = love.audio.newSource('Audio/hermantheme.mp3')
 		--music:play()
