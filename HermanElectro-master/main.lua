@@ -1511,7 +1511,6 @@ function love.keypressed(key, unicode)
 			end
 			stepTrigger()
 			--updateGameState()
-			checkAllDeath()
 		end
     end
     --Debug console stuff
