@@ -279,7 +279,7 @@ function updatePower()
 
 	for i=1, roomHeight do
 		for j=1, roomLength do
-			--power starts at power sources: powerSupply and `ate
+			--power starts at power sources: powerSupply and notGate
 			if room[i]~=nil and room[i][j]~=nil and room[i][j]:instanceof(tiles.powerSupply) and not room[i][j].destroyed then
 				room[i][j].powered = true
 			end
@@ -302,7 +302,7 @@ function updatePower()
 	end
 
 	--fixing weird not-gate bug
-	for k = 1, 10 do
+	for k = 1, 4 do
 		for i = 1, roomHeight do
 			for j = 1, roomLength do
 				if room[i]~=nil and room[i][j]~=nil and not (room[i][j]:instanceof(tiles.powerSupply) or room[i][j]:instanceof(tiles.notGate)) and not room[i][j].charged then
@@ -350,6 +350,7 @@ function updatePower()
 			end
 		end
 	end
+
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
 			if room[i][j]~=nil then
@@ -1434,7 +1435,7 @@ function love.keypressed(key, unicode)
     		end
     	end
     	enterMove()
-    	updateGameState()
+    	--updateGameState()
 	    if player.tileY~=player.prevTileY or player.tileX~=player.prevTileX or waitTurn then
 	    	for k = 1, #animals do
 	    		local ani = animals[k]
@@ -1496,7 +1497,7 @@ function love.keypressed(key, unicode)
 				end
 			end
 			stepTrigger()
-			updateGameState()
+			--updateGameState()
 			checkAllDeath()
 		end
     end
