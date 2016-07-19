@@ -7,7 +7,7 @@ local P = {}
 map = P
 
 --Temporary variable, we have to do this a better way later
-P.floorOrder = {'RoomData/floor1.json', 'RoomData/floor2.json', 'RoomData/floor3.json', 'RoomData/floor4.json', 'RoomData/floor5.json'}
+P.floorOrder = {'RoomData/floor1.json', 'RoomData/floor2.json', 'RoomData/floor3.json', 'RoomData/floor4.json', 'RoomData/floor5.json', 'RoomData/floor6.json'}
 
 local MapInfo = Object:new{floor = 1, height = 0, numRooms = 0}
 
@@ -78,6 +78,7 @@ local function tilesWhitelistHelper(arr, tiles)
 			if not util.deepContains(tiles, arr[i][j], true) and arr[i][j] ~= 0 and arr[i][j] ~= nil then
 				return false
 			end
+			
 		end
 	end
 	return true

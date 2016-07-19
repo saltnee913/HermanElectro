@@ -7,7 +7,7 @@ tools = require('scripts.tools')
 local P = {}
 tiles = P
 
-P.tile = Object:new{formerPowered = nil, overlayable = true, overlaying = false, gone = false, lit = false, destroyed = false, 
+P.tile = Object:new{formerPowered = nil, overlayable = false, overlaying = false, gone = false, lit = false, destroyed = false, 
   blocksProjectiles = false, isVisible = true, rotation = 0, powered = false, blocksMovement = false, 
   blocksAnimalMovement = false, poweredNeighbors = {0,0,0,0}, blocksVision = false, dirSend = {1,1,1,1}, 
   dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile",
@@ -635,6 +635,10 @@ end
 
 P.endTile = P.tile:new{name = "endTile", canBePowered = false, dirAccept = {0,0,0,0}, sprite = love.graphics.newImage('Graphics/end.png'), done = false}
 function P.endTile:onEnter(player)
+	if floorIndex-1==#map.floorOrder and roomHeight>12 then
+		win()
+		return
+	end
 	if self.done then return end
 	beatRoom()
 	self.done = true
