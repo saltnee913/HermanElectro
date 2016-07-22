@@ -75,6 +75,6 @@
   
   "superFields":
   {
-    "dirEnter": [1,1,1,1]
+    "dirEnter": [0,1,0,0]
   }
 }
