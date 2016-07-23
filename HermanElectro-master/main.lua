@@ -32,6 +32,8 @@ function love.load()
 	roomHeight = 12
 	roomLength = 24
 
+	won = false
+
 	--[[local json = require('scripts.dkjson')
 	local roomsToFix, roomsArray = util.readJSON('RoomData/tut_rooms.json', true)
 	local outputPrint = {rooms = {}, superFields = roomsToFix.superFields}
@@ -97,7 +99,7 @@ function love.load()
 		mouseDown = 0
 		regularLength = 24
 		regularHeight = 12
-		toolTime = 10
+		toolTime = 0
 		f1 = love.graphics.newImage('Graphics/concretewalls.png')
 		walls = love.graphics.newImage('Graphics/walls3.png')		black = love.graphics.newImage('Graphics/dark.png')
 		green = love.graphics.newImage('Graphics/green.png')
@@ -106,6 +108,7 @@ function love.load()
 		floortile = love.graphics.newImage('Graphics/floortilemost.png')
 		doorwaybg = love.graphics.newImage('Graphics/doorwaybackground.png')
 		deathscreen = love.graphics.newImage('NewGraphics/Newdeathscreen.png')
+		winscreen = love.graphics.newImage('Graphics/winscreen.png')
 		bottomwall = love.graphics.newImage('Graphics3D/bottomwall.png')
 		--topwall = love.graphics.newImage('Graphics/cave6_b.png')
 		topwall = love.graphics.newImage('Graphics3D/topwall.png')
@@ -149,6 +152,10 @@ end
 
 floorIndex = 1
 function loadNextLevel()
+	--hacky way of getting info, but for now, it works
+	toolMax = floorIndex+1
+ 	toolMin = floorIndex
+ 	gameTime = gameTime+120
 	if loadTutorial then
 		loadLevel('RoomData/tut_map.json')
 	else
@@ -223,6 +230,10 @@ function kill()
 	player.dead = true
 end
 
+function win()
+	won = true
+end
+
 function updateLight()
 	litTiles = {}
 	for i = 1, roomHeight do
@@ -286,7 +297,7 @@ function updatePower()
 
 	for i=1, roomHeight do
 		for j=1, roomLength do
-			--power starts at power sources: powerSupply and `ate
+			--power starts at power sources: powerSupply and notGate
 			if room[i]~=nil and room[i][j]~=nil and room[i][j]:instanceof(tiles.powerSupply) and not room[i][j].destroyed then
 				room[i][j].powered = true
 			end
@@ -309,9 +320,10 @@ function updatePower()
 	end
 
 	--fixing weird not-gate bug
-	for k = 1, 10 do
+	for k = 1, 4 do
 		for i = 1, roomHeight do
 			for j = 1, roomLength do
+				if room[i][j]~=nil and room[i][j].charged then room[i][j].powered=true end
 				if room[i]~=nil and room[i][j]~=nil and not (room[i][j]:instanceof(tiles.powerSupply) or room[i][j]:instanceof(tiles.notGate)) and not room[i][j].charged then
 					room[i][j].poweredNeighbors = {0,0,0,0}
 					room[i][j].powered = false
@@ -357,6 +369,7 @@ function updatePower()
 			end
 		end
 	end
+
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
 			if room[i][j]~=nil then
@@ -734,6 +747,7 @@ function love.draw()
 							else
 								toDraw3 = room[j][i].overlay.wireHackOff
 							end
+							log(-1*addY/toDraw3:getHeight())
 							love.graphics.draw(toDraw3, (tempi-1)*floor.sprite:getWidth()*scale+wallSprite.width, (addY+(tempj)*floor.sprite:getWidth())*scale+wallSprite.height,
 							  0, scale*16/toDraw3:getWidth(), -1*addY/toDraw3:getHeight()*(scale*16/toDraw3:getWidth()))
 						end
@@ -931,6 +945,9 @@ function love.draw()
 	love.graphics.setColor(255,255,255)
 	if player.dead then
 		love.graphics.draw(deathscreen, width/2-width/2000*320, 10, 0, width/1000, width/1000)
+	end
+	if won then
+		love.graphics.draw(winscreen, width/2-width/2000*320, 10, 0, width/1000, width/1000)
 	end
 	if not editorMode then
 		botText = "e to toggle editor mode"
@@ -1437,7 +1454,30 @@ function love.keypressed(key, unicode)
     		end
     	end
     	enterMove()
-    	updateGameState()
+    	local needToUpdate = false
+    	if room[player.tileY][player.tileX]~=nil then
+    		if room[player.tileY][player.tileX]:instanceof(tiles.button) then
+    			needToUpdate = true
+    		end
+    	end
+    	if room[player.prevTileY][player.prevTileX]~=nil then
+    		if room[player.prevTileY][player.prevTileX]:instanceof(tiles.stayButton) then
+    			needToUpdate = true
+    		end
+    	end
+    	for i = 1, #pushables do
+	    	if room[pushables[i].tileY][pushables[i].tileX]~=nil then
+	    		if room[pushables[i].tileY][pushables[i].tileX]:instanceof(tiles.button) then
+	    			needToUpdate = true
+	    		end
+	    	end
+	    	if room[pushables[i].prevTileY][pushables[i].prevTileX]~=nil then
+	    		if room[pushables[i].prevTileY][pushables[i].prevTileX]:instanceof(tiles.stayButton) then
+	    			needToUpdate = true
+	    		end
+	    	end
+    	end
+    	if needToUpdate then updateGameState() end
 	    if player.tileY~=player.prevTileY or player.tileX~=player.prevTileX or waitTurn then
 	    	for k = 1, #animals do
 	    		local ani = animals[k]
@@ -1499,8 +1539,7 @@ function love.keypressed(key, unicode)
 				end
 			end
 			stepTrigger()
-			updateGameState()
-			checkAllDeath()
+			--updateGameState()
 		end
     end
     --Debug console stuff
@@ -1521,6 +1560,7 @@ function love.keypressed(key, unicode)
     	log(nil)
     end
     updateGameState()
+    checkAllDeath()
 end
 
 function resolveConflicts()
@@ -1683,6 +1723,7 @@ function love.mousemoved(x, y, dx, dy)
 	if room[tileLocY+1] ~= nil and room[tileLocY+1][tileLocX] ~= nil then
 		tileLocY = math.ceil((mouseY-wallSprite.height-room[tileLocY+1][tileLocX]:getYOffset()*scale)/(scale*floor.sprite:getHeight()))-bigRoomTranslation.y
 	end
+	log(tileLocY)
 	if editorMode then
 		editor.mousemoved(x, y, dx, dy)
 	end
@@ -1794,7 +1835,6 @@ function unlockDoors()
 end
 
 function dropTools()
-	gameTime = gameTime+30
 	local dropOverride = map.getFieldForRoom(mainMap[mapy][mapx].roomid, 'itemsGivenOverride')
 	if loadTutorial then
 		for i = 1, tools.numNormalTools do
@@ -1856,6 +1896,7 @@ function dropTools()
 end
 
 function beatRoom()
+	gameTime = gameTime+15
 	unlockDoors()
 	dropTools()
 end
