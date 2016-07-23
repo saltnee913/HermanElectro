@@ -659,6 +659,28 @@ function P.endTile:onEnter(player)
 		win()
 		return
 	end
+	if floorIndex-1==#map.floorOrder then
+		beatRoom()
+		if donations<recDonations then
+			for i = 1, recDonations-donations do
+				local noTools = true
+				for j = 1, 7 do
+					if tools[j].numHeld>0 then noTools = false end
+				end
+				if noTools then break end
+				local slotToRemove = math.floor(math.random()*7)+1
+				while tools[slotToRemove].numHeld<=0 do
+					slotToRemove = math.floor(math.random()*7)+1
+				end
+				tools[slotToRemove].numHeld = tools[slotToRemove].numHeld-1
+			end
+		end
+		self.done = true
+		self.isCompleted = true
+		self.isVisible = false
+		self.gone = true
+		return
+	end
 	if self.done then return end
 	beatRoom()
 	self.done = true
@@ -767,11 +789,14 @@ P.concreteWallConductiveT.updateSprite = P.concreteWallConductiveCorner.updateSp
 
 P.tunnel = P.tile:new{name = "tunnel", toolsNeeded = -1, toolsEntered = 0}
 function P.tunnel:onEnter(player)
-	if self.toolsNeeded==0 then loadNextLevel() return end
+	loadNextLevel()
+	--[[if self.toolsNeeded==0 then loadNextLevel() return end
 	if tool==0 or tool>7 then return end
 	tools[tool].numHeld = tools[tool].numHeld - 1
 	self.toolsNeeded = self.toolsNeeded-1
 	self.toolsEntered = self.toolsEntered+1
+	donations = donations+1
+	floorDonations = floorDonations+1]]
 end
 function P.tunnel:getInfoText()
 	return self.toolsNeeded
@@ -782,8 +807,9 @@ function P.tunnel:postPowerUpdate()
 		if tools[i].numHeld>0 then noNormalTools = false end
 	end
 	if noNormalTools then self.toolsNeeded = 0
-	elseif self.toolsNeeded == -1 then self.toolsNeeded = toolMin
-	elseif self.toolsNeeded==0 and toolMin~=0 and toolsEntered~=toolMin then self.toolsNeeded = toolMin-self.toolsEntered end
+	elseif self.toolsNeeded == -1 then self.toolsNeeded = toolMin-floorDonations end
+	self.toolsNeeded = toolMin-floorDonations-self.toolsEntered
+	if self.toolsNeeded<0 then self.toolsNeeded = 0 end
 end
 
 P.pit = P.tile:new{name = "pit", laddered = false, sprite = love.graphics.newImage('Graphics/pit.png'), destroyedSprite = love.graphics.newImage('Graphics/ladderedPit.png')}
@@ -1153,7 +1179,8 @@ end
 function P.donationMachine:onEnter(player)
 	if tool==0 or tool>7 then return end
 	tools[tool].numHeld = tools[tool].numHeld - 1
-	donations = donations+1
+	donations = donations+math.ceil((7-(floorIndex))/2)
+	floorDonations = floorDonations+1
 	gameTime = gameTime+20
 end
 
