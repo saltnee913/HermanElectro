@@ -789,14 +789,18 @@ P.concreteWallConductiveT.updateSprite = P.concreteWallConductiveCorner.updateSp
 
 P.tunnel = P.tile:new{name = "tunnel", toolsNeeded = -1, toolsEntered = 0}
 function P.tunnel:onEnter(player)
-	loadNextLevel()
-	--[[if self.toolsNeeded==0 then loadNextLevel() return end
+	if self.toolsNeeded==0 then loadNextLevel() return end
+	local noNormalTools = true
+	for i = 1, tools.numNormalTools do
+		if tools[i].numHeld>0 then noNormalTools = false end
+	end
+	if noNormalTools then loadNextLevel() end
 	if tool==0 or tool>7 then return end
 	tools[tool].numHeld = tools[tool].numHeld - 1
 	self.toolsNeeded = self.toolsNeeded-1
 	self.toolsEntered = self.toolsEntered+1
 	donations = donations+1
-	floorDonations = floorDonations+1]]
+	floorDonations = floorDonations+1
 end
 function P.tunnel:getInfoText()
 	return self.toolsNeeded
