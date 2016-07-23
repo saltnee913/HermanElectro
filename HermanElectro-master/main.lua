@@ -133,7 +133,6 @@ function love.load()
 	enterRoom(-1)
 end
 
-floorIndex = 1
 function loadNextLevel()
 	--hacky way of getting info, but for now, it works
 	toolMax = floorIndex+1
@@ -1242,7 +1241,7 @@ function enterMove()
 	end
 
 	if not (player.prevTileY == player.tileY and player.prevTileX == player.tileX) then
-		if room[player.prevTileY][player.prevTileX]~=nil then
+		if room~=nil and room[player.prevTileY][player.prevTileX]~=nil then
 			room[player.prevTileY][player.prevTileX]:onLeave(player)
 		end
 	end
