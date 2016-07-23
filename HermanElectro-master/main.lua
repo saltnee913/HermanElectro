@@ -35,26 +35,43 @@ function love.load()
 	won = false
 
 	--[[local json = require('scripts.dkjson')
-	io.input('RoomData/finalrooms.json')
-	local roomsToFix
-	local str = io.read('*all')
-	local obj, pos, err = json.decode(str, 1, nil)
-	if err then
-		print('Error:', err)
-	else
-		roomsToFix = obj.rooms
+	local roomsToFix, roomsArray = util.readJSON('RoomData/tut_rooms.json', true)
+	local outputPrint = {rooms = {}, superFields = roomsToFix.superFields}
+	for k, v in pairs(roomsToFix.rooms) do
+		local layouts = v.layouts and v.layouts or {v.layout}
+		for l = 1, #layouts do
+			local layout = layouts[l]
+			for i = 1, #layout do
+				for j = 1, #layout[i] do
+					
+					local rot = layout[i][j]-math.floor(layout[i][j])
+					local val = layout[i][j]
+					if math.floor(layout[i][j]) == 40 then
+						val = {31, 82}
+					elseif math.floor(layout[i][j]) == 48 then
+						val = {31, 83.1}
+					elseif math.floor(layout[i][j]) == 54 then
+						val = {31, 85.3}
+					elseif math.floor(layout[i][j]) == 55 then
+						val = {31, 84.3}
+					elseif math.floor(layout[i][j]) == 79 then
+						val = {24, 4}
+					elseif math.floor(layout[i][j]) == 80 then
+						val = {64, 4}
+					end
+					if type(val) ~= 'number' then
+						val[2] = val[2] + rot
+						if val[2] > math.floor(val[2]) + 0.3 then
+							val[2] = val[2] - 0.4
+						end
+					end
+					layout[i][j] = val
+				end
+			end
+		end
 	end
-	local outputPrint = {rooms = {}}
-	local outputFixed = outputPrint.rooms
-	local keyOrder = {}
-	local i=1
-	while roomsToFix[i] ~= nil do
-		keyOrder[#keyOrder + 1] = roomsToFix[i].id
-		outputFixed[roomsToFix[i].id] = {layout = roomsToFix[i].layout, itemsNeeded = roomsToFix[i].itemsNeeded}
-		i = i+1
-	end
-	local state = {indent = true, keyorder = keyOrder}
-	print(json.encode(outputPrint, state))
+	local state = {indent = true, keyorder = roomsArray}
+	print(json.encode(roomsToFix, state))
 	game.crash()]]
 
 	level = 0
@@ -729,7 +746,6 @@ function love.draw()
 							else
 								toDraw3 = room[j][i].overlay.wireHackOff
 							end
-							log(-1*addY/toDraw3:getHeight())
 							love.graphics.draw(toDraw3, (tempi-1)*floor.sprite:getWidth()*scale+wallSprite.width, (addY+(tempj)*floor.sprite:getWidth())*scale+wallSprite.height,
 							  0, scale*16/toDraw3:getWidth(), -1*addY/toDraw3:getHeight()*(scale*16/toDraw3:getWidth()))
 						end
@@ -1416,7 +1432,6 @@ function love.keypressed(key, unicode)
     end
     if dirUse ~= 0 then
     	local usedTool = tools.useToolDir(tool, dirUse)
-		log(tostring(usedTool)..' '..tool..' '..dirUse)
 		--[[if usedTool and tool>tools.numNormalTools then
 			gameTime = gameTime-100
 		end]]
@@ -1673,7 +1688,6 @@ function love.mousepressed(x, y, button, istouch)
 			else tool = 0
 			end
 		end
-		log(tool)
 	end
 
 	tools.updateToolableTiles(tool)
@@ -1705,7 +1719,6 @@ function love.mousemoved(x, y, dx, dy)
 	if room[tileLocY+1] ~= nil and room[tileLocY+1][tileLocX] ~= nil then
 		tileLocY = math.ceil((mouseY-wallSprite.height-room[tileLocY+1][tileLocX]:getYOffset()*scale)/(scale*floor.sprite:getHeight()))-bigRoomTranslation.y
 	end
-	log(tileLocY)
 	if editorMode then
 		editor.mousemoved(x, y, dx, dy)
 	end
