@@ -1005,23 +1005,19 @@ function getTranslation()
 	translation.x = translation.x*-1
 	translation.y = translation.y*-1	
 	return translation]]
-		translation = {x = 0, y = 0}
+	translation = {x = 0, y = 0}
 	if roomLength>regularLength then
-		if player.tileX<roomLength-regularLength then
-			translation.x = player.tileX-1
-		else
-			translation.x = roomLength-regularLength
-		end
+		translation.x = player.tileX-1-regularLength/2
+		if translation.x > roomLength - regularLength then translation.x = roomLength - regularLength end
+		if translation.x < 0 then translation.x = 0 end
 	elseif roomLength<regularLength then
 		local lengthDiff = regularLength-roomLength
 		translation.x = -1*math.floor(lengthDiff/2)
 	end
 	if roomHeight>regularHeight then
-		if player.tileY<roomHeight-regularHeight then
-			translation.y = player.tileY-1
-		else
-			translation.y = roomHeight-regularHeight
-		end
+		translation.y = player.tileY-1-regularHeight/2
+		if translation.y > roomHeight - regularHeight then translation.y = roomHeight - regularHeight end
+		if translation.y < 0 then translation.y = 0 end
 	elseif roomHeight<regularHeight then
 		local heightDiff = regularHeight-roomHeight
 		translation.y = -1*math.floor(heightDiff/2)
