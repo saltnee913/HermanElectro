@@ -69,6 +69,9 @@ function P.keypressed(key, unicode)
 										prt=prt..k
 									end
 								end
+								if(room[i][j].overlay.rotation ~= 0) then
+									prt = prt..'.'..room[i][j].overlay.rotation
+								end
 								prt=prt..']'
 							end
 							break
