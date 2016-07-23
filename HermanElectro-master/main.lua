@@ -140,7 +140,7 @@ function love.load()
 		y = (6-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10, prevTileX = 3, prevTileY = 10,
 		prevx = (3-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10,
 		prevy = (10-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10,
-		width = 20, height = 20, speed = 250, sprite = love.graphics.newImage('GraphicsTony/ben.png'), scale = 0.65 * width/1200}
+		width = 20, height = 20, speed = 250, sprite = love.graphics.newImage('GraphicsTony/Ben.png'), scale = 0.65 * width/1200}
 	if loadTutorial then
 		player.enterX = player.tileX
 		player.enterY = player.tileY
