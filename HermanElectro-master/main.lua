@@ -747,7 +747,6 @@ function love.draw()
 							else
 								toDraw3 = room[j][i].overlay.wireHackOff
 							end
-							log(-1*addY/toDraw3:getHeight())
 							love.graphics.draw(toDraw3, (tempi-1)*floor.sprite:getWidth()*scale+wallSprite.width, (addY+(tempj)*floor.sprite:getWidth())*scale+wallSprite.height,
 							  0, scale*16/toDraw3:getWidth(), -1*addY/toDraw3:getHeight()*(scale*16/toDraw3:getWidth()))
 						end
@@ -1434,7 +1433,6 @@ function love.keypressed(key, unicode)
     end
     if dirUse ~= 0 then
     	local usedTool = tools.useToolDir(tool, dirUse)
-		log(tostring(usedTool)..' '..tool..' '..dirUse)
 		--[[if usedTool and tool>tools.numNormalTools then
 			gameTime = gameTime-100
 		end]]
@@ -1691,7 +1689,6 @@ function love.mousepressed(x, y, button, istouch)
 			else tool = 0
 			end
 		end
-		log(tool)
 	end
 
 	tools.updateToolableTiles(tool)
@@ -1723,7 +1720,6 @@ function love.mousemoved(x, y, dx, dy)
 	if room[tileLocY+1] ~= nil and room[tileLocY+1][tileLocX] ~= nil then
 		tileLocY = math.ceil((mouseY-wallSprite.height-room[tileLocY+1][tileLocX]:getYOffset()*scale)/(scale*floor.sprite:getHeight()))-bigRoomTranslation.y
 	end
-	log(tileLocY)
 	if editorMode then
 		editor.mousemoved(x, y, dx, dy)
 	end
