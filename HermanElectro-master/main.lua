@@ -33,7 +33,7 @@ function love.load()
 	roomLength = 24
 
 	--[[local json = require('scripts.dkjson')
-	local roomsToFix, roomsArray = util.readJSON('RoomData/bigrooms.json', true)
+	local roomsToFix, roomsArray = util.readJSON('RoomData/tut_rooms.json', true)
 	local outputPrint = {rooms = {}, superFields = roomsToFix.superFields}
 	for k, v in pairs(roomsToFix.rooms) do
 		local layouts = v.layouts and v.layouts or {v.layout}
