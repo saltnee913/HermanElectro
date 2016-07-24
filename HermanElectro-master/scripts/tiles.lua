@@ -799,7 +799,7 @@ function P.tunnel:onEnter(player)
 	tools[tool].numHeld = tools[tool].numHeld - 1
 	self.toolsNeeded = self.toolsNeeded-1
 	self.toolsEntered = self.toolsEntered+1
-	donations = donations+1
+	donations = donations+math.ceil((7-(floorIndex))/2)
 	floorDonations = floorDonations+1
 end
 function P.tunnel:getInfoText()
