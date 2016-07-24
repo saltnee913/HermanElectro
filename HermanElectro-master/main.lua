@@ -1271,7 +1271,7 @@ function love.update(dt)
 	keyTimer.timeLeft = keyTimer.timeLeft - dt
 
 	--game timer
-	if started then
+	if started and completedRooms[mapy][mapx]~=1 then
 		gameTime = gameTime-dt
 	end
 	if gameTime<=0 and not loadTutorial then
