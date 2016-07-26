@@ -849,12 +849,7 @@ function P.breakablePit:onEnter(player)
 		self.sprite = self.destroyedSprite
 	end
 end
-function P.breakablePit:onEnterAnimal(animal)
-	self:onEnter()
-	if self.strength <= 0 then
-		animal:kill()
-	end
-end
+P.breakablePit.onEnterAnimal = P.breakablePit.onEnter
 function P.breakablePit:willKillPlayer()
 	return not self.laddered and self.strength == 0
 end
