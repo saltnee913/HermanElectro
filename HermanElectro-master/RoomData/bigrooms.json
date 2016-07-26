@@ -167,7 +167,7 @@
     "itemsNeeded":
     [
       //[saws, ladders, wireCutters, waterBottles, sponges, bricks, guns]
-      [4,2,3,0,1,3,0]
+      [4,3,3,1,1,3,0]
     ],
         "dirEnter": [0,0,0,1]
     },

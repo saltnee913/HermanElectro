@@ -674,6 +674,11 @@ function P.endTile:onEnter(player)
 				end
 				tools[slotToRemove].numHeld = tools[slotToRemove].numHeld-1
 			end
+		elseif donations>recDonations then
+			for i = 1, donations-recDonations do
+				local slotToAdd = math.floor(math.random()*7)+1
+				tools[slotToRemove].numHeld = tools[slotToRemove].numHeld+1
+			end
 		end
 		self.done = true
 		self.isCompleted = true
@@ -1115,7 +1120,7 @@ function P.beggar:onEnter(player)
 	if not self.alive then return end
 	tools[tool].numHeld = tools[tool].numHeld - 1
 	self.counter = self.counter+1
-	probabilityOfPayout = math.atan(self.counter)*1/math.pi
+	probabilityOfPayout = math.atan(self.counter)*1/math.pi+donations*2/100
 	randomNum = math.random()
 	if randomNum<probabilityOfPayout then
 		self.counter = 0
