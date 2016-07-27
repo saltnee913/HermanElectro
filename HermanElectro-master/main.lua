@@ -1455,23 +1455,23 @@ function love.keypressed(key, unicode)
     	end
     	enterMove()
     	if room[player.tileY][player.tileX]~=nil then
-    		if room[player.tileY][player.tileX]:instanceof(tiles.button) then
+    		if room[player.tileY][player.tileX].updatePowerOnEnter then
     			noPowerUpdate = false
     		end
     	end
     	if room[player.prevTileY][player.prevTileX]~=nil then
-    		if room[player.prevTileY][player.prevTileX]:instanceof(tiles.stayButton) then
+    		if room[player.prevTileY][player.prevTileX].updatePowerOnLeave then
     			noPowerUpdate = false
     		end
     	end
     	for i = 1, #pushables do
 	    	if room[pushables[i].tileY][pushables[i].tileX]~=nil then
-	    		if room[pushables[i].tileY][pushables[i].tileX]:instanceof(tiles.button) then
+	    		if room[pushables[i].tileY][pushables[i].tileX].updatePowerOnEnter then
 	    			noPowerUpdate = false
 	    		end
 	    	end
 	    	if room[pushables[i].prevTileY][pushables[i].prevTileX]~=nil then
-	    		if room[pushables[i].prevTileY][pushables[i].prevTileX]:instanceof(tiles.stayButton) then
+	    		if room[pushables[i].prevTileY][pushables[i].prevTileX].updatePowerOnLeave then
 	    			noPowerUpdate = false
 	    		end
 	    	end
@@ -1537,12 +1537,12 @@ function love.keypressed(key, unicode)
 					room[animals[i].tileY][animals[i].tileX]:onStayAnimal(animals[i])
 				end
 				 if room[animals[i].tileY][animals[i].tileX]~=nil then
-		    		if room[animals[i].tileY][animals[i].tileX]:instanceof(tiles.button) then
+		    		if room[animals[i].tileY][animals[i].tileX].updatePowerOnEnter then
 		    			noPowerUpdate = false
 		    		end
 		    	end
 		    	if room[animals[i].prevTileY][animals[i].prevTileX]~=nil then
-		    		if room[animals[i].prevTileY][animals[i].prevTileX]:instanceof(tiles.stayButton) then
+		    		if room[animals[i].prevTileY][animals[i].prevTileX].updatePowerOnLeave then
 		    			noPowerUpdate = false
 		    		end
 		    	end
