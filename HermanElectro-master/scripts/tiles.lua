@@ -7,7 +7,7 @@ tools = require('scripts.tools')
 local P = {}
 tiles = P
 
-P.tile = Object:new{formerPowered = nil, overlayable = false, overlaying = false, gone = false, lit = false, destroyed = false, 
+P.tile = Object:new{formerPowered = nil, updatePowerOnEnter = false, updatePowerOnLeave = true, overlayable = false, overlaying = false, gone = false, lit = false, destroyed = false, 
   blocksProjectiles = false, isVisible = true, rotation = 0, powered = false, blocksMovement = false, 
   blocksAnimalMovement = false, poweredNeighbors = {0,0,0,0}, blocksVision = false, dirSend = {1,1,1,1}, 
   dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile",
@@ -205,7 +205,7 @@ function P.spikes:willKillPlayer()
 end
 P.spikes.willKillAnimal = P.spikes.willKillPlayer
 
-P.button = P.tile:new{bricked = false, justPressed = false, down = false, powered = false, dirSend = {1,1,1,1}, dirAccept = {0,0,0,0}, canBePowered = true, name = "button", pressed = false, sprite = love.graphics.newImage('Graphics/button.png'), poweredSprite = love.graphics.newImage('Graphics/button.png'), downSprite = love.graphics.newImage('Graphics/buttonPressed.png'), brickedSprite = love.graphics.newImage('Graphics/brickedButton.png'), upSprite = love.graphics.newImage('Graphics/button.png')}
+P.button = P.tile:new{bricked = false, updatePowerOnEnter = true, justPressed = false, down = false, powered = false, dirSend = {1,1,1,1}, dirAccept = {0,0,0,0}, canBePowered = true, name = "button", pressed = false, sprite = love.graphics.newImage('Graphics/button.png'), poweredSprite = love.graphics.newImage('Graphics/button.png'), downSprite = love.graphics.newImage('Graphics/buttonPressed.png'), brickedSprite = love.graphics.newImage('Graphics/brickedButton.png'), upSprite = love.graphics.newImage('Graphics/button.png')}
 function P.button:resetState()
 	self.justPressed = false
 end
@@ -300,7 +300,7 @@ end
 P.stickyButton.onEnterAnimal = P.stickyButton.onEnter
 P.stickyButton.onLeaveAnimal = P.stickyButton.onLeave
 
-P.stayButton = P.button:new{name = "stayButton", sprite = love.graphics.newImage('Graphics/staybutton.png'), upSprite = love.graphics.newImage('Graphics/staybutton.png')}
+P.stayButton = P.button:new{name = "stayButton", updatePowerOnLeave = true, sprite = love.graphics.newImage('Graphics/staybutton.png'), upSprite = love.graphics.newImage('Graphics/staybutton.png')}
 function P.stayButton:onEnter(player)
 	self.justPressed = true
 	if self.bricked then return end
@@ -673,6 +673,11 @@ function P.endTile:onEnter(player)
 					slotToRemove = math.floor(math.random()*7)+1
 				end
 				tools[slotToRemove].numHeld = tools[slotToRemove].numHeld-1
+			end
+		elseif donations>recDonations then
+			for i = 1, donations-recDonations do
+				local slotToAdd = math.floor(math.random()*7)+1
+				tools[slotToRemove].numHeld = tools[slotToRemove].numHeld+1
 			end
 		end
 		self.done = true
@@ -1110,7 +1115,7 @@ function P.beggar:onEnter(player)
 	if not self.alive then return end
 	tools[tool].numHeld = tools[tool].numHeld - 1
 	self.counter = self.counter+1
-	probabilityOfPayout = math.atan(self.counter)*1/math.pi
+	probabilityOfPayout = math.atan(self.counter)*1/math.pi+donations*2/100
 	randomNum = math.random()
 	if randomNum<probabilityOfPayout then
 		self.counter = 0
@@ -1256,7 +1261,7 @@ P.powerTriggeredBomb.onEnterAnimal = P.powerTriggeredBomb.onEnter
 
 P.boxTile = P.tile:new{name = "boxTile", pushable = pushableList[2]:new(), listIndex = 2, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
 
-P.motionGate = P.conductiveTile:new{name = "gate", dirSend = {0,0,0,0}, sprite = love.graphics.newImage('Graphics/gate.png'), poweredSprite = love.graphics.newImage('Graphics/gate.png')}
+P.motionGate = P.conductiveTile:new{name = "gate", updatePowerOnLeave = true, dirSend = {0,0,0,0}, sprite = love.graphics.newImage('Graphics/gate.png'), poweredSprite = love.graphics.newImage('Graphics/gate.png')}
 function P.motionGate:onLeave(player)
 	if (player.prevTileX<player.tileX and self.rotation == 0) or (player.prevTileX>player.tileX and self.rotation == 2) or
 	(player.prevTileY<player.tileY and self.rotation == 1) or (player.prevTileY>player.tileY and self.rotation == 3) then

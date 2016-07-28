@@ -1443,6 +1443,7 @@ function love.keypressed(key, unicode)
 		updateGameState()
 		checkAllDeath()
 	end
+	local noPowerUpdate = true
     if (key=="w" or key=="a" or key=="s" or key=="d") then
     	for i = 1, roomHeight do
     		for j = 1, roomLength do
@@ -1453,30 +1454,29 @@ function love.keypressed(key, unicode)
     		end
     	end
     	enterMove()
-    	local needToUpdate = false
     	if room[player.tileY][player.tileX]~=nil then
-    		if room[player.tileY][player.tileX]:instanceof(tiles.button) then
-    			needToUpdate = true
+    		if room[player.tileY][player.tileX].updatePowerOnEnter then
+    			noPowerUpdate = false
     		end
     	end
     	if room[player.prevTileY][player.prevTileX]~=nil then
-    		if room[player.prevTileY][player.prevTileX]:instanceof(tiles.stayButton) then
-    			needToUpdate = true
+    		if room[player.prevTileY][player.prevTileX].updatePowerOnLeave then
+    			noPowerUpdate = false
     		end
     	end
     	for i = 1, #pushables do
 	    	if room[pushables[i].tileY][pushables[i].tileX]~=nil then
-	    		if room[pushables[i].tileY][pushables[i].tileX]:instanceof(tiles.button) then
-	    			needToUpdate = true
+	    		if room[pushables[i].tileY][pushables[i].tileX].updatePowerOnEnter then
+	    			noPowerUpdate = false
 	    		end
 	    	end
 	    	if room[pushables[i].prevTileY][pushables[i].prevTileX]~=nil then
-	    		if room[pushables[i].prevTileY][pushables[i].prevTileX]:instanceof(tiles.stayButton) then
-	    			needToUpdate = true
+	    		if room[pushables[i].prevTileY][pushables[i].prevTileX].updatePowerOnLeave then
+	    			noPowerUpdate = false
 	    		end
 	    	end
     	end
-    	if needToUpdate then updateGameState() end
+    	updateGameState(noPowerUpdate)
 	    if player.tileY~=player.prevTileY or player.tileX~=player.prevTileX or waitTurn then
 	    	for k = 1, #animals do
 	    		local ani = animals[k]
@@ -1536,6 +1536,16 @@ function love.keypressed(key, unicode)
 				if room[animals[i].tileY][animals[i].tileX]~=nil then
 					room[animals[i].tileY][animals[i].tileX]:onStayAnimal(animals[i])
 				end
+				 if room[animals[i].tileY][animals[i].tileX]~=nil then
+		    		if room[animals[i].tileY][animals[i].tileX].updatePowerOnEnter then
+		    			noPowerUpdate = false
+		    		end
+		    	end
+		    	if room[animals[i].prevTileY][animals[i].prevTileX]~=nil then
+		    		if room[animals[i].prevTileY][animals[i].prevTileX].updatePowerOnLeave then
+		    			noPowerUpdate = false
+		    		end
+		    	end
 			end
 			stepTrigger()
 			--updateGameState()
@@ -1558,7 +1568,7 @@ function love.keypressed(key, unicode)
     elseif key == 'c' then
     	log(nil)
     end
-    updateGameState()
+    updateGameState(noPowerUpdate)
     checkAllDeath()
 end
 
@@ -1726,14 +1736,15 @@ function love.mousemoved(x, y, dx, dy)
 	end
 end
 
-function updateGameState()
+function updateGameState(noPowerUpdate)
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
 			if room[i]~=nil and room[i][j]~=nil then room[i][j]:resetState() end
 		end
 	end
 	checkWin()
-	updatePower()
+
+	if not noPowerUpdate then updatePower() end
 	updateLight()
 	updateTools()
 	if tool ~= 0 and tool ~= nil and tools[tool].numHeld == 0 then tool = 0 end
