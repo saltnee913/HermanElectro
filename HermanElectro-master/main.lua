@@ -1907,9 +1907,7 @@ function dropTools()
 			end
 		end
 	else
-		for i=1,tools.numNormalTools do
-			tools[i].numHeld = tools[i].numHeld + dropOverride[i]
-		end
+		tools.giveToolsByArray(dropOverride)
 	end
 end
 

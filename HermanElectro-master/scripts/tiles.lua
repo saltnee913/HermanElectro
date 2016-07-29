@@ -7,7 +7,7 @@ tools = require('scripts.tools')
 local P = {}
 tiles = P
 
-P.tile = Object:new{formerPowered = nil, updatePowerOnEnter = false, updatePowerOnLeave = true, overlayable = false, overlaying = false, gone = false, lit = false, destroyed = false, 
+P.tile = Object:new{formerPowered = nil, updatePowerOnEnter = false, updatePowerOnLeave = true, overlayable = false, overlaying = false, gone = false, lit = false, destroyed = false,
   blocksProjectiles = false, isVisible = true, rotation = 0, powered = false, blocksMovement = false, 
   blocksAnimalMovement = false, poweredNeighbors = {0,0,0,0}, blocksVision = false, dirSend = {1,1,1,1}, 
   dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile",
@@ -655,36 +655,38 @@ end
 
 P.endTile = P.tile:new{name = "endTile", canBePowered = false, dirAccept = {0,0,0,0}, sprite = love.graphics.newImage('Graphics/end.png'), done = false}
 function P.endTile:onEnter(player)
-	if floorIndex-1==#map.floorOrder and roomHeight>12 and not editorMode then
-		win()
-		return
-	end
-	if floorIndex-1==#map.floorOrder then
-		beatRoom()
-		if donations<recDonations then
-			for i = 1, recDonations-donations do
-				local noTools = true
-				for j = 1, 7 do
-					if tools[j].numHeld>0 then noTools = false end
-				end
-				if noTools then break end
-				local slotToRemove = math.floor(math.random()*7)+1
-				while tools[slotToRemove].numHeld<=0 do
-					slotToRemove = math.floor(math.random()*7)+1
-				end
-				tools[slotToRemove].numHeld = tools[slotToRemove].numHeld-1
-			end
-		elseif donations>recDonations then
-			for i = 1, donations-recDonations do
-				local slotToAdd = math.floor(math.random()*7)+1
-				tools[slotToAdd].numHeld = tools[slotToAdd].numHeld+1
-			end
+	if map.floorInfo.finalFloor == true then
+		if floorIndex-1==#map.floorOrder and roomHeight>12 and not editorMode then
+			win()
+			return
 		end
-		self.done = true
-		self.isCompleted = true
-		self.isVisible = false
-		self.gone = true
-		return
+		if floorIndex-1==#map.floorOrder then
+			beatRoom()
+			if donations<recDonations then
+				for i = 1, recDonations-donations do
+					local noTools = true
+					for j = 1, 7 do
+						if tools[j].numHeld>0 then noTools = false end
+					end
+					if noTools then break end
+					local slotToRemove = math.floor(math.random()*7)+1
+					while tools[slotToRemove].numHeld<=0 do
+						slotToRemove = math.floor(math.random()*7)+1
+					end
+					tools[slotToRemove].numHeld = tools[slotToRemove].numHeld-1
+				end
+			elseif donations>recDonations then
+				for i = 1, donations-recDonations do
+					local slotToAdd = math.floor(math.random()*7)+1
+					tools[slotToAdd].numHeld = tools[slotToAdd].numHeld+1
+				end
+			end
+			self.done = true
+			self.isCompleted = true
+			self.isVisible = false
+			self.gone = true
+			return
+		end
 	end
 	if self.done then return end
 	beatRoom()
@@ -1192,6 +1194,10 @@ end
 P.powerTriggeredBomb.onEnterAnimal = P.powerTriggeredBomb.onEnter
 
 P.boxTile = P.tile:new{name = "boxTile", pushable = pushableList[2]:new(), listIndex = 2, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
+
+function P.boxTile:usableOnNothing()
+	return true
+end
 
 P.motionGate = P.conductiveTile:new{name = "gate", updatePowerOnLeave = true, dirSend = {0,0,0,0}, sprite = love.graphics.newImage('Graphics/gate.png'), poweredSprite = love.graphics.newImage('Graphics/gate.png')}
 function P.motionGate:onLeave(player)
