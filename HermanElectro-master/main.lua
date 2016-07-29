@@ -1852,12 +1852,15 @@ end
 function dropTools()
 	local dropOverride = map.getFieldForRoom(mainMap[mapy][mapx].roomid, 'itemsGivenOverride')
 	if loadTutorial then
+		local toolsToDisplay = {0,0,0,0,0,0,0}
 		for i = 1, tools.numNormalTools do
 			player.totalItemsGiven[i] = player.totalItemsGiven[i] + map.getItemsGiven(mainMap[mapy][mapx].roomid)[1][i]
 			player.totalItemsNeeded[i] = player.totalItemsNeeded[i] + map.getItemsNeeded(mainMap[mapy][mapx].roomid)[1][i]
+			toolsToDisplay[i] = player.totalItemsGiven[i] - player.totalItemsNeeded[i] - tools[i].numHeld
 			tools[i].numHeld = player.totalItemsGiven[i] - player.totalItemsNeeded[i]
 			if tools[i].numHeld < 0 then tools[i].numHeld = 0 end
 		end
+		tools.displayToolsByArray(toolsToDisplay)
 	elseif dropOverride == nil then
 		local checkedRooms = {}
 		for i = 0, mapHeight do
