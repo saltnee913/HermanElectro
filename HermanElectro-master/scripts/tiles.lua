@@ -677,7 +677,7 @@ function P.endTile:onEnter(player)
 		elseif donations>recDonations then
 			for i = 1, donations-recDonations do
 				local slotToAdd = math.floor(math.random()*7)+1
-				tools[slotToRemove].numHeld = tools[slotToRemove].numHeld+1
+				tools[slotToAdd].numHeld = tools[slotToAdd].numHeld+1
 			end
 		end
 		self.done = true
@@ -871,68 +871,19 @@ function P.treasureTile:giveReward(reward)
 		--do nothing
 	elseif reward<850-donations*12 then
 		--give one tool
-		slot = math.floor(math.random()*tools.numNormalTools)+1
-		tools[slot].numHeld = tools[slot].numHeld+1
+		tools.giveRandomTools(1)
 	elseif reward<950-donations*6 then
 		--give two tools
-		for i = 1, 2 do
-			slot = math.floor(math.random()*tools.numNormalTools)+1
-			tools[slot].numHeld = tools[slot].numHeld+1
-		end
+		tools.giveRandomTools(2)
 	elseif reward<980-donations*3 then
 		--give three tools
-		for i = 1, 3 do
-			slot = math.floor(math.random()*tools.numNormalTools)+1
-			tools[slot].numHeld = tools[slot].numHeld+1
-		end
+		tools.giveRandomTools(3)
 	elseif reward<990-donations then
 		--give one special tool
-		filledSlots = {0,0,0}
-		slot = 1
-		for i = tools.numNormalTools + 1, #tools do
-			if tools[i].numHeld>0 then
-				filledSlots[slot] = i
-				slot = slot+1
-			end
-		end
-		goodSlot = false
-		while (not goodSlot) do
-			slot = tools.chooseSupertool()
-			if filledSlots[3]==0 then
-				goodSlot = true
-			end
-			for i = 1, 3 do
-				if filledSlots[i]==slot then
-					goodSlot = true
-				end
-			end
-		end
-		tools[slot].numHeld = tools[slot].numHeld+1
+		tools.giveSupertools(1)
 	else
 		--give two special tools
-		for j = 1, 2 do
-			filledSlots = {0,0,0}
-			slot = 1
-			for i = tools.numNormalTools + 1, #tools do
-				if tools[i].numHeld>0 then
-					filledSlots[slot] = i
-					slot = slot+1
-				end
-			end
-			goodSlot = false
-			while (not goodSlot) do
-				slot = tools.chooseSupertool()
-				if filledSlots[3]==0 then
-					goodSlot = true
-				end
-				for i = 1, 3 do
-					if filledSlots[i]==slot then
-						goodSlot = true
-					end
-				end
-			end
-			tools[slot].numHeld = tools[slot].numHeld+1
-		end
+		tools.giveSupertools(2)
 	end
 end
 
@@ -1119,27 +1070,7 @@ function P.beggar:onEnter(player)
 	randomNum = math.random()
 	if randomNum<probabilityOfPayout then
 		self.counter = 0
-		filledSlots = {0,0,0}
-		slot = 1
-		for i = tools.numNormalTools + 1, #tools do
-			if tools[i].numHeld>0 then
-				filledSlots[slot] = i
-				slot = slot+1
-			end
-		end
-		goodSlot = false
-		while (not goodSlot) do
-			slot = tools.chooseSupertool()
-			if filledSlots[3]==0 then
-				goodSlot = true
-			end
-			for i = 1, 3 do
-				if filledSlots[i]==slot then
-					goodSlot = true
-				end
-			end
-		end
-		tools[slot].numHeld = tools[slot].numHeld+1
+		tools.giveSupertools(1)
 		local killBeggar = math.random()
 		if killBeggar<0.5 then self:destroy() end
 	end
@@ -1149,7 +1080,8 @@ function P.beggar:destroy()
 	self.alive = false
 	local paysOut = math.random()
 	if paysOut<0.5 then return end
-	filledSlots = {0,0,0}
+	tools.giveSupertools(1)
+	--[[filledSlots = {0,0,0}
 	slot = 1
 	for i = tools.numNormalTools + 1, #tools do
 		if tools[i].numHeld>0 then
@@ -1169,7 +1101,7 @@ function P.beggar:destroy()
 			end
 		end
 	end
-	tools[slot].numHeld = tools[slot].numHeld+1
+	tools[slot].numHeld = tools[slot].numHeld+1]]
 end
 
 P.ladder = P.tile:new{name = "ladder", sprite = love.graphics.newImage('Graphics/laddertile.png'), blocksAnimalMovement = true}

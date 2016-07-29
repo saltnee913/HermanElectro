@@ -1,6 +1,55 @@
 local P = {}
 tools = P
 
+P.toolDisplayTimer = {base = 1.5, timeLeft = 0}
+P.toolsShown = {}
+
+function P.updateTimer(dt)
+	P.toolDisplayTimer.timeLeft = P.toolDisplayTimer.timeLeft - dt
+end
+
+--displays tools above player, takes input as [1,1,6,6,5,5] = 2 saw, 2 brick, 2 sponge
+function P.displayTools(toolArray)
+	P.toolDisplayTimer.timeLeft = P.toolDisplayTimer.base
+	P.toolsShown = toolArray
+end
+
+--same as displayTools but takes input as [0,0,1,0,0,1,2] = 1 wire-cutters, 1 brick, 2 gun (same format as itemsNeeded)
+function P.displayToolsByArray(toolArray)
+	local revisedToolArray = {}
+	for i = 1, P.numNormalTools do
+		for toolNum = 1, toolArray[i] do
+			revisedToolArray[#revisedToolArray+1] = i
+		end
+	end
+	P.displayTools(revisedToolArray)
+end
+
+function P.giveTools(toolArray)
+	for i = 1, #toolArray do
+		tools[toolArray[i]].numHeld = tools[toolArray[i]].numHeld + 1
+	end
+	P.displayTools(toolArray)
+	updateTools()
+end
+
+function P.giveToolsByArray(toolArray)
+	for i = 1, P.numNormalTools do
+		tools[i].numHeld = tools[i].numHeld + toolArray[i]
+	end
+	P.displayToolsByArray(toolArray)
+	updateTools()
+end
+
+function P.giveRandomTools(numTools)
+	local toolsToGive = {}
+	for i = 1, numTools do
+		slot = math.floor(math.random()*tools.numNormalTools)+1
+		toolsToGive[#toolsToGive+1] = slot
+	end
+	P.giveTools(toolsToGive)
+end
+
 function P.updateToolableTiles(toolid)
 	if toolid ~= 0 then
 		P.toolableAnimals = tools[toolid]:getToolableAnimals()
@@ -461,6 +510,35 @@ P.superTool = P.tool:new{name = 'superTool', range = 10, rarity = 1}
 
 function P.chooseSupertool()
 	return math.floor(math.random()*(#tools-tools.numNormalTools))+tools.numNormalTools+1
+end
+
+function P.giveSupertools(numTools)
+	if numTools == nil then numTools = 1 end
+	local toolsToGive = {}
+	local filledSlots = {0,0,0}
+	local slot = 1
+	for i = tools.numNormalTools + 1, #tools do
+		if tools[i].numHeld>0 then
+			filledSlots[slot] = i
+			slot = slot+1
+		end
+	end
+	for superToolNumber = 1, numTools do
+		local goodSlot = false
+		while (not goodSlot) do
+			slot = tools.chooseSupertool()
+			if filledSlots[3]==0 then
+				goodSlot = true
+			end
+			for i = 1, 3 do
+				if filledSlots[i]==slot then
+					goodSlot = true
+				end
+			end
+		end
+		toolsToGive[#toolsToGive + 1] = slot
+	end
+	P.giveTools(toolsToGive)
 end
 
 P.shovel = P.superTool:new{name = "shovel", range = 1, image = love.graphics.newImage('Graphics/shovel.png')}
