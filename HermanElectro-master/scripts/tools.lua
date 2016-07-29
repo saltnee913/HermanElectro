@@ -71,7 +71,7 @@ function P.useToolDir(toolid, dir)
 		return true
 	end
 	if P.toolableTiles ~= nil and P.toolableTiles[dir][1] ~= nil then
-		if room[P.toolableTiles[dir][1].y][P.toolableTiles[dir][1].x] == nil or room[P.toolableTiles[dir][1].y][P.toolableTiles[dir][1].x].isNilTile
+		if room[P.toolableTiles[dir][1].y][P.toolableTiles[dir][1].x] == nil
 			or room[P.toolableTiles[dir][1].y][P.toolableTiles[dir][1].x]:usableOnNothing(P.toolableTiles[dir][1].y,P.toolableTiles[dir][1].x) then
 			tools[toolid]:useToolNothing(P.toolableTiles[dir][1].y, P.toolableTiles[dir][1].x)
 		else
