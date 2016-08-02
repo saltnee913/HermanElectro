@@ -122,12 +122,7 @@ function P.keypressed(key, unicode)
     	end
     	--print(room[1][1].name)
 	elseif key == "f" then
-		for i = 1, 7 do
-			tools[i].numHeld = tools[i].numHeld+1
-		end
-		--[[for i = 1, 3 do
-			tools[i+7].numHeld = tools[i+7].numHeld+1
-		end]]
+		tools.giveTools({1,2,3,4,5,6,7})
 	elseif key == "b" then
 		roomsDesigned = roomsDesigned+1
 		print("\n\n---End of Room "..roomsDesigned.."---\n\n")

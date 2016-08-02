@@ -830,10 +830,16 @@ function love.draw()
 			player.x = (player.tileX-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
 			player.y = (player.tileY-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
 			love.graphics.draw(player.sprite, player.x-player.sprite:getWidth()*player.scale/2, player.y-player.sprite:getHeight()*player.scale, 0, player.scale, player.scale)
-			love.graphics.print(player:getTileLoc().x .. ":" .. player:getTileLoc().y, 0, 0);
 		end
 
 		--love.graphics.draw(walls, 0, 0, 0, width/walls:getWidth(), height/walls:getHeight())
+	end
+	if tools.toolDisplayTimer.timeLeft > 0 then
+		local toolWidth = tools[1].image:getWidth()
+		local toolScale = player.sprite:getWidth() * player.scale/toolWidth
+		for i = 1, #tools.toolsShown do
+			love.graphics.draw(tools[tools.toolsShown[i]].image, (i-math.ceil(#tools.toolsShown)/2-1)*toolScale*toolWidth+player.x, player.y - player.sprite:getHeight()*player.scale - tools[1].image:getHeight()*toolScale, 0, toolScale, toolScale)
+		end
 	end
 	for i = 1, roomLength do
 		if not (i==math.floor(roomLength/2) or i==math.floor(roomLength/2)+1) then
@@ -1269,6 +1275,7 @@ keyTimer = {base = .05, timeLeft = .05, suicideDelay = .5}
 function love.update(dt)
 	--key press
 	keyTimer.timeLeft = keyTimer.timeLeft - dt
+	tools.updateTimer(dt)
 
 	--game timer
 	if started and completedRooms[mapy][mapx]~=1 then
@@ -1845,12 +1852,15 @@ end
 function dropTools()
 	local dropOverride = map.getFieldForRoom(mainMap[mapy][mapx].roomid, 'itemsGivenOverride')
 	if loadTutorial then
+		local toolsToDisplay = {0,0,0,0,0,0,0}
 		for i = 1, tools.numNormalTools do
 			player.totalItemsGiven[i] = player.totalItemsGiven[i] + map.getItemsGiven(mainMap[mapy][mapx].roomid)[1][i]
 			player.totalItemsNeeded[i] = player.totalItemsNeeded[i] + map.getItemsNeeded(mainMap[mapy][mapx].roomid)[1][i]
+			toolsToDisplay[i] = player.totalItemsGiven[i] - player.totalItemsNeeded[i] - tools[i].numHeld
 			tools[i].numHeld = player.totalItemsGiven[i] - player.totalItemsNeeded[i]
 			if tools[i].numHeld < 0 then tools[i].numHeld = 0 end
 		end
+		tools.displayToolsByArray(toolsToDisplay)
 	elseif dropOverride == nil then
 		local checkedRooms = {}
 		for i = 0, mapHeight do
@@ -1879,13 +1889,13 @@ function dropTools()
 								end
 							end
 							listChoose = math.random(numLists)
-							for i=1,tools.numNormalTools do
-								--print(listChoose)
-								--tools[i].numHeld = tools[i].numHeld+itemsNeeded[mainMap[x][y].roomid][i]
-								tools[i].numHeld = tools[i].numHeld+listOfItemsNeeded[listChoose][i]
-								if listOfItemsNeeded[listChoose][i]>0 then
+							for i = 1, tools.numNormalTools do
+								if listOfItemsNeeded[listChoose][i] ~= 0 then
 									done = true
 								end
+							end
+							if done then
+								tools.giveToolsByArray(listOfItemsNeeded[listChoose])
 							end
 						end
 					end
@@ -1897,9 +1907,7 @@ function dropTools()
 			end
 		end
 	else
-		for i=1,tools.numNormalTools do
-			tools[i].numHeld = tools[i].numHeld + dropOverride[i]
-		end
+		tools.giveToolsByArray(dropOverride)
 	end
 end
 
