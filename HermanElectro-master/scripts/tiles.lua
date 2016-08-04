@@ -7,7 +7,7 @@ tools = require('scripts.tools')
 local P = {}
 tiles = P
 
-P.tile = Object:new{formerPowered = nil, overlayable = false, overlaying = false, gone = false, lit = false, destroyed = false, 
+P.tile = Object:new{formerPowered = nil, updatePowerOnEnter = false, updatePowerOnLeave = true, overlayable = false, overlaying = false, gone = false, lit = false, destroyed = false,
   blocksProjectiles = false, isVisible = true, rotation = 0, powered = false, blocksMovement = false, 
   blocksAnimalMovement = false, poweredNeighbors = {0,0,0,0}, blocksVision = false, dirSend = {1,1,1,1}, 
   dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile",
@@ -205,7 +205,7 @@ function P.spikes:willKillPlayer()
 end
 P.spikes.willKillAnimal = P.spikes.willKillPlayer
 
-P.button = P.tile:new{bricked = false, justPressed = false, down = false, powered = false, dirSend = {1,1,1,1}, dirAccept = {0,0,0,0}, canBePowered = true, name = "button", pressed = false, sprite = love.graphics.newImage('Graphics/button.png'), poweredSprite = love.graphics.newImage('Graphics/button.png'), downSprite = love.graphics.newImage('Graphics/buttonPressed.png'), brickedSprite = love.graphics.newImage('Graphics/brickedButton.png'), upSprite = love.graphics.newImage('Graphics/button.png')}
+P.button = P.tile:new{bricked = false, updatePowerOnEnter = true, justPressed = false, down = false, powered = false, dirSend = {1,1,1,1}, dirAccept = {0,0,0,0}, canBePowered = true, name = "button", pressed = false, sprite = love.graphics.newImage('Graphics/button.png'), poweredSprite = love.graphics.newImage('Graphics/button.png'), downSprite = love.graphics.newImage('Graphics/buttonPressed.png'), brickedSprite = love.graphics.newImage('Graphics/brickedButton.png'), upSprite = love.graphics.newImage('Graphics/button.png')}
 function P.button:resetState()
 	self.justPressed = false
 end
@@ -300,7 +300,7 @@ end
 P.stickyButton.onEnterAnimal = P.stickyButton.onEnter
 P.stickyButton.onLeaveAnimal = P.stickyButton.onLeave
 
-P.stayButton = P.button:new{name = "stayButton", sprite = love.graphics.newImage('Graphics/staybutton.png'), upSprite = love.graphics.newImage('Graphics/staybutton.png')}
+P.stayButton = P.button:new{name = "stayButton", updatePowerOnLeave = true, sprite = love.graphics.newImage('Graphics/staybutton.png'), upSprite = love.graphics.newImage('Graphics/staybutton.png')}
 function P.stayButton:onEnter(player)
 	self.justPressed = true
 	if self.bricked then return end
@@ -461,7 +461,7 @@ function P.splitGate:updateTile(dir)
 	end
 end
 
-P.notGate = P.gate:new{overlaying = false, name = "notGate", dirSend = {1,0,0,0}, dirAccept = {1,1,1,1}, sprite = love.graphics.newImage('Graphics/notgateoff.png'), poweredSprite = love.graphics.newImage('Graphics/notgate.png') }
+P.notGate = P.powerSupply:new{overlaying = false, name = "notGate", dirSend = {1,0,0,0}, dirAccept = {1,1,1,1}, sprite = love.graphics.newImage('Graphics/notgateoff.png'), poweredSprite = love.graphics.newImage('Graphics/notgate.png') }
 function P.notGate:updateTile(dir)
 	if self.destroyed then
 		self.powered = false
@@ -655,9 +655,38 @@ end
 
 P.endTile = P.tile:new{name = "endTile", canBePowered = false, dirAccept = {0,0,0,0}, sprite = love.graphics.newImage('Graphics/end.png'), done = false}
 function P.endTile:onEnter(player)
-	if floorIndex-1==#map.floorOrder and roomHeight>12 then
-		win()
-		return
+	if map.floorInfo.finalFloor == true then
+		if floorIndex-1==#map.floorOrder and roomHeight>12 and not editorMode then
+			win()
+			return
+		end
+		if floorIndex-1==#map.floorOrder then
+			beatRoom()
+			if donations<recDonations then
+				for i = 1, recDonations-donations do
+					local noTools = true
+					for j = 1, 7 do
+						if tools[j].numHeld>0 then noTools = false end
+					end
+					if noTools then break end
+					local slotToRemove = math.floor(math.random()*7)+1
+					while tools[slotToRemove].numHeld<=0 do
+						slotToRemove = math.floor(math.random()*7)+1
+					end
+					tools[slotToRemove].numHeld = tools[slotToRemove].numHeld-1
+				end
+			elseif donations>recDonations then
+				for i = 1, donations-recDonations do
+					local slotToAdd = math.floor(math.random()*7)+1
+					tools[slotToAdd].numHeld = tools[slotToAdd].numHeld+1
+				end
+			end
+			self.done = true
+			self.isCompleted = true
+			self.isVisible = false
+			self.gone = true
+			return
+		end
 	end
 	if self.done then return end
 	beatRoom()
@@ -768,10 +797,17 @@ P.concreteWallConductiveT.updateSprite = P.concreteWallConductiveCorner.updateSp
 P.tunnel = P.tile:new{name = "tunnel", toolsNeeded = -1, toolsEntered = 0}
 function P.tunnel:onEnter(player)
 	if self.toolsNeeded==0 then loadNextLevel() return end
+	local noNormalTools = true
+	for i = 1, tools.numNormalTools do
+		if tools[i].numHeld>0 then noNormalTools = false end
+	end
+	if noNormalTools then loadNextLevel() end
 	if tool==0 or tool>7 then return end
 	tools[tool].numHeld = tools[tool].numHeld - 1
 	self.toolsNeeded = self.toolsNeeded-1
 	self.toolsEntered = self.toolsEntered+1
+	donations = donations+math.ceil((7-(floorIndex))/2)
+	floorDonations = floorDonations+1
 end
 function P.tunnel:getInfoText()
 	return self.toolsNeeded
@@ -782,8 +818,9 @@ function P.tunnel:postPowerUpdate()
 		if tools[i].numHeld>0 then noNormalTools = false end
 	end
 	if noNormalTools then self.toolsNeeded = 0
-	elseif self.toolsNeeded == -1 then self.toolsNeeded = toolMin
-	elseif self.toolsNeeded==0 and toolMin~=0 and toolsEntered~=toolMin then self.toolsNeeded = toolMin-self.toolsEntered end
+	elseif self.toolsNeeded == -1 then self.toolsNeeded = toolMin-floorDonations end
+	self.toolsNeeded = toolMin-floorDonations-self.toolsEntered
+	if self.toolsNeeded<0 then self.toolsNeeded = 0 end
 end
 
 P.pit = P.tile:new{name = "pit", laddered = false, sprite = love.graphics.newImage('Graphics/pit.png'), destroyedSprite = love.graphics.newImage('Graphics/ladderedPit.png')}
@@ -814,12 +851,7 @@ function P.breakablePit:onEnter(player)
 		self.sprite = self.destroyedSprite
 	end
 end
-function P.breakablePit:onEnterAnimal(animal)
-	self:onEnter()
-	if self.strength <= 0 then
-		animal:kill()
-	end
-end
+P.breakablePit.onEnterAnimal = P.breakablePit.onEnter
 function P.breakablePit:willKillPlayer()
 	return not self.laddered and self.strength == 0
 end
@@ -841,68 +873,19 @@ function P.treasureTile:giveReward(reward)
 		--do nothing
 	elseif reward<850-donations*12 then
 		--give one tool
-		slot = math.floor(math.random()*tools.numNormalTools)+1
-		tools[slot].numHeld = tools[slot].numHeld+1
+		tools.giveRandomTools(1)
 	elseif reward<950-donations*6 then
 		--give two tools
-		for i = 1, 2 do
-			slot = math.floor(math.random()*tools.numNormalTools)+1
-			tools[slot].numHeld = tools[slot].numHeld+1
-		end
+		tools.giveRandomTools(2)
 	elseif reward<980-donations*3 then
 		--give three tools
-		for i = 1, 3 do
-			slot = math.floor(math.random()*tools.numNormalTools)+1
-			tools[slot].numHeld = tools[slot].numHeld+1
-		end
+		tools.giveRandomTools(3)
 	elseif reward<990-donations then
 		--give one special tool
-		filledSlots = {0,0,0}
-		slot = 1
-		for i = tools.numNormalTools + 1, #tools do
-			if tools[i].numHeld>0 then
-				filledSlots[slot] = i
-				slot = slot+1
-			end
-		end
-		goodSlot = false
-		while (not goodSlot) do
-			slot = tools.chooseSupertool()
-			if filledSlots[3]==0 then
-				goodSlot = true
-			end
-			for i = 1, 3 do
-				if filledSlots[i]==slot then
-					goodSlot = true
-				end
-			end
-		end
-		tools[slot].numHeld = tools[slot].numHeld+1
+		tools.giveSupertools(1)
 	else
 		--give two special tools
-		for j = 1, 2 do
-			filledSlots = {0,0,0}
-			slot = 1
-			for i = tools.numNormalTools + 1, #tools do
-				if tools[i].numHeld>0 then
-					filledSlots[slot] = i
-					slot = slot+1
-				end
-			end
-			goodSlot = false
-			while (not goodSlot) do
-				slot = tools.chooseSupertool()
-				if filledSlots[3]==0 then
-					goodSlot = true
-				end
-				for i = 1, 3 do
-					if filledSlots[i]==slot then
-						goodSlot = true
-					end
-				end
-			end
-			tools[slot].numHeld = tools[slot].numHeld+1
-		end
+		tools.giveSupertools(2)
 	end
 end
 
@@ -1085,31 +1068,11 @@ function P.beggar:onEnter(player)
 	if not self.alive then return end
 	tools[tool].numHeld = tools[tool].numHeld - 1
 	self.counter = self.counter+1
-	probabilityOfPayout = math.atan(self.counter)*1/math.pi
+	probabilityOfPayout = math.atan(self.counter)*1/math.pi+donations*2/100
 	randomNum = math.random()
 	if randomNum<probabilityOfPayout then
 		self.counter = 0
-		filledSlots = {0,0,0}
-		slot = 1
-		for i = tools.numNormalTools + 1, #tools do
-			if tools[i].numHeld>0 then
-				filledSlots[slot] = i
-				slot = slot+1
-			end
-		end
-		goodSlot = false
-		while (not goodSlot) do
-			slot = tools.chooseSupertool()
-			if filledSlots[3]==0 then
-				goodSlot = true
-			end
-			for i = 1, 3 do
-				if filledSlots[i]==slot then
-					goodSlot = true
-				end
-			end
-		end
-		tools[slot].numHeld = tools[slot].numHeld+1
+		tools.giveSupertools(1)
 		local killBeggar = math.random()
 		if killBeggar<0.5 then self:destroy() end
 	end
@@ -1119,7 +1082,8 @@ function P.beggar:destroy()
 	self.alive = false
 	local paysOut = math.random()
 	if paysOut<0.5 then return end
-	filledSlots = {0,0,0}
+	tools.giveSupertools(1)
+	--[[filledSlots = {0,0,0}
 	slot = 1
 	for i = tools.numNormalTools + 1, #tools do
 		if tools[i].numHeld>0 then
@@ -1139,7 +1103,7 @@ function P.beggar:destroy()
 			end
 		end
 	end
-	tools[slot].numHeld = tools[slot].numHeld+1
+	tools[slot].numHeld = tools[slot].numHeld+1]]
 end
 
 P.ladder = P.tile:new{name = "ladder", sprite = love.graphics.newImage('Graphics/laddertile.png'), blocksAnimalMovement = true}
@@ -1153,7 +1117,8 @@ end
 function P.donationMachine:onEnter(player)
 	if tool==0 or tool>7 then return end
 	tools[tool].numHeld = tools[tool].numHeld - 1
-	donations = donations+1
+	donations = donations+math.ceil((7-(floorIndex))/2)
+	floorDonations = floorDonations+1
 	gameTime = gameTime+20
 end
 
@@ -1230,7 +1195,11 @@ P.powerTriggeredBomb.onEnterAnimal = P.powerTriggeredBomb.onEnter
 
 P.boxTile = P.tile:new{name = "boxTile", pushable = pushableList[2]:new(), listIndex = 2, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
 
-P.motionGate = P.conductiveTile:new{name = "gate", dirSend = {0,0,0,0}, sprite = love.graphics.newImage('Graphics/gate.png'), poweredSprite = love.graphics.newImage('Graphics/gate.png')}
+function P.boxTile:usableOnNothing()
+	return true
+end
+
+P.motionGate = P.conductiveTile:new{name = "gate", updatePowerOnLeave = true, dirSend = {0,0,0,0}, sprite = love.graphics.newImage('Graphics/gate.png'), poweredSprite = love.graphics.newImage('Graphics/gate.png')}
 function P.motionGate:onLeave(player)
 	if (player.prevTileX<player.tileX and self.rotation == 0) or (player.prevTileX>player.tileX and self.rotation == 2) or
 	(player.prevTileY<player.tileY and self.rotation == 1) or (player.prevTileY>player.tileY and self.rotation == 3) then

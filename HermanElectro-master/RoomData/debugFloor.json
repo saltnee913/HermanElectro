@@ -32,6 +32,14 @@
 			{
 				
 			}
+		},
+		"bigRooms":
+		{
+			"filePath": "RoomData/bigrooms.json",
+			"requirements":
+			{
+				
+			}
 		}
 	},
 	"data":

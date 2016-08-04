@@ -69,6 +69,9 @@ function P.keypressed(key, unicode)
 										prt=prt..k
 									end
 								end
+								if(room[i][j].overlay.rotation ~= 0) then
+									prt = prt..'.'..room[i][j].overlay.rotation
+								end
 								prt=prt..']'
 							end
 							break
@@ -119,12 +122,7 @@ function P.keypressed(key, unicode)
     	end
     	--print(room[1][1].name)
 	elseif key == "f" then
-		for i = 1, 7 do
-			tools[i].numHeld = tools[i].numHeld+1
-		end
-		--[[for i = 1, 3 do
-			tools[i+7].numHeld = tools[i+7].numHeld+1
-		end]]
+		tools.giveTools({1,2,3,4,5,6,7})
 	elseif key == "b" then
 		roomsDesigned = roomsDesigned+1
 		print("\n\n---End of Room "..roomsDesigned.."---\n\n")
