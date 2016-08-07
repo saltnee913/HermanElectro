@@ -806,20 +806,14 @@ function P.tunnel:onEnter(player)
 	tools[tool].numHeld = tools[tool].numHeld - 1
 	self.toolsNeeded = self.toolsNeeded-1
 	self.toolsEntered = self.toolsEntered+1
-	donations = donations+math.ceil((7-(floorIndex))/2)
+	--donations = donations+math.ceil((7-(floorIndex))/2)
 	floorDonations = floorDonations+1
 end
 function P.tunnel:getInfoText()
 	return self.toolsNeeded
 end
 function P.tunnel:postPowerUpdate()
-	local noNormalTools = true
-	for i = 1, tools.numNormalTools do
-		if tools[i].numHeld>0 then noNormalTools = false end
-	end
-	if noNormalTools then self.toolsNeeded = 0
-	elseif self.toolsNeeded == -1 then self.toolsNeeded = toolMin-floorDonations end
-	self.toolsNeeded = toolMin-floorDonations-self.toolsEntered
+	self.toolsNeeded = toolMin-self.toolsEntered
 	if self.toolsNeeded<0 then self.toolsNeeded = 0 end
 end
 
