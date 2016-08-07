@@ -7,7 +7,8 @@ local P = {}
 map = P
 
 --Temporary variable, we have to do this a better way later
-P.floorOrder = {'RoomData/floor1.json', 'RoomData/floor2.json', 'RoomData/floor3.json', 'RoomData/floor4.json', 'RoomData/floor5.json', 'RoomData/floor6.json'}
+P.defaultFloorOrder = {'RoomData/floor1.json', 'RoomData/floor2.json', 'RoomData/floor3.json', 'RoomData/floor4.json', 'RoomData/floor5.json', 'RoomData/floor6.json'}
+P.floorOrder = P.defaultFloorOrder
 
 local MapInfo = Object:new{floor = 1, height = 0, numRooms = 0}
 
@@ -564,7 +565,7 @@ function P.generateMapWeighted()
 		end
 		usedRooms[#usedRooms+1] = roomid
 		print(#usedRooms)
-		newmap[choice.y][choice.x] = {roomid = roomid, room = P.createRoom(roomid, arr), isFinal = false, isInitial = false}
+		newmap[choice.y][choice.x] = {roomid = roomid, room = P.createRoom(roomid), isFinal = false, isInitial = false}
 	end
 	printMap(newmap)
 	return newmap
