@@ -974,7 +974,8 @@ function love.draw()
 		love.graphics.draw(winscreen, width/2-width/2000*320, 10, 0, width/1000, width/1000)
 	end
 	if gamePaused then
-		love.graphics.draw(pausescreen, width/2-width/2000*320, 10, 0, width/1000, width/1000)
+		--love.graphics.draw(pausescreen, width/2-width/2000*320, 10, 0, width/1000, width/1000)
+		love.graphics.draw(pausescreen, 0, 0, 0, width/pausescreen:getWidth(), height/pausescreen:getHeight())
 	end
 	if not editorMode then
 		botText = "e to toggle editor mode"
