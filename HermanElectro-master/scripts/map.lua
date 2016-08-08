@@ -36,7 +36,9 @@ function P.loadFloor(inFloorFile)
 			for i = 1, 7 do
 				if #v1.itemsNeeded[1]>1 then
 					numTools = numTools + v1.itemsNeeded[1][i]
-					toolAppearanceArray[i] = toolAppearanceArray[i]+v1.itemsNeeded[1][i]
+					for j = 1, #v1.itemsNeeded do
+						toolAppearanceArray[i] = toolAppearanceArray[i]+v1.itemsNeeded[j][i]/#v1.itemsNeeded
+					end
 				else
 					numTools = numTools + v1.itemsNeeded[i]
 					toolAppearanceArray[i] = toolAppearanceArray[i]+v1.itemsNeeded[i]
