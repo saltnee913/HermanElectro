@@ -18,9 +18,9 @@ function P.loadFloor(inFloorFile)
 	for k, v in pairs(floorData.data) do
 		P.floorInfo[k] = v
 	end
-	local numToolsArray = {0,0,0,0,0,0,0,0,0,0,0,0,0}
 	local loadRooms = floorData.loadRooms
 	for k, v in pairs(loadRooms) do
+		local numToolsArray = {0,0,0,0,0,0,0,0,0,0,0,0,0}
 		local roomsData, roomsArray = util.readJSON(v.filePath, true)
 		P.floorInfo.rooms[k] = roomsData.rooms
 		local amt = 0
