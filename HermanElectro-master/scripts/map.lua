@@ -21,6 +21,7 @@ function P.loadFloor(inFloorFile)
 	local loadRooms = floorData.loadRooms
 	for k, v in pairs(loadRooms) do
 		local numToolsArray = {0,0,0,0,0,0,0,0,0,0,0,0,0}
+		local toolAppearanceArray = {0,0,0,0,0,0,0}
 		local roomsData, roomsArray = util.readJSON(v.filePath, true)
 		P.floorInfo.rooms[k] = roomsData.rooms
 		local amt = 0
@@ -35,8 +36,10 @@ function P.loadFloor(inFloorFile)
 			for i = 1, 7 do
 				if #v1.itemsNeeded[1]>1 then
 					numTools = numTools + v1.itemsNeeded[1][i]
+					toolAppearanceArray[i] = toolAppearanceArray[i]+v1.itemsNeeded[1][i]
 				else
 					numTools = numTools + v1.itemsNeeded[i]
+					toolAppearanceArray[i] = toolAppearanceArray[i]+v1.itemsNeeded[i]
 				end
 			end
 			if numTools<=10 then
@@ -53,6 +56,11 @@ function P.loadFloor(inFloorFile)
 		print(k..': '..amt)
 		for i = 0, 10 do
 			print(i..": "..numToolsArray[i+1])
+		end
+		print("Tools:")
+		toolWords = {"saws", "ladders", "wireCutters", "waterBottles", "sponges", "bricks", "guns"}
+		for i = 1, 7 do
+			print(toolWords[i]..": "..toolAppearanceArray[i])
 		end
 	end
 end
