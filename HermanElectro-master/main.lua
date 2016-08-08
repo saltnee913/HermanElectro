@@ -4,6 +4,7 @@ screenScale = 70
 
 debug = true
 loadTutorial = false
+gamePaused = false
 
 util = require('scripts.util')
 tiles = require('scripts.tiles')
@@ -19,6 +20,7 @@ loadedOnce = false
 
 
 function love.load()
+	gamePaused = false
 	gameTime = 60
 
 	typingCallback = nil
@@ -113,6 +115,7 @@ function love.load()
 		doorwaybg = love.graphics.newImage('Graphics/doorwaybackground.png')
 		deathscreen = love.graphics.newImage('NewGraphics/Newdeathscreen.png')
 		winscreen = love.graphics.newImage('Graphics/winscreen.png')
+		pausescreen = love.graphics.newImage('Graphics/pausescreen.png')
 		bottomwall = love.graphics.newImage('Graphics3D/bottomwall.png')
 		--topwall = love.graphics.newImage('Graphics/cave6_b.png')
 		topwall = love.graphics.newImage('Graphics3D/topwall.png')
@@ -171,19 +174,31 @@ function loadNextLevel()
 	end
 end
 
+function startGame()
+	loadTutorial = false
+	map.floorOrder = map.defaultFloorOrder
+	loadNextLevel()
+	love.load()
+	started = true
+end
+
 function startTutorial()
 	loadTutorial = true
+	map.floorOrder = {'RoomData/tut_map.json'}
 	player.enterX = player.tileX
 	player.enterY = player.tileY
 	player.totalItemsGiven = {0,0,0,0,0,0,0}
 	player.totalItemsNeeded = {0,0,0,0,0,0,0}
 	loadNextLevel()
+	love.load()
 	started = true
 end
 
 function startDebug()
+	loadTutorial = false
 	map.floorOrder = {'RoomData/debugFloor.json'}
 	loadNextLevel()
+	love.load()
 	started = true
 end
 
@@ -958,6 +973,10 @@ function love.draw()
 	if won then
 		love.graphics.draw(winscreen, width/2-width/2000*320, 10, 0, width/1000, width/1000)
 	end
+	if gamePaused then
+		--love.graphics.draw(pausescreen, width/2-width/2000*320, 10, 0, width/1000, width/1000)
+		love.graphics.draw(pausescreen, 0, 0, 0, width/pausescreen:getWidth(), height/pausescreen:getHeight())
+	end
 	if not editorMode then
 		botText = "e to toggle editor mode"
 	else
@@ -1273,6 +1292,9 @@ end
 
 keyTimer = {base = .05, timeLeft = .05, suicideDelay = .5}
 function love.update(dt)
+	if gamePaused then
+		return
+	end
 	--key press
 	keyTimer.timeLeft = keyTimer.timeLeft - dt
 	tools.updateTimer(dt)
@@ -1291,9 +1313,11 @@ function love.textinput(text)
 end
 
 function love.keypressed(key, unicode)
+
+
 	if not started then
 		if key=="s" then
-			started = true
+			startGame()
 			return
 		elseif key == "t" then
 			startTutorial()
@@ -1305,9 +1329,21 @@ function love.keypressed(key, unicode)
 		return
 	end
 
+	if gamePaused then
+		if key=="escape" then
+			gamePaused = false
+		elseif key=="m" then
+			started = false
+		end
+		return
+	end
+
 	if editor.stealInput then
 		editor.inputSteal(key, unicode)
 		return
+	end
+	if key=="escape" then
+		gamePaused = true
 	end
 	if key=="e" then
 		editorMode = not editorMode
@@ -1673,6 +1709,9 @@ function checkDeath()
 end
 
 function love.mousepressed(x, y, button, istouch)
+	if gamePaused then
+		return
+	end
 	local bigRoomTranslation = getTranslation()
 	tileLocX = math.ceil((mouseX-wallSprite.width)/(scale*floor.sprite:getWidth()))-bigRoomTranslation.x
 	tileLocY = math.ceil((mouseY-wallSprite.height)/(scale*floor.sprite:getHeight()))-bigRoomTranslation.y
@@ -1724,10 +1763,16 @@ function love.mousepressed(x, y, button, istouch)
 end
 
 function love.mousereleased(x, y, button, istouch)
+	if gamePaused then
+		return
+	end
 	mouseDown = mouseDown-1
 end
 
 function love.mousemoved(x, y, dx, dy)
+	if gamePaused then
+		return
+	end
 	--mouseX = x-width2/2+16*screenScale/2
 	--mouseY = y-height2/2+9*screenScale/2
 	mouseX = x-(width2-width)/2
