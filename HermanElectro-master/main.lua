@@ -162,8 +162,8 @@ end
 
 function loadNextLevel()
 	--hacky way of getting info, but for now, it works
-	toolMax = floorIndex+1
- 	toolMin = floorIndex
+	toolMax = floorIndex
+ 	toolMin = floorIndex-1
  	floorDonations = 0
  	gameTime = gameTime+120
 	if loadTutorial then
@@ -1958,6 +1958,12 @@ function dropTools()
 				if amtChecked == (mapHeight + 1)*(mapHeight + 1) then
 					break
 				end
+			end
+		end
+		if not done then
+			for i = 1, toolMin+1 do
+				local slot = math.floor(math.random()*7)+1
+				tools[slot].numHeld = tools[slot].numHeld+1
 			end
 		end
 	else
