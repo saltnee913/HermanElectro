@@ -1949,7 +1949,36 @@ function dropTools()
 								end
 							end
 							if done then
-								tools.giveToolsByArray(listOfItemsNeeded[listChoose])
+								if map.floorInfo.finalFloor then
+									local toolsArray = listOfItemsNeeded[listChoose]
+									local toolsNum = 0
+									for i = 1, 7 do
+										toolsNum = toolsNum + toolsArray[i]
+									end
+									for i = 1, donations do
+										if i<=toolsNum then
+											local finished = false
+											while not finished do
+												local slot = math.floor(math.random()*7)+1
+												if toolsArray[slot]>0 then
+													toolsArray[slot] = toolsArray[slot]-1
+													tools[slot].numHeld = tools[slot].numHeld+1
+													finished = true
+												end
+											end
+										else
+											local random = math.random()
+											if random>0.75 then
+												tools.giveSupertools(1)
+											else
+												local slot = math.floor(math.random()*7)+1
+												tools[slot].numHeld = tools[slot].numHeld+1
+											end
+										end
+									end
+								else
+									tools.giveToolsByArray(listOfItemsNeeded[listChoose])
+								end
 							end
 						end
 					end
