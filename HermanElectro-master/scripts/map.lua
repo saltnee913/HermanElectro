@@ -20,6 +20,8 @@ function P.loadFloor(inFloorFile)
 	end
 	local loadRooms = floorData.loadRooms
 	for k, v in pairs(loadRooms) do
+		local numToolsArray = {0,0,0,0,0,0,0,0,0,0,0,0,0}
+		local toolAppearanceArray = {0,0,0,0,0,0,0}
 		local roomsData, roomsArray = util.readJSON(v.filePath, true)
 		P.floorInfo.rooms[k] = roomsData.rooms
 		local amt = 0
@@ -30,6 +32,21 @@ function P.loadFloor(inFloorFile)
 					if v1[k2] == nil then v1[k2] = v2 end
 				end
 			end
+			local numTools = 0
+			for i = 1, 7 do
+				if #v1.itemsNeeded[1]>1 then
+					numTools = numTools + v1.itemsNeeded[1][i]
+					for j = 1, #v1.itemsNeeded do
+						toolAppearanceArray[i] = toolAppearanceArray[i]+v1.itemsNeeded[j][i]/#v1.itemsNeeded
+					end
+				else
+					numTools = numTools + v1.itemsNeeded[i]
+					toolAppearanceArray[i] = toolAppearanceArray[i]+v1.itemsNeeded[i]
+				end
+			end
+			if numTools<=10 then
+				numToolsArray[numTools+1] = numToolsArray[numTools+1]+1
+			end
 			amt = amt + 1
 		end
 		P.filterRoomSet(P.floorInfo.rooms[k], v.requirements)
@@ -39,6 +56,14 @@ function P.loadFloor(inFloorFile)
 			end
 		end
 		print(k..': '..amt)
+		for i = 0, 10 do
+			print(i..": "..numToolsArray[i+1])
+		end
+		print("Tools:")
+		toolWords = {"saws", "ladders", "wireCutters", "waterBottles", "sponges", "bricks", "guns"}
+		for i = 1, 7 do
+			print(toolWords[i]..": "..toolAppearanceArray[i])
+		end
 	end
 end
 

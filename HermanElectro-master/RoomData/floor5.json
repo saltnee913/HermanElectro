@@ -16,7 +16,7 @@
 				},
 				"or":
 				{
-					"toolRange": [3,4],
+					"toolRange": [4,7],
 					"equals":
 					{
 						"key": "roomid",
