@@ -656,35 +656,8 @@ end
 P.endTile = P.tile:new{name = "endTile", canBePowered = false, dirAccept = {0,0,0,0}, sprite = love.graphics.newImage('Graphics/end.png'), done = false}
 function P.endTile:onEnter(player)
 	if map.floorInfo.finalFloor == true then
-		if floorIndex-1==#map.floorOrder and roomHeight>12 and not editorMode then
+		if roomHeight>12 and not editorMode then
 			win()
-			return
-		end
-		if floorIndex-1==#map.floorOrder then
-			beatRoom()
-			if donations<recDonations then
-				for i = 1, recDonations-donations do
-					local noTools = true
-					for j = 1, 7 do
-						if tools[j].numHeld>0 then noTools = false end
-					end
-					if noTools then break end
-					local slotToRemove = math.floor(math.random()*7)+1
-					while tools[slotToRemove].numHeld<=0 do
-						slotToRemove = math.floor(math.random()*7)+1
-					end
-					tools[slotToRemove].numHeld = tools[slotToRemove].numHeld-1
-				end
-			elseif donations>recDonations then
-				for i = 1, donations-recDonations do
-					local slotToAdd = math.floor(math.random()*7)+1
-					tools[slotToAdd].numHeld = tools[slotToAdd].numHeld+1
-				end
-			end
-			self.done = true
-			self.isCompleted = true
-			self.isVisible = false
-			self.gone = true
 			return
 		end
 	end
