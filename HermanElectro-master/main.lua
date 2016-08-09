@@ -15,6 +15,7 @@ boundaries = require('scripts.boundaries')
 animalList = require('scripts.animals')
 tools = require('scripts.tools')
 editor = require('scripts.editor')
+unlocks = require('scripts.unlocks')
 
 loadedOnce = false
 
@@ -38,6 +39,8 @@ function love.load()
 	recDonations = 26
 
 	won = false
+
+	unlocks.load()
 
 	--[[local json = require('scripts.dkjson')
 	local roomsToFix, roomsArray = util.readJSON('RoomData/tut_rooms.json', true)
@@ -250,6 +253,12 @@ function kill()
 end
 
 function win()
+	for i = 1, #unlocks.winUnlocks do
+		if unlocks[unlocks.winUnlocks[i]].unlocked == false then
+			unlocks.unlockUnlockable(unlocks.winUnlocks[i])
+			break
+		end
+	end
 	won = true
 end
 

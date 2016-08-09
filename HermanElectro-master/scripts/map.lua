@@ -2,6 +2,7 @@ require('scripts.object')
 require('scripts.tiles')
 local util = require('scripts.util')
 local json = require('scripts.dkjson')
+local unlocks = require('scripts.unlocks')
 
 local P = {}
 map = P
@@ -50,20 +51,15 @@ function P.loadFloor(inFloorFile)
 			amt = amt + 1
 		end
 		P.filterRoomSet(P.floorInfo.rooms[k], v.requirements)
+		if P.floorInfo.requireUnlocks == true then
+			P.filterRoomSetByUnlocks(P.floorInfo.rooms[k])
+		end
 		for i = 1, #roomsArray do
 			if P.floorInfo.rooms[k][roomsArray[i]] ~= nil then
 				P.floorInfo.roomsArray[#(P.floorInfo.roomsArray)+1] = roomsArray[i]
 			end
 		end
 		print(k..': '..amt)
-		for i = 0, 10 do
-			print(i..": "..numToolsArray[i+1])
-		end
-		print("Tools:")
-		toolWords = {"saws", "ladders", "wireCutters", "waterBottles", "sponges", "bricks", "guns"}
-		for i = 1, 7 do
-			print(toolWords[i]..": "..toolAppearanceArray[i])
-		end
 	end
 end
 
@@ -91,6 +87,25 @@ function P.filterRoomSet(arr, requirements)
 	for k, v in pairs(arr) do
 		if not P.roomMeetsRequirements(v, requirements) then
 			arr[k] = nil
+		end
+	end
+end
+
+local function doesRoomContainTile(roomData, tile)
+	layouts = roomData.layouts and roomData.layouts or {roomData.layout}
+	return util.deepContains(layouts, tile)
+end
+
+function P.filterRoomSetByUnlocks(arr)
+	for k, v in pairs(arr) do
+		for i = 1, #unlocks do
+			if unlocks[i]:instanceof(unlocks.tileUnlock) and unlocks[i].unlocked == false then
+				for j = 1, #unlocks[i].tileIds do
+					if doesRoomContainTile(v, unlocks[i].tileIds[j]) then
+						arr[k] = nil
+					end
+				end
+			end
 		end
 	end
 end
