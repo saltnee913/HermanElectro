@@ -604,7 +604,6 @@ function P.generateMapWeighted()
 			roomid = roomChoices[util.chooseWeightedRandom(roomWeights)]
 		end
 		usedRooms[#usedRooms+1] = roomid
-		print(#usedRooms)
 		newmap[choice.y][choice.x] = {roomid = roomid, room = P.createRoom(roomid), isFinal = false, isInitial = false}
 	end
 	printMap(newmap)
