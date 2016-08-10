@@ -1621,12 +1621,6 @@ function love.keypressed(key, unicode)
     	log(nil)
     end
 
-    --new acceleration tiles
-    for i = 1, 4 do
-    	accelerate()
-    end
-    resetPushables()
-
     updateGameState(noPowerUpdate)
     checkAllDeath()
 end
@@ -1924,6 +1918,12 @@ function stepTrigger()
 			end
 		end
 	end
+
+	--new acceleration tiles
+    for i = 1, 4 do
+    	accelerate()
+    end
+    resetPushables()
 end
 
 function unlockDoors()
