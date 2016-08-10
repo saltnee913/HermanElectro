@@ -19,6 +19,8 @@ unlocks = require('scripts.unlocks')
 
 loadedOnce = false
 
+saveDir = 'SaveData'
+
 
 function love.load()
 	gamePaused = false
@@ -253,13 +255,15 @@ function kill()
 end
 
 function win()
-	for i = 1, #unlocks.winUnlocks do
-		if unlocks[unlocks.winUnlocks[i]].unlocked == false then
-			unlocks.unlockUnlockable(unlocks.winUnlocks[i])
-			break
+	if not won then
+		for i = 1, #unlocks.winUnlocks do
+			if unlocks[unlocks.winUnlocks[i]].unlocked == false then
+				unlocks.unlockUnlockable(unlocks.winUnlocks[i])
+				break
+			end
 		end
+		won = true
 	end
-	won = true
 end
 
 function updateLight()

@@ -4,11 +4,11 @@ require('scripts.object')
 local P = {}
 unlocks = P
 
-P.unlocksFile = 'SaveData/unlocks.json'
+P.unlocksFile = 'unlocks.json'
 
 local function readUnlocks()
-	if not love.filesystem.exists(P.unlocksFile) then return end
-	local unlocksArray = util.readJSON(P.unlocksFile, false)
+	if not love.filesystem.exists(saveDir..'/'..P.unlocksFile) then return end
+	local unlocksArray = util.readJSON(saveDir..'/'..P.unlocksFile, false)
 	if unlocksArray == nil then return end
 	for i = 1, #unlocksArray do
 		P[unlocksArray[i]].unlocked = true
@@ -41,7 +41,7 @@ P.unlock = Object:new{name = 'generic', unlocked = false}
 
 P.tileUnlock = P.unlock:new{name = 'tile', tileIds = {1}}
 P.boxUnlock = P.tileUnlock:new{name = 'box', tileIds = {66}}
-P.booksUnlock = P.tileUnlock:new{name = 'boox', tileIds = {69}}
+P.booksUnlock = P.tileUnlock:new{name = 'boox', tileIds = {38}}
 
 P.winUnlocks = {1, 2}
 

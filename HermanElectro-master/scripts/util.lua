@@ -87,7 +87,11 @@ end
 
 function P.writeJSON(filePath, data)
 	local str = json.encode(data)
-	love.filesystem.write(filePath, str)
+	if not love.filesystem.exists(saveDir) then
+		love.filesystem.createDirectory(saveDir)
+	end
+	print(str)
+	love.filesystem.write(saveDir..'/'..filePath, str)
 end
 
 function P.deepContains(arr, value, floor)
