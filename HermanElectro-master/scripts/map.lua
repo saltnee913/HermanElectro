@@ -60,6 +60,18 @@ function P.loadFloor(inFloorFile)
 			end
 		end
 		print(k..': '..amt)
+		local toPrint = ""
+		for i = 0, 10 do
+			toPrint = toPrint..i..": "..numToolsArray[i+1]..", "
+		end
+		print(toPrint)
+		print("Tools:")
+		toolWords = {"saws", "ladders", "wireCutters", "waterBottles", "sponges", "bricks", "guns"}
+		toPrint = ""
+		for i = 1, 7 do
+			toPrint = toPrint..toolWords[i]..": "..toolAppearanceArray[i]..", "
+		end
+		print(toPrint)
 	end
 end
 
