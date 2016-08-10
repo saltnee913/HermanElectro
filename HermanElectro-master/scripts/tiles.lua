@@ -1248,6 +1248,18 @@ P.reinforcedConductiveGlass = P.reinforcedGlass:new{name = "reinforcedConductive
 
 P.fog = P.tile:new{name = "fog", sprite = love.graphics.newImage('Graphics/fog.png'), blocksVision = true}
 
+P.accelerator = P.conductiveTile:new{name = "accelerator", sprite = love.graphics.newImage('Graphics/accelerator.png')}
+function P.accelerator:yAccel()
+	if self.rotation==0 then return -1
+	elseif self.rotation==2 then return 1
+	else return 0 end
+end
+function P.accelerator:xAccel()
+	if self.rotation==1 then return 1
+	elseif self.rotation==3 then return -1
+	else return 0 end
+end
+
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
 tiles[3] = P.powerSupply
@@ -1333,5 +1345,6 @@ tiles[82] = P.unbreakableWire
 tiles[83] = P.unbreakableHorizontalWire
 tiles[84] = P.unbreakableTWire
 tiles[85] = P.unbreakableCornerWire
+tiles[86] = P.accelerator
 
 return tiles

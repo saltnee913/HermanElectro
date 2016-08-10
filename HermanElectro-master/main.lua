@@ -1620,6 +1620,13 @@ function love.keypressed(key, unicode)
     elseif key == 'c' then
     	log(nil)
     end
+
+    --new acceleration tiles
+    for i = 1, 4 do
+    	accelerate()
+    end
+    resetPushables()
+
     updateGameState(noPowerUpdate)
     checkAllDeath()
 end
@@ -1811,6 +1818,38 @@ function updateGameState(noPowerUpdate)
 	if tool ~= 0 and tool ~= nil and tools[tool].numHeld == 0 then tool = 0 end
 	tools.updateToolableTiles(tool)
 	--checkAllDeath()
+end
+
+function accelerate()
+	for i = 1, #pushables do
+		if not pushables[i].canBeAccelerated then return end
+		if room[pushables[i].tileY][pushables[i].tileX]~=nil and room[pushables[i].tileY][pushables[i].tileX]:instanceof(tiles.accelerator) then
+			local potentialY = pushables[i].tileY+room[pushables[i].tileY][pushables[i].tileX]:yAccel()
+			local potentialX = pushables[i].tileX+room[pushables[i].tileY][pushables[i].tileX]:xAccel()
+			if potentialY>0 and potentialY<=roomHeight and potentialX>0 and potentialX<=roomLength then
+				local canAccelerate = true
+				if room[potentialY][potentialX]~=nil and room[potentialY][potentialX].blocksMovement then canAccelerate = false end
+				for i = 1, #pushables do
+					if pushables[i].tileY == potentialY and pushables[i].tileX == potentialX then canAccelerate = false end
+				end
+				for i = 1, #animals do
+					if animals[i].tileY == potentialY and animals[i].tileX == potentialX then canAccelerate = false end
+				end
+				if player.tileY == potentialY and player.tileX == potentialX then canAccelerate = false end
+				if canAccelerate then
+					pushables[i].tileY = potentialY
+					pushables[i].tileX = potentialX
+				end
+			end
+		end
+		pushables[i].canBeAccelerated = false
+	end
+end
+
+function resetPushables()
+	for i = 1, #pushables do
+		pushables[i].canBeAccelerated = true
+	end
 end
 
 function checkWin()
