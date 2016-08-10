@@ -1248,13 +1248,15 @@ P.reinforcedConductiveGlass = P.reinforcedGlass:new{name = "reinforcedConductive
 
 P.fog = P.tile:new{name = "fog", sprite = love.graphics.newImage('Graphics/fog.png'), blocksVision = true}
 
-P.accelerator = P.conductiveTile:new{name = "accelerator", sprite = love.graphics.newImage('Graphics/accelerator.png')}
+P.accelerator = P.conductiveTile:new{name = "accelerator", sprite = love.graphics.newImage('Graphics/accelerator.png'), poweredSprite = love.graphics.newImage('Graphics/accelerator.png')}
 function P.accelerator:yAccel()
+	if not self.powered then return 0 end
 	if self.rotation==0 then return -1
 	elseif self.rotation==2 then return 1
 	else return 0 end
 end
 function P.accelerator:xAccel()
+	if not self.powered then return 0 end
 	if self.rotation==1 then return 1
 	elseif self.rotation==3 then return -1
 	else return 0 end

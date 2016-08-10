@@ -1918,7 +1918,6 @@ function stepTrigger()
 			end
 		end
 	end
-
 	--new acceleration tiles
     for i = 1, 4 do
     	accelerate()
