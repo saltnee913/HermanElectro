@@ -656,35 +656,8 @@ end
 P.endTile = P.tile:new{name = "endTile", canBePowered = false, dirAccept = {0,0,0,0}, sprite = love.graphics.newImage('Graphics/end.png'), done = false}
 function P.endTile:onEnter(player)
 	if map.floorInfo.finalFloor == true then
-		if floorIndex-1==#map.floorOrder and roomHeight>12 and not editorMode then
+		if roomHeight>12 and not editorMode then
 			win()
-			return
-		end
-		if floorIndex-1==#map.floorOrder then
-			beatRoom()
-			if donations<recDonations then
-				for i = 1, recDonations-donations do
-					local noTools = true
-					for j = 1, 7 do
-						if tools[j].numHeld>0 then noTools = false end
-					end
-					if noTools then break end
-					local slotToRemove = math.floor(math.random()*7)+1
-					while tools[slotToRemove].numHeld<=0 do
-						slotToRemove = math.floor(math.random()*7)+1
-					end
-					tools[slotToRemove].numHeld = tools[slotToRemove].numHeld-1
-				end
-			elseif donations>recDonations then
-				for i = 1, donations-recDonations do
-					local slotToAdd = math.floor(math.random()*7)+1
-					tools[slotToAdd].numHeld = tools[slotToAdd].numHeld+1
-				end
-			end
-			self.done = true
-			self.isCompleted = true
-			self.isVisible = false
-			self.gone = true
 			return
 		end
 	end
@@ -862,24 +835,27 @@ function P.treasureTile:onEnter()
 	self.isVisible = false
 end
 function P.treasureTile:giveReward(reward)
-	if reward<333-donations*25 then
-
-		--do nothing
-	elseif reward<850-donations*12 then
-		--give one tool
-		tools.giveRandomTools(1)
-	elseif reward<950-donations*6 then
-		--give two tools
-		tools.giveRandomTools(2)
-	elseif reward<980-donations*3 then
-		--give three tools
-		tools.giveRandomTools(3)
-	elseif reward<990-donations then
-		--give one special tool
-		tools.giveSupertools(1)
+	local timesCounter = 0
+	local probNothing = 333-donations*18
+	local probBasic = 800-donations*18
+	local probSuper = 1 - probNothing - probBasic
+	if reward<probNothing then return
+	elseif reward<probBasic then
+		local counter = 0
+		while counter<3 do
+			tools.giveRandomTools(1)
+			local rand = math.random()
+			if rand>probBasic/1000 then return end
+			counter = counter+1
+		end
 	else
-		--give two special tools
-		tools.giveSupertools(2)
+		local counter = 0
+		while counter<2 do
+			tools.giveSupertools(1)
+			local rand = math.random()
+			if rand>probSuper/1000 then return end
+			counter = counter+1
+		end
 	end
 end
 
@@ -1062,7 +1038,7 @@ function P.beggar:onEnter(player)
 	if not self.alive then return end
 	tools[tool].numHeld = tools[tool].numHeld - 1
 	self.counter = self.counter+1
-	probabilityOfPayout = math.atan(self.counter)*1/math.pi+donations*2/100
+	probabilityOfPayout = self.counter/4+donations*2/100
 	randomNum = math.random()
 	if randomNum<probabilityOfPayout then
 		self.counter = 0
@@ -1070,6 +1046,9 @@ function P.beggar:onEnter(player)
 		local killBeggar = math.random()
 		if killBeggar<0.5 then self:destroy() end
 	end
+end
+function P.beggar:getInfoText()
+	return donations
 end
 function P.beggar:destroy()
 	self.sprite = self.deadSprite
@@ -1111,7 +1090,7 @@ end
 function P.donationMachine:onEnter(player)
 	if tool==0 or tool>7 then return end
 	tools[tool].numHeld = tools[tool].numHeld - 1
-	donations = donations+math.ceil((7-(floorIndex))/2)
+	donations = donations+math.ceil((10-(floorIndex))/2)
 	floorDonations = floorDonations+1
 	gameTime = gameTime+20
 end
@@ -1139,11 +1118,19 @@ P.treasureTile2 = P.treasureTile:new{name = "treasureTile2", sprite = love.graph
 
 function P.treasureTile2:onEnter()
 	if self.done then return end
-	local reward = math.floor(math.random()*667)+333
+	local reward = math.floor(math.random()*1000)
 	self:giveReward(reward)
 	self.done = true
 	self.isCompleted = true
 	self.isVisible = false
+end
+function P.treasureTile2:giveReward(reward)
+	if reward<775-donations*10 then
+		tools.giveRandomTools(1)
+	else
+		tools.giveRandomTools(1)
+		tools.giveSupertools(1)
+	end
 end
 
 P.treasureTile3 = P.treasureTile:new{name = "treasureTile3", sprite = love.graphics.newImage('Graphics/treasuretile3.png')}
@@ -1261,6 +1248,20 @@ P.reinforcedConductiveGlass = P.reinforcedGlass:new{name = "reinforcedConductive
 
 P.fog = P.tile:new{name = "fog", sprite = love.graphics.newImage('Graphics/fog.png'), blocksVision = true}
 
+P.accelerator = P.conductiveTile:new{name = "accelerator", sprite = love.graphics.newImage('Graphics/accelerator.png'), poweredSprite = love.graphics.newImage('Graphics/accelerator.png')}
+function P.accelerator:yAccel()
+	if not self.powered then return 0 end
+	if self.rotation==0 then return -1
+	elseif self.rotation==2 then return 1
+	else return 0 end
+end
+function P.accelerator:xAccel()
+	if not self.powered then return 0 end
+	if self.rotation==1 then return 1
+	elseif self.rotation==3 then return -1
+	else return 0 end
+end
+
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
 tiles[3] = P.powerSupply
@@ -1346,5 +1347,6 @@ tiles[82] = P.unbreakableWire
 tiles[83] = P.unbreakableHorizontalWire
 tiles[84] = P.unbreakableTWire
 tiles[85] = P.unbreakableCornerWire
+tiles[86] = P.accelerator
 
 return tiles

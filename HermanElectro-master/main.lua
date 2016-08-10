@@ -15,8 +15,11 @@ boundaries = require('scripts.boundaries')
 animalList = require('scripts.animals')
 tools = require('scripts.tools')
 editor = require('scripts.editor')
+unlocks = require('scripts.unlocks')
 
 loadedOnce = false
+
+saveDir = 'SaveData'
 
 
 function love.load()
@@ -38,6 +41,8 @@ function love.load()
 	recDonations = 26
 
 	won = false
+
+	unlocks.load()
 
 	--[[local json = require('scripts.dkjson')
 	local roomsToFix, roomsArray = util.readJSON('RoomData/tut_rooms.json', true)
@@ -159,8 +164,8 @@ end
 
 function loadNextLevel()
 	--hacky way of getting info, but for now, it works
-	toolMax = floorIndex+1
- 	toolMin = floorIndex
+	toolMax = floorIndex
+ 	toolMin = floorIndex-1
  	floorDonations = 0
  	gameTime = gameTime+120
 	if loadTutorial then
@@ -250,7 +255,15 @@ function kill()
 end
 
 function win()
-	won = true
+	if not won then
+		for i = 1, #unlocks.winUnlocks do
+			if unlocks[unlocks.winUnlocks[i]].unlocked == false then
+				unlocks.unlockUnlockable(unlocks.winUnlocks[i])
+				break
+			end
+		end
+		won = true
+	end
 end
 
 function updateLight()
@@ -1611,6 +1624,7 @@ function love.keypressed(key, unicode)
     elseif key == 'c' then
     	log(nil)
     end
+
     updateGameState(noPowerUpdate)
     checkAllDeath()
 end
@@ -1804,6 +1818,38 @@ function updateGameState(noPowerUpdate)
 	--checkAllDeath()
 end
 
+function accelerate()
+	for i = 1, #pushables do
+		if not pushables[i].canBeAccelerated then return end
+		if room[pushables[i].tileY][pushables[i].tileX]~=nil and room[pushables[i].tileY][pushables[i].tileX]:instanceof(tiles.accelerator) then
+			local potentialY = pushables[i].tileY+room[pushables[i].tileY][pushables[i].tileX]:yAccel()
+			local potentialX = pushables[i].tileX+room[pushables[i].tileY][pushables[i].tileX]:xAccel()
+			if potentialY>0 and potentialY<=roomHeight and potentialX>0 and potentialX<=roomLength then
+				local canAccelerate = true
+				if room[potentialY][potentialX]~=nil and room[potentialY][potentialX].blocksMovement then canAccelerate = false end
+				for i = 1, #pushables do
+					if pushables[i].tileY == potentialY and pushables[i].tileX == potentialX then canAccelerate = false end
+				end
+				for i = 1, #animals do
+					if animals[i].tileY == potentialY and animals[i].tileX == potentialX then canAccelerate = false end
+				end
+				if player.tileY == potentialY and player.tileX == potentialX then canAccelerate = false end
+				if canAccelerate then
+					pushables[i].tileY = potentialY
+					pushables[i].tileX = potentialX
+				end
+			end
+		end
+		pushables[i].canBeAccelerated = false
+	end
+end
+
+function resetPushables()
+	for i = 1, #pushables do
+		pushables[i].canBeAccelerated = true
+	end
+end
+
 function checkWin()
 	if room[player.tileY][player.tileX]~=nil and room[player.tileY][player.tileX]:instanceof(tiles.endTile) then room[player.tileY][player.tileX]:onEnter() end
 end
@@ -1876,6 +1922,11 @@ function stepTrigger()
 			end
 		end
 	end
+	--new acceleration tiles
+    for i = 1, 4 do
+    	accelerate()
+    end
+    resetPushables()
 end
 
 function unlockDoors()
@@ -1940,7 +1991,36 @@ function dropTools()
 								end
 							end
 							if done then
-								tools.giveToolsByArray(listOfItemsNeeded[listChoose])
+								if map.floorInfo.finalFloor then
+									local toolsArray = listOfItemsNeeded[listChoose]
+									local toolsNum = 0
+									for i = 1, 7 do
+										toolsNum = toolsNum + toolsArray[i]
+									end
+									for i = 1, donations do
+										if i<=toolsNum then
+											local finished = false
+											while not finished do
+												local slot = math.floor(math.random()*7)+1
+												if toolsArray[slot]>0 then
+													toolsArray[slot] = toolsArray[slot]-1
+													tools[slot].numHeld = tools[slot].numHeld+1
+													finished = true
+												end
+											end
+										else
+											local random = math.random()
+											if random>0.75 then
+												tools.giveSupertools(1)
+											else
+												local slot = math.floor(math.random()*7)+1
+												tools[slot].numHeld = tools[slot].numHeld+1
+											end
+										end
+									end
+								else
+									tools.giveToolsByArray(listOfItemsNeeded[listChoose])
+								end
 							end
 						end
 					end
@@ -1949,6 +2029,12 @@ function dropTools()
 				if amtChecked == (mapHeight + 1)*(mapHeight + 1) then
 					break
 				end
+			end
+		end
+		if not done then
+			for i = 1, toolMin+1 do
+				local slot = math.floor(math.random()*7)+1
+				tools[slot].numHeld = tools[slot].numHeld+1
 			end
 		end
 	else

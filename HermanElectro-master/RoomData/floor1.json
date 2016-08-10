@@ -53,6 +53,7 @@
 	},
 	"data":
 	{
+		"requireUnlocks": true,
 		"height": 10,
 		"numRooms": 12,
 		"generateFunction": "generateMapWeighted",
