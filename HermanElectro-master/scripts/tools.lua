@@ -499,6 +499,7 @@ end
 function P.gun:useToolTile(tile)
 	self.numHeld = self.numHeld-1
 	if tile:instanceof(tiles.beggar) then
+		unlocks.unlockUnlockableRef(unlocks.beggarPartyUnlock)
 		tile:destroy()
 	else
 		tile:allowVision()

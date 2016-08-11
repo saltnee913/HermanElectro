@@ -1001,6 +1001,16 @@ function love.draw()
 		--love.graphics.draw(pausescreen, width/2-width/2000*320, 10, 0, width/1000, width/1000)
 		love.graphics.draw(pausescreen, 0, 0, 0, width/pausescreen:getWidth(), height/pausescreen:getHeight())
 	end
+
+	--Display unlock screen
+	if unlocks.unlocksDisplay.timeLeft > 0 then
+		local unlock = unlocks[unlocks.unlocksDisplay.unlockToShow]
+		local uScale = width/500
+		local offsetY = (unlocks.frame:getHeight() - unlock.sprite:getHeight())/2
+		local offsetX = (unlocks.frame:getWidth() - unlock.sprite:getWidth())/2
+		love.graphics.draw(unlocks.frame, 0, height-unlocks.frame:getHeight()*uScale, 0, uScale, uScale)
+		love.graphics.draw(unlock.sprite, offsetX*uScale, height-(unlock.sprite:getHeight()+offsetY)*uScale, 0, uScale, uScale)
+	end
 	if not editorMode then
 		botText = "e to toggle editor mode"
 	else
@@ -1322,6 +1332,7 @@ function love.update(dt)
 	--key press
 	keyTimer.timeLeft = keyTimer.timeLeft - dt
 	tools.updateTimer(dt)
+	unlocks.updateTimer(dt)
 
 	--game timer
 	if started and completedRooms[mapy][mapx]~=1 then

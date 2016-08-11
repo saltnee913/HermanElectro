@@ -111,10 +111,18 @@ end
 function P.filterRoomSetByUnlocks(arr)
 	for k, v in pairs(arr) do
 		for i = 1, #unlocks do
-			if unlocks[i]:instanceof(unlocks.tileUnlock) and unlocks[i].unlocked == false then
-				for j = 1, #unlocks[i].tileIds do
-					if doesRoomContainTile(v, unlocks[i].tileIds[j]) then
-						arr[k] = nil
+			if unlocks[i].unlocked == false then
+				if unlocks[i]:instanceof(unlocks.tileUnlock) then
+					for j = 1, #unlocks[i].tileIds do
+						if doesRoomContainTile(v, unlocks[i].tileIds[j]) then
+							arr[k] = nil
+						end
+					end
+				elseif unlocks[i]:instanceof(unlocks.roomUnlock) then
+					for j = 1, #unlocks[i].roomIds do
+						if k == unlocks[i].roomIds[j] then
+							arr[k] = nil
+						end
 					end
 				end
 			end
