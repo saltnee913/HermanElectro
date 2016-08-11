@@ -380,7 +380,18 @@ function updatePower()
 				(room[pY+1]~=nil and room[pY+1][pX]~=nil and room[pY+1][pX].powered and room[pY+1][pX].dirSend[1]==1) or
 				(room[pY][pX-1]~=nil and room[pY][pX-1].powered and room[pY][pX-1].dirSend[2]==1) or
 				(room[pY][pX+1]~=nil and room[pY][pX+1].powered and room[pY][pX+1].dirSend[4]==1) then
-					powerTestPushable(pY, pX, 0)
+					if pushables[i]:instanceof(pushableList.bombBox) then
+						room[pY][pX] = tiles.bomb:new()
+						room = room[pY][pX]:onEnd(room, pY, pX)
+						pushables[i].destroyed = true
+						if not editorMode and math.abs(pY-player.tileY)+math.abs(pX-player.tileX)<3 then kill() end
+						for k = 1, #animals do
+							if math.abs(pY-animals[k].tileY)+math.abs(pX-animals[k].tileX)<3 then animals[k]:kill() end
+						end
+						room[pY][pX] = nil
+					else
+						powerTestPushable(pY, pX, 0)
+					end
 				end
 			end
 		end
@@ -1499,7 +1510,7 @@ function love.keypressed(key, unicode)
 		updateGameState()
 		checkAllDeath()
 	end
-	local noPowerUpdate = true
+	noPowerUpdate = true
     if (key=="w" or key=="a" or key=="s" or key=="d") then
     	for i = 1, roomHeight do
     		for j = 1, roomLength do
@@ -1526,85 +1537,82 @@ function love.keypressed(key, unicode)
 	    			noPowerUpdate = false
 	    		end
 	    	end
-	    	if room[pushables[i].prevTileY][pushables[i].prevTileX]~=nil then
+	    	if pushables[i].prevTileY~=nil and pushables[i].prevTileX~=nil and 
+	    	room[pushables[i].prevTileY]~=nil and room[pushables[i].prevTileY][pushables[i].prevTileX]~=nil then
 	    		if room[pushables[i].prevTileY][pushables[i].prevTileX].updatePowerOnLeave then
 	    			noPowerUpdate = false
 	    		end
+	    	end
+	    	if pushables[i].conductive and (pushables[i].tileX~=pushables[i].prevTileX or pushables[i].tileY~=pushables[i].prevTileY) then
+	    		noPowerUpdate = false
 	    	end
     	end
     	updateGameState(noPowerUpdate)
 	    if player.tileY~=player.prevTileY or player.tileX~=player.prevTileX or waitTurn then
 	    	for k = 1, #animals do
-	    		local ani = animals[k]
-	    		if not map.blocksMovement(ani.tileY, ani.tileX) then
-	    			local movex = player.tileX
-	    			local movey = player.tileY
-	    			local animalDist = math.abs(movey-ani.tileY)+math.abs(movex-ani.tileX)
-	    			for i = 1, roomHeight do
-	    				for j = 1, roomLength do
-	    					if room[i][j]~=nil and room[i][j]:instanceof(tiles.meat) then
-	    						if math.abs(i-ani.tileY)+math.abs(j-ani.tileX)<animalDist then
-	    							animalDist = math.abs(i-ani.tileY)+math.abs(j-ani.tileX)
-	    							movex = j
-	    							movey = i
-	    						end
-	    					end
-	    				end
-	    			end
-	    			for i = 1, #pushables do
-	    				if pushables[i]:instanceof(pushableList.boombox) then
+				local ani = animals[k]
+				if not map.blocksMovement(ani.tileY, ani.tileX) then
+					local movex = player.tileX
+					local movey = player.tileY
+					local animalDist = math.abs(movey-ani.tileY)+math.abs(movex-ani.tileX)
+					for i = 1, roomHeight do
+						for j = 1, roomLength do
+							if room[i][j]~=nil and room[i][j]:instanceof(tiles.meat) then
+								if math.abs(i-ani.tileY)+math.abs(j-ani.tileX)<animalDist then
+									animalDist = math.abs(i-ani.tileY)+math.abs(j-ani.tileX)
+									movex = j
+									movey = i
+								end
+							end
+						end
+					end
+					for i = 1, #pushables do
+						if pushables[i]:instanceof(pushableList.boombox) then
 						    if math.abs(pushables[i].tileY-ani.tileY)+math.abs(pushables[i].tileX-ani.tileX)<animalDist then
 								animalDist = math.abs(pushables[i].tileY-ani.tileY)+math.abs(pushables[i].tileX-ani.tileX)
 								movex = pushables[i].tileX
 								movey = pushables[i].tileY
 							end
-	    				end
-	    			end
-	    			ani:move(movex, movey, room, litTiles[ani.tileY][ani.tileX]==1)
-	    		end
-	    	end   	
-	    	resolveConflicts()
-	    	for i = 1, #animals do
-	    		animals[i].x = (animals[i].tileX-1)*floor.sprite:getHeight()*scale+wallSprite.width
-	    		animals[i].y = (animals[i].tileY-1)*floor.sprite:getWidth()*scale+wallSprite.height
-	    		if animals[i]:hasMoved() and not animals[i].dead then
-					if room[animals[i].prevTileY]~=nil and room[animals[i].prevTileY][animals[i].prevTileX]~=nil then
-						room[animals[i].prevTileY][animals[i].prevTileX]:onLeaveAnimal(animals[i])
-					elseif animals[i]:onNullLeave()~=nil then
-						room[animals[i].prevTileY][animals[i].prevTileX] = animals[i]:onNullLeave()
+						end
 					end
+					ani:move(movex, movey, room, litTiles[ani.tileY][ani.tileX]==1)
 				end
-			end
-			for i = 1, #animals do
-				if animals[i].waitCounter>0 then
-					animals[i].waitCounter = animals[i].waitCounter-1
-				end
-				if animals[i]:hasMoved() and not animals[i].dead then
-					if room[animals[i].tileY][animals[i].tileX]~=nil then
-						room[animals[i].tileY][animals[i].tileX]:onEnterAnimal(animals[i])
-					end
-				elseif room[animals[i].tileY][animals[i].tileX]~=nil then
-					room[animals[i].tileY][animals[i].tileX]:onStayAnimal(animals[i])
-				end
-			end
-			resolveConflicts()
-			for i = 1, #animals do
-				if room[animals[i].tileY][animals[i].tileX]~=nil then
-					room[animals[i].tileY][animals[i].tileX]:onStayAnimal(animals[i])
-				end
-				 if room[animals[i].tileY][animals[i].tileX]~=nil then
-		    		if room[animals[i].tileY][animals[i].tileX].updatePowerOnEnter then
-		    			noPowerUpdate = false
-		    		end
-		    	end
-		    	if room[animals[i].prevTileY][animals[i].prevTileX]~=nil then
-		    		if room[animals[i].prevTileY][animals[i].prevTileX].updatePowerOnLeave then
-		    			noPowerUpdate = false
-		    		end
-		    	end
-			end
+			end   	
+	    	postAnimalMovement()
 			stepTrigger()
+			for k = 1, #animals do
+				if animals[k].prevTileX == animals[k].tileX and animals[k].prevTileY==animals[k].tileY then
+					local ani = animals[k]
+					if not map.blocksMovement(ani.tileY, ani.tileX) then
+						local movex = player.tileX
+						local movey = player.tileY
+						local animalDist = math.abs(movey-ani.tileY)+math.abs(movex-ani.tileX)
+						for i = 1, roomHeight do
+							for j = 1, roomLength do
+								if room[i][j]~=nil and room[i][j]:instanceof(tiles.meat) then
+									if math.abs(i-ani.tileY)+math.abs(j-ani.tileX)<animalDist then
+										animalDist = math.abs(i-ani.tileY)+math.abs(j-ani.tileX)
+										movex = j
+										movey = i
+									end
+								end
+							end
+						end
+						for i = 1, #pushables do
+							if pushables[i]:instanceof(pushableList.boombox) then
+							    if math.abs(pushables[i].tileY-ani.tileY)+math.abs(pushables[i].tileX-ani.tileX)<animalDist then
+									animalDist = math.abs(pushables[i].tileY-ani.tileY)+math.abs(pushables[i].tileX-ani.tileX)
+									movex = pushables[i].tileX
+									movey = pushables[i].tileY
+								end
+							end
+						end
+						ani:move(movex, movey, room, litTiles[ani.tileY][ani.tileX]==1)
+					end
+				end
 			--updateGameState()
+			end
+			postAnimalMovement()
 		end
     end
     --Debug console stuff
@@ -1624,9 +1632,51 @@ function love.keypressed(key, unicode)
     elseif key == 'c' then
     	log(nil)
     end
-
     updateGameState(noPowerUpdate)
     checkAllDeath()
+end
+
+function postAnimalMovement()
+	resolveConflicts()
+	for i = 1, #animals do
+		animals[i].x = (animals[i].tileX-1)*floor.sprite:getHeight()*scale+wallSprite.width
+		animals[i].y = (animals[i].tileY-1)*floor.sprite:getWidth()*scale+wallSprite.height
+		if animals[i]:hasMoved() and not animals[i].dead then
+			if room[animals[i].prevTileY]~=nil and room[animals[i].prevTileY][animals[i].prevTileX]~=nil then
+				room[animals[i].prevTileY][animals[i].prevTileX]:onLeaveAnimal(animals[i])
+			elseif animals[i]:onNullLeave()~=nil then
+				room[animals[i].prevTileY][animals[i].prevTileX] = animals[i]:onNullLeave()
+			end
+		end
+	end
+	for i = 1, #animals do
+		if animals[i].waitCounter>0 then
+			animals[i].waitCounter = animals[i].waitCounter-1
+		end
+		if animals[i]:hasMoved() and not animals[i].dead then
+			if room[animals[i].tileY][animals[i].tileX]~=nil then
+				room[animals[i].tileY][animals[i].tileX]:onEnterAnimal(animals[i])
+			end
+		elseif room[animals[i].tileY][animals[i].tileX]~=nil then
+			room[animals[i].tileY][animals[i].tileX]:onStayAnimal(animals[i])
+		end
+	end
+	resolveConflicts()
+	for i = 1, #animals do
+		if room[animals[i].tileY][animals[i].tileX]~=nil then
+			room[animals[i].tileY][animals[i].tileX]:onStayAnimal(animals[i])
+		end
+		 if room[animals[i].tileY][animals[i].tileX]~=nil and animals[i]:hasMoved() then
+			if room[animals[i].tileY][animals[i].tileX].updatePowerOnEnter then
+				noPowerUpdate = false
+			end
+		end
+		if animals[i].prevTileY~=nil and animals[i].prevTileX~=nil and room[animals[i].prevTileY][animals[i].prevTileX]~=nil then
+			if room[animals[i].prevTileY][animals[i].prevTileX].updatePowerOnLeave then
+				noPowerUpdate = false
+			end
+		end
+	end
 end
 
 function resolveConflicts()
