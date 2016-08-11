@@ -869,8 +869,8 @@ function P.lamp:useToolNothing(tileY, tileX)
 	room[tileY][tileX] = tiles.lamp:new()
 end
 
-P.ramSpawner = P.tool:new{name = "ramSpawner", range = 1, image = love.graphics.newImage('Graphics/batteringram.png')}
-function P.ramSpawner:usableOnNothing(tileY, tileX)
+P.boxSpawner = P.tool:new{name = "boxSpawner", range = 1, image = love.graphics.newImage('Graphics/box.png')}
+function P.boxSpawner:usableOnNothing(tileY, tileX)
 	if tileY==player.tileY and tileX==player.tileX then return false end
 	for i = 1, #animals do
 		if animals[i].tileY==tileY and animals[i].tileX==tileX then return false end
@@ -880,7 +880,7 @@ function P.ramSpawner:usableOnNothing(tileY, tileX)
 	end
 	return true
 end
-function P.ramSpawner:usableOnTile(tile, tileY, tileX)
+function P.boxSpawner:usableOnTile(tile, tileY, tileX)
 	if tileY==player.tileY and tileX==player.tileX then return false end
 	for i = 1, #animals do
 		if animals[i].tileY==tileY and animals[i].tileX==tileX then return false end
@@ -890,6 +890,22 @@ function P.ramSpawner:usableOnTile(tile, tileY, tileX)
 	end
 	return not tile.blocksMovement
 end
+function P.boxSpawner:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
+	local toSpawn = pushableList[2]:new()
+	toSpawn.tileY = tileY
+	toSpawn.tileX = tileX
+	pushables[#pushables+1] = toSpawn
+end
+function P.boxSpawner:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
+	local toSpawn = pushableList[2]:new()
+	toSpawn.tileY = tileY
+	toSpawn.tileX = tileX
+	pushables[#pushables+1] = toSpawn
+end
+
+P.ramSpawner = P.boxSpawner:new{name = "ramSpawner", image = love.graphics.newImage('Graphics/batteringram.png')}
 function P.ramSpawner:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld-1
 	local toSpawn = pushableList[7]:new()
@@ -915,6 +931,48 @@ function P.gateBreaker:useToolTile(tile)
 	tile.destroyed = true
 	tile.canBePowered = false
 end
+
+P.conductiveBoxSpawner = P.boxSpawner:new{name = "conductiveBoxSpawner", image = love.graphics.newImage('Graphics/conductiveBox.png')}
+function P.conductiveBoxSpawner:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
+	local toSpawn = pushableList[5]:new()
+	toSpawn.tileY = tileY
+	toSpawn.tileX = tileX
+	pushables[#pushables+1] = toSpawn
+end
+function P.conductiveBoxSpawner:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
+	local toSpawn = pushableList[5]:new()
+	toSpawn.tileY = tileY
+	toSpawn.tileX = tileX
+	pushables[#pushables+1] = toSpawn
+end
+
+P.boomboxSpawner = P.boxSpawner:new{name = "boomboxSpawner", image = love.graphics.newImage('Graphics/boombox.png')}
+function P.boomboxSpawner:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
+	local toSpawn = pushableList[6]:new()
+	toSpawn.tileY = tileY
+	toSpawn.tileX = tileX
+	pushables[#pushables+1] = toSpawn
+end
+function P.boomboxSpawner:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
+	local toSpawn = pushableList[6]:new()
+	toSpawn.tileY = tileY
+	toSpawn.tileX = tileX
+	pushables[#pushables+1] = toSpawn
+end
+
+P.superWireCutters = P.wireCutters:new{name = "superWireCutters", image = love.graphics.newImage('Graphics/wirecutters.png')}
+function P.superWireCutters:usableOnNonOverlay(tile)
+	return not tile.destroyed and (tile:instanceof(tiles.wire)
+	or tile:instanceof(tiles.conductiveGlass) or tile:instanceof(tiles.reinforcedConductiveGlass) or tile:instanceof(tiles.electricFloor))
+end
+function P.superWireCutters:usableOnTile(tile)
+	return self:usableOnNonOverlay(tile) or (tile.overlay~=nil and self:usableOnNonOverlay(tile.overlay))
+end
+
 P.numNormalTools = 7
 
 P[1] = P.saw
@@ -949,5 +1007,9 @@ P[29] = P.endFinder
 P[30] = P.lamp
 P[31] = P.ramSpawner
 P[32] = P.gateBreaker
+P[33] = P.conductiveBoxSpawner
+P[34] = P.superWireCutters
+P[35] = P.boxSpawner
+P[36] = P.boomboxSpawner
 
 return tools

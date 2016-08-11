@@ -1537,7 +1537,8 @@ function love.keypressed(key, unicode)
 	    			noPowerUpdate = false
 	    		end
 	    	end
-	    	if room[pushables[i].prevTileY][pushables[i].prevTileX]~=nil then
+	    	if pushables[i].prevTileY~=nil and pushables[i].prevTileX~=nil and 
+	    	room[pushables[i].prevTileY]~=nil and room[pushables[i].prevTileY][pushables[i].prevTileX]~=nil then
 	    		if room[pushables[i].prevTileY][pushables[i].prevTileX].updatePowerOnLeave then
 	    			noPowerUpdate = false
 	    		end
