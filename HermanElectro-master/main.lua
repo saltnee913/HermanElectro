@@ -1657,7 +1657,7 @@ function postAnimalMovement()
 				noPowerUpdate = false
 			end
 		end
-		if room[animals[i].prevTileY][animals[i].prevTileX]~=nil then
+		if animals[i].prevTileY~=nil and animals[i].prevTileX~=nil and room[animals[i].prevTileY][animals[i].prevTileX]~=nil then
 			if room[animals[i].prevTileY][animals[i].prevTileX].updatePowerOnLeave then
 				noPowerUpdate = false
 			end
