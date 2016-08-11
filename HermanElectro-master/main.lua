@@ -1510,7 +1510,7 @@ function love.keypressed(key, unicode)
 		updateGameState()
 		checkAllDeath()
 	end
-	local noPowerUpdate = true
+	noPowerUpdate = true
     if (key=="w" or key=="a" or key=="s" or key=="d") then
     	for i = 1, roomHeight do
     		for j = 1, roomLength do
@@ -1632,7 +1632,6 @@ function love.keypressed(key, unicode)
     elseif key == 'c' then
     	log(nil)
     end
-
     updateGameState(noPowerUpdate)
     checkAllDeath()
 end
@@ -1667,7 +1666,7 @@ function postAnimalMovement()
 		if room[animals[i].tileY][animals[i].tileX]~=nil then
 			room[animals[i].tileY][animals[i].tileX]:onStayAnimal(animals[i])
 		end
-		 if room[animals[i].tileY][animals[i].tileX]~=nil then
+		 if room[animals[i].tileY][animals[i].tileX]~=nil and animals[i]:hasMoved() then
 			if room[animals[i].tileY][animals[i].tileX].updatePowerOnEnter then
 				noPowerUpdate = false
 			end
