@@ -163,6 +163,8 @@ function P.batteringRam:move(mover)
 	return false
 end
 
+P.bombBox = P.conductiveBox:new{name = "bombBox", sprite = love.graphics.newImage('Graphics/bombBox.png')}
+
 pushableList[1] = P.pushable
 pushableList[2] = P.box
 pushableList[3] = P.playerBox
@@ -170,5 +172,6 @@ pushableList[4] = P.animalBox
 pushableList[5] = P.conductiveBox
 pushableList[6] = P.boombox
 pushableList[7] = P.batteringRam
+pushableList[8] = P.bombBox
 
 return pushableList

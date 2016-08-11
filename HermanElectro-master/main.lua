@@ -380,7 +380,18 @@ function updatePower()
 				(room[pY+1]~=nil and room[pY+1][pX]~=nil and room[pY+1][pX].powered and room[pY+1][pX].dirSend[1]==1) or
 				(room[pY][pX-1]~=nil and room[pY][pX-1].powered and room[pY][pX-1].dirSend[2]==1) or
 				(room[pY][pX+1]~=nil and room[pY][pX+1].powered and room[pY][pX+1].dirSend[4]==1) then
-					powerTestPushable(pY, pX, 0)
+					if pushables[i]:instanceof(pushableList.bombBox) then
+						room[pY][pX] = tiles.bomb:new()
+						room = room[pY][pX]:onEnd(room, pY, pX)
+						pushables[i].destroyed = true
+						if not editorMode and math.abs(pY-player.tileY)+math.abs(pX-player.tileX)<3 then kill() end
+						for k = 1, #animals do
+							if math.abs(pY-animals[k].tileY)+math.abs(pX-animals[k].tileX)<3 then animals[k]:kill() end
+						end
+						room[pY][pX] = nil
+					else
+						powerTestPushable(pY, pX, 0)
+					end
 				end
 			end
 		end
@@ -1530,6 +1541,9 @@ function love.keypressed(key, unicode)
 	    		if room[pushables[i].prevTileY][pushables[i].prevTileX].updatePowerOnLeave then
 	    			noPowerUpdate = false
 	    		end
+	    	end
+	    	if pushables[i].conductive and (pushables[i].tileX~=pushables[i].prevTileX or pushables[i].tileY~=pushables[i].prevTileY) then
+	    		noPowerUpdate = false
 	    	end
     	end
     	updateGameState(noPowerUpdate)

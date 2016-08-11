@@ -1262,6 +1262,8 @@ function P.accelerator:xAccel()
 	else return 0 end
 end
 
+P.bombBoxTile = P.tile:new{name = "bombBoxTile", pushable = pushableList[8]:new(), listIndex = 8, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
+
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
 tiles[3] = P.powerSupply
@@ -1348,5 +1350,6 @@ tiles[83] = P.unbreakableHorizontalWire
 tiles[84] = P.unbreakableTWire
 tiles[85] = P.unbreakableCornerWire
 tiles[86] = P.accelerator
+tiles[87] = P.bombBoxTile
 
 return tiles
