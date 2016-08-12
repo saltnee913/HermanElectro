@@ -390,6 +390,8 @@ function P.wall:destroy()
 	self.sprite = self.destroyedSprite
 	self.destroyed = true
 	self.blocksMovement = false
+	self.dirAccept = {0,0,0,0}
+	self.dirSend = {0,0,0,0}
 	self.overlay = nil
 end
 function P.wall:rotate(times)
@@ -420,6 +422,8 @@ function P.glassWall:destroy()
 	self.destroyed = true
 	self.blocksMovement = false
 	self.blocksVision = false
+	self.dirAccept = {0,0,0,0}
+	self.dirSend = {0,0,0,0}
 	self.overlay = nil
 end
 
@@ -722,6 +726,8 @@ function P.concreteWall:destroy()
 	self.sprite = self.destroyedSprite
 	self.destroyed = true
 	self.blocksMovement = false
+	self.dirAccept = {0,0,0,0}
+	self.dirSend = {0,0,0,0}
 	self.overlay = nil
 end
 
