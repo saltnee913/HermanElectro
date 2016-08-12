@@ -1623,7 +1623,22 @@ function love.keypressed(key, unicode)
 				end
 			--updateGameState()
 			end
-			postAnimalMovement()
+			resolveConflicts()
+			for i = 1, #animals do
+				if room[animals[i].tileY][animals[i].tileX]~=nil then
+					room[animals[i].tileY][animals[i].tileX]:onStayAnimal(animals[i])
+				end
+				 if room[animals[i].tileY][animals[i].tileX]~=nil and animals[i]:hasMoved() then
+					if room[animals[i].tileY][animals[i].tileX].updatePowerOnEnter then
+						noPowerUpdate = false
+					end
+				end
+				if animals[i].prevTileY~=nil and animals[i].prevTileX~=nil and room[animals[i].prevTileY][animals[i].prevTileX]~=nil then
+					if room[animals[i].prevTileY][animals[i].prevTileX].updatePowerOnLeave then
+						noPowerUpdate = false
+					end
+				end
+			end
 		end
     end
     --Debug console stuff
@@ -1670,22 +1685,6 @@ function postAnimalMovement()
 			end
 		elseif room[animals[i].tileY][animals[i].tileX]~=nil then
 			room[animals[i].tileY][animals[i].tileX]:onStayAnimal(animals[i])
-		end
-	end
-	resolveConflicts()
-	for i = 1, #animals do
-		if room[animals[i].tileY][animals[i].tileX]~=nil then
-			room[animals[i].tileY][animals[i].tileX]:onStayAnimal(animals[i])
-		end
-		 if room[animals[i].tileY][animals[i].tileX]~=nil and animals[i]:hasMoved() then
-			if room[animals[i].tileY][animals[i].tileX].updatePowerOnEnter then
-				noPowerUpdate = false
-			end
-		end
-		if animals[i].prevTileY~=nil and animals[i].prevTileX~=nil and room[animals[i].prevTileY][animals[i].prevTileX]~=nil then
-			if room[animals[i].prevTileY][animals[i].prevTileX].updatePowerOnLeave then
-				noPowerUpdate = false
-			end
 		end
 	end
 end
