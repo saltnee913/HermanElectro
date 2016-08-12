@@ -386,7 +386,7 @@ function updatePower()
 						pushables[i].destroyed = true
 						if not editorMode and math.abs(pY-player.tileY)+math.abs(pX-player.tileX)<3 then kill() end
 						for k = 1, #animals do
-							if math.abs(pY-animals[k].tileY)+math.abs(pX-animals[k].tileX)<3 then animals[k]:kill() end
+							if math.abs(pY-animals[k].tileY)+math.abs(pX-animals[k].tileX)<2 then animals[k]:kill() end
 						end
 						room[pY][pX] = nil
 					else
@@ -1972,9 +1972,9 @@ function stepTrigger()
 				if room[i][j].gone then
 					room = room[i][j]:onEnd(room, i, j)
 					if room[i][j]:instanceof(tiles.bomb) then
-						if not editorMode and math.abs(i-player.tileY)+math.abs(j-player.tileX)<3 then kill() end
+						if not editorMode and math.abs(i-player.tileY)+math.abs(j-player.tileX)<2 then kill() end
 						for k = 1, #animals do
-							if math.abs(i-animals[k].tileY)+math.abs(j-animals[k].tileX)<3 then animals[k]:kill() end
+							if math.abs(i-animals[k].tileY)+math.abs(j-animals[k].tileX)<2 then animals[k]:kill() end
 						end
 					end
 					room[i][j] = nil
