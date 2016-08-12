@@ -1544,6 +1544,7 @@ function love.keypressed(key, unicode)
     	end
     	updateGameState(noPowerUpdate)
 	    if player.tileY~=player.prevTileY or player.tileX~=player.prevTileX or waitTurn then
+	    	stepTrigger()
 	    	for k = 1, #animals do
 				local ani = animals[k]
 				if not map.blocksMovement(ani.tileY, ani.tileX) then
@@ -1574,7 +1575,6 @@ function love.keypressed(key, unicode)
 				end
 			end   	
 	    	postAnimalMovement()
-			stepTrigger()
 			for i = 1, #pushables do
 		    	if room[pushables[i].tileY][pushables[i].tileX]~=nil then
 		    		if room[pushables[i].tileY][pushables[i].tileX].updatePowerOnEnter then
@@ -1594,54 +1594,6 @@ function love.keypressed(key, unicode)
 		    		noPowerUpdate = false
 		    	end
 	    	end
-			for k = 1, #animals do
-				if animals[k].prevTileX == animals[k].tileX and animals[k].prevTileY==animals[k].tileY then
-					local ani = animals[k]
-					if not map.blocksMovement(ani.tileY, ani.tileX) then
-						local movex = player.tileX
-						local movey = player.tileY
-						local animalDist = math.abs(movey-ani.tileY)+math.abs(movex-ani.tileX)
-						for i = 1, roomHeight do
-							for j = 1, roomLength do
-								if room[i][j]~=nil and room[i][j]:instanceof(tiles.meat) then
-									if math.abs(i-ani.tileY)+math.abs(j-ani.tileX)<animalDist then
-										animalDist = math.abs(i-ani.tileY)+math.abs(j-ani.tileX)
-										movex = j
-										movey = i
-									end
-								end
-							end
-						end
-						for i = 1, #pushables do
-							if pushables[i]:instanceof(pushableList.boombox) then
-							    if math.abs(pushables[i].tileY-ani.tileY)+math.abs(pushables[i].tileX-ani.tileX)<animalDist then
-									animalDist = math.abs(pushables[i].tileY-ani.tileY)+math.abs(pushables[i].tileX-ani.tileX)
-									movex = pushables[i].tileX
-									movey = pushables[i].tileY
-								end
-							end
-						end
-						ani:move(movex, movey, room, litTiles[ani.tileY][ani.tileX]==1)
-					end
-				end
-			--updateGameState()
-			end
-			resolveConflicts()
-			for i = 1, #animals do
-				if room[animals[i].tileY][animals[i].tileX]~=nil then
-					room[animals[i].tileY][animals[i].tileX]:onStayAnimal(animals[i])
-				end
-				 if room[animals[i].tileY][animals[i].tileX]~=nil and animals[i]:hasMoved() then
-					if room[animals[i].tileY][animals[i].tileX].updatePowerOnEnter then
-						noPowerUpdate = false
-					end
-				end
-				if animals[i].prevTileY~=nil and animals[i].prevTileX~=nil and room[animals[i].prevTileY][animals[i].prevTileX]~=nil then
-					if room[animals[i].prevTileY][animals[i].prevTileX].updatePowerOnLeave then
-						noPowerUpdate = false
-					end
-				end
-			end
 		end
     end
     --Debug console stuff
@@ -1678,16 +1630,22 @@ function postAnimalMovement()
 			end
 		end
 	end
+	resetAnimals()
 	for i = 1, #animals do
-		if animals[i].waitCounter>0 then
-			animals[i].waitCounter = animals[i].waitCounter-1
-		end
 		if animals[i]:hasMoved() and not animals[i].dead then
 			if room[animals[i].tileY][animals[i].tileX]~=nil then
 				room[animals[i].tileY][animals[i].tileX]:onEnterAnimal(animals[i])
 			end
 		elseif room[animals[i].tileY][animals[i].tileX]~=nil then
 			room[animals[i].tileY][animals[i].tileX]:onStayAnimal(animals[i])
+		end
+	end
+end
+
+function resetAnimals()
+	for i = 1, #animals do
+		if animals[i].waitCounter>0 then
+			animals[i].waitCounter = animals[i].waitCounter-1
 		end
 	end
 end
