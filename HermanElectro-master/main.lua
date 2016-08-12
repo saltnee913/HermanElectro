@@ -1001,6 +1001,16 @@ function love.draw()
 		--love.graphics.draw(pausescreen, width/2-width/2000*320, 10, 0, width/1000, width/1000)
 		love.graphics.draw(pausescreen, 0, 0, 0, width/pausescreen:getWidth(), height/pausescreen:getHeight())
 	end
+
+	--Display unlock screen
+	if unlocks.unlocksDisplay.timeLeft > 0 then
+		local unlock = unlocks[unlocks.unlocksDisplay.unlockToShow]
+		local uScale = width/500
+		local offsetY = (unlocks.frame:getHeight() - unlock.sprite:getHeight())/2
+		local offsetX = (unlocks.frame:getWidth() - unlock.sprite:getWidth())/2
+		love.graphics.draw(unlocks.frame, 0, height-unlocks.frame:getHeight()*uScale, 0, uScale, uScale)
+		love.graphics.draw(unlock.sprite, offsetX*uScale, height-(unlock.sprite:getHeight()+offsetY)*uScale, 0, uScale, uScale)
+	end
 	if not editorMode then
 		botText = "e to toggle editor mode"
 	else
@@ -1322,6 +1332,7 @@ function love.update(dt)
 	--key press
 	keyTimer.timeLeft = keyTimer.timeLeft - dt
 	tools.updateTimer(dt)
+	unlocks.updateTimer(dt)
 
 	--game timer
 	if started and completedRooms[mapy][mapx]~=1 then
@@ -1612,7 +1623,22 @@ function love.keypressed(key, unicode)
 				end
 			--updateGameState()
 			end
-			postAnimalMovement()
+			resolveConflicts()
+			for i = 1, #animals do
+				if room[animals[i].tileY][animals[i].tileX]~=nil then
+					room[animals[i].tileY][animals[i].tileX]:onStayAnimal(animals[i])
+				end
+				 if room[animals[i].tileY][animals[i].tileX]~=nil and animals[i]:hasMoved() then
+					if room[animals[i].tileY][animals[i].tileX].updatePowerOnEnter then
+						noPowerUpdate = false
+					end
+				end
+				if animals[i].prevTileY~=nil and animals[i].prevTileX~=nil and room[animals[i].prevTileY][animals[i].prevTileX]~=nil then
+					if room[animals[i].prevTileY][animals[i].prevTileX].updatePowerOnLeave then
+						noPowerUpdate = false
+					end
+				end
+			end
 		end
     end
     --Debug console stuff
@@ -1659,22 +1685,6 @@ function postAnimalMovement()
 			end
 		elseif room[animals[i].tileY][animals[i].tileX]~=nil then
 			room[animals[i].tileY][animals[i].tileX]:onStayAnimal(animals[i])
-		end
-	end
-	resolveConflicts()
-	for i = 1, #animals do
-		if room[animals[i].tileY][animals[i].tileX]~=nil then
-			room[animals[i].tileY][animals[i].tileX]:onStayAnimal(animals[i])
-		end
-		 if room[animals[i].tileY][animals[i].tileX]~=nil and animals[i]:hasMoved() then
-			if room[animals[i].tileY][animals[i].tileX].updatePowerOnEnter then
-				noPowerUpdate = false
-			end
-		end
-		if animals[i].prevTileY~=nil and animals[i].prevTileX~=nil and room[animals[i].prevTileY][animals[i].prevTileX]~=nil then
-			if room[animals[i].prevTileY][animals[i].prevTileX].updatePowerOnLeave then
-				noPowerUpdate = false
-			end
 		end
 	end
 end

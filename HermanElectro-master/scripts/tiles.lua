@@ -1044,7 +1044,9 @@ function P.beggar:onEnter(player)
 		self.counter = 0
 		tools.giveSupertools(1)
 		local killBeggar = math.random()
-		if killBeggar<0.5 then self:destroy() end
+		if killBeggar<0.5 then
+			self:destroy()
+		end
 	end
 end
 function P.beggar:getInfoText()
