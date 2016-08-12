@@ -381,14 +381,16 @@ function updatePower()
 				(room[pY][pX-1]~=nil and room[pY][pX-1].powered and room[pY][pX-1].dirSend[2]==1) or
 				(room[pY][pX+1]~=nil and room[pY][pX+1].powered and room[pY][pX+1].dirSend[4]==1) then
 					if pushables[i]:instanceof(pushableList.bombBox) then
-						room[pY][pX] = tiles.bomb:new()
-						room = room[pY][pX]:onEnd(room, pY, pX)
-						pushables[i].destroyed = true
-						if not editorMode and math.abs(pY-player.tileY)+math.abs(pX-player.tileX)<3 then kill() end
-						for k = 1, #animals do
-							if math.abs(pY-animals[k].tileY)+math.abs(pX-animals[k].tileX)<2 then animals[k]:kill() end
-						end
-						room[pY][pX] = nil
+						if not pushables[i].destroyed then
+							room[pY][pX] = tiles.bomb:new()
+							room = room[pY][pX]:onEnd(room, pY, pX)
+							pushables[i].destroyed = true
+							if not editorMode and math.abs(pY-player.tileY)+math.abs(pX-player.tileX)<2 then kill() end
+							for k = 1, #animals do
+								if math.abs(pY-animals[k].tileY)+math.abs(pX-animals[k].tileX)<2 then animals[k]:kill() end
+							end
+							room[pY][pX] = nil
+					end
 					else
 						powerTestPushable(pY, pX, 0)
 					end
