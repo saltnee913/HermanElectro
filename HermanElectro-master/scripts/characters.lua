@@ -9,7 +9,7 @@ function P.character:onBegin()
 	self:onCharLoad()
 end
 function P.character:setStartingTools()
-	for i = 1, 7 do
+	for i = 1, tools.numNormalTools do
 		tools[i].numHeld = self.startingTools[i]
 	end
 end
