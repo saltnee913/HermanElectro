@@ -16,6 +16,7 @@ animalList = require('scripts.animals')
 tools = require('scripts.tools')
 editor = require('scripts.editor')
 unlocks = require('scripts.unlocks')
+characters = require('scripts.characters')
 
 loadedOnce = false
 
@@ -105,6 +106,9 @@ function love.load()
 	love.graphics.setBackgroundColor(255,255,255)
 	if not loadedOnce then
 		started = false
+		charSelect = false
+		character = characters[1]
+		selectedBox = {x = 0, y = 0}
 		yOffset = -6
 		mouseDown = 0
 		regularLength = 24
@@ -184,7 +188,8 @@ function startGame()
 	map.floorOrder = map.defaultFloorOrder
 	loadNextLevel()
 	love.load()
-	started = true
+	--started = true
+	charSelect = true
 end
 
 function startTutorial()
@@ -379,7 +384,8 @@ function updatePower()
 				if (room[pY-1]~=nil and room[pY-1][pX]~=nil and room[pY-1][pX].powered and room[pY-1][pX].dirSend[3]==1) or
 				(room[pY+1]~=nil and room[pY+1][pX]~=nil and room[pY+1][pX].powered and room[pY+1][pX].dirSend[1]==1) or
 				(room[pY][pX-1]~=nil and room[pY][pX-1].powered and room[pY][pX-1].dirSend[2]==1) or
-				(room[pY][pX+1]~=nil and room[pY][pX+1].powered and room[pY][pX+1].dirSend[4]==1) then
+				(room[pY][pX+1]~=nil and 
+					room[pY][pX+1].powered and room[pY][pX+1].dirSend[4]==1) then
 					if pushables[i]:instanceof(pushableList.bombBox) then
 						if not pushables[i].destroyed then
 							room[pY][pX] = tiles.bomb:new()
@@ -705,8 +711,29 @@ end
 
 function love.draw()
 	love.graphics.setBackgroundColor(0,0,0)
-	if not started then
+	if not started and not charSelect then
 		love.graphics.draw(startscreen, 0, 0, 0, width/startscreen:getWidth(), height/startscreen:getHeight())
+		return
+	elseif charSelect then
+		love.graphics.setColor(150, 200, 0)
+		love.graphics.rectangle("fill", selectedBox.x*width/5, selectedBox.y*height/3, width/5, height/3)
+		love.graphics.setColor(255, 255, 255)
+		for i = 1, 2 do
+			love.graphics.line(0, height/3*i, width, height/3*i)
+		end
+		for i = 1, 4 do
+			love.graphics.line(width/5*i, 0, width/5*i, height)
+		end
+
+		for i = 1, #characters do
+			local row = math.floor((i+4)/5)
+			local column = i%5
+			if column==0 then column=5 end
+			love.graphics.draw(characters[i].sprite, width/5*column-width/10-10, height/3*(row-1)+height/6+20, 0, player.scale, player.scale)
+			love.graphics.print(characters[i].name, width/5*column-width/10-10, height/3*(row-1)+height/6-100)
+			love.graphics.print(characters[i].description, width/5*column-width/10-10, height/3*(row-1)+height/6-80)
+		end
+
 		return
 	end
 
@@ -1350,7 +1377,34 @@ function love.textinput(text)
 end
 
 function love.keypressed(key, unicode)
-
+	if charSelect then
+		if key == "return" then
+			--enter in selected character
+			charSelect = false
+			started = true
+			local charNum = 1
+			charNum = charNum+5*selectedBox.y
+			charNum = charNum+selectedBox.x
+			character = characters[charNum]
+			character:onBegin()
+		elseif key == "up" then
+			if selectedBox.y>0 then
+				selectedBox.y = selectedBox.y-1
+			end
+		elseif key == "down" then
+			if selectedBox.y<2 then
+				selectedBox.y = selectedBox.y+1
+			end
+		elseif key == "left" then
+			if selectedBox.x>0 then
+				selectedBox.x = selectedBox.x-1
+			end
+		elseif key == "right" then
+			if selectedBox.x<4 then
+				selectedBox.x = selectedBox.x+1
+			end
+		end
+	end
 
 	if not started then
 		if key=="s" then
@@ -1746,6 +1800,12 @@ function checkDeath()
 end
 
 function love.mousepressed(x, y, button, istouch)
+	if charSelect then
+		selectedBox.y = math.floor(y/(height/3))
+		selectedBox.x = math.floor(x/(width/5))
+		return
+	end
+
 	if gamePaused then
 		return
 	end
