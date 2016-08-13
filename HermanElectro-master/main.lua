@@ -107,7 +107,6 @@ function love.load()
 	if not loadedOnce then
 		started = false
 		charSelect = false
-		character = characters[1]
 		selectedBox = {x = 0, y = 0}
 		yOffset = -6
 		mouseDown = 0
@@ -153,7 +152,8 @@ function love.load()
 		y = (6-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10, prevTileX = 3, prevTileY = 10,
 		prevx = (3-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10,
 		prevy = (10-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10,
-		width = 20, height = 20, speed = 250, sprite = love.graphics.newImage('Graphics/herman_sketch.png'), scale = 0.25 * width/1200}
+		width = 20, height = 20, speed = 250, scale = 0.25 * width/1200,
+		character = characters[1]}
 	if loadTutorial then
 		player.enterX = player.tileX
 		player.enterY = player.tileY
@@ -188,6 +188,7 @@ function startGame()
 	map.floorOrder = map.defaultFloorOrder
 	loadNextLevel()
 	love.load()
+	tools.resetTools()
 	--started = true
 	charSelect = true
 end
@@ -201,6 +202,7 @@ function startTutorial()
 	player.totalItemsNeeded = {0,0,0,0,0,0,0}
 	loadNextLevel()
 	love.load()
+	tools.resetTools()
 	started = true
 end
 
@@ -209,6 +211,7 @@ function startDebug()
 	map.floorOrder = {'RoomData/debugFloor.json'}
 	loadNextLevel()
 	love.load()
+	tools.resetTools()
 	started = true
 end
 
@@ -897,16 +900,16 @@ function love.draw()
 		if player.tileY==j then
 			player.x = (player.tileX-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
 			player.y = (player.tileY-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
-			love.graphics.draw(player.sprite, player.x-player.sprite:getWidth()*player.scale/2, player.y-player.sprite:getHeight()*player.scale, 0, player.scale, player.scale)
+			love.graphics.draw(player.character.sprite, player.x-player.character.sprite:getWidth()*player.scale/2, player.y-player.character.sprite:getHeight()*player.scale, 0, player.scale, player.scale)
 		end
 
 		--love.graphics.draw(walls, 0, 0, 0, width/walls:getWidth(), height/walls:getHeight())
 	end
 	if tools.toolDisplayTimer.timeLeft > 0 then
 		local toolWidth = tools[1].image:getWidth()
-		local toolScale = player.sprite:getWidth() * player.scale/toolWidth
+		local toolScale = player.character.sprite:getWidth() * player.scale/toolWidth
 		for i = 1, #tools.toolsShown do
-			love.graphics.draw(tools[tools.toolsShown[i]].image, (i-math.ceil(#tools.toolsShown)/2-1)*toolScale*toolWidth+player.x, player.y - player.sprite:getHeight()*player.scale - tools[1].image:getHeight()*toolScale, 0, toolScale, toolScale)
+			love.graphics.draw(tools[tools.toolsShown[i]].image, (i-math.ceil(#tools.toolsShown)/2-1)*toolScale*toolWidth+player.x, player.y - player.character.sprite:getHeight()*player.scale - tools[1].image:getHeight()*toolScale, 0, toolScale, toolScale)
 		end
 	end
 	for i = 1, roomLength do
@@ -1385,8 +1388,8 @@ function love.keypressed(key, unicode)
 			local charNum = 1
 			charNum = charNum+5*selectedBox.y
 			charNum = charNum+selectedBox.x
-			character = characters[charNum]
-			character:onBegin()
+			player.character = characters[charNum]
+			player.character:onBegin()
 		elseif key == "up" then
 			if selectedBox.y>0 then
 				selectedBox.y = selectedBox.y-1
