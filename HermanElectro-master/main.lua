@@ -148,12 +148,20 @@ function love.load()
 	--print(love.graphics.getWidth(f1))
 	scale = (width - 2*wallSprite.width)/(20.3 * 16)*5/6
 	floor = tiles.tile
-	player = { dead = false, waitCounter = 0, tileX = 1, tileY = 6, x = (1-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10, 
-		y = (6-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10, prevTileX = 3, prevTileY = 10,
-		prevx = (3-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10,
-		prevy = (10-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10,
-		width = 20, height = 20, speed = 250, scale = 0.25 * width/1200,
-		character = characters[1]}
+	if player == nil then
+		player = { dead = false, waitCounter = 0, tileX = 1, tileY = 6, x = (1-1)*scale*floor.sprite:getWidth()+wallSprite.width+	floor.sprite:getWidth()/2*scale-10, 
+			y = (6-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10, prevTileX = 3, prevTileY 	= 10,
+			prevx = (3-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10,
+			prevy = (10-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10,
+			width = 20, height = 20, speed = 250, scale = 0.25 * width/1200,
+			character = characters[1]}
+	else
+		player.dead = false
+		player.tileX = 1
+		player.tileY = 6
+	end
+	player.character:onBegin()
+
 	if loadTutorial then
 		player.enterX = player.tileX
 		player.enterY = player.tileY
@@ -203,6 +211,8 @@ function startTutorial()
 	loadNextLevel()
 	love.load()
 	tools.resetTools()
+	player.character = characters.herman
+	player.character:onBegin()
 	started = true
 end
 
@@ -212,7 +222,7 @@ function startDebug()
 	loadNextLevel()
 	love.load()
 	tools.resetTools()
-	started = true
+	charSelect = true
 end
 
 function loadFirstLevel()
