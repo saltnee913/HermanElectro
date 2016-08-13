@@ -1062,7 +1062,7 @@ function P.beggar:destroy()
 	self.sprite = self.deadSprite
 	self.alive = false
 	local paysOut = math.random()
-	if paysOut<0.5 then return end
+	if paysOut<0.5 and not character.name=="Felix" then return end
 	tools.giveSupertools(1)
 	--[[filledSlots = {0,0,0}
 	slot = 1
@@ -1270,6 +1270,18 @@ function P.accelerator:xAccel()
 	else return 0 end
 end
 
+P.unpoweredAccelerator = P.accelerator:new{name = "unpoweredaccelerator", canBePowered = false, sprite = love.graphics.newImage('Graphics/unpoweredaccelerator.png')}
+function P.unpoweredAccelerator:yAccel()
+	if self.rotation==0 then return -1
+	elseif self.rotation==2 then return 1
+	else return 0 end
+end
+function P.unpoweredAccelerator:xAccel()
+	if self.rotation==1 then return 1
+	elseif self.rotation==3 then return -1
+	else return 0 end
+end
+
 P.bombBoxTile = P.tile:new{name = "bombBoxTile", pushable = pushableList[8]:new(), listIndex = 8, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
 
 tiles[1] = P.invisibleTile
@@ -1359,5 +1371,6 @@ tiles[84] = P.unbreakableTWire
 tiles[85] = P.unbreakableCornerWire
 tiles[86] = P.accelerator
 tiles[87] = P.bombBoxTile
+tiles[88] = P.unpoweredAccelerator
 
 return tiles
