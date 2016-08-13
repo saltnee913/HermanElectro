@@ -1398,6 +1398,9 @@ function love.keypressed(key, unicode)
 			local charNum = 1
 			charNum = charNum+5*selectedBox.y
 			charNum = charNum+selectedBox.x
+			if charNum > #characters then
+				charNum = #characters
+			end
 			player.character = characters[charNum]
 			player.character:onBegin()
 		elseif key == "up" then
