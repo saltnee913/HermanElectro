@@ -1643,6 +1643,16 @@ function love.keypressed(key, unicode)
 					end
 					ani:move(movex, movey, room, litTiles[ani.tileY][ani.tileX]==1)
 				end
+				if room[ani.tileY][ani.tileX]~=nil then
+					if room[ani.tileY][ani.tileX].updatePowerOnEnter then
+						noPowerUpdate = false
+					end
+				end
+				if room[ani.prevTileY][ani.prevTileX]~=nil then
+					if room[ani.prevTileY][ani.prevTileX].updatePowerOnLeave then
+						noPowerUpdate = false
+					end
+				end
 			end   	
 	    	postAnimalMovement()
 			for i = 1, #pushables do
