@@ -85,16 +85,16 @@ function love.load()
 	print(json.encode(roomsToFix, state))
 	game.crash()]]
 
-	level = 0
-	loadFirstLevel()
 	--1=saw
 	--toolMode = 1
+
 	tool = 0
 	for i = 1, #tools do
 		tools[i].numHeld = 0
 	end
 	specialTools = {0,0,0}
 	animals = {}
+	animalCounter = 1
 	pushables = {}
 	--width = 16*screenScale
 	--height = 9*screenScale
@@ -153,14 +153,13 @@ function love.load()
 			y = (6-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10, prevTileX = 3, prevTileY 	= 10,
 			prevx = (3-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10,
 			prevy = (10-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10,
-			width = 20, height = 20, speed = 250, scale = 0.25 * width/1200,
+			width = 20, height = 20, speed = 250,
 			character = characters[1]}
 	else
 		player.dead = false
 		player.tileX = 1
 		player.tileY = 6
 	end
-	player.character:onBegin()
 
 	if loadTutorial then
 		player.enterX = player.tileX
@@ -171,7 +170,6 @@ function love.load()
 	function player:getTileLoc()
 		return {x = self.x/(floor.sprite:getWidth()*scale), y = self.y/(floor.sprite:getWidth()*scale)}
 	end
-	enterRoom(-1)
 end
 
 function loadNextLevel()
@@ -194,7 +192,6 @@ end
 function startGame()
 	loadTutorial = false
 	map.floorOrder = map.defaultFloorOrder
-	loadNextLevel()
 	love.load()
 	tools.resetTools()
 	--started = true
@@ -208,7 +205,7 @@ function startTutorial()
 	player.enterY = player.tileY
 	player.totalItemsGiven = {0,0,0,0,0,0,0}
 	player.totalItemsNeeded = {0,0,0,0,0,0,0}
-	loadNextLevel()
+	loadFirstLevel()
 	love.load()
 	tools.resetTools()
 	player.character = characters.herman
@@ -219,7 +216,6 @@ end
 function startDebug()
 	loadTutorial = false
 	map.floorOrder = {'RoomData/debugFloor.json'}
-	loadNextLevel()
 	love.load()
 	tools.resetTools()
 	charSelect = true
@@ -233,7 +229,6 @@ end
 function loadLevel(floorPath)
 	animals = {}
 	pushables = {}
-	level = level+1
 	map.loadFloor(floorPath)
 	mainMap = map.generateMap(os.time())
 	mapHeight = mainMap.height
@@ -742,7 +737,7 @@ function love.draw()
 			local row = math.floor((i+4)/5)
 			local column = i%5
 			if column==0 then column=5 end
-			love.graphics.draw(characters[i].sprite, width/5*column-width/10-10, height/3*(row-1)+height/6+20, 0, player.scale, player.scale)
+			love.graphics.draw(characters[i].sprite, width/5*column-width/10-10, height/3*(row-1)+height/6+20, 0, player.character.scale, player.character.scale)
 			love.graphics.print(characters[i].name, width/5*column-width/10-10, height/3*(row-1)+height/6-100)
 			love.graphics.print(characters[i].description, width/5*column-width/10-10, height/3*(row-1)+height/6-80)
 		end
@@ -910,16 +905,16 @@ function love.draw()
 		if player.tileY==j then
 			player.x = (player.tileX-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
 			player.y = (player.tileY-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
-			love.graphics.draw(player.character.sprite, player.x-player.character.sprite:getWidth()*player.scale/2, player.y-player.character.sprite:getHeight()*player.scale, 0, player.scale, player.scale)
+			love.graphics.draw(player.character.sprite, player.x-player.character.sprite:getWidth()*player.character.scale/2, player.y-player.character.sprite:getHeight()*player.character.scale, 0, player.character.scale, player.character.scale)
 		end
 
 		--love.graphics.draw(walls, 0, 0, 0, width/walls:getWidth(), height/walls:getHeight())
 	end
 	if tools.toolDisplayTimer.timeLeft > 0 then
 		local toolWidth = tools[1].image:getWidth()
-		local toolScale = player.character.sprite:getWidth() * player.scale/toolWidth
+		local toolScale = player.character.sprite:getWidth() * player.character.scale/toolWidth
 		for i = 1, #tools.toolsShown do
-			love.graphics.draw(tools[tools.toolsShown[i]].image, (i-math.ceil(#tools.toolsShown)/2-1)*toolScale*toolWidth+player.x, player.y - player.character.sprite:getHeight()*player.scale - tools[1].image:getHeight()*toolScale, 0, toolScale, toolScale)
+			love.graphics.draw(tools[tools.toolsShown[i]].image, (i-math.ceil(#tools.toolsShown)/2-1)*toolScale*toolWidth+player.x, player.y - player.character.sprite:getHeight()*player.character.scale - tools[1].image:getHeight()*toolScale, 0, toolScale, toolScale)
 		end
 	end
 	for i = 1, roomLength do
@@ -1403,6 +1398,7 @@ function love.keypressed(key, unicode)
 			end
 			player.character = characters[charNum]
 			player.character:onBegin()
+			loadFirstLevel()
 		elseif key == "up" then
 			if selectedBox.y>0 then
 				selectedBox.y = selectedBox.y-1
@@ -1501,6 +1497,8 @@ function love.keypressed(key, unicode)
 				end
 			else
 				love.load()
+				loadFirstLevel()
+				player.character:onBegin()
 			end
 		end
 	end
@@ -1893,7 +1891,7 @@ function love.mousemoved(x, y, dx, dy)
 	local bigRoomTranslation = getTranslation()
 	tileLocX = math.ceil((mouseX-wallSprite.width)/(scale*floor.sprite:getWidth()))-bigRoomTranslation.x
 	tileLocY = math.ceil((mouseY-wallSprite.height)/(scale*floor.sprite:getHeight()))-bigRoomTranslation.y
-	if room[tileLocY+1] ~= nil and room[tileLocY+1][tileLocX] ~= nil then
+	if room ~= nil and room[tileLocY+1] ~= nil and room[tileLocY+1][tileLocX] ~= nil then
 		tileLocY = math.ceil((mouseY-wallSprite.height-room[tileLocY+1][tileLocX]:getYOffset()*scale)/(scale*floor.sprite:getHeight()))-bigRoomTranslation.y
 	end
 	if editorMode then

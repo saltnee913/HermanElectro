@@ -63,7 +63,6 @@ P.unlock = Object:new{name = 'generic', unlocked = false, sprite = tiles.fog.spr
 
 P.tileUnlock = P.unlock:new{name = 'tile', tileIds = {1}, sprite = tiles.tile.sprite}
 P.boxUnlock = P.tileUnlock:new{name = 'box', tileIds = {66}, sprite = tiles.boxTile.sprite}
-P.booksUnlock = P.tileUnlock:new{name = 'boox', tileIds = {38}, sprite = tiles.mousetrap.sprite}
 
 P.roomUnlock = P.unlock:new{name = 'room', roomIds = {"1"}}
 P.beggarPartyUnlock = P.roomUnlock:new{name = 'beggars love you', roomIds = {"beggar_party"}, sprite = tiles.beggar.sprite}

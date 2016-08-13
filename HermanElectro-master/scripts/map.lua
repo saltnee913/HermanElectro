@@ -312,6 +312,8 @@ end
 
 function P.generateMap(seed)
 	math.randomseed(seed)
+	print('lookie here'..P.floorInfo.generateFunction)
+	print(P.floorInfo.numRooms)
 	return P[P.floorInfo.generateFunction]()
 end
 
@@ -490,7 +492,7 @@ function P.generateMapFinal()
 		roomChoiceid = util.chooseRandomElement(randomRoomsArray)
 	end
 
-	newmap[choice.y][choice.x] = {roomid = roomChoiceid, room = P.createRoom(roomChoiceid, arr), isFinal = false, isInitial = false}
+	newmap[choice.y][choice.x] = {roomid = roomChoiceid, room = P.createRoom(roomChoiceid), isFinal = false, isInitial = false}
 
 	return newmap
 end
