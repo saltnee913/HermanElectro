@@ -28,7 +28,9 @@ end
 P.most = P.character:new{name = "Ben", description = "The Explorer",
   sprite = love.graphics.newImage('GraphicsTony/Ben.png'), scale = 0.7 * width/1200}
 function P.most:onCharLoad()
-	map.floorOrder = {'RoomData/bigfloor.json', 'RoomData/floor6.json'}
+	if map.floorOrder == map.defaultFloorOrder then
+		map.floorOrder = {'RoomData/bigfloor.json', 'RoomData/floor6.json'}
+	end
 end
 
 P[1] = P.herman
