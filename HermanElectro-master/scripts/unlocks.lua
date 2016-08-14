@@ -68,10 +68,14 @@ P.acceleratorUnlock = P.tileUnlock:new{name = 'accelerator', tileIds = {86,88}, 
 P.roomUnlock = P.unlock:new{name = 'room', roomIds = {"1"}}
 P.beggarPartyUnlock = P.roomUnlock:new{name = 'beggars love you', roomIds = {"beggar_party"}, sprite = tiles.beggar.sprite}
 
-P.winUnlocks = {1, 2}
+P.charUnlock = P.unlock:new{name = 'character', charIds = {1}}
+P.mostUnlock = P.unlock:new{name = 'ben most', charIds = {3}, sprite = love.graphics.newImage('GraphicsTony/Ben.png')}
+
+P.winUnlocks = {1, 2, 4}
 
 P[1] = P.boxUnlock
 P[2] = P.acceleratorUnlock
 P[3] = P.beggarPartyUnlock
+P[4] = P.mostUnlock
 
 return unlocks
