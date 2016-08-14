@@ -578,6 +578,10 @@ function P.delectrifier:useToolTile(tile)
 	self.numHeld = self.numHeld - 1
 	tile.canBePowered = false
 	if tile:instanceof(tiles.powerSupply) or tile:instanceof(tiles.notGate) or tile:instanceof(tiles.wire) then tile:destroy() end
+	if tile.overlay ~= nil then
+		tile.overlay.canBePowered = false
+		if tile.overlay:instanceof(tiles.powerSupply) or tile.overlay:instanceof(tiles.notGate) or tile.overlay:instanceof(tiles.wire) then tile.overlay:destroy() end
+	end
 end
 
 P.charger = P.superTool:new{name = 'charger', baseRange = 1, image = love.graphics.newImage('Graphics/charger.png')}
