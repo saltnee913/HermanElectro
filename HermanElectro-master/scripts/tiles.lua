@@ -1293,6 +1293,10 @@ end
 
 P.bombBoxTile = P.tile:new{name = "bombBoxTile", pushable = pushableList[8]:new(), listIndex = 8, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
 
+P.giftBoxTile = P.tile:new{name = "giftBoxTile", pushable = pushableList[9]:new(), listIndex = 9, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
+
+P.jackInTheBoxTile = P.tile:new{name = "jackInTheBoxTile", pushable = pushableList[10]:new(), listIndex = 10, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
+
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
 tiles[3] = P.powerSupply
@@ -1381,5 +1385,7 @@ tiles[85] = P.unbreakableCornerWire
 tiles[86] = P.accelerator
 tiles[87] = P.bombBoxTile
 tiles[88] = P.unpoweredAccelerator
+tiles[89] = P.giftBoxTile
+tiles[90] = P.jackInTheBoxTile
 
 return tiles
