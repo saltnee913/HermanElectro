@@ -147,7 +147,7 @@ function P.animalBox:playerCanMove()
 	return false
 end
 
-P.conductiveBox = P.box:new{name = "conductiveBox", sprite = love.graphics.newImage('Graphics/conductiveBox.png'), conductive = true}
+P.conductiveBox = P.box:new{name = "conductiveBox", powered = false, sprite = love.graphics.newImage('Graphics/conductiveBox.png'), conductive = true}
 
 P.boombox = P.box:new{name = "boombox", sprite = love.graphics.newImage('Graphics/boombox.png')}
 
