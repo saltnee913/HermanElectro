@@ -1109,7 +1109,7 @@ function P.donationMachine:onEnter(player)
 	tools[tool].numHeld = tools[tool].numHeld - 1
 	donations = donations+math.ceil((10-(floorIndex))/2)
 	floorDonations = floorDonations+1
-	gameTime = gameTime+20
+	gameTime.timeLeft = gameTime.timeLeft+gameTime.donateTime
 end
 
 P.entrancePortal = P.tile:new{name = "entrancePortal", sprite = love.graphics.newImage('Graphics/entrancePortal.png')}
