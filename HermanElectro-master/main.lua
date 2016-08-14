@@ -1833,6 +1833,11 @@ function love.mousepressed(x, y, button, istouch)
 	if gamePaused then
 		return
 	end
+
+	if not started then
+		return
+	end
+	
 	local bigRoomTranslation = getTranslation()
 	tileLocX = math.ceil((mouseX-wallSprite.width)/(scale*floor.sprite:getWidth()))-bigRoomTranslation.x
 	tileLocY = math.ceil((mouseY-wallSprite.height)/(scale*floor.sprite:getHeight()))-bigRoomTranslation.y
