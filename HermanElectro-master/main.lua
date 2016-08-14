@@ -385,28 +385,39 @@ function updatePower()
 				end
 			end
 		end
-		for i = 1, #pushables do
-			if pushables[i].conductive then
-				local pX = pushables[i].tileX
-				local pY = pushables[i].tileY
-				if (room[pY-1]~=nil and room[pY-1][pX]~=nil and room[pY-1][pX].powered and room[pY-1][pX].dirSend[3]==1) or
-				(room[pY+1]~=nil and room[pY+1][pX]~=nil and room[pY+1][pX].powered and room[pY+1][pX].dirSend[1]==1) or
-				(room[pY][pX-1]~=nil and room[pY][pX-1].powered and room[pY][pX-1].dirSend[2]==1) or
-				(room[pY][pX+1]~=nil and 
-					room[pY][pX+1].powered and room[pY][pX+1].dirSend[4]==1) then
-					if pushables[i]:instanceof(pushableList.bombBox) then
-						if not pushables[i].destroyed then
-							room[pY][pX] = tiles.bomb:new()
-							room = room[pY][pX]:onEnd(room, pY, pX)
-							pushables[i].destroyed = true
-							if not editorMode and math.abs(pY-player.tileY)+math.abs(pX-player.tileX)<2 then kill() end
-							for k = 1, #animals do
-								if math.abs(pY-animals[k].tileY)+math.abs(pX-animals[k].tileX)<2 then animals[k]:kill() end
-							end
-							room[pY][pX] = nil
+		for i = 1, 5 do
+			for i = 1, #pushables do
+				if pushables[i].conductive then
+					local conductPower = false
+					local pX = pushables[i].tileX
+					local pY = pushables[i].tileY
+					if (room[pY-1]~=nil and room[pY-1][pX]~=nil and room[pY-1][pX].powered and room[pY-1][pX].dirSend[3]==1) or
+					(room[pY+1]~=nil and room[pY+1][pX]~=nil and room[pY+1][pX].powered and room[pY+1][pX].dirSend[1]==1) or
+					(room[pY][pX-1]~=nil and room[pY][pX-1].powered and room[pY][pX-1].dirSend[2]==1) or
+					(room[pY][pX+1]~=nil and room[pY][pX+1].powered and room[pY][pX+1].dirSend[4]==1) then
+						conductPower = true
 					end
-					else
-						powerTestPushable(pY, pX, 0)
+					for j = 1, #pushables do
+						if pushables[j].powered and not pushables[j].destroyed then
+							if pushables[i].tileY == pushables[j].tileY and math.abs(pushables[i].tileX-pushables[j].tileX)==1
+							or pushables[i].tileX == pushables[j].tileX and math.abs(pushables[j].tileY-pushables[i].tileY)==1 then
+								conductPower = true
+							end
+						end
+					end
+					if conductPower then
+						if pushables[i]:instanceof(pushableList.bombBox) then
+							if not pushables[i].destroyed then
+								room[pY][pX] = tiles.bomb:new()
+								room = room[pY][pX]:onEnd(room, pY, pX)
+								room[pY][pX]:explode(pY, pX)
+								pushables[i].destroyed = true
+								room[pY][pX] = nil
+							end
+						else
+							powerTestPushable(pY, pX, 0)
+						end
+						pushables[i].powered = true
 					end
 				end
 			end
@@ -1833,6 +1844,11 @@ function love.mousepressed(x, y, button, istouch)
 	if gamePaused then
 		return
 	end
+
+	if not started then
+		return
+	end
+
 	local bigRoomTranslation = getTranslation()
 	tileLocX = math.ceil((mouseX-wallSprite.width)/(scale*floor.sprite:getWidth()))-bigRoomTranslation.x
 	tileLocY = math.ceil((mouseY-wallSprite.height)/(scale*floor.sprite:getHeight()))-bigRoomTranslation.y
@@ -2022,10 +2038,7 @@ function stepTrigger()
 				if room[i][j].gone then
 					room = room[i][j]:onEnd(room, i, j)
 					if room[i][j]:instanceof(tiles.bomb) then
-						if not editorMode and math.abs(i-player.tileY)+math.abs(j-player.tileX)<2 then kill() end
-						for k = 1, #animals do
-							if math.abs(i-animals[k].tileY)+math.abs(j-animals[k].tileX)<2 then animals[k]:kill() end
-						end
+						room[i][j]:explode(i,j)
 					end
 					room[i][j] = nil
 				end

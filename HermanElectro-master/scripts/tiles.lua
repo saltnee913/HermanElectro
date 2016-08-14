@@ -932,6 +932,15 @@ function P.bomb:onEnd(map, x, y)
 	end
 	return map
 end
+function P.bomb:explode(i,j)
+	if not editorMode and math.abs(player.tileY-i)<2 and math.abs(player.tileX-j)<2 then kill() end
+	for k = 1, #animals do
+		if math.abs(animals[k].tileY-i)<2 and math.abs(animals[k].tileX-j)<2 then animals[k]:kill() end
+	end
+	for k = 1, #pushables do
+		if math.abs(pushables[k].tileY-i)<2 and math.abs(pushables[k].tileX-j)<2 then pushables[k].destroyed = true end
+	end
+end
 
 P.capacitor = P.conductiveTile:new{name = "capacitor", counter = 3, maxCounter = 3, dirAccept = {1,0,1,0}, sprite = love.graphics.newImage('Graphics/capacitor.png'), poweredSprite = love.graphics.newImage('Graphics/capacitor.png')}
 function P.capacitor:updateTile(dir)
@@ -1284,6 +1293,10 @@ end
 
 P.bombBoxTile = P.tile:new{name = "bombBoxTile", pushable = pushableList[8]:new(), listIndex = 8, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
 
+P.giftBoxTile = P.tile:new{name = "giftBoxTile", pushable = pushableList[9]:new(), listIndex = 9, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
+
+P.jackInTheBoxTile = P.tile:new{name = "jackInTheBoxTile", pushable = pushableList[10]:new(), listIndex = 10, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
+
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
 tiles[3] = P.powerSupply
@@ -1372,5 +1385,7 @@ tiles[85] = P.unbreakableCornerWire
 tiles[86] = P.accelerator
 tiles[87] = P.bombBoxTile
 tiles[88] = P.unpoweredAccelerator
+tiles[89] = P.giftBoxTile
+tiles[90] = P.jackInTheBoxTile
 
 return tiles
