@@ -1062,7 +1062,7 @@ function P.beggar:destroy()
 	self.sprite = self.deadSprite
 	self.alive = false
 	local paysOut = math.random()
-	if paysOut<0.5 and not character.name=="Felix" then return end
+	if paysOut<0.5 and not player.character.name==characters.felix.name then return end
 	tools.giveSupertools(1)
 	--[[filledSlots = {0,0,0}
 	slot = 1
