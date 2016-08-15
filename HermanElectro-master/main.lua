@@ -752,7 +752,7 @@ function love.draw()
 			local row = math.floor((i+4)/5)
 			local column = i%5
 			if column==0 then column=5 end
-			love.graphics.draw(charsToDraw[i].sprite, width/5*column-width/10-10, height/3*(row-1)+height/6+20, 0, player.character.scale, player.character.scale)
+			love.graphics.draw(charsToDraw[i].sprite, width/5*column-width/10-10, height/3*(row-1)+height/6+20, 0, charsToDraw[i].scale, charsToDraw[i].scale)
 			love.graphics.print(charsToDraw[i].name, width/5*column-width/10-10, height/3*(row-1)+height/6-100)
 			love.graphics.print(charsToDraw[i].description, width/5*column-width/10-10, height/3*(row-1)+height/6-80)
 		end
