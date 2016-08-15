@@ -312,8 +312,6 @@ end
 
 function P.generateMap(seed)
 	math.randomseed(seed)
-	print('lookie here'..P.floorInfo.generateFunction)
-	print(P.floorInfo.numRooms)
 	return P[P.floorInfo.generateFunction]()
 end
 

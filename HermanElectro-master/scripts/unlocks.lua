@@ -70,6 +70,7 @@ P.beggarPartyUnlock = P.roomUnlock:new{name = 'beggars love you', roomIds = {"be
 
 P.charUnlock = P.unlock:new{name = 'character', charIds = {1}}
 P.mostUnlock = P.unlock:new{name = 'ben most', charIds = {3}, sprite = love.graphics.newImage('GraphicsTony/Ben.png')}
+P.erikUnlock = P.unlock:new{name = 'erik knighton', charIds = {4}, sprite = tiles.beggar.sprite}
 
 P.winUnlocks = {1, 2, 4}
 
@@ -77,5 +78,6 @@ P[1] = P.boxUnlock
 P[2] = P.acceleratorUnlock
 P[3] = P.beggarPartyUnlock
 P[4] = P.mostUnlock
+P[5] = P.erikUnlock
 
 return unlocks

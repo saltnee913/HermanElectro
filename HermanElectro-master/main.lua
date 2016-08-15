@@ -278,6 +278,9 @@ function win()
 				break
 			end
 		end
+		if gameTime.timeLeft > gameTime.levelTime * floorIndex then
+			unlocks.unlockUnlockable(5)
+		end
 		won = true
 	end
 end
