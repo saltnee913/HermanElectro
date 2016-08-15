@@ -383,6 +383,13 @@ P.saw = P.tool:new{name = 'saw', image = love.graphics.newImage('Graphics/saw.pn
 function P.saw:usableOnTile(tile)
 	return tile:instanceof(tiles.wall) and not tile.destroyed and tile.sawable
 end
+function P.saw:usableOnPushable(pushable)
+	return pushable:instanceof(pushableList.giftBox)
+end
+function P.saw:useToolPushable(pushable)
+	pushable.destroyed = true
+	P.giveSupertools(1)
+end
 
 P.ladder = P.tool:new{name = 'ladder', image = love.graphics.newImage('Graphics/ladder.png')}
 function P.ladder:usableOnTile(tile)

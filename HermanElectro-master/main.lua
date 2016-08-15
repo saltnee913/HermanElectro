@@ -224,6 +224,8 @@ end
 function loadFirstLevel()
 	floorIndex = 1
 	loadNextLevel()
+	createAnimals()
+	createPushables()
 end
 
 function loadLevel(floorPath)
@@ -235,6 +237,22 @@ function loadLevel(floorPath)
 	mapx = mainMap.initialX
 	mapy = mainMap.initialY
 	visibleMap = {}
+	for i = 1, mapHeight do
+		for j = 1, mapHeight do
+			if mainMap[i][j]~=nil then
+				for i2 = 1, mainMap[i][j].room.height do
+					for j2 = 1, mainMap[i][j].room.length do
+						if mainMap[i][j].room[i2][j2]~=nil and mainMap[i][j].room[i2][j2]:instanceof(tiles.boxTile) then
+							local rand = math.random()
+							if rand<donations/100 then
+								mainMap[i][j].room[i2][j2] = tiles.giftBoxTile:new()
+							end
+						end
+					end
+				end
+			end
+		end
+	end
 	for i = 0, mapHeight do
 		visibleMap[i] = {}
 		for j = 0, mapHeight do
@@ -415,6 +433,11 @@ function updatePower()
 								room[pY][pX] = nil
 							end
 						else
+							if pushables[i]:instanceof(pushableList.jackInTheBox) then
+								for i = 1, #animals do
+									animals[i].waitCounter = 1
+								end
+							end
 							powerTestPushable(pY, pX, 0)
 						end
 						pushables[i].powered = true
@@ -862,7 +885,9 @@ function love.draw()
 			if pushables[i]~=nil and not pushables[i].destroyed and litTiles[pushables[i].tileY][pushables[i].tileX]==1 and pushables[i].tileY==j then
 		    	pushablex = (pushables[i].tileX-1)*floor.sprite:getHeight()*scale+wallSprite.width
 		    	pushabley = (pushables[i].tileY-1)*floor.sprite:getWidth()*scale+wallSprite.height
-				love.graphics.draw(pushables[i].sprite, pushablex, pushabley, 0, scale, scale)
+		    	if pushables[i].conductive and pushables[i].powered then toDraw = pushables[i].poweredSprite
+		    	else toDraw = pushables[i].sprite end
+				love.graphics.draw(toDraw, pushablex, pushabley, 0, scale, scale)
 			end
 		end
 		if tools.toolableAnimals~=nil then
@@ -886,7 +911,7 @@ function love.draw()
 					for i = 1, #(tools.toolablePushables[dir]) do
 						local tx = tools.toolablePushables[dir][i].tileX
 						local ty = tools.toolablePushables[dir][i].tileY
-						if tY==j then
+						if ty==j then
 							if dir == 1 or tools.toolablePushables[1][1] == nil or not (tx == tools.toolablePushables[1][1].tileX and ty == tools.toolablePushables[1][1].tileY) then
 								love.graphics.draw(green, (tx-1)*floor.sprite:getWidth()*scale+wallSprite.width, (ty-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
 							end
@@ -1973,6 +1998,7 @@ end
 function resetPushables()
 	for i = 1, #pushables do
 		pushables[i].canBeAccelerated = true
+		pushables[i].powered = false
 	end
 end
 
