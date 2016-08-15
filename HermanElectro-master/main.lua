@@ -25,7 +25,7 @@ saveDir = 'SaveData'
 
 function love.load()
 	gamePaused = false
-	gameTime = 60
+	gameTime = {timeLeft = 260, toolTime = 0, roomTime = 15, levelTime = 200, donateTime = 20}
 
 	typingCallback = nil
 	debugText = nil
@@ -172,12 +172,15 @@ function love.load()
 	end
 end
 
-function loadNextLevel()
+function loadNextLevel(dontChangeTime)
+	if dontChangeTime == nil then dontChangeTime = false end
 	--hacky way of getting info, but for now, it works
 	toolMax = floorIndex
  	toolMin = floorIndex-1
  	floorDonations = 0
- 	gameTime = gameTime+120
+ 	if not dontChangeTime then
+ 		gameTime.timeLeft = gameTime.timeLeft+gameTime.levelTime
+ 	end
 	if loadTutorial then
 		loadLevel('RoomData/tut_map.json')
 	else
@@ -223,7 +226,7 @@ end
 
 function loadFirstLevel()
 	floorIndex = 1
-	loadNextLevel()
+	loadNextLevel(true)
 	createAnimals()
 	createPushables()
 end
@@ -997,7 +1000,7 @@ function love.draw()
 	love.graphics.translate(-1*bigRoomTranslation.x*floor.sprite:getWidth()*scale, -1*bigRoomTranslation.y*floor.sprite:getHeight()*scale)
 
 	if not loadTutorial then
-		love.graphics.print(math.floor(gameTime), width/2-10, 20);
+		love.graphics.print(math.floor(gameTime.timeLeft), width/2-10, 20);
 	end
 	for i = 0, mapHeight do
 		for j = 0, mapHeight do
@@ -1409,9 +1412,9 @@ function love.update(dt)
 
 	--game timer
 	if started and completedRooms[mapy][mapx]~=1 then
-		gameTime = gameTime-dt
+		gameTime.timeLeft = gameTime.timeLeft-dt
 	end
-	if gameTime<=0 and not loadTutorial then
+	if gameTime.timeLeft<=0 and not loadTutorial then
 		kill()
 	end
 end
@@ -1486,7 +1489,7 @@ function love.keypressed(key, unicode)
 	end
 	if key=="e" then
 		editorMode = not editorMode
-		gameTime = gameTime+20000
+		gameTime.timeLeft = gameTime.timeLeft+20000
 	end
 	--[[if key=='t' then
 		if toolMode == 1 then
@@ -1622,7 +1625,7 @@ function love.keypressed(key, unicode)
 			gameTime = gameTime-100
 		end]]
 		if usedTool and tool<=tools.numNormalTools then
-			gameTime = gameTime+toolTime
+			gameTime.timeLeft = gameTime.timeLeft+gameTime.toolTime
 		end
 		updateGameState()
 		checkAllDeath()
@@ -1916,7 +1919,7 @@ function love.mousepressed(x, y, button, istouch)
 		tool = 0
 	elseif not clickActivated then
 		if tool<=tools.numNormalTools then
-			gameTime = gameTime+toolTime
+			gameTime.timeLeft = gameTime.timeLeft+gameTime.toolTime
 		end
 	end
 	
@@ -2192,7 +2195,7 @@ function dropTools()
 end
 
 function beatRoom()
-	gameTime = gameTime+15
+	gameTime.timeLeft = gameTime.timeLeft+gameTime.roomTime
 	unlockDoors()
 	dropTools()
 end

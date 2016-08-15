@@ -1071,7 +1071,7 @@ function P.beggar:destroy()
 	self.sprite = self.deadSprite
 	self.alive = false
 	local paysOut = math.random()
-	if paysOut<0.5 and not character.name=="Felix" then return end
+	if paysOut<0.5 and not player.character.name==characters.felix.name then return end
 	tools.giveSupertools(1)
 	--[[filledSlots = {0,0,0}
 	slot = 1
@@ -1109,7 +1109,7 @@ function P.donationMachine:onEnter(player)
 	tools[tool].numHeld = tools[tool].numHeld - 1
 	donations = donations+math.ceil((10-(floorIndex))/2)
 	floorDonations = floorDonations+1
-	gameTime = gameTime+20
+	gameTime.timeLeft = gameTime.timeLeft+gameTime.donateTime
 end
 
 P.entrancePortal = P.tile:new{name = "entrancePortal", sprite = love.graphics.newImage('Graphics/entrancePortal.png')}

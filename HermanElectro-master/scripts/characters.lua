@@ -33,8 +33,19 @@ function P.most:onCharLoad()
 	end
 end
 
+local erikSprite = love.graphics.newImage('Graphics/beggar.png')
+P.erik = P.character:new{name = "Erik", description = "The Quick",
+  sprite = erikSprite, scale = scale*16/erikSprite:getWidth()}
+function P.erik:onCharLoad()
+	gameTime.timeLeft = 60
+	gameTime.roomTime = 10
+	gameTime.levelTime = 0
+	map.floorOrder = {'RoomData/floor1_erik.json', 'RoomData/floor2_erik.json', 'RoomData/floor3_erik.json', 'RoomData/floor6.json'}
+end
+
 P[1] = P.herman
 P[2] = P.felix
 P[3] = P.most
+P[4] = P.erik
 
 return characters

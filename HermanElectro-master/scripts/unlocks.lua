@@ -62,7 +62,10 @@ end
 P.unlock = Object:new{name = 'generic', unlocked = false, sprite = tiles.fog.sprite}
 
 P.tileUnlock = P.unlock:new{name = 'tile', tileIds = {1}, sprite = tiles.tile.sprite}
-P.boxUnlock = P.tileUnlock:new{name = 'box', tileIds = {}, sprite = tiles.boxTile.sprite}
+
+P.boxUnlock = P.tileUnlock:new{name = 'box', tileIds = {66}, sprite = tiles.boxTile.sprite}
+
+P.acceleratorUnlock = P.tileUnlock:new{name = 'accelerator', tileIds = {86,88}, sprite = tiles.unpoweredAccelerator.sprite}
 
 P.roomUnlock = P.unlock:new{name = 'room', roomIds = {"1"}}
 P.beggarPartyUnlock = P.roomUnlock:new{name = 'beggars love you', roomIds = {"beggar_party"}, sprite = tiles.beggar.sprite}
@@ -70,7 +73,7 @@ P.beggarPartyUnlock = P.roomUnlock:new{name = 'beggars love you', roomIds = {"be
 P.winUnlocks = {1, 2}
 
 P[1] = P.boxUnlock
-P[2] = P.booksUnlock
+P[2] = P.acceleratorUnlock
 P[3] = P.beggarPartyUnlock
 
 return unlocks
