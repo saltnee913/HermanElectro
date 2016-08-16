@@ -32,8 +32,7 @@ function P.tile:onLeaveAnimal(animal)
 end
 function P.tile:onStep(x, y)
 end
-function P.tile:onEnd(map, x, y)
-	return map
+function P.tile:onEnd(x,y)
 end
 function P.tile:resetState()
 end
@@ -924,21 +923,29 @@ function P.bomb:onStep(x, y)
 		self.gone = true
 	end
 end
-function P.bomb:onEnd(map, x, y)
+function P.bomb:onEnd(x, y)
+	self:explode(x,y)
+end
+function P.bomb:destroy()
+	self.gone = true
+end
+function P.bomb:explode(x,y)
+	if not editorMode and math.abs(player.tileY-x)<2 and math.abs(player.tileX-y)<2 then kill() end
 	for i = -1, 1 do
 		for j = -1, 1 do
-			if map[x+i]~=nil and map[x+i][y+j]~=nil then map[x+i][y+j]:destroy() end
+			if room[x+i]~=nil and room[x+i][y+j]~=nil then room[x+i][y+j]:destroy() end
 		end
 	end
-	return map
-end
-function P.bomb:explode(i,j)
-	if not editorMode and math.abs(player.tileY-i)<2 and math.abs(player.tileX-j)<2 then kill() end
 	for k = 1, #animals do
-		if math.abs(animals[k].tileY-i)<2 and math.abs(animals[k].tileX-j)<2 then animals[k]:kill() end
+		if math.abs(animals[k].tileY-x)<2 and math.abs(animals[k].tileX-y)<2 then animals[k]:kill() end
 	end
 	for k = 1, #pushables do
-		if math.abs(pushables[k].tileY-i)<2 and math.abs(pushables[k].tileX-j)<2 then pushables[k].destroyed = true end
+		if math.abs(pushables[k].tileY-x)<2 and math.abs(pushables[k].tileX-y)<2 and not pushables[k].destroyed then
+			pushables[k].destroyed = true
+			if pushables[k]:instanceof(pushableList.bombBox) then
+				self:explode(pushables[k].tileY, pushables[k].tileX)
+			end
+		end
 	end
 end
 
@@ -1011,14 +1018,6 @@ function P.unactivatedBomb:onStep(x, y)
 		end
 		self.poweredSprite = self.sprite
 	end
-end
-function P.unactivatedBomb:onEnd(map, x, y)
-	for i = -1, 1 do
-		for j = -1, 1 do
-			if map[x+i]~=nil and map[x+i][y+j]~=nil then map[x+i][y+j]:destroy() end
-		end
-	end
-	return map
 end
 function P.unactivatedBomb:onEnter(player)
 	self.triggered = true
@@ -1213,6 +1212,8 @@ P.animalBoxTile = P.boxTile:new{name = "animalBoxTile", pushable = pushableList[
 P.puddle = P.conductiveTile:new{name = "puddle", sprite = love.graphics.newImage('Graphics/puddle.png'), poweredSprite = love.graphics.newImage('Graphics/puddlelectrified.png')}
 function P.puddle:willKillPlayer()
 	return not self.destroyed and self.powered
+end
+function P.puddle:destroy()
 end
 P.puddle.willKillAnimal = P.puddle.willKillPlayer
 
