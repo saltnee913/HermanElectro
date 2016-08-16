@@ -10,7 +10,7 @@ util = require('scripts.util')
 tiles = require('scripts.tiles')
 map = require('scripts.map')
 
-boundaries = require('scripts.boundaries')
+boundaries = require('scripts.boundaries') 
 --require('scripts.tools')
 animalList = require('scripts.animals')
 tools = require('scripts.tools')
@@ -295,6 +295,9 @@ function win()
 				unlocks.unlockUnlockable(unlocks.winUnlocks[i])
 				break
 			end
+		end
+		if gameTime.timeLeft > gameTime.levelTime * floorIndex then
+			unlocks.unlockUnlockable(5)
 		end
 		won = true
 	end
@@ -770,13 +773,14 @@ function love.draw()
 			love.graphics.line(width/5*i, 0, width/5*i, height)
 		end
 
-		for i = 1, #characters do
+		local charsToDraw = characters.getUnlockedCharacters()
+		for i = 1, #charsToDraw do
 			local row = math.floor((i+4)/5)
 			local column = i%5
 			if column==0 then column=5 end
-			love.graphics.draw(characters[i].sprite, width/5*column-width/10-10, height/3*(row-1)+height/6+20, 0, player.character.scale, player.character.scale)
-			love.graphics.print(characters[i].name, width/5*column-width/10-10, height/3*(row-1)+height/6-100)
-			love.graphics.print(characters[i].description, width/5*column-width/10-10, height/3*(row-1)+height/6-80)
+			love.graphics.draw(charsToDraw[i].sprite, width/5*column-width/10-10, height/3*(row-1)+height/6+20, 0, charsToDraw[i].scale, charsToDraw[i].scale)
+			love.graphics.print(charsToDraw[i].name, width/5*column-width/10-10, height/3*(row-1)+height/6-100)
+			love.graphics.print(charsToDraw[i].description, width/5*column-width/10-10, height/3*(row-1)+height/6-80)
 		end
 
 		return
@@ -1081,11 +1085,12 @@ function love.draw()
 	--Display unlock screen
 	if unlocks.unlocksDisplay.timeLeft > 0 then
 		local unlock = unlocks[unlocks.unlocksDisplay.unlockToShow]
+		local tScale = tiles[1].sprite:getWidth()/math.max(unlock.sprite:getWidth(), unlock.sprite:getHeight())
 		local uScale = width/500
-		local offsetY = (unlocks.frame:getHeight() - unlock.sprite:getHeight())/2
-		local offsetX = (unlocks.frame:getWidth() - unlock.sprite:getWidth())/2
+		local offsetY = (unlocks.frame:getHeight() - unlock.sprite:getHeight()*tScale)/2
+		local offsetX = (unlocks.frame:getWidth() - unlock.sprite:getWidth()*tScale)/2
 		love.graphics.draw(unlocks.frame, 0, height-unlocks.frame:getHeight()*uScale, 0, uScale, uScale)
-		love.graphics.draw(unlock.sprite, offsetX*uScale, height-(unlock.sprite:getHeight()+offsetY)*uScale, 0, uScale, uScale)
+		love.graphics.draw(unlock.sprite, offsetX*uScale, height-(unlock.sprite:getHeight()*tScale+offsetY)*uScale, 0, uScale*tScale, uScale*tScale)
 	end
 	if not editorMode then
 		botText = "e to toggle editor mode"
@@ -1425,6 +1430,7 @@ end
 
 function love.keypressed(key, unicode)
 	if charSelect then
+		local charsToSelect = characters.getUnlockedCharacters()
 		if key == "return" then
 			--enter in selected character
 			charSelect = false
@@ -1435,7 +1441,7 @@ function love.keypressed(key, unicode)
 			if charNum > #characters then
 				charNum = #characters
 			end
-			player.character = characters[charNum]
+			player.character = charsToSelect[charNum]
 			player.character:onBegin()
 			loadFirstLevel()
 		elseif key == "up" then

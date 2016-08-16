@@ -1,7 +1,32 @@
 require('scripts.object')
+unlocks = require('scripts.unlocks')
 
 local P = {}
 characters = P
+
+function P.getUnlockedCharacters()
+	local lockedChars = {}
+	for i = 1, #unlocks do
+		if unlocks[i].charIds ~= nil and not unlocks[i].unlocked then
+			for j = 1, #unlocks[i].charIds do
+				lockedChars[#lockedChars+1] = unlocks[i].charIds[j]
+			end
+		end
+	end
+	local toRet = {}
+	for i = 1, #characters do
+		local isLocked = false
+		for j = 1, #lockedChars do
+			if lockedChars[j] == i then
+				isLocked = true
+			end
+		end
+		if not isLocked then
+			toRet[#toRet+1] = characters[i]
+		end
+	end
+	return toRet
+end
 
 P.character = Object:new{name = "Name", sprite = love.graphics.newImage('Graphics/herman_sketch.png'),
   description = "description", startingTools = {0,0,0,0,0,0,0}, scale = 0.25 * width/1200}
