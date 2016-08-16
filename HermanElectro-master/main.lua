@@ -429,10 +429,10 @@ function updatePower()
 					if conductPower then
 						if pushables[i]:instanceof(pushableList.bombBox) then
 							if not pushables[i].destroyed then
-								room[pY][pX] = tiles.bomb:new()
-								room = room[pY][pX]:onEnd(room, pY, pX)
-								room[pY][pX]:explode(pY, pX)
 								pushables[i].destroyed = true
+								room[pY][pX] = tiles.bomb:new()
+								room[pY][pX]:onEnd(pY, pX)
+								room[pY][pX]:explode(pY, pX)
 								room[pY][pX] = nil
 							end
 						else
@@ -2065,11 +2065,20 @@ function stepTrigger()
 			if room[i][j]~=nil then
 				room[i][j]:onStep(i, j)
 				if room[i][j].gone then
-					room = room[i][j]:onEnd(room, i, j)
-					if room[i][j]:instanceof(tiles.bomb) then
-						room[i][j]:explode(i,j)
-					end
+					room[i][j]:onEnd(i, j)
 					room[i][j] = nil
+				end
+			end
+		end
+	end
+	for times = 1, 5 do
+		for i = 1, roomHeight do
+			for j = 1, roomLength do
+				if room[i][j]~=nil then
+					if room[i][j].gone then
+						room[i][j]:onEnd(i, j)
+						room[i][j] = nil
+					end
 				end
 			end
 		end
