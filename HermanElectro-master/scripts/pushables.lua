@@ -147,7 +147,7 @@ function P.animalBox:playerCanMove()
 	return false
 end
 
-P.conductiveBox = P.box:new{name = "conductiveBox", powered = false, sprite = love.graphics.newImage('Graphics/conductiveBox.png'), conductive = true}
+P.conductiveBox = P.box:new{name = "conductiveBox", powered = false, sprite = love.graphics.newImage('Graphics/conductiveBox.png'), poweredSprite = love.graphics.newImage('Graphics/conductiveboxpowered.png'), conductive = true}
 
 P.boombox = P.box:new{name = "boombox", sprite = love.graphics.newImage('Graphics/boombox.png')}
 
@@ -270,7 +270,7 @@ P.bombBox = P.conductiveBox:new{name = "bombBox", sprite = love.graphics.newImag
 
 P.giftBox = P.box:new{name = "giftBox", sprite = love.graphics.newImage('Graphics/giftbox.png')}
 
-P.jackInTheBox = P.box:new{name = "jackInTheBox", sprite = love.graphics.newImage('Graphics/jackinthebox.png')}
+P.jackInTheBox = P.conductiveBox:new{name = "jackInTheBox", sprite = love.graphics.newImage('Graphics/jackinthebox.png'), poweredSprite = love.graphics.newImage('Graphics/jackintheboxpowered.png')}
 
 pushableList[1] = P.pushable
 pushableList[2] = P.box

@@ -229,6 +229,7 @@ function P.createRoom(inRoom, arr)
 			return nil
 		end
 	end
+	--if arr[inRoom]==nil then print("isNil") end
 	local roomToLoad = arr[inRoom].layout
 	roomToLoad = (roomToLoad ~= nil) and roomToLoad 
 		or arr[inRoom].layouts[math.floor(math.random()*#(arr[inRoom].layouts))+1]
