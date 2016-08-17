@@ -109,7 +109,6 @@ function love.load()
 		charSelect = false
 		selectedBox = {x = 0, y = 0}
 		yOffset = -6
-		mouseDown = 0
 		regularLength = 24
 		regularHeight = 12
 		toolTime = 0
@@ -1912,7 +1911,6 @@ function love.mousepressed(x, y, button, istouch)
 	if editorMode then
 		editor.mousepressed(x, y, button, istouch)
 	end
-	mouseDown = mouseDown+1
 	--mouseX = x-width2/2+16*screenScale/2
 	--mouseY = y-height2/2+9*screenScale/2
 	mouseX = x-(width2-width)/2
@@ -1956,7 +1954,6 @@ function love.mousereleased(x, y, button, istouch)
 	if gamePaused then
 		return
 	end
-	mouseDown = mouseDown-1
 end
 
 function love.mousemoved(x, y, dx, dy)
