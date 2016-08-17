@@ -1657,6 +1657,25 @@ function love.keypressed(key, unicode)
     			noPowerUpdate = false
     		end
     	end
+		for i = 1, #pushables do
+		 	if room[pushables[i].tileY][pushables[i].tileX]~=nil then
+		 		if room[pushables[i].tileY][pushables[i].tileX].updatePowerOnEnter then
+		 			noPowerUpdate = false
+		 		end
+		 	end
+		 	if pushables[i].conductive and (pushables[i].tileY~=pushables[i].prevTileY or pushables[i].tileX~=pushables[i].prevTileX) then
+		 		noPowerUpdate = false
+		 	end
+		 	if pushables[i].prevTileY~=nil and pushables[i].prevTileX~=nil and 
+		 	room[pushables[i].prevTileY]~=nil and room[pushables[i].prevTileY][pushables[i].prevTileX]~=nil then
+		 		if room[pushables[i].prevTileY][pushables[i].prevTileX].updatePowerOnLeave then
+		 			noPowerUpdate = false
+		 		end
+		 	end
+		 	if pushables[i].conductive and (pushables[i].tileX~=pushables[i].prevTileX or pushables[i].tileY~=pushables[i].prevTileY) then
+		 		noPowerUpdate = false
+		 	end
+	    end
     	updateGameState(noPowerUpdate)
 	    if player.tileY~=player.prevTileY or player.tileX~=player.prevTileX or waitTurn then
 	    	stepTrigger()
