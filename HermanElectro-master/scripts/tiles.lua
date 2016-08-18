@@ -1104,11 +1104,15 @@ function P.donationMachine:getInfoText()
 	return donations
 end
 function P.donationMachine:onEnter(player)
-	if tool==0 or tool>7 then return end
+	if tool==0 then return end
 	tools[tool].numHeld = tools[tool].numHeld - 1
-	donations = donations+math.ceil((10-(floorIndex))/2)
+	local mult = 1
+	if tool > tools.numNormalTools then
+		mult = 2
+	end
+	donations = donations+mult*math.ceil((10-(floorIndex))/2)
 	floorDonations = floorDonations+1
-	gameTime.timeLeft = gameTime.timeLeft+gameTime.donateTime
+	gameTime.timeLeft = gameTime.timeLeft+mult*gameTime.donateTime
 end
 
 P.entrancePortal = P.tile:new{name = "entrancePortal", sprite = love.graphics.newImage('Graphics/entrancePortal.png')}
