@@ -626,6 +626,7 @@ end
 
 P.flame = P.superTool:new{name = "flame", baseRange = 1, image = love.graphics.newImage('Graphics/flame.png')}
 function P.flame:usableOnTile(tile)
+	--flame cannot burn metal walls
 	if tile:instanceof(tiles.wall) and tile.sawable and not tile:instanceof(tiles.metalWall) and not tile.destroyed then
 		return true
 	end
@@ -634,7 +635,30 @@ end
 function P.flame:useToolTile(tile)
 	self.numHeld = self.numHeld - 1
 	tile.onFire = true
-	updateFire()
+	self:updateFire()
+end
+function P.flame:updateFire()
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]~=nil and room[i][j]:instanceof(tiles.wall) and room[i][j].onFire then
+				self:burn(i,j)
+			end
+		end
+	end
+end
+function P.flame:burn(x,y)
+	--flame movement note: flames can travel across corners of wooden walls [for example, flame
+	--can travel from (1,1) to (2,2)]
+
+	room[x][y]:destroy()
+	for i = -1, 1 do
+		for j = -1, 1 do
+			if room[x+i]~=nil and room[x+i][y+j]~=nil and tools.flame:usableOnTile(room[x+i][y+j]) and not room[x+i][y+j].onFire then
+				room[x+i][y+j].onFire = true
+				self:burn(x+i, y+j)
+			end
+		end
+	end
 end
 
 P.unsticker = P.superTool:new{name = "unsticker", baseRange = 1, image = love.graphics.newImage('Graphics/unsticker.png')}
@@ -1172,6 +1196,39 @@ end
 P.swapper.getToolableAnimals = P.swapper.getToolableAnimalsBox
 
 
+P.bucketOfWater = P.tool:new{name = "bucketOfWater", baseRange = 1, image = love.graphics.newImage('Graphics/bucketofwater.png')}
+function P.bucketOfWater:usableOnNothing()
+	return true
+end
+function P.bucketOfWater:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld - 1
+	self:spreadWater(tileY, tileX)
+end
+function P.bucketOfWater:spreadWater(tileY, tileX)
+	room[tileY][tileX] = tiles.puddle:new()
+	if tileY>1 then
+		if room[tileY-1][tileX]==nil then
+			self:spreadWater(tileY-1, tileX)
+		end
+	end
+	if tileY<roomHeight then
+		if room[tileY+1][tileX]==nil then
+			self:spreadWater(tileY+1, tileX)
+		end
+	end
+	if tileX>1 then
+		if room[tileY][tileX-1]==nil then
+			self:spreadWater(tileY, tileX-1)
+		end
+	end
+	if tileX<roomLength then
+		if room[tileY][tileX+1]==nil then
+			self:spreadWater(tileY, tileX+1)
+		end
+	end
+end
+
+
 P.numNormalTools = 7
 
 P[1] = P.saw
@@ -1219,5 +1276,7 @@ P[42] = P.toolDoubler
 P[43] = P.roomReroller
 P[44] = P.wings
 P[45] = P.swapper
+P[46] = P.bucketOfWater
+P[47] = P.flame
 
 return tools

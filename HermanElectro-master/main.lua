@@ -2045,28 +2045,6 @@ function checkAllDeath()
 	end
 end
 
-function updateFire()
-	for i = 1, roomHeight do
-		for j = 1, roomLength do
-			if room[i][j]~=nil and room[i][j]:instanceof(tiles.wall) and room[i][j].onFire then
-				burn(i,j)
-			end
-		end
-	end
-end
-
-function burn(x,y)
-	room[x][y]:destroy()
-	for i = -1, 1 do
-		for j = -1, 1 do
-			if room[x+i]~=nil and room[x+i][y+j]~=nil and tools.flame:usableOnTile(room[x+i][y+j]) and not room[x+i][y+j].onFire then
-				room[x+i][y+j].onFire = true
-				burn(x+i, y+j)
-			end
-		end
-	end
-end
-
 function updateTools()
 	for i = 1, 3 do
 		if specialTools[i]~=0 and tools[specialTools[i]].numHeld==0 then
