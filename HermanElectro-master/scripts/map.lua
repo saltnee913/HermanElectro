@@ -2,12 +2,14 @@ require('scripts.object')
 require('scripts.tiles')
 local util = require('scripts.util')
 local json = require('scripts.dkjson')
+local unlocks = require('scripts.unlocks')
 
 local P = {}
 map = P
 
 --Temporary variable, we have to do this a better way later
-P.floorOrder = {'RoomData/floor1.json', 'RoomData/floor2.json', 'RoomData/floor3.json', 'RoomData/floor4.json', 'RoomData/floor5.json', 'RoomData/floor6.json'}
+P.defaultFloorOrder = {'RoomData/floor1.json', 'RoomData/floor2.json', 'RoomData/floor3.json', 'RoomData/floor4.json', 'RoomData/floor5.json', 'RoomData/floor6.json'}
+P.floorOrder = P.defaultFloorOrder
 
 local MapInfo = Object:new{floor = 1, height = 0, numRooms = 0}
 
@@ -19,6 +21,8 @@ function P.loadFloor(inFloorFile)
 	end
 	local loadRooms = floorData.loadRooms
 	for k, v in pairs(loadRooms) do
+		local numToolsArray = {0,0,0,0,0,0,0,0,0,0,0,0,0}
+		local toolAppearanceArray = {0,0,0,0,0,0,0}
 		local roomsData, roomsArray = util.readJSON(v.filePath, true)
 		P.floorInfo.rooms[k] = roomsData.rooms
 		local amt = 0
@@ -29,15 +33,45 @@ function P.loadFloor(inFloorFile)
 					if v1[k2] == nil then v1[k2] = v2 end
 				end
 			end
+			local numTools = 0
+			for i = 1, 7 do
+				if #v1.itemsNeeded[1]>1 then
+					numTools = numTools + v1.itemsNeeded[1][i]
+					for j = 1, #v1.itemsNeeded do
+						toolAppearanceArray[i] = toolAppearanceArray[i]+v1.itemsNeeded[j][i]/#v1.itemsNeeded
+					end
+				else
+					numTools = numTools + v1.itemsNeeded[i]
+					toolAppearanceArray[i] = toolAppearanceArray[i]+v1.itemsNeeded[i]
+				end
+			end
+			if numTools<=10 then
+				numToolsArray[numTools+1] = numToolsArray[numTools+1]+1
+			end
 			amt = amt + 1
 		end
 		P.filterRoomSet(P.floorInfo.rooms[k], v.requirements)
+		if P.floorInfo.requireUnlocks == true then
+			P.filterRoomSetByUnlocks(P.floorInfo.rooms[k])
+		end
 		for i = 1, #roomsArray do
 			if P.floorInfo.rooms[k][roomsArray[i]] ~= nil then
 				P.floorInfo.roomsArray[#(P.floorInfo.roomsArray)+1] = roomsArray[i]
 			end
 		end
 		print(k..': '..amt)
+		local toPrint = ""
+		for i = 0, 10 do
+			toPrint = toPrint..i..": "..numToolsArray[i+1]..", "
+		end
+		print(toPrint)
+		print("Tools:")
+		toolWords = {"saws", "ladders", "wireCutters", "waterBottles", "sponges", "bricks", "guns"}
+		toPrint = ""
+		for i = 1, 7 do
+			toPrint = toPrint..toolWords[i]..": "..toolAppearanceArray[i]..", "
+		end
+		print(toPrint)
 	end
 end
 
@@ -65,6 +99,33 @@ function P.filterRoomSet(arr, requirements)
 	for k, v in pairs(arr) do
 		if not P.roomMeetsRequirements(v, requirements) then
 			arr[k] = nil
+		end
+	end
+end
+
+local function doesRoomContainTile(roomData, tile)
+	layouts = roomData.layouts and roomData.layouts or {roomData.layout}
+	return util.deepContains(layouts, tile)
+end
+
+function P.filterRoomSetByUnlocks(arr)
+	for k, v in pairs(arr) do
+		for i = 1, #unlocks do
+			if unlocks[i].unlocked == false then
+				if unlocks[i].tileIds ~= nil then
+					for j = 1, #unlocks[i].tileIds do
+						if doesRoomContainTile(v, unlocks[i].tileIds[j]) then
+							arr[k] = nil
+						end
+					end
+				elseif unlocks[i].roomIds ~= nil then
+					for j = 1, #unlocks[i].roomIds do
+						if k == unlocks[i].roomIds[j] then
+							arr[k] = nil
+						end
+					end
+				end
+			end
 		end
 	end
 end
@@ -168,6 +229,7 @@ function P.createRoom(inRoom, arr)
 			return nil
 		end
 	end
+	--if arr[inRoom]==nil then print("isNil") end
 	local roomToLoad = arr[inRoom].layout
 	roomToLoad = (roomToLoad ~= nil) and roomToLoad 
 		or arr[inRoom].layouts[math.floor(math.random()*#(arr[inRoom].layouts))+1]
@@ -429,7 +491,7 @@ function P.generateMapFinal()
 		roomChoiceid = util.chooseRandomElement(randomRoomsArray)
 	end
 
-	newmap[choice.y][choice.x] = {roomid = roomChoiceid, room = P.createRoom(roomChoiceid, arr), isFinal = false, isInitial = false}
+	newmap[choice.y][choice.x] = {roomid = roomChoiceid, room = P.createRoom(roomChoiceid), isFinal = false, isInitial = false}
 
 	return newmap
 end
@@ -563,8 +625,7 @@ function P.generateMapWeighted()
 			roomid = roomChoices[util.chooseWeightedRandom(roomWeights)]
 		end
 		usedRooms[#usedRooms+1] = roomid
-		print(#usedRooms)
-		newmap[choice.y][choice.x] = {roomid = roomid, room = P.createRoom(roomid, arr), isFinal = false, isInitial = false}
+		newmap[choice.y][choice.x] = {roomid = roomid, room = P.createRoom(roomid), isFinal = false, isInitial = false}
 	end
 	printMap(newmap)
 	return newmap

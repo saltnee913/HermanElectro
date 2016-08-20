@@ -85,6 +85,15 @@ function P.readJSON(filePath, askForRooms)
 	end
 end
 
+function P.writeJSON(filePath, data)
+	local str = json.encode(data)
+	if not love.filesystem.exists(saveDir) then
+		love.filesystem.createDirectory(saveDir)
+	end
+	print(str)
+	love.filesystem.write(saveDir..'/'..filePath, str)
+end
+
 function P.deepContains(arr, value, floor)
 	if type(arr) == 'table' then
 		for i = 1, #arr do

@@ -38,7 +38,7 @@ function P.keypressed(key, unicode)
 			end
 		end
 		savedAnimals = {}
-		for i = 1, animalCounter - 1 do
+		for i = 1, #animals do
 			savedAnimals[i] = animals[i]
 		end
 		print("\"name\":")
@@ -106,19 +106,12 @@ function P.keypressed(key, unicode)
     		end
     	end
     	animals = {}
-    	animalCounter = 1
     	pushables = {}
     end
 	if key == "z" and prevRoom~=nil then
     	room = prevRoom
     	if prevAnimals~=nil then
     		animals = prevAnimals
-    	end
-    	animalCounter = 1
-    	for i = 1, 100 do
-    		if animals[i]~=nil then
-    			animalCounter = animalCounter+1
-    		end
     	end
     	--print(room[1][1].name)
 	elseif key == "f" then
@@ -129,12 +122,6 @@ function P.keypressed(key, unicode)
 	elseif key == "r" and savedRoom~=nil then
 		room = savedRoom
     	animals = savedAnimals
-    	animalCounter = 1
-    	for i = 1, 100 do
-    		if animals[i]~=nil then
-    			animalCounter = animalCounter+1
-    		end
-    	end
     end
 end
 
@@ -179,7 +166,7 @@ function P.mousepressed(x, y, button, istouch)
 		end
 	end
 	prevAnimals = {}
-	for i = 1, animalCounter - 1 do
+	for i = 1, #animals do
 		prevAnimals[i] = animals[i]
 	end
 
@@ -212,13 +199,12 @@ function P.mousepressed(x, y, button, istouch)
 			end
 		end
 		if tempAdd==1 then room[tileLocY][tileLocX]=nil end
-		for i = 1, animalCounter-1 do
+		for i = 1, #animals do
 			if animals[i]~=nil and animals[i].tileX == tileLocX and animals[i].tileY == tileLocY then
 				animals[i] = nil
-				for j = i+1, animalCounter do
+				for j = i+1, #animals+1 do
 					animals[j-1] = animals[j]
 				end
-				animalCounter = animalCounter-1
 			end
 		end
 
@@ -235,12 +221,13 @@ function P.mousepressed(x, y, button, istouch)
 		if tiles[tempAdd]~=nil and tiles[tempAdd].animal~=nil then
 			animalToSpawn = room[tileLocY][tileLocX].animal
 			if not animalToSpawn.dead then
-				animals[animalCounter] = animalList[tiles[tempAdd].listIndex]:new()
-				animals[animalCounter].y = (tileLocY-1)*floor.sprite:getWidth()*scale+wallSprite.height
-				animals[animalCounter].x = (tileLocX-1)*floor.sprite:getHeight()*scale+wallSprite.width
-				animals[animalCounter].tileX = tileLocX
-				animals[animalCounter].tileY = tileLocY
-				animalCounter = animalCounter+1
+				animals[#animals+1] = animalList[tiles[tempAdd].listIndex]:new()
+				animals[#animals].y = (tileLocY-1)*floor.sprite:getWidth()*scale+wallSprite.height
+				animals[#animals].x = (tileLocX-1)*floor.sprite:getHeight()*scale+wallSprite.width
+				animals[#animals].tileX = tileLocX
+				animals[#animals].tileY = tileLocY
+				animals[#animals].prevTileX = animals[#animals].tileX
+				animals[#animals].prevTileY = animals[#animals].tileY
 			end
 		end
 
@@ -258,7 +245,7 @@ end
 
 function P.mousemoved(x, y, dx, dy)
 	if mouseY>height-2*width/45 then return end
-	if mouseDown > 0 and tempAdd>0 and tiles[tempAdd]~=nil and tileLocX>=1 and tileLocX<=roomLength and tileLocY>=1 and tileLocY<=roomHeight then
+	if (love.mouse.isDown(1) or love.mouse.isDown(2)) and tempAdd>0 and tiles[tempAdd]~=nil and tileLocX>=1 and tileLocX<=roomLength and tileLocY>=1 and tileLocY<=roomHeight then
 		if room[tileLocY] ~= nil and room[tileLocY][tileLocX] ~= nil and room[tileLocY][tileLocX].overlayable and tiles[tempAdd].overlaying then
 			if not (room[tileLocY][tileLocX].overlay ~= nil and room[tileLocY][tileLocX].overlay.name == tiles[tempAdd].name) then
 				room[tileLocY][tileLocX]:setOverlay(tiles[tempAdd]:new())

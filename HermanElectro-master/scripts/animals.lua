@@ -116,7 +116,7 @@ function P.animal:secondaryMove(playerx, playery)
 end
 
 function P.animal:checkDeath()
-	if room[self.tileY][self.tileX]~=nil then
+	if room[self.tileY]~=nil and room[self.tileY][self.tileX]~=nil then
 		t = room[self.tileY][self.tileX]
 		if self.dead == false and t:willKillAnimal() then
 			self:kill()

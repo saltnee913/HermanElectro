@@ -32,8 +32,7 @@ function P.tile:onLeaveAnimal(animal)
 end
 function P.tile:onStep(x, y)
 end
-function P.tile:onEnd(map, x, y)
-	return map
+function P.tile:onEnd(x,y)
 end
 function P.tile:resetState()
 end
@@ -355,6 +354,11 @@ P.poweredFloor.willDestroyPushable = P.poweredFloor.willKillPlayer
 
 P.wall = P.tile:new{overlayable = true, electrified = false, onFire = false, blocksProjectiles = true, blocksMovement = true, canBePowered = false, name = "wall", blocksVision = true, electrifiedSprite = love.graphics.newImage('Graphics/woodwallelectrified.png'), destroyedSprite = love.graphics.newImage('Graphics/woodwallbroken.png'), sprite = love.graphics.newImage('Graphics3D/woodwall.png'), poweredSprite = love.graphics.newImage('Graphics3D/woodwall.png'), electrifiedPoweredSprite = love.graphics.newImage('Graphics/woodwallpowered.png'), sawable = true}
 function P.wall:onEnter(player)	
+	if player.character.name == "Rammy" then
+		if not (self:instanceof(P.glassWall) or self:instanceof(P.metalWall) or self:instanceof(P.concreteWall)) then
+			self:destroy()
+		end
+	end
 	if not self.destroyed then
 		--player.x = player.prevx
 		--player.y = player.prevy
@@ -390,6 +394,8 @@ function P.wall:destroy()
 	self.sprite = self.destroyedSprite
 	self.destroyed = true
 	self.blocksMovement = false
+	self.dirAccept = {0,0,0,0}
+	self.dirSend = {0,0,0,0}
 	self.overlay = nil
 end
 function P.wall:rotate(times)
@@ -420,6 +426,8 @@ function P.glassWall:destroy()
 	self.destroyed = true
 	self.blocksMovement = false
 	self.blocksVision = false
+	self.dirAccept = {0,0,0,0}
+	self.dirSend = {0,0,0,0}
 	self.overlay = nil
 end
 
@@ -656,35 +664,8 @@ end
 P.endTile = P.tile:new{name = "endTile", canBePowered = false, dirAccept = {0,0,0,0}, sprite = love.graphics.newImage('Graphics/end.png'), done = false}
 function P.endTile:onEnter(player)
 	if map.floorInfo.finalFloor == true then
-		if floorIndex-1==#map.floorOrder and roomHeight>12 and not editorMode then
+		if roomHeight>12 and not editorMode then
 			win()
-			return
-		end
-		if floorIndex-1==#map.floorOrder then
-			beatRoom()
-			if donations<recDonations then
-				for i = 1, recDonations-donations do
-					local noTools = true
-					for j = 1, 7 do
-						if tools[j].numHeld>0 then noTools = false end
-					end
-					if noTools then break end
-					local slotToRemove = math.floor(math.random()*7)+1
-					while tools[slotToRemove].numHeld<=0 do
-						slotToRemove = math.floor(math.random()*7)+1
-					end
-					tools[slotToRemove].numHeld = tools[slotToRemove].numHeld-1
-				end
-			elseif donations>recDonations then
-				for i = 1, donations-recDonations do
-					local slotToAdd = math.floor(math.random()*7)+1
-					tools[slotToAdd].numHeld = tools[slotToAdd].numHeld+1
-				end
-			end
-			self.done = true
-			self.isCompleted = true
-			self.isVisible = false
-			self.gone = true
 			return
 		end
 	end
@@ -749,6 +730,8 @@ function P.concreteWall:destroy()
 	self.sprite = self.destroyedSprite
 	self.destroyed = true
 	self.blocksMovement = false
+	self.dirAccept = {0,0,0,0}
+	self.dirSend = {0,0,0,0}
 	self.overlay = nil
 end
 
@@ -806,20 +789,14 @@ function P.tunnel:onEnter(player)
 	tools[tool].numHeld = tools[tool].numHeld - 1
 	self.toolsNeeded = self.toolsNeeded-1
 	self.toolsEntered = self.toolsEntered+1
-	donations = donations+math.ceil((7-(floorIndex))/2)
+	--donations = donations+math.ceil((7-(floorIndex))/2)
 	floorDonations = floorDonations+1
 end
 function P.tunnel:getInfoText()
 	return self.toolsNeeded
 end
 function P.tunnel:postPowerUpdate()
-	local noNormalTools = true
-	for i = 1, tools.numNormalTools do
-		if tools[i].numHeld>0 then noNormalTools = false end
-	end
-	if noNormalTools then self.toolsNeeded = 0
-	elseif self.toolsNeeded == -1 then self.toolsNeeded = toolMin-floorDonations end
-	self.toolsNeeded = toolMin-floorDonations-self.toolsEntered
+	self.toolsNeeded = toolMin-self.toolsEntered
 	if self.toolsNeeded<0 then self.toolsNeeded = 0 end
 end
 
@@ -868,24 +845,27 @@ function P.treasureTile:onEnter()
 	self.isVisible = false
 end
 function P.treasureTile:giveReward(reward)
-	if reward<333-donations*25 then
-
-		--do nothing
-	elseif reward<850-donations*12 then
-		--give one tool
-		tools.giveRandomTools(1)
-	elseif reward<950-donations*6 then
-		--give two tools
-		tools.giveRandomTools(2)
-	elseif reward<980-donations*3 then
-		--give three tools
-		tools.giveRandomTools(3)
-	elseif reward<990-donations then
-		--give one special tool
-		tools.giveSupertools(1)
+	local timesCounter = 0
+	local probNothing = 333-donations*18
+	local probBasic = 800-donations*18
+	local probSuper = 1 - probNothing - probBasic
+	if reward<probNothing then return
+	elseif reward<probBasic then
+		local counter = 0
+		while counter<3 do
+			tools.giveRandomTools(1)
+			local rand = math.random()
+			if rand>probBasic/1000 then return end
+			counter = counter+1
+		end
 	else
-		--give two special tools
-		tools.giveSupertools(2)
+		local counter = 0
+		while counter<2 do
+			tools.giveSupertools(1)
+			local rand = math.random()
+			if rand>probSuper/1000 then return end
+			counter = counter+1
+		end
 	end
 end
 
@@ -948,13 +928,30 @@ function P.bomb:onStep(x, y)
 		self.gone = true
 	end
 end
-function P.bomb:onEnd(map, x, y)
+function P.bomb:onEnd(x, y)
+	self:explode(x,y)
+end
+function P.bomb:destroy()
+	self.gone = true
+end
+function P.bomb:explode(x,y)
+	if not editorMode and math.abs(player.tileY-x)<2 and math.abs(player.tileX-y)<2 then kill() end
 	for i = -1, 1 do
 		for j = -1, 1 do
-			if map[x+i]~=nil and map[x+i][y+j]~=nil then map[x+i][y+j]:destroy() end
+			if room[x+i]~=nil and room[x+i][y+j]~=nil then room[x+i][y+j]:destroy() end
 		end
 	end
-	return map
+	for k = 1, #animals do
+		if math.abs(animals[k].tileY-x)<2 and math.abs(animals[k].tileX-y)<2 then animals[k]:kill() end
+	end
+	for k = 1, #pushables do
+		if math.abs(pushables[k].tileY-x)<2 and math.abs(pushables[k].tileX-y)<2 and not pushables[k].destroyed then
+			pushables[k].destroyed = true
+			if pushables[k]:instanceof(pushableList.bombBox) then
+				self:explode(pushables[k].tileY, pushables[k].tileX)
+			end
+		end
+	end
 end
 
 P.capacitor = P.conductiveTile:new{name = "capacitor", counter = 3, maxCounter = 3, dirAccept = {1,0,1,0}, sprite = love.graphics.newImage('Graphics/capacitor.png'), poweredSprite = love.graphics.newImage('Graphics/capacitor.png')}
@@ -1027,14 +1024,6 @@ function P.unactivatedBomb:onStep(x, y)
 		self.poweredSprite = self.sprite
 	end
 end
-function P.unactivatedBomb:onEnd(map, x, y)
-	for i = -1, 1 do
-		for j = -1, 1 do
-			if map[x+i]~=nil and map[x+i][y+j]~=nil then map[x+i][y+j]:destroy() end
-		end
-	end
-	return map
-end
 function P.unactivatedBomb:onEnter(player)
 	self.triggered = true
 end
@@ -1068,20 +1057,25 @@ function P.beggar:onEnter(player)
 	if not self.alive then return end
 	tools[tool].numHeld = tools[tool].numHeld - 1
 	self.counter = self.counter+1
-	probabilityOfPayout = math.atan(self.counter)*1/math.pi+donations*2/100
+	probabilityOfPayout = self.counter/4+donations*2/100
 	randomNum = math.random()
 	if randomNum<probabilityOfPayout then
 		self.counter = 0
 		tools.giveSupertools(1)
 		local killBeggar = math.random()
-		if killBeggar<0.5 then self:destroy() end
+		if killBeggar<0.5 then
+			self:destroy()
+		end
 	end
+end
+function P.beggar:getInfoText()
+	return donations
 end
 function P.beggar:destroy()
 	self.sprite = self.deadSprite
 	self.alive = false
 	local paysOut = math.random()
-	if paysOut<0.5 then return end
+	if paysOut<0.5 and not player.character.name==characters.felix.name then return end
 	tools.giveSupertools(1)
 	--[[filledSlots = {0,0,0}
 	slot = 1
@@ -1115,11 +1109,15 @@ function P.donationMachine:getInfoText()
 	return donations
 end
 function P.donationMachine:onEnter(player)
-	if tool==0 or tool>7 then return end
+	if tool==0 then return end
 	tools[tool].numHeld = tools[tool].numHeld - 1
-	donations = donations+math.ceil((7-(floorIndex))/2)
+	local mult = 1
+	if tool > tools.numNormalTools then
+		mult = 2
+	end
+	donations = donations+mult*math.ceil((10-(floorIndex))/2)
 	floorDonations = floorDonations+1
-	gameTime = gameTime+20
+	gameTime.timeLeft = gameTime.timeLeft+mult*gameTime.donateTime
 end
 
 P.entrancePortal = P.tile:new{name = "entrancePortal", sprite = love.graphics.newImage('Graphics/entrancePortal.png')}
@@ -1145,11 +1143,19 @@ P.treasureTile2 = P.treasureTile:new{name = "treasureTile2", sprite = love.graph
 
 function P.treasureTile2:onEnter()
 	if self.done then return end
-	local reward = math.floor(math.random()*667)+333
+	local reward = math.floor(math.random()*1000)
 	self:giveReward(reward)
 	self.done = true
 	self.isCompleted = true
 	self.isVisible = false
+end
+function P.treasureTile2:giveReward(reward)
+	if reward<775-donations*10 then
+		tools.giveRandomTools(1)
+	else
+		tools.giveRandomTools(1)
+		tools.giveSupertools(1)
+	end
 end
 
 P.treasureTile3 = P.treasureTile:new{name = "treasureTile3", sprite = love.graphics.newImage('Graphics/treasuretile3.png')}
@@ -1195,10 +1201,6 @@ P.powerTriggeredBomb.onEnterAnimal = P.powerTriggeredBomb.onEnter
 
 P.boxTile = P.tile:new{name = "boxTile", pushable = pushableList[2]:new(), listIndex = 2, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
 
-function P.boxTile:usableOnNothing()
-	return true
-end
-
 P.motionGate = P.conductiveTile:new{name = "gate", updatePowerOnLeave = true, dirSend = {0,0,0,0}, sprite = love.graphics.newImage('Graphics/gate.png'), poweredSprite = love.graphics.newImage('Graphics/gate.png')}
 function P.motionGate:onLeave(player)
 	if (player.prevTileX<player.tileX and self.rotation == 0) or (player.prevTileX>player.tileX and self.rotation == 2) or
@@ -1219,6 +1221,8 @@ P.animalBoxTile = P.boxTile:new{name = "animalBoxTile", pushable = pushableList[
 P.puddle = P.conductiveTile:new{name = "puddle", sprite = love.graphics.newImage('Graphics/puddle.png'), poweredSprite = love.graphics.newImage('Graphics/puddlelectrified.png')}
 function P.puddle:willKillPlayer()
 	return not self.destroyed and self.powered
+end
+function P.puddle:destroy()
 end
 P.puddle.willKillAnimal = P.puddle.willKillPlayer
 
@@ -1266,6 +1270,38 @@ end
 P.reinforcedConductiveGlass = P.reinforcedGlass:new{name = "reinforcedConductiveGlass", sprite = love.graphics.newImage('Graphics3D/reinforcedconductiveglass.png'), poweredSprite = love.graphics.newImage('Graphics3D/reinforcedconductiveglass.png'), canBePowered = true, dirAccept = {1,1,1,1}, dirSend = {1,1,1,1}}
 
 P.fog = P.tile:new{name = "fog", sprite = love.graphics.newImage('Graphics/fog.png'), blocksVision = true}
+
+P.accelerator = P.conductiveTile:new{name = "accelerator", sprite = love.graphics.newImage('Graphics/accelerator.png'), poweredSprite = love.graphics.newImage('Graphics/accelerator.png')}
+function P.accelerator:yAccel()
+	if not self.powered then return 0 end
+	if self.rotation==0 then return -1
+	elseif self.rotation==2 then return 1
+	else return 0 end
+end
+function P.accelerator:xAccel()
+	if not self.powered then return 0 end
+	if self.rotation==1 then return 1
+	elseif self.rotation==3 then return -1
+	else return 0 end
+end
+
+P.unpoweredAccelerator = P.accelerator:new{name = "unpoweredaccelerator", canBePowered = false, sprite = love.graphics.newImage('Graphics/unpoweredaccelerator.png')}
+function P.unpoweredAccelerator:yAccel()
+	if self.rotation==0 then return -1
+	elseif self.rotation==2 then return 1
+	else return 0 end
+end
+function P.unpoweredAccelerator:xAccel()
+	if self.rotation==1 then return 1
+	elseif self.rotation==3 then return -1
+	else return 0 end
+end
+
+P.bombBoxTile = P.tile:new{name = "bombBoxTile", pushable = pushableList[8]:new(), listIndex = 8, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
+
+P.giftBoxTile = P.tile:new{name = "giftBoxTile", pushable = pushableList[9]:new(), listIndex = 9, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
+
+P.jackInTheBoxTile = P.tile:new{name = "jackInTheBoxTile", pushable = pushableList[10]:new(), listIndex = 10, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
 
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
@@ -1352,5 +1388,10 @@ tiles[82] = P.unbreakableWire
 tiles[83] = P.unbreakableHorizontalWire
 tiles[84] = P.unbreakableTWire
 tiles[85] = P.unbreakableCornerWire
+tiles[86] = P.accelerator
+tiles[87] = P.bombBoxTile
+tiles[88] = P.unpoweredAccelerator
+tiles[89] = P.giftBoxTile
+tiles[90] = P.jackInTheBoxTile
 
 return tiles
