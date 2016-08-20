@@ -34,16 +34,14 @@ function P.character:onBegin()
 	self:setStartingTools()
 	self:onCharLoad()
 end
-function P.character:canFly()
-	return false
-end
 function P.character:setStartingTools()
 	for i = 1, tools.numNormalTools do
 		tools[i].numHeld = self.startingTools[i]
 	end
 end
 function P.character:onCharLoad()
-
+end
+function P.character:onRoomEnter()
 end
 
 P.herman = P.character:new{name = "Herman", description = "The Electrician"}
@@ -76,9 +74,6 @@ P.gabe = P.character:new{name = "Gabe", description = "The Angel",
 function P.gabe:onCharLoad()
 	player.flying = true
 end
-function P.gabe:canFly()
-	return true
-end
 
 P.rammy = P.character:new{name = "Rammy", description = "The Ram",
 	sprite = love.graphics.newImage('Graphics/ram.png')}
@@ -88,6 +83,15 @@ function P.rick:onCharLoad()
 	tools.toolReroller.numHeld = 3
 end
 
+--alternative name: "Froggy, the Fresh"
+P.frederick = P.character:new{name = "Frederick", description = "The Frog", sprite = love.graphics.newImage('Graphics/frederick.png')}
+function P.rick:onCharLoad()
+	tools.spring.numHeld = 4
+end
+function P.frederick:onFloorEnter()
+	tools.spring.numHeld = tools.spring.numHeld+2
+end
+
 P[1] = P.herman
 P[2] = P.felix
 P[3] = P.most
@@ -95,5 +99,6 @@ P[4] = P.erik
 P[5] = P.gabe
 P[6] = P.rammy
 P[7] = P.rick
+P[8] = P.frederick
 
 return characters

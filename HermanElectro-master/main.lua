@@ -28,6 +28,7 @@ function love.load()
 	gameTime = {timeLeft = 260, toolTime = 0, roomTime = 15, levelTime = 200, donateTime = 20}
 
 	typingCallback = nil
+	mouseDown = false
 	debugText = nil
 	tempAdd = 1
 	editorMode = false
@@ -189,6 +190,7 @@ function loadNextLevel(dontChangeTime)
 		loadLevel(map.floorOrder[floorIndex])
 		floorIndex = floorIndex + 1
 	end
+	player.character:onFloorEnter()
 end
 
 function startGame()
@@ -1285,9 +1287,8 @@ end
 
 function enterRoom(dir)
 	resetTranslation()
-	if not player.character:canFly() then
-		player.flying = false
-	end
+	player.flying = false
+	player.character:onRoomEnter()
 	--set pushables of prev. room to pushables array, saving for next entry
 	room.pushables = pushables
 	room.animals = animals
@@ -1891,6 +1892,8 @@ function checkDeath()
 end
 
 function love.mousepressed(x, y, button, istouch)
+	mouseDown = true
+
 	if charSelect then
 		selectedBox.y = math.floor(y/(height/3))
 		selectedBox.x = math.floor(x/(width/5))
@@ -1955,6 +1958,7 @@ function love.mousepressed(x, y, button, istouch)
 end
 
 function love.mousereleased(x, y, button, istouch)
+	mouseDown = false
 	if gamePaused then
 		return
 	end
