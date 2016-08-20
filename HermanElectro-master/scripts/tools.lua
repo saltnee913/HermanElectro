@@ -1144,6 +1144,19 @@ function P.toolIncrementer:useToolNothing()
 	self.numHeld = self.numHeld-1
 end
 
+P.wings = P.tool:new{name = "wings", baseRange = 1, image = love.graphics.newImage('Graphics/wings.png')}
+function P.wings:usableOnNothing()
+	return true
+end
+P.wings.usableOnTile = P.roomReroller.usableOnNothing
+
+function P.wings:useToolNothing()
+	player.flying = true
+	self.numHeld = self.numHeld-1
+end
+P.wings.useToolTile = P.wings.useToolNothing
+
+
 P.numNormalTools = 7
 
 P[1] = P.saw
@@ -1189,5 +1202,6 @@ P[40] = P.armageddon
 P[41] = P.toolIncrementer
 P[42] = P.toolDoubler
 P[43] = P.roomReroller
+P[5] = P.wings
 
 return tools
