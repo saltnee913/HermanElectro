@@ -354,6 +354,11 @@ P.poweredFloor.willDestroyPushable = P.poweredFloor.willKillPlayer
 
 P.wall = P.tile:new{overlayable = true, electrified = false, onFire = false, blocksProjectiles = true, blocksMovement = true, canBePowered = false, name = "wall", blocksVision = true, electrifiedSprite = love.graphics.newImage('Graphics/woodwallelectrified.png'), destroyedSprite = love.graphics.newImage('Graphics/woodwallbroken.png'), sprite = love.graphics.newImage('Graphics3D/woodwall.png'), poweredSprite = love.graphics.newImage('Graphics3D/woodwall.png'), electrifiedPoweredSprite = love.graphics.newImage('Graphics/woodwallpowered.png'), sawable = true}
 function P.wall:onEnter(player)	
+	if player.character.name == "Rammy" then
+		if not (self:instanceof(P.glassWall) or self:instanceof(P.metalWall) or self:instanceof(P.concreteWall)) then
+			self:destroy()
+		end
+	end
 	if not self.destroyed then
 		--player.x = player.prevx
 		--player.y = player.prevy

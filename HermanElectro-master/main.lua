@@ -148,7 +148,7 @@ function love.load()
 	scale = (width - 2*wallSprite.width)/(20.3 * 16)*5/6
 	floor = tiles.tile
 	if player == nil then
-		player = { dead = false, waitCounter = 0, tileX = 1, tileY = 6, x = (1-1)*scale*floor.sprite:getWidth()+wallSprite.width+	floor.sprite:getWidth()/2*scale-10, 
+		player = { dead = false, flying = false, waitCounter = 0, tileX = 1, tileY = 6, x = (1-1)*scale*floor.sprite:getWidth()+wallSprite.width+	floor.sprite:getWidth()/2*scale-10, 
 			y = (6-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10, prevTileX = 3, prevTileY 	= 10,
 			prevx = (3-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10,
 			prevy = (10-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10,
@@ -944,12 +944,6 @@ function love.draw()
 				end
 			end
 		end
-		if player.tileY==j then
-			player.x = (player.tileX-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
-			player.y = (player.tileY-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
-			love.graphics.draw(player.character.sprite, player.x-player.character.sprite:getWidth()*player.character.scale/2, player.y-player.character.sprite:getHeight()*player.character.scale, 0, player.character.scale, player.character.scale)
-		end
-
 		--love.graphics.draw(walls, 0, 0, 0, width/walls:getWidth(), height/walls:getHeight())
 	end
 	if tools.toolDisplayTimer.timeLeft > 0 then
@@ -998,6 +992,10 @@ function love.draw()
 		end
 		love.graphics.draw(cornerwall, (cornerX-1)*floor.sprite:getWidth()*scale+wallSprite.width, (yOffset+(cornerY-1)*floor.sprite:getHeight())*scale+wallSprite.height, (i-2)*math.pi/2, scale, scale)
 	end
+
+	player.x = (player.tileX-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
+	player.y = (player.tileY-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
+	love.graphics.draw(player.character.sprite, player.x-player.character.sprite:getWidth()*player.character.scale/2, player.y-player.character.sprite:getHeight()*player.character.scale, 0, player.character.scale, player.character.scale)
 
 	--everything after this will be drawn regardless of bigRoomTranslation
 	love.graphics.translate(-1*bigRoomTranslation.x*floor.sprite:getWidth()*scale, -1*bigRoomTranslation.y*floor.sprite:getHeight()*scale)
@@ -1287,6 +1285,9 @@ end
 
 function enterRoom(dir)
 	resetTranslation()
+	if not player.character:canFly() then
+		player.flying = false
+	end
 	--set pushables of prev. room to pushables array, saving for next entry
 	room.pushables = pushables
 	room.animals = animals
@@ -1503,12 +1504,15 @@ function love.keypressed(key, unicode)
 			toolMode = 1
 		end
 	end]]
+
+	--k ability: open doors with k on supertools
 	if key=="k" then
 		if tool>tools.numNormalTools then
 			tools[tool].numHeld = tools[tool].numHeld-1
 			unlockDoors()
 		end
 	end
+
 	if editorMode then
 		editor.keypressed(key, unicode)
 	else
@@ -1621,7 +1625,7 @@ function love.keypressed(key, unicode)
     elseif key == 'down' then dirUse = 3
     elseif key == 'left' then dirUse = 4
     elseif key == "space" then dirUse = 5 end
-    if dirUse~=0 then
+    if dirUse~=0 and tool>0 and tools[tool].useWithArrowKeys then
     	tools.updateToolableTiles(tool)
     end
     if dirUse ~= 0 then
@@ -1875,7 +1879,7 @@ function checkDeath()
 	end
 	if room[player.tileY][player.tileX]~=nil then
 		t = room[player.tileY][player.tileX]
-		if t:willKillPlayer() then
+		if t:willKillPlayer() and not player.flying then
 			kill()
 		end
 	end
@@ -2038,28 +2042,6 @@ function checkAllDeath()
 	end
 	for i = 1, #pushables do
 		pushables[i]:checkDestruction()
-	end
-end
-
-function updateFire()
-	for i = 1, roomHeight do
-		for j = 1, roomLength do
-			if room[i][j]~=nil and room[i][j]:instanceof(tiles.wall) and room[i][j].onFire then
-				burn(i,j)
-			end
-		end
-	end
-end
-
-function burn(x,y)
-	room[x][y]:destroy()
-	for i = -1, 1 do
-		for j = -1, 1 do
-			if room[x+i]~=nil and room[x+i][y+j]~=nil and tools.flame:usableOnTile(room[x+i][y+j]) and not room[x+i][y+j].onFire then
-				room[x+i][y+j].onFire = true
-				burn(x+i, y+j)
-			end
-		end
 	end
 end
 
