@@ -34,6 +34,9 @@ function P.character:onBegin()
 	self:setStartingTools()
 	self:onCharLoad()
 end
+function P.character:canFly()
+	return false
+end
 function P.character:setStartingTools()
 	for i = 1, tools.numNormalTools do
 		tools[i].numHeld = self.startingTools[i]
@@ -68,9 +71,19 @@ function P.erik:onCharLoad()
 	map.floorOrder = {'RoomData/floor1_erik.json', 'RoomData/floor2_erik.json', 'RoomData/floor3_erik.json', 'RoomData/floor6.json'}
 end
 
+P.gabe = P.character:new{name = "Gabe", description = "The Angel",
+	sprite = love.graphics.newImage('Graphics/gabe.png')}
+function P.gabe:onCharLoad()
+	player.flying = true
+end
+function P.gabe:canFly()
+	return true
+end
+
 P[1] = P.herman
 P[2] = P.felix
 P[3] = P.most
 P[4] = P.erik
+P[5] = P.gabe
 
 return characters

@@ -1287,7 +1287,9 @@ end
 
 function enterRoom(dir)
 	resetTranslation()
-	player.flying = false
+	if not player.character:canFly() then
+		player.flying = false
+	end
 	--set pushables of prev. room to pushables array, saving for next entry
 	room.pushables = pushables
 	room.animals = animals
