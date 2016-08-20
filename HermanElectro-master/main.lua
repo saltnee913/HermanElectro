@@ -1504,12 +1504,15 @@ function love.keypressed(key, unicode)
 			toolMode = 1
 		end
 	end]]
-	if key=="k" then
+
+	--k ability: open doors with k on supertools
+	--[[if key=="k" then
 		if tool>tools.numNormalTools then
 			tools[tool].numHeld = tools[tool].numHeld-1
 			unlockDoors()
 		end
-	end
+	end]]
+
 	if editorMode then
 		editor.keypressed(key, unicode)
 	else

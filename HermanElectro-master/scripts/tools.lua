@@ -1156,6 +1156,21 @@ function P.wings:useToolNothing()
 end
 P.wings.useToolTile = P.wings.useToolNothing
 
+P.swapper = P.tool:new{name = "swapper", baseRange = 100, image = love.graphics.newImage('Graphics/swapper.png')}
+function P.swapper:usableOnAnimal()
+	return true
+end
+function P.swapper:useToolAnimal(animal)
+	local tempx = animal.tileX
+	local tempy = animal.tileY
+	animal.tileX = player.tileX
+	animal.tileY = player.tileY
+	player.tileX = tempx
+	player.tileY = tempy
+	self.numHeld = self.numHeld-1
+end
+P.swapper.getToolableAnimals = P.swapper.getToolableAnimalsBox
+
 
 P.numNormalTools = 7
 
@@ -1202,6 +1217,7 @@ P[40] = P.armageddon
 P[41] = P.toolIncrementer
 P[42] = P.toolDoubler
 P[43] = P.roomReroller
-P[5] = P.wings
+P[44] = P.wings
+P[45] = P.swapper
 
 return tools
