@@ -1009,7 +1009,31 @@ function P.laser:useToolAnimal(animal)
 			end
 		end
 	end
+	self.numHeld = self.numHeld-1
 end
+
+--should superLaser kill animals? can't decide
+P.superLaser = P.laser:new{name = "superLaser", baseRange = 100, image = love.graphics.newImage('Graphics/laser.png')}
+function P.superLaser:usableOnTile()
+	return true
+end
+function P.superLaser:useToolTile(tile, tileY, tileX)
+	if tileY == player.tileY then
+		for i = 1, roomLength do
+			if room[tileY][i]~=nil then
+				room[tileY][i]:destroy()
+			end
+		end
+	elseif tileX == player.tileX then
+		for i = 1, roomHeight do
+			if room[i][tileX]~=nil then
+				room[i][tileX]:destroy()
+			end
+		end
+	end
+	self.numHeld = self.numHeld-1
+end
+
 
 P.gas = P.tool:new{name = "gas", baseRange = 1, image = love.graphics.newImage('Graphics/gas.png')}
 function P.gas:usableOnNothing()
@@ -1022,9 +1046,103 @@ function P.gas:useToolTile()
 	for i = 1, #animals do
 		animals[i]:kill()
 	end
+	self.numHeld = self.numHeld-1
 end
 P.gas.useToolNothing = P.gas.useToolTile
 P.gas.useToolAnimal = P.gas.useToolTile
+
+
+P.armageddon = P.tool:new{name = "armageddon", baseRange = 1, image = love.graphics.newImage('Graphics/armageddon.png')}
+function P.armageddon:usableOnTile()
+	return true
+end
+P.armageddon.usableOnNothing = P.armageddon.usableOnTile
+
+function P.armageddon:useToolTile()
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]~=nil then
+				room[i][j]:destroy()
+			end
+		end
+	end
+	for i = 1, #pushables do
+		pushables[i].destroyed = true
+	end
+	for i = 1, #animals do
+		animals[i]:kill()
+	end
+	self.numHeld = self.numHeld-1
+end
+P.armageddon.useToolNothing = P.armageddon.useToolTile
+
+
+P.toolReroller = P.tool:new{name = "toolReroller", baseRange = 1, image = love.graphics.newImage('Graphics/toolreroller.png')}
+function P.toolReroller:usableOnNothing()
+	return true
+end
+function P.toolReroller:useToolNothing()
+	local inventorySize = 0
+	for i = 1, P.numNormalTools do
+		inventorySize = inventorySize+tools[i].numHeld
+		tools[i].numHeld = 0
+	end
+	--gain one extra basic tool from use (but all tools are rerolled)
+	inventorySize = inventorySize+1
+	for i = 1, inventorySize do
+		local slot = math.floor(math.random()*7)+1
+		tools[slot].numHeld = tools[slot].numHeld+1
+	end
+	self.numHeld = self.numHeld-1
+end
+
+P.roomReroller = P.tool:new{name = "roomReroller", baseRange = 1, image = love.graphics.newImage('Graphics/roomreroller.png')}
+function P.roomReroller:usableOnNothing()
+	return true
+end
+P.roomReroller.usableOnTile = P.roomReroller.usableOnNothing
+
+function P.roomReroller:useToolNothing()
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]~=nil and not room[i][j]:instanceof(tiles.endTile) then
+				local slot = math.floor(math.random()*#tiles)+1
+				room[i][j] = tiles[slot]:new()
+			end
+		end
+	end
+	for i = 1, #animals do
+		animals[i]:kill()
+	end
+	for i = 1, #pushables do
+		pushables[i].destroyed = true
+	end
+	self.numHeld = self.numHeld-1
+end
+P.roomReroller.useToolTile = P.roomReroller.useToolNothing
+
+
+P.toolDoubler = P.tool:new{name = "toolDoubler", baseRange = 1, image = love.graphics.newImage('Graphics/tooldoubler.png')}
+function P.toolDoubler:usableOnNothing()
+	return true
+end
+function P.toolDoubler:useToolNothing()
+	for i = 1, P.numNormalTools do
+		tools[i].numHeld = tools[i].numHeld*2
+	end
+	self.numHeld = self.numHeld-1
+end
+
+P.toolIncrementer = P.tool:new{name = "toolIncrementer", baseRange = 1, image = love.graphics.newImage('Graphics/toolincrementer.png')}
+function P.toolIncrementer:usableOnNothing()
+	return true
+end
+function P.toolIncrementer:useToolNothing()
+	for i = 1, P.numNormalTools do
+		tools[i].numHeld = tools[i].numHeld+1
+	end
+	self.numHeld = self.numHeld-1
+end
 
 P.numNormalTools = 7
 
@@ -1065,6 +1183,11 @@ P[34] = P.superWireCutters
 P[35] = P.boxSpawner
 P[36] = P.boomboxSpawner
 P[37] = P.laser
-P[7] = P.gas
+P[38] = P.gas
+P[39] = P.superLaser
+P[40] = P.armageddon
+P[41] = P.toolIncrementer
+P[42] = P.toolDoubler
+P[43] = P.roomReroller
 
 return tools
