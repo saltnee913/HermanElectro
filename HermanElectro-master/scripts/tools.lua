@@ -1278,5 +1278,6 @@ P[44] = P.wings
 P[45] = P.swapper
 P[46] = P.bucketOfWater
 P[47] = P.flame
+P[48] = P.toolReroller
 
 return tools

@@ -83,11 +83,17 @@ end
 P.rammy = P.character:new{name = "Rammy", description = "The Ram",
 	sprite = love.graphics.newImage('Graphics/ram.png')}
 
+P.rick = P.character:new{name = "Rick", description = "The Gambler", sprite = love.graphics.newImage('Graphics/rick.png')}
+function P.rick:onCharLoad()
+	tools.toolReroller.numHeld = 3
+end
+
 P[1] = P.herman
 P[2] = P.felix
 P[3] = P.most
 P[4] = P.erik
 P[5] = P.gabe
 P[6] = P.rammy
+P[7] = P.rick
 
 return characters
