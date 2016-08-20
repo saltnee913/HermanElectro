@@ -1506,12 +1506,12 @@ function love.keypressed(key, unicode)
 	end]]
 
 	--k ability: open doors with k on supertools
-	--[[if key=="k" then
+	if key=="k" then
 		if tool>tools.numNormalTools then
 			tools[tool].numHeld = tools[tool].numHeld-1
 			unlockDoors()
 		end
-	end]]
+	end
 
 	if editorMode then
 		editor.keypressed(key, unicode)
@@ -1625,7 +1625,7 @@ function love.keypressed(key, unicode)
     elseif key == 'down' then dirUse = 3
     elseif key == 'left' then dirUse = 4
     elseif key == "space" then dirUse = 5 end
-    if dirUse~=0 then
+    if dirUse~=0 and tool>0 and tools[tool].useWithArrowKeys then
     	tools.updateToolableTiles(tool)
     end
     if dirUse ~= 0 then

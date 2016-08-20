@@ -130,7 +130,7 @@ function P.useToolTile(toolid, tileY, tileX)
 	return false
 end
 
-P.tool = Object:new{name = 'test', numHeld = 0, baseRange = 1, image=love.graphics.newImage('Graphics/saw.png')}
+P.tool = Object:new{name = 'test', useWithArrowKeys = true, numHeld = 0, baseRange = 1, image=love.graphics.newImage('Graphics/saw.png')}
 function P.tool:usableOnTile()
 	return false
 end
@@ -668,7 +668,7 @@ function P.doorstop:useToolTile(tile)
 	tile.stopped = true
 end
 
-P.missile = P.superTool:new{name = "missile", baseRange = 10, image = love.graphics.newImage('Graphics/missile.png')}
+P.missile = P.superTool:new{name = "missile", useWithArrowKeys = false, baseRange = 10, image = love.graphics.newImage('Graphics/missile.png')}
 function P.missile:usableOnTile(tile)
 	return not tile.destroyed and (tile:instanceof(tiles.wire) or tile:instanceof(tiles.electricFloor) or tile:instanceof(tiles.wall)) or tile:instanceof(tiles.powerSupply) and not tile.destroyed
 end
@@ -817,7 +817,7 @@ function P.magnet:useToolPushable(pushable)
 	pushable:move(mover)
 end
 
-P.spring = P.tool:new{name = "spring", baseRange = 4, image = love.graphics.newImage('Graphics/spring.png')}
+P.spring = P.tool:new{name = "spring", useWithArrowKeys = false, baseRange = 4, image = love.graphics.newImage('Graphics/spring.png')}
 function P.spring:usableOnTile(tile)
 	for i = 1, #pushables do
 		if pushables[i].tileX == tile.tileX and pushables[i].tileY == tile.tileY then return false end
@@ -1156,7 +1156,7 @@ function P.wings:useToolNothing()
 end
 P.wings.useToolTile = P.wings.useToolNothing
 
-P.swapper = P.tool:new{name = "swapper", baseRange = 100, image = love.graphics.newImage('Graphics/swapper.png')}
+P.swapper = P.tool:new{name = "swapper", useWithArrowKeys = false, baseRange = 100, image = love.graphics.newImage('Graphics/swapper.png')}
 function P.swapper:usableOnAnimal()
 	return true
 end
