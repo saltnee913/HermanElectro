@@ -29,7 +29,7 @@ function P.getUnlockedCharacters()
 end
 
 P.character = Object:new{name = "Name", sprite = love.graphics.newImage('Graphics/herman_sketch.png'),
-  description = "description", startingTools = {0,0,0,0,0,0,0}, scale = 0.25 * width/1200}
+  description = "description", startingTools = {0,0,0,0,0,0,0}, scale = 0.25 * width/1200, forcePowerUpdate = false}
 function P.character:onBegin()
 	self:setStartingTools()
 	self:onCharLoad()
@@ -44,6 +44,15 @@ function P.character:setStartingTools()
 end
 function P.character:onCharLoad()
 
+end
+function P.character:onPreUpdatePower()
+
+end
+function P.character:onPostUpdatePower()
+	
+end
+function P.character:onKeyPressed()
+	return false
 end
 
 P.herman = P.character:new{name = "Herman", description = "The Electrician"}
@@ -88,6 +97,42 @@ function P.rick:onCharLoad()
 	tools.toolReroller.numHeld = 3
 end
 
+P.battery = P.character:new{name = "Bob", description = "The Battery", sprite = love.graphics.newImage('Graphics/powersupplydead.png'),
+  onSprite = love.graphics.newImage('Graphics/powersupply.png'), offSprite = love.graphics.newImage('Graphics/powersupplydead.png'), 
+  scale = scale, storedTile = nil, forcePowerUpdate = false, powered = false}
+function P.battery:onKeyPressed(key)
+	--log(key)
+	if key == 'rshift' or key == 'lshift' or key == 'shift' then
+		if self.powered then
+			self.powered = false
+			self.sprite = self.offSprite
+			self.forcePowerUpdate = false
+		else
+			self.powered = true
+			self.sprite = self.onSprite
+			self.forcePowerUpdate = true
+		end
+		return true
+	end
+	return false
+end
+function P.battery:onPreUpdatePower()
+	if self.powered then
+		if room[player.tileY][player.tileX] ~= nil then
+			self.storedTile = room[player.tileY][player.tileX]:new()
+			self.storedTile.powered = true
+		else
+			self.storedTile = nil
+		end
+		room[player.tileY][player.tileX] = tiles.powerSupply:new()
+	end
+end
+function P.battery:onPostUpdatePower()
+	if self.powered then
+		room[player.tileY][player.tileX] = self.storedTile
+	end
+end
+
 P[1] = P.herman
 P[2] = P.felix
 P[3] = P.most
@@ -95,5 +140,6 @@ P[4] = P.erik
 P[5] = P.gabe
 P[6] = P.rammy
 P[7] = P.rick
+P[8] = P.battery
 
 return characters

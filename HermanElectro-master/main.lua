@@ -348,6 +348,7 @@ function checkLight(i, j, x, y)
 end
 
 function updatePower()
+	player.character:onPreUpdatePower()
 	powerCount = 0
 
 	for i=1, roomHeight do
@@ -491,6 +492,7 @@ function updatePower()
 		--	kill()
 		--end
 	--end
+	player.character:onPostUpdatePower()
 end
 
 function lightTest(x, y)
@@ -1561,7 +1563,10 @@ function love.keypressed(key, unicode)
 	end
 	keyTimer.timeLeft = keyTimer.base
 	waitTurn = false
-    -- ignore non-printable characters (see http://www.ascii-code.com/)
+
+	if player.character:onKeyPressed(key) then
+		updateGameState()
+	end
    	if player.waitCounter<=0 then
 		player.prevx = player.x
 		player.prevy = player.y
@@ -1639,7 +1644,7 @@ function love.keypressed(key, unicode)
 		updateGameState()
 		checkAllDeath()
 	end
-	noPowerUpdate = true
+	noPowerUpdate = not player.character.forcePowerUpdate
     if (key=="w" or key=="a" or key=="s" or key=="d") then
     	for i = 1, roomHeight do
     		for j = 1, roomLength do
