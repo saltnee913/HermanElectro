@@ -991,6 +991,41 @@ function P.superWireCutters:usableOnTile(tile)
 	return self:usableOnNonOverlay(tile) or (tile.overlay~=nil and self:usableOnNonOverlay(tile.overlay))
 end
 
+P.laser = P.tool:new{name = "laser", baseRange = 100, image = love.graphics.newImage('Graphics/laser.png')}
+function P.laser:usableOnAnimal(animal)
+	return not animal.dead
+end
+function P.laser:useToolAnimal(animal)
+	if animal.tileX == player.tileX then
+		for i = 1, #animals do
+			if animals[i].tileX == player.tileX then
+				animals[i]:kill()
+			end
+		end
+	else
+		for i = 1, #animals do
+			if animals[i].tileY == player.tileY then
+				animals[i]:kill()
+			end
+		end
+	end
+end
+
+P.gas = P.tool:new{name = "gas", baseRange = 1, image = love.graphics.newImage('Graphics/gas.png')}
+function P.gas:usableOnNothing()
+	return true
+end
+P.gas.usableOnTile = P.gas.usableOnNothing
+P.gas.usableOnAnimal = P.gas.usableOnNothing
+
+function P.gas:useToolTile()
+	for i = 1, #animals do
+		animals[i]:kill()
+	end
+end
+P.gas.useToolNothing = P.gas.useToolTile
+P.gas.useToolAnimal = P.gas.useToolTile
+
 P.numNormalTools = 7
 
 P[1] = P.saw
@@ -1029,5 +1064,7 @@ P[33] = P.conductiveBoxSpawner
 P[34] = P.superWireCutters
 P[35] = P.boxSpawner
 P[36] = P.boomboxSpawner
+P[37] = P.laser
+P[7] = P.gas
 
 return tools
