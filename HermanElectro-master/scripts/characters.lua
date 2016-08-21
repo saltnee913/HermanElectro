@@ -82,6 +82,13 @@ P.rick = P.character:new{name = "Rick", description = "The Gambler", sprite = lo
 function P.rick:onCharLoad()
 	tools.toolReroller.numHeld = 3
 end
+function P.rick:onFloorEnter()
+	for i = 1, #tools do
+		if tools[i].numHeld>0 then
+			tools[i].numHeld=0
+		end
+	end
+end
 
 --alternative name: "Froggy, the Fresh"
 P.frederick = P.character:new{name = "Frederick", description = "The Frog", sprite = love.graphics.newImage('Graphics/frederick.png')}
