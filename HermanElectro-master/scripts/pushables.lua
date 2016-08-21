@@ -6,6 +6,9 @@ local P = {}
 pushableList = P
 
 P.pushable = Object:new{name = "pushable", canBeAccelerated = true, conductive = false, prevTileX = 0, prevTileY = 0, tileX = 0, tileY = 0, destroyed = false, sprite = love.graphics.newImage('Graphics/box.png')}
+function P.pushable:destroy()
+	self.destroyed = true
+end
 function P.pushable:move(mover)
 	if self.destroyed then
 		return true
@@ -269,6 +272,10 @@ end
 P.bombBox = P.conductiveBox:new{name = "bombBox", sprite = love.graphics.newImage('Graphics/bombBox.png')}
 
 P.giftBox = P.box:new{name = "giftBox", sprite = love.graphics.newImage('Graphics/giftbox.png')}
+function P.giftBox:destroy()
+	tools.giveSupertools(1)
+	self.destroyed = true
+end
 
 P.jackInTheBox = P.conductiveBox:new{name = "jackInTheBox", sprite = love.graphics.newImage('Graphics/jackinthebox.png'), poweredSprite = love.graphics.newImage('Graphics/jackintheboxpowered.png')}
 
