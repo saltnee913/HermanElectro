@@ -34,16 +34,16 @@ function P.character:onBegin()
 	self:setStartingTools()
 	self:onCharLoad()
 end
-function P.character:canFly()
-	return false
-end
 function P.character:setStartingTools()
 	for i = 1, tools.numNormalTools do
 		tools[i].numHeld = self.startingTools[i]
 	end
 end
 function P.character:onCharLoad()
-
+end
+function P.character:onRoomEnter()
+end
+function P.character:onFloorEnter()
 end
 function P.character:onPreUpdatePower()
 
@@ -85,9 +85,6 @@ P.gabe = P.character:new{name = "Gabe", description = "The Angel",
 function P.gabe:onCharLoad()
 	player.flying = true
 end
-function P.gabe:canFly()
-	return true
-end
 
 P.rammy = P.character:new{name = "Rammy", description = "The Ram",
 	sprite = love.graphics.newImage('Graphics/ram.png')}
@@ -95,6 +92,22 @@ P.rammy = P.character:new{name = "Rammy", description = "The Ram",
 P.rick = P.character:new{name = "Rick", description = "The Gambler", sprite = love.graphics.newImage('Graphics/rick.png')}
 function P.rick:onCharLoad()
 	tools.toolReroller.numHeld = 3
+end
+function P.rick:onFloorEnter()
+	for i = 1, #tools do
+		if tools[i].numHeld>0 then
+			tools[i].numHeld=0
+		end
+	end
+end
+
+--alternative name: "Froggy, the Fresh"
+P.frederick = P.character:new{name = "Frederick", description = "The Frog", sprite = love.graphics.newImage('Graphics/frederick.png')}
+function P.rick:onCharLoad()
+	tools.spring.numHeld = 4
+end
+function P.frederick:onFloorEnter()
+	tools.spring.numHeld = tools.spring.numHeld+2
 end
 
 P.battery = P.character:new{name = "Bob", description = "The Battery", sprite = love.graphics.newImage('Graphics/powersupplydead.png'),
@@ -140,6 +153,7 @@ P[4] = P.erik
 P[5] = P.gabe
 P[6] = P.rammy
 P[7] = P.rick
-P[8] = P.battery
+P[8] = P.frederick
+P[9] = P.battery
 
 return characters

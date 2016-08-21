@@ -1059,7 +1059,7 @@ function P.superLaser:useToolTile(tile, tileY, tileX)
 end
 
 
-P.gas = P.tool:new{name = "gas", baseRange = 1, image = love.graphics.newImage('Graphics/gas.png')}
+P.gas = P.tool:new{name = "gas", baseRange = 0, image = love.graphics.newImage('Graphics/gas.png')}
 function P.gas:usableOnNothing()
 	return true
 end
@@ -1076,7 +1076,7 @@ P.gas.useToolNothing = P.gas.useToolTile
 P.gas.useToolAnimal = P.gas.useToolTile
 
 
-P.armageddon = P.tool:new{name = "armageddon", baseRange = 1, image = love.graphics.newImage('Graphics/armageddon.png')}
+P.armageddon = P.tool:new{name = "armageddon", baseRange = 0, image = love.graphics.newImage('Graphics/armageddon.png')}
 function P.armageddon:usableOnTile()
 	return true
 end
@@ -1101,7 +1101,7 @@ end
 P.armageddon.useToolNothing = P.armageddon.useToolTile
 
 
-P.toolReroller = P.tool:new{name = "toolReroller", baseRange = 1, image = love.graphics.newImage('Graphics/toolreroller.png')}
+P.toolReroller = P.tool:new{name = "toolReroller", baseRange = 0, image = love.graphics.newImage('Graphics/toolreroller.png')}
 function P.toolReroller:usableOnNothing()
 	return true
 end
@@ -1120,7 +1120,7 @@ function P.toolReroller:useToolNothing()
 	self.numHeld = self.numHeld-1
 end
 
-P.roomReroller = P.tool:new{name = "roomReroller", baseRange = 1, image = love.graphics.newImage('Graphics/roomreroller.png')}
+P.roomReroller = P.tool:new{name = "roomReroller", baseRange = 0, image = love.graphics.newImage('Graphics/roomreroller.png')}
 function P.roomReroller:usableOnNothing()
 	return true
 end
@@ -1146,7 +1146,7 @@ end
 P.roomReroller.useToolTile = P.roomReroller.useToolNothing
 
 
-P.toolDoubler = P.tool:new{name = "toolDoubler", baseRange = 1, image = love.graphics.newImage('Graphics/tooldoubler.png')}
+P.toolDoubler = P.tool:new{name = "toolDoubler", baseRange = 0, image = love.graphics.newImage('Graphics/tooldoubler.png')}
 function P.toolDoubler:usableOnNothing()
 	return true
 end
@@ -1157,7 +1157,7 @@ function P.toolDoubler:useToolNothing()
 	self.numHeld = self.numHeld-1
 end
 
-P.toolIncrementer = P.tool:new{name = "toolIncrementer", baseRange = 1, image = love.graphics.newImage('Graphics/toolincrementer.png')}
+P.toolIncrementer = P.tool:new{name = "toolIncrementer", baseRange = 0, image = love.graphics.newImage('Graphics/toolincrementer.png')}
 function P.toolIncrementer:usableOnNothing()
 	return true
 end
@@ -1168,7 +1168,7 @@ function P.toolIncrementer:useToolNothing()
 	self.numHeld = self.numHeld-1
 end
 
-P.wings = P.tool:new{name = "wings", baseRange = 1, image = love.graphics.newImage('Graphics/wings.png')}
+P.wings = P.tool:new{name = "wings", baseRange = 0, image = love.graphics.newImage('Graphics/wings.png')}
 function P.wings:usableOnNothing()
 	return true
 end
@@ -1230,6 +1230,75 @@ function P.bucketOfWater:spreadWater(tileY, tileX)
 		end
 	end
 end
+P.teleporter = P.tool:new{name = "teleporter", baseRange = 0, image = love.graphics.newImage('Graphics/teleporter.png')}
+function P.teleporter:usableOnNothing()
+	return true
+end
+function P.teleporter:useToolNothing()
+	self.numHeld = self.numHeld-1
+
+	local teleported = false
+	while not teleported do
+		local xval = math.floor(math.random()*mapHeight)+1
+		local yval = math.floor(math.random()*mapHeight)+1
+		if mainMap[yval][xval]~=nil then
+			teleported = true
+
+			resetTranslation()
+			player.flying = false
+			player.character:onRoomEnter()
+			--set pushables of prev. room to pushables array, saving for next entry
+			room.pushables = pushables
+			room.animals = animals
+
+			local plusOne = true
+
+			if player.tileY == math.floor(roomHeight/2) then plusOne = false
+			elseif player.tileX == math.floor(roomLength/2) then plusOne = false end
+
+			prevMapX = mapx
+			prevMapY = mapy
+			prevRoom = room
+
+			room = mainMap[yval][xval].room
+			mapx = xval
+			mapy = yval
+
+			if mainMap[yval][xval].dirEnter==nil then
+				mainMap[yval][xval].dirEnter = {1,1,1,1}
+			end
+
+			if mainMap[yval][xval].dirEnter[1]==1 then
+				player.tileX = math.floor(roomLength/2)
+				player.tileY = 1
+			elseif mainMap[yval][xval].dirEnter[2]==1 then
+				player.tileY = math.floor(roomHeight/2)
+				room.tileX = roomLength
+			elseif mainMap[yval][xval].dirEnter[3]==1 then
+				player.tileX = math.floor(roomLength/2)
+				player.tileY = roomHeight
+			else
+				player.tileY = math.floor(roomHeight/2)
+				room.tileX = 1
+			end
+
+			currentid = tostring(mainMap[mapy][mapx].roomid)
+			if map.getFieldForRoom(currentid, 'autowin') then completedRooms[mapy][mapx] = 1 end
+			if loadTutorial then
+				player.enterX = player.tileX
+				player.enterY = player.tileY
+			end
+
+			if (prevMapX~=mapx or prevMapY~=mapy) or dir == -1 then
+				createAnimals()
+				createPushables()
+			end
+			visibleMap[mapy][mapx] = 1
+			keyTimer.timeLeft = keyTimer.suicideDelay
+			updateGameState()
+		end
+	end
+end
 
 
 P.numNormalTools = 7
@@ -1282,5 +1351,6 @@ P[45] = P.swapper
 P[46] = P.bucketOfWater
 P[47] = P.flame
 P[48] = P.toolReroller
+P[49] = P.teleporter
 
 return tools

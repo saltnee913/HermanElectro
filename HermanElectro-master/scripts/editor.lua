@@ -245,7 +245,7 @@ end
 
 function P.mousemoved(x, y, dx, dy)
 	if mouseY>height-2*width/45 then return end
-	if (love.mouse.isDown(1) or love.mouse.isDown('l') or love.mouse.isDown(2) or love.mouse.isDown('r')) and tempAdd>0 and tiles[tempAdd]~=nil and tileLocX>=1 and tileLocX<=roomLength and tileLocY>=1 and tileLocY<=roomHeight then
+	if mouseDown and tempAdd>0 and tiles[tempAdd]~=nil and tileLocX>=1 and tileLocX<=roomLength and tileLocY>=1 and tileLocY<=roomHeight then
 		if room[tileLocY] ~= nil and room[tileLocY][tileLocX] ~= nil and room[tileLocY][tileLocX].overlayable and tiles[tempAdd].overlaying then
 			if not (room[tileLocY][tileLocX].overlay ~= nil and room[tileLocY][tileLocX].overlay.name == tiles[tempAdd].name) then
 				room[tileLocY][tileLocX]:setOverlay(tiles[tempAdd]:new())
