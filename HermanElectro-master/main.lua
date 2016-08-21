@@ -435,7 +435,7 @@ function updatePower()
 						end
 					end
 					if conductPower then
-						if pushables[i]:instanceof(pushableList.bombBox) then
+						if pushables[i]:instanceof(pushableList.bombBox) and k==3 then
 							if not pushables[i].destroyed then
 								pushables[i].destroyed = true
 								room[pY][pX] = tiles.bomb:new()

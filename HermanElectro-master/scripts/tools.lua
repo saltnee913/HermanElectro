@@ -384,12 +384,11 @@ function P.saw:usableOnTile(tile)
 	return tile:instanceof(tiles.wall) and not tile.destroyed and tile.sawable
 end
 function P.saw:usableOnPushable(pushable)
-	return pushable:instanceof(pushableList.giftBox) and not pushable.destroyed
+	return not pushable.destroyed
 end
 function P.saw:useToolPushable(pushable)
 	self.numHeld = self.numHeld - 1
-	pushable.destroyed = true
-	P.giveSupertools(1)
+	pushable:destroy()
 end
 
 P.ladder = P.tool:new{name = 'ladder', image = love.graphics.newImage('Graphics/ladder.png')}
@@ -423,12 +422,19 @@ end
 function P.wireCutters:usableOnTile(tile)
 	return self:usableOnNonOverlay(tile) or (tile.overlay~=nil and self:usableOnNonOverlay(tile.overlay))
 end
+function P.wireCutters:usableOnPushable(pushable)
+	return pushable.conductive and not pushable:instanceof(pushableList.jackInTheBox)
+end
+
 function P.wireCutters:useToolTile(tile)
 	self.numHeld = self.numHeld - 1
 	if tile:instanceof(tiles.conductiveGlass) or tile:instanceof(tiles.reinforcedConductiveGlass) then tile.canBePowered = false
 	elseif (tile.overlay~=nil and self:usableOnNonOverlay(tile.overlay)) then
 		tile.overlay:destroy()
 	else tile:destroy() end
+end
+function P.wireCutters:useToolPushable(pushable)
+	pushable.conductive = false
 end
 
 P.waterBottle = P.tool:new{name = 'water-bottle', image = love.graphics.newImage('Graphics/waterbottle.png')}
@@ -1015,6 +1021,7 @@ end
 function P.superWireCutters:usableOnTile(tile)
 	return self:usableOnNonOverlay(tile) or (tile.overlay~=nil and self:usableOnNonOverlay(tile.overlay))
 end
+
 
 P.laser = P.tool:new{name = "laser", baseRange = 100, image = love.graphics.newImage('Graphics/laser.png')}
 function P.laser:usableOnAnimal(animal)
