@@ -43,6 +43,8 @@ function P.character:onCharLoad()
 end
 function P.character:onRoomEnter()
 end
+function P.character:onFloorEnter()
+end
 
 P.herman = P.character:new{name = "Herman", description = "The Electrician"}
 
