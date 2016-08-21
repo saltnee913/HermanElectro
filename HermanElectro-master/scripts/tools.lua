@@ -1227,12 +1227,74 @@ function P.bucketOfWater:spreadWater(tileY, tileX)
 		end
 	end
 end
-P.teleporter = P.tool:new{name = "teleporter", baseRange = 0, image = love.graphics.newImage('Graphics/bucketofwater.png')}
+P.teleporter = P.tool:new{name = "teleporter", baseRange = 0, image = love.graphics.newImage('Graphics/teleporter.png')}
 function P.teleporter:usableOnNothing()
 	return true
 end
 function P.teleporter:useToolNothing()
+	self.numHeld = self.numHeld-1
 
+	local teleported = false
+	while not teleported do
+		local xval = math.floor(math.random()*mapHeight)+1
+		local yval = math.floor(math.random()*mapHeight)+1
+		if mainMap[yval][xval]~=nil then
+			teleported = true
+
+			resetTranslation()
+			player.flying = false
+			player.character:onRoomEnter()
+			--set pushables of prev. room to pushables array, saving for next entry
+			room.pushables = pushables
+			room.animals = animals
+
+			local plusOne = true
+
+			if player.tileY == math.floor(roomHeight/2) then plusOne = false
+			elseif player.tileX == math.floor(roomLength/2) then plusOne = false end
+
+			prevMapX = mapx
+			prevMapY = mapy
+			prevRoom = room
+
+			room = mainMap[yval][xval].room
+			mapx = xval
+			mapy = yval
+
+			if mainMap[yval][xval].dirEnter==nil then
+				mainMap[yval][xval].dirEnter = {1,1,1,1}
+			end
+
+			if mainMap[yval][xval].dirEnter[1]==1 then
+				player.tileX = math.floor(roomLength/2)
+				player.tileY = 1
+			elseif mainMap[yval][xval].dirEnter[2]==1 then
+				player.tileY = math.floor(roomHeight/2)
+				room.tileX = roomLength
+			elseif mainMap[yval][xval].dirEnter[3]==1 then
+				player.tileX = math.floor(roomLength/2)
+				player.tileY = roomHeight
+			else
+				player.tileY = math.floor(roomHeight/2)
+				room.tileX = 1
+			end
+
+			currentid = tostring(mainMap[mapy][mapx].roomid)
+			if map.getFieldForRoom(currentid, 'autowin') then completedRooms[mapy][mapx] = 1 end
+			if loadTutorial then
+				player.enterX = player.tileX
+				player.enterY = player.tileY
+			end
+
+			if (prevMapX~=mapx or prevMapY~=mapy) or dir == -1 then
+				createAnimals()
+				createPushables()
+			end
+			visibleMap[mapy][mapx] = 1
+			keyTimer.timeLeft = keyTimer.suicideDelay
+			updateGameState()
+		end
+	end
 end
 
 

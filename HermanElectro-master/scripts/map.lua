@@ -432,7 +432,11 @@ function P.generateMapStandard()
 			donationX = choice.y
 			donationY = choice.x
 		end
-		newmap[choice.x][choice.y] = {roomid = roomid, room = P.createRoom(roomid, arr), isFinal = false, isInitial = false}
+		local newDirEnter = {1,1,1,1}
+		if arr[roomid].dirEnter~=nil then
+			newDirEnter = arr[roomid].dirEnter
+		end
+		newmap[choice.x][choice.y] = {roomid = roomid, room = P.createRoom(roomid, arr), dirEnter = arr[roomid].dirEnter, isFinal = false, isInitial = false}
 	end
 	--printMap(newmap)
 	return newmap
