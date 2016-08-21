@@ -1175,6 +1175,9 @@ end
 P.wings.usableOnTile = P.roomReroller.usableOnNothing
 
 function P.wings:useToolNothing()
+	if player.flying then
+		unlocks.unlockUnlockableRef(unlocks.gabeUnlock)
+	end
 	player.flying = true
 	self.numHeld = self.numHeld-1
 end

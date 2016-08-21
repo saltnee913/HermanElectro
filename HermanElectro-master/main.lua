@@ -296,7 +296,7 @@ function win()
 			end
 		end
 		if gameTime.timeLeft > gameTime.levelTime * floorIndex then
-			unlocks.unlockUnlockable(5)
+			unlocks.unlockUnlockableRef(unlocks.erikUnlock)
 		end
 		won = true
 	end
