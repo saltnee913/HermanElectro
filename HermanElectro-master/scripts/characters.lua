@@ -103,7 +103,7 @@ end
 
 --alternative name: "Froggy, the Fresh"
 P.frederick = P.character:new{name = "Frederick", description = "The Frog", sprite = love.graphics.newImage('Graphics/frederick.png')}
-function P.rick:onCharLoad()
+function P.frederick:onCharLoad()
 	tools.spring.numHeld = 4
 end
 function P.frederick:onFloorEnter()

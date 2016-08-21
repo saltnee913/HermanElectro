@@ -190,7 +190,10 @@ function loadNextLevel(dontChangeTime)
 		loadLevel(map.floorOrder[floorIndex])
 		floorIndex = floorIndex + 1
 	end
-	player.character:onFloorEnter()
+	--hack to make it not happen on the first floor
+	if floorIndex ~= 2 then
+		player.character:onFloorEnter()
+	end
 end
 
 function startGame()
