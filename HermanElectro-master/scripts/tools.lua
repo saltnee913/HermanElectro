@@ -422,12 +422,19 @@ end
 function P.wireCutters:usableOnTile(tile)
 	return self:usableOnNonOverlay(tile) or (tile.overlay~=nil and self:usableOnNonOverlay(tile.overlay))
 end
+function P.wireCutters:usableOnPushable(pushable)
+	return pushable.conductive and not pushable:instanceof(pushableList.jackInTheBox)
+end
+
 function P.wireCutters:useToolTile(tile)
 	self.numHeld = self.numHeld - 1
 	if tile:instanceof(tiles.conductiveGlass) or tile:instanceof(tiles.reinforcedConductiveGlass) then tile.canBePowered = false
 	elseif (tile.overlay~=nil and self:usableOnNonOverlay(tile.overlay)) then
 		tile.overlay:destroy()
 	else tile:destroy() end
+end
+function P.wireCutters:useToolPushable(pushable)
+	pushable.conductive = false
 end
 
 P.waterBottle = P.tool:new{name = 'water-bottle', image = love.graphics.newImage('Graphics/waterbottle.png')}
@@ -1014,6 +1021,7 @@ end
 function P.superWireCutters:usableOnTile(tile)
 	return self:usableOnNonOverlay(tile) or (tile.overlay~=nil and self:usableOnNonOverlay(tile.overlay))
 end
+
 
 P.laser = P.tool:new{name = "laser", baseRange = 100, image = love.graphics.newImage('Graphics/laser.png')}
 function P.laser:usableOnAnimal(animal)
