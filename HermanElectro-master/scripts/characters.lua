@@ -146,6 +146,31 @@ function P.battery:onPostUpdatePower()
 	end
 end
 
+P.nadia = P.character:new{name = "Nadia", description = "The Naturalist", sprite = love.graphics.newImage('Graphics/nadia.png')}
+function P.nadia:onCharLoad()
+	tools.meat.numHeld = 3
+	player.safeFromAnimals = true
+end
+
+P.crate = P.character:new{name = "Carla", description = "The Crate", isCrate = false, sprite = love.graphics.newImage('Graphics/carlaperson.png'),
+  humanSprite = love.graphics.newImage('Graphics/carlaperson.png'), crateSprite = love.graphics.newImage('Graphics/carlabox.png')}
+function P.crate:onKeyPressed(key)
+	--log(key)
+	if key == 'rshift' or key == 'lshift' or key == 'shift' then
+		self.isCrate = not self.isCrate
+		if self.isCrate then
+			self.sprite = self.crateSprite
+			player.active = false
+		else
+			self.sprite = self.humanSprite
+			player.active = true
+		end
+		return true
+	end
+	return false
+end
+
+
 P[1] = P.herman
 P[2] = P.felix
 P[3] = P.most
@@ -155,5 +180,7 @@ P[6] = P.rammy
 P[7] = P.rick
 P[8] = P.frederick
 P[9] = P.battery
+P[10] = P.nadia
+P[11] = P.crate
 
 return characters

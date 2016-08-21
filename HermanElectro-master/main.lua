@@ -149,7 +149,7 @@ function love.load()
 	scale = (width - 2*wallSprite.width)/(20.3 * 16)*5/6
 	floor = tiles.tile
 	if player == nil then
-		player = { dead = false, flying = false, waitCounter = 0, tileX = 1, tileY = 6, x = (1-1)*scale*floor.sprite:getWidth()+wallSprite.width+	floor.sprite:getWidth()/2*scale-10, 
+		player = { dead = false, safeFromAnimals = false, active = true, flying = false, waitCounter = 0, tileX = 1, tileY = 6, x = (1-1)*scale*floor.sprite:getWidth()+wallSprite.width+	floor.sprite:getWidth()/2*scale-10, 
 			y = (6-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10, prevTileX = 3, prevTileY 	= 10,
 			prevx = (3-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10,
 			prevy = (10-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10,
@@ -1634,6 +1634,7 @@ function love.keypressed(key, unicode)
     elseif key == 'down' then dirUse = 3
     elseif key == 'left' then dirUse = 4
     elseif key == "space" then dirUse = 5 end
+    if not player.active then dirUse = 0 end
     if dirUse~=0 and tool>0 and tools[tool].useWithArrowKeys then
     	tools.updateToolableTiles(tool)
     end
@@ -1694,8 +1695,12 @@ function love.keypressed(key, unicode)
 	    	for k = 1, #animals do
 				local ani = animals[k]
 				if not map.blocksMovement(ani.tileY, ani.tileX) then
-					local movex = player.tileX
-					local movey = player.tileY
+					local movex = ani.tileX
+					local movey = ani.tileY
+					if player.active then
+						movex = player.tileX
+						movey = player.tileY
+					end
 					local animalDist = math.abs(movey-ani.tileY)+math.abs(movex-ani.tileX)
 					for i = 1, roomHeight do
 						for j = 1, roomLength do
@@ -1841,8 +1846,12 @@ function resolveConflicts()
 						tryMove = false
 					end
 					if tryMove and litTiles[animals[i].tileY][animals[i].tileX]~=0 then
-						local movex = player.tileX
-			    		local movey = player.tileY
+						local movex = animals[i].tileX
+						local movey = animals[i].tileY
+						if player.active then
+							movex = player.tileX
+				    		movey = player.tileY
+				    	end
 			    		local animalDist = math.abs(movey-animals[i].tileY)+math.abs(movex-animals[i].tileX)
 			    		for j = 1, roomHeight do
 			    			for k = 1, roomLength do
@@ -1893,7 +1902,7 @@ function checkDeath()
 		end
 	end
 	for i = 1, #animals do
-		if animals[i]:willKillPlayer(player) then
+		if animals[i]:willKillPlayer(player) and not player.safeFromAnimals then
 			kill()
 		end
 	end
@@ -1953,8 +1962,9 @@ function love.mousepressed(x, y, button, istouch)
 
 	tools.updateToolableTiles(tool)
 
-	if not clickActivated and not tools.useToolTile(tool, tileLocY, tileLocX) then
+	if not clickActivated and not (player.active and tools.useToolTile(tool, tileLocY, tileLocX)) then
 		tool = 0
+	elseif not player.active then tool = 0
 	elseif not clickActivated then
 		if tool<=tools.numNormalTools then
 			gameTime.timeLeft = gameTime.timeLeft+gameTime.toolTime
