@@ -20,7 +20,6 @@ local function readUnlocks()
 	if unlocksArray == nil then return end
 	for i = 1, #unlocksArray do
 		P[unlocksArray[i]].unlocked = true
-		print('un'..unlocksArray[i])
 	end
 end
 
@@ -62,16 +61,26 @@ end
 P.unlock = Object:new{name = 'generic', unlocked = false, sprite = tiles.fog.sprite}
 
 P.tileUnlock = P.unlock:new{name = 'tile', tileIds = {1}, sprite = tiles.tile.sprite}
+
 P.boxUnlock = P.tileUnlock:new{name = 'box', tileIds = {66}, sprite = tiles.boxTile.sprite}
-P.booksUnlock = P.tileUnlock:new{name = 'boox', tileIds = {38}, sprite = tiles.mousetrap.sprite}
+
+P.acceleratorUnlock = P.tileUnlock:new{name = 'accelerator', tileIds = {86,88}, sprite = tiles.unpoweredAccelerator.sprite}
 
 P.roomUnlock = P.unlock:new{name = 'room', roomIds = {"1"}}
 P.beggarPartyUnlock = P.roomUnlock:new{name = 'beggars love you', roomIds = {"beggar_party"}, sprite = tiles.beggar.sprite}
 
-P.winUnlocks = {1, 2}
+P.charUnlock = P.unlock:new{name = 'character', charIds = {1}}
+P.mostUnlock = P.unlock:new{name = 'ben most', charIds = {3}, sprite = love.graphics.newImage('GraphicsTony/Ben.png')}
+P.erikUnlock = P.unlock:new{name = 'erik knighton', charIds = {4}, sprite = tiles.beggar.sprite}
+P.gabeUnlock = P.unlock:new{name = 'gabe the angel', charIds = {5}, sprite = love.graphics.newImage('Graphics/gabe.png')}
+
+P.winUnlocks = {1, 2, 4}
 
 P[1] = P.boxUnlock
-P[2] = P.booksUnlock
+P[2] = P.acceleratorUnlock
 P[3] = P.beggarPartyUnlock
+P[4] = P.mostUnlock
+P[5] = P.erikUnlock
+P[6] = P.gabeUnlock
 
 return unlocks

@@ -112,13 +112,13 @@ function P.filterRoomSetByUnlocks(arr)
 	for k, v in pairs(arr) do
 		for i = 1, #unlocks do
 			if unlocks[i].unlocked == false then
-				if unlocks[i]:instanceof(unlocks.tileUnlock) then
+				if unlocks[i].tileIds ~= nil then
 					for j = 1, #unlocks[i].tileIds do
 						if doesRoomContainTile(v, unlocks[i].tileIds[j]) then
 							arr[k] = nil
 						end
 					end
-				elseif unlocks[i]:instanceof(unlocks.roomUnlock) then
+				elseif unlocks[i].roomIds ~= nil then
 					for j = 1, #unlocks[i].roomIds do
 						if k == unlocks[i].roomIds[j] then
 							arr[k] = nil
@@ -229,6 +229,7 @@ function P.createRoom(inRoom, arr)
 			return nil
 		end
 	end
+	--if arr[inRoom]==nil then print("isNil") end
 	local roomToLoad = arr[inRoom].layout
 	roomToLoad = (roomToLoad ~= nil) and roomToLoad 
 		or arr[inRoom].layouts[math.floor(math.random()*#(arr[inRoom].layouts))+1]
@@ -431,7 +432,11 @@ function P.generateMapStandard()
 			donationX = choice.y
 			donationY = choice.x
 		end
-		newmap[choice.x][choice.y] = {roomid = roomid, room = P.createRoom(roomid, arr), isFinal = false, isInitial = false}
+		local newDirEnter = {1,1,1,1}
+		if arr[roomid].dirEnter~=nil then
+			newDirEnter = arr[roomid].dirEnter
+		end
+		newmap[choice.x][choice.y] = {roomid = roomid, room = P.createRoom(roomid, arr), dirEnter = arr[roomid].dirEnter, isFinal = false, isInitial = false}
 	end
 	--printMap(newmap)
 	return newmap
@@ -490,7 +495,7 @@ function P.generateMapFinal()
 		roomChoiceid = util.chooseRandomElement(randomRoomsArray)
 	end
 
-	newmap[choice.y][choice.x] = {roomid = roomChoiceid, room = P.createRoom(roomChoiceid, arr), isFinal = false, isInitial = false}
+	newmap[choice.y][choice.x] = {roomid = roomChoiceid, room = P.createRoom(roomChoiceid), isFinal = false, isInitial = false}
 
 	return newmap
 end

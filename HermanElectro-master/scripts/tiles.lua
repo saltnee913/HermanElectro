@@ -32,8 +32,7 @@ function P.tile:onLeaveAnimal(animal)
 end
 function P.tile:onStep(x, y)
 end
-function P.tile:onEnd(map, x, y)
-	return map
+function P.tile:onEnd(x,y)
 end
 function P.tile:resetState()
 end
@@ -355,6 +354,11 @@ P.poweredFloor.willDestroyPushable = P.poweredFloor.willKillPlayer
 
 P.wall = P.tile:new{overlayable = true, electrified = false, onFire = false, blocksProjectiles = true, blocksMovement = true, canBePowered = false, name = "wall", blocksVision = true, electrifiedSprite = love.graphics.newImage('Graphics/woodwallelectrified.png'), destroyedSprite = love.graphics.newImage('Graphics/woodwallbroken.png'), sprite = love.graphics.newImage('Graphics3D/woodwall.png'), poweredSprite = love.graphics.newImage('Graphics3D/woodwall.png'), electrifiedPoweredSprite = love.graphics.newImage('Graphics/woodwallpowered.png'), sawable = true}
 function P.wall:onEnter(player)	
+	if player.character~=nil and player.character.name == "Rammy" then
+		if not (self:instanceof(P.glassWall) or self:instanceof(P.metalWall) or self:instanceof(P.concreteWall)) then
+			self:destroy()
+		end
+	end
 	if not self.destroyed then
 		--player.x = player.prevx
 		--player.y = player.prevy
@@ -390,6 +394,8 @@ function P.wall:destroy()
 	self.sprite = self.destroyedSprite
 	self.destroyed = true
 	self.blocksMovement = false
+	self.dirAccept = {0,0,0,0}
+	self.dirSend = {0,0,0,0}
 	self.overlay = nil
 end
 function P.wall:rotate(times)
@@ -420,6 +426,8 @@ function P.glassWall:destroy()
 	self.destroyed = true
 	self.blocksMovement = false
 	self.blocksVision = false
+	self.dirAccept = {0,0,0,0}
+	self.dirSend = {0,0,0,0}
 	self.overlay = nil
 end
 
@@ -722,6 +730,8 @@ function P.concreteWall:destroy()
 	self.sprite = self.destroyedSprite
 	self.destroyed = true
 	self.blocksMovement = false
+	self.dirAccept = {0,0,0,0}
+	self.dirSend = {0,0,0,0}
 	self.overlay = nil
 end
 
@@ -918,13 +928,30 @@ function P.bomb:onStep(x, y)
 		self.gone = true
 	end
 end
-function P.bomb:onEnd(map, x, y)
+function P.bomb:onEnd(x, y)
+	self:explode(x,y)
+end
+function P.bomb:destroy()
+	self.gone = true
+end
+function P.bomb:explode(x,y)
+	if not editorMode and math.abs(player.tileY-x)<2 and math.abs(player.tileX-y)<2 then kill() end
 	for i = -1, 1 do
 		for j = -1, 1 do
-			if map[x+i]~=nil and map[x+i][y+j]~=nil then map[x+i][y+j]:destroy() end
+			if room[x+i]~=nil and room[x+i][y+j]~=nil then room[x+i][y+j]:destroy() end
 		end
 	end
-	return map
+	for k = 1, #animals do
+		if math.abs(animals[k].tileY-x)<2 and math.abs(animals[k].tileX-y)<2 then animals[k]:kill() end
+	end
+	for k = 1, #pushables do
+		if math.abs(pushables[k].tileY-x)<2 and math.abs(pushables[k].tileX-y)<2 and not pushables[k].destroyed then
+			pushables[k].destroyed = true
+			if pushables[k]:instanceof(pushableList.bombBox) then
+				self:explode(pushables[k].tileY, pushables[k].tileX)
+			end
+		end
+	end
 end
 
 P.capacitor = P.conductiveTile:new{name = "capacitor", counter = 3, maxCounter = 3, dirAccept = {1,0,1,0}, sprite = love.graphics.newImage('Graphics/capacitor.png'), poweredSprite = love.graphics.newImage('Graphics/capacitor.png')}
@@ -997,14 +1024,6 @@ function P.unactivatedBomb:onStep(x, y)
 		self.poweredSprite = self.sprite
 	end
 end
-function P.unactivatedBomb:onEnd(map, x, y)
-	for i = -1, 1 do
-		for j = -1, 1 do
-			if map[x+i]~=nil and map[x+i][y+j]~=nil then map[x+i][y+j]:destroy() end
-		end
-	end
-	return map
-end
 function P.unactivatedBomb:onEnter(player)
 	self.triggered = true
 end
@@ -1056,7 +1075,7 @@ function P.beggar:destroy()
 	self.sprite = self.deadSprite
 	self.alive = false
 	local paysOut = math.random()
-	if paysOut<0.5 then return end
+	if paysOut<0.5 and not player.character.name==characters.felix.name then return end
 	tools.giveSupertools(1)
 	--[[filledSlots = {0,0,0}
 	slot = 1
@@ -1090,11 +1109,15 @@ function P.donationMachine:getInfoText()
 	return donations
 end
 function P.donationMachine:onEnter(player)
-	if tool==0 or tool>7 then return end
+	if tool==0 then return end
 	tools[tool].numHeld = tools[tool].numHeld - 1
-	donations = donations+math.ceil((10-(floorIndex))/2)
+	local mult = 1
+	if tool > tools.numNormalTools then
+		mult = 2
+	end
+	donations = donations+mult*math.ceil((10-(floorIndex))/2)
 	floorDonations = floorDonations+1
-	gameTime = gameTime+20
+	gameTime.timeLeft = gameTime.timeLeft+mult*gameTime.donateTime
 end
 
 P.entrancePortal = P.tile:new{name = "entrancePortal", sprite = love.graphics.newImage('Graphics/entrancePortal.png')}
@@ -1177,7 +1200,6 @@ end
 P.powerTriggeredBomb.onEnterAnimal = P.powerTriggeredBomb.onEnter
 
 P.boxTile = P.tile:new{name = "boxTile", pushable = pushableList[2]:new(), listIndex = 2, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
-
 function P.boxTile:usableOnNothing()
 	return true
 end
@@ -1202,6 +1224,8 @@ P.animalBoxTile = P.boxTile:new{name = "animalBoxTile", pushable = pushableList[
 P.puddle = P.conductiveTile:new{name = "puddle", sprite = love.graphics.newImage('Graphics/puddle.png'), poweredSprite = love.graphics.newImage('Graphics/puddlelectrified.png')}
 function P.puddle:willKillPlayer()
 	return not self.destroyed and self.powered
+end
+function P.puddle:destroy()
 end
 P.puddle.willKillAnimal = P.puddle.willKillPlayer
 
@@ -1277,6 +1301,10 @@ function P.unpoweredAccelerator:xAccel()
 end
 
 P.bombBoxTile = P.tile:new{name = "bombBoxTile", pushable = pushableList[8]:new(), listIndex = 8, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
+
+P.giftBoxTile = P.tile:new{name = "giftBoxTile", pushable = pushableList[9]:new(), listIndex = 9, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
+
+P.jackInTheBoxTile = P.tile:new{name = "jackInTheBoxTile", pushable = pushableList[10]:new(), listIndex = 10, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
 
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
@@ -1366,5 +1394,7 @@ tiles[85] = P.unbreakableCornerWire
 tiles[86] = P.accelerator
 tiles[87] = P.bombBoxTile
 tiles[88] = P.unpoweredAccelerator
+tiles[89] = P.giftBoxTile
+tiles[90] = P.jackInTheBoxTile
 
 return tiles
