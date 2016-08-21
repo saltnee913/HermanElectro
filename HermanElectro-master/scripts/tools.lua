@@ -384,9 +384,10 @@ function P.saw:usableOnTile(tile)
 	return tile:instanceof(tiles.wall) and not tile.destroyed and tile.sawable
 end
 function P.saw:usableOnPushable(pushable)
-	return pushable:instanceof(pushableList.giftBox)
+	return pushable:instanceof(pushableList.giftBox) and not pushable.destroyed
 end
 function P.saw:useToolPushable(pushable)
+	self.numHeld = self.numHeld - 1
 	pushable.destroyed = true
 	P.giveSupertools(1)
 end
