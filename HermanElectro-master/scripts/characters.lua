@@ -58,7 +58,7 @@ function P.character:onToolUse()
 end
 
 P.herman = P.character:new{name = "Herman", description = "The Electrician"}
-function P.felix:onCharLoad()
+function P.herman:onCharLoad()
 	tools.revive.numHeld = 2
 end
 
@@ -109,9 +109,10 @@ P.rammy = P.character:new{name = "Rammy", description = "The Ram",
 P.rick = P.character:new{name = "Rick", description = "The Gambler", sprite = love.graphics.newImage('Graphics/rick.png')}
 function P.rick:onCharLoad()
 	tools.toolReroller.numHeld = 3
+	tools.roomReroller.numHeld = 1
 end
 function P.rick:onFloorEnter()
-	for i = 1, #tools do
+	for i = 1, tools.numNormalTools do
 		if tools[i].numHeld>0 then
 			tools[i].numHeld=0
 		end

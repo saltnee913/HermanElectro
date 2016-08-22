@@ -1143,7 +1143,7 @@ function P.toolReroller:useToolNothing()
 	--gain one extra basic tool from use (but all tools are rerolled)
 	inventorySize = inventorySize+1
 	for i = 1, inventorySize do
-		local slot = math.floor(math.random()*7)+1
+		local slot = math.floor(math.random()*P.numNormalTools)+1
 		tools[slot].numHeld = tools[slot].numHeld+1
 	end
 	self.numHeld = self.numHeld-1
@@ -1153,14 +1153,18 @@ P.roomReroller = P.tool:new{name = "roomReroller", baseRange = 0, image = love.g
 function P.roomReroller:usableOnNothing()
 	return true
 end
+function P.roomReroller:getTilesWhitelist()
+	return {3,4,5,6,7,8,9,10,11,12,13,15,16,18,20,24,25,31,33,34,38,43,50,56,57,58,59,60,71,72}
+end
 P.roomReroller.usableOnTile = P.roomReroller.usableOnNothing
 
 function P.roomReroller:useToolNothing()
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
 			if room[i][j]~=nil and not room[i][j]:instanceof(tiles.endTile) then
-				local slot = math.floor(math.random()*#tiles)+1
-				room[i][j] = tiles[slot]:new()
+				local whitelist = self:getTilesWhitelist()
+				local slot = math.floor(math.random()*#whitelist)+1
+				room[i][j] = tiles[whitelist[slot]]:new()
 			end
 		end
 	end
