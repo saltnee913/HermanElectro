@@ -1329,6 +1329,7 @@ function P.teleporter:useToolNothing()
 	end
 end
 
+P.revive = P.tool:new{name = "revive", baseRange = 0, image = love.graphics.newImage('Graphics/revive.png')}
 
 P.numNormalTools = 7
 
@@ -1384,5 +1385,6 @@ P[45] = P.swapper
 P[46] = P.bucketOfWater
 P[47] = P.flame
 P[48] = P.toolReroller
+P[49] = P.revive
 
 return tools

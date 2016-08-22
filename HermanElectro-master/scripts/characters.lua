@@ -58,6 +58,9 @@ function P.character:onToolUse()
 end
 
 P.herman = P.character:new{name = "Herman", description = "The Electrician"}
+function P.felix:onCharLoad()
+	tools.revive.numHeld = 2
+end
 
 P.felix = P.character:new{name = "Felix", laserActive = false, description = "The Sharpshooter", sprite = love.graphics.newImage('Graphics/felix.png'), startingTools = {0,0,0,0,0,0,1}}
 function P.felix:onCharLoad()
