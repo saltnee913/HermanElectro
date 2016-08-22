@@ -1046,7 +1046,11 @@ function love.draw()
 			love.graphics.setColor(0,0,0)
 			love.graphics.rectangle("line", i*width/18, 0, width/18, width/18)
 			love.graphics.setColor(255,255,255)
-			love.graphics.draw(tools[i+1].image, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
+			local image = tools[i+1].image
+			if i==6 and player.character.laserActive~=nil and player.character.laserActive then
+				image = tools.laser.image
+			end
+			love.graphics.draw(image, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
 			if tools[i+1].numHeld==0 then
 				love.graphics.draw(gray, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
 			end
@@ -1643,6 +1647,7 @@ function love.keypressed(key, unicode)
 		--[[if usedTool and tool>tools.numNormalTools then
 			gameTime = gameTime-100
 		end]]
+		if usedTool then player.character:onToolUse() end
 		if usedTool and tool<=tools.numNormalTools then
 			gameTime.timeLeft = gameTime.timeLeft+gameTime.toolTime
 		end
@@ -1962,6 +1967,7 @@ function love.mousepressed(x, y, button, istouch)
 
 	tools.updateToolableTiles(tool)
 
+	local currentTool = 0
 	if not clickActivated and not (player.active and tools.useToolTile(tool, tileLocY, tileLocX)) then
 		tool = 0
 	elseif not player.active then tool = 0

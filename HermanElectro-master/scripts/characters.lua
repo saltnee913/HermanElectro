@@ -59,9 +59,18 @@ end
 
 P.herman = P.character:new{name = "Herman", description = "The Electrician"}
 
-P.felix = P.character:new{name = "Felix", description = "The Sharpshooter", sprite = love.graphics.newImage('Graphics/felix.png'), startingTools = {0,0,0,0,0,0,1}}
+P.felix = P.character:new{name = "Felix", laserActive = false, description = "The Sharpshooter", sprite = love.graphics.newImage('Graphics/felix.png'), startingTools = {0,0,0,0,0,0,1}}
 function P.felix:onCharLoad()
 	tools.gun.range = 5
+	tools.bomb.numHeld = 1
+end
+function P.felix:onKeyPressed(key)
+	--log(key)
+	if key == 'rshift' or key == 'lshift' or key == 'shift' then
+		self.laserActive = not self.laserActive
+		return true
+	end
+	return false
 end
 
 P.most = P.character:new{name = "Ben", description = "The Explorer",
@@ -182,6 +191,11 @@ function P.crate:onToolUse()
 	self.roomTrigger = true
 end
 
+
+--good characters: battery, crate
+--need buffs: herman
+--need depth: felix, gabe (needs nerfs), frederick, rick
+--not interesting: most(?), erik(?), nadia (could rework as werewolf character w/ two shift states)
 
 P[1] = P.herman
 P[2] = P.felix

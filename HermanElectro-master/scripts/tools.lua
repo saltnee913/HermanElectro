@@ -525,6 +525,14 @@ function P.gun:useToolTile(tile)
 		tile:allowVision()
 	end
 end
+function P.gun:useToolAnimal(animal)
+	self.numHeld = self.numHeld - 1
+	animal:kill()
+	if player.character.name == "Felix" and player.character.laserActive then
+		P.laser:useToolAnimal(animal)
+	end
+end
+
 
 
 P.superTool = P.tool:new{name = 'superTool', baseRange = 10, rarity = 1}
