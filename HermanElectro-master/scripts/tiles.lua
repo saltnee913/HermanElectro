@@ -221,6 +221,7 @@ function P.button:updateSprite()
 	end
 end
 function P.button:onEnter(player)
+	print("aaa")
 	--justPressed prevents flickering button next to wall
 	if self.bricked then
 		return
