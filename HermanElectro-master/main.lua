@@ -1968,6 +1968,7 @@ function love.mousepressed(x, y, button, istouch)
 	elseif not clickActivated then
 		if tool<=tools.numNormalTools then
 			gameTime.timeLeft = gameTime.timeLeft+gameTime.toolTime
+			player.character:onToolUse()
 		end
 	end
 	

@@ -54,6 +54,8 @@ end
 function P.character:onKeyPressed()
 	return false
 end
+function P.character:onToolUse()
+end
 
 P.herman = P.character:new{name = "Herman", description = "The Electrician"}
 
@@ -155,13 +157,13 @@ function P.nadia:onCharLoad()
 	player.safeFromAnimals = true
 end
 
-P.crate = P.character:new{name = "Carla", description = "The Crate", isCrate = false, sprite = love.graphics.newImage('Graphics/carlaperson.png'),
+P.crate = P.character:new{name = "Carla", roomTrigger = false, description = "The Crate", isCrate = false, sprite = love.graphics.newImage('Graphics/carlaperson.png'),
   humanSprite = love.graphics.newImage('Graphics/carlaperson.png'), crateSprite = love.graphics.newImage('Graphics/carlabox.png')}
 function P.crate:onKeyPressed(key)
 	--log(key)
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
 		self.isCrate = not self.isCrate
-		if self.isCrate then
+		if self.isCrate and not self.roomTrigger then
 			self.sprite = self.crateSprite
 			player.active = false
 		else
@@ -171,6 +173,13 @@ function P.crate:onKeyPressed(key)
 		return true
 	end
 	return false
+end
+function P.crate:onRoomEnter()
+	self.roomTrigger = false
+end
+function P.crate:onToolUse()
+	player.active = false
+	self.roomTrigger = true
 end
 
 

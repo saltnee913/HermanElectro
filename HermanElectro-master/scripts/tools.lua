@@ -1376,6 +1376,5 @@ P[45] = P.swapper
 P[46] = P.bucketOfWater
 P[47] = P.flame
 P[48] = P.toolReroller
-P[2] = P.visionChanger
 
 return tools
