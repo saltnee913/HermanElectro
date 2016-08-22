@@ -943,7 +943,7 @@ function love.draw()
 						if room[ty][tx]~=nil and litTiles[ty][tx]~=0 then
 							addY = room[ty][tx]:getYOffset()
 							yScale = scale*(16-addY)/16
-						end
+						else addY=0 end
 						if dir == 1 or tools.toolableTiles[1][1] == nil or not (tx == tools.toolableTiles[1][1].x and ty == tools.toolableTiles[1][1].y) then
 							love.graphics.draw(green, (tx-1)*floor.sprite:getWidth()*scale+wallSprite.width, (addY+(ty-1)*floor.sprite:getHeight())*scale+wallSprite.height, 0, scale, yScale)
 						end
@@ -1635,10 +1635,10 @@ function love.keypressed(key, unicode)
     elseif key == 'left' then dirUse = 4
     elseif key == "space" then dirUse = 5 end
     if not player.active then dirUse = 0 end
-    if dirUse~=0 and tool>0 and tools[tool].useWithArrowKeys then
+    if dirUse~=0 and tool>0 then
     	tools.updateToolableTiles(tool)
     end
-    if dirUse ~= 0 then
+    if dirUse ~= 0  and tools[tool].useWithArrowKeys then
     	local usedTool = tools.useToolDir(tool, dirUse)
 		--[[if usedTool and tool>tools.numNormalTools then
 			gameTime = gameTime-100
