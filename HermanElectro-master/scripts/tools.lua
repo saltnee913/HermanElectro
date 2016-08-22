@@ -608,17 +608,23 @@ function P.charger:useToolTile(tile)
 	tile.charged = true
 end
 
-P.visionChanger = P.superTool:new{name = 'visionChanger', baseRange = 1, image = love.graphics.newImage('Graphics/visionChanger.png')}
+P.visionChanger = P.superTool:new{name = 'visionChanger', baseRange = 0, image = love.graphics.newImage('Graphics/visionChanger.png')}
 function P.visionChanger:usableOnTile(tile)
-	if tile.blocksVision then
-		return true
-	end
-	return false
+	return true
 end
+P.visionChanger.usableOnNothing = P.visionChanger.usableOnTile
 function P.visionChanger:useToolTile(tile)
 	self.numHeld = self.numHeld-1
-	tile:allowVision()
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]~=nil then
+				room[i][j]:allowVision()
+				litTiles[i][j]=1
+			end
+		end
+	end
 end
+P.visionChanger.useToolNothing = P.visionChanger.useToolTile
 
 P.bomb = P.superTool:new{name = "bomb", baseRange = 1, image = love.graphics.newImage('Graphics/bomb.png')}
 function P.bomb:useToolNothing(tileY, tileX)
@@ -736,6 +742,13 @@ function P.corpseGrabber:useToolAnimal(animal)
 	self.numHeld = self.numHeld-1
 	animal.pickedUp = true
 	P.meat.numHeld = P.meat.numHeld+3
+	local counter = 0
+	for i = P.numNormalTools+1, #tools do
+		if tools[i].numHeld>0 then
+			counter = counter+1
+		end
+	end
+	if counter>3 then self.numHeld = 0 end
 end
 
 P.woodGrabber = P.superTool:new{name = "woodGrabber", baseRange = 1, image = love.graphics.newImage('Graphics/woodGrabber.png')}
@@ -1311,6 +1324,9 @@ end
 
 P.numNormalTools = 7
 
+--tools not included in list: trap (identical to glue in purpose)
+--some tools are weak, but necessary for balance
+
 P[1] = P.saw
 P[2] = P.ladder
 P[3] = P.wireCutters
@@ -1318,6 +1334,7 @@ P[4] = P.waterBottle
 P[5] = P.sponge
 P[6] = P.brick
 P[7] = P.gun
+
 P[8] = P.crowbar
 P[9] = P.visionChanger
 P[10] = P.bomb
@@ -1333,7 +1350,7 @@ P[19] = P.corpseGrabber
 P[20] = P.pitbullChanger
 P[21] = P.meat
 P[22] = P.rotater
-P[23] = P.trap
+P[23] = P.teleporter
 P[24] = P.boxCutter
 P[25] = P.broom
 P[26] = P.magnet
@@ -1359,6 +1376,6 @@ P[45] = P.swapper
 P[46] = P.bucketOfWater
 P[47] = P.flame
 P[48] = P.toolReroller
-P[49] = P.teleporter
+P[2] = P.visionChanger
 
 return tools
