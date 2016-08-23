@@ -1047,9 +1047,6 @@ function love.draw()
 			love.graphics.rectangle("line", i*width/18, 0, width/18, width/18)
 			love.graphics.setColor(255,255,255)
 			local image = tools[i+1].image
-			if i==6 and player.character.laserActive~=nil and player.character.laserActive then
-				image = tools.laser.image
-			end
 			love.graphics.draw(image, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
 			if tools[i+1].numHeld==0 then
 				love.graphics.draw(gray, i*width/18, 0, 0, (width/18)/32, (width/18)/32)

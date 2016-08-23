@@ -62,15 +62,17 @@ function P.herman:onCharLoad()
 	tools.revive.numHeld = 2
 end
 
-P.felix = P.character:new{name = "Felix", laserActive = false, description = "The Sharpshooter", sprite = love.graphics.newImage('Graphics/felix.png'), startingTools = {0,0,0,0,0,0,1}}
+P.felix = P.character:new{name = "Felix", description = "The Sharpshooter", sprite = love.graphics.newImage('Graphics/felix.png'), startingTools = {0,0,0,0,0,0,1}}
 function P.felix:onCharLoad()
-	tools.gun.range = 5
+	tools[7] = tools.felixGun
+	tools.felixGun.numHeld = 1
 	tools.bomb.numHeld = 1
 end
 function P.felix:onKeyPressed(key)
 	--log(key)
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
-		self.laserActive = not self.laserActive
+		tools.felixGun:switchEffects()
+		tools.updateToolableTiles(tool)
 		return true
 	end
 	return false
