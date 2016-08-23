@@ -688,6 +688,13 @@ function P.poweredEnd:onEnter(player)
 end
 
 P.pitbullTile = P.tile:new{name = "pitbull", animal = animalList[2]:new(), sprite = love.graphics.newImage('Graphics/animalstartingtile.png'), listIndex = 2}
+function P.pitbullTile:new(o)
+	o = o or {}
+	setmetatable(o, self)
+	self.__index = self
+	o.animal = self.animal:new()
+	return o
+end
 P.pupTile = P.pitbullTile:new{name = "pup", animal = animalList[3]:new(), listIndex = 3}
 P.catTile = P.pitbullTile:new{name = "cat", animal = animalList[4]:new(), listIndex = 4}
 

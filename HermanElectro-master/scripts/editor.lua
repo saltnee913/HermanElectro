@@ -156,6 +156,50 @@ function P.textinput(text)
 	end
 end
 
+local function postTileAddCleanup(tempAdd, tileLocY, tileLocX)
+	for i = 1, #animals do
+		if animals[i]~=nil and animals[i].tileX == tileLocX and animals[i].tileY == tileLocY then
+			animals[i] = nil
+			for j = i+1, #animals+1 do
+				animals[j-1] = animals[j]
+			end
+		end
+	end
+
+	local pushableLen = #pushables
+	for i = 1, pushableLen do
+		if pushables[i]~=nil and pushables[i].tileX == tileLocX and pushables[i].tileY == tileLocY then
+			pushables[i] = nil
+			for j = i+1, pushableLen+1 do
+				pushables[j-1] = pushables[j]
+			end
+		end
+	end
+
+	if tiles[tempAdd]~=nil and tiles[tempAdd].animal~=nil then
+		animalToSpawn = room[tileLocY][tileLocX].animal
+		if not animalToSpawn.dead then
+			animals[#animals+1] = animalToSpawn
+			animals[#animals].y = (tileLocY-1)*floor.sprite:getWidth()*scale+wallSprite.height
+			animals[#animals].x = (tileLocX-1)*floor.sprite:getHeight()*scale+wallSprite.width
+			animals[#animals].tileX = tileLocX
+			animals[#animals].tileY = tileLocY
+			animals[#animals].prevTileX = animals[#animals].tileX
+			animals[#animals].prevTileY = animals[#animals].tileY
+		end
+	end
+
+	if tiles[tempAdd]~=nil and tiles[tempAdd].pushable~=nil then
+		pushables[#pushables+1] = pushableList[tiles[tempAdd].listIndex]:new()
+		pushables[#pushables].tileX = tileLocX
+		pushables[#pushables].tileY = tileLocY
+		pushables[#pushables].prevTileX = pushables[#pushables].tileX
+		pushables[#pushables].prevTileY = pushables[#pushables].tileY
+	end
+	
+	updateGameState()
+end
+
 function P.mousepressed(x, y, button, istouch)
 	--store information for undoing
 	prevRoom = {}
@@ -199,47 +243,7 @@ function P.mousepressed(x, y, button, istouch)
 			end
 		end
 		if tempAdd==1 then room[tileLocY][tileLocX]=nil end
-		for i = 1, #animals do
-			if animals[i]~=nil and animals[i].tileX == tileLocX and animals[i].tileY == tileLocY then
-				animals[i] = nil
-				for j = i+1, #animals+1 do
-					animals[j-1] = animals[j]
-				end
-			end
-		end
-
-		local pushableLen = #pushables
-		for i = 1, pushableLen do
-			if pushables[i]~=nil and pushables[i].tileX == tileLocX and pushables[i].tileY == tileLocY then
-				pushables[i] = nil
-				for j = i+1, pushableLen+1 do
-					pushables[j-1] = pushables[j]
-				end
-			end
-		end
-
-		if tiles[tempAdd]~=nil and tiles[tempAdd].animal~=nil then
-			animalToSpawn = room[tileLocY][tileLocX].animal
-			if not animalToSpawn.dead then
-				animals[#animals+1] = animalList[tiles[tempAdd].listIndex]:new()
-				animals[#animals].y = (tileLocY-1)*floor.sprite:getWidth()*scale+wallSprite.height
-				animals[#animals].x = (tileLocX-1)*floor.sprite:getHeight()*scale+wallSprite.width
-				animals[#animals].tileX = tileLocX
-				animals[#animals].tileY = tileLocY
-				animals[#animals].prevTileX = animals[#animals].tileX
-				animals[#animals].prevTileY = animals[#animals].tileY
-			end
-		end
-
-		if tiles[tempAdd]~=nil and tiles[tempAdd].pushable~=nil then
-			pushables[#pushables+1] = pushableList[tiles[tempAdd].listIndex]:new()
-			pushables[#pushables].tileX = tileLocX
-			pushables[#pushables].tileY = tileLocY
-			pushables[#pushables].prevTileX = pushables[#pushables].tileX
-			pushables[#pushables].prevTileY = pushables[#pushables].tileY
-		end
-		
-		updateGameState()
+		postTileAddCleanup(tempAdd, tileLocY, tileLocX)
 	end
 end
 
@@ -253,7 +257,7 @@ function P.mousemoved(x, y, dx, dy)
 		else
 			room[tileLocY][tileLocX] = tiles[tempAdd]:new()
 		end
-		updateGameState()
+		postTileAddCleanup(tempAdd, tileLocY, tileLocX)
 	end
 end
 
