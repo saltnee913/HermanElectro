@@ -65,6 +65,9 @@ end
 P.felix = P.character:new{name = "Felix", description = "The Sharpshooter", sprite = love.graphics.newImage('Graphics/felix.png'), startingTools = {0,0,0,0,0,0,1}}
 function P.felix:onCharLoad()
 	tools[7] = tools.felixGun
+	if not tools.felixGun.isGun then
+		tools.felixGun:switchEffects()
+	end
 	tools.felixGun.numHeld = 1
 	tools.bomb.numHeld = 1
 end

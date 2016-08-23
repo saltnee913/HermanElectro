@@ -1340,13 +1340,20 @@ P.numNormalTools = 7
 --tools not included in list: trap (identical to glue in purpose)
 --some tools are weak, but necessary for balance
 
-P[1] = P.saw
-P[2] = P.ladder
-P[3] = P.wireCutters
-P[4] = P.waterBottle
-P[5] = P.sponge
-P[6] = P.brick
-P[7] = P.gun
+function P.resetTools()
+	P[1] = P.saw
+	P[2] = P.ladder
+	P[3] = P.wireCutters
+	P[4] = P.waterBottle
+	P[5] = P.sponge
+	P[6] = P.brick
+	P[7] = P.gun
+	for i = 1, #tools do
+		tools[i].range = tools[i].baseRange
+	end
+end
+P.resetTools()
+>>>>>>> 311418324fb3ca22e16ad0d5d236307f11257061
 
 P[8] = P.crowbar
 P[9] = P.visionChanger
