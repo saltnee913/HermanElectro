@@ -206,6 +206,30 @@ function P.crate:onToolUse()
 	self.roomTrigger = true
 end
 
+P.giovanni = P.character:new{name = "Giovanni", description = "The Sorcerer", shiftPos = {x = -1, y = -1}, sprite = love.graphics.newImage('Graphics/giovanni.png'), sprite2 = love.graphics.newImage('Graphics/giovannighost.png')}
+function P.giovanni:onKeyPressed(key)
+	if key == 'rshift' or key == 'lshift' or key == 'shift' then
+		if self.shiftPos.x==-1 then
+			self.shiftPos.x = player.tileX
+			self.shiftPos.y = player.tileY
+			log("Clone spawned!")
+		else
+			player.tileX = self.shiftPos.x
+			player.tileY = self.shiftPos.y
+			self.shiftPos = {x = -1, y = -1}
+			log("Returned to clone!")
+		end
+	end
+end
+function P.giovanni:onCharLoad()
+	tools.pitbullChanger.numHeld = 2
+	self.shiftPos = {x = -1, y = -1}
+end
+function P.giovanni:onRoomEnter()
+	self.shiftPos = {x = -1, y = -1}
+end
+P.giovanni.onFloorEnter = P.giovanni.onRoomEnter
+
 
 P[1] = P.herman
 P[2] = P.felix
@@ -217,5 +241,6 @@ P[7] = P.rick
 P[8] = P.frederick
 P[9] = P.battery
 P[10] = P.crate
+P[11] = P.giovanni
 
 return characters
