@@ -196,11 +196,6 @@ function P.crate:onToolUse()
 end
 
 
---good characters: battery, crate
---need buffs: herman
---need depth: felix, gabe (needs nerfs), frederick, rick
---not interesting: most(?), erik(?), nadia (could rework as werewolf character w/ two shift states)
-
 P[1] = P.herman
 P[2] = P.felix
 P[3] = P.most
@@ -210,7 +205,6 @@ P[6] = P.rammy
 P[7] = P.rick
 P[8] = P.frederick
 P[9] = P.battery
-P[10] = P.nadia
-P[11] = P.crate
+P[10] = P.crate
 
 return characters
