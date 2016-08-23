@@ -232,19 +232,21 @@ function P.mousepressed(x, y, button, istouch)
 	elseif tempAdd>0 and tileLocX>=1 and tileLocX<=roomLength and tileLocY>=1 and tileLocY<=roomHeight then
 		if(room[tileLocY][tileLocX] ~= nil and room[tileLocY][tileLocX].name == tiles[tempAdd].name) then
 			room[tileLocY][tileLocX]:rotate(1)
-		elseif tiles[tempAdd]~=nil then
-			if room[tileLocY] ~= nil and room[tileLocY][tileLocX] ~= nil and room[tileLocY][tileLocX].overlayable and tiles[tempAdd].overlaying then
-				if room[tileLocY][tileLocX].overlay ~= nil and room[tileLocY][tileLocX].overlay.name == tiles[tempAdd].name then
-					room[tileLocY][tileLocX].overlay:rotate(1)
+		else
+			if tiles[tempAdd]~=nil then
+				if room[tileLocY] ~= nil and room[tileLocY][tileLocX] ~= nil and room[tileLocY][tileLocX].overlayable and tiles[tempAdd].overlaying then
+					if room[tileLocY][tileLocX].overlay ~= nil and room[tileLocY][tileLocX].overlay.name == tiles[tempAdd].name then
+						room[tileLocY][tileLocX].overlay:rotate(1)
+					else
+						room[tileLocY][tileLocX]:setOverlay(tiles[tempAdd]:new())
+					end
 				else
-					room[tileLocY][tileLocX]:setOverlay(tiles[tempAdd]:new())
+					room[tileLocY][tileLocX] = tiles[tempAdd]:new()
 				end
-			else
-				room[tileLocY][tileLocX] = tiles[tempAdd]:new()
 			end
+			if tempAdd==1 then room[tileLocY][tileLocX]=nil end
+			postTileAddCleanup(tempAdd, tileLocY, tileLocX)
 		end
-		if tempAdd==1 then room[tileLocY][tileLocX]=nil end
-		postTileAddCleanup(tempAdd, tileLocY, tileLocX)
 	end
 end
 
