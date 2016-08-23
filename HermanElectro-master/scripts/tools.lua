@@ -59,6 +59,7 @@ function P.updateToolableTiles(toolid)
 	else
 		P.toolableAnimals = nil
 		P.toolableTiles = nil
+		P.toolablePushables = nil
 	end
 end
 
@@ -379,7 +380,7 @@ function P.saw:usableOnTile(tile)
 	return tile:instanceof(tiles.wall) and not tile.destroyed and tile.sawable
 end
 function P.saw:usableOnPushable(pushable)
-	return not pushable.destroyed
+	return not pushable.destroyed and pushable.sawable
 end
 function P.saw:useToolPushable(pushable)
 	self.numHeld = self.numHeld - 1

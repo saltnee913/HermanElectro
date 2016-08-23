@@ -116,6 +116,11 @@ end
 
 P.rammy = P.character:new{name = "Rammy", description = "The Ram",
 	sprite = love.graphics.newImage('Graphics/ram.png')}
+function P.rammy:preTileEnter(tile)
+	if tile.name == tiles.wall.name and not tile.destroyed then
+		tile:destroy()
+	end
+end
 
 P.rick = P.character:new{name = "Rick", description = "The Gambler", sprite = love.graphics.newImage('Graphics/rick.png')}
 function P.rick:onCharLoad()
