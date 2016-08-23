@@ -1679,7 +1679,7 @@ function love.keypressed(key, unicode)
 		for i = 1, #pushables do
 		 	if room[pushables[i].tileY][pushables[i].tileX]~=nil then
 		 		if room[pushables[i].tileY][pushables[i].tileX].updatePowerOnEnter then
-		 			noPowerUpdate = false
+		 			noPowerUpdate = false		 			print("aaa")
 		 		end
 		 	end
 		 	if pushables[i].conductive and (pushables[i].tileY~=pushables[i].prevTileY or pushables[i].tileX~=pushables[i].prevTileX) then
@@ -1690,9 +1690,6 @@ function love.keypressed(key, unicode)
 		 		if room[pushables[i].prevTileY][pushables[i].prevTileX].updatePowerOnLeave then
 		 			noPowerUpdate = false
 		 		end
-		 	end
-		 	if pushables[i].conductive and (pushables[i].tileX~=pushables[i].prevTileX or pushables[i].tileY~=pushables[i].prevTileY) then
-		 		noPowerUpdate = false
 		 	end
 	    end
     	updateGameState(noPowerUpdate)
@@ -1904,6 +1901,14 @@ function checkDeath()
 	if room[player.tileY][player.tileX]~=nil then
 		t = room[player.tileY][player.tileX]
 		if t:willKillPlayer() and not player.flying then
+			if player.character.name=="Carla" and player.character.isCrate then
+				if room[player.tileY][player.tileX]:instanceof(tiles.pit) or room[player.tileY][player.tileX]:instanceof(tiles.poweredFloor) then
+					room[player.tileY][player.tileX]:ladder()
+					player.character:onKeyPressed('shift')
+					player.character:onToolUse()
+					return
+				end
+			end
 			kill()
 		end
 	end

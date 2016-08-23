@@ -59,6 +59,7 @@ end
 
 P.herman = P.character:new{name = "Herman", description = "The Electrician"}
 function P.herman:onCharLoad()
+	if loadTutorial then return end
 	tools.revive.numHeld = 2
 end
 
@@ -79,6 +80,9 @@ function P.felix:onKeyPressed(key)
 		return true
 	end
 	return false
+end
+function P.felix:onFloorEnter()
+	tools.felixGun.numHeld = tools.felixGun.numHeld+2
 end
 
 P.most = P.character:new{name = "Ben", description = "The Explorer",
@@ -181,9 +185,11 @@ function P.crate:onKeyPressed(key)
 	--log(key)
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
 		self.isCrate = not self.isCrate
-		if self.isCrate and not self.roomTrigger then
+		if self.isCrate then
 			self.sprite = self.crateSprite
-			player.active = false
+			if not self.roomTrigger then
+				player.active = false
+			end
 		else
 			self.sprite = self.humanSprite
 			player.active = true
@@ -196,7 +202,7 @@ function P.crate:onRoomEnter()
 	self.roomTrigger = false
 end
 function P.crate:onToolUse()
-	player.active = false
+	player.active = true
 	self.roomTrigger = true
 end
 
