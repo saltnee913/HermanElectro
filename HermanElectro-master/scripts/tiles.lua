@@ -692,7 +692,7 @@ function P.pitbullTile:new(o)
 	o = o or {}
 	setmetatable(o, self)
 	self.__index = self
-	o.animal = self.animal:new()
+	o.animal = o.animal:new()
 	return o
 end
 P.pupTile = P.pitbullTile:new{name = "pup", animal = animalList[3]:new(), listIndex = 3}
