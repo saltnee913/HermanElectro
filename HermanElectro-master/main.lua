@@ -1394,6 +1394,7 @@ function enterMove()
 		if player.prevTileY == player.tileY and player.prevTileX == player.tileX then
 			room[player.tileY][player.tileX]:onStay(player)
 		else
+			player.character:preTileEnter(room[player.tileY][player.tileX])
 			room[player.tileY][player.tileX]:onEnter(player)
 		end
 	end
@@ -1639,7 +1640,6 @@ function love.keypressed(key, unicode)
     elseif key == 'down' then dirUse = 3
     elseif key == 'left' then dirUse = 4
     elseif key == "space" then dirUse = 5 end
-    if not player.active then dirUse = 0 end
     if dirUse~=0 and tool>0 then
     	tools.updateToolableTiles(tool)
     end
@@ -1901,14 +1901,6 @@ function checkDeath()
 	if room[player.tileY][player.tileX]~=nil then
 		t = room[player.tileY][player.tileX]
 		if t:willKillPlayer() and not player.flying then
-			if player.character.name=="Carla" and player.character.isCrate then
-				if room[player.tileY][player.tileX]:instanceof(tiles.pit) or room[player.tileY][player.tileX]:instanceof(tiles.poweredFloor) then
-					room[player.tileY][player.tileX]:ladder()
-					player.character:onKeyPressed('shift')
-					player.character:onToolUse()
-					return
-				end
-			end
 			kill()
 		end
 	end
@@ -1999,9 +1991,8 @@ function love.mousepressed(x, y, button, istouch)
 	tools.updateToolableTiles(tool)
 
 	local currentTool = 0
-	if not clickActivated and not (player.active and tools.useToolTile(tool, tileLocY, tileLocX)) then
+	if not clickActivated and not (tools.useToolTile(tool, tileLocY, tileLocX)) then
 		tool = 0
-	elseif not player.active then tool = 0
 	elseif not clickActivated then
 		if tool<=tools.numNormalTools then
 			gameTime.timeLeft = gameTime.timeLeft+gameTime.toolTime
