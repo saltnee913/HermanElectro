@@ -186,6 +186,7 @@ local function postTileAddCleanup(tempAdd, tileLocY, tileLocX)
 			animals[#animals].tileY = tileLocY
 			animals[#animals].prevTileX = animals[#animals].tileX
 			animals[#animals].prevTileY = animals[#animals].tileY
+			animalToSpawn.loaded = true
 		end
 	end
 

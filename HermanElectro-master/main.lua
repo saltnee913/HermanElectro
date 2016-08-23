@@ -1255,13 +1255,16 @@ function createAnimals()
 				animalToSpawn = room[i][j].animal
 				if not animalToSpawn.dead then
 					animals[animalCounter] = animalToSpawn
-					animals[animalCounter].triggered = false
-					animals[animalCounter].y = (i-1)*floor.sprite:getWidth()*scale+wallSprite.height
-					animals[animalCounter].x = (j-1)*floor.sprite:getHeight()*scale+wallSprite.width
-					animals[animalCounter].tileX = j
-					animals[animalCounter].tileY = i
-					animals[animalCounter].prevTileX = j
-					animals[animalCounter].prevTileY = i
+					if not animalToSpawn.loaded then
+						animals[animalCounter].triggered = false
+						animals[animalCounter].y = (i-1)*floor.sprite:getWidth()*scale+wallSprite.height
+						animals[animalCounter].x = (j-1)*floor.sprite:getHeight()*scale+wallSprite.width
+						animals[animalCounter].tileX = j
+						animals[animalCounter].tileY = i
+						animals[animalCounter].prevTileX = j
+						animals[animalCounter].prevTileY = i
+						animalToSpawn.loaded = true
+					end
 					animalCounter=animalCounter+1
 					--room[i][j] = nil
 				end
