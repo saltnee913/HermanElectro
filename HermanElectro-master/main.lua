@@ -1640,7 +1640,7 @@ function love.keypressed(key, unicode)
     if dirUse~=0 and tool>0 then
     	tools.updateToolableTiles(tool)
     end
-    if dirUse ~= 0  and tools[tool].useWithArrowKeys then
+    if dirUse ~= 0 and tool ~= 0 and tools[tool].useWithArrowKeys then
     	local usedTool = tools.useToolDir(tool, dirUse)
 		--[[if usedTool and tool>tools.numNormalTools then
 			gameTime = gameTime-100
