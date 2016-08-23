@@ -1679,7 +1679,7 @@ function love.keypressed(key, unicode)
 		for i = 1, #pushables do
 		 	if room[pushables[i].tileY][pushables[i].tileX]~=nil then
 		 		if room[pushables[i].tileY][pushables[i].tileX].updatePowerOnEnter then
-		 			noPowerUpdate = false		 			print("aaa")
+		 			noPowerUpdate = false
 		 		end
 		 	end
 		 	if pushables[i].conductive and (pushables[i].tileY~=pushables[i].prevTileY or pushables[i].tileX~=pushables[i].prevTileX) then
