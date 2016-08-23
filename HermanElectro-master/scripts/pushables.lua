@@ -5,7 +5,7 @@ require('scripts.object')
 local P = {}
 pushableList = P
 
-P.pushable = Object:new{name = "pushable", canBeAccelerated = true, conductive = false, prevTileX = 0, prevTileY = 0, tileX = 0, tileY = 0, destroyed = false, sprite = love.graphics.newImage('Graphics/box.png')}
+P.pushable = Object:new{name = "pushable", sawable = true, canBeAccelerated = true, conductive = false, prevTileX = 0, prevTileY = 0, tileX = 0, tileY = 0, destroyed = false, sprite = love.graphics.newImage('Graphics/box.png')}
 function P.pushable:destroy()
 	self.destroyed = true
 end
@@ -142,19 +142,19 @@ end
 
 P.box = P.pushable:new{name = "box", sprite = love.graphics.newImage('Graphics/box.png')}
 
-P.playerBox = P.box:new{name = "playerBox", sprite = love.graphics.newImage('Graphics/playerBox.png')}
+P.playerBox = P.box:new{name = "playerBox", sprite = love.graphics.newImage('Graphics/playerBox.png'), sawable = false}
 function P.playerBox:animalCanMove()
-	return false
+	return self.destroyed
 end
 
-P.animalBox = P.box:new{name = "animalBox", sprite = love.graphics.newImage('Graphics/animalBox.png')}
+P.animalBox = P.box:new{name = "animalBox", sprite = love.graphics.newImage('Graphics/animalBox.png'), sawable = false}
 function P.animalBox:playerCanMove()
-	return false
+	return self.destroyed
 end
 
 P.conductiveBox = P.box:new{name = "conductiveBox", powered = false, sprite = love.graphics.newImage('Graphics/conductiveBox.png'), poweredSprite = love.graphics.newImage('Graphics/conductiveboxpowered.png'), conductive = true}
 
-P.boombox = P.box:new{name = "boombox", sprite = love.graphics.newImage('Graphics/boombox.png')}
+P.boombox = P.box:new{name = "boombox", sprite = love.graphics.newImage('Graphics/boombox.png'), sawable = false}
 
 P.batteringRam = P.box:new{name = "batteringRam", sprite = love.graphics.newImage('Graphics/batteringram.png')}
 function P.batteringRam:move(mover)
@@ -279,7 +279,8 @@ function P.giftBox:destroy()
 	self.destroyed = true
 end
 
-P.jackInTheBox = P.conductiveBox:new{name = "jackInTheBox", sprite = love.graphics.newImage('Graphics/jackinthebox.png'), poweredSprite = love.graphics.newImage('Graphics/jackintheboxpowered.png')}
+P.jackInTheBox = P.conductiveBox:new{name = "jackInTheBox", sprite = love.graphics.newImage('Graphics/jackinthebox.png'),
+  poweredSprite = love.graphics.newImage('Graphics/jackintheboxpowered.png'), sawable = false}
 
 pushableList[1] = P.pushable
 pushableList[2] = P.box

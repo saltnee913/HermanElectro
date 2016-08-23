@@ -56,6 +56,8 @@ function P.character:onKeyPressed()
 end
 function P.character:onToolUse()
 end
+function P.character:preTileEnter(tile)
+end
 
 P.herman = P.character:new{name = "Herman", description = "The Electrician"}
 function P.herman:onCharLoad()
@@ -114,6 +116,11 @@ end
 
 P.rammy = P.character:new{name = "Rammy", description = "The Ram",
 	sprite = love.graphics.newImage('Graphics/ram.png')}
+function P.rammy:preTileEnter(tile)
+	if tile.name == tiles.wall.name and not tile.destroyed then
+		tile:destroy()
+	end
+end
 
 P.rick = P.character:new{name = "Rick", description = "The Gambler", sprite = love.graphics.newImage('Graphics/rick.png')}
 function P.rick:onCharLoad()
@@ -181,20 +188,21 @@ end
 
 P.crate = P.character:new{name = "Carla", roomTrigger = false, description = "The Crate", isCrate = false, sprite = love.graphics.newImage('Graphics/carlaperson.png'),
   humanSprite = love.graphics.newImage('Graphics/carlaperson.png'), crateSprite = love.graphics.newImage('Graphics/carlabox.png')}
+function P.crate:setCrate(isCrate)
+	self.sprite = isCrate and self.crateSprite or self.humanSprite
+	player.active = not isCrate
+	self.isCrate = isCrate
+end
 function P.crate:onKeyPressed(key)
 	--log(key)
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
-		self.isCrate = not self.isCrate
-		if self.isCrate then
-			self.sprite = self.crateSprite
-			if not self.roomTrigger then
-				player.active = false
-			end
+		if not self.isCrate and not self.roomTrigger then
+			P.crate:setCrate(true)
+			return true
 		else
-			self.sprite = self.humanSprite
-			player.active = true
+			P.crate:setCrate(false)
+			return true
 		end
-		return true
 	end
 	return false
 end
@@ -204,6 +212,15 @@ end
 function P.crate:onToolUse()
 	player.active = true
 	self.roomTrigger = true
+end
+function P.crate:preTileEnter(tile)
+	if self.isCrate then
+		if room[player.tileY][player.tileX]:instanceof(tiles.pit) or room[player.tileY][player.tileX]:instanceof(tiles.poweredFloor) then
+			room[player.tileY][player.tileX]:ladder()
+			P.crate:setCrate(false)
+			self.roomTrigger = true
+		end
+	end
 end
 
 P.giovanni = P.character:new{name = "Giovanni", description = "The Sorcerer", shiftPos = {x = -1, y = -1}, sprite = love.graphics.newImage('Graphics/giovanni.png'), sprite2 = love.graphics.newImage('Graphics/giovannighost.png')}
