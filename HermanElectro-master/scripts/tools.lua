@@ -4,11 +4,6 @@ tools = P
 P.toolDisplayTimer = {base = 1.5, timeLeft = 0}
 P.toolsShown = {}
 
-function P.resetTools()
-	for i = 1, #tools do
-		tools[i].range = tools[i].baseRange
-	end
-end
 
 function P.updateTimer(dt)
 	P.toolDisplayTimer.timeLeft = P.toolDisplayTimer.timeLeft - dt
@@ -528,11 +523,22 @@ end
 function P.gun:useToolAnimal(animal)
 	self.numHeld = self.numHeld - 1
 	animal:kill()
-	if player.character.name == "Felix" and player.character.laserActive then
-		P.laser:useToolAnimal(animal)
-	end
 end
 
+P.felixGun = P.gun:new{name = 'felix gun', range = 5, isGun = true}
+function P.felixGun:switchEffects()
+	local switchEffects = self.switchEffects
+	if self.isGun then
+		P.felixGun = P.superGun:new{name = self.name, numHeld = self.numHeld, isGun = false, switchEffects = switchEffects}
+	else
+		P.felixGun = P.gun:new{name = self.name, numHeld = self.numHeld, range = 5, isGun = true, switchEffects = switchEffects}
+	end
+	for i = 1, #tools do
+		if tools[i].name == self.name then
+			tools[i] = P.felixGun
+		end
+	end
+end
 
 
 P.superTool = P.tool:new{name = 'superTool', baseRange = 10, rarity = 1}
@@ -1335,6 +1341,31 @@ end
 
 P.revive = P.tool:new{name = "revive", baseRange = 0, image = love.graphics.newImage('Graphics/revive.png')}
 
+P.superGun = P.gun:new{name = "superGun", baseRange = 5, image = love.graphics.newImage('Graphics/supergun.png')}
+function P.superGun:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
+	if tile:instanceof(tiles.beggar) then
+		unlocks.unlockUnlockableRef(unlocks.beggarPartyUnlock)
+		tile:destroy()
+	else
+		tile:allowVision()
+	end
+	room[tileY][tileX] = tiles.bomb:new()
+	room[tileY][tileX]:onEnd(tileY, tileX)
+	room[tileY][tileX]:explode(tileY, tileX)
+	room[tileY][tileX] = nil
+end
+function P.superGun:useToolAnimal(animal)
+	self.numHeld = self.numHeld - 1
+	animal:kill()
+	local pY = animal.tileY
+	local pX = animal.tileX
+	room[pY][pX] = tiles.bomb:new()
+	room[pY][pX]:onEnd(pY, pX)
+	room[pY][pX]:explode(pY, pX)
+	room[pY][pX] = nil
+end
+
 P.numNormalTools = 7
 
 --tools not included in list: trap (identical to glue in purpose)
@@ -1353,7 +1384,7 @@ function P.resetTools()
 	end
 end
 
---P.resetTools()
+P.resetTools()
 
 P[8] = P.crowbar
 P[9] = P.visionChanger
@@ -1397,5 +1428,6 @@ P[46] = P.bucketOfWater
 P[47] = P.flame
 P[48] = P.toolReroller
 P[49] = P.revive
+P[50] = P.superGun
 
 return tools
