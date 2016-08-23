@@ -1358,6 +1358,7 @@ function P.resetTools()
 		tools[i].range = tools[i].baseRange
 	end
 end
+P.resetTools()
 
 P[8] = P.crowbar
 P[9] = P.visionChanger
