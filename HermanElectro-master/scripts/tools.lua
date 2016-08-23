@@ -4,6 +4,11 @@ tools = P
 P.toolDisplayTimer = {base = 1.5, timeLeft = 0}
 P.toolsShown = {}
 
+function P.resetTools()
+	for i = 1, #tools do
+		tools[i].range = tools[i].baseRange
+	end
+end
 
 function P.updateTimer(dt)
 	P.toolDisplayTimer.timeLeft = P.toolDisplayTimer.timeLeft - dt
@@ -523,22 +528,11 @@ end
 function P.gun:useToolAnimal(animal)
 	self.numHeld = self.numHeld - 1
 	animal:kill()
+	if player.character.name == "Felix" and player.character.laserActive then
+		P.laser:useToolAnimal(animal)
+	end
 end
 
-P.felixGun = P.gun:new{name = 'felix gun', range = 5, isGun = true}
-function P.felixGun:switchEffects()
-	local switchEffects = self.switchEffects
-	if self.isGun then
-		P.felixGun = P.missile:new{name = self.name, numHeld = self.numHeld, isGun = false, switchEffects = switchEffects}
-	else
-		P.felixGun = P.gun:new{name = self.name, numHeld = self.numHeld, range = 5, isGun = true, switchEffects = switchEffects}
-	end
-	for i = 1, #tools do
-		if tools[i].name == self.name then
-			tools[i] = P.felixGun
-		end
-	end
-end
 
 
 P.superTool = P.tool:new{name = 'superTool', baseRange = 10, rarity = 1}
@@ -1346,18 +1340,13 @@ P.numNormalTools = 7
 --tools not included in list: trap (identical to glue in purpose)
 --some tools are weak, but necessary for balance
 
-function P.resetTools()
-	P[1] = P.saw
-	P[2] = P.ladder
-	P[3] = P.wireCutters
-	P[4] = P.waterBottle
-	P[5] = P.sponge
-	P[6] = P.brick
-	P[7] = P.gun
-	for i = 1, #tools do
-		tools[i].range = tools[i].baseRange
-	end
-end
+P[1] = P.saw
+P[2] = P.ladder
+P[3] = P.wireCutters
+P[4] = P.waterBottle
+P[5] = P.sponge
+P[6] = P.brick
+P[7] = P.gun
 
 P[8] = P.crowbar
 P[9] = P.visionChanger
