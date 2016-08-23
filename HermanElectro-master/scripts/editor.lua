@@ -177,15 +177,15 @@ local function postTileAddCleanup(tempAdd, tileLocY, tileLocX)
 	end
 
 	if tiles[tempAdd]~=nil and tiles[tempAdd].animal~=nil then
-		animalToSpawn = room[tileLocY][tileLocX].animal
+		local animalToSpawn = room[tileLocY][tileLocX].animal
 		if not animalToSpawn.dead then
 			animals[#animals+1] = animalToSpawn
-			animals[#animals].y = (tileLocY-1)*floor.sprite:getWidth()*scale+wallSprite.height
-			animals[#animals].x = (tileLocX-1)*floor.sprite:getHeight()*scale+wallSprite.width
-			animals[#animals].tileX = tileLocX
-			animals[#animals].tileY = tileLocY
-			animals[#animals].prevTileX = animals[#animals].tileX
-			animals[#animals].prevTileY = animals[#animals].tileY
+			animalToSpawn.y = (tileLocY-1)*floor.sprite:getWidth()*scale+wallSprite.height
+			animalToSpawn.x = (tileLocX-1)*floor.sprite:getHeight()*scale+wallSprite.width
+			animalToSpawn.tileX = tileLocX
+			animalToSpawn.tileY = tileLocY
+			animalToSpawn.prevTileX = animals[#animals].tileX
+			animalToSpawn.prevTileY = animals[#animals].tileY
 			animalToSpawn.loaded = true
 		end
 	end
