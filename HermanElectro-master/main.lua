@@ -1432,6 +1432,9 @@ function love.update(dt)
 	keyTimer.timeLeft = keyTimer.timeLeft - dt
 	tools.updateTimer(dt)
 	unlocks.updateTimer(dt)
+	if room~=nil and room[player.tileY] ~= nil and room[player.tileY][player.tileX] ~= nil and room[player.tileY][player.tileX].updateTime ~= nil then
+		room[player.tileY][player.tileX]:updateTime(dt)
+	end
 
 	--game timer
 	if started and completedRooms[mapy][mapx]~=1 then
@@ -2039,7 +2042,13 @@ end
 function updateGameState(noPowerUpdate)
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
-			if room[i]~=nil and room[i][j]~=nil then room[i][j]:resetState() end
+			if room[i]~=nil and room[i][j]~=nil then
+				room[i][j]:resetState()
+				if room[i][j].onLoad ~= nil and room[i][j].loaded == nil then
+					room[i][j]:onLoad()
+					room[i][j].loaded = true
+				end
+			end
 		end
 	end
 	checkWin()
@@ -2214,36 +2223,7 @@ function dropTools()
 								end
 							end
 							if done then
-								if map.floorInfo.finalFloor then
-									local toolsArray = listOfItemsNeeded[listChoose]
-									local toolsNum = 0
-									for i = 1, 7 do
-										toolsNum = toolsNum + toolsArray[i]
-									end
-									for i = 1, donations do
-										if i<=toolsNum then
-											local finished = false
-											while not finished do
-												local slot = math.floor(math.random()*7)+1
-												if toolsArray[slot]>0 then
-													toolsArray[slot] = toolsArray[slot]-1
-													tools[slot].numHeld = tools[slot].numHeld+1
-													finished = true
-												end
-											end
-										else
-											local random = math.random()
-											if random>0.75 then
-												tools.giveSupertools(1)
-											else
-												local slot = math.floor(math.random()*7)+1
-												tools[slot].numHeld = tools[slot].numHeld+1
-											end
-										end
-									end
-								else
-									tools.giveToolsByArray(listOfItemsNeeded[listChoose])
-								end
+								tools.giveToolsByArray(listOfItemsNeeded[listChoose])
 							end
 						end
 					end
@@ -2265,8 +2245,11 @@ function dropTools()
 	end
 end
 
-function beatRoom()
+function beatRoom(noDrops)
+	if noDrops == nil then noDrops = false end
 	gameTime.timeLeft = gameTime.timeLeft+gameTime.roomTime
 	unlockDoors()
-	dropTools()
+	if not noDrops then
+		dropTools()
+	end
 end

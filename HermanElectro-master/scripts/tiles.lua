@@ -1308,6 +1308,60 @@ P.giftBoxTile = P.tile:new{name = "giftBoxTile", pushable = pushableList[9]:new(
 
 P.jackInTheBoxTile = P.tile:new{name = "jackInTheBoxTile", pushable = pushableList[10]:new(), listIndex = 10, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
 
+P.finalToolsTile = P.tile:new{name = "finalToolsTile", canBePowered = false, dirAccept = {0,0,0,0}, sprite = love.graphics.newImage('Graphics/donationmachine.png'), done = false, toolsToGive = {}, giveRate = 0.75, timeLeft = 0}
+function P.finalToolsTile:onEnter(player)
+	if self.done then return end
+end
+function P.finalToolsTile:onLoad()
+	beatRoom(true)
+	local itemsNeeded = map.getItemsNeeded(mainMap[mapy][mapx+1].roomid)
+	local toolsArray = itemsNeeded[math.floor(math.random()*#itemsNeeded)+1]
+	local toolsNum = 0
+	for i = 1, tools.numNormalTools do
+		toolsNum = toolsNum + toolsArray[i]
+	end
+	local superOptions = tools.chooseGoodSupertools()
+	for i = 1, donations-toolsNum do
+		local random = math.random()
+		if random>0.75 then
+			self.toolsToGive[#self.toolsToGive+1] = superOptions[math.floor(math.random()*3)+1]
+		else
+			self.toolsToGive[#self.toolsToGive+1] = tools.chooseNormalTool()
+		end
+	end
+	local toolsList = {}
+	for i = 1, tools.numNormalTools do
+		for j = 1, toolsArray[i] do
+			toolsList[#toolsList+1] = i
+		end
+	end
+	toolsList = util.shuffle(toolsList)
+	for i = 1, donations do
+		self.toolsToGive[#self.toolsToGive+1] = toolsList[i]
+	end
+end
+function P.finalToolsTile:updateTime(dt)
+	if self.done then
+		return
+	end
+	if #self.toolsToGive == 0 then
+		self.done = true
+		self.isCompleted = true
+		self.isVisible = false
+		self.gone = true
+		return
+	end
+	self.timeLeft = self.timeLeft - dt
+	if self.timeLeft < 0 then
+		self.timeLeft = self.giveRate
+		tools.giveTools({self.toolsToGive[#self.toolsToGive]})
+		self.toolsToGive[#self.toolsToGive] = nil
+	end
+end
+function P.finalToolsTile:getInfoText()
+	return #self.toolsToGive
+end
+
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
 tiles[3] = P.powerSupply
@@ -1398,5 +1452,6 @@ tiles[87] = P.bombBoxTile
 tiles[88] = P.unpoweredAccelerator
 tiles[89] = P.giftBoxTile
 tiles[90] = P.jackInTheBoxTile
+tiles[91] = P.finalToolsTile
 
 return tiles

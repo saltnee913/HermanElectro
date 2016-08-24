@@ -45,10 +45,14 @@ end
 function P.giveRandomTools(numTools)
 	local toolsToGive = {}
 	for i = 1, numTools do
-		slot = math.floor(math.random()*tools.numNormalTools)+1
+		slot = P.chooseNormalTool()
 		toolsToGive[#toolsToGive+1] = slot
 	end
 	P.giveTools(toolsToGive)
+end
+
+function P.chooseNormalTool()
+	return math.floor(math.random()*tools.numNormalTools)+1
 end
 
 function P.updateToolableTiles(toolid)
@@ -546,6 +550,28 @@ P.superTool = P.tool:new{name = 'superTool', baseRange = 10, rarity = 1}
 
 function P.chooseSupertool()
 	return math.floor(math.random()*(#tools-tools.numNormalTools))+tools.numNormalTools+1
+end
+
+--i know this is a copy of the function but if we called this every time we'd needlessly repeat the first part, bad practice still tho
+function P.chooseGoodSupertools()
+	local filledSlots = {0,0,0}
+	local slot = 1
+	for i = tools.numNormalTools + 1, #tools do
+		if tools[i].numHeld>0 then
+			filledSlots[slot] = i
+			slot = slot+1
+		end
+	end
+	for i = 1, 3 do
+		if filledSlots[i] == 0 then
+			local toCheck = 0
+			while (toCheck == filledSlots[1] or toCheck == filledSlots[2] or toCheck == filledSlots[3]) do
+				toCheck = P.chooseSupertool()
+			end
+			filledSlots[i] = toCheck
+		end
+	end
+	return filledSlots
 end
 
 function P.giveSupertools(numTools)
