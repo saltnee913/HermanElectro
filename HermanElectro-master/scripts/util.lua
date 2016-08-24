@@ -8,12 +8,12 @@ function P.printTable(tab)
 	print(json.encode(tab, state))
 end
 
-function P.chooseWeightedRandom(arr)
+function P.chooseWeightedRandom(arr, random)
 	local sum = 0
 	for i = 1, #arr do
 		sum = sum + arr[i]
 	end
-	local choice = (math.random()*sum)
+	local choice = (util.random(random)*sum)
 	for i = 1, #arr do
 		choice = choice - arr[i]
 		if choice <= 0 then
@@ -23,8 +23,8 @@ function P.chooseWeightedRandom(arr)
 	return -1
 end
 
-function P.chooseRandomElement(arr)
-	return arr[math.floor(math.random()*#arr)+1]
+function P.chooseRandomElement(arr, random)
+	return arr[util.random(#arr, random)]
 end
 
 function P.getOffsetByDir(dir)
@@ -36,15 +36,15 @@ function P.getOffsetByDir(dir)
 end
 
 --you must seed first!
-function P.chooseRandomKey(arr)
-	return P.createRandomKeyArray(arr)[1]
+function P.chooseRandomKey(arr, random)
+	return P.createRandomKeyArray(arr, random)[1]
 end
 
 --you must seed first!
-function P.createRandomKeyArray(arr, blacklist)
+function P.createRandomKeyArray(arr, random, blacklist)
 	local keyArray = P.createIndexArray(arr, blacklist)
 	table.sort(keyArray)
-	return P.shuffle(keyArray)
+	return P.shuffle(keyArray, random)
 end
 
 --this is the ultra hacky part, we should remove it later
@@ -62,12 +62,12 @@ function P.createIndexArray(arr, blacklist)
 end
 
 --shuffles array, you must seed first!
-function P.shuffle(arr)
+function P.shuffle(arr,random)
 	local shuffledArr = {}
 	for i = 1, #arr do
-		local index = math.floor(math.random()*#arr)+1
+		local index = util.random(#arr, random)
 		while(shuffledArr[index]~=nil) do
-			index = math.floor(math.random()*#arr)+1
+			index = util.random(#arr, random)
 		end
 		shuffledArr[index] = arr[i]
 	end
@@ -106,6 +106,26 @@ function P.deepContains(arr, value, floor)
 		return math.floor(arr) == math.floor(value)
 	else
 		return arr == value
+	end
+end
+
+P.randoms = {}
+
+function P.newRandom(random, seed)
+	P.randoms[random] = {seed = seed, times = 2}
+end
+
+function P.random(maxVal, random)
+	if random ~= nil then
+		return math.floor(P.random(random)*maxVal)+1
+	else
+		random = maxVal
+		love.math.setRandomSeed(P.randoms[random].seed)
+		for i = 1, P.randoms[random].times do
+			love.math.random()
+		end
+		P.randoms[random].times = P.randoms[random].times + 1
+		return love.math.random()
 	end
 end
 

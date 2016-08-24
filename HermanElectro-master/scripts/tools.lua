@@ -52,7 +52,7 @@ function P.giveRandomTools(numTools)
 end
 
 function P.chooseNormalTool()
-	return math.floor(math.random()*tools.numNormalTools)+1
+	return util.random(tools.numNormalTools,'toolDrop')
 end
 
 function P.updateToolableTiles(toolid)
@@ -549,7 +549,7 @@ end
 P.superTool = P.tool:new{name = 'superTool', baseRange = 10, rarity = 1}
 
 function P.chooseSupertool()
-	return math.floor(math.random()*(#tools-tools.numNormalTools))+tools.numNormalTools+1
+	return util.random(#tools-tools.numNormalTools,'toolDrop')+tools.numNormalTools
 end
 
 --i know this is a copy of the function but if we called this every time we'd needlessly repeat the first part, bad practice still tho
@@ -869,10 +869,7 @@ end
 function P.boxCutter:useToolPushable(pushable)
 	self.numHeld = self.numHeld - 1
 	pushable.destroyed = true
-	for i = 1, 3 do
-		local slot = math.floor(math.random()*tools.numNormalTools)+1
-		tools[slot].numHeld = tools[slot].numHeld+1
-	end
+	P.giveRandomTools(3)
 end
 
 P.broom = P.tool:new{name = "broom", image = love.graphics.newImage('Graphics/pitbullChanger.png')}
@@ -1175,10 +1172,7 @@ function P.toolReroller:useToolNothing()
 	end
 	--gain one extra basic tool from use (but all tools are rerolled)
 	inventorySize = inventorySize+1
-	for i = 1, inventorySize do
-		local slot = math.floor(math.random()*P.numNormalTools)+1
-		tools[slot].numHeld = tools[slot].numHeld+1
-	end
+	P.giveRandomTools(inventorySize)
 	self.numHeld = self.numHeld-1
 end
 
@@ -1196,7 +1190,7 @@ function P.roomReroller:useToolNothing()
 		for j = 1, roomLength do
 			if room[i][j]~=nil and not room[i][j]:instanceof(tiles.endTile) then
 				local whitelist = self:getTilesWhitelist()
-				local slot = math.floor(math.random()*#whitelist)+1
+				local slot = util.random(#whitelist, misc)
 				room[i][j] = tiles[whitelist[slot]]:new()
 			end
 		end
@@ -1305,8 +1299,8 @@ function P.teleporter:useToolNothing()
 
 	local teleported = false
 	while not teleported do
-		local xval = math.floor(math.random()*mapHeight)+1
-		local yval = math.floor(math.random()*mapHeight)+1
+		local xval = util.random(mapHeight, misc)
+		local yval = util.random(mapHeight, misc)
 		if mainMap[yval][xval]~=nil then
 			teleported = true
 

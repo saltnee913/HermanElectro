@@ -840,7 +840,7 @@ P.breakablePit.willDestroyPushable = P.breakablePit.willKillPlayer
 P.treasureTile = P.tile:new{name = "treasureTile", sprite = love.graphics.newImage('Graphics/treasuretile.png'), done = false}
 function P.treasureTile:onEnter()
 	if self.done then return end
-	local reward = math.floor(math.random()*1000)
+	local reward = util.random(1000,'toolDrop')
 	self:giveReward(reward)
 	self.done = true
 	self.isCompleted = true
@@ -856,7 +856,7 @@ function P.treasureTile:giveReward(reward)
 		local counter = 0
 		while counter<3 do
 			tools.giveRandomTools(1)
-			local rand = math.random()
+			local rand = util.random('toolDrop')
 			if rand>probBasic/1000 then return end
 			counter = counter+1
 		end
@@ -864,7 +864,7 @@ function P.treasureTile:giveReward(reward)
 		local counter = 0
 		while counter<2 do
 			tools.giveSupertools(1)
-			local rand = math.random()
+			local rand = util.random('toolDrop')
 			if rand>probSuper/1000 then return end
 			counter = counter+1
 		end
@@ -1060,11 +1060,11 @@ function P.beggar:onEnter(player)
 	tools[tool].numHeld = tools[tool].numHeld - 1
 	self.counter = self.counter+1
 	probabilityOfPayout = self.counter/4+donations*2/100
-	randomNum = math.random()
+	randomNum = util.random('toolDrop')
 	if randomNum<probabilityOfPayout then
 		self.counter = 0
 		tools.giveSupertools(1)
-		local killBeggar = math.random()
+		local killBeggar = util.random('toolDrop')
 		if killBeggar<0.5 then
 			self:destroy()
 		end
@@ -1076,30 +1076,9 @@ end
 function P.beggar:destroy()
 	self.sprite = self.deadSprite
 	self.alive = false
-	local paysOut = math.random()
+	local paysOut = util.random('toolDrop')
 	if paysOut<0.5 and not player.character.name==characters.felix.name then return end
 	tools.giveSupertools(1)
-	--[[filledSlots = {0,0,0}
-	slot = 1
-	for i = tools.numNormalTools + 1, #tools do
-		if tools[i].numHeld>0 then
-			filledSlots[slot] = i
-			slot = slot+1
-		end
-	end
-	goodSlot = false
-	while (not goodSlot) do
-		slot = math.floor(math.random()*5)+8
-		if filledSlots[3]==0 then
-			goodSlot = true
-		end
-		for i = 1, 3 do
-			if filledSlots[i]==slot then
-				goodSlot = true
-			end
-		end
-	end
-	tools[slot].numHeld = tools[slot].numHeld+1]]
 end
 
 P.ladder = P.tile:new{name = "ladder", sprite = love.graphics.newImage('Graphics/laddertile.png'), blocksAnimalMovement = true}
@@ -1145,7 +1124,7 @@ P.treasureTile2 = P.treasureTile:new{name = "treasureTile2", sprite = love.graph
 
 function P.treasureTile2:onEnter()
 	if self.done then return end
-	local reward = math.floor(math.random()*1000)
+	local reward = util.random(1000,'toolDrop')
 	self:giveReward(reward)
 	self.done = true
 	self.isCompleted = true
@@ -1315,16 +1294,16 @@ end
 function P.finalToolsTile:onLoad()
 	beatRoom(true)
 	local itemsNeeded = map.getItemsNeeded(mainMap[mapy][mapx+1].roomid)
-	local toolsArray = itemsNeeded[math.floor(math.random()*#itemsNeeded)+1]
+	local toolsArray = itemsNeeded[util.random(#itemsNeeded,'toolDrop')]
 	local toolsNum = 0
 	for i = 1, tools.numNormalTools do
 		toolsNum = toolsNum + toolsArray[i]
 	end
 	local superOptions = tools.chooseGoodSupertools()
 	for i = 1, donations-toolsNum do
-		local random = math.random()
+		local random = util.random('toolDrop')
 		if random>0.75 then
-			self.toolsToGive[#self.toolsToGive+1] = superOptions[math.floor(math.random()*3)+1]
+			self.toolsToGive[#self.toolsToGive+1] = superOptions[util.random(3,'toolDrop')]
 		else
 			self.toolsToGive[#self.toolsToGive+1] = tools.chooseNormalTool()
 		end
@@ -1335,7 +1314,7 @@ function P.finalToolsTile:onLoad()
 			toolsList[#toolsList+1] = i
 		end
 	end
-	toolsList = util.shuffle(toolsList)
+	toolsList = util.shuffle(toolsList, 'toolDrop')
 	for i = 1, donations do
 		self.toolsToGive[#self.toolsToGive+1] = toolsList[i]
 	end

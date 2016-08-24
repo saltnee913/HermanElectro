@@ -29,11 +29,12 @@ function love.load()
 	--math.random() will not actually be random. This may seem weird, and it is, but it's true.
 	--I got the idea for the fix from http://lua-users.org/wiki/MathLibraryTutorial, but I still dont
 	--entirely understand why it works.
-	math.randomseed(os.time())
 
 	gamePaused = false
 	gameTime = {timeLeft = 260, toolTime = 0, roomTime = 15, levelTime = 200, donateTime = 20}
 
+	enteringSeed = false
+	seedOverride = nil
 	typingCallback = nil
 	mouseDown = false
 	debugText = nil
@@ -150,8 +151,6 @@ function love.load()
 		end
 		loadedOnce = true
 	end
-	number1 = love.math.random()*-200
-	number2 = love.math.random()*-200
 	--print(love.graphics.getWidth(f1))
 	scale = (width - 2*wallSprite.width)/(20.3 * 16)*5/6
 	floor = tiles.tile
@@ -179,6 +178,18 @@ function love.load()
 	end
 end
 
+function loadRandoms()
+	local seed
+	if seedOverride == nil then
+		seed = os.time()
+	else
+		seed = tonumber(seedOverride)
+	end
+	util.newRandom('mapGen', seed)
+	util.newRandom('toolDrop', seed*3)
+	util.newRandom('misc', seed*5)
+end
+
 function loadNextLevel(dontChangeTime)
 	if dontChangeTime == nil then dontChangeTime = false end
 	--hacky way of getting info, but for now, it works
@@ -204,6 +215,7 @@ function loadNextLevel(dontChangeTime)
 end
 
 function startGame()
+	loadRandoms()
 	loadTutorial = false
 	map.floorOrder = map.defaultFloorOrder
 	love.load()
@@ -213,6 +225,7 @@ function startGame()
 end
 
 function startTutorial()
+	loadRandoms()
 	loadTutorial = true
 	map.floorOrder = {'RoomData/tut_map.json'}
 	player.enterX = player.tileX
@@ -228,6 +241,7 @@ function startTutorial()
 end
 
 function startDebug()
+	loadRandoms()
 	loadTutorial = false
 	map.floorOrder = {'RoomData/debugFloor.json'}
 	love.load()
@@ -246,7 +260,7 @@ function loadLevel(floorPath)
 	animals = {}
 	pushables = {}
 	map.loadFloor(floorPath)
-	mainMap = map.generateMap(os.time())
+	mainMap = map.generateMap()
 	mapHeight = mainMap.height
 	mapx = mainMap.initialX
 	mapy = mainMap.initialY
@@ -257,7 +271,7 @@ function loadLevel(floorPath)
 				for i2 = 1, mainMap[i][j].room.height do
 					for j2 = 1, mainMap[i][j].room.length do
 						if mainMap[i][j].room[i2][j2]~=nil and mainMap[i][j].room[i2][j2]:instanceof(tiles.boxTile) then
-							local rand = math.random()
+							local rand = util.random('mapGen')
 							if rand<donations/100 then
 								mainMap[i][j].room[i2][j2] = tiles.giftBoxTile:new()
 							end
@@ -774,6 +788,11 @@ function love.draw()
 	love.graphics.setBackgroundColor(0,0,0)
 	if not started and not charSelect then
 		love.graphics.draw(startscreen, 0, 0, 0, width/startscreen:getWidth(), height/startscreen:getHeight())
+		if seedOverride ~= nil then
+			love.graphics.setColor(0,255,0,255)
+			love.graphics.print(seedOverride, 0, 100)
+			love.graphics.setColor(255,255,255,255)
+		end
 		return
 	elseif charSelect then
 		love.graphics.setColor(150, 200, 0)
@@ -1454,9 +1473,30 @@ end
 
 function love.textinput(text)
 	editor.textinput(text)
+	seedEnter(text)
+end
+
+function seedEnter(text)
+	if enteringSeed then
+		if seedOverride == nil then
+			seedOverride = ''
+		end
+		if tonumber(text) ~= nil then
+			seedOverride = seedOverride..text
+		end
+	end
 end
 
 function love.keypressed(key, unicode)
+	if enteringSeed then
+		if key == 'backspace' and seedOverride ~= nil then
+			seedOverride = seedOverride:sub(1, -2)
+		end
+		if key == 'tab' or key == 'return' then
+			enteringSeed = false
+		end
+		return
+	end
 	if charSelect then
 		local charsToSelect = characters.getUnlockedCharacters()
 		if key == "return" then
@@ -1501,6 +1541,8 @@ function love.keypressed(key, unicode)
 		elseif key=="e" then
 			startDebug()
 			return
+		elseif key=="tab" then
+			enteringSeed = true
 		end
 		return
 	end
@@ -2204,8 +2246,8 @@ function dropTools()
 		local amtChecked = 0
 		local done = false
 		while (not done) do
-			y = math.floor(math.random()*(mapHeight+1))
-			x = math.floor(math.random()*(mapHeight+1))
+			y = util.random(mapHeight, 'toolDrop')
+			x = util.random(mapHeight, 'toolDrop')
 			if checkedRooms[y][x] == nil then
 				checkedRooms[y][x] = 1
 				if completedRooms[y]~=nil and completedRooms[y][x]~=nil and completedRooms[y][x] == 0 then
@@ -2223,7 +2265,7 @@ function dropTools()
 									numLists = numLists+1
 								end
 							end
-							listChoose = math.random(numLists)
+							listChoose = util.random(numLists, 'toolDrop')
 							for i = 1, tools.numNormalTools do
 								if listOfItemsNeeded[listChoose][i] ~= 0 then
 									done = true
@@ -2243,7 +2285,7 @@ function dropTools()
 		end
 		if not done then
 			for i = 1, toolMin+1 do
-				local slot = math.floor(math.random()*7)+1
+				local slot = util.random(tools.numNormalTools, 'toolDrop')
 				tools[slot].numHeld = tools[slot].numHeld+1
 			end
 		end

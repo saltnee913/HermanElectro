@@ -249,7 +249,7 @@ P.giovanni.onFloorEnter = P.giovanni.onRoomEnter
 
 P.random = P.character:new{name = "Random", description = "", sprite = love.graphics.newImage('Graphics/random.png')}
 function P.random:onBegin()
-	local charSlot = math.floor(math.random()*(#characters-1))+1
+	local charSlot = util.random(#characters-1, 'misc')
 	player.character = characters[charSlot]:new()
 	player.character:onBegin()
 end
