@@ -7,7 +7,7 @@ tools = require('scripts.tools')
 local P = {}
 tiles = P
 
-P.tile = Object:new{formerPowered = nil, updatePowerOnEnter = false, updatePowerOnLeave = true, overlayable = false, overlaying = false, gone = false, lit = false, destroyed = false,
+P.tile = Object:new{formerPowered = nil, updatePowerOnEnter = false, updatePowerOnLeave = false, overlayable = false, overlaying = false, gone = false, lit = false, destroyed = false,
   blocksProjectiles = false, isVisible = true, rotation = 0, powered = false, blocksMovement = false, 
   blocksAnimalMovement = false, poweredNeighbors = {0,0,0,0}, blocksVision = false, dirSend = {1,1,1,1}, 
   dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile",
@@ -354,11 +354,6 @@ P.poweredFloor.willDestroyPushable = P.poweredFloor.willKillPlayer
 
 P.wall = P.tile:new{overlayable = true, electrified = false, onFire = false, blocksProjectiles = true, blocksMovement = true, canBePowered = false, name = "wall", blocksVision = true, electrifiedSprite = love.graphics.newImage('Graphics/woodwallelectrified.png'), destroyedSprite = love.graphics.newImage('Graphics/woodwallbroken.png'), sprite = love.graphics.newImage('Graphics3D/woodwall.png'), poweredSprite = love.graphics.newImage('Graphics3D/woodwall.png'), electrifiedPoweredSprite = love.graphics.newImage('Graphics/woodwallpowered.png'), sawable = true}
 function P.wall:onEnter(player)	
-	if player.character~=nil and player.character.name == "Rammy" then
-		if not (self:instanceof(P.glassWall) or self:instanceof(P.metalWall) or self:instanceof(P.concreteWall)) then
-			self:destroy()
-		end
-	end
 	if not self.destroyed then
 		--player.x = player.prevx
 		--player.y = player.prevy
@@ -688,6 +683,13 @@ function P.poweredEnd:onEnter(player)
 end
 
 P.pitbullTile = P.tile:new{name = "pitbull", animal = animalList[2]:new(), sprite = love.graphics.newImage('Graphics/animalstartingtile.png'), listIndex = 2}
+function P.pitbullTile:new(o)
+	o = o or {}
+	setmetatable(o, self)
+	self.__index = self
+	o.animal = o.animal:new()
+	return o
+end
 P.pupTile = P.pitbullTile:new{name = "pup", animal = animalList[3]:new(), listIndex = 3}
 P.catTile = P.pitbullTile:new{name = "cat", animal = animalList[4]:new(), listIndex = 4}
 
@@ -838,7 +840,7 @@ P.breakablePit.willDestroyPushable = P.breakablePit.willKillPlayer
 P.treasureTile = P.tile:new{name = "treasureTile", sprite = love.graphics.newImage('Graphics/treasuretile.png'), done = false}
 function P.treasureTile:onEnter()
 	if self.done then return end
-	local reward = math.floor(math.random()*1000)
+	local reward = util.random(1000,'toolDrop')
 	self:giveReward(reward)
 	self.done = true
 	self.isCompleted = true
@@ -854,7 +856,7 @@ function P.treasureTile:giveReward(reward)
 		local counter = 0
 		while counter<3 do
 			tools.giveRandomTools(1)
-			local rand = math.random()
+			local rand = util.random('toolDrop')
 			if rand>probBasic/1000 then return end
 			counter = counter+1
 		end
@@ -862,7 +864,7 @@ function P.treasureTile:giveReward(reward)
 		local counter = 0
 		while counter<2 do
 			tools.giveSupertools(1)
-			local rand = math.random()
+			local rand = util.random('toolDrop')
 			if rand>probSuper/1000 then return end
 			counter = counter+1
 		end
@@ -1058,11 +1060,11 @@ function P.beggar:onEnter(player)
 	tools[tool].numHeld = tools[tool].numHeld - 1
 	self.counter = self.counter+1
 	probabilityOfPayout = self.counter/4+donations*2/100
-	randomNum = math.random()
+	randomNum = util.random('toolDrop')
 	if randomNum<probabilityOfPayout then
 		self.counter = 0
 		tools.giveSupertools(1)
-		local killBeggar = math.random()
+		local killBeggar = util.random('toolDrop')
 		if killBeggar<0.5 then
 			self:destroy()
 		end
@@ -1074,30 +1076,9 @@ end
 function P.beggar:destroy()
 	self.sprite = self.deadSprite
 	self.alive = false
-	local paysOut = math.random()
+	local paysOut = util.random('toolDrop')
 	if paysOut<0.5 and not player.character.name==characters.felix.name then return end
 	tools.giveSupertools(1)
-	--[[filledSlots = {0,0,0}
-	slot = 1
-	for i = tools.numNormalTools + 1, #tools do
-		if tools[i].numHeld>0 then
-			filledSlots[slot] = i
-			slot = slot+1
-		end
-	end
-	goodSlot = false
-	while (not goodSlot) do
-		slot = math.floor(math.random()*5)+8
-		if filledSlots[3]==0 then
-			goodSlot = true
-		end
-		for i = 1, 3 do
-			if filledSlots[i]==slot then
-				goodSlot = true
-			end
-		end
-	end
-	tools[slot].numHeld = tools[slot].numHeld+1]]
 end
 
 P.ladder = P.tile:new{name = "ladder", sprite = love.graphics.newImage('Graphics/laddertile.png'), blocksAnimalMovement = true}
@@ -1143,7 +1124,7 @@ P.treasureTile2 = P.treasureTile:new{name = "treasureTile2", sprite = love.graph
 
 function P.treasureTile2:onEnter()
 	if self.done then return end
-	local reward = math.floor(math.random()*1000)
+	local reward = util.random(1000,'toolDrop')
 	self:giveReward(reward)
 	self.done = true
 	self.isCompleted = true
@@ -1306,6 +1287,60 @@ P.giftBoxTile = P.tile:new{name = "giftBoxTile", pushable = pushableList[9]:new(
 
 P.jackInTheBoxTile = P.tile:new{name = "jackInTheBoxTile", pushable = pushableList[10]:new(), listIndex = 10, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
 
+P.finalToolsTile = P.tile:new{name = "finalToolsTile", canBePowered = false, dirAccept = {0,0,0,0}, sprite = love.graphics.newImage('Graphics/donationmachine.png'), done = false, toolsToGive = {}, giveRate = 0.75, timeLeft = 0}
+function P.finalToolsTile:onEnter(player)
+	if self.done then return end
+end
+function P.finalToolsTile:onLoad()
+	beatRoom(true)
+	local itemsNeeded = map.getItemsNeeded(mainMap[mapy][mapx+1].roomid)
+	local toolsArray = itemsNeeded[util.random(#itemsNeeded,'toolDrop')]
+	local toolsNum = 0
+	for i = 1, tools.numNormalTools do
+		toolsNum = toolsNum + toolsArray[i]
+	end
+	local superOptions = tools.chooseGoodSupertools()
+	for i = 1, donations-toolsNum do
+		local random = util.random('toolDrop')
+		if random>0.75 then
+			self.toolsToGive[#self.toolsToGive+1] = superOptions[util.random(3,'toolDrop')]
+		else
+			self.toolsToGive[#self.toolsToGive+1] = tools.chooseNormalTool()
+		end
+	end
+	local toolsList = {}
+	for i = 1, tools.numNormalTools do
+		for j = 1, toolsArray[i] do
+			toolsList[#toolsList+1] = i
+		end
+	end
+	toolsList = util.shuffle(toolsList, 'toolDrop')
+	for i = 1, donations do
+		self.toolsToGive[#self.toolsToGive+1] = toolsList[i]
+	end
+end
+function P.finalToolsTile:updateTime(dt)
+	if self.done then
+		return
+	end
+	if #self.toolsToGive == 0 then
+		self.done = true
+		self.isCompleted = true
+		self.isVisible = false
+		self.gone = true
+		return
+	end
+	self.timeLeft = self.timeLeft - dt
+	if self.timeLeft < 0 then
+		self.timeLeft = self.giveRate
+		tools.giveTools({self.toolsToGive[#self.toolsToGive]})
+		self.toolsToGive[#self.toolsToGive] = nil
+	end
+end
+function P.finalToolsTile:getInfoText()
+	return #self.toolsToGive
+end
+
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
 tiles[3] = P.powerSupply
@@ -1396,5 +1431,6 @@ tiles[87] = P.bombBoxTile
 tiles[88] = P.unpoweredAccelerator
 tiles[89] = P.giftBoxTile
 tiles[90] = P.jackInTheBoxTile
+tiles[91] = P.finalToolsTile
 
 return tiles

@@ -232,7 +232,7 @@ function P.createRoom(inRoom, arr)
 	--if arr[inRoom]==nil then print("isNil") end
 	local roomToLoad = arr[inRoom].layout
 	roomToLoad = (roomToLoad ~= nil) and roomToLoad 
-		or arr[inRoom].layouts[math.floor(math.random()*#(arr[inRoom].layouts))+1]
+		or arr[inRoom].layouts[util.random(#arr[inRoom].layouts, 'mapGen')]
 	local loadedRoom = {}
 	loadedRoom.height = #roomToLoad
 	loadedRoom.length = #roomToLoad[1]
@@ -311,8 +311,7 @@ local function printMap(inMap)
 	end
 end
 
-function P.generateMap(seed)
-	math.randomseed(seed)
+function P.generateMap()
 	return P[P.floorInfo.generateFunction]()
 end
 
@@ -345,7 +344,7 @@ function P.generateMapStandard()
 	donationX = 0
 	donationY = 0
 	local blacklist = {startRoomID}
-	local randomRoomArray = util.createRandomKeyArray(P.floorInfo.rooms.rooms, blacklist)
+	local randomRoomArray = util.createRandomKeyArray(P.floorInfo.rooms.rooms, 'mapGen', blacklist)
 	local skippedRooms = {}
 	local skippedRoomsIndex = 1
 	for i = 0, numRooms-1 do
@@ -397,7 +396,7 @@ function P.generateMapStandard()
 		end
 
 		--numRooms=0
-		local choice = available[math.floor(math.random()*a)]
+		local choice = available[util.random(a-1, 'mapGen')]
 		--local roomNum = math.floor(math.random()*#(P.rooms)) -- what we will actually do, with some editing
 		arr = P.floorInfo.rooms.rooms
 		local roomid = randomRoomArray[i+skippedRoomsIndex]
@@ -417,17 +416,17 @@ function P.generateMapStandard()
 		end
 		if i == numRooms-2 then
 			arr = P.floorInfo.rooms.treasureRooms
-			roomid = util.chooseRandomKey(arr)
+			roomid = util.chooseRandomKey(arr, 'mapGen')
 			loadedRoom = P.createRoom(roomid, arr)
 			treasureX = choice.y
 			treasureY = choice.x
 		elseif i == numRooms-1 then
 			arr = P.floorInfo.rooms.finalRooms
-			roomid = util.chooseRandomKey(arr)
+			roomid = util.chooseRandomKey(arr, 'mapGen')
 			loadedRoom = P.createRoom(roomid, arr)
 		elseif i == numRooms-3 then
 			arr = P.floorInfo.rooms.donationRooms
-			roomid = util.chooseRandomKey(arr)
+			roomid = util.chooseRandomKey(arr, 'mapGen')
 			loadedRoom = P.createRoom(roomid, arr)
 			donationX = choice.y
 			donationY = choice.x
@@ -488,11 +487,11 @@ function P.generateMapFinal()
 	
 	local roomIndex = -1
 
-	local randomRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.rooms)
+	local randomRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.rooms, 'mapGen')
 
 	local roomChoiceid = ""
 	while roomChoiceid=="" or roomChoiceid==newmap[newmap.initialY][newmap.initialX].roomid do
-		roomChoiceid = util.chooseRandomElement(randomRoomsArray)
+		roomChoiceid = util.chooseRandomElement(randomRoomsArray, 'mapGen')
 	end
 
 	newmap[choice.y][choice.x] = {roomid = roomChoiceid, room = P.createRoom(roomChoiceid), isFinal = false, isInitial = false}
@@ -509,10 +508,10 @@ function P.generateMapWeighted()
 		newmap[i] = {}
 	end
 	local roomsArray = P.floorInfo.rooms.rooms
-	local randomRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.rooms)
-	local randomTreasureRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.treasureRooms)
-	local randomFinalRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.finalRooms)
-	local randomDonationRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.donationRooms)
+	local randomRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.rooms, 'mapGen')
+	local randomTreasureRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.treasureRooms, 'mapGen')
+	local randomFinalRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.finalRooms, 'mapGen')
+	local randomDonationRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.donationRooms, 'mapGen')
 
 	--create first room
 	local startRoomID = P.floorInfo.startRoomID
@@ -565,26 +564,26 @@ function P.generateMapWeighted()
 			end
 		end
 		--choose a room slot
-		local choice = util.chooseRandomElement(available)
+		local choice = util.chooseRandomElement(available, 'mapGen')
 		local roomid
 
 		if numRooms - #usedRooms == 1 then
-			roomid = util.chooseRandomElement(randomFinalRoomsArray)
+			roomid = util.chooseRandomElement(randomFinalRoomsArray, 'mapGen')
 		elseif numRooms - #usedRooms == 2 then
-			roomid = util.chooseRandomElement(randomTreasureRoomsArray)
+			roomid = util.chooseRandomElement(randomTreasureRoomsArray, 'mapGen')
 		elseif numRooms - #usedRooms == 3 then
-			roomid = util.chooseRandomElement(randomDonationRoomsArray)
+			roomid = util.chooseRandomElement(randomDonationRoomsArray, 'mapGen')
 		else
 			--creates an array of 5 possible choices with weights
 			local roomChoices = {}
 			local roomWeights = {}
 			for i = 1, P.floorInfo.numRoomsToCheck do
-				local roomChoiceid = util.chooseRandomElement(randomRoomsArray)
+				local roomChoiceid = util.chooseRandomElement(randomRoomsArray, 'mapGen')
 				local roomChoice = roomsArray[roomChoiceid]
 				local infiniteLoopCheck = 0
 				while not isRoomAllowed(roomChoice, usedRooms, newmap, choice) do
 					infiniteLoopCheck = infiniteLoopCheck + 1
-					roomChoiceid = util.chooseRandomElement(randomRoomsArray)
+					roomChoiceid = util.chooseRandomElement(randomRoomsArray, 'mapGen')
 					roomChoice = roomsArray[roomChoiceid]
 					if infiniteLoopCheck > 1000 then
 						printMap()
@@ -626,7 +625,7 @@ function P.generateMapWeighted()
 				roomWeight = roomWeight/totalRoomsCompared + P.getRoomWeight(roomChoice)
 				roomWeights[i] = roomWeight
 			end
-			roomid = roomChoices[util.chooseWeightedRandom(roomWeights)]
+			roomid = roomChoices[util.chooseWeightedRandom(roomWeights, 'mapGen')]
 		end
 		usedRooms[#usedRooms+1] = roomid
 		newmap[choice.y][choice.x] = {roomid = roomid, room = P.createRoom(roomid), isFinal = false, isInitial = false}
@@ -647,7 +646,7 @@ function P.generateOneFloor()
 	newmap.initialY = math.floor(height/2)
 	newmap.initialX = math.floor(height/2)
 	local blacklist = {startRoomID}
-	local randomRoomArray = util.createRandomKeyArray(P.floorInfo.rooms.rooms, blacklist)
+	local randomRoomArray = util.createRandomKeyArray(P.floorInfo.rooms.rooms, 'mapGen', blacklist)
 	local skippedRooms = {}
 	local skippedRoomsIndex = 1
 	for i = 0, numRooms-1 do
@@ -707,7 +706,7 @@ function P.generateOneFloor()
 		end
 
 		--numRooms=0
-		local choice = available[math.floor(math.random()*a)]
+		local choice = available[util.random(a-1, 'mapGen')]
 		--local roomNum = math.floor(math.random()*#(P.rooms)) -- what we will actually do, with some editing
 		arr = P.floorInfo.rooms.rooms
 		local roomid = randomRoomArray[i+skippedRoomsIndex]
@@ -727,17 +726,17 @@ function P.generateOneFloor()
 		end
 		if i == numRooms-1 then
 			arr = P.floorInfo.rooms.finalRooms
-			roomid = util.chooseRandomKey(arr)
+			roomid = util.chooseRandomKey(arr, 'mapGen')
 			loadedRoom = P.createRoom(roomid, arr)
 		elseif i>numRooms-5 then
 			arr = P.floorInfo.rooms.treasureRooms
-			roomid = util.chooseRandomKey(arr)
+			roomid = util.chooseRandomKey(arr, 'mapGen')
 			loadedRoom = P.createRoom(roomid, arr)
 			treasureX = choice.y
 			treasureY = choice.x
 		elseif i>numRooms-10 then
 			arr = P.floorInfo.rooms.donationRooms
-			roomid = util.chooseRandomKey(arr)
+			roomid = util.chooseRandomKey(arr, 'mapGen')
 			loadedRoom = P.createRoom(roomid, arr)
 			donationX = choice.y
 			donationY = choice.x
@@ -750,21 +749,6 @@ end
 
 function P.generateTutorial()
 	return P.generateMapFromJSON('RoomData/tut_map.json')
-	--[[local newmap = MapInfo:new{height = #P.rooms, numRooms = #P.rooms}
-	newmap[0] = {}
-	newmap[newmap.height+1] = {}
-	for i = 1, newmap.height do
-		newmap[i] = {}
-		newmap[i][math.floor(newmap.height/2)] = {roomid = i, room = P.createRoom(i), isFinal = false, isInitial = false, isCompleted = false}
-	end
-	newmap[1][math.floor(newmap.height/2)].isInitial = true
-	newmap.initialY = 1
-	newmap.initialX = math.floor(newmap.height/2)
-	newmap[1][math.floor(newmap.height/2)].isCompleted = false
-	newmap[newmap.height][math.floor(newmap.height/2)].isFinal = true
-	print(newmap[1][math.floor(newmap.height/2)].roomid)
-	printMap(newmap)
-	return newmap]]
 end
 
 function P.generateMapFromJSON()
