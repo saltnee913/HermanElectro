@@ -24,7 +24,13 @@ saveDir = 'SaveData'
 
 
 function love.load()
+
+	--IMPORTANT: This line is actually completely necessary; without it, the first random number generated from
+	--math.random() will not actually be random. This may seem weird, and it is, but it's true.
+	--I got the idea for the fix from http://lua-users.org/wiki/MathLibraryTutorial, but I still dont
+	--entirely understand why it works.
 	math.randomseed(os.time())
+
 	gamePaused = false
 	gameTime = {timeLeft = 260, toolTime = 0, roomTime = 15, levelTime = 200, donateTime = 20}
 
