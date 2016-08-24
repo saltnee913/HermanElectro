@@ -24,6 +24,7 @@ saveDir = 'SaveData'
 
 
 function love.load()
+	math.randomseed(os.time())
 	gamePaused = false
 	gameTime = {timeLeft = 260, toolTime = 0, roomTime = 15, levelTime = 200, donateTime = 20}
 

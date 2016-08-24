@@ -247,6 +247,13 @@ function P.giovanni:onRoomEnter()
 end
 P.giovanni.onFloorEnter = P.giovanni.onRoomEnter
 
+P.random = P.character:new{name = "Random", description = "", sprite = love.graphics.newImage('Graphics/random.png')}
+function P.random:onBegin()
+	local charSlot = math.floor(math.random()*(#characters-1))+1
+	player.character = characters[charSlot]:new()
+	player.character:onBegin()
+end
+
 
 P[1] = P.herman
 P[2] = P.felix
@@ -259,5 +266,6 @@ P[8] = P.frederick
 P[9] = P.battery
 P[10] = P.crate
 P[11] = P.giovanni
+P[12] = P.random
 
 return characters
