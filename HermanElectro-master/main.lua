@@ -437,7 +437,7 @@ function updatePower()
 		end
 		for i = 1, 5 do
 			for i = 1, #pushables do
-				if pushables[i].conductive then
+				if pushables[i].conductive and not pushables[i].destroyed then
 					local conductPower = false
 					local pX = pushables[i].tileX
 					local pY = pushables[i].tileY
