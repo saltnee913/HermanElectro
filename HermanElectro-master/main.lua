@@ -377,6 +377,10 @@ function updatePower()
 	player.character:onPreUpdatePower()
 	powerCount = 0
 
+	for i = 1, #pushables do
+		pushables[i].powered = false
+	end
+
 	for i=1, roomHeight do
 		for j=1, roomLength do
 			if room[i]~=nil and room[i][j]~=nil then
@@ -2143,7 +2147,7 @@ end
 function resetPushables()
 	for i = 1, #pushables do
 		pushables[i].canBeAccelerated = true
-		pushables[i].powered = false
+		--pushables[i].powered = false
 	end
 end
 
