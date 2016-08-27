@@ -246,6 +246,20 @@ function P.giovanni:onRoomEnter()
 	self.shiftPos = {x = -1, y = -1}
 end
 P.giovanni.onFloorEnter = P.giovanni.onRoomEnter
+function P.giovanni:onKeyPressed(key)
+	if key == 'rshift' or key == 'lshift' or key == 'shift' then
+		if self.shiftPos.x==-1 then
+			self.shiftPos.x = player.tileX
+			self.shiftPos.y = player.tileY
+			log("Clone spawned!")
+		else
+			player.tileX = self.shiftPos.x
+			player.tileY = self.shiftPos.y
+			self.shiftPos = {x = -1, y = -1}
+			log("Returned to clone!")
+		end
+	end
+end
 
 P.random = P.character:new{name = "Random", description = "", sprite = love.graphics.newImage('Graphics/random.png')}
 function P.random:onBegin()
