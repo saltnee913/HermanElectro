@@ -29,13 +29,10 @@ function P.getUnlockedCharacters()
 end
 
 P.character = Object:new{name = "Name", sprite = love.graphics.newImage('Graphics/herman_sketch.png'),
-  description = "description", startingTools = {0,0,0,0,0,0,0}, scale = 0.25 * width/1200}
+  description = "description", startingTools = {0,0,0,0,0,0,0}, scale = 0.25 * width/1200, forcePowerUpdate = false}
 function P.character:onBegin()
 	self:setStartingTools()
 	self:onCharLoad()
-end
-function P.character:canFly()
-	return false
 end
 function P.character:setStartingTools()
 	for i = 1, tools.numNormalTools do
@@ -43,14 +40,51 @@ function P.character:setStartingTools()
 	end
 end
 function P.character:onCharLoad()
+end
+function P.character:onRoomEnter()
+end
+function P.character:onFloorEnter()
+end
+function P.character:onPreUpdatePower()
 
+end
+function P.character:onPostUpdatePower()
+	
+end
+function P.character:onKeyPressed()
+	return false
+end
+function P.character:onToolUse()
+end
+function P.character:preTileEnter(tile)
 end
 
 P.herman = P.character:new{name = "Herman", description = "The Electrician"}
+function P.herman:onCharLoad()
+	if loadTutorial then return end
+	tools.revive.numHeld = 2
+end
 
 P.felix = P.character:new{name = "Felix", description = "The Sharpshooter", sprite = love.graphics.newImage('Graphics/felix.png'), startingTools = {0,0,0,0,0,0,1}}
 function P.felix:onCharLoad()
-	tools.gun.range = 5
+	tools[7] = tools.felixGun
+	if not tools.felixGun.isGun then
+		tools.felixGun:switchEffects()
+	end
+	tools.felixGun.numHeld = 1
+	tools.bomb.numHeld = 1
+end
+function P.felix:onKeyPressed(key)
+	--log(key)
+	if key == 'rshift' or key == 'lshift' or key == 'shift' then
+		tools.felixGun:switchEffects()
+		tools.updateToolableTiles(tool)
+		return true
+	end
+	return false
+end
+function P.felix:onFloorEnter()
+	tools.felixGun.numHeld = tools.felixGun.numHeld+2
 end
 
 P.most = P.character:new{name = "Ben", description = "The Explorer",
@@ -76,17 +110,173 @@ P.gabe = P.character:new{name = "Gabe", description = "The Angel",
 function P.gabe:onCharLoad()
 	player.flying = true
 end
-function P.gabe:canFly()
-	return true
+function P.gabe:onRoomEnter()
+	player.flying = true
 end
 
 P.rammy = P.character:new{name = "Rammy", description = "The Ram",
 	sprite = love.graphics.newImage('Graphics/ram.png')}
+function P.rammy:preTileEnter(tile)
+	if tile.name == tiles.wall.name and not tile.destroyed then
+		tile:destroy()
+	end
+end
 
 P.rick = P.character:new{name = "Rick", description = "The Gambler", sprite = love.graphics.newImage('Graphics/rick.png')}
 function P.rick:onCharLoad()
 	tools.toolReroller.numHeld = 3
+	tools.roomReroller.numHeld = 1
 end
+function P.rick:onFloorEnter()
+	for i = 1, tools.numNormalTools do
+		if tools[i].numHeld>0 then
+			tools[i].numHeld=0
+		end
+	end
+end
+
+--alternative name: "Froggy, the Fresh"
+P.frederick = P.character:new{name = "Frederick", description = "The Frog", sprite = love.graphics.newImage('Graphics/frederick.png')}
+function P.frederick:onCharLoad()
+	tools.spring.numHeld = 4
+end
+function P.frederick:onFloorEnter()
+	tools.spring.numHeld = tools.spring.numHeld+2
+end
+
+P.battery = P.character:new{name = "Bob", description = "The Battery", sprite = love.graphics.newImage('Graphics/powersupplydead.png'),
+  onSprite = love.graphics.newImage('Graphics/powersupply.png'), offSprite = love.graphics.newImage('Graphics/powersupplydead.png'), 
+  scale = scale, storedTile = nil, forcePowerUpdate = false, powered = false}
+function P.battery:onKeyPressed(key)
+	--log(key)
+	if key == 'rshift' or key == 'lshift' or key == 'shift' then
+		if self.powered then
+			self.powered = false
+			self.sprite = self.offSprite
+			self.forcePowerUpdate = false
+		else
+			self.powered = true
+			self.sprite = self.onSprite
+			self.forcePowerUpdate = true
+		end
+		return true
+	end
+	return false
+end
+function P.battery:onPreUpdatePower()
+	if self.powered then
+		if room[player.tileY][player.tileX] ~= nil then
+			self.storedTile = room[player.tileY][player.tileX]:new()
+			self.storedTile.powered = true
+		else
+			self.storedTile = nil
+		end
+		room[player.tileY][player.tileX] = tiles.powerSupply:new()
+	end
+end
+function P.battery:onPostUpdatePower()
+	if self.powered then
+		room[player.tileY][player.tileX] = self.storedTile
+	end
+end
+
+P.nadia = P.character:new{name = "Nadia", description = "The Naturalist", sprite = love.graphics.newImage('Graphics/nadia.png')}
+function P.nadia:onCharLoad()
+	tools.meat.numHeld = 3
+	player.safeFromAnimals = true
+end
+
+P.crate = P.character:new{name = "Carla", roomTrigger = false, description = "The Crate", isCrate = false, sprite = love.graphics.newImage('Graphics/carlaperson.png'),
+  humanSprite = love.graphics.newImage('Graphics/carlaperson.png'), crateSprite = love.graphics.newImage('Graphics/carlabox.png')}
+function P.crate:setCrate(isCrate)
+	self.sprite = isCrate and self.crateSprite or self.humanSprite
+	player.active = not isCrate
+	self.isCrate = isCrate
+end
+function P.crate:onKeyPressed(key)
+	--log(key)
+	if key == 'rshift' or key == 'lshift' or key == 'shift' then
+		if not self.isCrate and not self.roomTrigger then
+			P.crate:setCrate(true)
+			return true
+		else
+			P.crate:setCrate(false)
+			return true
+		end
+	end
+	return false
+end
+function P.crate:onRoomEnter()
+	self.roomTrigger = false
+end
+function P.crate:onToolUse()
+	player.active = true
+	self.roomTrigger = true
+end
+function P.crate:preTileEnter(tile)
+	if self.isCrate then
+		if room[player.tileY][player.tileX]:instanceof(tiles.pit) or room[player.tileY][player.tileX]:instanceof(tiles.poweredFloor) then
+			room[player.tileY][player.tileX]:ladder()
+			P.crate:setCrate(false)
+			self.roomTrigger = true
+		end
+	end
+end
+
+P.giovanni = P.character:new{name = "Giovanni", description = "The Sorcerer", shiftPos = {x = -1, y = -1}, sprite = love.graphics.newImage('Graphics/giovanni.png'), sprite2 = love.graphics.newImage('Graphics/giovannighost.png')}
+function P.giovanni:onKeyPressed(key)
+	if key == 'rshift' or key == 'lshift' or key == 'shift' then
+		if self.shiftPos.x==-1 then
+			self.shiftPos.x = player.tileX
+			self.shiftPos.y = player.tileY
+			log("Clone spawned!")
+		else
+			player.tileX = self.shiftPos.x
+			player.tileY = self.shiftPos.y
+			self.shiftPos = {x = -1, y = -1}
+			log("Returned to clone!")
+		end
+	end
+end
+function P.giovanni:onCharLoad()
+	tools.pitbullChanger.numHeld = 2
+	self.shiftPos = {x = -1, y = -1}
+end
+function P.giovanni:onRoomEnter()
+	self.shiftPos = {x = -1, y = -1}
+end
+P.giovanni.onFloorEnter = P.giovanni.onRoomEnter
+function P.giovanni:onKeyPressed(key)
+	if key == 'rshift' or key == 'lshift' or key == 'shift' then
+		if self.shiftPos.x==-1 then
+			self.shiftPos.x = player.tileX
+			self.shiftPos.y = player.tileY
+			log("Clone spawned!")
+		else
+			player.tileX = self.shiftPos.x
+			player.tileY = self.shiftPos.y
+			self.shiftPos = {x = -1, y = -1}
+			log("Returned to clone!")
+		end
+	end
+end
+
+P.francisco = P.character:new{name = "Francisco", description = "The Cartographer", nextRoom = {yLoc = -1, xLoc = -1}, sprite = love.graphics.newImage('Graphics/francisco.png')}
+function P.francisco:onBegin()
+	tools.map.numHeld = 1
+end
+function P.francisco:onFloorEnter()
+	tools.map.numHeld = tools.map.numHeld+1
+end
+
+P.random = P.character:new{name = "Random", description = "", sprite = love.graphics.newImage('Graphics/random.png')}
+function P.random:onBegin()
+	local charsToSelect = characters.getUnlockedCharacters()
+	local charSlot = util.random(#charsToSelect-1, 'misc')
+	player.character = charsToSelect[charSlot]:new()
+	player.character:onBegin()
+end
+
 
 P[1] = P.herman
 P[2] = P.felix
@@ -95,5 +285,11 @@ P[4] = P.erik
 P[5] = P.gabe
 P[6] = P.rammy
 P[7] = P.rick
+P[8] = P.frederick
+P[9] = P.battery
+P[10] = P.crate
+P[11] = P.giovanni
+P[12] = P.francisco
+P[13] = P.random
 
 return characters

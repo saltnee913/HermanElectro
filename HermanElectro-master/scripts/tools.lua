@@ -4,11 +4,6 @@ tools = P
 P.toolDisplayTimer = {base = 1.5, timeLeft = 0}
 P.toolsShown = {}
 
-function P.resetTools()
-	for i = 1, #tools do
-		tools[i].range = tools[i].baseRange
-	end
-end
 
 function P.updateTimer(dt)
 	P.toolDisplayTimer.timeLeft = P.toolDisplayTimer.timeLeft - dt
@@ -50,10 +45,14 @@ end
 function P.giveRandomTools(numTools)
 	local toolsToGive = {}
 	for i = 1, numTools do
-		slot = math.floor(math.random()*tools.numNormalTools)+1
+		slot = P.chooseNormalTool()
 		toolsToGive[#toolsToGive+1] = slot
 	end
 	P.giveTools(toolsToGive)
+end
+
+function P.chooseNormalTool()
+	return util.random(tools.numNormalTools,'toolDrop')
 end
 
 function P.updateToolableTiles(toolid)
@@ -64,6 +63,7 @@ function P.updateToolableTiles(toolid)
 	else
 		P.toolableAnimals = nil
 		P.toolableTiles = nil
+		P.toolablePushables = nil
 	end
 end
 
@@ -384,11 +384,11 @@ function P.saw:usableOnTile(tile)
 	return tile:instanceof(tiles.wall) and not tile.destroyed and tile.sawable
 end
 function P.saw:usableOnPushable(pushable)
-	return pushable:instanceof(pushableList.giftBox)
+	return not pushable.destroyed and pushable.sawable
 end
 function P.saw:useToolPushable(pushable)
-	pushable.destroyed = true
-	P.giveSupertools(1)
+	self.numHeld = self.numHeld - 1
+	pushable:destroy()
 end
 
 P.ladder = P.tool:new{name = 'ladder', image = love.graphics.newImage('Graphics/ladder.png')}
@@ -422,12 +422,19 @@ end
 function P.wireCutters:usableOnTile(tile)
 	return self:usableOnNonOverlay(tile) or (tile.overlay~=nil and self:usableOnNonOverlay(tile.overlay))
 end
+function P.wireCutters:usableOnPushable(pushable)
+	return pushable.conductive and not pushable:instanceof(pushableList.jackInTheBox)
+end
+
 function P.wireCutters:useToolTile(tile)
 	self.numHeld = self.numHeld - 1
 	if tile:instanceof(tiles.conductiveGlass) or tile:instanceof(tiles.reinforcedConductiveGlass) then tile.canBePowered = false
 	elseif (tile.overlay~=nil and self:usableOnNonOverlay(tile.overlay)) then
 		tile.overlay:destroy()
 	else tile:destroy() end
+end
+function P.wireCutters:useToolPushable(pushable)
+	pushable.conductive = false
 end
 
 P.waterBottle = P.tool:new{name = 'water-bottle', image = love.graphics.newImage('Graphics/waterbottle.png')}
@@ -518,12 +525,53 @@ function P.gun:useToolTile(tile)
 		tile:allowVision()
 	end
 end
+function P.gun:useToolAnimal(animal)
+	self.numHeld = self.numHeld - 1
+	animal:kill()
+end
+
+P.felixGun = P.gun:new{name = 'felix gun', range = 5, isGun = true}
+function P.felixGun:switchEffects()
+	local switchEffects = self.switchEffects
+	if self.isGun then
+		P.felixGun = P.superGun:new{name = self.name, numHeld = self.numHeld, isGun = false, switchEffects = switchEffects}
+	else
+		P.felixGun = P.gun:new{name = self.name, numHeld = self.numHeld, range = 5, isGun = true, switchEffects = switchEffects}
+	end
+	for i = 1, #tools do
+		if tools[i].name == self.name then
+			tools[i] = P.felixGun
+		end
+	end
+end
 
 
 P.superTool = P.tool:new{name = 'superTool', baseRange = 10, rarity = 1}
 
 function P.chooseSupertool()
-	return math.floor(math.random()*(#tools-tools.numNormalTools))+tools.numNormalTools+1
+	return util.random(#tools-tools.numNormalTools,'toolDrop')+tools.numNormalTools
+end
+
+--i know this is a copy of the function but if we called this every time we'd needlessly repeat the first part, bad practice still tho
+function P.chooseGoodSupertools()
+	local filledSlots = {0,0,0}
+	local slot = 1
+	for i = tools.numNormalTools + 1, #tools do
+		if tools[i].numHeld>0 then
+			filledSlots[slot] = i
+			slot = slot+1
+		end
+	end
+	for i = 1, 3 do
+		if filledSlots[i] == 0 then
+			local toCheck = 0
+			while (toCheck == filledSlots[1] or toCheck == filledSlots[2] or toCheck == filledSlots[3]) do
+				toCheck = P.chooseSupertool()
+			end
+			filledSlots[i] = toCheck
+		end
+	end
+	return filledSlots
 end
 
 function P.giveSupertools(numTools)
@@ -601,17 +649,23 @@ function P.charger:useToolTile(tile)
 	tile.charged = true
 end
 
-P.visionChanger = P.superTool:new{name = 'visionChanger', baseRange = 1, image = love.graphics.newImage('Graphics/visionChanger.png')}
+P.visionChanger = P.superTool:new{name = 'visionChanger', baseRange = 0, image = love.graphics.newImage('Graphics/visionChanger.png')}
 function P.visionChanger:usableOnTile(tile)
-	if tile.blocksVision then
-		return true
-	end
-	return false
+	return true
 end
+P.visionChanger.usableOnNothing = P.visionChanger.usableOnTile
 function P.visionChanger:useToolTile(tile)
 	self.numHeld = self.numHeld-1
-	tile:allowVision()
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]~=nil then
+				room[i][j]:allowVision()
+				litTiles[i][j]=1
+			end
+		end
+	end
 end
+P.visionChanger.useToolNothing = P.visionChanger.useToolTile
 
 P.bomb = P.superTool:new{name = "bomb", baseRange = 1, image = love.graphics.newImage('Graphics/bomb.png')}
 function P.bomb:useToolNothing(tileY, tileX)
@@ -729,6 +783,13 @@ function P.corpseGrabber:useToolAnimal(animal)
 	self.numHeld = self.numHeld-1
 	animal.pickedUp = true
 	P.meat.numHeld = P.meat.numHeld+3
+	local counter = 0
+	for i = P.numNormalTools+1, #tools do
+		if tools[i].numHeld>0 then
+			counter = counter+1
+		end
+	end
+	if counter>3 then self.numHeld = 0 end
 end
 
 P.woodGrabber = P.superTool:new{name = "woodGrabber", baseRange = 1, image = love.graphics.newImage('Graphics/woodGrabber.png')}
@@ -808,10 +869,7 @@ end
 function P.boxCutter:useToolPushable(pushable)
 	self.numHeld = self.numHeld - 1
 	pushable.destroyed = true
-	for i = 1, 3 do
-		local slot = math.floor(math.random()*tools.numNormalTools)+1
-		tools[slot].numHeld = tools[slot].numHeld+1
-	end
+	P.giveRandomTools(3)
 end
 
 P.broom = P.tool:new{name = "broom", image = love.graphics.newImage('Graphics/pitbullChanger.png')}
@@ -902,7 +960,7 @@ function P.endFinder:useToolTile()
 end
 P.endFinder.useToolNothing = P.endFinder.useToolTile
 
-P.lamp = P.tool:new{name = "lamp", baseRange = 1, image = love.graphics.newImage('Graphics/lamp.png')}
+P.lamp = P.tool:new{name = "lamp", baseRange = 3, image = love.graphics.newImage('Graphics/lamp.png')}
 function P.lamp:usableOnNothing()
 	return true
 end
@@ -1015,6 +1073,7 @@ function P.superWireCutters:usableOnTile(tile)
 	return self:usableOnNonOverlay(tile) or (tile.overlay~=nil and self:usableOnNonOverlay(tile.overlay))
 end
 
+
 P.laser = P.tool:new{name = "laser", baseRange = 100, image = love.graphics.newImage('Graphics/laser.png')}
 function P.laser:usableOnAnimal(animal)
 	return not animal.dead
@@ -1059,7 +1118,7 @@ function P.superLaser:useToolTile(tile, tileY, tileX)
 end
 
 
-P.gas = P.tool:new{name = "gas", baseRange = 1, image = love.graphics.newImage('Graphics/gas.png')}
+P.gas = P.tool:new{name = "gas", baseRange = 0, image = love.graphics.newImage('Graphics/gas.png')}
 function P.gas:usableOnNothing()
 	return true
 end
@@ -1076,7 +1135,7 @@ P.gas.useToolNothing = P.gas.useToolTile
 P.gas.useToolAnimal = P.gas.useToolTile
 
 
-P.armageddon = P.tool:new{name = "armageddon", baseRange = 1, image = love.graphics.newImage('Graphics/armageddon.png')}
+P.armageddon = P.tool:new{name = "armageddon", baseRange = 0, image = love.graphics.newImage('Graphics/armageddon.png')}
 function P.armageddon:usableOnTile()
 	return true
 end
@@ -1101,7 +1160,7 @@ end
 P.armageddon.useToolNothing = P.armageddon.useToolTile
 
 
-P.toolReroller = P.tool:new{name = "toolReroller", baseRange = 1, image = love.graphics.newImage('Graphics/toolreroller.png')}
+P.toolReroller = P.tool:new{name = "toolReroller", baseRange = 0, image = love.graphics.newImage('Graphics/toolreroller.png')}
 function P.toolReroller:usableOnNothing()
 	return true
 end
@@ -1113,16 +1172,16 @@ function P.toolReroller:useToolNothing()
 	end
 	--gain one extra basic tool from use (but all tools are rerolled)
 	inventorySize = inventorySize+1
-	for i = 1, inventorySize do
-		local slot = math.floor(math.random()*7)+1
-		tools[slot].numHeld = tools[slot].numHeld+1
-	end
+	P.giveRandomTools(inventorySize)
 	self.numHeld = self.numHeld-1
 end
 
-P.roomReroller = P.tool:new{name = "roomReroller", baseRange = 1, image = love.graphics.newImage('Graphics/roomreroller.png')}
+P.roomReroller = P.tool:new{name = "roomReroller", baseRange = 0, image = love.graphics.newImage('Graphics/roomreroller.png')}
 function P.roomReroller:usableOnNothing()
 	return true
+end
+function P.roomReroller:getTilesWhitelist()
+	return {3,4,5,6,7,8,9,10,11,12,13,15,16,18,20,24,25,31,33,34,38,43,50,56,57,58,59,60,71,72}
 end
 P.roomReroller.usableOnTile = P.roomReroller.usableOnNothing
 
@@ -1130,8 +1189,9 @@ function P.roomReroller:useToolNothing()
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
 			if room[i][j]~=nil and not room[i][j]:instanceof(tiles.endTile) then
-				local slot = math.floor(math.random()*#tiles)+1
-				room[i][j] = tiles[slot]:new()
+				local whitelist = self:getTilesWhitelist()
+				local slot = util.random(#whitelist, misc)
+				room[i][j] = tiles[whitelist[slot]]:new()
 			end
 		end
 	end
@@ -1146,7 +1206,7 @@ end
 P.roomReroller.useToolTile = P.roomReroller.useToolNothing
 
 
-P.toolDoubler = P.tool:new{name = "toolDoubler", baseRange = 1, image = love.graphics.newImage('Graphics/tooldoubler.png')}
+P.toolDoubler = P.tool:new{name = "toolDoubler", baseRange = 0, image = love.graphics.newImage('Graphics/tooldoubler.png')}
 function P.toolDoubler:usableOnNothing()
 	return true
 end
@@ -1157,7 +1217,7 @@ function P.toolDoubler:useToolNothing()
 	self.numHeld = self.numHeld-1
 end
 
-P.toolIncrementer = P.tool:new{name = "toolIncrementer", baseRange = 1, image = love.graphics.newImage('Graphics/toolincrementer.png')}
+P.toolIncrementer = P.tool:new{name = "toolIncrementer", baseRange = 0, image = love.graphics.newImage('Graphics/toolincrementer.png')}
 function P.toolIncrementer:usableOnNothing()
 	return true
 end
@@ -1168,13 +1228,16 @@ function P.toolIncrementer:useToolNothing()
 	self.numHeld = self.numHeld-1
 end
 
-P.wings = P.tool:new{name = "wings", baseRange = 1, image = love.graphics.newImage('Graphics/wings.png')}
+P.wings = P.tool:new{name = "wings", baseRange = 0, image = love.graphics.newImage('Graphics/wings.png')}
 function P.wings:usableOnNothing()
 	return true
 end
 P.wings.usableOnTile = P.roomReroller.usableOnNothing
 
 function P.wings:useToolNothing()
+	if player.flying then
+		unlocks.unlockUnlockableRef(unlocks.gabeUnlock)
+	end
 	player.flying = true
 	self.numHeld = self.numHeld-1
 end
@@ -1227,17 +1290,136 @@ function P.bucketOfWater:spreadWater(tileY, tileX)
 		end
 	end
 end
+P.teleporter = P.tool:new{name = "teleporter", baseRange = 0, image = love.graphics.newImage('Graphics/teleporter.png')}
+function P.teleporter:usableOnNothing()
+	return true
+end
+function P.teleporter:useToolNothing()
+	self.numHeld = self.numHeld-1
 
+	local teleported = false
+	while not teleported do
+		local xval = util.random(mapHeight, misc)
+		local yval = util.random(mapHeight, misc)
+		if mainMap[yval][xval]~=nil then
+			teleported = true
+
+			resetTranslation()
+			player.flying = false
+			player.character:onRoomEnter()
+			--set pushables of prev. room to pushables array, saving for next entry
+			room.pushables = pushables
+			room.animals = animals
+
+			local plusOne = true
+
+			if player.tileY == math.floor(roomHeight/2) then plusOne = false
+			elseif player.tileX == math.floor(roomLength/2) then plusOne = false end
+
+			prevMapX = mapx
+			prevMapY = mapy
+			prevRoom = room
+
+			room = mainMap[yval][xval].room
+			mapx = xval
+			mapy = yval
+
+			if mainMap[yval][xval].dirEnter==nil then
+				mainMap[yval][xval].dirEnter = {1,1,1,1}
+			end
+
+			if mainMap[yval][xval].dirEnter[1]==1 then
+				player.tileX = math.floor(roomLength/2)
+				player.tileY = 1
+			elseif mainMap[yval][xval].dirEnter[2]==1 then
+				player.tileY = math.floor(roomHeight/2)
+				room.tileX = roomLength
+			elseif mainMap[yval][xval].dirEnter[3]==1 then
+				player.tileX = math.floor(roomLength/2)
+				player.tileY = roomHeight
+			else
+				player.tileY = math.floor(roomHeight/2)
+				room.tileX = 1
+			end
+
+			currentid = tostring(mainMap[mapy][mapx].roomid)
+			if map.getFieldForRoom(currentid, 'autowin') then completedRooms[mapy][mapx] = 1 end
+			if loadTutorial then
+				player.enterX = player.tileX
+				player.enterY = player.tileY
+			end
+
+			if (prevMapX~=mapx or prevMapY~=mapy) or dir == -1 then
+				createAnimals()
+				createPushables()
+			end
+			visibleMap[mapy][mapx] = 1
+			keyTimer.timeLeft = keyTimer.suicideDelay
+			updateGameState()
+		end
+	end
+end
+
+P.revive = P.tool:new{name = "revive", baseRange = 0, image = love.graphics.newImage('Graphics/revive.png')}
+
+P.superGun = P.gun:new{name = "superGun", baseRange = 5, image = love.graphics.newImage('Graphics/supergun.png')}
+function P.superGun:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
+	if tile:instanceof(tiles.beggar) then
+		unlocks.unlockUnlockableRef(unlocks.beggarPartyUnlock)
+		tile:destroy()
+	else
+		tile:allowVision()
+	end
+	room[tileY][tileX] = tiles.bomb:new()
+	room[tileY][tileX]:onEnd(tileY, tileX)
+	room[tileY][tileX]:explode(tileY, tileX)
+	room[tileY][tileX] = nil
+end
+function P.superGun:useToolAnimal(animal)
+	self.numHeld = self.numHeld - 1
+	animal:kill()
+	local pY = animal.tileY
+	local pX = animal.tileX
+	room[pY][pX] = tiles.bomb:new()
+	room[pY][pX]:onEnd(pY, pX)
+	room[pY][pX]:explode(pY, pX)
+	room[pY][pX] = nil
+end
+
+P.map = P.tool:new{name = "map", baseRange = 0, image = love.graphics.newImage('Graphics/map.png')}
+function P.map:usableOnNothing()
+	return true
+end
+function P.map:useToolNothing(tileY, tileX)
+	for i = 1, mapHeight do
+		for j = 1, mapHeight do
+			visibleMap[i][j]=1
+		end
+	end
+	self.numHeld = self.numHeld-1
+end
 
 P.numNormalTools = 7
 
-P[1] = P.saw
-P[2] = P.ladder
-P[3] = P.wireCutters
-P[4] = P.waterBottle
-P[5] = P.sponge
-P[6] = P.brick
-P[7] = P.gun
+--tools not included in list: trap (identical to glue in purpose)
+--some tools are weak, but necessary for balance
+
+function P.resetTools()
+	P[1] = P.saw
+	P[2] = P.ladder
+	P[3] = P.wireCutters
+	P[4] = P.waterBottle
+	P[5] = P.sponge
+	P[6] = P.brick
+	P[7] = P.gun
+	for i = 1, #tools do
+		tools[i].range = tools[i].baseRange
+	end
+end
+
+P.resetTools()
+
 P[8] = P.crowbar
 P[9] = P.visionChanger
 P[10] = P.bomb
@@ -1253,14 +1435,14 @@ P[19] = P.corpseGrabber
 P[20] = P.pitbullChanger
 P[21] = P.meat
 P[22] = P.rotater
-P[23] = P.trap
+P[23] = P.teleporter
 P[24] = P.boxCutter
 P[25] = P.broom
 P[26] = P.magnet
 P[27] = P.spring
 P[28] = P.glue
 P[29] = P.endFinder
-P[30] = P.lamp
+P[30] = P.map
 P[31] = P.ramSpawner
 P[32] = P.gateBreaker
 P[33] = P.conductiveBoxSpawner
@@ -1279,5 +1461,7 @@ P[45] = P.swapper
 P[46] = P.bucketOfWater
 P[47] = P.flame
 P[48] = P.toolReroller
+P[49] = P.revive
+P[50] = P.superGun
 
 return tools
