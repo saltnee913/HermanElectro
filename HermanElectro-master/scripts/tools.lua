@@ -960,7 +960,7 @@ function P.endFinder:useToolTile()
 end
 P.endFinder.useToolNothing = P.endFinder.useToolTile
 
-P.lamp = P.tool:new{name = "lamp", baseRange = 1, image = love.graphics.newImage('Graphics/lamp.png')}
+P.lamp = P.tool:new{name = "lamp", baseRange = 3, image = love.graphics.newImage('Graphics/lamp.png')}
 function P.lamp:usableOnNothing()
 	return true
 end
@@ -1387,6 +1387,19 @@ function P.superGun:useToolAnimal(animal)
 	room[pY][pX] = nil
 end
 
+P.map = P.tool:new{name = "map", baseRange = 0, image = love.graphics.newImage('Graphics/map.png')}
+function P.map:usableOnNothing()
+	return true
+end
+function P.map:useToolNothing(tileY, tileX)
+	for i = 1, mapHeight do
+		for j = 1, mapHeight do
+			visibleMap[i][j]=1
+		end
+	end
+	self.numHeld = self.numHeld-1
+end
+
 P.numNormalTools = 7
 
 --tools not included in list: trap (identical to glue in purpose)
@@ -1429,7 +1442,7 @@ P[26] = P.magnet
 P[27] = P.spring
 P[28] = P.glue
 P[29] = P.endFinder
-P[30] = P.lamp
+P[30] = P.map
 P[31] = P.ramSpawner
 P[32] = P.gateBreaker
 P[33] = P.conductiveBoxSpawner

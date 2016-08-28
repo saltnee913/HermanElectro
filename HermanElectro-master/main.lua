@@ -1066,6 +1066,11 @@ function love.draw()
 				end
 				local minimapScale = 8/mapHeight
 				love.graphics.rectangle("fill", width - minimapScale*18*(mapHeight-j+1), minimapScale*9*i, minimapScale*18, minimapScale*9 )
+				if player.character.name == "Francisco" and
+				i==player.character.nextRoom.yLoc and j==player.character.nextRoom.xLoc then
+					love.graphics.setColor(255, 0, 0)
+					love.graphics.rectangle("fill", width - minimapScale*18*(mapHeight-j+1), minimapScale*9*i, minimapScale*9, minimapScale*4 )
+				end
 			else
 				--love.graphics.setColor(255,255,255)
 				--love.graphics.rectangle("line", width - 18*(mapHeight-j+1), 9*i, 18, 9 )
@@ -2277,12 +2282,18 @@ function dropTools()
 							end
 							if done then
 								tools.giveToolsByArray(listOfItemsNeeded[listChoose])
+								if player.character.name == "Francisco" then
+									player.character.nextRoom = {yLoc = y, xLoc = x}
+								end
 							end
 						end
 					end
 				end
 				amtChecked = amtChecked + 1
-				if amtChecked == (mapHeight + 1)*(mapHeight + 1) then
+				if amtChecked == mapHeight*mapHeight then
+					if player.character.name == "Francisco" then
+						player.character.nextRoom = {yLoc = -1, xLoc = -1}
+					end
 					break
 				end
 			end

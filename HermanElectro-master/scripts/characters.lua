@@ -261,6 +261,14 @@ function P.giovanni:onKeyPressed(key)
 	end
 end
 
+P.francisco = P.character:new{name = "Francisco", description = "The Cartographer", nextRoom = {yLoc = -1, xLoc = -1}, sprite = love.graphics.newImage('Graphics/francisco.png')}
+function P.francisco:onBegin()
+	tools.map.numHeld = 1
+end
+function P.francisco:onFloorEnter()
+	tools.map.numHeld = tools.map.numHeld+1
+end
+
 P.random = P.character:new{name = "Random", description = "", sprite = love.graphics.newImage('Graphics/random.png')}
 function P.random:onBegin()
 	local charsToSelect = characters.getUnlockedCharacters()
@@ -281,6 +289,7 @@ P[8] = P.frederick
 P[9] = P.battery
 P[10] = P.crate
 P[11] = P.giovanni
-P[12] = P.random
+P[12] = P.francisco
+P[13] = P.random
 
 return characters
