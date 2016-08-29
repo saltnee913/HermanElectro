@@ -1564,6 +1564,11 @@ function love.keypressed(key, unicode)
 		end
 		return
 	end
+	if won then
+		if key=="m" then
+			started = false
+		end
+	end
 
 	if editor.stealInput then
 		editor.inputSteal(key, unicode)
