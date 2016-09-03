@@ -277,6 +277,13 @@ function P.random:onBegin()
 	player.character:onBegin()
 end
 
+P.tim = P.character:new{name = "Tim", description = "The Box Summoner", sprite = love.graphics.newImage('Graphics/tim.png')}
+function P.tim:onBegin()
+	tools.boxSpawner.numHeld = 1
+	tools.ramSpawner.numHeld = 1
+	tools.boomboxSpawner.numHeld = 1
+end
+
 
 P[1] = P.herman
 P[2] = P.felix
@@ -290,6 +297,8 @@ P[9] = P.battery
 P[10] = P.crate
 P[11] = P.giovanni
 P[12] = P.francisco
-P[13] = P.random
+P[13] = P.tim
+P[14] = P.herman
+P[15] = P.random
 
 return characters

@@ -272,7 +272,7 @@ function loadLevel(floorPath)
 					for j2 = 1, mainMap[i][j].room.length do
 						if mainMap[i][j].room[i2][j2]~=nil and mainMap[i][j].room[i2][j2]:instanceof(tiles.boxTile) then
 							local rand = util.random('mapGen')
-							if rand<donations/100 then
+							if rand<donations/100 or player.character.name=="Tim" then
 								mainMap[i][j].room[i2][j2] = tiles.giftBoxTile:new()
 							end
 						end
