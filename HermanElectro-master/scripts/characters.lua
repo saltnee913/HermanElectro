@@ -246,12 +246,42 @@ function P.giovanni:onRoomEnter()
 	self.shiftPos = {x = -1, y = -1}
 end
 P.giovanni.onFloorEnter = P.giovanni.onRoomEnter
+function P.giovanni:onKeyPressed(key)
+	if key == 'rshift' or key == 'lshift' or key == 'shift' then
+		if self.shiftPos.x==-1 then
+			self.shiftPos.x = player.tileX
+			self.shiftPos.y = player.tileY
+			log("Clone spawned!")
+		else
+			player.tileX = self.shiftPos.x
+			player.tileY = self.shiftPos.y
+			self.shiftPos = {x = -1, y = -1}
+			log("Returned to clone!")
+		end
+	end
+end
+
+P.francisco = P.character:new{name = "Francisco", description = "The Cartographer", nextRoom = {yLoc = -1, xLoc = -1}, sprite = love.graphics.newImage('Graphics/francisco.png')}
+function P.francisco:onBegin()
+	tools.map.numHeld = 1
+end
+function P.francisco:onFloorEnter()
+	tools.map.numHeld = tools.map.numHeld+1
+end
 
 P.random = P.character:new{name = "Random", description = "", sprite = love.graphics.newImage('Graphics/random.png')}
 function P.random:onBegin()
-	local charSlot = util.random(#characters-1, 'misc')
-	player.character = characters[charSlot]:new()
+	local charsToSelect = characters.getUnlockedCharacters()
+	local charSlot = util.random(#charsToSelect-1, 'misc')
+	player.character = charsToSelect[charSlot]:new()
 	player.character:onBegin()
+end
+
+P.tim = P.character:new{name = "Tim", description = "The Box Summoner", sprite = love.graphics.newImage('Graphics/tim.png')}
+function P.tim:onBegin()
+	tools.boxSpawner.numHeld = 1
+	tools.ramSpawner.numHeld = 1
+	tools.boomboxSpawner.numHeld = 1
 end
 
 
@@ -266,6 +296,9 @@ P[8] = P.frederick
 P[9] = P.battery
 P[10] = P.crate
 P[11] = P.giovanni
-P[12] = P.random
+P[12] = P.francisco
+P[13] = P.tim
+P[14] = P.herman
+P[15] = P.random
 
 return characters

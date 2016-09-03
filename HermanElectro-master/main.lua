@@ -130,13 +130,13 @@ function love.load()
 		floortile = love.graphics.newImage('Graphics/floortilemost.png')
 		doorwaybg = love.graphics.newImage('Graphics/doorwaybackground.png')
 		deathscreen = love.graphics.newImage('NewGraphics/Newdeathscreen.png')
-		winscreen = love.graphics.newImage('Graphics/winscreen.png')
-		pausescreen = love.graphics.newImage('Graphics/pausescreen.png')
+		winscreen = love.graphics.newImage('NewGraphics/NewWinScreen.png')
+		pausescreen = love.graphics.newImage('NewGraphics/NewPauseScreen.png')
 		bottomwall = love.graphics.newImage('Graphics3D/bottomwall.png')
 		--topwall = love.graphics.newImage('Graphics/cave6_b.png')
 		topwall = love.graphics.newImage('Graphics3D/topwall.png')
 		cornerwall = love.graphics.newImage('Graphics/toprightcorner.png')
-		startscreen = love.graphics.newImage('Graphics/startscreen.png')
+		startscreen = love.graphics.newImage('NewGraphics/startscreen2.png')
 
 		music = love.audio.newSource('Audio/hermantheme.mp3')
 		--music:play()
@@ -272,7 +272,7 @@ function loadLevel(floorPath)
 					for j2 = 1, mainMap[i][j].room.length do
 						if mainMap[i][j].room[i2][j2]~=nil and mainMap[i][j].room[i2][j2]:instanceof(tiles.boxTile) then
 							local rand = util.random('mapGen')
-							if rand<donations/100 then
+							if rand<donations/100 or player.character.name=="Tim" then
 								mainMap[i][j].room[i2][j2] = tiles.giftBoxTile:new()
 							end
 						end
@@ -377,6 +377,10 @@ function updatePower()
 	player.character:onPreUpdatePower()
 	powerCount = 0
 
+	for i = 1, #pushables do
+		pushables[i].powered = false
+	end
+
 	for i=1, roomHeight do
 		for j=1, roomLength do
 			if room[i]~=nil and room[i][j]~=nil then
@@ -437,7 +441,7 @@ function updatePower()
 		end
 		for i = 1, 5 do
 			for i = 1, #pushables do
-				if pushables[i].conductive then
+				if pushables[i].conductive and not pushables[i].destroyed then
 					local conductPower = false
 					local pX = pushables[i].tileX
 					local pY = pushables[i].tileY
@@ -1062,6 +1066,11 @@ function love.draw()
 				end
 				local minimapScale = 8/mapHeight
 				love.graphics.rectangle("fill", width - minimapScale*18*(mapHeight-j+1), minimapScale*9*i, minimapScale*18, minimapScale*9 )
+				if player.character.name == "Francisco" and
+				i==player.character.nextRoom.yLoc and j==player.character.nextRoom.xLoc then
+					love.graphics.setColor(255, 0, 0)
+					love.graphics.rectangle("fill", width - minimapScale*18*(mapHeight-j+1), minimapScale*9*i, minimapScale*9, minimapScale*4 )
+				end
 			else
 				--love.graphics.setColor(255,255,255)
 				--love.graphics.rectangle("line", width - 18*(mapHeight-j+1), 9*i, 18, 9 )
@@ -1554,6 +1563,11 @@ function love.keypressed(key, unicode)
 			started = false
 		end
 		return
+	end
+	if won then
+		if key=="m" then
+			started = false
+		end
 	end
 
 	if editor.stealInput then
@@ -2143,7 +2157,7 @@ end
 function resetPushables()
 	for i = 1, #pushables do
 		pushables[i].canBeAccelerated = true
-		pushables[i].powered = false
+		--pushables[i].powered = false
 	end
 end
 
@@ -2273,12 +2287,18 @@ function dropTools()
 							end
 							if done then
 								tools.giveToolsByArray(listOfItemsNeeded[listChoose])
+								if player.character.name == "Francisco" then
+									player.character.nextRoom = {yLoc = y, xLoc = x}
+								end
 							end
 						end
 					end
 				end
 				amtChecked = amtChecked + 1
-				if amtChecked == (mapHeight + 1)*(mapHeight + 1) then
+				if amtChecked == mapHeight*mapHeight then
+					if player.character.name == "Francisco" then
+						player.character.nextRoom = {yLoc = -1, xLoc = -1}
+					end
 					break
 				end
 			end
