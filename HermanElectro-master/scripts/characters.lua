@@ -288,6 +288,29 @@ function P.tim:onBegin()
 	tools.boomboxSpawner.numHeld = 1
 end
 
+P.orson = P.character:new{name = "Orson", description = "The Mastermind", sprite = love.graphics.newImage('Graphics/orson.png')}
+function P.orson:onBegin()
+	tools.brick.range = 100
+end
+function P.orson:onKeyPressed(key)
+	if key == 'rshift' or key == 'lshift' or key == 'shift' then
+		for i = 1, roomHeight do
+			for j = 1, roomLength do
+				if room[i][j]~=nil and room[i][j]:instanceof(tiles.button) and not room[i][j]:instanceof(tiles.stayButton) then
+					if room[i][j]:instanceof(tiles.stickyButton) then
+						if room[i][j].down then room[i][j]:unstick()
+						else room[i][j]:onEnter() end
+					else room[i][j]:onEnter() end
+				elseif room[i][j]~=nil and room[i][j]:instanceof(tiles.stayButton) then
+					if room[i][j].down then room[i][j]:onLeave()
+					else room[i][j]:onEnter() end
+				end
+			end
+		end
+		return true
+	end
+	return false
+end
 
 P[1] = P.herman
 P[2] = P.felix
@@ -302,7 +325,7 @@ P[10] = P.crate
 P[11] = P.giovanni
 P[12] = P.francisco
 P[13] = P.tim
-P[14] = P.herman
+P[14] = P.orson
 P[15] = P.random
 
 return characters

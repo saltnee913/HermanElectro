@@ -1409,9 +1409,14 @@ function P.buttonFlipper:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld-1
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
-			if room[i][j]~=nil and room[i][j]:instanceof(tiles.button) then
-				room[i][j].bricked = false
-				room[i][j].down = not room[i][j].down
+			if room[i][j]~=nil and room[i][j]:instanceof(tiles.button) and not room[i][j]:instanceof(tiles.stayButton) then
+				if room[i][j]:instanceof(tiles.stickyButton) then
+					if room[i][j].down then room[i][j]:unstick()
+					else room[i][j]:onEnter() end
+				else room[i][j]:onEnter() end
+			elseif room[i][j]~=nil and room[i][j]:instanceof(tiles.stayButton) then
+				if room[i][j].down then room[i][j]:onLeave()
+				else room[i][j]:onEnter() end
 			end
 		end
 	end
