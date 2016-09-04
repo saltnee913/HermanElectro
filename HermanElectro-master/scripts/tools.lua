@@ -1400,6 +1400,24 @@ function P.map:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld-1
 end
 
+P.buttonFlipper = P.tool:new{name = "buttonFlipper", baseRange = 0, image = love.graphics.newImage('Graphics/buttonflipper.png')}
+function P.buttonFlipper:usableOnNothing()
+	return true
+end
+P.buttonFlipper.usableOnTile = P.buttonFlipper.usableOnNothing
+function P.buttonFlipper:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]~=nil and room[i][j]:instanceof(tiles.button) then
+				room[i][j].bricked = false
+				room[i][j].down = not room[i][j].down
+			end
+		end
+	end
+end
+P.buttonFlipper.useToolTile = P.buttonFlipper.useToolNothing
+
 P.numNormalTools = 7
 
 --tools not included in list: trap (identical to glue in purpose)
@@ -1463,5 +1481,6 @@ P[47] = P.flame
 P[48] = P.toolReroller
 P[49] = P.revive
 P[50] = P.superGun
+P[51] = P.buttonFlipper
 
 return tools

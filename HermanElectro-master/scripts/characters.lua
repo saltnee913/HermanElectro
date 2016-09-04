@@ -108,10 +108,11 @@ end
 P.gabe = P.character:new{name = "Gabe", description = "The Angel",
 	sprite = love.graphics.newImage('Graphics/gabe.png')}
 function P.gabe:onCharLoad()
-	player.flying = true
+	--player.flying = true
+	tools.wings.numHeld = 3
 end
 function P.gabe:onRoomEnter()
-	player.flying = true
+	--player.flying = true
 end
 
 P.rammy = P.character:new{name = "Rammy", description = "The Ram",
