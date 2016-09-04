@@ -114,6 +114,9 @@ end
 function P.gabe:onRoomEnter()
 	--player.flying = true
 end
+function P.gabe:onFloorEnter()
+	tools.wings.numHeld = tools.wings.numHeld+1
+end
 
 P.rammy = P.character:new{name = "Rammy", description = "The Ram",
 	sprite = love.graphics.newImage('Graphics/ram.png')}
