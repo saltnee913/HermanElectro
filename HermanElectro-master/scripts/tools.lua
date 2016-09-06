@@ -1400,6 +1400,66 @@ function P.map:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld-1
 end
 
+P.buttonFlipper = P.tool:new{name = "buttonFlipper", baseRange = 0, image = love.graphics.newImage('Graphics/buttonflipper.png')}
+function P.buttonFlipper:usableOnNothing()
+	return true
+end
+P.buttonFlipper.usableOnTile = P.buttonFlipper.usableOnNothing
+function P.buttonFlipper:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]~=nil and room[i][j]:instanceof(tiles.button) and not room[i][j]:instanceof(tiles.stayButton) then
+				if room[i][j]:instanceof(tiles.stickyButton) then
+					if room[i][j].down then room[i][j]:unstick()
+					else room[i][j]:onEnter() end
+				else room[i][j]:onEnter() end
+			elseif room[i][j]~=nil and room[i][j]:instanceof(tiles.stayButton) then
+				if room[i][j].down then room[i][j]:onLeave()
+				else room[i][j]:onEnter() end
+			end
+		end
+	end
+end
+P.buttonFlipper.useToolTile = P.buttonFlipper.useToolNothing
+
+P.wireBreaker = P.tool:new{name = "wireBreaker", baseRange = 0, image = love.graphics.newImage('Graphics/wirebreaker.png')}
+function P.wireBreaker:usableOnNothing()
+	return true
+end
+P.wireBreaker.usableOnTile = P.wireBreaker.usableOnNothing
+function P.wireBreaker:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]~=nil and room[i][j]:instanceof(tiles.wire) and not room[i][j]:instanceof(tiles.unbreakableWire) then
+				room[i][j]:destroy()
+			elseif room[i][j]~=nil and room[i][j].overlay~=nil and room[i][j].overlay:instanceof(tiles.wire)
+			and not room[i][j].overlay:instanceof(tiles.unbreakableWire) then
+				room[i][j].overlay:destroy()
+			end
+		end
+	end
+end
+P.wireBreaker.useToolTile = P.wireBreaker.useToolNothing
+
+P.powerBreaker = P.tool:new{name = "powerBreaker", baseRange = 0, image = love.graphics.newImage('Graphics/powerbreaker.png')}
+function P.powerBreaker:usableOnNothing()
+	return true
+end
+P.powerBreaker.usableOnTile = P.powerBreaker.usableOnNothing
+function P.powerBreaker:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]~=nil and room[i][j]:instanceof(tiles.powerSupply) then
+				room[i][j]:destroy()
+			end
+		end
+	end
+end
+P.powerBreaker.useToolTile = P.powerBreaker.useToolNothing
+
 P.numNormalTools = 7
 
 --tools not included in list: trap (identical to glue in purpose)
@@ -1463,5 +1523,8 @@ P[47] = P.flame
 P[48] = P.toolReroller
 P[49] = P.revive
 P[50] = P.superGun
+P[51] = P.buttonFlipper
+P[52] = P.wireBreaker
+P[53] = P.powerBreaker
 
 return tools
