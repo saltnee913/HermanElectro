@@ -56,7 +56,7 @@ function P.tile:updateTile(dir)
 end
 function P.tile:updateSprite()
 end
-function P.tile:postPowerUpdate()
+function P.tile:postPowerUpdate(i,j)
 end
 function P.tile:blocksMovementAnimal(animal)
 	return not animal.flying and (self.blocksMovement or self.blocksAnimalMovement)
@@ -317,6 +317,46 @@ function P.stayButton:onLeave(player)
 		self:updateSprite()
 	end
 	self.justPressed = false
+end
+function P.stayButton:postPowerUpdate(i,j)
+	self.down = false
+	self.dirAccept = {0,0,0,0}
+	--updateGameState()
+	self:updateSprite()
+	for k = 1, #animals do
+		if animals[k].dead and not animals[k].pickedUp then
+			if animals[k].tileX == j and animals[k].tileY == i then
+				self.down = true
+				self.dirAccept = {1,1,1,1}
+				--updateGameState()
+				self:updateSprite()
+			end
+		end
+	end
+	for k = 1, #animals do
+		if not animals[k].dead then
+			if animals[k].tileX == j and animals[k].tileY == i then
+				self.down = true
+				self.dirAccept = {1,1,1,1}
+				--updateGameState()
+				self:updateSprite()
+			end
+		end
+	end
+	for k = 1, #pushables do
+		if pushables[k].tileX == j and pushables[k].tileY == i then
+			self.down = true
+			self.dirAccept = {1,1,1,1}
+			--updateGameState()
+			self:updateSprite()
+		end
+	end
+	if player.tileY == i and player.tileX == j then
+		self.down = true
+		self.dirAccept = {1,1,1,1}
+		--updateGameState()
+		self:updateSprite()
+	end
 end
 P.stayButton.onEnterAnimal = P.stayButton.onEnter
 P.stayButton.onLeaveAnimal = P.stayButton.onLeave
