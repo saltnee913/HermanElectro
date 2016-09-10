@@ -22,13 +22,74 @@ loadedOnce = false
 
 saveDir = 'SaveData'
 
+local function addTo(toAdd, array)
+	for i = 1, 7 do
+		toAdd[i] = toAdd[i] + array[i]
+	end
+end
 
 function love.load()
-
-	--IMPORTANT: This line is actually completely necessary; without it, the first random number generated from
-	--math.random() will not actually be random. This may seem weird, and it is, but it's true.
-	--I got the idea for the fix from http://lua-users.org/wiki/MathLibraryTutorial, but I still dont
-	--entirely understand why it works.
+	--[[local json = require('scripts.dkjson')
+	local itemsNeededs = {}
+	local ls = {}
+	ls[1] = {}
+	ls[1][1] = {0,0,0,0,0,3,0}
+	 ls[2] = {}
+	ls[2][1] = {0,1,0,0,0,0,0}
+	ls[2][2] = {0,0,0,1,0,0,0}
+	ls[2][3] = {1,0,0,0,0,0,0}
+	ls[2][4] = {0,0,1,0,0,0,0}
+	ls[2][5] = {0,0,0,0,1,0,0}
+	 ls[3] = {}
+	ls[3][1] = {0,0,0,0,0,0,1}
+	ls[3][2] = {0,0,0,0,0,1,0}
+	ls[3][3] = {1,1,0,0,0,0,0}
+	 ls[4] = {}
+	ls[4][1] = {0,1,0,0,0,1,0}
+	ls[4][2] = {0,1,2,0,0,0,0}
+	ls[4][3] = {0,1,1,1,0,0,0}
+	 ls[5] = {}
+	ls[5][1] = {0,0,1,0,0,0,0}
+	ls[5][2] = {0,0,0,1,0,0,0}
+	 ls[6] = {}
+	ls[6][1] = {0,7,0,0,0,0,0}
+	ls[6][2] = {0,4,0,0,0,1,0}
+	for i1 = 1, 1 do
+		for i2 = 1, 5 do
+			for i3 = 1, 3 do
+				for i4 = 1, 3 do
+					for i5 = 1, 2 do
+						for i6 = 1, 2 do
+							local toAdd = {0,0,0,0,0,0,0}
+							addTo(toAdd, ls[1][i1])
+							addTo(toAdd, ls[2][i2])
+							addTo(toAdd, ls[3][i3])
+							addTo(toAdd, ls[4][i4])
+							addTo(toAdd, ls[5][i5])
+							addTo(toAdd, ls[6][i6])
+							itemsNeededs[#itemsNeededs+1] = toAdd
+						end
+					end
+				end
+			end
+		end
+	end
+	for i = 1, #itemsNeededs do
+		for j = 1, #itemsNeededs do
+			if i ~= j and itemsNeededs[j] ~= nil and itemsNeededs[i] ~= nil then
+				local bad = true
+				for k = 1, 7 do
+					if itemsNeededs[i][k] > itemsNeededs[j][k] then
+						bad = false
+					end
+				end
+				if bad then itemsNeededs[i] = nil end
+			end
+		end
+	end
+	local state = {indent = true}
+	print(json.encode(itemsNeededs, state))
+	game.crash()]]
 
 	gamePaused = false
 	gameTime = {timeLeft = 260, toolTime = 0, roomTime = 15, levelTime = 200, donateTime = 20}
@@ -272,7 +333,7 @@ function loadLevel(floorPath)
 					for j2 = 1, mainMap[i][j].room.length do
 						if mainMap[i][j].room[i2][j2]~=nil and mainMap[i][j].room[i2][j2]:instanceof(tiles.boxTile) then
 							local rand = util.random('mapGen')
-							if rand<donations/100 or player.character.name=="Tim" then
+							if rand<donations/100 or player.character.name==characters.tim.name then
 								mainMap[i][j].room[i2][j2] = tiles.giftBoxTile:new()
 							end
 						end
@@ -462,11 +523,7 @@ function updatePower()
 					if conductPower then
 						if pushables[i]:instanceof(pushableList.bombBox) and k==3 then
 							if not pushables[i].destroyed then
-								pushables[i].destroyed = true
-								room[pY][pX] = tiles.bomb:new()
-								room[pY][pX]:onEnd(pY, pX)
-								room[pY][pX]:explode(pY, pX)
-								room[pY][pX] = nil
+								pushables[i]:destroy(pY, pX)
 							end
 						else
 							if pushables[i]:instanceof(pushableList.jackInTheBox) then

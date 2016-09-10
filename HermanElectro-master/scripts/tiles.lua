@@ -988,10 +988,7 @@ function P.bomb:explode(x,y)
 	end
 	for k = 1, #pushables do
 		if math.abs(pushables[k].tileY-x)<2 and math.abs(pushables[k].tileX-y)<2 and not pushables[k].destroyed then
-			pushables[k].destroyed = true
-			if pushables[k]:instanceof(pushableList.bombBox) then
-				self:explode(pushables[k].tileY, pushables[k].tileX)
-			end
+			pushables[k]:destroy()
 		end
 	end
 end

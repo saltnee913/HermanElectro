@@ -272,6 +272,25 @@ function P.batteringRam:moveNoMover()
 end
 
 P.bombBox = P.conductiveBox:new{name = "bombBox", sprite = love.graphics.newImage('Graphics/bombBox.png')}
+function P.bombBox:destroy()
+	self.destroyed = true
+	y = self.tileX
+	x = self.tileY
+	if not editorMode and math.abs(player.tileY-x)<2 and math.abs(player.tileX-y)<2 then kill() end
+	for i = -1, 1 do
+		for j = -1, 1 do
+			if room[x+i]~=nil and room[x+i][y+j]~=nil then room[x+i][y+j]:destroy() end
+		end
+	end
+	for k = 1, #animals do
+		if math.abs(animals[k].tileY-x)<2 and math.abs(animals[k].tileX-y)<2 then animals[k]:kill() end
+	end
+	for k = 1, #pushables do
+		if math.abs(pushables[k].tileY-x)<2 and math.abs(pushables[k].tileX-y)<2 and not pushables[k].destroyed then
+			pushables[k]:destroy()
+		end
+	end
+end
 
 P.giftBox = P.box:new{name = "giftBox", sprite = love.graphics.newImage('Graphics/giftbox.png')}
 function P.giftBox:destroy()
