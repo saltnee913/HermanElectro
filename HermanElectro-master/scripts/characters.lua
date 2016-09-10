@@ -288,11 +288,15 @@ function P.tim:onBegin()
 	tools.boomboxSpawner.numHeld = 1
 end
 
-P.orson = P.character:new{name = "Orson", description = "The Mastermind", sprite = love.graphics.newImage('Graphics/orson.png')}
+P.orson = P.character:new{name = "Orson", shifted = false, description = "The Mastermind", sprite = love.graphics.newImage('Graphics/orson.png')}
 function P.orson:onBegin()
 	tools.brick.range = 100
 end
+function P.orson:onPostUpdatePower()
+	self.shifted = false
+end
 function P.orson:onKeyPressed(key)
+	self.shifted = true
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
 		for i = 1, roomHeight do
 			for j = 1, roomLength do

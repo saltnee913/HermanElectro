@@ -319,6 +319,7 @@ function P.stayButton:onLeave(player)
 	self.justPressed = false
 end
 function P.stayButton:postPowerUpdate(i,j)
+	if player.character.name == "Orson" and player.character.shifted then return end
 	self.down = false
 	self.dirAccept = {0,0,0,0}
 	--updateGameState()
@@ -351,7 +352,7 @@ function P.stayButton:postPowerUpdate(i,j)
 			self:updateSprite()
 		end
 	end
-	if player.tileY == i and player.tileX == j then
+	if self.bricked or (player.tileY == i and player.tileX == j) then
 		self.down = true
 		self.dirAccept = {1,1,1,1}
 		--updateGameState()
