@@ -502,7 +502,7 @@ function updatePower()
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
 			if room[i][j]~=nil then
-				room[i][j]:postPowerUpdate()
+				room[i][j]:postPowerUpdate(i,j)
 			end
 		end
 	end

@@ -993,6 +993,7 @@ end
 function P.boxSpawner:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld-1
 	local toSpawn = pushableList[2]:new()
+	if player.character.name == "Tim" then toSpawn = pushableList.giftBox:new() end
 	toSpawn.tileY = tileY
 	toSpawn.tileX = tileX
 	pushables[#pushables+1] = toSpawn
@@ -1000,6 +1001,7 @@ end
 function P.boxSpawner:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld-1
 	local toSpawn = pushableList[2]:new()
+	if player.character.name == "Tim" then toSpawn = pushableList.giftBox:new() end
 	toSpawn.tileY = tileY
 	toSpawn.tileX = tileX
 	pushables[#pushables+1] = toSpawn
