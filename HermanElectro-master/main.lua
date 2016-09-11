@@ -1337,7 +1337,7 @@ function hackEnterRoom(roomid, y, x)
 	roomLength = room.length
 	if player.tileX>roomLength then player.tileX = roomLength end
 	if player.tileY>roomHeight then player.tileY = roomHeight end
-	updateGameState()
+	updateGameState(false)
 	createAnimals()
 	createPushables()
 	return true
@@ -1482,7 +1482,7 @@ function enterRoom(dir)
 	end
 	visibleMap[mapy][mapx] = 1
 	keyTimer.timeLeft = keyTimer.suicideDelay
-	updateGameState()
+	updateGameState(false)
 end
 
 oldTilesOn = {}
@@ -1704,7 +1704,7 @@ function love.keypressed(key, unicode)
 	waitTurn = false
 
 	if player.character:onKeyPressed(key) then
-		updateGameState()
+		updateGameState(false)
 	end
    	if player.waitCounter<=0 then
 		player.prevx = player.x
@@ -1781,7 +1781,7 @@ function love.keypressed(key, unicode)
 		if usedTool and tool<=tools.numNormalTools then
 			gameTime.timeLeft = gameTime.timeLeft+gameTime.toolTime
 		end
-		updateGameState()
+		updateGameState(false)
 		checkAllDeath()
 	end
 	noPowerUpdate = not player.character.forcePowerUpdate
@@ -2060,7 +2060,7 @@ function checkDeath()
 		for j = 1, #pushables do
 			pushables[j]:destroy()
 		end
-		updateGameState()
+		updateGameState(false)
 		log("Revived!")
 	end
 end
@@ -2129,7 +2129,7 @@ function love.mousepressed(x, y, button, istouch)
 		end
 	end
 	
-	updateGameState()
+	updateGameState(false)
 	checkAllDeath()
 end
 
