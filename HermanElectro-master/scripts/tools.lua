@@ -1192,7 +1192,7 @@ function P.roomReroller:useToolNothing()
 		for j = 1, roomLength do
 			if room[i][j]~=nil and not room[i][j]:instanceof(tiles.endTile) then
 				local whitelist = self:getTilesWhitelist()
-				local slot = util.random(#whitelist, misc)
+				local slot = util.random(#whitelist, 'misc')
 				room[i][j] = tiles[whitelist[slot]]:new()
 			end
 		end
