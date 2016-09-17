@@ -111,8 +111,8 @@ end
 
 P.randoms = {}
 
-function P.newRandom(random, seed)
-	P.randoms[random] = {seed = seed, times = 2}
+function P.newRandom(random, randSeed)
+	P.randoms[random] = {seed = randSeed, times = 2}
 end
 
 function P.random(maxVal, random)
@@ -120,6 +120,7 @@ function P.random(maxVal, random)
 		return math.floor(P.random(random)*maxVal)+1
 	else
 		random = maxVal
+		print(random)
 		love.math.setRandomSeed(P.randoms[random].seed)
 		for i = 1, P.randoms[random].times do
 			love.math.random()
