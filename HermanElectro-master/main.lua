@@ -1866,7 +1866,7 @@ function love.keypressed(key, unicode)
 						noPowerUpdate = false
 					end
 				end
-				if ani:instanceof(animalList.conductiveSnail) then
+				if ani:instanceof(animalList.conductiveSnail) and (ani.tileX~=ani.prevTileX or ani.tileY~=ani.prevTileY) then
 					noPowerUpdate = false
 				end
 			end   	
