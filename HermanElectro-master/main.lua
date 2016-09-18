@@ -1866,6 +1866,9 @@ function love.keypressed(key, unicode)
 						noPowerUpdate = false
 					end
 				end
+				if ani:instanceof(animalList.conductiveSnail) then
+					noPowerUpdate = false
+				end
 			end   	
 	    	postAnimalMovement()
 			for i = 1, #pushables do
