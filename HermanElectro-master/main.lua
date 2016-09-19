@@ -1027,6 +1027,7 @@ function love.draw()
 					local ty = tools.toolableTiles[dir][i].y
 					if ty==j then
 						local addY = 0
+						local yScale = scale
 						if room[ty][tx]~=nil and litTiles[ty][tx]~=0 then
 							addY = room[ty][tx]:getYOffset()
 							yScale = scale*(16-addY)/16
