@@ -156,6 +156,9 @@ end
 function P.tool:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld - 1
 end
+function P.tool:checkDeath()
+	return true
+end
 
 --returns a table of tables of coordinates by direction
 function P.tool:getToolableTiles()
@@ -1363,6 +1366,13 @@ function P.teleporter:useToolNothing()
 end
 
 P.revive = P.tool:new{name = "revive", baseRange = 0, image = love.graphics.newImage('Graphics/revive.png')}
+function P.revive:checkDeath()
+	if self.numHeld > 0 then
+		self.numHeld = self.numHeld-1
+		return false
+	end
+	return true
+end
 
 P.superGun = P.gun:new{name = "superGun", baseRange = 5, image = love.graphics.newImage('Graphics/supergun.png')}
 function P.superGun:useToolTile(tile, tileY, tileX)
@@ -1462,6 +1472,19 @@ function P.powerBreaker:useToolNothing(tileY, tileX)
 end
 P.powerBreaker.useToolTile = P.powerBreaker.useToolNothing
 
+P.gabeMaker = P.superTool:new{name = "gabeMaker", baseRange = 0, image = love.graphics.newImage('Graphics/gabeSmall.png')}
+function P.gabeMaker:usableOnNothing()
+	return true
+end
+P.gabeMaker.usableOnTile = P.gabeMaker.usableOnNothing
+function P.gabeMaker:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
+	characters.gabe.realChar = player.character
+	player.character = characters.gabe
+	player.character:onBegin()
+end
+P.gabeMaker.useToolTile = P.gabeMaker.useToolNothing
+
 P.numNormalTools = 7
 
 --tools not included in list: trap (identical to glue in purpose)
@@ -1528,5 +1551,6 @@ P[50] = P.superGun
 P[51] = P.buttonFlipper
 P[52] = P.wireBreaker
 P[53] = P.powerBreaker
+P[54] = P.gabeMaker
 
 return tools
