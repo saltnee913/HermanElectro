@@ -2043,30 +2043,34 @@ function checkDeath()
 			kill()
 		end
 	end
-	if player.dead and tools.revive.numHeld>0 then
-		player.dead = false
-		tools.revive.numHeld = tools.revive.numHeld-1
-		for i = 1, tools.numNormalTools do
-			tools[i].numHeld = 0
-		end
-		for i = 1, roomHeight do
-			for j = 1, roomLength do
-				if room[i][j]~=nil then
-					if not room[i][j]:instanceof(tiles.endTile) then
-						room[i][j]=tiles.invisibleTile:new()
+	if player.dead then
+		for i = 1, #tools do
+			if not tools[i]:checkDeath() then
+				player.dead = false
+				for i = 1, tools.numNormalTools do
+					tools[i].numHeld = 0
+				end
+				for i = 1, roomHeight do
+					for j = 1, roomLength do
+						if room[i][j]~=nil then
+							if not room[i][j]:instanceof(tiles.endTile) then
+								room[i][j]=tiles.invisibleTile:new()
+							end
+						end
 					end
 				end
+		
+				for i = 1, #animals do
+					animals[i]:kill()
+				end
+				for j = 1, #pushables do
+					pushables[j]:destroy()
+				end
+				updateGameState(false)
+				log("Revived!")
+				break
 			end
 		end
-
-		for i = 1, #animals do
-			animals[i]:kill()
-		end
-		for j = 1, #pushables do
-			pushables[j]:destroy()
-		end
-		updateGameState(false)
-		log("Revived!")
 	end
 end
 
