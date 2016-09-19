@@ -106,16 +106,20 @@ function P.erik:onCharLoad()
 end
 
 P.gabe = P.character:new{name = "Gabe", description = "The Angel",
-	sprite = love.graphics.newImage('Graphics/gabe.png')}
+	sprite = love.graphics.newImage('Graphics/gabe.png'), realChar = nil, reset = false}
 function P.gabe:onCharLoad()
-	--player.flying = true
-	tools.wings.numHeld = 3
+	if not self.reset then
+		player.flying = true
+		self.reset = true
+	elseif self.realChar ~= nil then
+		player.character = self.realChar
+		player.character:onBegin()
+		self.realChar = nil
+		self.reset = false
+	end
 end
 function P.gabe:onRoomEnter()
-	--player.flying = true
-end
-function P.gabe:onFloorEnter()
-	tools.wings.numHeld = tools.wings.numHeld+1
+	player.flying = true
 end
 
 P.rammy = P.character:new{name = "Rammy", description = "The Ram",
@@ -266,7 +270,7 @@ function P.giovanni:onKeyPressed(key)
 end
 
 P.francisco = P.character:new{name = "Francisco", description = "The Cartographer", nextRoom = {yLoc = -1, xLoc = -1}, sprite = love.graphics.newImage('Graphics/francisco.png')}
-function P.francisco:onBegin()
+function P.francisco:onCharLoad()
 	tools.map.numHeld = 1
 end
 function P.francisco:onFloorEnter()
@@ -282,17 +286,21 @@ function P.random:onBegin()
 end
 
 P.tim = P.character:new{name = "Tim", description = "The Box Summoner", sprite = love.graphics.newImage('Graphics/tim.png')}
-function P.tim:onBegin()
+function P.tim:onCharLoad()
 	tools.boxSpawner.numHeld = 1
 	tools.ramSpawner.numHeld = 1
 	tools.boomboxSpawner.numHeld = 1
 end
 
-P.orson = P.character:new{name = "Orson", description = "The Mastermind", sprite = love.graphics.newImage('Graphics/orson.png')}
-function P.orson:onBegin()
+P.orson = P.character:new{name = "Orson", shifted = false, description = "The Mastermind", sprite = love.graphics.newImage('Graphics/orson.png')}
+function P.orson:onCharLoad()
 	tools.brick.range = 100
 end
+function P.orson:onPostUpdatePower()
+	self.shifted = false
+end
 function P.orson:onKeyPressed(key)
+	self.shifted = true
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
 		for i = 1, roomHeight do
 			for j = 1, roomLength do

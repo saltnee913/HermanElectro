@@ -319,6 +319,7 @@ function P.stayButton:onLeave(player)
 	self.justPressed = false
 end
 function P.stayButton:postPowerUpdate(i,j)
+	if player.character.name == "Orson" and player.character.shifted then return end
 	self.down = false
 	self.dirAccept = {0,0,0,0}
 	--updateGameState()
@@ -351,7 +352,7 @@ function P.stayButton:postPowerUpdate(i,j)
 			self:updateSprite()
 		end
 	end
-	if player.tileY == i and player.tileX == j then
+	if self.bricked or (player.tileY == i and player.tileX == j) then
 		self.down = true
 		self.dirAccept = {1,1,1,1}
 		--updateGameState()
@@ -988,10 +989,7 @@ function P.bomb:explode(x,y)
 	end
 	for k = 1, #pushables do
 		if math.abs(pushables[k].tileY-x)<2 and math.abs(pushables[k].tileX-y)<2 and not pushables[k].destroyed then
-			pushables[k].destroyed = true
-			if pushables[k]:instanceof(pushableList.bombBox) then
-				self:explode(pushables[k].tileY, pushables[k].tileX)
-			end
+			pushables[k]:destroy()
 		end
 	end
 end
