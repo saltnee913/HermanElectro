@@ -382,6 +382,13 @@ function win()
 				break
 			end
 		end
+		for i = 1, #player.character.winUnlocks do
+			local unlock = player.character.winUnlocks[i]
+			if unlocks[unlock].unlocked == false then
+				unlocks.unlockUnlockable(unlock)
+				break
+			end
+		end
 		if gameTime.timeLeft > gameTime.levelTime * floorIndex then
 			unlocks.unlockUnlockableRef(unlocks.erikUnlock)
 		end
