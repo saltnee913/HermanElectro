@@ -382,6 +382,13 @@ function win()
 				break
 			end
 		end
+		for i = 1, #player.character.winUnlocks do
+			local unlock = player.character.winUnlocks[i]
+			if unlocks[unlock].unlocked == false then
+				unlocks.unlockUnlockable(unlock)
+				break
+			end
+		end
 		if gameTime.timeLeft > gameTime.levelTime * floorIndex then
 			unlocks.unlockUnlockableRef(unlocks.erikUnlock)
 		end
@@ -1027,6 +1034,7 @@ function love.draw()
 					local ty = tools.toolableTiles[dir][i].y
 					if ty==j then
 						local addY = 0
+						local yScale = scale
 						if room[ty][tx]~=nil and litTiles[ty][tx]~=0 then
 							addY = room[ty][tx]:getYOffset()
 							yScale = scale*(16-addY)/16
@@ -1040,13 +1048,7 @@ function love.draw()
 		end
 		--love.graphics.draw(walls, 0, 0, 0, width/walls:getWidth(), height/walls:getHeight())
 	end
-	if tools.toolDisplayTimer.timeLeft > 0 then
-		local toolWidth = tools[1].image:getWidth()
-		local toolScale = player.character.sprite:getWidth() * player.character.scale/toolWidth
-		for i = 1, #tools.toolsShown do
-			love.graphics.draw(tools[tools.toolsShown[i]].image, (i-math.ceil(#tools.toolsShown)/2-1)*toolScale*toolWidth+player.x, player.y - player.character.sprite:getHeight()*player.character.scale - tools[1].image:getHeight()*toolScale, 0, toolScale, toolScale)
-		end
-	end
+
 	for i = 1, roomLength do
 		if not (i==math.floor(roomLength/2) or i==math.floor(roomLength/2)+1) then
 			love.graphics.draw(bottomwall, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (yOffset+(roomHeight)*floor.sprite:getHeight())*scale+wallSprite.height, 0, scale, scale)
@@ -1090,6 +1092,14 @@ function love.draw()
 	player.x = (player.tileX-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
 	player.y = (player.tileY-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
 	love.graphics.draw(player.character.sprite, player.x-player.character.sprite:getWidth()*player.character.scale/2, player.y-player.character.sprite:getHeight()*player.character.scale, 0, player.character.scale, player.character.scale)
+
+	if tools.toolDisplayTimer.timeLeft > 0 then
+		local toolWidth = tools[1].image:getWidth()
+		local toolScale = player.character.sprite:getWidth() * player.character.scale/toolWidth
+		for i = 1, #tools.toolsShown do
+			love.graphics.draw(tools[tools.toolsShown[i]].image, (i-math.ceil(#tools.toolsShown)/2-1)*toolScale*toolWidth+player.x, player.y - player.character.sprite:getHeight()*player.character.scale - tools[1].image:getHeight()*toolScale, 0, toolScale, toolScale)
+		end
+	end
 
 	if player.character.name == "Giovanni" and player.character.shiftPos.x>0 then
 		local playerx = (player.character.shiftPos.x-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10

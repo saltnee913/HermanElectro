@@ -1186,7 +1186,10 @@ function P.roomReroller:usableOnNothing()
 	return true
 end
 function P.roomReroller:getTilesWhitelist()
-	return {3,4,5,6,7,8,9,10,11,12,13,15,16,18,20,24,25,31,33,34,38,43,50,56,57,58,59,60,71,72}
+	return {3,4,5,6,7,8,9,10,11,12,13,15,16,18,20,24,25,31,33,34,38,43,50,56,57,71,72}
+end
+function P.roomReroller:getTreasureTiles()
+	return {34,58,59,60}
 end
 P.roomReroller.usableOnTile = P.roomReroller.usableOnNothing
 
@@ -1196,7 +1199,18 @@ function P.roomReroller:useToolNothing()
 			if room[i][j]~=nil and not room[i][j]:instanceof(tiles.endTile) then
 				local whitelist = self:getTilesWhitelist()
 				local slot = util.random(#whitelist, 'misc')
-				room[i][j] = tiles[whitelist[slot]]:new()
+				local tilesNum = whitelist[slot]
+				local treasureTiles = self:getTreasureTiles()
+				if whitelist[slot]==treasureTiles[1] or whitelist[slot]==treasureTiles[2] then
+					local treasureTileChooser = util.random(#treasureTiles, 'misc')
+					for i = 1, 4 do
+						if treasureTileChooser<=i then
+							tilesNum = treasureTiles[i]
+							break
+						end
+					end
+				end
+				room[i][j] = tiles[tilesNum]:new()
 			end
 		end
 	end
@@ -1206,6 +1220,7 @@ function P.roomReroller:useToolNothing()
 	for i = 1, #pushables do
 		pushables[i].destroyed = true
 	end
+	room[player.tileY][player.tileX]=nil
 	self.numHeld = self.numHeld-1
 end
 P.roomReroller.useToolTile = P.roomReroller.useToolNothing

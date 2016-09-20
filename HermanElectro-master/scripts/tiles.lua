@@ -1278,7 +1278,7 @@ P.glue.onStayAnimal = P.glue.onEnterAnimal
 
 P.conductiveBoxTile = P.tile:new{name = "conductiveBoxTile", pushable = pushableList[5]:new(), listIndex = 5, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
 
-P.boomboxTile = P.tile:new{name = "boomboxTile", pushable = pushableList[6]:new(), listIndex = 6, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
+P.boomboxTile = P.boxTile:new{name = "boomboxTile", pushable = pushableList[6]:new(), listIndex = 6, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
 
 P.batteringRamTile = P.tile:new{name = "batteringRamTile", pushable = pushableList[7]:new(), listIndex = 7, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
 
@@ -1319,11 +1319,11 @@ function P.unpoweredAccelerator:xAccel()
 	else return 0 end
 end
 
-P.bombBoxTile = P.tile:new{name = "bombBoxTile", pushable = pushableList[8]:new(), listIndex = 8, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
+P.bombBoxTile = P.boxTile:new{name = "bombBoxTile", pushable = pushableList[8]:new(), listIndex = 8, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
 
-P.giftBoxTile = P.tile:new{name = "giftBoxTile", pushable = pushableList[9]:new(), listIndex = 9, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
+P.giftBoxTile = P.boxTile:new{name = "giftBoxTile", pushable = pushableList[9]:new(), listIndex = 9, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
 
-P.jackInTheBoxTile = P.tile:new{name = "jackInTheBoxTile", pushable = pushableList[10]:new(), listIndex = 10, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
+P.jackInTheBoxTile = P.boxTile:new{name = "jackInTheBoxTile", pushable = pushableList[10]:new(), listIndex = 10, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
 
 P.finalToolsTile = P.tile:new{name = "finalToolsTile", canBePowered = false, dirAccept = {0,0,0,0}, sprite = love.graphics.newImage('Graphics/donationmachine.png'), done = false, toolsToGive = {}, giveRate = 0.75, timeLeft = 0}
 function P.finalToolsTile:onEnter(player)
