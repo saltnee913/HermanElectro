@@ -1500,6 +1500,18 @@ function P.gabeMaker:useToolNothing(tileY, tileX)
 end
 P.gabeMaker.useToolTile = P.gabeMaker.useToolNothing
 
+P.roomUnlocker = P.superTool:new{name = "roomUnlocker", baseRange = 0, image = love.graphics.newImage('Graphics/roomunlocker.png')}
+function P.roomUnlocker:usableOnNothing()
+	return true
+end
+P.roomUnlocker.usableOnTile = P.roomUnlocker.usableOnNothing
+function P.roomUnlocker:useToolNothing()
+	self.numHeld = self.numHeld-1
+	unlockDoors()
+end
+P.roomUnlocker.useToolTile = P.roomUnlocker.useToolNothing
+
+
 P.numNormalTools = 7
 
 --tools not included in list: trap (identical to glue in purpose)
@@ -1567,5 +1579,6 @@ P[51] = P.buttonFlipper
 P[52] = P.wireBreaker
 P[53] = P.powerBreaker
 P[54] = P.gabeMaker
+P[55] = P.roomUnlocker
 
 return tools
