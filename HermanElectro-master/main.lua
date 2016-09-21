@@ -921,7 +921,7 @@ function love.draw()
 				if j <= table.getn(room) or i <= table.getn(room[0]) then
 					if litTiles[j][i] == 0 then
 						toDraw = black
-					elseif room[j][i]~=nil and room[j][i].powered == false then
+					elseif room[j][i]~=nil and (room[j][i].powered == false or not room[j][i].canBePowered) then
 						toDraw = room[j][i].sprite
 						rot = room[j][i].rotation
 					elseif room[j][i]~=nil then
