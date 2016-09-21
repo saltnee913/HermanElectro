@@ -875,7 +875,7 @@ function P.boxCutter:useToolPushable(pushable)
 	P.giveRandomTools(3)
 end
 
-P.broom = P.tool:new{name = "broom", image = love.graphics.newImage('Graphics/pitbullChanger.png')}
+P.broom = P.tool:new{name = "broom", image = love.graphics.newImage('Graphics/broom.png')}
 function P.broom:usableOnTile(tile)
 	return tile:instanceof(tiles.slime) or tile:instanceof(tiles.conductiveSlime)
 end

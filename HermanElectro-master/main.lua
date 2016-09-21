@@ -1522,6 +1522,7 @@ function enterMove()
 		if room~=nil and room[player.prevTileY][player.prevTileX]~=nil then
 			room[player.prevTileY][player.prevTileX]:onLeave(player)
 		end
+		player.character.onTileLeave()
 	end
 end
 

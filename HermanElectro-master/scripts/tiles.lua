@@ -1041,6 +1041,7 @@ P.inductor.getInfoText = P.capacitor.getInfoText
 
 P.slime = P.tile:new{name = "slime", sprite = love.graphics.newImage('Graphics/slime.png')}
 function P.slime:onEnter(player)
+	if player.character.name == "Lenny" then return end
 	player.waitCounter = player.waitCounter+1
 end
 function P.slime:onEnterAnimal(animal)
