@@ -9,20 +9,20 @@ roomsDesigned = 0
 function P.draw()
 	barLength = 660
 	love.graphics.setColor(255,255,255)
-	for i = 1, 90 do
+	for i = 1, 100 do
 		if tiles[i]~=nil then
 			toDraw = tiles[i].sprite
 			addx = 0
 			addy = 0
-			if i>45 then
+			if i>50 then
 				addx = -width
-				addy = width/45
+				addy = width/50
 			end
 			--love.graphics.rectangle("fill", (i-1)*width/25, height-width/25, width/25, width/25)
 			--sprite width: floor.sprite:getWidth()
-			love.graphics.draw(toDraw, (i-1)*width/45+addx, height-2*width/45+addy, 0, (width/45)/(floor.sprite:getWidth())*16/toDraw:getWidth(), (width/45)/(floor.sprite:getWidth())*16/toDraw:getWidth())
+			love.graphics.draw(toDraw, (i-1)*width/50+addx, height-2*width/50+addy, 0, (width/50)/(floor.sprite:getWidth())*16/toDraw:getWidth(), (width/50)/(floor.sprite:getWidth())*16/toDraw:getWidth())
 			if editorAdd == i then
-				love.graphics.draw(green, (i-1)*width/45+addx, height-2*width/45+addy, 0, (width/45)/(floor.sprite:getWidth()), (width/45)/(floor.sprite:getWidth()))
+				love.graphics.draw(green, (i-1)*width/50+addx, height-2*width/50+addy, 0, (width/50)/(floor.sprite:getWidth()), (width/50)/(floor.sprite:getWidth()))
 			end
 		end
 	end
@@ -224,10 +224,10 @@ function P.mousepressed(x, y, button, istouch)
 	end
 	--tileLocX = math.ceil((x-wallSprite.width)/(scale*floor.sprite:getWidth()))-getTranslation().x
 	--tileLocY = math.ceil((y-wallSprite.height)/(scale*floor.sprite:getHeight()))-getTranslation().y
-	if mouseY>height-2*width/45 then
-		editorAdd = math.floor(mouseX/(width/45))+1
-		if mouseY>height-width/45 then
-			editorAdd = editorAdd+45
+	if mouseY>height-2*width/50 then
+		editorAdd = math.floor(mouseX/(width/50))+1
+		if mouseY>height-width/50 then
+			editorAdd = editorAdd+50
 		end
 	elseif tempAdd>0 and tileLocX>=1 and tileLocX<=roomLength and tileLocY>=1 and tileLocY<=roomHeight then
 		if(room[tileLocY][tileLocX] ~= nil and room[tileLocY][tileLocX].name == tiles[tempAdd].name) then
@@ -251,7 +251,7 @@ function P.mousepressed(x, y, button, istouch)
 end
 
 function P.mousemoved(x, y, dx, dy)
-	if mouseY>height-2*width/45 then return end
+	if mouseY>height-2*width/50 then return end
 	if mouseDown and tempAdd>0 and tiles[tempAdd]~=nil and tileLocX>=1 and tileLocX<=roomLength and tileLocY>=1 and tileLocY<=roomHeight then
 		if room[tileLocY] ~= nil and room[tileLocY][tileLocX] ~= nil and room[tileLocY][tileLocX].overlayable and tiles[tempAdd].overlaying then
 			if not (room[tileLocY][tileLocX].overlay ~= nil and room[tileLocY][tileLocX].overlay.name == tiles[tempAdd].name) then

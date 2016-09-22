@@ -579,6 +579,31 @@ function P.orGate:updateTile(dir)
 end
 P.orGate.destroy = P.conductiveTile.destroy
 
+P.xorGate = P.gate:new{name = "xorGate", dirSend = {1,0,0,0}, dirAccept = {0,1,0,1}, dirWireHack = {1,0,0,0}, sprite = love.graphics.newImage('Graphics/xorgate.png'), poweredSprite = love.graphics.newImage('Graphics/xorgate.png')}
+function P.xorGate:updateTile(dir)
+	if self.charged then
+		self.powered = true
+		self.dirSend = shiftArray({1,0,0,0}, self.rotation)
+		return
+	end
+	local sideOne = self.poweredNeighbors[self:cfr(2)]==1
+	local sideTwo = self.poweredNeighbors[self:cfr(4)]==1
+	if (sideOne and not sideTwo) or (sideTwo and not sideOne) then
+		self.powered = true
+		self.dirSend = shiftArray({1,0,0,0}, self.rotation)
+		if self.poweredNeighbors[self:cfr(2)]==1 and self.poweredNeighbors[self:cfr(4)]==1 then
+			self.poweredSprite = self.bothOn
+		elseif self.poweredNeighbors[self:cfr(2)]==1 then
+			self.poweredSprite = self.rightOn
+		else
+			self.poweredSprite = self.leftOn
+		end
+	else
+		self.powered = false
+		self.dirSend = {0,0,0,0}
+	end
+end
+P.xorGate.destroy = P.conductiveTile.destroy
 
 local function getTileX(posX)
 	return (posX-1)*floor.sprite:getWidth()*scale+wallSprite.width
@@ -1471,5 +1496,6 @@ tiles[88] = P.unpoweredAccelerator
 tiles[89] = P.giftBoxTile
 tiles[90] = P.jackInTheBoxTile
 tiles[91] = P.finalToolsTile
+tiles[92] = P.xorGate
 
 return tiles
