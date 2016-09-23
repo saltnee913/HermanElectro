@@ -149,9 +149,11 @@ end
 P.frederick = P.character:new{name = "Frederick", description = "The Frog", sprite = love.graphics.newImage('Graphics/frederick.png')}
 function P.frederick:onCharLoad()
 	tools.spring.numHeld = 4
+	tools.visionChanger.numHeld = 2
 end
 function P.frederick:onFloorEnter()
 	tools.spring.numHeld = tools.spring.numHeld+2
+	tools.visionChanger.numHeld = tools.visionChanger.numHeld+1
 end
 
 P.battery = P.character:new{name = "Bob", description = "The Battery", sprite = love.graphics.newImage('Graphics/powersupplydead.png'),
