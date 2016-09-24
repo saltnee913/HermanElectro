@@ -342,7 +342,8 @@ function P.lenny:onKeyPressed(key)
 end
 function P.lenny:onTileLeave()
 	if slime then
-		if room[player.prevTileY][player.prevTileX]==nil then
+		if room[player.prevTileY][player.prevTileX]==nil or
+			(room[player.prevTileY][player.prevTileX]:instanceof(tiles.wire) and room[player.prevTileY][player.prevTileX].destroyed) then
 			room[player.prevTileY][player.prevTileX]=tiles.conductiveSlime:new()
 			updateGameState(false)
 		end
