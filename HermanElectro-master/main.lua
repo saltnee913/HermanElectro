@@ -1932,6 +1932,12 @@ function postAnimalMovement()
 		if animals[i]:hasMoved() and not animals[i].dead then
 			if room[animals[i].prevTileY]~=nil and room[animals[i].prevTileY][animals[i].prevTileX]~=nil then
 				room[animals[i].prevTileY][animals[i].prevTileX]:onLeaveAnimal(animals[i])
+				if room[animals[i].prevTileY][animals[i].prevTileX]:instanceof(tiles.wire) and
+				room[animals[i].prevTileY][animals[i].prevTileX].destroyed then
+					if animals[i]:onNullLeave()~=nil then
+					room[animals[i].prevTileY][animals[i].prevTileX] = animals[i]:onNullLeave()
+					end
+				end
 			elseif animals[i]:onNullLeave()~=nil then
 				room[animals[i].prevTileY][animals[i].prevTileX] = animals[i]:onNullLeave()
 			end
