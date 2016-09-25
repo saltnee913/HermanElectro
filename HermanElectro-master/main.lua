@@ -1161,6 +1161,8 @@ function love.draw()
 			end
 			love.graphics.setColor(0,0,0)
 			love.graphics.print(tools[i+1].numHeld, i*width/18+3, 0)
+			love.graphics.print(i+1, i*width/18+7, (width/18)-20)
+			love.graphics.circle("line", i*width/18+10, (width/18)-15, 9, 50)
 		end
 		for i = 0, 2 do
 			love.graphics.setColor(255,255,255)
@@ -1180,6 +1182,8 @@ function love.draw()
 			love.graphics.setColor(0,0,0)
 			if specialTools[i+1]~=0 then
 				love.graphics.print(tools[specialTools[i+1]].numHeld, (i+13)*width/18+3, 0)
+				love.graphics.print(i+8, (i+13)*width/18+7, (width/18)-20)
+				love.graphics.circle("line", (i+13)*width/18+10, (width/18)-15, 9, 50)
 			end
 		end
 	end
