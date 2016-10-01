@@ -1613,6 +1613,7 @@ function love.keypressed(key, unicode)
 	end
 
 	if not started then
+		if charSelect then return end
 		if key=="s" then
 			startGame()
 			return
