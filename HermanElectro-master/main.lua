@@ -17,6 +17,7 @@ tools = require('scripts.tools')
 editor = require('scripts.editor')
 unlocks = require('scripts.unlocks')
 characters = require('scripts.characters')
+tutorial = require('scripts.tutorial')
 
 loadedOnce = false
 
@@ -286,6 +287,7 @@ function startGame()
 end
 
 function startTutorial()
+	tutorial.load()
 	loadRandoms()
 	loadTutorial = true
 	map.floorOrder = {'RoomData/tut_map.json'}
@@ -1218,6 +1220,9 @@ function love.draw()
 	if editorMode then
 		editor.draw()
 	end
+	if loadTutorial then
+		tutorial.draw()
+	end
 	love.graphics.setColor(0,0,0)
 	love.graphics.rectangle("fill", 5, height-2.5*width/30, barLength, 15)
 	love.graphics.setColor(255,255,255)
@@ -1497,6 +1502,7 @@ function enterRoom(dir)
 	visibleMap[mapy][mapx] = 1
 	keyTimer.timeLeft = keyTimer.suicideDelay
 	updateGameState(false)
+	tutorial.enterRoom()
 end
 
 oldTilesOn = {}
@@ -1534,6 +1540,9 @@ keyTimer = {base = .05, timeLeft = .05, suicideDelay = .5}
 function love.update(dt)
 	if gamePaused then
 		return
+	end
+	if loadTutorial then
+		tutorial.update(dt)
 	end
 	--key press
 	keyTimer.timeLeft = keyTimer.timeLeft - dt
