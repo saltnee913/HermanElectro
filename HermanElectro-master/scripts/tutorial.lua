@@ -1,6 +1,8 @@
 local P = {}
 tutorial = P
 
+--NOTE: This file is hacky as fuck, don't carry about good code here because code here can NEVER leave. If any code tries to escape, show it no mercy.
+
 local clickAnimation = {baseTime = 10, timeLeft = 0, baseDelay = 20, delayLeft = 0}
 local minimapAnimation = {baseDelay = 15, delayLeft = 0, enabled = false, opacity = 0}
 
@@ -44,6 +46,7 @@ function P.enterRoom()
 	for i = 1, tools.numNormalTools do
 		if itemsNeeded[i] > tools[i].numHeld then
 			minimapAnimation.enabled = true
+			minimapAnimation.opacity = 0
 		end
 	end
 end
