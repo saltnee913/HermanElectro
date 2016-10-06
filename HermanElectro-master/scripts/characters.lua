@@ -58,6 +58,8 @@ function P.character:onToolUse()
 end
 function P.character:preTileEnter(tile)
 end
+function P.character:onTileLeave()
+end
 
 P.herman = P.character:new{name = "Herman", description = "The Electrician"}
 function P.herman:onCharLoad()
@@ -147,9 +149,11 @@ end
 P.frederick = P.character:new{name = "Frederick", description = "The Frog", sprite = love.graphics.newImage('Graphics/frederick.png')}
 function P.frederick:onCharLoad()
 	tools.spring.numHeld = 4
+	tools.visionChanger.numHeld = 2
 end
 function P.frederick:onFloorEnter()
 	tools.spring.numHeld = tools.spring.numHeld+2
+	tools.visionChanger.numHeld = tools.visionChanger.numHeld+1
 end
 
 P.battery = P.character:new{name = "Bob", description = "The Battery", sprite = love.graphics.newImage('Graphics/powersupplydead.png'),
@@ -320,6 +324,32 @@ function P.orson:onKeyPressed(key)
 	return false
 end
 
+P.lenny = P.character:new{name = "Lenny", description = "The Ghost Snail", slime = false, sprite = love.graphics.newImage('Graphics/lenny.png')}
+function P.lenny:onCharLoad()
+	tools.wings.numHeld = 1
+	tools.broom.numHeld = 1
+end
+function P.lenny:onFloorEnter()
+	tools.wings.numHeld = tools.wings.numHeld+1
+	tools.broom.numHeld = tools.broom.numHeld+1
+end
+function P.lenny:onKeyPressed(key)
+	if key == 'rshift' or key == 'lshift' or key == 'shift' then
+		slime = not slime
+		return true
+	end
+	return false
+end
+function P.lenny:onTileLeave()
+	if slime then
+		if room[player.prevTileY][player.prevTileX]==nil or
+			(room[player.prevTileY][player.prevTileX]:instanceof(tiles.wire) and room[player.prevTileY][player.prevTileX].destroyed) then
+			room[player.prevTileY][player.prevTileX]=tiles.conductiveSlime:new()
+			updateGameState(false)
+		end
+	end
+end
+
 P[1] = P.herman
 P[2] = P.felix
 P[3] = P.most
@@ -334,6 +364,7 @@ P[11] = P.giovanni
 P[12] = P.francisco
 P[13] = P.tim
 P[14] = P.orson
-P[15] = P.random
+P[15] = P.lenny
+P[16] = P.random
 
 return characters

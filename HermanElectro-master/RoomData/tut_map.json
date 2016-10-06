@@ -10,12 +10,12 @@
   	{
   		"map":
   		[
-        [0                 ,0                 ,0                 ,"zach_stack"    ,0             ,0  ,0 ],
+        [0                 ,0                 ,0                 ,0               ,0             ,0  ,0 ],
   			[0 			           ,"tut_2_trapdoors" ,"tut_5_ladder"    ,"tut_6_pitbull" ,0             ,0  ,0 ],
-  			[0 			           ,"tut_1_endpoint"  ,0 			           ,0 			        ,"tut_or"      ,0  ,0 ],
-  			["tut_4_buttons"   ,"tut_3_walls"	    ,"tut_7_stack"     ,"tut_and"       ,"tut_not"     ,0  ,0 ],
-  			[0 			           ,0 				        ,"tut_bonus_srdt1" ,0               ,0             ,0  ,0 ],
-        [0                 ,0                 ,"tut_bonus_srdt2" ,"zach_srdt1"    ,"zach_srdt2"  ,0  ,0 ],
+  			[0 			           ,"tut_1_endpoint"  ,0 			           ,0 			        ,0             ,0  ,0 ],
+  			["tut_4_buttons"   ,"tut_3_walls"	    ,"most_not"        ,"most_and"      ,0             ,0  ,0 ],
+        [0                 ,0                 ,0                 ,"most_buttons"  ,0             ,0  ,0 ],
+        [0                 ,0                 ,0                 ,"most_stack"    ,"tut_not"     ,0  ,0 ],
         [0                 ,0                 ,0                 ,0               ,0             ,0  ,0 ],
         [0                 ,0                 ,0                 ,0               ,0             ,0  ,0 ],
   		],

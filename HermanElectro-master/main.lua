@@ -17,6 +17,7 @@ tools = require('scripts.tools')
 editor = require('scripts.editor')
 unlocks = require('scripts.unlocks')
 characters = require('scripts.characters')
+tutorial = require('scripts.tutorial')
 
 loadedOnce = false
 
@@ -286,6 +287,7 @@ function startGame()
 end
 
 function startTutorial()
+	tutorial.load()
 	loadRandoms()
 	loadTutorial = true
 	map.floorOrder = {'RoomData/tut_map.json'}
@@ -921,7 +923,7 @@ function love.draw()
 				if j <= table.getn(room) or i <= table.getn(room[0]) then
 					if litTiles[j][i] == 0 then
 						toDraw = black
-					elseif room[j][i]~=nil and room[j][i].powered == false then
+					elseif room[j][i]~=nil and (room[j][i].powered == false or not room[j][i].canBePowered) then
 						toDraw = room[j][i].sprite
 						rot = room[j][i].rotation
 					elseif room[j][i]~=nil then
@@ -1161,6 +1163,8 @@ function love.draw()
 			end
 			love.graphics.setColor(0,0,0)
 			love.graphics.print(tools[i+1].numHeld, i*width/18+3, 0)
+			love.graphics.print(i+1, i*width/18+7, (width/18)-20)
+			love.graphics.circle("line", i*width/18+10, (width/18)-15, 9, 50)
 		end
 		for i = 0, 2 do
 			love.graphics.setColor(255,255,255)
@@ -1180,6 +1184,8 @@ function love.draw()
 			love.graphics.setColor(0,0,0)
 			if specialTools[i+1]~=0 then
 				love.graphics.print(tools[specialTools[i+1]].numHeld, (i+13)*width/18+3, 0)
+				love.graphics.print(i+8, (i+13)*width/18+7, (width/18)-20)
+				love.graphics.circle("line", (i+13)*width/18+10, (width/18)-15, 9, 50)
 			end
 		end
 	end
@@ -1213,6 +1219,9 @@ function love.draw()
 	barLength = 200
 	if editorMode then
 		editor.draw()
+	end
+	if loadTutorial then
+		tutorial.draw()
 	end
 	love.graphics.setColor(0,0,0)
 	love.graphics.rectangle("fill", 5, height-2.5*width/30, barLength, 15)
@@ -1493,6 +1502,7 @@ function enterRoom(dir)
 	visibleMap[mapy][mapx] = 1
 	keyTimer.timeLeft = keyTimer.suicideDelay
 	updateGameState(false)
+	tutorial.enterRoom()
 end
 
 oldTilesOn = {}
@@ -1522,6 +1532,7 @@ function enterMove()
 		if room~=nil and room[player.prevTileY][player.prevTileX]~=nil then
 			room[player.prevTileY][player.prevTileX]:onLeave(player)
 		end
+		player.character.onTileLeave()
 	end
 end
 
@@ -1529,6 +1540,9 @@ keyTimer = {base = .05, timeLeft = .05, suicideDelay = .5}
 function love.update(dt)
 	if gamePaused then
 		return
+	end
+	if loadTutorial then
+		tutorial.update(dt)
 	end
 	--key press
 	keyTimer.timeLeft = keyTimer.timeLeft - dt
@@ -1608,6 +1622,7 @@ function love.keypressed(key, unicode)
 	end
 
 	if not started then
+		if charSelect then return end
 		if key=="s" then
 			startGame()
 			return
@@ -1657,12 +1672,12 @@ function love.keypressed(key, unicode)
 	end]]
 
 	--k ability: open doors with k on supertools
-	if key=="k" then
+	--[[if key=="k" then
 		if tool>tools.numNormalTools then
 			tools[tool].numHeld = tools[tool].numHeld-1
 			unlockDoors()
 		end
-	end
+	end]]
 
 	if editorMode then
 		editor.keypressed(key, unicode)
@@ -1931,6 +1946,12 @@ function postAnimalMovement()
 		if animals[i]:hasMoved() and not animals[i].dead then
 			if room[animals[i].prevTileY]~=nil and room[animals[i].prevTileY][animals[i].prevTileX]~=nil then
 				room[animals[i].prevTileY][animals[i].prevTileX]:onLeaveAnimal(animals[i])
+				if room[animals[i].prevTileY][animals[i].prevTileX]:instanceof(tiles.wire) and
+				room[animals[i].prevTileY][animals[i].prevTileX].destroyed then
+					if animals[i]:onNullLeave()~=nil then
+					room[animals[i].prevTileY][animals[i].prevTileX] = animals[i]:onNullLeave()
+					end
+				end
 			elseif animals[i]:onNullLeave()~=nil then
 				room[animals[i].prevTileY][animals[i].prevTileX] = animals[i]:onNullLeave()
 			end
