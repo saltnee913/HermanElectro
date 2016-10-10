@@ -64,7 +64,7 @@ end
 P.herman = P.character:new{name = "Herman", description = "The Electrician"}
 function P.herman:onCharLoad()
 	if loadTutorial then return end
-	tools.revive.numHeld = 2
+	tools.giveToolsByReference({tools.revive,tools.revive})
 end
 
 P.felix = P.character:new{name = "Felix", description = "The Sharpshooter", sprite = love.graphics.newImage('Graphics/felix.png'), startingTools = {0,0,0,0,0,0,1}}
@@ -73,8 +73,7 @@ function P.felix:onCharLoad()
 	if not tools.felixGun.isGun then
 		tools.felixGun:switchEffects()
 	end
-	tools.felixGun.numHeld = 1
-	tools.bomb.numHeld = 1
+	tools.giveToolsByReference({tools.bomb})
 end
 function P.felix:onKeyPressed(key)
 	--log(key)
@@ -134,8 +133,7 @@ end
 
 P.rick = P.character:new{name = "Rick", description = "The Gambler", sprite = love.graphics.newImage('Graphics/rick.png')}
 function P.rick:onCharLoad()
-	tools.toolReroller.numHeld = 3
-	tools.roomReroller.numHeld = 1
+	tools.giveToolsByReference({tools.toolReroller,tools.toolReroller,tools.toolReroller,tools.roomReroller})
 end
 function P.rick:onFloorEnter()
 	for i = 1, tools.numNormalTools do
@@ -148,11 +146,10 @@ end
 --alternative name: "Froggy, the Fresh"
 P.frederick = P.character:new{name = "Frederick", description = "The Frog", sprite = love.graphics.newImage('Graphics/frederick.png')}
 function P.frederick:onCharLoad()
-	tools.spring.numHeld = 4
-	tools.visionChanger.numHeld = 2
+	tools.giveToolsByReference({tools.spring,tools.spring,tools.spring,tools.spring,tools.visionChanger,tools.visionChanger})
 end
 function P.frederick:onFloorEnter()
-	tools.giveTools({27,9})
+	tools.giveToolsByReference({tools.spring,tools.spring,tools.visionChanger})
 end
 
 P.battery = P.character:new{name = "Bob", description = "The Battery", sprite = love.graphics.newImage('Graphics/powersupplydead.png'),
@@ -193,7 +190,7 @@ end
 
 P.nadia = P.character:new{name = "Nadia", description = "The Naturalist", sprite = love.graphics.newImage('Graphics/nadia.png')}
 function P.nadia:onCharLoad()
-	tools.meat.numHeld = 3
+	tools.giveToolsByReference({tools.meat})
 	player.safeFromAnimals = true
 end
 
@@ -250,7 +247,7 @@ function P.giovanni:onKeyPressed(key)
 	end
 end
 function P.giovanni:onCharLoad()
-	tools.pitbullChanger.numHeld = 2
+	tools.giveToolsByReference({tools.pitbullChanger,tools.pitbullChanger})
 	self.shiftPos = {x = -1, y = -1}
 end
 function P.giovanni:onRoomEnter()
@@ -275,10 +272,10 @@ end
 
 P.francisco = P.character:new{name = "Francisco", description = "The Cartographer", nextRoom = {yLoc = -1, xLoc = -1}, sprite = love.graphics.newImage('Graphics/francisco.png')}
 function P.francisco:onCharLoad()
-	tools.giveTools({30})
+	tools.giveToolsByReference({tools.map})
 end
 function P.francisco:onFloorEnter()
-	tools.giveTools({30})
+	tools.giveToolsByReference({tools.map})
 end
 
 P.random = P.character:new{name = "Random", description = "", sprite = love.graphics.newImage('Graphics/random.png')}
@@ -291,7 +288,7 @@ end
 
 P.tim = P.character:new{name = "Tim", description = "The Box Summoner", sprite = love.graphics.newImage('Graphics/tim.png')}
 function P.tim:onCharLoad()
-	tools.giveTools({35,36,31})
+	tools.giveToolsByReference({tools.ramSpawner,tools.boxSpawner,tools.boomboxSpawner})
 end
 
 P.orson = P.character:new{name = "Orson", shifted = false, description = "The Mastermind", sprite = love.graphics.newImage('Graphics/orson.png')}
