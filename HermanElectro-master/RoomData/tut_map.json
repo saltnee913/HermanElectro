@@ -1,15 +1,19 @@
 {
   	"loadRooms":
   	{
-  		"rooms":
+  		"oldrooms":
   		{
   			"filePath": "RoomData/tut_rooms.json"
-  		}
+  		},
+      "rooms":
+      {
+        "filePath": "RoomData/tut_new.json"
+      }
   	},
   	"data":
   	{
   		"map":
-  		[
+  		/*[
         [0                 ,0                 ,0                 ,0               ,0             ,0  ,0 ],
   			[0 			           ,"tut_2_trapdoors" ,"tut_5_ladder"    ,"tut_6_pitbull" ,0             ,0  ,0 ],
   			[0 			           ,"tut_1_endpoint"  ,0 			           ,0 			        ,0             ,0  ,0 ],
@@ -18,7 +22,16 @@
         [0                 ,0                 ,0                 ,"most_stack"    ,"tut_not"     ,0  ,0 ],
         [0                 ,0                 ,0                 ,0               ,0             ,0  ,0 ],
         [0                 ,0                 ,0                 ,0               ,0             ,0  ,0 ],
-  		],
+  		],*/[
+        [0                 ,0                 ,0                 ,0               ,0             ,0  ,0 ],
+        [0                 ,0                 ,0                 ,0               ,0             ,0  ,0 ],
+        [0                 ,0                 ,"tut_wiring"      ,"tut_doors"     ,"tut_saw"     ,0  ,0 ],
+        [0                 ,"tut_death"       ,"tut_button"      ,0               ,0             ,0  ,0 ],
+        [0                 ,"tut_start"       ,0                 ,0               ,0             ,0  ,0 ],
+        [0                 ,0                 ,0                 ,0               ,0             ,0  ,0 ],
+        [0                 ,0                 ,0                 ,0               ,0             ,0  ,0 ],
+        [0                 ,0                 ,0                 ,0               ,0             ,0  ,0 ],
+      ],
   		"generateFunction": "generateMapFromJSON"
   	}
 }

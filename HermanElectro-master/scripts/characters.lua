@@ -15,7 +15,7 @@ function P.getUnlockedCharacters()
 	end
 	local toRet = {}
 	for i = 1, #characters do
-		local isLocked = false
+		local isLocked = (characters[i].disabled == true)
 		for j = 1, #lockedChars do
 			if lockedChars[j] == i then
 				isLocked = true
@@ -89,7 +89,7 @@ function P.felix:onFloorEnter()
 end
 
 P.most = P.character:new{name = "Ben", description = "The Explorer",
-  sprite = love.graphics.newImage('GraphicsTony/Ben.png'), scale = 0.7 * width/1200, winUnlocks = {7}}
+  sprite = love.graphics.newImage('GraphicsTony/Ben.png'), scale = 0.7 * width/1200, winUnlocks = {7}, disabled = true}
 function P.most:onCharLoad()
 	if map.floorOrder == map.defaultFloorOrder then
 		map.floorOrder = {'RoomData/bigfloor.json', 'RoomData/floor6.json'}
@@ -107,7 +107,7 @@ function P.erik:onCharLoad()
 end
 
 P.gabe = P.character:new{name = "Gabe", description = "The Angel",
-	sprite = love.graphics.newImage('Graphics/gabe.png'), realChar = nil, reset = false}
+	sprite = love.graphics.newImage('Graphics/gabe.png'), realChar = nil, reset = false, disabled = true}
 function P.gabe:onCharLoad()
 	if not self.reset then
 		player.flying = true
@@ -131,7 +131,7 @@ function P.rammy:preTileEnter(tile)
 	end
 end
 
-P.rick = P.character:new{name = "Rick", description = "The Gambler", sprite = love.graphics.newImage('Graphics/rick.png')}
+P.rick = P.character:new{name = "Rick", description = "The Gambler", sprite = love.graphics.newImage('Graphics/rick.png'), disabled = true}
 function P.rick:onCharLoad()
 	tools.giveToolsByReference({tools.toolReroller,tools.toolReroller,tools.toolReroller,tools.roomReroller})
 end
@@ -144,7 +144,7 @@ function P.rick:onFloorEnter()
 end
 
 --alternative name: "Froggy, the Fresh"
-P.frederick = P.character:new{name = "Frederick", description = "The Frog", sprite = love.graphics.newImage('Graphics/frederick.png')}
+P.frederick = P.character:new{name = "Frederick", description = "The Frog", sprite = love.graphics.newImage('Graphics/frederick.png'), disabled = true}
 function P.frederick:onCharLoad()
 	tools.giveToolsByReference({tools.spring,tools.spring,tools.spring,tools.spring,tools.visionChanger,tools.visionChanger})
 end
@@ -188,7 +188,7 @@ function P.battery:onPostUpdatePower()
 	end
 end
 
-P.nadia = P.character:new{name = "Nadia", description = "The Naturalist", sprite = love.graphics.newImage('Graphics/nadia.png')}
+P.nadia = P.character:new{name = "Nadia", description = "The Naturalist", sprite = love.graphics.newImage('Graphics/nadia.png'), disabled = true}
 function P.nadia:onCharLoad()
 	tools.giveToolsByReference({tools.meat})
 	player.safeFromAnimals = true
@@ -285,7 +285,7 @@ function P.random:onBegin()
 	player.character:onBegin()
 end
 
-P.tim = P.character:new{name = "Tim", description = "The Box Summoner", sprite = love.graphics.newImage('Graphics/tim.png')}
+P.tim = P.character:new{name = "Tim", description = "The Box Summoner", sprite = love.graphics.newImage('Graphics/tim.png'), disabled = true}
 function P.tim:onCharLoad()
 	tools.giveToolsByReference({tools.ramSpawner,tools.boxSpawner,tools.boomboxSpawner})
 end
