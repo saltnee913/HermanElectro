@@ -265,6 +265,7 @@ function P.giovanni:onKeyPressed(key)
 			player.tileY = self.shiftPos.y
 			self.shiftPos = {x = -1, y = -1}
 			log("Returned to clone!")
+			updateGameState(false)
 		end
 	end
 end

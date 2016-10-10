@@ -7,7 +7,7 @@ tools = require('scripts.tools')
 local P = {}
 tiles = P
 
-P.tile = Object:new{formerPowered = nil, updatePowerOnEnter = false, updatePowerOnLeave = false, overlayable = false, overlaying = false, gone = false, lit = false, destroyed = false,
+P.tile = Object:new{formerPowered = nil, updatePowerOnEnter = false, text = "", updatePowerOnLeave = false, overlayable = false, overlaying = false, gone = false, lit = false, destroyed = false,
   blocksProjectiles = false, isVisible = true, rotation = 0, powered = false, blocksMovement = false, 
   blocksAnimalMovement = false, poweredNeighbors = {0,0,0,0}, blocksVision = false, dirSend = {1,1,1,1}, 
   dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile",
@@ -762,7 +762,13 @@ P.catTile = P.pitbullTile:new{name = "cat", animal = animalList[4]:new(), listIn
 P.vDoor= P.hDoor:new{name = "vDoor", sprite = love.graphics.newImage('Graphics3D/door.png'), closedSprite = love.graphics.newImage('Graphics/door.png'), openSprite = love.graphics.newImage('Graphics/doorsopen.png')}
 P.vDoor.onEnter = P.hDoor.onEnter
 
-P.sign = P.tile:new{text = "", name = "sign"}
+P.sign = P.tile:new{text = "", name = "sign", sprite = love.graphics.newImage('Graphics/sign.png')}
+function P.sign:onEnter(player)
+	messageInfo.text = self.text
+end
+function P.sign:onLeave(player)
+	messageInfo.text = nil
+end
 
 P.rotater = P.button:new{canBePowered = true, dirAccept = {1,0,1,0}, dirSend = {1,0,1,0}, sprite = love.graphics.newImage('Graphics/rotater.png'), poweredSprite = love.graphics.newImage('Graphics/rotater.png')}
 function P.rotater:updateSprite()
