@@ -39,7 +39,7 @@ end
 function P.giveTools(toolArray)
 	local toolsToDisp = {}
 	for i = 1, #toolArray do
-		if tools[toolArray[i]].numHeld ~= 0 or not tools.areSupersFull() then
+		if toolArray[i] <= tools.numNormalTools or tools[toolArray[i]].numHeld ~= 0 or not tools.areSupersFull() then
 			tools[toolArray[i]].numHeld = tools[toolArray[i]].numHeld + 1
 			toolsToDisp[#toolsToDisp+1] = toolArray[i]
 		end
