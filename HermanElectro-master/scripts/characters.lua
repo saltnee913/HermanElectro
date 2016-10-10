@@ -86,7 +86,7 @@ function P.felix:onKeyPressed(key)
 	return false
 end
 function P.felix:onFloorEnter()
-	tools.felixGun.numHeld = tools.felixGun.numHeld+2
+	tools.giveTools({7,7})
 end
 
 P.most = P.character:new{name = "Ben", description = "The Explorer",
@@ -152,8 +152,7 @@ function P.frederick:onCharLoad()
 	tools.visionChanger.numHeld = 2
 end
 function P.frederick:onFloorEnter()
-	tools.spring.numHeld = tools.spring.numHeld+2
-	tools.visionChanger.numHeld = tools.visionChanger.numHeld+1
+	tools.giveTools({27,9})
 end
 
 P.battery = P.character:new{name = "Bob", description = "The Battery", sprite = love.graphics.newImage('Graphics/powersupplydead.png'),
@@ -275,10 +274,10 @@ end
 
 P.francisco = P.character:new{name = "Francisco", description = "The Cartographer", nextRoom = {yLoc = -1, xLoc = -1}, sprite = love.graphics.newImage('Graphics/francisco.png')}
 function P.francisco:onCharLoad()
-	tools.map.numHeld = 1
+	tools.giveTools({30})
 end
 function P.francisco:onFloorEnter()
-	tools.map.numHeld = tools.map.numHeld+1
+	tools.giveTools({30})
 end
 
 P.random = P.character:new{name = "Random", description = "", sprite = love.graphics.newImage('Graphics/random.png')}
@@ -291,9 +290,7 @@ end
 
 P.tim = P.character:new{name = "Tim", description = "The Box Summoner", sprite = love.graphics.newImage('Graphics/tim.png')}
 function P.tim:onCharLoad()
-	tools.boxSpawner.numHeld = 1
-	tools.ramSpawner.numHeld = 1
-	tools.boomboxSpawner.numHeld = 1
+	tools.giveTools({35,36,31})
 end
 
 P.orson = P.character:new{name = "Orson", shifted = false, description = "The Mastermind", sprite = love.graphics.newImage('Graphics/orson.png')}
@@ -326,8 +323,7 @@ end
 
 P.lenny = P.character:new{name = "Lenny", description = "The Ghost Snail", slime = false, sprite = love.graphics.newImage('Graphics/lenny.png')}
 function P.lenny:onCharLoad()
-	tools.wings.numHeld = 1
-	tools.broom.numHeld = 1
+	tools.giveToolsByReference({tools.wings,tools.broom,tools.broom})
 end
 function P.lenny:onFloorEnter()
 	tools.wings.numHeld = tools.wings.numHeld+1

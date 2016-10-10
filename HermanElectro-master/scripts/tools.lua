@@ -42,6 +42,18 @@ function P.giveToolsByArray(toolArray)
 	updateTools()
 end
 
+function P.giveToolsByReference(toolArray)
+	local toolsToGive = {}
+	for i = 1, #tools do
+		for j = 1, #toolArray do
+			if toolArray[j].name==tools[i].name then
+				toolsToGive[#toolsToGive+1] = i
+			end
+		end
+	end
+	P.giveTools(toolsToGive)
+end
+
 function P.giveRandomTools(numTools)
 	local toolsToGive = {}
 	for i = 1, numTools do
