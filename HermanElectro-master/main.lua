@@ -45,7 +45,7 @@ function love.load()
 	ls[3][1] = {0,0,0,0,0,0,1}
 	ls[3][2] = {0,0,0,0,0,1,0}
 	ls[3][3] = {1,1,0,0,0,0,0}
-	 ls[4] = {}
+	 ls[4] = {}sas
 	ls[4][1] = {0,1,0,0,0,1,0}
 	ls[4][2] = {0,1,2,0,0,0,0}
 	ls[4][3] = {0,1,1,1,0,0,0}
@@ -1935,6 +1935,7 @@ function love.keypressed(key, unicode)
     	log(nil)
     end
     updateGameState(noPowerUpdate)
+    resetTileStates()
     checkAllDeath()
 end
 
@@ -2201,7 +2202,6 @@ function updateGameState(noPowerUpdate)
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
 			if room[i]~=nil and room[i][j]~=nil then
-				room[i][j]:resetState()
 				if room[i][j].onLoad ~= nil and room[i][j].loaded == nil then
 					room[i][j]:onLoad()
 					room[i][j].loaded = true
@@ -2217,6 +2217,20 @@ function updateGameState(noPowerUpdate)
 	if tool ~= 0 and tool ~= nil and tools[tool].numHeld == 0 then tool = 0 end
 	tools.updateToolableTiles(tool)
 	--checkAllDeath()
+end
+
+function resetTileStates()
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i]~=nil and room[i][j]~=nil then
+				room[i][j]:resetState()
+				if room[i][j].onLoad ~= nil and room[i][j].loaded == nil then
+					room[i][j]:onLoad()
+					room[i][j].loaded = true
+				end
+			end
+		end
+	end
 end
 
 function accelerate()
