@@ -241,14 +241,20 @@ function P.createRoom(inRoom, arr)
 		for j = 1, #(roomToLoad[i]) do
 			local tileData = roomToLoad[i][j]
 			local overlayToPlace = nil
+			local tileText = nil
 			if type(tileData) ~= 'number' then
-				local overInd = math.floor(tileData[2])
-				overlayToPlace = tiles[overInd]:new()
-				local overRot = math.floor(10*(tileData[2]-overInd+0.01))
-				if overRot~=nil and overRot~=0 then
-					overlayToPlace:rotate(overRot)
+				if type(tileData[2])=='number' then
+					local overInd = math.floor(tileData[2])
+					overlayToPlace = tiles[overInd]:new()
+					local overRot = math.floor(10*(tileData[2]-overInd+0.01))
+					if overRot~=nil and overRot~=0 then
+						overlayToPlace:rotate(overRot)
+					end
+					tileData = tileData[1]
+				elseif type(tileData[2])=='string' then
+					tileText = tileData[2]
+					tileData = tileData[1]
 				end
-				tileData = tileData[1]
 			end
 			local ind = math.floor(tileData)
 			if tileData == nil or ind == 0 then
@@ -265,6 +271,8 @@ function P.createRoom(inRoom, arr)
 			end
 			if overlayToPlace ~= nil then
 				loadedRoom[i][j]:setOverlay(overlayToPlace)
+			elseif tileText~=nil then
+				loadedRoom[i][j].text = tileText
 			end
 		end
 	end
