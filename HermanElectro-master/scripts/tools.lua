@@ -26,11 +26,25 @@ function P.displayToolsByArray(toolArray)
 	P.displayTools(revisedToolArray)
 end
 
-function P.giveTools(toolArray)
-	for i = 1, #toolArray do
-		tools[toolArray[i]].numHeld = tools[toolArray[i]].numHeld + 1
+function P.areSupersFull()
+	local superCount = 0
+	for i = tools.numNormalTools+1, #tools do
+		if tools[i].numHeld > 0 then
+			superCount = superCount + 1
+		end
 	end
-	P.displayTools(toolArray)
+	return (superCount >= 3)
+end
+
+function P.giveTools(toolArray)
+	local toolsToDisp = {}
+	for i = 1, #toolArray do
+		if tools[toolArray[i]].numHeld ~= 0 or not tools.areSupersFull() then
+			tools[toolArray[i]].numHeld = tools[toolArray[i]].numHeld + 1
+			toolsToDisp[#toolsToDisp+1] = toolArray[i]
+		end
+	end
+	P.displayTools(toolsToDisp)
 	updateTools()
 end
 

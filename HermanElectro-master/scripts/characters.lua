@@ -325,9 +325,8 @@ P.lenny = P.character:new{name = "Lenny", description = "The Ghost Snail", slime
 function P.lenny:onCharLoad()
 	tools.giveToolsByReference({tools.wings,tools.broom,tools.broom})
 end
-function P.lenny:onFloorEnter()
-	tools.wings.numHeld = tools.wings.numHeld+1
-	tools.broom.numHeld = tools.broom.numHeld+1
+function P.lenny:onFloorEnter()	
+	tools.giveToolsByReference({tools.wings,tools.broom,tools.broom})
 end
 function P.lenny:onKeyPressed(key)
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
