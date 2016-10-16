@@ -1,0 +1,28 @@
+{
+    "loadRooms":
+    {
+      "oldrooms":
+      {
+        "filePath": "RoomData/tut_rooms.json"
+      },
+      "rooms":
+      {
+        "filePath": "RoomData/tut_rooms.json"
+      }
+    },
+    "data":
+    {
+      "map":
+      [
+        [0                 ,0                 ,0                 ,0               ,0             ,0  ,0 ],
+        [0                 ,0                 ,"tut_5_ladder"    ,"tut_6_pitbull" ,0             ,0  ,0 ],
+        [0                 ,"tut_1_endpoint"  ,0                 ,0               ,0             ,0  ,0 ],
+        ["tut_4_buttons"   ,"tut_3_walls"     ,"most_not"        ,"most_and"      ,0             ,0  ,0 ],
+        [0                 ,0                 ,0                 ,"most_buttons"  ,0             ,0  ,0 ],
+        [0                 ,0                 ,0                 ,"most_stack"    ,"tut_not"     ,0  ,0 ],
+        [0                 ,0                 ,0                 ,0               ,0             ,0  ,0 ],
+        [0                 ,0                 ,0                 ,0               ,0             ,0  ,0 ],
+      ],
+      "generateFunction": "generateMapFromJSON"
+    }
+}

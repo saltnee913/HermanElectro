@@ -263,7 +263,12 @@ function loadNextLevel(dontChangeTime)
  		gameTime.timeLeft = gameTime.timeLeft+gameTime.levelTime
  	end
 	if loadTutorial then
-		loadLevel('RoomData/tut_map_new.json')
+		if floorIndex==1 then
+			loadLevel('RoomData/tut_map.json')
+		else
+			loadLevel('RoomData/tut_map_2.json')
+		end
+		floorIndex = floorIndex + 1
 	else
 		if floorIndex > #map.floorOrder then
 			floorIndex = 1
