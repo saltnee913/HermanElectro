@@ -167,6 +167,7 @@ function love.load()
 	animals = {}
 	animalCounter = 1
 	pushables = {}
+	messageInfo = {x = 0, y = 0, text = nil}
 	--width = 16*screenScale
 	--height = 9*screenScale
 	--wallSprite = {width = 78*screenScale/50, height = 72*screenScale/50, heightForHitbox = 62*screenScale/50}
@@ -262,7 +263,12 @@ function loadNextLevel(dontChangeTime)
  		gameTime.timeLeft = gameTime.timeLeft+gameTime.levelTime
  	end
 	if loadTutorial then
-		loadLevel('RoomData/tut_map.json')
+		if floorIndex==1 then
+			loadLevel('RoomData/tut_map.json')
+		else
+			loadLevel('RoomData/tut_map_2.json')
+		end
+		floorIndex = floorIndex + 1
 	else
 		if floorIndex > #map.floorOrder then
 			floorIndex = 1
@@ -1199,6 +1205,14 @@ function love.draw()
 	if gamePaused then
 		--love.graphics.draw(pausescreen, width/2-width/2000*320, 10, 0, width/1000, width/1000)
 		love.graphics.draw(pausescreen, 0, 0, 0, width/pausescreen:getWidth(), height/pausescreen:getHeight())
+	end
+
+	if messageInfo.text~=nil then
+		love.graphics.setColor(255,255,255,100)
+		love.graphics.rectangle("fill", width/2-200, 100, 400, 100)
+		love.graphics.setColor(0,0,0,255)
+		love.graphics.print(messageInfo.text, width/2-180, 110)
+		love.graphics.setColor(255,255,255,255)
 	end
 
 	--Display unlock screen

@@ -39,7 +39,7 @@ end
 function P.giveTools(toolArray)
 	local toolsToDisp = {}
 	for i = 1, #toolArray do
-		if tools[toolArray[i]].numHeld ~= 0 or not tools.areSupersFull() then
+		if toolArray[i] <= tools.numNormalTools or tools[toolArray[i]].numHeld ~= 0 or not tools.areSupersFull() then
 			tools[toolArray[i]].numHeld = tools[toolArray[i]].numHeld + 1
 			toolsToDisp[#toolsToDisp+1] = toolArray[i]
 		end
@@ -559,7 +559,7 @@ function P.gun:useToolAnimal(animal)
 	animal:kill()
 end
 
-P.felixGun = P.gun:new{name = 'felix gun', range = 5, isGun = true}
+P.felixGun = P.gun:new{name = 'felix gun', numHeld = 0, range = 5, isGun = true}
 function P.felixGun:switchEffects()
 	local switchEffects = self.switchEffects
 	if self.isGun then
@@ -811,7 +811,7 @@ end
 function P.corpseGrabber:useToolAnimal(animal)
 	self.numHeld = self.numHeld-1
 	animal.pickedUp = true
-	P.meat.numHeld = P.meat.numHeld+3
+	tools.giveToolsByReference({tools.meat,tools.meat,tools.meat})
 	local counter = 0
 	for i = P.numNormalTools+1, #tools do
 		if tools[i].numHeld>0 then

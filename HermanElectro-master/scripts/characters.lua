@@ -15,7 +15,7 @@ function P.getUnlockedCharacters()
 	end
 	local toRet = {}
 	for i = 1, #characters do
-		local isLocked = false
+		local isLocked = (characters[i].disabled == true)
 		for j = 1, #lockedChars do
 			if lockedChars[j] == i then
 				isLocked = true
@@ -64,7 +64,7 @@ end
 P.herman = P.character:new{name = "Herman", description = "The Electrician"}
 function P.herman:onCharLoad()
 	if loadTutorial then return end
-	tools.revive.numHeld = 2
+	tools.giveToolsByReference({tools.revive,tools.revive})
 end
 
 P.felix = P.character:new{name = "Felix", description = "The Sharpshooter", sprite = love.graphics.newImage('Graphics/felix.png'), startingTools = {0,0,0,0,0,0,1}}
@@ -73,8 +73,7 @@ function P.felix:onCharLoad()
 	if not tools.felixGun.isGun then
 		tools.felixGun:switchEffects()
 	end
-	tools.felixGun.numHeld = 1
-	tools.bomb.numHeld = 1
+	tools.giveToolsByReference({tools.bomb})
 end
 function P.felix:onKeyPressed(key)
 	--log(key)
@@ -90,7 +89,7 @@ function P.felix:onFloorEnter()
 end
 
 P.most = P.character:new{name = "Ben", description = "The Explorer",
-  sprite = love.graphics.newImage('GraphicsTony/Ben.png'), scale = 0.7 * width/1200, winUnlocks = {7}}
+  sprite = love.graphics.newImage('GraphicsTony/Ben.png'), scale = 0.7 * width/1200, winUnlocks = {7}, disabled = true}
 function P.most:onCharLoad()
 	if map.floorOrder == map.defaultFloorOrder then
 		map.floorOrder = {'RoomData/bigfloor.json', 'RoomData/floor6.json'}
@@ -108,7 +107,7 @@ function P.erik:onCharLoad()
 end
 
 P.gabe = P.character:new{name = "Gabe", description = "The Angel",
-	sprite = love.graphics.newImage('Graphics/gabe.png'), realChar = nil, reset = false}
+	sprite = love.graphics.newImage('Graphics/gabe.png'), realChar = nil, reset = false, disabled = true}
 function P.gabe:onCharLoad()
 	if not self.reset then
 		player.flying = true
@@ -132,10 +131,9 @@ function P.rammy:preTileEnter(tile)
 	end
 end
 
-P.rick = P.character:new{name = "Rick", description = "The Gambler", sprite = love.graphics.newImage('Graphics/rick.png')}
+P.rick = P.character:new{name = "Rick", description = "The Gambler", sprite = love.graphics.newImage('Graphics/rick.png'), disabled = true}
 function P.rick:onCharLoad()
-	tools.toolReroller.numHeld = 3
-	tools.roomReroller.numHeld = 1
+	tools.giveToolsByReference({tools.toolReroller,tools.toolReroller,tools.toolReroller,tools.roomReroller})
 end
 function P.rick:onFloorEnter()
 	for i = 1, tools.numNormalTools do
@@ -146,13 +144,12 @@ function P.rick:onFloorEnter()
 end
 
 --alternative name: "Froggy, the Fresh"
-P.frederick = P.character:new{name = "Frederick", description = "The Frog", sprite = love.graphics.newImage('Graphics/frederick.png')}
+P.frederick = P.character:new{name = "Frederick", description = "The Frog", sprite = love.graphics.newImage('Graphics/frederick.png'), disabled = true}
 function P.frederick:onCharLoad()
-	tools.spring.numHeld = 4
-	tools.visionChanger.numHeld = 2
+	tools.giveToolsByReference({tools.spring,tools.spring,tools.spring,tools.spring,tools.visionChanger,tools.visionChanger})
 end
 function P.frederick:onFloorEnter()
-	tools.giveTools({27,9})
+	tools.giveToolsByReference({tools.spring,tools.spring,tools.visionChanger})
 end
 
 P.battery = P.character:new{name = "Bob", description = "The Battery", sprite = love.graphics.newImage('Graphics/powersupplydead.png'),
@@ -191,9 +188,9 @@ function P.battery:onPostUpdatePower()
 	end
 end
 
-P.nadia = P.character:new{name = "Nadia", description = "The Naturalist", sprite = love.graphics.newImage('Graphics/nadia.png')}
+P.nadia = P.character:new{name = "Nadia", description = "The Naturalist", sprite = love.graphics.newImage('Graphics/nadia.png'), disabled = true}
 function P.nadia:onCharLoad()
-	tools.meat.numHeld = 3
+	tools.giveToolsByReference({tools.meat})
 	player.safeFromAnimals = true
 end
 
@@ -250,7 +247,7 @@ function P.giovanni:onKeyPressed(key)
 	end
 end
 function P.giovanni:onCharLoad()
-	tools.pitbullChanger.numHeld = 2
+	tools.giveToolsByReference({tools.pitbullChanger,tools.pitbullChanger})
 	self.shiftPos = {x = -1, y = -1}
 end
 function P.giovanni:onRoomEnter()
@@ -268,16 +265,17 @@ function P.giovanni:onKeyPressed(key)
 			player.tileY = self.shiftPos.y
 			self.shiftPos = {x = -1, y = -1}
 			log("Returned to clone!")
+			updateGameState(false)
 		end
 	end
 end
 
 P.francisco = P.character:new{name = "Francisco", description = "The Cartographer", nextRoom = {yLoc = -1, xLoc = -1}, sprite = love.graphics.newImage('Graphics/francisco.png')}
 function P.francisco:onCharLoad()
-	tools.giveTools({30})
+	tools.giveToolsByReference({tools.map})
 end
 function P.francisco:onFloorEnter()
-	tools.giveTools({30})
+	tools.giveToolsByReference({tools.map})
 end
 
 P.random = P.character:new{name = "Random", description = "", sprite = love.graphics.newImage('Graphics/random.png')}
@@ -288,9 +286,9 @@ function P.random:onBegin()
 	player.character:onBegin()
 end
 
-P.tim = P.character:new{name = "Tim", description = "The Box Summoner", sprite = love.graphics.newImage('Graphics/tim.png')}
+P.tim = P.character:new{name = "Tim", description = "The Box Summoner", sprite = love.graphics.newImage('Graphics/tim.png'), disabled = true}
 function P.tim:onCharLoad()
-	tools.giveTools({35,36,31})
+	tools.giveToolsByReference({tools.ramSpawner,tools.boxSpawner,tools.boomboxSpawner})
 end
 
 P.orson = P.character:new{name = "Orson", shifted = false, description = "The Mastermind", sprite = love.graphics.newImage('Graphics/orson.png')}
