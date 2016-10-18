@@ -111,8 +111,8 @@ end
 
 P.randoms = {}
 
-function P.newRandom(random, seed)
-	P.randoms[random] = {seed = seed, times = 2}
+function P.newRandom(random, randSeed)
+	P.randoms[random] = {seed = randSeed, times = 2}
 end
 
 function P.random(maxVal, random)

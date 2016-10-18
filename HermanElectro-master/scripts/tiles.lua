@@ -7,7 +7,7 @@ tools = require('scripts.tools')
 local P = {}
 tiles = P
 
-P.tile = Object:new{formerPowered = nil, updatePowerOnEnter = false, updatePowerOnLeave = false, overlayable = false, overlaying = false, gone = false, lit = false, destroyed = false,
+P.tile = Object:new{formerPowered = nil, updatePowerOnEnter = false, text = "", updatePowerOnLeave = false, overlayable = false, overlaying = false, gone = false, lit = false, destroyed = false,
   blocksProjectiles = false, isVisible = true, rotation = 0, powered = false, blocksMovement = false, 
   blocksAnimalMovement = false, poweredNeighbors = {0,0,0,0}, blocksVision = false, dirSend = {1,1,1,1}, 
   dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile",
@@ -56,7 +56,7 @@ function P.tile:updateTile(dir)
 end
 function P.tile:updateSprite()
 end
-function P.tile:postPowerUpdate()
+function P.tile:postPowerUpdate(i,j)
 end
 function P.tile:blocksMovementAnimal(animal)
 	return not animal.flying and (self.blocksMovement or self.blocksAnimalMovement)
@@ -318,6 +318,47 @@ function P.stayButton:onLeave(player)
 	end
 	self.justPressed = false
 end
+function P.stayButton:postPowerUpdate(i,j)
+	if player.character.name == "Orson" and player.character.shifted then return end
+	self.down = false
+	self.dirAccept = {0,0,0,0}
+	--updateGameState()
+	self:updateSprite()
+	for k = 1, #animals do
+		if animals[k].dead and not animals[k].pickedUp then
+			if animals[k].tileX == j and animals[k].tileY == i then
+				self.down = true
+				self.dirAccept = {1,1,1,1}
+				--updateGameState()
+				self:updateSprite()
+			end
+		end
+	end
+	for k = 1, #animals do
+		if not animals[k].dead then
+			if animals[k].tileX == j and animals[k].tileY == i then
+				self.down = true
+				self.dirAccept = {1,1,1,1}
+				--updateGameState()
+				self:updateSprite()
+			end
+		end
+	end
+	for k = 1, #pushables do
+		if pushables[k].tileX == j and pushables[k].tileY == i then
+			self.down = true
+			self.dirAccept = {1,1,1,1}
+			--updateGameState()
+			self:updateSprite()
+		end
+	end
+	if self.bricked or (player.tileY == i and player.tileX == j) then
+		self.down = true
+		self.dirAccept = {1,1,1,1}
+		--updateGameState()
+		self:updateSprite()
+	end
+end
 P.stayButton.onEnterAnimal = P.stayButton.onEnter
 P.stayButton.onLeaveAnimal = P.stayButton.onLeave
 --P.stayButton.onLeave = P.stayButton.onEnter
@@ -538,6 +579,31 @@ function P.orGate:updateTile(dir)
 end
 P.orGate.destroy = P.conductiveTile.destroy
 
+P.xorGate = P.gate:new{name = "xorGate", dirSend = {1,0,0,0}, dirAccept = {0,1,0,1}, dirWireHack = {1,0,0,0}, sprite = love.graphics.newImage('Graphics/xorgate.png'), poweredSprite = love.graphics.newImage('Graphics/xorgate.png')}
+function P.xorGate:updateTile(dir)
+	if self.charged then
+		self.powered = true
+		self.dirSend = shiftArray({1,0,0,0}, self.rotation)
+		return
+	end
+	local sideOne = self.poweredNeighbors[self:cfr(2)]==1
+	local sideTwo = self.poweredNeighbors[self:cfr(4)]==1
+	if (sideOne and not sideTwo) or (sideTwo and not sideOne) then
+		self.powered = true
+		self.dirSend = shiftArray({1,0,0,0}, self.rotation)
+		if self.poweredNeighbors[self:cfr(2)]==1 and self.poweredNeighbors[self:cfr(4)]==1 then
+			self.poweredSprite = self.bothOn
+		elseif self.poweredNeighbors[self:cfr(2)]==1 then
+			self.poweredSprite = self.rightOn
+		else
+			self.poweredSprite = self.leftOn
+		end
+	else
+		self.powered = false
+		self.dirSend = {0,0,0,0}
+	end
+end
+P.xorGate.destroy = P.conductiveTile.destroy
 
 local function getTileX(posX)
 	return (posX-1)*floor.sprite:getWidth()*scale+wallSprite.width
@@ -696,7 +762,13 @@ P.catTile = P.pitbullTile:new{name = "cat", animal = animalList[4]:new(), listIn
 P.vDoor= P.hDoor:new{name = "vDoor", sprite = love.graphics.newImage('Graphics3D/door.png'), closedSprite = love.graphics.newImage('Graphics/door.png'), openSprite = love.graphics.newImage('Graphics/doorsopen.png')}
 P.vDoor.onEnter = P.hDoor.onEnter
 
-P.sign = P.tile:new{text = "", name = "sign"}
+P.sign = P.tile:new{text = "", name = "sign", sprite = love.graphics.newImage('Graphics/sign.png')}
+function P.sign:onEnter(player)
+	messageInfo.text = self.text
+end
+function P.sign:onLeave(player)
+	messageInfo.text = nil
+end
 
 P.rotater = P.button:new{canBePowered = true, dirAccept = {1,0,1,0}, dirSend = {1,0,1,0}, sprite = love.graphics.newImage('Graphics/rotater.png'), poweredSprite = love.graphics.newImage('Graphics/rotater.png')}
 function P.rotater:updateSprite()
@@ -948,10 +1020,7 @@ function P.bomb:explode(x,y)
 	end
 	for k = 1, #pushables do
 		if math.abs(pushables[k].tileY-x)<2 and math.abs(pushables[k].tileX-y)<2 and not pushables[k].destroyed then
-			pushables[k].destroyed = true
-			if pushables[k]:instanceof(pushableList.bombBox) then
-				self:explode(pushables[k].tileY, pushables[k].tileX)
-			end
+			pushables[k]:destroy()
 		end
 	end
 end
@@ -1003,6 +1072,7 @@ P.inductor.getInfoText = P.capacitor.getInfoText
 
 P.slime = P.tile:new{name = "slime", sprite = love.graphics.newImage('Graphics/slime.png')}
 function P.slime:onEnter(player)
+	if player.character.name == "Lenny" then return end
 	player.waitCounter = player.waitCounter+1
 end
 function P.slime:onEnterAnimal(animal)
@@ -1240,7 +1310,7 @@ P.glue.onStayAnimal = P.glue.onEnterAnimal
 
 P.conductiveBoxTile = P.tile:new{name = "conductiveBoxTile", pushable = pushableList[5]:new(), listIndex = 5, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
 
-P.boomboxTile = P.tile:new{name = "boomboxTile", pushable = pushableList[6]:new(), listIndex = 6, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
+P.boomboxTile = P.boxTile:new{name = "boomboxTile", pushable = pushableList[6]:new(), listIndex = 6, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
 
 P.batteringRamTile = P.tile:new{name = "batteringRamTile", pushable = pushableList[7]:new(), listIndex = 7, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
 
@@ -1281,11 +1351,11 @@ function P.unpoweredAccelerator:xAccel()
 	else return 0 end
 end
 
-P.bombBoxTile = P.tile:new{name = "bombBoxTile", pushable = pushableList[8]:new(), listIndex = 8, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
+P.bombBoxTile = P.boxTile:new{name = "bombBoxTile", pushable = pushableList[8]:new(), listIndex = 8, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
 
-P.giftBoxTile = P.tile:new{name = "giftBoxTile", pushable = pushableList[9]:new(), listIndex = 9, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
+P.giftBoxTile = P.boxTile:new{name = "giftBoxTile", pushable = pushableList[9]:new(), listIndex = 9, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
 
-P.jackInTheBoxTile = P.tile:new{name = "jackInTheBoxTile", pushable = pushableList[10]:new(), listIndex = 10, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
+P.jackInTheBoxTile = P.boxTile:new{name = "jackInTheBoxTile", pushable = pushableList[10]:new(), listIndex = 10, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
 
 P.finalToolsTile = P.tile:new{name = "finalToolsTile", canBePowered = false, dirAccept = {0,0,0,0}, sprite = love.graphics.newImage('Graphics/donationmachine.png'), done = false, toolsToGive = {}, giveRate = 0.75, timeLeft = 0}
 function P.finalToolsTile:onEnter(player)
@@ -1432,5 +1502,6 @@ tiles[88] = P.unpoweredAccelerator
 tiles[89] = P.giftBoxTile
 tiles[90] = P.jackInTheBoxTile
 tiles[91] = P.finalToolsTile
+tiles[92] = P.xorGate
 
 return tiles
