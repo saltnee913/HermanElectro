@@ -25,6 +25,33 @@
           [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
       "isInitial": true
     },
+
+    "tut_start_2":
+    {
+    "layout":
+    [
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,[26,"This floor is meant to represent a floor in the actual game.\n\nEach floor is randomly generated from a pool of rooms."],0,0,0,[26,"The map often forms a labyrinth shape."],0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,19,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,[26,"When you die in the actual game, you have to start your\nrun-through from the beginning.\n\nThis permadeath mode is disabled for the tutorial."],0,0,0,[26,"You should always be able to beat at least one available\nroom with the tools you are given."],0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    ],
+    "isInitial":true,
+    "itemsNeeded":
+    [
+    [0,0,0,0,0,0,0]
+    ],
+    "itemsGiven":
+    [[0,0,0,0,0,0,0]]
+    },
+
     "tut_death":
     {"itemsGiven":
         [
