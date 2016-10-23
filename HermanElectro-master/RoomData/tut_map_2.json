@@ -3,25 +3,25 @@
     {
       "oldrooms":
       {
-        "filePath": "RoomData/tut_rooms.json"
+        "filePath": "RoomData/tut_new.json"
       },
       "rooms":
       {
-        "filePath": "RoomData/tut_rooms.json"
+        "filePath": "RoomData/tut_new.json"
       }
     },
     "data":
     {
       "map":
       [
-        [0,         0,          0,          0,          0,          0,          0,          0]
-        [0,         0,          0,          0,          0,          0,          0,          0]
-        [0,         0,          0,          0,          0,          0,          0,          0]
-        [0,         0,          0,          0,          0,          0,          0,          0]
-        [0,         0,          0,          0,          0,          0,          0,          0]
-        [0,         0,          0,          0,          0,          0,          0,          0]
-        [0,         0,          0,          0,          0,          0,          0,          0]
-        [0,         0,          0,          0,          0,          0,          0,          0]
+        [0,               0,              0,               0,              0,               0,               0,              0]
+        [0,               0,              0,               0,              0,               0,               0,              0]
+        [0,               0,              0,               0,              0,               0,               0,              0]
+        [0,               "tut_start_2",  0,               0,              0,               0,               0,              0]
+        [0,               0,              0,               0,              0,               0,               0,              0]
+        [0,               0,              0,               0,              0,               0,               0,              0]
+        [0,               0,              0,               0,              0,               0,               0,              0]
+        [0,               0,              0,               0,              0,               0,               0,              0]
       ],
       "generateFunction": "generateMapFromJSON"
     }
