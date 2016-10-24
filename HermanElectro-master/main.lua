@@ -202,7 +202,7 @@ function love.load()
 		startscreen = love.graphics.newImage('NewGraphics/startscreen2.png')
 
 		music = love.audio.newSource('Audio/hermantheme.mp3')
-		--music:play()
+		music:play()
 
 		width2, height2 = love.graphics.getDimensions()
 		if width2>height2*16/9 then

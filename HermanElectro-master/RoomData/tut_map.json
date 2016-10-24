@@ -17,10 +17,10 @@
         [0,             0,              0,              0,              0,              0,                0,               0]
         [0,             0,              0,              0,              0,              0,                0,               0]
         [0,             0,              0,              0,              0,              0,                0,               0]
-        [0,             "tut_start",    0,              0,              0,              0,                0,               0]
-        [0,             0,              0,              0,              0,              0,                0,               0]
-        [0,             0,              0,              0,              0,              0,                0,               0]
-        [0,             0,              0,              0,              0,              0,                0,               0]
+        [0,             "tut_start",    "tut_death",    "tut_button",   "tut_wiring",   "tut_doors",      "tut_saw",       0]
+        [0,             0,              0,              0,              0,              0,                "tut_glass",     0]
+        [0,             0,              0,              0,              0,              0,                "tut_ef",        0]
+        [0,             0,              0,              "tut_final",    "tut_metal",    "tut_not",        "tut_and",       0]
         [0,             0,              0,              0,              0,              0,                0,               0]
   		],
   		"generateFunction": "generateMapFromJSON"
