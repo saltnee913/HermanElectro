@@ -203,7 +203,7 @@ function love.load()
 		startscreen = love.graphics.newImage('NewGraphics/startscreen2.png')
 
 		music = love.audio.newSource('Audio/hermantheme.mp3')
-		music:play()
+		--music:play()
 
 		width2, height2 = love.graphics.getDimensions()
 		if width2>height2*16/9 then
@@ -1440,8 +1440,12 @@ function enterRoom(dir)
 	if player.tileY == math.floor(roomHeight/2) then plusOne = false
 	elseif player.tileX == math.floor(roomLength/2) then plusOne = false end
 
+	player.prevTileX = player.tileX
+	player.prevTileY = player.tileY
 	prevMapX = mapx
 	prevMapY = mapy
+	prevRoom = room
+
 	if dir == 0 then
 		if mapy>0 and not (completedRooms[mapy][mapx]==0 and completedRooms[mapy-1][mapx]==0) then
 			if mainMap[mapy-1][mapx]~=nil then
@@ -1453,8 +1457,6 @@ function enterRoom(dir)
 				player.tileY = roomHeight
 				if plusOne then player.tileX = math.floor(roomLength/2)+1
 				else player.tileX = math.floor(roomLength/2) end
-				player.prevTileY = player.tileY
-				player.prevTileX = player.tileX
 			end
 		end
 	elseif dir == 1 then
@@ -1468,8 +1470,6 @@ function enterRoom(dir)
 				player.tileX = 1
 				if plusOne then player.tileY = math.floor(roomHeight/2)+1
 				else player.tileY = math.floor(roomHeight/2) end
-				player.prevTileX = player.tileX
-				player.prevTileY = player.tileY
 			end
 		end
 	elseif dir == 2 then
@@ -1483,8 +1483,6 @@ function enterRoom(dir)
 				if plusOne then player.tileX = math.floor(roomLength/2)+1
 				else player.tileX = math.floor(roomLength/2) end
 				player.tileY = 1
-				player.prevTileY = player.tileY
-				player.prevTileX = player.tileX
 			end
 		end
 	elseif dir == 3 then
@@ -1498,8 +1496,6 @@ function enterRoom(dir)
 				player.tileX = roomLength
 				if plusOne then player.tileY = math.floor(roomHeight/2)+1
 				else player.tileY = math.floor(roomHeight/2) end
-				player.prevTileX = player.tileX
-				player.prevTileY = player.tileY
 			end
 		end
 	end
@@ -1514,6 +1510,24 @@ function enterRoom(dir)
 		createAnimals()
 		createPushables()
 	end
+
+	--check if box blocking doorway
+	for i = 1, #pushables do
+		if pushables[i].tileY == player.tileY and pushables[i].tileX == player.tileX then
+			room = prevRoom
+			player.tileX = player.prevTileX
+			player.tileY = player.prevTileY
+			mapx = prevMapX
+			mapy = prevMapY
+			createAnimals()
+			createPushables()
+			break
+		end
+	end
+
+	player.prevTileY = player.tileY
+	player.prevTileX = player.tileX
+
 	visibleMap[mapy][mapx] = 1
 	keyTimer.timeLeft = keyTimer.suicideDelay
 	updateGameState(false)
