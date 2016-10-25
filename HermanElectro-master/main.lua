@@ -191,6 +191,7 @@ function love.load()
 		gray = love.graphics.newImage('Graphics/gray.png')
 		--floortile = love.graphics.newImage('Graphics/floortile.png')
 		floortile = love.graphics.newImage('Graphics/floortilemost.png')
+		whitetile = love.graphics.newImage('Graphics/whitetile.png')
 		doorwaybg = love.graphics.newImage('Graphics/doorwaybackground.png')
 		deathscreen = love.graphics.newImage('NewGraphics/Newdeathscreen.png')
 		winscreen = love.graphics.newImage('NewGraphics/NewWinScreen.png')
@@ -904,7 +905,7 @@ function love.draw()
 
 	for i = 1, roomLength do
 		for j = 1, roomHeight do
-			love.graphics.draw(floortile, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height,
+			love.graphics.draw(whitetile, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height,
 			0, scale*16/floortile:getWidth(), scale*16/floortile:getWidth())
 		end
 	end
