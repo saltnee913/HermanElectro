@@ -190,7 +190,8 @@ function love.load()
 		green = love.graphics.newImage('Graphics/green.png')
 		gray = love.graphics.newImage('Graphics/gray.png')
 		--floortile = love.graphics.newImage('Graphics/floortile.png')
-		floortile = love.graphics.newImage('Graphics/floortilemost.png')
+		--floortile = love.graphics.newImage('Graphics/floortilemost.png')
+		floortile = love.graphics.newImage('Graphics/floortilenew.png')
 		whitetile = love.graphics.newImage('Graphics/whitetile.png')
 		doorwaybg = love.graphics.newImage('Graphics/doorwaybackground.png')
 		deathscreen = love.graphics.newImage('NewGraphics/Newdeathscreen.png')
@@ -219,7 +220,7 @@ function love.load()
 	scale = (width - 2*wallSprite.width)/(20.3 * 16)*5/6
 	floor = tiles.tile
 	if player == nil then
-		player = { dead = false, safeFromAnimals = false, active = true, flying = false, waitCounter = 0, tileX = 1, tileY = 6, x = (1-1)*scale*floor.sprite:getWidth()+wallSprite.width+	floor.sprite:getWidth()/2*scale-10, 
+		player = { dead = false, safeFromAnimals = false, active = true, flying = false, waitCounter = 0, tileX = 1, tileY = 6, x = (1-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10, 
 			y = (6-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10, prevTileX = 3, prevTileY 	= 10,
 			prevx = (3-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10,
 			prevy = (10-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10,
@@ -905,7 +906,7 @@ function love.draw()
 
 	for i = 1, roomLength do
 		for j = 1, roomHeight do
-			love.graphics.draw(whitetile, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height,
+			love.graphics.draw(floortile, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height,
 			0, scale*16/floortile:getWidth(), scale*16/floortile:getWidth())
 		end
 	end
@@ -1006,6 +1007,21 @@ function love.draw()
 				love.graphics.draw(toDraw, pushablex, pushabley, 0, scale, scale)
 			end
 		end
+
+		if player.tileY == j then
+			player.x = (player.tileX-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
+			player.y = (player.tileY-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
+			love.graphics.draw(player.character.sprite, player.x-player.character.sprite:getWidth()*player.character.scale/2, player.y-player.character.sprite:getHeight()*player.character.scale+10, 0, player.character.scale, player.character.scale)
+		end
+
+		if player.character.name == "Giovanni" and player.character.shiftPos.x>0 then
+			if player.character.shiftPos.y == j then
+				local playerx = (player.character.shiftPos.x-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
+				local playery = (player.character.shiftPos.y-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
+				love.graphics.draw(player.character.sprite2, playerx-player.character.sprite:getWidth()*player.character.scale/2, playery-player.character.sprite:getHeight()*player.character.scale+10, 0, player.character.scale, player.character.scale)
+			end
+		end
+
 		if tools.toolableAnimals~=nil then
 			for dir = 1, 5 do
 				if tools.toolableAnimals[dir]~=nil then
@@ -1098,22 +1114,12 @@ function love.draw()
 		love.graphics.draw(cornerwall, (cornerX-1)*floor.sprite:getWidth()*scale+wallSprite.width, (yOffset+(cornerY-1)*floor.sprite:getHeight())*scale+wallSprite.height, (i-2)*math.pi/2, scale, scale)
 	end
 
-	player.x = (player.tileX-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
-	player.y = (player.tileY-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
-	love.graphics.draw(player.character.sprite, player.x-player.character.sprite:getWidth()*player.character.scale/2, player.y-player.character.sprite:getHeight()*player.character.scale, 0, player.character.scale, player.character.scale)
-
 	if tools.toolDisplayTimer.timeLeft > 0 then
 		local toolWidth = tools[1].image:getWidth()
 		local toolScale = player.character.sprite:getWidth() * player.character.scale/toolWidth
 		for i = 1, #tools.toolsShown do
 			love.graphics.draw(tools[tools.toolsShown[i]].image, (i-math.ceil(#tools.toolsShown)/2-1)*toolScale*toolWidth+player.x, player.y - player.character.sprite:getHeight()*player.character.scale - tools[1].image:getHeight()*toolScale, 0, toolScale, toolScale)
 		end
-	end
-
-	if player.character.name == "Giovanni" and player.character.shiftPos.x>0 then
-		local playerx = (player.character.shiftPos.x-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
-		local playery = (player.character.shiftPos.y-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
-		love.graphics.draw(player.character.sprite2, playerx-player.character.sprite:getWidth()*player.character.scale/2, playery-player.character.sprite:getHeight()*player.character.scale, 0, player.character.scale, player.character.scale)
 	end
 
 	--everything after this will be drawn regardless of bigRoomTranslation (i.e., translation is undone in following line)

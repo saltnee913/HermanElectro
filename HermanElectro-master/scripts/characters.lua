@@ -28,7 +28,7 @@ function P.getUnlockedCharacters()
 	return toRet
 end
 
-P.character = Object:new{name = "Name", sprite = love.graphics.newImage('Graphics/herman_sketch.png'),
+P.character = Object:new{name = "Name", sprite = love.graphics.newImage('Graphics/hermannew.png'),
   description = "description", startingTools = {0,0,0,0,0,0,0}, scale = 0.25 * width/1200, forcePowerUpdate = false, winUnlocks = {}}
 function P.character:onBegin()
 	self:setStartingTools()
