@@ -190,7 +190,9 @@ function love.load()
 		green = love.graphics.newImage('Graphics/green.png')
 		gray = love.graphics.newImage('Graphics/gray.png')
 		--floortile = love.graphics.newImage('Graphics/floortile.png')
-		floortile = love.graphics.newImage('Graphics/floortilemost.png')
+		--floortile = love.graphics.newImage('Graphics/floortilemost.png')
+		floortile = love.graphics.newImage('Graphics/floortilenew.png')
+		whitetile = love.graphics.newImage('Graphics/whitetile.png')
 		doorwaybg = love.graphics.newImage('Graphics/doorwaybackground.png')
 		deathscreen = love.graphics.newImage('NewGraphics/Newdeathscreen.png')
 		winscreen = love.graphics.newImage('NewGraphics/NewWinScreen.png')
@@ -218,7 +220,7 @@ function love.load()
 	scale = (width - 2*wallSprite.width)/(20.3 * 16)*5/6
 	floor = tiles.tile
 	if player == nil then
-		player = { dead = false, safeFromAnimals = false, active = true, flying = false, waitCounter = 0, tileX = 1, tileY = 6, x = (1-1)*scale*floor.sprite:getWidth()+wallSprite.width+	floor.sprite:getWidth()/2*scale-10, 
+		player = { dead = false, safeFromAnimals = false, active = true, flying = false, waitCounter = 0, tileX = 1, tileY = 6, x = (1-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10, 
 			y = (6-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10, prevTileX = 3, prevTileY 	= 10,
 			prevx = (3-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10,
 			prevy = (10-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10,
@@ -980,7 +982,7 @@ function love.draw()
 							  0, scale*16/toDraw3:getWidth(), -1*addY/toDraw3:getHeight()*(scale*16/toDraw3:getWidth()))
 						end
 					end
-					if room[j][i]~=nil and room[j][i]:getInfoText()~=nil then
+					if room[j][i]~=nil and litTiles[j][i]==1 and room[j][i]:getInfoText()~=nil then
 						love.graphics.setColor(0,0,0)
 						love.graphics.print(room[j][i]:getInfoText(), (tempi-1)*floor.sprite:getWidth()*scale+wallSprite.width, (tempj-1)*floor.sprite:getHeight()*scale+wallSprite.height);
 						love.graphics.setColor(255,255,255)
@@ -1005,6 +1007,21 @@ function love.draw()
 				love.graphics.draw(toDraw, pushablex, pushabley, 0, scale, scale)
 			end
 		end
+
+		if player.tileY == j then
+			player.x = (player.tileX-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
+			player.y = (player.tileY-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
+			love.graphics.draw(player.character.sprite, player.x-player.character.sprite:getWidth()*player.character.scale/2, player.y-player.character.sprite:getHeight()*player.character.scale+10, 0, player.character.scale, player.character.scale)
+		end
+
+		if player.character.name == "Giovanni" and player.character.shiftPos.x>0 then
+			if player.character.shiftPos.y == j then
+				local playerx = (player.character.shiftPos.x-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
+				local playery = (player.character.shiftPos.y-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
+				love.graphics.draw(player.character.sprite2, playerx-player.character.sprite:getWidth()*player.character.scale/2, playery-player.character.sprite:getHeight()*player.character.scale+10, 0, player.character.scale, player.character.scale)
+			end
+		end
+
 		if tools.toolableAnimals~=nil then
 			for dir = 1, 5 do
 				if tools.toolableAnimals[dir]~=nil then
@@ -1097,22 +1114,12 @@ function love.draw()
 		love.graphics.draw(cornerwall, (cornerX-1)*floor.sprite:getWidth()*scale+wallSprite.width, (yOffset+(cornerY-1)*floor.sprite:getHeight())*scale+wallSprite.height, (i-2)*math.pi/2, scale, scale)
 	end
 
-	player.x = (player.tileX-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
-	player.y = (player.tileY-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
-	love.graphics.draw(player.character.sprite, player.x-player.character.sprite:getWidth()*player.character.scale/2, player.y-player.character.sprite:getHeight()*player.character.scale, 0, player.character.scale, player.character.scale)
-
 	if tools.toolDisplayTimer.timeLeft > 0 then
 		local toolWidth = tools[1].image:getWidth()
 		local toolScale = player.character.sprite:getWidth() * player.character.scale/toolWidth
 		for i = 1, #tools.toolsShown do
 			love.graphics.draw(tools[tools.toolsShown[i]].image, (i-math.ceil(#tools.toolsShown)/2-1)*toolScale*toolWidth+player.x, player.y - player.character.sprite:getHeight()*player.character.scale - tools[1].image:getHeight()*toolScale, 0, toolScale, toolScale)
 		end
-	end
-
-	if player.character.name == "Giovanni" and player.character.shiftPos.x>0 then
-		local playerx = (player.character.shiftPos.x-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
-		local playery = (player.character.shiftPos.y-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
-		love.graphics.draw(player.character.sprite2, playerx-player.character.sprite:getWidth()*player.character.scale/2, playery-player.character.sprite:getHeight()*player.character.scale, 0, player.character.scale, player.character.scale)
 	end
 
 	--everything after this will be drawn regardless of bigRoomTranslation (i.e., translation is undone in following line)
@@ -1190,7 +1197,7 @@ function love.draw()
 			love.graphics.setColor(0,0,0)
 			if specialTools[i+1]~=0 then
 				love.graphics.print(tools[specialTools[i+1]].numHeld, (i+13)*width/18+3, 0)
-				love.graphics.print(i+8, (i+13)*width/18+7, (width/18)-20)
+				love.graphics.print((i+8)%10, (i+13)*width/18+7, (width/18)-20)
 				love.graphics.circle("line", (i+13)*width/18+10, (width/18)-15, 9, 50)
 			end
 		end
@@ -1439,8 +1446,12 @@ function enterRoom(dir)
 	if player.tileY == math.floor(roomHeight/2) then plusOne = false
 	elseif player.tileX == math.floor(roomLength/2) then plusOne = false end
 
+	player.prevTileX = player.tileX
+	player.prevTileY = player.tileY
 	prevMapX = mapx
 	prevMapY = mapy
+	prevRoom = room
+
 	if dir == 0 then
 		if mapy>0 and not (completedRooms[mapy][mapx]==0 and completedRooms[mapy-1][mapx]==0) then
 			if mainMap[mapy-1][mapx]~=nil then
@@ -1452,8 +1463,6 @@ function enterRoom(dir)
 				player.tileY = roomHeight
 				if plusOne then player.tileX = math.floor(roomLength/2)+1
 				else player.tileX = math.floor(roomLength/2) end
-				player.prevTileY = player.tileY
-				player.prevTileX = player.tileX
 			end
 		end
 	elseif dir == 1 then
@@ -1467,8 +1476,6 @@ function enterRoom(dir)
 				player.tileX = 1
 				if plusOne then player.tileY = math.floor(roomHeight/2)+1
 				else player.tileY = math.floor(roomHeight/2) end
-				player.prevTileX = player.tileX
-				player.prevTileY = player.tileY
 			end
 		end
 	elseif dir == 2 then
@@ -1482,8 +1489,6 @@ function enterRoom(dir)
 				if plusOne then player.tileX = math.floor(roomLength/2)+1
 				else player.tileX = math.floor(roomLength/2) end
 				player.tileY = 1
-				player.prevTileY = player.tileY
-				player.prevTileX = player.tileX
 			end
 		end
 	elseif dir == 3 then
@@ -1497,8 +1502,6 @@ function enterRoom(dir)
 				player.tileX = roomLength
 				if plusOne then player.tileY = math.floor(roomHeight/2)+1
 				else player.tileY = math.floor(roomHeight/2) end
-				player.prevTileX = player.tileX
-				player.prevTileY = player.tileY
 			end
 		end
 	end
@@ -1513,6 +1516,24 @@ function enterRoom(dir)
 		createAnimals()
 		createPushables()
 	end
+
+	--check if box blocking doorway
+	for i = 1, #pushables do
+		if pushables[i].tileY == player.tileY and pushables[i].tileX == player.tileX then
+			room = prevRoom
+			player.tileX = player.prevTileX
+			player.tileY = player.prevTileY
+			mapx = prevMapX
+			mapy = prevMapY
+			createAnimals()
+			createPushables()
+			break
+		end
+	end
+
+	player.prevTileY = player.tileY
+	player.prevTileX = player.tileX
+
 	visibleMap[mapy][mapx] = 1
 	keyTimer.timeLeft = keyTimer.suicideDelay
 	updateGameState(false)
