@@ -762,7 +762,7 @@ P.catTile = P.pitbullTile:new{name = "cat", animal = animalList[4]:new(), listIn
 P.vDoor= P.hDoor:new{name = "vDoor", sprite = love.graphics.newImage('Graphics3D/door.png'), closedSprite = love.graphics.newImage('Graphics/door.png'), openSprite = love.graphics.newImage('Graphics/doorsopen.png')}
 P.vDoor.onEnter = P.hDoor.onEnter
 
-P.sign = P.tile:new{text = "", name = "sign", sprite = love.graphics.newImage('Graphics/sign.png')}
+P.sign = P.tile:new{text = "", name = "sign", sprite = love.graphics.newImage('KenGraphics/sign.png')}
 function P.sign:onEnter(player)
 	messageInfo.text = self.text
 end
@@ -889,7 +889,7 @@ end
 P.pit.willKillAnimal = P.pit.willKillPlayer
 P.pit.willDestroyPushable = P.pit.willKillPlayer
 
-P.breakablePit = P.pit:new{strength = 2, name = "breakablePit", sprite = love.graphics.newImage('Graphics/pitcovered.png'), halfBrokenSprite = love.graphics.newImage('Graphics/pithalfcovered.png'), brokenSprite = love.graphics.newImage('Graphics/pit.png')}
+P.breakablePit = P.pit:new{strength = 2, name = "breakablePit", sprite = love.graphics.newImage('KenGraphics/pitcovered.png'), halfBrokenSprite = love.graphics.newImage('KenGraphics/pithalfcovered.png'), brokenSprite = love.graphics.newImage('Graphics/pit.png')}
 function P.breakablePit:onEnter(player)
 	if self.strength>0 then
 		self.strength = self.strength - 1
