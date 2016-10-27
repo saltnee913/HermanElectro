@@ -1014,7 +1014,7 @@ function love.draw()
 		if player.tileY == j then
 			player.x = (player.tileX-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
 			player.y = (player.tileY-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
-			love.graphics.draw(player.character.sprite, math.floor(player.x-player.character.sprite:getWidth()*player.character.scale/2), math.floor(player.y-player.character.sprite:getHeight()*player.character.scale), 0, math.floor(player.character.scale), math.floor(player.character.scale))
+			love.graphics.draw(player.character.sprite, math.floor(player.x-player.character.sprite:getWidth()*player.character.scale/2), math.floor(player.y-player.character.sprite:getHeight()*player.character.scale), 0, player.character.scale, player.character.scale)
 		end
 
 		if player.character.name == "Giovanni" and player.character.shiftPos.x>0 then
