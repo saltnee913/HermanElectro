@@ -1,3 +1,5 @@
+love.graphics.setDefaultFilter( "nearest" )
+
 roomHeight = 12
 roomLength = 24
 screenScale = 70
@@ -191,7 +193,8 @@ function love.load()
 		gray = love.graphics.newImage('Graphics/gray.png')
 		--floortile = love.graphics.newImage('Graphics/floortile.png')
 		--floortile = love.graphics.newImage('Graphics/floortilemost.png')
-		floortile = love.graphics.newImage('Graphics/floortilenew.png')
+		--floortile = love.graphics.newImage('Graphics/floortilenew.png')
+		floortile = love.graphics.newImage('KenGraphics/darkrock.png')
 		whitetile = love.graphics.newImage('Graphics/whitetile.png')
 		doorwaybg = love.graphics.newImage('Graphics/doorwaybackground.png')
 		deathscreen = love.graphics.newImage('NewGraphics/Newdeathscreen.png')
@@ -1011,14 +1014,14 @@ function love.draw()
 		if player.tileY == j then
 			player.x = (player.tileX-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
 			player.y = (player.tileY-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
-			love.graphics.draw(player.character.sprite, player.x-player.character.sprite:getWidth()*player.character.scale/2, player.y-player.character.sprite:getHeight()*player.character.scale+10, 0, player.character.scale, player.character.scale)
+			love.graphics.draw(player.character.sprite, math.floor(player.x-player.character.sprite:getWidth()*player.character.scale/2), math.floor(player.y-player.character.sprite:getHeight()*player.character.scale), 0, player.character.scale, player.character.scale)
 		end
 
 		if player.character.name == "Giovanni" and player.character.shiftPos.x>0 then
 			if player.character.shiftPos.y == j then
 				local playerx = (player.character.shiftPos.x-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
 				local playery = (player.character.shiftPos.y-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
-				love.graphics.draw(player.character.sprite2, playerx-player.character.sprite:getWidth()*player.character.scale/2, playery-player.character.sprite:getHeight()*player.character.scale+10, 0, player.character.scale, player.character.scale)
+				love.graphics.draw(player.character.sprite2, playerx-player.character.sprite:getWidth()*player.character.scale/2, playery-player.character.sprite:getHeight()*player.character.scale, 0, player.character.scale, player.character.scale)
 			end
 		end
 
