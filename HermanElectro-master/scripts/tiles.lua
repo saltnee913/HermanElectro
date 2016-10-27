@@ -797,7 +797,7 @@ end
 P.rotater.onEnterAnimal = P.rotater.onEnter
 P.rotater.onLeaveAnimal = P.rotater.onLeave
 
-P.concreteWall = P.wall:new{sawable = false, name = "concreteWall", sprite = love.graphics.newImage('KenGraphics/brickwall.png'), poweredSprite = love.graphics.newImage('Graphics3D/concretewall.png'), electrifiedPoweredSprite = love.graphics.newImage('Graphics/concretewallpowered.png'), electrifiedSprite = love.graphics.newImage('Graphics/concretewallelectrified.png'), destroyedSprite = love.graphics.newImage('Graphics/concretewallbroken.png'), sawable = false}
+P.concreteWall = P.wall:new{sawable = false, name = "concreteWall", sprite = love.graphics.newImage('KenGraphics/brickwalldark.png'), poweredSprite = love.graphics.newImage('Graphics3D/concretewall.png'), electrifiedPoweredSprite = love.graphics.newImage('Graphics/concretewallpowered.png'), electrifiedSprite = love.graphics.newImage('Graphics/concretewallelectrified.png'), destroyedSprite = love.graphics.newImage('Graphics/concretewallbroken.png'), sawable = false}
 function P.concreteWall:destroy()
 	self.blocksProjectiles = false
 	self.blocksVision = false
@@ -909,7 +909,7 @@ end
 P.breakablePit.willKillAnimal = P.breakablePit.willKillPlayer
 P.breakablePit.willDestroyPushable = P.breakablePit.willKillPlayer
 
-P.treasureTile = P.tile:new{name = "treasureTile", sprite = love.graphics.newImage('Graphics/treasuretile.png'), done = false}
+P.treasureTile = P.tile:new{name = "treasureTile", sprite = love.graphics.newImage('KenGraphics/orange.png'), done = false}
 function P.treasureTile:onEnter()
 	if self.done then return end
 	local reward = util.random(1000,'toolDrop')
@@ -1190,7 +1190,7 @@ P.entrancePortal.onEnterAnimal = P.entrancePortal.onEnter
 
 P.exitPortal = P.tile:new{name = "exitPortal", sprite = love.graphics.newImage('Graphics/exitPortal.png')}
 
-P.treasureTile2 = P.treasureTile:new{name = "treasureTile2", sprite = love.graphics.newImage('Graphics/treasuretile2.png')}
+P.treasureTile2 = P.treasureTile:new{name = "treasureTile2", sprite = love.graphics.newImage('KenGraphics/purple.png')}
 
 function P.treasureTile2:onEnter()
 	if self.done then return end
@@ -1209,9 +1209,9 @@ function P.treasureTile2:giveReward(reward)
 	end
 end
 
-P.treasureTile3 = P.treasureTile:new{name = "treasureTile3", sprite = love.graphics.newImage('Graphics/treasuretile3.png')}
+P.treasureTile3 = P.treasureTile:new{name = "treasureTile3", sprite = love.graphics.newImage('KenGraphics/red.png')}
 
-P.treasureTile4 = P.treasureTile:new{name = "treasureTile4", sprite = love.graphics.newImage('Graphics/treasuretile4.png')}
+P.treasureTile4 = P.treasureTile:new{name = "treasureTile4", sprite = love.graphics.newImage('KenGraphics/green.png')}
 
 P.conductiveSlime = P.conductiveTile:new{name = "conductiveSlime", sprite = love.graphics.newImage('Graphics/conductiveslime.png'), poweredSprite = love.graphics.newImage('Graphics/conductiveslimepowered.png')}
 P.conductiveSlime.onEnter = P.slime.onEnter
