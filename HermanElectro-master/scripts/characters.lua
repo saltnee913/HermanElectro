@@ -28,7 +28,7 @@ function P.getUnlockedCharacters()
 	return toRet
 end
 
-P.character = Object:new{name = "Name", sprite = love.graphics.newImage('Graphics/hermannew.png'),
+P.character = Object:new{name = "Name", scale = 0, sprite = love.graphics.newImage('KenGraphics/char2.png'),
   description = "description", startingTools = {0,0,0,0,0,0,0}, scale = 0.25 * width/1200, forcePowerUpdate = false, winUnlocks = {}}
 function P.character:onBegin()
 	self:setStartingTools()
@@ -61,7 +61,7 @@ end
 function P.character:onTileLeave()
 end
 
-P.herman = P.character:new{name = "Herman", description = "The Electrician"}
+P.herman = P.character:new{name = "Herman", description = "The Electrician", scale = math.floor(scale)}
 function P.herman:onCharLoad()
 	if loadTutorial then return end
 	tools.giveToolsByReference({tools.revive,tools.revive})
