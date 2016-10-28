@@ -2115,13 +2115,13 @@ function checkDeath()
 		for i = 1, #tools do
 			if not tools[i]:checkDeath() then
 				player.dead = false
-				for i = 1, tools.numNormalTools do
+				--[[for i = 1, tools.numNormalTools do
 					tools[i].numHeld = 0
-				end
+				end]]
 				for i = 1, roomHeight do
 					for j = 1, roomLength do
 						if room[i][j]~=nil then
-							if not room[i][j]:instanceof(tiles.endTile) then
+							if not room[i][j]:instanceof(tiles.endTile) and not room[i][j]:instanceof(tiles.tunnel) then
 								room[i][j]=tiles.invisibleTile:new()
 							end
 						end
