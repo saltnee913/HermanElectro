@@ -797,7 +797,7 @@ end
 P.rotater.onEnterAnimal = P.rotater.onEnter
 P.rotater.onLeaveAnimal = P.rotater.onLeave
 
-P.concreteWall = P.wall:new{sawable = false, name = "concreteWall", sprite = love.graphics.newImage('KenGraphics/brickwalldark.png'), poweredSprite = love.graphics.newImage('Graphics3D/concretewall.png'), electrifiedPoweredSprite = love.graphics.newImage('Graphics/concretewallpowered.png'), electrifiedSprite = love.graphics.newImage('Graphics/concretewallelectrified.png'), destroyedSprite = love.graphics.newImage('Graphics/concretewallbroken.png'), sawable = false}
+P.concreteWall = P.wall:new{sawable = false, name = "concreteWall", sprite = love.graphics.newImage('KenGraphics/brickwalldark.png'), poweredSprite = love.graphics.newImage('KenGraphics/brickwalldark.png'), electrifiedPoweredSprite = love.graphics.newImage('Graphics/concretewallpowered.png'), electrifiedSprite = love.graphics.newImage('Graphics/concretewallelectrified.png'), destroyedSprite = love.graphics.newImage('Graphics/concretewallbroken.png'), sawable = false}
 function P.concreteWall:destroy()
 	self.blocksProjectiles = false
 	self.blocksVision = false
