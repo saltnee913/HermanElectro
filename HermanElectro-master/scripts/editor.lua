@@ -14,7 +14,7 @@ function P.draw()
 			toDraw = tiles[i].sprite
 			addx = 0
 			addy = -width/50
-			if i>50 then
+			if i>50 and i<=100 then
 				addx = -width
 				addy = 0
 			elseif i>100 then

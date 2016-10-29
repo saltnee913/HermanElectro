@@ -1407,6 +1407,16 @@ function P.finalToolsTile:getInfoText()
 end
 
 P.grass = P.tile:new{name = "grass", sprite = love.graphics.newImage('KenGraphics/grass.png')}
+P.bed = P.tile:new{name = "bed", sprite = love.graphics.newImage('KenGraphics/bed.png')}
+P.statuebottom = P.tile:new{name = "statuebottom", sprite = love.graphics.newImage('KenGraphics/statuebottom.png')}
+P.statuetop = P.tile:new{name = "statuetop", sprite = love.graphics.newImage('KenGraphics/statuetop.png')}
+P.chairfront = P.tile:new{name = "chairfront", sprite = love.graphics.newImage('KenGraphics/chairfront.png')}
+P.chairback = P.tile:new{name = "chairback", sprite = love.graphics.newImage('KenGraphics/chairback.png')}
+P.carpetmid = P.tile:new{name = "carpetmid", sprite = love.graphics.newImage('KenGraphics/puregreen.png')}
+P.carpetedge = P.tile:new{name = "carpetedge", sprite = love.graphics.newImage('KenGraphics/carpetedge.png')}
+P.carpetcorner = P.tile:new{name = "carpetcorner", sprite = love.graphics.newImage('KenGraphics/carpetcorner.png')}
+P.bookcase = P.tile:new{name = "bookcase", sprite = love.graphics.newImage('KenGraphics/bookcase.png')}
+
 
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
@@ -1501,5 +1511,14 @@ tiles[90] = P.jackInTheBoxTile
 tiles[91] = P.finalToolsTile
 tiles[92] = P.xorGate
 tiles[93] = P.grass
+tiles[94] = P.bed
+tiles[95] = P.statuebottom
+tiles[96] = P.statuetop
+tiles[97] = P.chairfront
+tiles[98] = P.chairback
+tiles[99] = P.carpetmid
+tiles[100] = P.carpetcorner
+tiles[101] = P.carpetedge
+tiles[102] = P.bookcase
 
 return tiles
