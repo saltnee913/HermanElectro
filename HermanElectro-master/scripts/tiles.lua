@@ -851,7 +851,7 @@ sprite0 = love.graphics.newImage('Graphics3D/concretewallconductivet0.png'), spr
 P.concreteWallConductiveT.rotate = P.concreteWallConductiveDirected.rotate
 P.concreteWallConductiveT.updateSprite = P.concreteWallConductiveCorner.updateSprite
 
-P.tunnel = P.tile:new{name = "tunnel", toolsNeeded = -1, toolsEntered = 0}
+P.tunnel = P.tile:new{name = "tunnel", toolsNeeded = -1, toolsEntered = 0, sprite = love.graphics.newImage('KenGraphics/stairs.png')}
 function P.tunnel:onEnter(player)
 	if self.toolsNeeded==0 then loadNextLevel() return end
 	local noNormalTools = true
