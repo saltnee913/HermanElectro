@@ -94,6 +94,12 @@ function love.load()
 	print(json.encode(itemsNeededs, state))
 	game.crash()]]
 
+	myShader = love.graphics.newShader[[
+		vec4 effect( vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords ){
+		  return vec4(1.0,0.0,0.0,1.0);
+		}
+  	]]
+
 	gamePaused = false
 	gameTime = {timeLeft = 260, toolTime = 0, roomTime = 15, levelTime = 200, donateTime = 20}
 
@@ -866,6 +872,8 @@ function canBePowered(x,y,dir)
 end
 
 function love.draw()
+	love.graphics.setShader(myShader) --draw something here
+  	--love.graphics.setShader() //removes shader
 	love.graphics.setBackgroundColor(0,0,0)
 	if not started and not charSelect then
 		love.graphics.draw(startscreen, 0, 0, 0, width/startscreen:getWidth(), height/startscreen:getHeight())
