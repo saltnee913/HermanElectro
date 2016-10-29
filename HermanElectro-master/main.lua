@@ -225,14 +225,31 @@ function love.load()
 	floor = tiles.tile
 
 	myShader = love.graphics.newShader[[
+		extern vec2 top_left;
+		extern vec2 bottom_right;
+		extern number tileYShader;
 		vec4 effect( vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords ){
 		  vec4 pixel = Texel(texture, texture_coords );//This is the current pixel color
-		  pixel.r = pixel.r/screen_coords[1]*300;
-		  pixel.g = pixel.g/screen_coords[1]*300;
-		  pixel.b = pixel.b/screen_coords[1]*300;
+		  number distx = bottom_right[0]-top_left[0];
+		  number disty = bottom_right[1]-top_left[1];
+		  number xval = abs(screen_coords[0]-top_left[0]-distx/2)/distx;
+		  number yval = abs(screen_coords[1]-top_left[1]-disty/2)/disty;
+		  xval = xval+0.5;
+		  yval = yval+0.5;
+		  number maxval = 0;
+		  if (xval>yval) {
+		  	maxval = xval;
+		  }
+		  else {
+		  	maxval = yval;
+		  }
+		  pixel.r = pixel.r*maxval;
+		  pixel.g = pixel.g*maxval;
+		  pixel.b = pixel.b*maxval;
 		  return pixel;
 		}
   	]]
+
 	if player == nil then
 		player = { dead = false, safeFromAnimals = false, active = true, flying = false, waitCounter = 0, tileX = 1, tileY = 6, x = (1-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10, 
 			y = (6-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10, prevTileX = 3, prevTileY 	= 10,
@@ -877,8 +894,6 @@ function canBePowered(x,y,dir)
 end
 
 function love.draw()
-	love.graphics.setShader(myShader) --draw something here
-  	--love.graphics.setShader() //removes shader
 	love.graphics.setBackgroundColor(0,0,0)
 	if not started and not charSelect then
 		love.graphics.draw(startscreen, 0, 0, 0, width/startscreen:getWidth(), height/startscreen:getHeight())
@@ -919,14 +934,14 @@ function love.draw()
 	--love.graphics.draw(rocks, rocksQuad, 0, 0)
 	--love.graphics.draw(rocks, -mapx * width, -mapy * height, 0, 1, 1)
 
-
+	love.graphics.setShader(myShader)
 	for i = 1, roomLength do
 		for j = 1, roomHeight do
 			love.graphics.draw(floortile, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height,
 			0, scale*16/floortile:getWidth(), scale*16/floortile:getWidth())
 		end
 	end
-
+	love.graphics.setShader()
 	for i = 1, roomLength do
 		if not (i==math.floor(roomLength/2) or i==math.floor(roomLength/2)+1) then
 			love.graphics.draw(topwall, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (yOffset+(-1)*floor.sprite:getHeight())*scale+wallSprite.height, 0, scale*16/topwall:getWidth(), scale*16/topwall:getWidth())
@@ -937,6 +952,7 @@ function love.draw()
 		end
 	end
 
+	love.graphics.setShader(myShader)
 	for j = 1, roomHeight do
 		for i = 1, roomLength do
 			if (room[j][i]~=nil and room[j][i].isVisible) or litTiles[j][i]==0 then
@@ -1089,6 +1105,7 @@ function love.draw()
 		end
 		--love.graphics.draw(walls, 0, 0, 0, width/walls:getWidth(), height/walls:getHeight())
 	end
+	love.graphics.setShader()
 
 	for i = 1, roomLength do
 		if not (i==math.floor(roomLength/2) or i==math.floor(roomLength/2)+1) then
@@ -1554,6 +1571,9 @@ function enterRoom(dir)
 	keyTimer.timeLeft = keyTimer.suicideDelay
 	updateGameState(false)
 	tutorial.enterRoom()
+
+	myShader:send("top_left", {wallSprite.width, wallSprite.height})
+  	myShader:send("bottom_right", {wallSprite.width+roomLength*floortile:getWidth()*scale, wallSprite.height+roomHeight*floortile:getWidth()*scale})
 end
 
 oldTilesOn = {}
