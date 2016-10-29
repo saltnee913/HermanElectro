@@ -1411,6 +1411,8 @@ function P.finalToolsTile:getInfoText()
 	return #self.toolsToGive
 end
 
+P.grass = P.tile:new{name = "grass", sprite = love.graphics.newImage('KenGraphics/grass.png')}
+
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
 tiles[3] = P.powerSupply
@@ -1503,5 +1505,6 @@ tiles[89] = P.giftBoxTile
 tiles[90] = P.jackInTheBoxTile
 tiles[91] = P.finalToolsTile
 tiles[92] = P.xorGate
+tiles[93] = P.grass
 
 return tiles
