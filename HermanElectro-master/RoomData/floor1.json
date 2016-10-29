@@ -49,14 +49,6 @@
 			{
 				
 			}
-		},
-		"openingrooms":
-		{
-			"filePath": "RoomData/openingrooms.json",
-			"requirements":
-			{
-
-			}
 		}
 	},
 	"data":
