@@ -308,9 +308,6 @@ function P.orson:onKeyPressed(key)
 						if room[i][j].down then room[i][j]:unstick()
 						else room[i][j]:onEnter() end
 					else room[i][j]:onEnter() end
-				elseif room[i][j]~=nil and room[i][j]:instanceof(tiles.stayButton) then
-					if room[i][j].down then room[i][j]:onLeave()
-					else room[i][j]:onEnter() end
 				end
 			end
 		end
