@@ -140,7 +140,7 @@ function P.pushable:checkDestruction()
 	end
 end
 
-P.box = P.pushable:new{name = "box", sprite = love.graphics.newImage('Graphics/box.png')}
+P.box = P.pushable:new{name = "box", sprite = love.graphics.newImage('KenGraphics/smallmachine.png')}
 
 P.playerBox = P.box:new{name = "playerBox", sprite = love.graphics.newImage('Graphics/playerBox.png'), sawable = true}
 function P.playerBox:animalCanMove()
