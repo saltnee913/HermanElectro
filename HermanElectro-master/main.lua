@@ -208,7 +208,7 @@ function love.load()
 		startscreen = love.graphics.newImage('NewGraphics/startscreen2.png')
 
 		music = love.audio.newSource('Audio/hermantheme.mp3')
-		music:play()
+		--music:play()
 
 		width2, height2 = love.graphics.getDimensions()
 		if width2>height2*16/9 then
@@ -232,10 +232,12 @@ function love.load()
 		  vec4 pixel = Texel(texture, texture_coords );//This is the current pixel color
 		  number xdist = player_x-screen_coords[0];
 		  number ydist = player_y-screen_coords[1];
-		  number playerDist = sqrt(xdist*xdist+ydist*ydist)/120;
+		  number playerDist = sqrt(xdist*xdist+ydist*ydist)/200;
 		  if (playerDist<2)
 		  	playerDist = 1+playerDist*playerDist/4;
-		  number divVal = 10;
+		  if (playerDist<0)
+		  	playerDist = 1;
+		  number divVal = 100000;
 		  if (playerDist<divVal)
 		  	divVal = playerDist;
 		  pixel.r = pixel.r/divVal;
@@ -2003,8 +2005,8 @@ function love.keypressed(key, unicode)
 
 	player.x = (player.tileX-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
 	player.y = (player.tileY-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
-    myShader:send("player_x", player.x)
-    myShader:send("player_y", player.y)
+    myShader:send("player_x", player.x+getTranslation().x*floor.sprite:getWidth()*scale+(width2-width)/2)
+    myShader:send("player_y", player.y+getTranslation().y*floor.sprite:getWidth()*scale+(height2-height)/2)
 end
 
 function postAnimalMovement()
