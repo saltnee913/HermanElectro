@@ -225,27 +225,22 @@ function love.load()
 	floor = tiles.tile
 
 	myShader = love.graphics.newShader[[
-		extern vec2 top_left;
-		extern vec2 bottom_right;
+		extern number player_x;
+		extern number player_y;
 		extern number tileYShader;
 		vec4 effect( vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords ){
 		  vec4 pixel = Texel(texture, texture_coords );//This is the current pixel color
-		  number distx = bottom_right[0]-top_left[0];
-		  number disty = bottom_right[1]-top_left[1];
-		  number xval = abs(screen_coords[0]-top_left[0]-distx/2)/distx;
-		  number yval = abs(screen_coords[1]-top_left[1]-disty/2)/disty;
-		  xval = xval+0.5;
-		  yval = yval+0.5;
-		  number maxval = 0;
-		  if (xval>yval) {
-		  	maxval = xval;
-		  }
-		  else {
-		  	maxval = yval;
-		  }
-		  pixel.r = pixel.r*maxval;
-		  pixel.g = pixel.g*maxval;
-		  pixel.b = pixel.b*maxval;
+		  number xdist = player_x-screen_coords[0];
+		  number ydist = player_y-screen_coords[1];
+		  number playerDist = sqrt(xdist*xdist+ydist*ydist)/100;
+		  number divVal = 10;
+		  if (playerDist<divVal)
+		  	divVal = playerDist;
+		  if (divVal<1)
+		  	divVal = 1;
+		  pixel.r = pixel.r/divVal;
+		  pixel.g = pixel.g/divVal;
+		  pixel.b = pixel.b/divVal;
 		  return pixel;
 		}
   	]]
@@ -1571,9 +1566,6 @@ function enterRoom(dir)
 	keyTimer.timeLeft = keyTimer.suicideDelay
 	updateGameState(false)
 	tutorial.enterRoom()
-
-	myShader:send("top_left", {wallSprite.width, wallSprite.height})
-  	myShader:send("bottom_right", {wallSprite.width+roomLength*floortile:getWidth()*scale, wallSprite.height+roomHeight*floortile:getWidth()*scale})
 end
 
 oldTilesOn = {}
@@ -2008,6 +2000,11 @@ function love.keypressed(key, unicode)
     updateGameState(noPowerUpdate)
     resetTileStates()
     checkAllDeath()
+
+	player.x = (player.tileX-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
+	player.y = (player.tileY-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
+    myShader:send("player_x", player.x)
+    myShader:send("player_y", player.y)
 end
 
 function postAnimalMovement()
