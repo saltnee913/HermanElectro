@@ -912,35 +912,31 @@ P.breakablePit.willDestroyPushable = P.breakablePit.willKillPlayer
 P.treasureTile = P.tile:new{name = "treasureTile", sprite = love.graphics.newImage('KenGraphics/orange.png'), done = false}
 function P.treasureTile:onEnter()
 	if self.done then return end
-	local reward = util.random(1000,'toolDrop')
-	self:giveReward(reward)
+	self:giveReward()
 	self.done = true
 	self.isCompleted = true
 	self.isVisible = false
 end
-function P.treasureTile:giveReward(reward)
+function P.treasureTile:giveReward()
 	local timesCounter = 0
-	local probNothing = 333-donations*18
-	local probBasic = 800-donations*18
-	local probSuper = 1 - probNothing - probBasic
-	if reward<probNothing then return
-	elseif reward<probBasic then
-		local counter = 0
-		while counter<3 do
-			tools.giveRandomTools(1)
-			local rand = util.random('toolDrop')
-			if rand>probBasic/1000 then return end
-			counter = counter+1
-		end
-	else
-		local counter = 0
-		while counter<2 do
-			tools.giveSupertools(1)
-			local rand = util.random('toolDrop')
-			if rand>probSuper/1000 then return end
-			counter = counter+1
-		end
+	local probBasic = 400
+	local probBasic2 = 100
+	local probSuper = 100
+	local basicCount = 0
+	local superCount = 0
+	local rand = util.random(1000,'toolDrop')
+	if rand<probBasic then
+		basicCount = basicCount+1
 	end
+	rand = util.random(1000,'toolDrop')
+	if rand<probBasic2 then
+		basicCount = basicCount+1
+	end
+	rand = util.random(1000,'toolDrop')
+	if rand<probSuper then
+		superCount = superCount+1
+	end
+	tools.giveRandomTools(basicCount,superCount)
 end
 
 P.mousetrap = P.conductiveTile:new{name = "mousetrap", bricked = false, formerPowered = nil, triggered = false, safe = false, sprite = love.graphics.newImage('Graphics/mousetrap.png'), safeSprite = love.graphics.newImage('Graphics/mousetrapsafe.png'), deadlySprite = love.graphics.newImage('Graphics/mousetrap.png'), brickedSprite = love.graphics.newImage('Graphics/mousetrapbricked.png')}
@@ -1194,18 +1190,17 @@ P.treasureTile2 = P.treasureTile:new{name = "treasureTile2", sprite = love.graph
 
 function P.treasureTile2:onEnter()
 	if self.done then return end
-	local reward = util.random(1000,'toolDrop')
-	self:giveReward(reward)
+	self:giveReward()
 	self.done = true
 	self.isCompleted = true
 	self.isVisible = false
 end
-function P.treasureTile2:giveReward(reward)
-	if reward<775-donations*10 then
+function P.treasureTile2:giveReward()
+	local reward = util.random(1000,'toolDrop')
+	if reward<775 then
 		tools.giveRandomTools(1)
 	else
-		tools.giveRandomTools(1)
-		tools.giveSupertools(1)
+		tools.giveRandomTools(1,1)
 	end
 end
 

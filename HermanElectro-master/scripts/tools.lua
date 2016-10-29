@@ -68,11 +68,16 @@ function P.giveToolsByReference(toolArray)
 	P.giveTools(toolsToGive)
 end
 
-function P.giveRandomTools(numTools)
+function P.giveRandomTools(numTools,numSupers)
+	if numSupers == nil then numSupers = 0 end
 	local toolsToGive = {}
 	for i = 1, numTools do
 		slot = P.chooseNormalTool()
 		toolsToGive[#toolsToGive+1] = slot
+	end
+	local supersToGive = P.getSupertools(numSupers)
+	for i = 1, numSupers do
+		toolsToGive[#toolsToGive+1] = supersToGive[i]
 	end
 	P.giveTools(toolsToGive)
 end
@@ -603,7 +608,7 @@ function P.chooseGoodSupertools()
 	return filledSlots
 end
 
-function P.giveSupertools(numTools)
+function P.getSupertools(numTools)
 	if numTools == nil then numTools = 1 end
 	local toolsToGive = {}
 	local filledSlots = {0,0,0}
@@ -629,7 +634,11 @@ function P.giveSupertools(numTools)
 		end
 		toolsToGive[#toolsToGive + 1] = slot
 	end
-	P.giveTools(toolsToGive)
+	return toolsToGive
+end
+
+function P.giveSupertools(numTools)
+	P.giveTools(P.getSupertools(numTools))
 end
 
 P.shovel = P.superTool:new{name = "shovel", baseRange = 1, image = love.graphics.newImage('Graphics/shovel.png')}
