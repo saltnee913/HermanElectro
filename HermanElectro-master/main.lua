@@ -94,11 +94,6 @@ function love.load()
 	print(json.encode(itemsNeededs, state))
 	game.crash()]]
 
-	myShader = love.graphics.newShader[[
-		vec4 effect( vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords ){
-		  return vec4(1.0,0.0,0.0,1.0);
-		}
-  	]]
 
 	gamePaused = false
 	gameTime = {timeLeft = 260, toolTime = 0, roomTime = 15, levelTime = 200, donateTime = 20}
@@ -228,6 +223,16 @@ function love.load()
 	--print(love.graphics.getWidth(f1))
 	scale = (width - 2*wallSprite.width)/(20.3 * 16)*5/6
 	floor = tiles.tile
+
+	myShader = love.graphics.newShader[[
+		vec4 effect( vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords ){
+		  vec4 pixel = Texel(texture, texture_coords );//This is the current pixel color
+		  pixel.r = pixel.r/screen_coords[1]*300;
+		  pixel.g = pixel.g/screen_coords[1]*300;
+		  pixel.b = pixel.b/screen_coords[1]*300;
+		  return pixel;
+		}
+  	]]
 	if player == nil then
 		player = { dead = false, safeFromAnimals = false, active = true, flying = false, waitCounter = 0, tileX = 1, tileY = 6, x = (1-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10, 
 			y = (6-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10, prevTileX = 3, prevTileY 	= 10,
