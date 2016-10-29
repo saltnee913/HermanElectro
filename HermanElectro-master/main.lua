@@ -232,12 +232,12 @@ function love.load()
 		  vec4 pixel = Texel(texture, texture_coords );//This is the current pixel color
 		  number xdist = player_x-screen_coords[0];
 		  number ydist = player_y-screen_coords[1];
-		  number playerDist = sqrt(xdist*xdist+ydist*ydist)/100;
+		  number playerDist = sqrt(xdist*xdist+ydist*ydist)/120;
+		  if (playerDist<2)
+		  	playerDist = 1+playerDist*playerDist/4;
 		  number divVal = 10;
 		  if (playerDist<divVal)
 		  	divVal = playerDist;
-		  if (divVal<1)
-		  	divVal = 1;
 		  pixel.r = pixel.r/divVal;
 		  pixel.g = pixel.g/divVal;
 		  pixel.b = pixel.b/divVal;
