@@ -227,23 +227,25 @@ function love.load()
 	myShader = love.graphics.newShader[[
 		extern number player_x;
 		extern number player_y;
-		extern number tileYShader;
+		extern vec4 adjacentLighting;
+		extern number tileXCenter;
+		extern number tileYCenter;
 		vec4 effect( vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords ){
-		  vec4 pixel = Texel(texture, texture_coords );//This is the current pixel color
-		  number xdist = player_x-screen_coords[0];
-		  number ydist = player_y-screen_coords[1];
-		  number playerDist = sqrt(xdist*xdist+ydist*ydist)/200;
-		  if (playerDist<2)
-		  	playerDist = 1+playerDist*playerDist/4;
-		  if (playerDist<0)
-		  	playerDist = 1;
-		  number divVal = 100000;
-		  if (playerDist<divVal)
-		  	divVal = playerDist;
-		  pixel.r = pixel.r/divVal;
-		  pixel.g = pixel.g/divVal;
-		  pixel.b = pixel.b/divVal;
-		  return pixel;
+		  	vec4 pixel = Texel(texture, texture_coords );//This is the current pixel color
+			number xdist = player_x-screen_coords[0];
+			number ydist = player_y-screen_coords[1];
+			number playerDist = sqrt(xdist*xdist+ydist*ydist)/200;
+			if (playerDist<2)
+				playerDist = 1+playerDist*playerDist/4;
+			if (playerDist<0)
+			  	playerDist = 1;
+			number divVal = 100000;
+			if (playerDist<divVal)
+			  	divVal = playerDist;
+			pixel.r = pixel.r/divVal;
+			pixel.g = pixel.g/divVal;
+			pixel.b = pixel.b/divVal;
+			return pixel;
 		}
   	]]
 
