@@ -1913,7 +1913,7 @@ function love.keypressed(key, unicode)
 		 		end
 		 	end
 	    end
-    	updateGameState(noPowerUpdate)
+    	updateGameState(noPowerUpdate, true)
 	    if player.tileY~=player.prevTileY or player.tileX~=player.prevTileX or waitTurn then
 	    	stepTrigger()
 	    	for k = 1, #animals do
@@ -2270,7 +2270,7 @@ function love.mousemoved(x, y, dx, dy)
 	end
 end
 
-function updateGameState(noPowerUpdate)
+function updateGameState(noPowerUpdate, noLightUpdate)
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
 			if room[i]~=nil and room[i][j]~=nil then
@@ -2284,7 +2284,9 @@ function updateGameState(noPowerUpdate)
 	checkWin()
 
 	if not noPowerUpdate then updatePower() end
-	updateLight()
+	if not noLightUpdate then
+		updateLight()
+	end
 	updateTools()
 	if tool ~= 0 and tool ~= nil and tools[tool].numHeld == 0 then tool = 0 end
 	tools.updateToolableTiles(tool)
