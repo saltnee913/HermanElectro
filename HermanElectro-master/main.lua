@@ -955,7 +955,7 @@ function love.draw()
 	love.graphics.setShader(myShader)
 	for j = 1, roomHeight do
 		for i = 1, roomLength do
-			if (room[j][i]~=nil or litTiles[j][i]==0) and not room[j][i]:instanceof(tiles.invisibleTile) then
+			if (room[j][i]~=nil or litTiles[j][i]==0) and not (room[j][i]~=nil and room[j][i]:instanceof(tiles.invisibleTile)) then
 				if room[j][i]~=nil then room[j][i]:updateSprite() end
 				local rot = 0
 				local tempi = i
