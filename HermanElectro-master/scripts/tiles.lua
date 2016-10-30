@@ -1420,6 +1420,8 @@ P.pooledge = P.tile:new{name = "pooledge", sprite = love.graphics.newImage('KenG
 P.poolcorner = P.tile:new{name = "poolcorner", sprite = love.graphics.newImage('KenGraphics/poolcorner.png')}
 P.poolcenter = P.tile:new{name = "poolcenter", sprite = love.graphics.newImage('KenGraphics/poolcenter.png')}
 
+P.invisibleWire = P.wire:new{name = "invisibleWire", isVisible = false}
+
 
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
@@ -1523,5 +1525,6 @@ tiles[99] = P.carpetmid
 tiles[100] = P.carpetcorner
 tiles[101] = P.carpetedge
 tiles[102] = P.bookcase
+tiles[103] = P.invisibleWire
 
 return tiles
