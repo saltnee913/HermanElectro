@@ -797,6 +797,8 @@ end
 P.rotater.onEnterAnimal = P.rotater.onEnter
 P.rotater.onLeaveAnimal = P.rotater.onLeave
 
+P.cornerRotater = P.rotater:new{name = "cornerRotater", dirSend = {1,1,0,0}, dirAccept = {1,1,0,0}, poweredSprite = love.graphics.newImage('Graphics/cornerRotater.png'), sprite = love.graphics.newImage('Graphics/cornerRotater.png')}
+
 P.concreteWall = P.wall:new{sawable = false, name = "concreteWall", sprite = love.graphics.newImage('KenGraphics/brickwalldark.png'), poweredSprite = love.graphics.newImage('KenGraphics/brickwalldark.png'), electrifiedPoweredSprite = love.graphics.newImage('Graphics/concretewallpowered.png'), electrifiedSprite = love.graphics.newImage('Graphics/concretewallelectrified.png'), destroyedSprite = love.graphics.newImage('Graphics/concretewallbroken.png'), sawable = false}
 function P.concreteWall:destroy()
 	self.blocksProjectiles = false
@@ -1550,5 +1552,6 @@ tiles[112] = P.invisibleBoxTile
 tiles[113] = P.invisibleDecoy
 tiles[114] = P.unbreakableElectricFloor
 tiles[115] = P.superStickyButton
+tiles[116] = P.cornerRotater
 
 return tiles
