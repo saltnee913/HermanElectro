@@ -1430,7 +1430,7 @@ P.invisibleWoodenWall = P.wall:new{name = "invisibleWoodenWall", isVisible = fal
 P.invisiblePoweredFloor = P.poweredFloor:new{name = "invisiblePoweredFloor", isVisible = false}
 P.invisibleElectricFloor = P.electricFloor:new{name = "invisibleElectricFloor", isVisible = false}
 P.invisibleBoxTile = P.tile:new{name = "invisibleBoxTile", pushable = pushableList[11]:new(), listIndex = 11, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
-
+P.invisibleDecoy = P.tile:new{name = "invisibleDecoy", isVisible = false}
 
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
@@ -1544,5 +1544,6 @@ tiles[109] = P.invisibleWoodenWall
 tiles[110] = P.invisiblePoweredFloor
 tiles[111] = P.invisibleElectricFloor
 tiles[112] = P.invisibleBoxTile
+tiles[113] = P.invisibleDecoy
 
 return tiles

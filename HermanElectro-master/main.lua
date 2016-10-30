@@ -196,6 +196,7 @@ function love.load()
 		--floortile = love.graphics.newImage('Graphics/floortilemost.png')
 		--floortile = love.graphics.newImage('Graphics/floortilenew.png')
 		floortile = love.graphics.newImage('KenGraphics/darkrock.png')
+		invisibleTile = love.graphics.newImage('Graphics/cavesfloor.png')
 		whitetile = love.graphics.newImage('Graphics/whitetile.png')
 		doorwaybg = love.graphics.newImage('Graphics/doorwaybackground.png')
 		deathscreen = love.graphics.newImage('NewGraphics/Newdeathscreen.png')
@@ -954,7 +955,7 @@ function love.draw()
 	love.graphics.setShader(myShader)
 	for j = 1, roomHeight do
 		for i = 1, roomLength do
-			if (room[j][i]~=nil and room[j][i].isVisible) or litTiles[j][i]==0 then
+			if room[j][i]~=nil or litTiles[j][i]==0 then
 				if room[j][i]~=nil then room[j][i]:updateSprite() end
 				local rot = 0
 				local tempi = i
@@ -978,6 +979,9 @@ function love.draw()
 					if rot == 2 or rot == 3 then
 						tempj = tempj + 1
 					end
+				end
+				if not room[j][i].isVisible then
+					toDraw = invisibleTile
 				end
 				if (room[j][i]~=nil --[[and room[j][i].name~="pitbull" and room[j][i].name~="cat" and room[j][i].name~="pup"]]) or litTiles[j][i]==0 then
 					local addY = 0
