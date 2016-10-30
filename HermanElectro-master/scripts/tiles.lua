@@ -454,7 +454,7 @@ end
 
 P.maskedMetalWall = P.metalWall:new{sprite = love.graphics.newImage('Graphics/maskedMetalWall.png'), poweredSprite = love.graphics.newImage('Graphics/maskedMetalWall.png')}
 
-P.glassWall = P.wall:new{sawable = false, canBePowered = false, dirAccept = {0,0,0,0}, dirSend = {0,0,0,0}, bricked = false, name = "glasswall", blocksVision = false, electrifiedSprite = love.graphics.newImage('Graphics/glasswallelectrified.png'), destroyedSprite = love.graphics.newImage('Graphics/glassbroken.png'), sprite = love.graphics.newImage('KenGraphics/glass.png'), poweredSprite = love.graphics.newImage('Graphics3D/glass.png'), electrifiedPoweredSprite = love.graphics.newImage('Graphics/glasswallpowered.png'), sawable = false }
+P.glassWall = P.wall:new{sawable = false, canBePowered = false, dirAccept = {0,0,0,0}, dirSend = {0,0,0,0}, bricked = false, name = "glasswall", blocksVision = false, electrifiedSprite = love.graphics.newImage('Graphics/glasswallelectrified.png'), destroyedSprite = love.graphics.newImage('Graphics/glassbroken.png'), sprite = love.graphics.newImage('Graphics3D/glass.png'), poweredSprite = love.graphics.newImage('Graphics3D/glass.png'), electrifiedPoweredSprite = love.graphics.newImage('Graphics/glasswallpowered.png'), sawable = false }
 P.glassWall.getYOffset = P.wall.getYOffset
 function P.glassWall:destroy()
 	self.blocksProjectiles = false
