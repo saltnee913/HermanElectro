@@ -1421,6 +1421,15 @@ P.poolcorner = P.tile:new{name = "poolcorner", sprite = love.graphics.newImage('
 P.poolcenter = P.tile:new{name = "poolcenter", sprite = love.graphics.newImage('KenGraphics/poolcenter.png')}
 
 P.invisibleWire = P.wire:new{name = "invisibleWire", isVisible = false}
+P.invisibleAndGate = P.wire:new{name = "invisibleAndGate", isVisible = false}
+P.invisibleTWire = P.tWire:new{name = "invisibleTWire", isVisible = false}
+P.invisibleNotGate = P.notGate:new{name = "invisibleNotGate", isVisible = false}
+P.invisiblePowerSupply = P.powerSupply:new{name = "invisiblePowerSupply", isVisible = false}
+P.invisibleConcreteWall = P.concreteWall:new{name = "invisibleConcreteWall", isVisible = false}
+P.invisibleWoodenWall = P.wall:new{name = "invisibleWoodenWall", isVisible = false}
+P.invisiblePoweredFloor = P.poweredFloor:new{name = "invisiblePoweredFloor", isVisible = false}
+P.invisibleElectricFloor = P.electricFloor:new{name = "invisibleElectricFloor", isVisible = false}
+P.invisibleBoxTile = P.tile:new{name = "invisibleBoxTile", pushable = pushableList[11]:new(), listIndex = 11, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
 
 
 tiles[1] = P.invisibleTile
@@ -1526,5 +1535,14 @@ tiles[100] = P.carpetcorner
 tiles[101] = P.carpetedge
 tiles[102] = P.bookcase
 tiles[103] = P.invisibleWire
+tiles[104] = P.invisibleAndGate
+tiles[105] = P.invisibleTWire
+tiles[106] = P.invisibleNotGate
+tiles[107] = P.invisiblePowerSupply
+tiles[108] = P.invisibleConcreteWall
+tiles[109] = P.invisibleWoodenWall
+tiles[110] = P.invisiblePoweredFloor
+tiles[111] = P.invisibleElectricFloor
+tiles[112] = P.invisibleBoxTile
 
 return tiles

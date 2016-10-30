@@ -5,7 +5,7 @@ require('scripts.object')
 local P = {}
 pushableList = P
 
-P.pushable = Object:new{name = "pushable", sawable = true, canBeAccelerated = true, conductive = false, prevTileX = 0, prevTileY = 0, tileX = 0, tileY = 0, destroyed = false, sprite = love.graphics.newImage('Graphics/box.png')}
+P.pushable = Object:new{name = "pushable", visible = true, sawable = true, canBeAccelerated = true, conductive = false, prevTileX = 0, prevTileY = 0, tileX = 0, tileY = 0, destroyed = false, sprite = love.graphics.newImage('Graphics/box.png')}
 function P.pushable:destroy()
 	self.destroyed = true
 end
@@ -301,6 +301,8 @@ end
 P.jackInTheBox = P.conductiveBox:new{name = "jackInTheBox", sprite = love.graphics.newImage('Graphics/jackinthebox.png'),
   poweredSprite = love.graphics.newImage('Graphics/jackintheboxpowered.png'), sawable = false}
 
+P.invisibleBox = P.box:new{visible = false}
+
 pushableList[1] = P.pushable
 pushableList[2] = P.box
 pushableList[3] = P.playerBox
@@ -311,5 +313,6 @@ pushableList[7] = P.batteringRam
 pushableList[8] = P.bombBox
 pushableList[9] = P.giftBox
 pushableList[10] = P.jackInTheBox
+pushableList[11] = P.invisibleBox
 
 return pushableList
