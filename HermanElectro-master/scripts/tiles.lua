@@ -920,6 +920,7 @@ function P.treasureTile:onEnter()
 	self.done = true
 	self.isCompleted = true
 	self.isVisible = false
+	self.gone = true
 end
 function P.treasureTile:giveReward()
 	local timesCounter = 0

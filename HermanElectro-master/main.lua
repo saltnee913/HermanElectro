@@ -1874,7 +1874,9 @@ function love.keypressed(key, unicode)
 		--[[if usedTool and tool>tools.numNormalTools then
 			gameTime = gameTime-100
 		end]]
-		if usedTool then player.character:onToolUse() end
+		if usedTool then
+			player.character:onToolUse()
+		end
 		if usedTool and tool<=tools.numNormalTools then
 			gameTime.timeLeft = gameTime.timeLeft+gameTime.toolTime
 		end
@@ -2242,8 +2244,8 @@ function love.mousepressed(x, y, button, istouch)
 	elseif not clickActivated then
 		if tool<=tools.numNormalTools then
 			gameTime.timeLeft = gameTime.timeLeft+gameTime.toolTime
-			player.character:onToolUse()
 		end
+		player.character:onToolUse()
 	end
 	
 	updateGameState(false)
