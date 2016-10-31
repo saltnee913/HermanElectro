@@ -345,11 +345,11 @@ function P.lenny:onTileLeave()
 	end
 end
 
-P.fish = P.character:new{name = "Fish", description = "Fish", life = 50, sprite = love.graphics.newImage('Graphics/fish.png')}
+P.fish = P.character:new{name = "Fish", description = "Fish", life = 100, sprite = love.graphics.newImage('Graphics/fish.png')}
 function P.fish:postMove()
 	self.life = self.life-1
 	if room[player.tileY][player.tileX]~=nil and room[player.tileY][player.tileX]:instanceof(tiles.puddle) then
-		self.life = 50
+		self.life = 100
 	end
 	if self.life<=0 then
 		kill()
@@ -357,7 +357,7 @@ function P.fish:postMove()
 end
 function P.fish:onCharLoad()
 	tools.giveToolsByReference({tools.bucketOfWater, tools.bucketOfWater, tools.bucketOfWater, tools.bucketOfWater, tools.bucketOfWater})
-	self.life = 50
+	self.life = 100
 end
 function P.fish:onFloorEnter()
 	tools.giveToolsByReference({tools.bucketOfWater, tools.bucketOfWater, tools.bucketOfWater, tools.bucketOfWater, tools.bucketOfWater})
