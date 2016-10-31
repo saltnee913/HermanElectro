@@ -54,6 +54,7 @@
 		"startRoomID": "1",
 		//numRoomsToCheck is the amount of rooms to try when deciding a room's roomid, decreasing this increases rng
 		"numRoomsToCheck": 5,
-		"finalFloor": true
+		"finalFloor": true,
+		"tint": [0.25,0.25,0.25]
 	}
 }
