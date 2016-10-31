@@ -235,8 +235,8 @@ function P.mousepressed(x, y, button, istouch)
 		if mouseY>height-width/50 then
 			editorAdd = editorAdd+50
 		end
-	elseif tempAdd>0 and tileLocX>=1 and tileLocX<=roomLength and tileLocY>=1 and tileLocY<=roomHeight then
-		if(room[tileLocY][tileLocX] ~= nil and room[tileLocY][tileLocX].name == tiles[tempAdd].name) then
+	elseif tempAdd>0 and tempAdd<=#tiles and tileLocX>=1 and tileLocX<=roomLength and tileLocY>=1 and tileLocY<=roomHeight then
+		if(room[tileLocY]~=nil and room[tileLocY][tileLocX] ~= nil and room[tileLocY][tileLocX].name == tiles[tempAdd].name) then
 			room[tileLocY][tileLocX]:rotate(1)
 		else
 			if tiles[tempAdd]~=nil then
