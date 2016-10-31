@@ -58,7 +58,11 @@ function P.character:onToolUse()
 end
 function P.character:preTileEnter(tile)
 end
+function P.character:postMove()
+end
 function P.character:onTileLeave()
+end
+function P.character:getInfoText()
 end
 
 P.herman = P.character:new{name = "Herman", description = "The Electrician", scale = 0.3}
@@ -340,6 +344,27 @@ function P.lenny:onTileLeave()
 	end
 end
 
+P.fish = P.character:new{name = "Fish", description = "Fish", life = 50, sprite = love.graphics.newImage('Graphics/fish.png')}
+function P.fish:postMove()
+	self.life = self.life-1
+	if room[player.tileY][player.tileX]~=nil and room[player.tileY][player.tileX]:instanceof(tiles.puddle) then
+		self.life = 50
+	end
+	if self.life<=0 then
+		kill()
+	end
+end
+function P.fish:onCharLoad()
+	tools.giveToolsByReference({tools.bucketOfWater, tools.bucketOfWater, tools.bucketOfWater, tools.bucketOfWater, tools.bucketOfWater})
+	self.life = 50
+end
+function P.fish:onFloorEnter()
+	tools.giveToolsByReference({tools.bucketOfWater, tools.bucketOfWater, tools.bucketOfWater, tools.bucketOfWater, tools.bucketOfWater})
+end
+function P.fish:getInfoText()
+	return self.life
+end
+
 P[1] = P.herman
 P[2] = P.felix
 P[3] = P.most
@@ -356,5 +381,6 @@ P[13] = P.tim
 P[14] = P.orson
 P[15] = P.lenny
 P[16] = P.random
+P[17] = P.fish
 
 return characters
