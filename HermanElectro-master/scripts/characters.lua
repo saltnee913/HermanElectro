@@ -29,8 +29,12 @@ function P.getUnlockedCharacters()
 end
 
 P.character = Object:new{name = "Name", scale = 0, sprite = love.graphics.newImage('Graphics/herman_sketchanother.png'),
-  description = "description", startingTools = {0,0,0,0,0,0,0}, scale = 0.25 * width/1200, forcePowerUpdate = false, winUnlocks = {}}
+  description = "description", startingTools = {0,0,0,0,0,0,0}, scale = 0.25 * width/1200, forcePowerUpdate = false, winUnlocks = {}, tint = {0,0,0}}
 function P.character:onBegin()
+
+    myShader:send("tint_r", self.tint[1])
+    myShader:send("tint_g", self.tint[2])
+    myShader:send("tint_b", self.tint[3])
 	self:setStartingTools()
 	self:onCharLoad()
 end
@@ -345,7 +349,7 @@ function P.lenny:onTileLeave()
 	end
 end
 
-P.fish = P.character:new{name = "Fish", description = "Fish", life = 100, sprite = love.graphics.newImage('Graphics/fish.png')}
+P.fish = P.character:new{name = "Fish", description = "Fish", life = 100, sprite = love.graphics.newImage('Graphics/fish.png'), tint = {0,0,0.4}}
 function P.fish:postMove()
 	self.life = self.life-1
 	if room[player.tileY][player.tileX]~=nil and room[player.tileY][player.tileX]:instanceof(tiles.puddle) then
