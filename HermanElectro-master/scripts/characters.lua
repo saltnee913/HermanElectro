@@ -58,7 +58,7 @@ function P.character:onToolUse()
 end
 function P.character:preTileEnter(tile)
 end
-function P.character:postMove()
+function P.character:postMAction()
 end
 function P.character:onTileLeave()
 end
@@ -365,6 +365,7 @@ end
 function P.fish:getInfoText()
 	return self.life
 end
+P.fish.onToolUse = P.fish.postMove
 
 P[1] = P.herman
 P[2] = P.felix
