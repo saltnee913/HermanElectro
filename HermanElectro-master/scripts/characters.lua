@@ -58,7 +58,7 @@ function P.character:onToolUse()
 end
 function P.character:preTileEnter(tile)
 end
-function P.character:postMAction()
+function P.character:postMove()
 end
 function P.character:onTileLeave()
 end
