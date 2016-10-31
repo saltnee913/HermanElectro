@@ -126,7 +126,7 @@ function P.tile:updateTileAndOverlay(dir)
 	self:updateTile(dir)
 end
 
-P.invisibleTile = P.tile:new{isVisible = false}
+P.invisibleTile = P.tile:new{isVisible = false, name = "invisibleTile"}
 local bounds = {}
 
 P.boundedTile = P.tile:new{boundary = boundaries.Boundary}
