@@ -287,6 +287,7 @@ function loadRandoms()
 	else
 		seed = tonumber(seedOverride)
 	end
+	if seed == nil then seed = os.time() end
 	util.newRandom('mapGen', seed)
 	util.newRandom('toolDrop', seed*3)
 	util.newRandom('misc', seed*5)
@@ -604,6 +605,66 @@ function updatePower()
 					 and room[i+offset.y][j+offset.x].dirSend[room[i][j]:cfr(1)]==1 then
 						room[i][j].poweredNeighbors[room[i][j]:cfr(3)]=1
 						room[i][j]:updateTileAndOverlay(0)
+					end
+				end
+			end
+		end
+	end
+
+	for i = 1, 4 do
+		for i = 1, 5 do
+			for i = 1, #pushables do
+				if pushables[i].conductive and not pushables[i].destroyed then
+					local conductPower = false
+					local pX = pushables[i].tileX
+					local pY = pushables[i].tileY
+					if (room[pY-1]~=nil and room[pY-1][pX]~=nil and room[pY-1][pX].powered and room[pY-1][pX].dirSend[3]==1) or
+					(room[pY+1]~=nil and room[pY+1][pX]~=nil and room[pY+1][pX].powered and room[pY+1][pX].dirSend[1]==1) or
+					(room[pY][pX-1]~=nil and room[pY][pX-1].powered and room[pY][pX-1].dirSend[2]==1) or
+					(room[pY][pX+1]~=nil and room[pY][pX+1].powered and room[pY][pX+1].dirSend[4]==1) then
+						conductPower = true
+					end
+					for j = 1, #pushables do
+						if pushables[j].powered and not pushables[j].destroyed then
+							if pushables[i].tileY == pushables[j].tileY and math.abs(pushables[i].tileX-pushables[j].tileX)==1
+							or pushables[i].tileX == pushables[j].tileX and math.abs(pushables[j].tileY-pushables[i].tileY)==1 then
+								conductPower = true
+							end
+						end
+					end
+					if conductPower then
+						if pushables[i]:instanceof(pushableList.bombBox) and k==3 then
+							if not pushables[i].destroyed then
+								pushables[i]:destroy(pY, pX)
+							end
+						else
+							if pushables[i]:instanceof(pushableList.jackInTheBox) then
+								for i = 1, #animals do
+									animals[i].waitCounter = 1
+								end
+							end
+							powerTestPushable(pY, pX, 0)
+						end
+						pushables[i].powered = true
+					end
+				end
+			end
+		end
+		for i = 1, roomHeight do
+			for j = 1, roomLength do
+				if room[i][j]~=nil and room[i][j].charged then room[i][j].powered=true end
+				if room[i]~=nil and room[i][j]~=nil and not (room[i][j]:instanceof(tiles.powerSupply) or room[i][j]:instanceof(tiles.notGate)) and not room[i][j].charged then
+					room[i][j].poweredNeighbors = {0,0,0,0}
+					room[i][j].powered = false
+					room[i][j]:updateTileAndOverlay(0)
+				end
+			end
+		end
+		for i = 1, roomHeight do
+			for j = 1, roomLength do
+				if room[i]~=nil and room[i][j]~=nil then
+					if (room[i][j]:instanceof(tiles.powerSupply) or room[i][j]:instanceof(tiles.notGate) or room[i][j].charged) and room[i][j].powered then
+						powerTestSpecial(i,j,0)
 					end
 				end
 			end
@@ -986,7 +1047,7 @@ function love.draw()
 						tempj = tempj + 1
 					end
 				end
-				if room[j][i]~=nil and not room[j][i].isVisible and not room[j][i]:instanceof(tiles.invisibleTile) then
+				if room[j][i]~=nil and not room[j][i].isVisible and not room[j][i]:instanceof(tiles.invisibleTile) and litTiles[j][i]==1 then
 					toDraw = invisibleTile
 				end
 				if (room[j][i]~=nil --[[and room[j][i].name~="pitbull" and room[j][i].name~="cat" and room[j][i].name~="pup"]]) or litTiles[j][i]==0 then
@@ -1420,9 +1481,9 @@ function hackEnterRoom(roomid, y, x)
 	roomLength = room.length
 	if player.tileX>roomLength then player.tileX = roomLength end
 	if player.tileY>roomHeight then player.tileY = roomHeight end
-	updateGameState(false)
 	createAnimals()
 	createPushables()
+	updateGameState(false)
 	return true
 end
 

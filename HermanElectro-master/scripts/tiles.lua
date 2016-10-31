@@ -1199,6 +1199,7 @@ function P.treasureTile2:onEnter()
 	self.done = true
 	self.isCompleted = true
 	self.isVisible = false
+	self.gone = true
 end
 function P.treasureTile2:giveReward()
 	local reward = util.random(1000,'toolDrop')
