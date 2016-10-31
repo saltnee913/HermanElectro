@@ -1047,6 +1047,7 @@ function love.draw()
 			player.x = (player.tileX-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
 			player.y = (player.tileY-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
 			love.graphics.draw(player.character.sprite, math.floor(player.x-player.character.sprite:getWidth()*player.character.scale/2), math.floor(player.y-player.character.sprite:getHeight()*player.character.scale), 0, player.character.scale, player.character.scale)
+			love.graphics.print(player.character:getInfoText(), math.floor(player.x-player.character.sprite:getWidth()*player.character.scale/2), math.floor(player.y-player.character.sprite:getHeight()*player.character.scale));
 		end
 
 		if player.character.name == "Giovanni" and player.character.shiftPos.x>0 then
@@ -1987,6 +1988,7 @@ function love.keypressed(key, unicode)
 		    	end
 	    	end
 		end
+		player.character:postMove()
     end
     --Debug console stuff
     if key=='p' then
