@@ -356,11 +356,11 @@ function P.fish:postMove()
 	end
 end
 function P.fish:onCharLoad()
-	tools.giveToolsByReference({tools.bucketOfWater, tools.bucketOfWater, tools.bucketOfWater, tools.bucketOfWater, tools.bucketOfWater})
+	tools.giveToolsByReference({tools.waterBottle, tools.waterBottle, tools.waterBottle, tools.bucketOfWater, tools.bucketOfWater, tools.bucketOfWater, tools.bucketOfWater, tools.bucketOfWater})
 	self.life = 100
 end
 function P.fish:onFloorEnter()
-	tools.giveToolsByReference({tools.bucketOfWater, tools.bucketOfWater, tools.bucketOfWater, tools.bucketOfWater, tools.bucketOfWater})
+	tools.giveToolsByReference({tools.waterBottle, tools.waterBottle, tools.waterBottle, tools.bucketOfWater, tools.bucketOfWater, tools.bucketOfWater, tools.bucketOfWater, tools.bucketOfWater})
 end
 function P.fish:getInfoText()
 	return self.life
