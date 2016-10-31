@@ -229,6 +229,9 @@ function love.load()
 		extern number tint_r;
 		extern number tint_g;
 		extern number tint_b;
+		extern number floorTint_r;
+		extern number floorTint_g;
+		extern number floorTint_b;
 		extern number player_x;
 		extern number player_y;
 		extern vec4 adjacentLighting;
@@ -246,9 +249,9 @@ function love.load()
 			number divVal = 100000;
 			if (playerDist<divVal)
 			  	divVal = playerDist;
-			pixel.r = (pixel.r*(1-(tint_b+tint_g)))/divVal;
-			pixel.g = (pixel.g*(1-(tint_r+tint_b)))/divVal;
-			pixel.b = (pixel.b*(1-(tint_r+tint_g)))/divVal;
+			pixel.r = (pixel.r*(1-(tint_g+tint_b))*(1-(floorTint_g+floorTint_b)))/divVal;
+			pixel.g = (pixel.g*(1-(tint_r+tint_b))*(1-(floorTint_r+floorTint_b)))/divVal;
+			pixel.b = (pixel.b*(1-(tint_r+tint_g))*(1-(floorTint_r+floorTint_g)))/divVal;
 			return pixel;
 		}
   	]]
