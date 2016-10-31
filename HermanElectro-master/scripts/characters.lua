@@ -63,6 +63,7 @@ end
 function P.character:onTileLeave()
 end
 function P.character:getInfoText()
+	return ""
 end
 
 P.herman = P.character:new{name = "Herman", description = "The Electrician", scale = 0.3}
