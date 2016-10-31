@@ -365,7 +365,14 @@ end
 function P.fish:getInfoText()
 	return self.life
 end
-P.fish.onToolUse = P.fish.postMove
+function P.fish:onToolUse()
+	if room[player.tileY][player.tileX]~=nil and room[player.tileY][player.tileX]:instanceof(tiles.puddle) then
+		self.life = 100
+	end
+	if self.life<=0 then
+		kill()
+	end
+end
 
 P[1] = P.herman
 P[2] = P.felix
