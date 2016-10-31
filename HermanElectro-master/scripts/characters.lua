@@ -107,7 +107,7 @@ end
 
 local erikSprite = love.graphics.newImage('Graphics/beggar.png')
 P.erik = P.character:new{name = "Erik", description = "The Quick",
-  sprite = erikSprite, scale = scale*16/erikSprite:getWidth()}
+  sprite = erikSprite, scale = scale*16/erikSprite:getWidth(), tint = {0.4,0.4,0.4}}
 function P.erik:onCharLoad()
 	gameTime.timeLeft = 60
 	gameTime.roomTime = 10

@@ -246,9 +246,9 @@ function love.load()
 			number divVal = 100000;
 			if (playerDist<divVal)
 			  	divVal = playerDist;
-			pixel.r = (pixel.r*(1-(tint_b+tint_g)/divVal))/divVal;
-			pixel.g = (pixel.g*(1-(tint_r+tint_b)/divVal))/divVal;
-			pixel.b = (pixel.b*(1-(tint_r+tint_g)/divVal))/divVal;
+			pixel.r = (pixel.r*(1-(tint_b+tint_g)))/divVal;
+			pixel.g = (pixel.g*(1-(tint_r+tint_b)))/divVal;
+			pixel.b = (pixel.b*(1-(tint_r+tint_g)))/divVal;
 			return pixel;
 		}
   	]]
