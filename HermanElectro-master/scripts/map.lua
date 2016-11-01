@@ -13,7 +13,35 @@ P.floorOrder = P.defaultFloorOrder
 
 local MapInfo = Object:new{floor = 1, height = 0, numRooms = 0}
 
+map.itemsNeededFile = 'itemsNeeded.json'
+
+function writeToolsUsed()
+	local solutionArray = {}
+	if love.filesystem.exists(saveDir..'/'..P.itemsNeededFile) then 
+		solutionArray = util.readJSON(saveDir..'/'..P.itemsNeededFile, false)
+	end
+	for i=0, mapHeight do
+		for j=1, mapHeight do
+			if completedRooms[i][j]==1 then
+				local arrToAdd = {}
+				arrToAdd[1] = tostring(mainMap[i][j].roomid)
+				arrToAdd[2] = player.character.name
+				if mainMap[i][j].toolsUsed ~= nil then
+					for k = 1, #mainMap[i][j].toolsUsed do
+						arrToAdd[#arrToAdd+1] = mainMap[i][j].toolsUsed[k]
+					end
+				end
+				solutionArray[#solutionArray+1] = arrToAdd
+			end
+		end
+	end
+	util.writeJSON(P.itemsNeededFile, solutionArray)
+end
+
 function P.loadFloor(inFloorFile)
+	if mainMap ~= nil and mainMap.cheated ~= true then
+		writeToolsUsed()
+	end
 	local floorData = util.readJSON(inFloorFile)
 	P.floorInfo = {rooms = {}, roomsArray = {}}
 	for k, v in pairs(floorData.data) do
