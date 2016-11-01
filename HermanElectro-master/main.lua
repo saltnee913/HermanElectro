@@ -1820,6 +1820,7 @@ function love.keypressed(key, unicode)
 
 	if editorMode then
 		editor.keypressed(key, unicode)
+		mainMap.cheated = true--kind of hacky
 	else
 		if key == 'r' then
 			if loadTutorial then
@@ -1942,7 +1943,7 @@ function love.keypressed(key, unicode)
 			gameTime = gameTime-100
 		end]]
 		if usedTool then
-			player.character:onToolUse()
+			onToolUse(tool)
 		end
 		if usedTool and tool<=tools.numNormalTools then
 			gameTime.timeLeft = gameTime.timeLeft+gameTime.toolTime
@@ -2245,6 +2246,7 @@ function checkDeath()
 				end
 				updateGameState(false)
 				log("Revived!")
+				onToolUse(i)
 				break
 			end
 		end
@@ -2312,7 +2314,7 @@ function love.mousepressed(x, y, button, istouch)
 		if tool<=tools.numNormalTools then
 			gameTime.timeLeft = gameTime.timeLeft+gameTime.toolTime
 		end
-		player.character:onToolUse()
+		onToolUse(tool)
 	end
 	
 	updateGameState(false)
@@ -2579,4 +2581,12 @@ function beatRoom(noDrops)
 	if not noDrops then
 		dropTools()
 	end
+end
+
+function onToolUse(tool)
+	player.character:onToolUse(tool)
+	if mainMap[mapy][mapx].toolsUsed == nil then
+		mainMap[mapy][mapx].toolsUsed = {}
+	end
+	mainMap[mapy][mapx].toolsUsed[#mainMap[mapy][mapx].toolsUsed+1] = tool
 end
