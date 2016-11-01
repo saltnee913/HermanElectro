@@ -874,7 +874,7 @@ function P.tunnel:getInfoText()
 	return self.toolsNeeded
 end
 function P.tunnel:postPowerUpdate()
-	self.toolsNeeded = toolMin-self.toolsEntered
+	self.toolsNeeded = toolMax-self.toolsEntered
 	if self.toolsNeeded<0 then self.toolsNeeded = 0 end
 end
 
