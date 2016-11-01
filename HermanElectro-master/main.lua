@@ -420,7 +420,7 @@ end
 function kill()
 	if editorMode then return end
 	player.dead = true
-	completedRooms[mapy][mapx] = 0
+	completedRooms[mapy][mapx] = 0 --to stop itemsNeeded tracking, it's a hack!
 end
 
 function win()
