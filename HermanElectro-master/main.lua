@@ -2059,7 +2059,9 @@ function love.keypressed(key, unicode)
 		    	end
 	    	end
 		end
-		player.character:postMove()
+		if player.tileX~=player.prevTileX or player.tileY~=player.prevTileY then
+			player.character:postMove()
+		end
     end
     --Debug console stuff
     if key=='p' then
