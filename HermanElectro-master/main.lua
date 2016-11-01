@@ -1542,7 +1542,6 @@ function enterRoom(dir)
 	log("")
 	resetTranslation()
 	player.flying = false
-	player.character:onRoomEnter()
 	--set pushables of prev. room to pushables array, saving for next entry
 	room.pushables = pushables
 	room.animals = animals
@@ -1639,6 +1638,8 @@ function enterRoom(dir)
 
 	player.prevTileY = player.tileY
 	player.prevTileX = player.tileX
+
+	player.character:onRoomEnter()
 
 	visibleMap[mapy][mapx] = 1
 	keyTimer.timeLeft = keyTimer.suicideDelay

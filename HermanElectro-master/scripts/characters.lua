@@ -31,7 +31,6 @@ end
 P.character = Object:new{name = "Name", scale = 0, sprite = love.graphics.newImage('Graphics/herman_sketchanother.png'),
   description = "description", startingTools = {0,0,0,0,0,0,0}, scale = 0.25 * width/1200, forcePowerUpdate = false, winUnlocks = {}, tint = {0,0,0}}
 function P.character:onBegin()
-
     myShader:send("tint_r", self.tint[1])
     myShader:send("tint_g", self.tint[2])
     myShader:send("tint_b", self.tint[3])
@@ -378,6 +377,24 @@ function P.fish:onToolUse()
 	end
 end
 
+P.random2 = P.character:new{name = "Random2", allowedCharacters = {1,2,6,8,9,11,12,14}, description = "**RanDOm**", sprite = love.graphics.newImage('Graphics/random.png'), enabled = false}
+function P.random2:onRoomEnter()
+	local charNum = util.random(#self.allowedCharacters, 'misc')
+	if room.character==nil then
+		player.character = characters[charNum]
+		player.character.onRoomEnter = self.onRoomEnter
+		player.character.allowedCharacters = self.allowedCharacters
+		room.character = player.character
+	else
+		player.character = room.character
+	end
+end
+function P.random2:postMove()
+	if room.character==nil then
+		room.character = player.character
+	end
+end
+
 P[1] = P.herman
 P[2] = P.felix
 P[3] = P.most
@@ -395,5 +412,6 @@ P[14] = P.orson
 P[15] = P.lenny
 P[16] = P.random
 P[17] = P.fish
+P[18] = P.random2
 
 return characters
