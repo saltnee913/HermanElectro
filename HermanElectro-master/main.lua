@@ -1088,7 +1088,9 @@ function love.draw()
 					end
 					if room[j][i]~=nil and litTiles[j][i]==1 and room[j][i]:getInfoText()~=nil then
 						love.graphics.setColor(0,0,0)
+						love.graphics.setShader()
 						love.graphics.print(room[j][i]:getInfoText(), (tempi-1)*floor.sprite:getWidth()*scale+wallSprite.width, (tempj-1)*floor.sprite:getHeight()*scale+wallSprite.height);
+						love.graphics.setShader(myShader)			
 						love.graphics.setColor(255,255,255)
 					end
 				end
@@ -1116,7 +1118,9 @@ function love.draw()
 			player.x = (player.tileX-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
 			player.y = (player.tileY-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
 			love.graphics.draw(player.character.sprite, math.floor(player.x-player.character.sprite:getWidth()*player.character.scale/2), math.floor(player.y-player.character.sprite:getHeight()*player.character.scale), 0, player.character.scale, player.character.scale)
+			love.graphics.setShader()
 			love.graphics.print(player.character:getInfoText(), math.floor(player.x-player.character.sprite:getWidth()*player.character.scale/2), math.floor(player.y-player.character.sprite:getHeight()*player.character.scale));
+			love.graphics.setShader(myShader)
 		end
 
 		if player.character.name == "Giovanni" and player.character.shiftPos.x>0 then
