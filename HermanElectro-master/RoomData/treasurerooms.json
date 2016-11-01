@@ -96,6 +96,7 @@
   {
     "autowin": true,
     "minimapColor": [250, 250, 0],
-    "dirEnter": [1,1,1,1]
+    "dirEnter": [1,1,1,1],
+    "hasEndTile": false
   }
 }

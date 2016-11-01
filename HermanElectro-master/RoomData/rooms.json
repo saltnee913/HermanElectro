@@ -8435,14 +8435,14 @@
 [0,0,0,0,0,2,0]
 ]
 },
-
 },
 
 
   "superFields":
   {
     "dirEnter":
-      [1,1,1,1]
-      //[clockwise from top]
+      [1,1,1,1],
+      //[clockwise from top],
+    "hasEndTile": true
   }
 }

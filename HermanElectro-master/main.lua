@@ -2548,10 +2548,14 @@ function dropTools()
 								end
 							end
 							listChoose = util.random(numLists, 'toolDrop')
-							for i = 1, tools.numNormalTools do
+							--[[for i = 1, tools.numNormalTools do
 								if listOfItemsNeeded[listChoose][i] ~= 0 then
 									done = true
 								end
+							end]]
+							local hasEndTile = map.getFieldForRoom(mainMap[y][x].roomid, "hasEndTile")
+							if hasEndTile then
+								done = true
 							end
 							if done then
 								tools.giveToolsByArray(listOfItemsNeeded[listChoose])
@@ -2572,10 +2576,11 @@ function dropTools()
 			end
 		end
 		if not done then
-			for i = 1, toolMin+1 do
+			--[[for i = 1, toolMin+1 do
 				local slot = util.random(tools.numNormalTools, 'toolDrop')
 				tools[slot].numHeld = tools[slot].numHeld+1
-			end
+			end]]
+			tools.giveSupertools(1)
 		end
 	else
 		tools.giveToolsByArray(dropOverride)

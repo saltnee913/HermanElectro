@@ -448,6 +448,7 @@
   },
   "superFields":
   {
-    "dirEnter": [0,0,0,1]
+    "dirEnter": [0,0,0,1],
+    "hasEndTile": false
   }
 }
