@@ -617,6 +617,7 @@ function updatePower()
 			for i = 1, #pushables do
 				if pushables[i].conductive and not pushables[i].destroyed then
 					local conductPower = false
+					pushables[i].powered = false
 					local pX = pushables[i].tileX
 					local pY = pushables[i].tileY
 					if (room[pY-1]~=nil and room[pY-1][pX]~=nil and room[pY-1][pX].powered and room[pY-1][pX].dirSend[3]==1) or
@@ -2058,6 +2059,10 @@ function love.keypressed(key, unicode)
 		    		noPowerUpdate = false
 		    	end
 	    	end
+		end
+		for i = 1, #pushables do
+			pushables[i].prevTileX = pushables[i].tileX
+			pushables[i].prevTileY = pushables[i].tileY
 		end
 		if player.tileX~=player.prevTileX or player.tileY~=player.prevTileY then
 			player.character:postMove()

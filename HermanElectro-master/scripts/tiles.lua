@@ -1439,7 +1439,7 @@ P.invisibleBoxTile = P.tile:new{name = "invisibleBoxTile", pushable = pushableLi
 P.invisibleDecoy = P.tile:new{name = "invisibleDecoy", isVisible = false}
 
 P.superStickyButton = P.stickyButton:new{name = "superStickyButton", sprite = love.graphics.newImage('Graphics/superStickyButton.png'), upSprite = love.graphics.newImage('Graphics/superStickyButton.png')}
-P.unbreakableElectricFloor = P.electricFloor:new{name = "unbreakableElectricFloor", sprite = love.graphics.newImage('Graphics/unbreakableElectricFloor.png')}
+P.unbreakableElectricFloor = P.electricFloor:new{name = "unbreakableElectricFloor", sprite = love.graphics.newImage('Graphics/unbreakableElectricFloor.png'), poweredSprite = love.graphics.newImage('Graphics/unbreakableElectricFloor.png')}
 
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
