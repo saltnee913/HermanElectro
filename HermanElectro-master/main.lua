@@ -420,6 +420,7 @@ end
 function kill()
 	if editorMode then return end
 	player.dead = true
+	completedRooms[mapy][mapx] = 0
 end
 
 function win()
