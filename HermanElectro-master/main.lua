@@ -1048,7 +1048,7 @@ function love.draw()
 						tempj = tempj + 1
 					end
 				end
-				if room[j][i]~=nil and not room[j][i].isVisible and not room[j][i]:instanceof(tiles.invisibleTile) and litTiles[j][i]==1 then
+				if litTiles[j][i]==1 and room[j][i]~=nil and not room[j][i].isVisible and not room[j][i]:instanceof(tiles.invisibleTile) then
 					toDraw = invisibleTile
 				end
 				if (room[j][i]~=nil --[[and room[j][i].name~="pitbull" and room[j][i].name~="cat" and room[j][i].name~="pup"]]) or litTiles[j][i]==0 then

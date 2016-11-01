@@ -240,7 +240,7 @@ function P.tool:getToolableTilesBox()
 		for j = -1*self.range, self.range do
 			local offset = {x = i, y = j}
 			local tileToCheck = {y = player.tileY + offset.y, x = player.tileX + offset.x}
-			if tileToCheck.x<=0 or i>roomLength then break end
+			if tileToCheck.x<=0 or tileToCheck.x>roomLength then break end
 			if room[tileToCheck.y]~=nil then
 				if (room[tileToCheck.y][tileToCheck.x] == nil and self:usableOnNothing(tileToCheck.y, tileToCheck.x))
 				or (room[tileToCheck.y][tileToCheck.x] ~= nil and self:usableOnTile(room[tileToCheck.y][tileToCheck.x], dist)) then
