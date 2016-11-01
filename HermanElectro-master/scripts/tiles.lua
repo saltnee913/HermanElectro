@@ -1443,6 +1443,65 @@ P.unbreakableElectricFloor = P.electricFloor:new{name = "unbreakableElectricFloo
 
 P.pinkFog = P.fog:new{name = "pinkFog", sprite = love.graphics.newImage('Graphics/pinkfog.png')}
 
+P.endTilePaid = P.tunnel:new{name = "endTilePaid", setTools = false, toolsNeededTotal = 0, sprite = love.graphics.newImage('Graphics/endtilepaid.png')}
+function P.endTilePaid:onEnter(player)
+
+end
+function P.endTilePaid:onEnter(player)
+	if self.toolsNeeded==0 then
+		if map.floorInfo.finalFloor == true then
+			if roomHeight>12 and not editorMode then
+				win()
+				return
+			end
+		end
+		if self.done then return end
+		beatRoom()
+		self.done = true
+		self.isCompleted = true
+		self.isVisible = false
+		self.gone = true
+		return
+	end
+	local noNormalTools = true
+	for i = 1, tools.numNormalTools do
+		if tools[i].numHeld>0 then noNormalTools = false end
+	end
+	if noNormalTools then
+		beatRoom()
+		self.done = true
+		self.isCompleted = true
+		self.isVisible = false
+		self.gone = true
+		return
+	end
+	if tool==0 or tool>7 then return end
+	tools[tool].numHeld = tools[tool].numHeld - 1
+	self.toolsNeeded = self.toolsNeeded-1
+	self.toolsEntered = self.toolsEntered+1
+	--donations = donations+math.ceil((7-(floorIndex))/2)
+	floorDonations = floorDonations+1
+end
+function P.endTilePaid:getInfoText()
+	return self.toolsNeeded
+end
+function P.endTilePaid:postPowerUpdate()
+	if self.text~=nil and tonumber(self.text)~=nil and not self.setTools then
+		self.toolsNeededTotal = tonumber(self.text)
+		self.toolsNeeded = self.toolsNeededTotal
+		self.setTools = true
+	elseif not self.setTools then
+		self.toolsNeededTotal = 1
+		self.toolsNeeded = self.toolsNeededTotal-self.toolsEntered
+		if self.toolsNeeded<0 then self.toolsNeeded = 0 end
+	else
+		self.toolsNeeded = self.toolsNeededTotal-self.toolsEntered
+		if self.toolsNeeded<0 then self.toolsNeeded = 0 end		
+	end
+end
+P.endTilePaid.onStep = P.endTilePaid.postPowerUpdate
+
+
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
 tiles[3] = P.powerSupply
@@ -1560,5 +1619,6 @@ tiles[114] = P.unbreakableElectricFloor
 tiles[115] = P.superStickyButton
 tiles[116] = P.cornerRotater
 tiles[117] = P.pinkFog
+tiles[118] = P.endTilePaid
 
 return tiles
