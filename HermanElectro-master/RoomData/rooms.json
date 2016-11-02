@@ -7947,7 +7947,8 @@
 "itemsNeeded":
 [
 [0, 0, 0, 0, 0, 0, 0]
-]
+],
+"dumb":true
 },
 
 "Erik_re_5":
