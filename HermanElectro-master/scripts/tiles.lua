@@ -1024,6 +1024,7 @@ function P.bomb:explode(x,y)
 			pushables[k]:destroy()
 		end
 	end
+	updatePower()
 end
 
 P.capacitor = P.conductiveTile:new{name = "capacitor", counter = 3, maxCounter = 3, dirAccept = {1,0,1,0}, sprite = love.graphics.newImage('Graphics/capacitor.png'), poweredSprite = love.graphics.newImage('Graphics/capacitor.png')}
