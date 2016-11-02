@@ -1599,8 +1599,8 @@ function P.resetTools()
 	P[3] = P.wireCutters
 	P[4] = P.waterBottle
 	P[5] = P.sponge
-	P[6] = P.axe
-	P[7] = P.knife
+	P[6] = P.brick
+	P[7] = P.gun
 	for i = 1, #tools do
 		tools[i].range = tools[i].baseRange
 	end
