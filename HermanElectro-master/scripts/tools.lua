@@ -1546,6 +1546,47 @@ function P.roomUnlocker:useToolNothing()
 end
 P.roomUnlocker.useToolTile = P.roomUnlocker.useToolNothing
 
+P.axe = P.superTool:new{name = "axe", baseRange = 5, image = love.graphics.newImage('Graphics/axe.png')}
+P.axe.usableOnTile = P.saw.usableOnTile
+P.axe.usableOnAnimal = P.gun.usableOnAnimal
+P.axe.useToolAnimal = P.gun.useToolAnimal
+P.axe.useToolTile = P.saw.useToolTile
+
+P.lube = P.superTool:new{name = "lube", baseRange = 1, image = love.graphics.newImage('Graphics/lube.png')}
+function P.lube:usableOnTile(tile)
+	if tile:instanceof(tiles.dustyGlassWall) and tile.blocksVision then return true
+	elseif tile:instanceof(tiles.puddle) then return true
+	elseif (tile:instanceof(tiles.stickyButton) and not tile:instanceof(tiles.superStickyButton)) or (tile:instanceof(tiles.button) and tile.bricked) then return true end
+	if not tile.destroyed and ((tile:instanceof(tiles.powerSupply) and not tile:instanceof(tiles.notGate)) or (tile:instanceof(tiles.electricFloor) and not tile:instanceof(tiles.unbreakableElectricFloor)) or tile:instanceof(tiles.untriggeredPowerSupply)) then
+		return true
+	end
+	return false
+end
+function P.lube:usableOnNothing()
+	return true
+end
+P.lube.useToolNothing = P.waterBottle.useToolNothing
+function P.lube:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
+	if tile:instanceof(tiles.dustyGlassWall) then
+		tile.blocksVision = false
+		tile.sprite = tile.cleanSprite
+	elseif tile:instanceof(tiles.stickyButton) or tile:instanceof(tiles.button) then
+		room[tileY][tileX] = tiles.button:new()
+		room[tileY][tileX].bricked = false
+	elseif not tile.destroyed then
+		tile:destroy()
+	end
+end
+
+P.knife = P.superTool:new{name = "knife", baseRange = 5, image = love.graphics.newImage('Graphics/knife.png')}
+P.knife.usableOnAnimal = P.gun.usableOnAnimal
+P.knife.usableOnTile = P.wireCutters.usableOnTile
+P.knife.useToolAnimal = P.gun.useToolAnimal
+P.knife.useToolTile = P.wireCutters.useToolTile
+P.knife.usableOnNonOverlay = P.wireCutters.usableOnNonOverlay
+P.knife.usableOnPushable = P.wireCutters.usableOnPushable
+P.knife.useToolPushable = P.wireCutters.useToolPushable
 
 P.numNormalTools = 7
 
@@ -1558,8 +1599,8 @@ function P.resetTools()
 	P[3] = P.wireCutters
 	P[4] = P.waterBottle
 	P[5] = P.sponge
-	P[6] = P.brick
-	P[7] = P.gun
+	P[6] = P.axe
+	P[7] = P.knife
 	for i = 1, #tools do
 		tools[i].range = tools[i].baseRange
 	end
@@ -1615,5 +1656,7 @@ P[52] = P.wireBreaker
 P[53] = P.powerBreaker
 P[54] = P.gabeMaker
 P[55] = P.roomUnlocker
+P[56] = P.axe
+P[57] = P.lube
 
 return tools
