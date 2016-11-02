@@ -511,7 +511,7 @@ end
 
 P.brick = P.tool:new{name = 'brick', baseRange = 3, image = love.graphics.newImage('Graphics/brick.png')}
 function P.brick:usableOnTile(tile, dist)
-	if not tile.bricked and tile:instanceof(tiles.button) and dist <= 3 then
+	if not tile.bricked and tile:instanceof(tiles.button) and not tile:instanceof(tiles.superStickyButton) and dist <= 3 then
 		return true
 	end
 	if not tile.destroyed and tile:instanceof(tiles.glassWall) then
