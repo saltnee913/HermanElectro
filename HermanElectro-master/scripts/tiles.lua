@@ -1365,6 +1365,7 @@ function P.finalToolsTile:onEnter(player)
 end
 function P.finalToolsTile:onLoad()
 	beatRoom(true)
+	if mainMap[mapy][mapx+1]==nil then return end
 	local itemsNeeded = map.getItemsNeeded(mainMap[mapy][mapx+1].roomid)
 	local toolsArray = itemsNeeded[util.random(#itemsNeeded,'toolDrop')]
 	local toolsNum = 0
