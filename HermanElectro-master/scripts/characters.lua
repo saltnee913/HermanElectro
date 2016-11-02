@@ -377,7 +377,7 @@ function P.fish:onToolUse()
 	end
 end
 
-P.random2 = P.character:new{name = "Random2", allowedCharacters = {1,2,6,8,9,11,12,14}, description = "**RanDOm**", sprite = love.graphics.newImage('Graphics/random.png'), enabled = false}
+P.random2 = P.character:new{name = "Random2", allowedCharacters = {1,2,6,8,9,11,12,14}, description = "**RanDOm**", sprite = love.graphics.newImage('Graphics/random.png'), disabled = true}
 function P.random2:onRoomEnter()
 	local charNum = util.random(#self.allowedCharacters, 'misc')
 	if room.character==nil then
