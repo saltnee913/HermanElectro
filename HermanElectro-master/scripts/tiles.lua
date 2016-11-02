@@ -1024,6 +1024,7 @@ function P.bomb:explode(x,y)
 			pushables[k]:destroy()
 		end
 	end
+	updatePower()
 end
 
 P.capacitor = P.conductiveTile:new{name = "capacitor", counter = 3, maxCounter = 3, dirAccept = {1,0,1,0}, sprite = love.graphics.newImage('Graphics/capacitor.png'), poweredSprite = love.graphics.newImage('Graphics/capacitor.png')}
@@ -1225,7 +1226,7 @@ P.conductiveSlime.willKillAnimal = P.conductiveSlime.willKillPlayer
 P.conductiveSnailTile = P.pitbullTile:new{name = "conductiveSnail", animal = animalList[7]:new(), listIndex = 7}
 
 P.untriggeredPowerSupply = P.conductiveTile:new{name = "untriggeredPowerSupply", sprite = love.graphics.newImage('Graphics/untriggeredpowersupply.png'), poweredSprite = love.graphics.newImage('Graphics/powersupply.png')}
-function P.untriggeredPowerSupply:updateTile(dir)
+function P.untriggeredPowerSupply:postPowerUpdate(dir)
 	if self.poweredNeighbors[1]==1 or self.poweredNeighbors[2]==1 or self.poweredNeighbors[3]==1 or self.poweredNeighbors[4]==1 then
 		self.charged = true
 	end
