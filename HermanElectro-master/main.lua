@@ -610,11 +610,6 @@ function updatePower()
 								pushables[i]:destroy(pY, pX)
 							end
 						else
-							if pushables[i]:instanceof(pushableList.jackInTheBox) then
-								for i = 1, #animals do
-									animals[i].waitCounter = 1
-								end
-							end
 							powerTestPushable(pY, pX, 0)
 						end
 						pushables[i].powered = true
@@ -715,6 +710,15 @@ function updatePower()
 				room[i][j].formerPowered = room[i][j].powered
 			end
 		end 
+	end
+	for i = 1, #pushables do
+		if pushables[i]:instanceof(pushableList.conductiveBox) then
+			if pushables[i].powered then
+				pushables[i].poweredLastUpdate = true
+			else
+				pushables[i].poweredLastUpdate = false
+			end
+		end
 	end
 	--if room[player.tileY][player.tileX]~=nil then
 		--t = room[player.tileY][player.tileX]
@@ -2054,9 +2058,6 @@ function love.keypressed(key, unicode)
 		 	if pushables[i].conductive and (pushables[i].tileY~=pushables[i].prevTileY or pushables[i].tileX~=pushables[i].prevTileX) then
 		 		noPowerUpdate = false
 		 	end
-		 	if pushables[i]:instanceof(pushableList.jackInTheBox) then
-		 		noPowerUpdate = false
-		 	end
 		 	if pushables[i].prevTileY~=nil and pushables[i].prevTileX~=nil and 
 		 	room[pushables[i].prevTileY]~=nil and room[pushables[i].prevTileY][pushables[i].prevTileX]~=nil then
 		 		if room[pushables[i].prevTileY][pushables[i].prevTileX].updatePowerOnLeave then
@@ -2558,6 +2559,9 @@ function stepTrigger()
 				end
 			end
 		end
+	end
+	for i = 1, #pushables do
+		pushables[i]:onStep()
 	end
 	--new acceleration tiles
     for i = 1, 4 do

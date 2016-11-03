@@ -6,6 +6,8 @@ local P = {}
 pushableList = P
 
 P.pushable = Object:new{name = "pushable", visible = true, sawable = true, canBeAccelerated = true, conductive = false, prevTileX = 0, prevTileY = 0, tileX = 0, tileY = 0, destroyed = false, sprite = love.graphics.newImage('Graphics/box.png')}
+function P.pushable:onStep()
+end
 function P.pushable:destroy()
 	self.destroyed = true
 end
@@ -152,7 +154,7 @@ function P.animalBox:playerCanMove()
 	return self.destroyed
 end
 
-P.conductiveBox = P.box:new{name = "conductiveBox", powered = false, sprite = love.graphics.newImage('Graphics/conductiveBox.png'), poweredSprite = love.graphics.newImage('Graphics/conductiveboxpowered.png'), conductive = true}
+P.conductiveBox = P.box:new{name = "conductiveBox", powered = false, poweredLastUpdate = false, sprite = love.graphics.newImage('Graphics/conductiveBox.png'), poweredSprite = love.graphics.newImage('Graphics/conductiveboxpowered.png'), conductive = true}
 
 P.boombox = P.box:new{name = "boombox", sprite = love.graphics.newImage('Graphics/boombox.png'), sawable = false}
 
@@ -300,6 +302,13 @@ end
 
 P.jackInTheBox = P.conductiveBox:new{name = "jackInTheBox", sprite = love.graphics.newImage('Graphics/jackinthebox.png'),
   poweredSprite = love.graphics.newImage('Graphics/jackintheboxpowered.png'), sawable = false}
+function P.jackInTheBox:onStep()
+	if self.poweredLastUpdate then
+		for i = 1, #animals do
+			animals[i].waitCounter = 1
+		end
+	end
+end
 
 P.invisibleBox = P.box:new{visible = false}
 
