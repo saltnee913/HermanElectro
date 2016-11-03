@@ -635,7 +635,7 @@ function updatePower()
 		end
 	end
 
-	for i = 1, 4 do
+	for i = 1, 0 do
 		for i = 1, 5 do
 			for i = 1, #pushables do
 				if pushables[i].conductive and not pushables[i].destroyed then
@@ -669,13 +669,14 @@ function updatePower()
 								end
 							end
 							powerTestPushable(pY, pX, 0)
+							powerTest(pY, px, 0)
 						end
 						pushables[i].powered = true
 					end
 				end
 			end
 		end
-		for i = 1, roomHeight do
+		--[[for i = 1, roomHeight do
 			for j = 1, roomLength do
 				if room[i][j]~=nil and room[i][j].charged then room[i][j].powered=true end
 				if room[i]~=nil and room[i][j]~=nil and not (room[i][j]:instanceof(tiles.powerSupply) or room[i][j]:instanceof(tiles.notGate)) and not room[i][j].charged then
@@ -684,7 +685,7 @@ function updatePower()
 					room[i][j]:updateTileAndOverlay(0)
 				end
 			end
-		end
+		end]]
 		for i = 1, roomHeight do
 			for j = 1, roomLength do
 				if room[i]~=nil and room[i][j]~=nil then
@@ -699,7 +700,27 @@ function updatePower()
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
 			if room[i][j]~=nil then
+				
+				for k = 1, #pushables do
+					if pushables[k].powered then
+						if pushables[k].tileY==i and pushables[k].tileX==j+1 and room[i][j].dirAccept[2]==1 then
+							room[i][j].poweredNeighbors[2]=1
+						end
+						if pushables[k].tileY==i and pushables[k].tileX==j-1 and room[i][j].dirAccept[4]==1 then
+							room[i][j].poweredNeighbors[4]=1
+						end
+						if pushables[k].tileY==i+1 and pushables[k].tileX==j and room[i][j].dirAccept[1]==1 then
+							room[i][j].poweredNeighbors[1]=1
+						end
+						if pushables[k].tileY==i-1 and pushables[k].tileX==j and room[i][j].dirAccept[3]==1 then
+							room[i][j].poweredNeighbors[3]=1
+						end
+					end
+				end
+
 				room[i][j]:postPowerUpdate(i,j)
+				room[i][j]:updateTileAndOverlay()
+				room[i][j]:updateSprite()
 			end
 		end
 	end

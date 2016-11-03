@@ -665,6 +665,7 @@ function P.vPoweredDoor:updateTile(player)
 		self.blocksVision = false
 		self.blocksProjectiles = false
 		self.blocksMovement = false
+		self.powered = false
 		self.sprite = self.openSprite
 	end
 end
