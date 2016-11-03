@@ -286,7 +286,7 @@ function love.load()
 	function player:getTileLoc()
 		return {x = self.x/(floor.sprite:getWidth()*scale), y = self.y/(floor.sprite:getWidth()*scale)}
 	end
-	loadOpeningWorld()
+	--loadOpeningWorld()
 end
 
 function loadRandoms()

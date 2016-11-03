@@ -527,6 +527,8 @@ function P.notGate:destroy()
 	self.powered = false
 end
 
+P.ambiguousNotGate = P.notGate:new{name = "ambiguousNotGate", sprite = love.graphics.newImage('Graphics/notgateambiguous.png'), poweredSprite = love.graphics.newImage('Graphics/notgateambiguous.png')}
+
 P.andGate = P.gate:new{name = "andGate", dirSend = {1,0,0,0}, dirAccept = {0,1,0,1}, dirWireHack = {1,0,0,0}, sprite = love.graphics.newImage('Graphics/andgate.png'), poweredSprite = love.graphics.newImage('Graphics/andgateon.png'), 
   off = love.graphics.newImage('Graphics/andgate.png'),
   leftOn = love.graphics.newImage('Graphics/andgateleft.png'), 
@@ -553,6 +555,12 @@ function P.andGate:updateTile(dir)
 	end
 end
 P.andGate.destroy = P.conductiveTile.destroy
+
+P.ambiguousAndGate = P.andGate:new{name = "ambiguousAndGate", sprite = love.graphics.newImage('Graphics/andgateambiguous.png')}
+P.ambiguousAndGate.poweredSprite = P.ambiguousAndGate.sprite
+P.ambiguousAndGate.off = P.ambiguousAndGate.sprite
+P.ambiguousAndGate.leftOn = P.ambiguousAndGate.sprite
+P.ambiguousAndGate.rightOn = P.ambiguousAndGate.sprite
 
 P.orGate = P.gate:new{name = "orGate", dirSend = {1,0,0,0}, dirAccept = {0,1,0,1}, dirWireHack = {1,0,0,0}, sprite = love.graphics.newImage('Graphics/orgate.png'), poweredSprite = love.graphics.newImage('Graphics/orgate.png'),
   leftOn = love.graphics.newImage('Graphics/orgateleft.png'), 
@@ -1565,8 +1573,8 @@ tiles[50] = P.beggar
 tiles[51] = P.ladder
 tiles[52] = P.mousetrapOff
 tiles[53] = P.donationMachine
-tiles[54] = P.concreteWallConductiveCorner
-tiles[55] = P.concreteWallConductiveT
+tiles[54] = P.ambiguousAndGate
+tiles[55] = P.ambiguousNotGate
 tiles[56] = P.entrancePortal
 tiles[57] = P.exitPortal
 tiles[58] = P.treasureTile2
