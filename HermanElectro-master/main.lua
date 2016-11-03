@@ -522,18 +522,33 @@ function updatePower()
 	player.character:onPreUpdatePower()
 	powerCount = 0
 
+	powerRoomLevel = {}
+	for i = 1, roomHeight do
+		powerRoomLevel[i] = {}
+		for j = 1, roomLength do
+			if room[i][j]~=nil then
+				powerRoomLevel[i][j] = room[i][j]:new()
+			end
+		end
+	end
+	for i = 1, #pushables do
+		if pushables[i].conductive and not pushables[i].destroyed then
+			powerRoomLevel[pushables[i].tileY][pushables[i].tileX] = tiles.conductiveTile:new()
+		end
+	end
+
 	for i = 1, #pushables do
 		pushables[i].powered = false
 	end
 
 	for i=1, roomHeight do
 		for j=1, roomLength do
-			if room[i]~=nil and room[i][j]~=nil then
-				room[i][j].powered = false
-				room[i][j].poweredNeighbors = {0,0,0,0}
-				if room[i][j].overlay ~= nil then
-					room[i][j].powered = true
-					room[i][j].poweredNeighbors = {0,0,0,0}
+			if powerRoomLevel[i]~=nil and powerRoomLevel[i][j]~=nil then
+				powerRoomLevel[i][j].powered = false
+				powerRoomLevel[i][j].poweredNeighbors = {0,0,0,0}
+				if powerRoomLevel[i][j].overlay ~= nil then
+					powerRoomLevel[i][j].powered = true
+					powerRoomLevel[i][j].poweredNeighbors = {0,0,0,0}
 				end
 			end
 		end 
@@ -542,22 +557,22 @@ function updatePower()
 	for i=1, roomHeight do
 		for j=1, roomLength do
 			--power starts at power sources: powerSupply and notGate
-			if room[i]~=nil and room[i][j]~=nil and room[i][j]:instanceof(tiles.powerSupply) and not room[i][j].destroyed then
-				room[i][j].powered = true
+			if powerRoomLevel[i]~=nil and powerRoomLevel[i][j]~=nil and powerRoomLevel[i][j]:instanceof(tiles.powerSupply) and not powerRoomLevel[i][j].destroyed then
+				powerRoomLevel[i][j].powered = true
 			end
-			if room[i]~=nil and room[i][j]~=nil and room[i][j]:instanceof(tiles.notGate) and not room[i][j].destroyed then
-				--room[i][j].powered = true
+			if powerRoomLevel[i]~=nil and powerRoomLevel[i][j]~=nil and powerRoomLevel[i][j]:instanceof(tiles.notGate) and not powerRoomLevel[i][j].destroyed then
+				--powerRoomLevel[i][j].powered = true
 			end
-			if room[i] ~= nil and room[i][j]~=nil and room[i][j].charged and not room[i][j].destroyed then
-				room[i][j].powered = true
+			if powerRoomLevel[i] ~= nil and powerRoomLevel[i][j]~=nil and powerRoomLevel[i][j].charged and not powerRoomLevel[i][j].destroyed then
+				powerRoomLevel[i][j].powered = true
 			end
 		end
 	end
 	for i=1, roomHeight do
 		for j=1, roomLength do
 			--power starts at power sources: powerSupply and notGate
-			if room[i]~=nil and room[i][j]~=nil and (room[i][j].charged or room[i][j]:instanceof(tiles.powerSupply) or room[i][j]:instanceof(tiles.notGate)) then
-				room[i][j]:updateTileAndOverlay(0)
+			if powerRoomLevel[i]~=nil and powerRoomLevel[i][j]~=nil and (powerRoomLevel[i][j].charged or powerRoomLevel[i][j]:instanceof(tiles.powerSupply) or powerRoomLevel[i][j]:instanceof(tiles.notGate)) then
+				powerRoomLevel[i][j]:updateTileAndOverlay(0)
 				powerTest(i,j,0)
 			end
 		end
@@ -567,33 +582,33 @@ function updatePower()
 	for k = 1, 4 do
 		for i = 1, roomHeight do
 			for j = 1, roomLength do
-				if room[i][j]~=nil and room[i][j].charged then room[i][j].powered=true end
-				if room[i]~=nil and room[i][j]~=nil and not (room[i][j]:instanceof(tiles.powerSupply) or room[i][j]:instanceof(tiles.notGate)) and not room[i][j].charged then
-					room[i][j].poweredNeighbors = {0,0,0,0}
-					room[i][j].powered = false
-					room[i][j]:updateTileAndOverlay(0)
+				if powerRoomLevel[i][j]~=nil and powerRoomLevel[i][j].charged then powerRoomLevel[i][j].powered=true end
+				if powerRoomLevel[i]~=nil and powerRoomLevel[i][j]~=nil and not (powerRoomLevel[i][j]:instanceof(tiles.powerSupply) or powerRoomLevel[i][j]:instanceof(tiles.notGate)) and not powerRoomLevel[i][j].charged then
+					powerRoomLevel[i][j].poweredNeighbors = {0,0,0,0}
+					powerRoomLevel[i][j].powered = false
+					powerRoomLevel[i][j]:updateTileAndOverlay(0)
 				end
 			end
 		end
 		for i = 1, roomHeight do
 			for j = 1, roomLength do
-				if room[i]~=nil and room[i][j]~=nil then
-					if (room[i][j]:instanceof(tiles.powerSupply) or room[i][j]:instanceof(tiles.notGate) or room[i][j].charged) and room[i][j].powered then
+				if powerRoomLevel[i]~=nil and powerRoomLevel[i][j]~=nil then
+					if (powerRoomLevel[i][j]:instanceof(tiles.powerSupply) or powerRoomLevel[i][j]:instanceof(tiles.notGate) or powerRoomLevel[i][j].charged) and powerRoomLevel[i][j].powered then
 						powerTestSpecial(i,j,0)
 					end
 				end
 			end
 		end
-		for i = 1, 5 do
+		--[[for i = 1, 5 do
 			for i = 1, #pushables do
 				if pushables[i].conductive and not pushables[i].destroyed then
 					local conductPower = false
 					local pX = pushables[i].tileX
 					local pY = pushables[i].tileY
-					if (room[pY-1]~=nil and room[pY-1][pX]~=nil and room[pY-1][pX].powered and room[pY-1][pX].dirSend[3]==1) or
-					(room[pY+1]~=nil and room[pY+1][pX]~=nil and room[pY+1][pX].powered and room[pY+1][pX].dirSend[1]==1) or
-					(room[pY][pX-1]~=nil and room[pY][pX-1].powered and room[pY][pX-1].dirSend[2]==1) or
-					(room[pY][pX+1]~=nil and room[pY][pX+1].powered and room[pY][pX+1].dirSend[4]==1) then
+					if (powerRoomLevel[pY-1]~=nil and powerRoomLevel[pY-1][pX]~=nil and powerRoomLevel[pY-1][pX].powered and powerRoomLevel[pY-1][pX].dirSend[3]==1) or
+					(powerRoomLevel[pY+1]~=nil and powerRoomLevel[pY+1][pX]~=nil and powerRoomLevel[pY+1][pX].powered and powerRoomLevel[pY+1][pX].dirSend[1]==1) or
+					(powerRoomLevel[pY][pX-1]~=nil and powerRoomLevel[pY][pX-1].powered and powerRoomLevel[pY][pX-1].dirSend[2]==1) or
+					(powerRoomLevel[pY][pX+1]~=nil and powerRoomLevel[pY][pX+1].powered and powerRoomLevel[pY][pX+1].dirSend[4]==1) then
 						conductPower = true
 					end
 					for j = 1, #pushables do
@@ -610,91 +625,47 @@ function updatePower()
 								pushables[i]:destroy(pY, pX)
 							end
 						else
+						if pushables[i]:instanceof(pushableList.bombBox) and k==3 then
+							if not pushables[i].destroyed then
+								pushables[i]:destroy(pY, pX)
+							end
+						else
+							powerTestPushable(pY, pX, 0)
+						end
+						pushables[i].powered = true
 							powerTestPushable(pY, pX, 0)
 						end
 						pushables[i].powered = true
 					end
 				end
 			end
-		end
+		end]]
 		for i = 1, roomHeight do
 			for j = 1, roomLength do
-				if room[i]~=nil and room[i][j]~=nil and room[i][j]:instanceof(tiles.notGate) then
-					local offset = room[i][j]:getCorrectedOffset(3)
-					if room[i+offset.y]~=nil and room[i+offset.y][j+offset.x]~=nil and room[i+offset.y][j+offset.x].powered==false then
-						room[i][j].poweredNeighbors[room[i][j]:cfr(3)]=0
-						room[i][j]:updateTileAndOverlay(0)
-					elseif room[i+offset.y]~=nil and room[i+offset.y][j+offset.x]~=nil
-					 and room[i+offset.y][j+offset.x].powered==true
-					 and room[i+offset.y][j+offset.x].dirSend[room[i][j]:cfr(1)]==1 then
-						room[i][j].poweredNeighbors[room[i][j]:cfr(3)]=1
-						room[i][j]:updateTileAndOverlay(0)
+				if powerRoomLevel[i]~=nil and powerRoomLevel[i][j]~=nil and powerRoomLevel[i][j]:instanceof(tiles.notGate) then
+					local offset = powerRoomLevel[i][j]:getCorrectedOffset(3)
+					if powerRoomLevel[i+offset.y]~=nil and powerRoomLevel[i+offset.y][j+offset.x]~=nil and powerRoomLevel[i+offset.y][j+offset.x].powered==false then
+						powerRoomLevel[i][j].poweredNeighbors[powerRoomLevel[i][j]:cfr(3)]=0
+						powerRoomLevel[i][j]:updateTileAndOverlay(0)
+					elseif powerRoomLevel[i+offset.y]~=nil and powerRoomLevel[i+offset.y][j+offset.x]~=nil
+					 and powerRoomLevel[i+offset.y][j+offset.x].powered==true
+					 and powerRoomLevel[i+offset.y][j+offset.x].dirSend[powerRoomLevel[i][j]:cfr(1)]==1 then
+						powerRoomLevel[i][j].poweredNeighbors[powerRoomLevel[i][j]:cfr(3)]=1
+						powerRoomLevel[i][j]:updateTileAndOverlay(0)
 					end
 				end
 			end
 		end
 	end
 
-	for i = 1, 4 do
-		for i = 1, 5 do
-			for i = 1, #pushables do
-				if pushables[i].conductive and not pushables[i].destroyed then
-					local conductPower = false
-					pushables[i].powered = false
-					local pX = pushables[i].tileX
-					local pY = pushables[i].tileY
-					if (room[pY-1]~=nil and room[pY-1][pX]~=nil and room[pY-1][pX].powered and room[pY-1][pX].dirSend[3]==1) or
-					(room[pY+1]~=nil and room[pY+1][pX]~=nil and room[pY+1][pX].powered and room[pY+1][pX].dirSend[1]==1) or
-					(room[pY][pX-1]~=nil and room[pY][pX-1].powered and room[pY][pX-1].dirSend[2]==1) or
-					(room[pY][pX+1]~=nil and room[pY][pX+1].powered and room[pY][pX+1].dirSend[4]==1) then
-						conductPower = true
-					end
-					for j = 1, #pushables do
-						if pushables[j].powered and not pushables[j].destroyed then
-							if pushables[i].tileY == pushables[j].tileY and math.abs(pushables[i].tileX-pushables[j].tileX)==1
-							or pushables[i].tileX == pushables[j].tileX and math.abs(pushables[j].tileY-pushables[i].tileY)==1 then
-								conductPower = true
-							end
-						end
-					end
-					if conductPower then
-						if pushables[i]:instanceof(pushableList.bombBox) and k==3 then
-							if not pushables[i].destroyed then
-								pushables[i]:destroy(pY, pX)
-							end
-						else
-							if pushables[i]:instanceof(pushableList.jackInTheBox) then
-								for i = 1, #animals do
-									animals[i].waitCounter = 1
-								end
-							end
-							powerTestPushable(pY, pX, 0)
-						end
-						pushables[i].powered = true
-					end
-				end
-			end
-		end
-		for i = 1, roomHeight do
-			for j = 1, roomLength do
-				if room[i][j]~=nil and room[i][j].charged then room[i][j].powered=true end
-				if room[i]~=nil and room[i][j]~=nil and not (room[i][j]:instanceof(tiles.powerSupply) or room[i][j]:instanceof(tiles.notGate)) and not room[i][j].charged then
-					room[i][j].poweredNeighbors = {0,0,0,0}
-					room[i][j].powered = false
-					room[i][j]:updateTileAndOverlay(0)
-				end
-			end
-		end
-		for i = 1, roomHeight do
-			for j = 1, roomLength do
-				if room[i]~=nil and room[i][j]~=nil then
-					if (room[i][j]:instanceof(tiles.powerSupply) or room[i][j]:instanceof(tiles.notGate) or room[i][j].charged) and room[i][j].powered then
-						powerTestSpecial(i,j,0)
-					end
-				end
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]~=nil then
+				room[i][j] = powerRoomLevel[i][j]
 			end
 		end
 	end
+
 
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
@@ -783,71 +754,71 @@ function powerTest(x, y, lastDir)
 	end
 	--x refers to y-direction and vice versa
 	--1 for up, 2 for right, 3 for down, 4 for left
-	if room[x] == nil or room[x][y] == nil then
+	if powerRoomLevel[x] == nil or powerRoomLevel[x][y] == nil then
 		return
 	end
 
-	if x>1 and room[x-1][y]~=nil and canBePowered(x-1,y,3) and lastDir~=1 then
-		formerPowered = room[x-1][y].powered
-		formerSend = room[x-1][y].dirSend
-		formerAccept = room[x-1][y].dirAccept
+	if x>1 and powerRoomLevel[x-1][y]~=nil and canBePowered(x-1,y,3) and lastDir~=1 then
+		formerPowered = powerRoomLevel[x-1][y].powered
+		formerSend = powerRoomLevel[x-1][y].dirSend
+		formerAccept = powerRoomLevel[x-1][y].dirAccept
 		--powered[x-1][y] = 1
-		if room[x][y].dirSend[1]==1 and room[x][y].powered then
-			room[x-1][y].poweredNeighbors[3] = 1
+		if powerRoomLevel[x][y].dirSend[1]==1 and powerRoomLevel[x][y].powered then
+			powerRoomLevel[x-1][y].poweredNeighbors[3] = 1
 		else
-			room[x-1][y].poweredNeighbors[3] = 0
+			powerRoomLevel[x-1][y].poweredNeighbors[3] = 0
 		end
-		room[x-1][y]:updateTileAndOverlay(3)
-		if room[x-1][y].powered ~= formerPowered or room[x-1][y].dirSend ~= formerSend or room[x-1][y].dirAccept ~= formerAccept then
+		powerRoomLevel[x-1][y]:updateTileAndOverlay(3)
+		if powerRoomLevel[x-1][y].powered ~= formerPowered or powerRoomLevel[x-1][y].dirSend ~= formerSend or powerRoomLevel[x-1][y].dirAccept ~= formerAccept then
 			powerTest(x-1,y,3)
 		end
 	end
 
 
-	if x<roomHeight and room[x+1][y]~=nil and canBePowered(x+1,y,1) and lastDir~=3 then
+	if x<roomHeight and powerRoomLevel[x+1][y]~=nil and canBePowered(x+1,y,1) and lastDir~=3 then
 		--powered[x+1][y] = 1
-		formerPowered = room[x+1][y].powered
-		formerSend = room[x+1][y].dirSend
-		formerAccept = room[x+1][y].dirAccept
-		if room[x][y].dirSend[3]==1 and room[x][y].powered then
-			room[x+1][y].poweredNeighbors[1] = 1
+		formerPowered = powerRoomLevel[x+1][y].powered
+		formerSend = powerRoomLevel[x+1][y].dirSend
+		formerAccept = powerRoomLevel[x+1][y].dirAccept
+		if powerRoomLevel[x][y].dirSend[3]==1 and powerRoomLevel[x][y].powered then
+			powerRoomLevel[x+1][y].poweredNeighbors[1] = 1
 		else
-			room[x+1][y].poweredNeighbors[1] = 0
+			powerRoomLevel[x+1][y].poweredNeighbors[1] = 0
 		end
-		room[x+1][y]:updateTileAndOverlay(1)
-		if room[x+1][y].powered ~= formerPowered or room[x+1][y].dirSend ~= formerSend or room[x+1][y].dirAccept ~= formerAccept then
+		powerRoomLevel[x+1][y]:updateTileAndOverlay(1)
+		if powerRoomLevel[x+1][y].powered ~= formerPowered or powerRoomLevel[x+1][y].dirSend ~= formerSend or powerRoomLevel[x+1][y].dirAccept ~= formerAccept then
 			powerTest(x+1,y,1)
 		end
 	end
 
-	if y>1 and room[x][y-1]~=nil and canBePowered(x,y-1,2) and lastDir~=4 then
-		formerPowered = room[x][y-1].powered
-		formerSend = room[x][y-1].dirSend
-		formerAccept = room[x][y-1].dirAccept
+	if y>1 and powerRoomLevel[x][y-1]~=nil and canBePowered(x,y-1,2) and lastDir~=4 then
+		formerPowered = powerRoomLevel[x][y-1].powered
+		formerSend = powerRoomLevel[x][y-1].dirSend
+		formerAccept = powerRoomLevel[x][y-1].dirAccept
 		--powered[x][y-1] = 1
-		if room[x][y].dirSend[4]==1 and room[x][y].powered then
-			room[x][y-1].poweredNeighbors[2] = 1
+		if powerRoomLevel[x][y].dirSend[4]==1 and powerRoomLevel[x][y].powered then
+			powerRoomLevel[x][y-1].poweredNeighbors[2] = 1
 		else
-			room[x][y-1].poweredNeighbors[2] = 0
+			powerRoomLevel[x][y-1].poweredNeighbors[2] = 0
 		end
-		room[x][y-1]:updateTileAndOverlay(2)
-		if room[x][y-1].powered ~= formerPowered or room[x][y-1].dirSend ~= formerSend or room[x][y-1].dirAccept ~= formerAccept then
+		powerRoomLevel[x][y-1]:updateTileAndOverlay(2)
+		if powerRoomLevel[x][y-1].powered ~= formerPowered or powerRoomLevel[x][y-1].dirSend ~= formerSend or powerRoomLevel[x][y-1].dirAccept ~= formerAccept then
 			powerTest(x, y-1, 2)
 		end
 	end
 
-	if y<roomLength and room[x][y+1]~=nil and canBePowered(x,y+1,4) and lastDir~=2 then
-		formerPowered = room[x][y+1].powered
-		formerSend = room[x][y+1].dirSend
-		formerAccept = room[x][y+1].dirAccept
+	if y<roomLength and powerRoomLevel[x][y+1]~=nil and canBePowered(x,y+1,4) and lastDir~=2 then
+		formerPowered = powerRoomLevel[x][y+1].powered
+		formerSend = powerRoomLevel[x][y+1].dirSend
+		formerAccept = powerRoomLevel[x][y+1].dirAccept
 		--powered[x][y+1] = 1
-		if room[x][y].dirSend[2]==1 and room[x][y].powered then
-			room[x][y+1].poweredNeighbors[4] = 1
+		if powerRoomLevel[x][y].dirSend[2]==1 and powerRoomLevel[x][y].powered then
+			powerRoomLevel[x][y+1].poweredNeighbors[4] = 1
 		else
-			room[x][y+1].poweredNeighbors[4] = 0
+			powerRoomLevel[x][y+1].poweredNeighbors[4] = 0
 		end
-		room[x][y+1]:updateTileAndOverlay(4)
-		if room[x][y+1].powered ~= formerPowered or room[x][y+1].dirSend ~= formerSend or room[x][y+1].dirAccept ~= formerAccept then
+		powerRoomLevel[x][y+1]:updateTileAndOverlay(4)
+		if powerRoomLevel[x][y+1].powered ~= formerPowered or powerRoomLevel[x][y+1].dirSend ~= formerSend or powerRoomLevel[x][y+1].dirAccept ~= formerAccept then
 			powerTest(x, y+1, 4)
 		end
 	end
@@ -862,51 +833,51 @@ function powerTestPushable(x, y, lastDir)
 	--x refers to y-direction and vice versa
 	--1 for up, 2 for right, 3 for down, 4 for left
 
-	if x>1 and room[x-1][y]~=nil and canBePowered(x-1,y,3) then
-		formerPowered = room[x-1][y].powered
-		formerSend = room[x-1][y].dirSend
-		formerAccept = room[x-1][y].dirAccept
+	if x>1 and powerRoomLevel[x-1][y]~=nil and canBePowered(x-1,y,3) then
+		formerPowered = powerRoomLevel[x-1][y].powered
+		formerSend = powerRoomLevel[x-1][y].dirSend
+		formerAccept = powerRoomLevel[x-1][y].dirAccept
 		--powered[x-1][y] = 1
-		room[x-1][y].poweredNeighbors[3] = 1
-		room[x-1][y]:updateTileAndOverlay(3)
-		if room[x-1][y].powered ~= formerPowered or room[x-1][y].dirSend ~= formerSend or room[x-1][y].dirAccept ~= formerAccept then
+		powerRoomLevel[x-1][y].poweredNeighbors[3] = 1
+		powerRoomLevel[x-1][y]:updateTileAndOverlay(3)
+		if powerRoomLevel[x-1][y].powered ~= formerPowered or powerRoomLevel[x-1][y].dirSend ~= formerSend or powerRoomLevel[x-1][y].dirAccept ~= formerAccept then
 			powerTestSpecial(x-1,y,3)
 		end
 	end
 
 
-	if x<roomHeight and room[x+1][y]~=nil and canBePowered(x+1,y,1) then
+	if x<roomHeight and powerRoomLevel[x+1][y]~=nil and canBePowered(x+1,y,1) then
 		--powered[x+1][y] = 1
-		formerPowered = room[x+1][y].powered
-		formerSend = room[x+1][y].dirSend
-		formerAccept = room[x+1][y].dirAccept
-		room[x+1][y].poweredNeighbors[1] = 1
-		room[x+1][y]:updateTileAndOverlay(1)
-		if room[x+1][y].powered ~= formerPowered or room[x+1][y].dirSend ~= formerSend or room[x+1][y].dirAccept ~= formerAccept then
+		formerPowered = powerRoomLevel[x+1][y].powered
+		formerSend = powerRoomLevel[x+1][y].dirSend
+		formerAccept = powerRoomLevel[x+1][y].dirAccept
+		powerRoomLevel[x+1][y].poweredNeighbors[1] = 1
+		powerRoomLevel[x+1][y]:updateTileAndOverlay(1)
+		if powerRoomLevel[x+1][y].powered ~= formerPowered or powerRoomLevel[x+1][y].dirSend ~= formerSend or powerRoomLevel[x+1][y].dirAccept ~= formerAccept then
 			powerTestSpecial(x+1,y,1)
 		end
 	end
 
-	if y>1 and room[x][y-1]~=nil and canBePowered(x,y-1,2) then
-		formerPowered = room[x][y-1].powered
-		formerSend = room[x][y-1].dirSend
-		formerAccept = room[x][y-1].dirAccept
+	if y>1 and powerRoomLevel[x][y-1]~=nil and canBePowered(x,y-1,2) then
+		formerPowered = powerRoomLevel[x][y-1].powered
+		formerSend = powerRoomLevel[x][y-1].dirSend
+		formerAccept = powerRoomLevel[x][y-1].dirAccept
 		--powered[x][y-1] = 1
-		room[x][y-1].poweredNeighbors[2] = 1
-		room[x][y-1]:updateTileAndOverlay(2)
-		if room[x][y-1].powered ~= formerPowered or room[x][y-1].dirSend ~= formerSend or room[x][y-1].dirAccept ~= formerAccept then
+		powerRoomLevel[x][y-1].poweredNeighbors[2] = 1
+		powerRoomLevel[x][y-1]:updateTileAndOverlay(2)
+		if powerRoomLevel[x][y-1].powered ~= formerPowered or powerRoomLevel[x][y-1].dirSend ~= formerSend or powerRoomLevel[x][y-1].dirAccept ~= formerAccept then
 			powerTestSpecial(x, y-1, 2)
 		end
 	end
 
-	if y<roomLength and room[x][y+1]~=nil and canBePowered(x,y+1,4) then
-		formerPowered = room[x][y+1].powered
-		formerSend = room[x][y+1].dirSend
-		formerAccept = room[x][y+1].dirAccept
+	if y<roomLength and powerRoomLevel[x][y+1]~=nil and canBePowered(x,y+1,4) then
+		formerPowered = powerRoomLevel[x][y+1].powered
+		formerSend = powerRoomLevel[x][y+1].dirSend
+		formerAccept = powerRoomLevel[x][y+1].dirAccept
 		--powered[x][y+1] = 1
-		room[x][y+1].poweredNeighbors[4] = 1
-		room[x][y+1]:updateTileAndOverlay(4)
-		if room[x][y+1].powered ~= formerPowered or room[x][y+1].dirSend ~= formerSend or room[x][y+1].dirAccept ~= formerAccept then
+		powerRoomLevel[x][y+1].poweredNeighbors[4] = 1
+		powerRoomLevel[x][y+1]:updateTileAndOverlay(4)
+		if powerRoomLevel[x][y+1].powered ~= formerPowered or powerRoomLevel[x][y+1].dirSend ~= formerSend or powerRoomLevel[x][y+1].dirAccept ~= formerAccept then
 			powerTestSpecial(x, y+1, 4)
 		end
 	end
@@ -915,71 +886,71 @@ end
 function powerTestSpecial(x, y, lastDir)
 --x refers to y-direction and vice versa
 	--1 for up, 2 for right, 3 for down, 4 for left
-	if room[x] == nil or room[x][y] == nil then
+	if powerRoomLevel[x] == nil or powerRoomLevel[x][y] == nil then
 		return
 	end
 
-	if x>1 and room[x-1][y]~=nil and not room[x-1][y]:instanceof(tiles.notGate) and canBePowered(x-1,y,3) and lastDir~=1 then
-		formerPowered = room[x-1][y].powered
-		formerSend = room[x-1][y].dirSend
-		formerAccept = room[x-1][y].dirAccept
+	if x>1 and powerRoomLevel[x-1][y]~=nil and not powerRoomLevel[x-1][y]:instanceof(tiles.notGate) and canBePowered(x-1,y,3) and lastDir~=1 then
+		formerPowered = powerRoomLevel[x-1][y].powered
+		formerSend = powerRoomLevel[x-1][y].dirSend
+		formerAccept = powerRoomLevel[x-1][y].dirAccept
 		--powered[x-1][y] = 1
-		if room[x][y].dirSend[1]==1 and room[x][y].powered then
-			room[x-1][y].poweredNeighbors[3] = 1
+		if powerRoomLevel[x][y].dirSend[1]==1 and powerRoomLevel[x][y].powered then
+			powerRoomLevel[x-1][y].poweredNeighbors[3] = 1
 		else
-			room[x-1][y].poweredNeighbors[3] = 0
+			powerRoomLevel[x-1][y].poweredNeighbors[3] = 0
 		end
-		room[x-1][y]:updateTileAndOverlay(3)
-		if room[x-1][y].powered ~= formerPowered or room[x-1][y].dirSend ~= formerSend or room[x-1][y].dirAccept ~= formerAccept then
+		powerRoomLevel[x-1][y]:updateTileAndOverlay(3)
+		if powerRoomLevel[x-1][y].powered ~= formerPowered or powerRoomLevel[x-1][y].dirSend ~= formerSend or powerRoomLevel[x-1][y].dirAccept ~= formerAccept then
 			powerTestSpecial(x-1,y,3)
 		end
 	end
 
 
-	if x<roomHeight and room[x+1][y]~=nil and not room[x+1][y]:instanceof(tiles.notGate) and canBePowered(x+1,y,1) and lastDir~=3 then
+	if x<roomHeight and powerRoomLevel[x+1][y]~=nil and not powerRoomLevel[x+1][y]:instanceof(tiles.notGate) and canBePowered(x+1,y,1) and lastDir~=3 then
 		--powered[x+1][y] = 1
-		formerPowered = room[x+1][y].powered
-		formerSend = room[x+1][y].dirSend
-		formerAccept = room[x+1][y].dirAccept
-		if room[x][y].dirSend[3]==1 and room[x][y].powered then
-			room[x+1][y].poweredNeighbors[1] = 1
+		formerPowered = powerRoomLevel[x+1][y].powered
+		formerSend = powerRoomLevel[x+1][y].dirSend
+		formerAccept = powerRoomLevel[x+1][y].dirAccept
+		if powerRoomLevel[x][y].dirSend[3]==1 and powerRoomLevel[x][y].powered then
+			powerRoomLevel[x+1][y].poweredNeighbors[1] = 1
 		else
-			room[x+1][y].poweredNeighbors[1] = 0
+			powerRoomLevel[x+1][y].poweredNeighbors[1] = 0
 		end
-		room[x+1][y]:updateTileAndOverlay(1)
-		if room[x+1][y].powered ~= formerPowered or room[x+1][y].dirSend ~= formerSend or room[x+1][y].dirAccept ~= formerAccept then
+		powerRoomLevel[x+1][y]:updateTileAndOverlay(1)
+		if powerRoomLevel[x+1][y].powered ~= formerPowered or powerRoomLevel[x+1][y].dirSend ~= formerSend or powerRoomLevel[x+1][y].dirAccept ~= formerAccept then
 			powerTestSpecial(x+1,y,1)
 		end
 	end
 
-	if y>1 and room[x][y-1]~=nil and not room[x][y-1]:instanceof(tiles.notGate) and canBePowered(x,y-1,2) and lastDir~=4 then
-		formerPowered = room[x][y-1].powered
-		formerSend = room[x][y-1].dirSend
-		formerAccept = room[x][y-1].dirAccept
+	if y>1 and powerRoomLevel[x][y-1]~=nil and not powerRoomLevel[x][y-1]:instanceof(tiles.notGate) and canBePowered(x,y-1,2) and lastDir~=4 then
+		formerPowered = powerRoomLevel[x][y-1].powered
+		formerSend = powerRoomLevel[x][y-1].dirSend
+		formerAccept = powerRoomLevel[x][y-1].dirAccept
 		--powered[x][y-1] = 1
-		if room[x][y].dirSend[4]==1 and room[x][y].powered then
-			room[x][y-1].poweredNeighbors[2] = 1
+		if powerRoomLevel[x][y].dirSend[4]==1 and powerRoomLevel[x][y].powered then
+			powerRoomLevel[x][y-1].poweredNeighbors[2] = 1
 		else
-			room[x][y-1].poweredNeighbors[2] = 0
+			powerRoomLevel[x][y-1].poweredNeighbors[2] = 0
 		end
-		room[x][y-1]:updateTileAndOverlay(2)
-		if room[x][y-1].powered ~= formerPowered or room[x][y-1].dirSend ~= formerSend or room[x][y-1].dirAccept ~= formerAccept then
+		powerRoomLevel[x][y-1]:updateTileAndOverlay(2)
+		if powerRoomLevel[x][y-1].powered ~= formerPowered or powerRoomLevel[x][y-1].dirSend ~= formerSend or powerRoomLevel[x][y-1].dirAccept ~= formerAccept then
 			powerTestSpecial(x, y-1, 2)
 		end
 	end
 
-	if y<roomLength and room[x][y+1]~=nil and not room[x][y+1]:instanceof(tiles.notGate) and canBePowered(x,y+1,4) and lastDir~=2 then
-		formerPowered = room[x][y+1].powered
-		formerSend = room[x][y+1].dirSend
-		formerAccept = room[x][y+1].dirAccept
+	if y<roomLength and powerRoomLevel[x][y+1]~=nil and not powerRoomLevel[x][y+1]:instanceof(tiles.notGate) and canBePowered(x,y+1,4) and lastDir~=2 then
+		formerPowered = powerRoomLevel[x][y+1].powered
+		formerSend = powerRoomLevel[x][y+1].dirSend
+		formerAccept = powerRoomLevel[x][y+1].dirAccept
 		--powered[x][y+1] = 1
-		if room[x][y].dirSend[2]==1 and room[x][y].powered then
-			room[x][y+1].poweredNeighbors[4] = 1
+		if powerRoomLevel[x][y].dirSend[2]==1 and powerRoomLevel[x][y].powered then
+			powerRoomLevel[x][y+1].poweredNeighbors[4] = 1
 		else
-			room[x][y+1].poweredNeighbors[4] = 0
+			powerRoomLevel[x][y+1].poweredNeighbors[4] = 0
 		end
-		room[x][y+1]:updateTileAndOverlay(4)
-		if room[x][y+1].powered ~= formerPowered or room[x][y+1].dirSend ~= formerSend or room[x][y+1].dirAccept ~= formerAccept then
+		powerRoomLevel[x][y+1]:updateTileAndOverlay(4)
+		if powerRoomLevel[x][y+1].powered ~= formerPowered or powerRoomLevel[x][y+1].dirSend ~= formerSend or powerRoomLevel[x][y+1].dirAccept ~= formerAccept then
 			powerTestSpecial(x, y+1, 4)
 		end
 	end
@@ -1528,7 +1499,7 @@ function hackEnterRoom(roomid, y, x)
 	if player.tileY>roomHeight then player.tileY = roomHeight end
 	createAnimals()
 	createPushables()
-	updateGameState(false)
+	updateGameState()
 	return true
 end
 
@@ -1703,7 +1674,6 @@ function enterMove()
 			end
 		end
 	end
-
 	if room[player.tileY][player.tileX]~=nil then
 		if player.prevTileY == player.tileY and player.prevTileX == player.tileX then
 			room[player.tileY][player.tileX]:onStay(player)

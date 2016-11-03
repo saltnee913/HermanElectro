@@ -131,7 +131,7 @@ local bounds = {}
 
 P.boundedTile = P.tile:new{boundary = boundaries.Boundary}
 
-P.conductiveTile = P.tile:new{charged = false, powered = false, dirSend = {1,1,1,1}, dirAccept = {1,1,1,1}, canBePowered = true, name = "conductiveTile", sprite = love.graphics.newImage('Graphics/lightoff.png'), poweredSprite = love.graphics.newImage('Graphics/lighton.png')}
+P.conductiveTile = P.tile:new{charged = false, box = nil, powered = false, dirSend = {1,1,1,1}, dirAccept = {1,1,1,1}, canBePowered = true, name = "conductiveTile", sprite = love.graphics.newImage('Graphics/lightoff.png'), poweredSprite = love.graphics.newImage('Graphics/lighton.png')}
 function P.conductiveTile:updateTile(dir)
 	if self.charged then
 		self.powered = true
