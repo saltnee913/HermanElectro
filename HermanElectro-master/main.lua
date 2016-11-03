@@ -2086,7 +2086,7 @@ function love.keypressed(key, unicode)
 		 		end
 		 	end
 	    end
-    	updateGameState(noPowerUpdate, true)
+    	updateGameState(noPowerUpdate, false)
 	    if player.tileY~=player.prevTileY or player.tileX~=player.prevTileX or waitTurn then
 	    	stepTrigger()
 	    	for k = 1, #animals do
