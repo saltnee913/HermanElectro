@@ -23,8 +23,6 @@ function P.animal:move(playerx, playery, room, isLit)
 	if self.dead or (not isLit and not self.triggered) then
 		return
 	end
-	if self.tileY<3 then
-		print(playerx.."  "..playery) end
 	self.triggered = true
 	self.prevTileX = self.tileX
 	self.prevTileY = self.tileY
