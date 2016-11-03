@@ -2054,6 +2054,9 @@ function love.keypressed(key, unicode)
 		 	if pushables[i].conductive and (pushables[i].tileY~=pushables[i].prevTileY or pushables[i].tileX~=pushables[i].prevTileX) then
 		 		noPowerUpdate = false
 		 	end
+		 	if pushables[i]:instanceof(pushableList.jackInTheBox) then
+		 		noPowerUpdate = false
+		 	end
 		 	if pushables[i].prevTileY~=nil and pushables[i].prevTileX~=nil and 
 		 	room[pushables[i].prevTileY]~=nil and room[pushables[i].prevTileY][pushables[i].prevTileX]~=nil then
 		 		if room[pushables[i].prevTileY][pushables[i].prevTileX].updatePowerOnLeave then
@@ -2067,7 +2070,7 @@ function love.keypressed(key, unicode)
 	    	for k = 1, #animals do
 				local ani = animals[k]
 				if not map.blocksMovement(ani.tileY, ani.tileX) then
-					local movex = ani.tileX
+					local movex = ani.tileXW
 					local movey = ani.tileY
 					if player.active then
 						movex = player.tileX
