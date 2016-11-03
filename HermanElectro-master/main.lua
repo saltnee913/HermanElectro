@@ -1693,15 +1693,6 @@ end
 oldTilesOn = {}
 
 function enterMove()
-	if room[player.tileY][player.tileX]~=nil then
-		if player.prevTileY == player.tileY and player.prevTileX == player.tileX then
-			room[player.tileY][player.tileX]:onStay(player)
-		else
-			player.character:preTileEnter(room[player.tileY][player.tileX])
-			room[player.tileY][player.tileX]:onEnter(player)
-		end
-	end
-
 	if not (player.prevTileY == player.tileY and player.prevTileX == player.tileX) then
 		for i = 1, #pushables do
 			if pushables[i].tileX == player.tileX and pushables[i].tileY == player.tileY then
@@ -1710,6 +1701,15 @@ function enterMove()
 					player.tileY = player.prevTileY
 				end
 			end
+		end
+	end
+
+	if room[player.tileY][player.tileX]~=nil then
+		if player.prevTileY == player.tileY and player.prevTileX == player.tileX then
+			room[player.tileY][player.tileX]:onStay(player)
+		else
+			player.character:preTileEnter(room[player.tileY][player.tileX])
+			room[player.tileY][player.tileX]:onEnter(player)
 		end
 	end
 

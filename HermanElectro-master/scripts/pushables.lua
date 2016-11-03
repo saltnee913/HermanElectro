@@ -17,6 +17,7 @@ function P.pushable:move(mover)
 	end
 	self.prevTileX = self.tileX
 	self.prevTileY = self.tileY
+		print(player.prevTileX.."   "..player.prevTileY.."   "..player.tileX.."   "..player.tileY)
 	if mover.tileX~=mover.prevTileX then
 		self.tileX = self.tileX+(mover.tileX-mover.prevTileX)
 	else
@@ -52,7 +53,6 @@ function P.pushable:move(mover)
 			return false
 		end
 	end
-
 	if room[self.tileY][self.tileX]~=nil and not room[self.tileY][self.tileX]:instanceof(tiles.endTile) and 
 		(self.prevTileX~=self.tileX or self.prevTileY~=self.tileY) then
 		room[self.tileY][self.tileX]:onEnter(self)
