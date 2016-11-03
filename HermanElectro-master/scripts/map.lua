@@ -112,6 +112,9 @@ end
 
 function P.getNextRoom(roomid)
 	local roomsArray = P.floorInfo.roomsArray
+	if roomsArray[#roomsArray] == roomid then
+		return roomsArray[1]
+	end
 	for i = 1, #roomsArray-1 do
 		if roomsArray[i] == roomid then
 			return roomsArray[i+1]
@@ -122,6 +125,9 @@ end
 
 function P.getPrevRoom(roomid)
 	local roomsArray = P.floorInfo.roomsArray
+	if roomsArray[1] == roomid then
+		return roomsArray[#roomsArray]
+	end
 	for i = 2, #roomsArray do
 		if roomsArray[i] == roomid then
 			return roomsArray[i-1]
