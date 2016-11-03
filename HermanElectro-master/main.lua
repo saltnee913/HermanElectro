@@ -180,7 +180,12 @@ function love.load()
 	love.graphics.setColor(255,255,255)
 	love.graphics.setBackgroundColor(255,255,255)
 	if not loadedOnce then
-		started = false
+		floorIndex = -1
+		--started = false
+		shaderTriggered = false
+		mushroomMode = false
+		globalTint = {0,0,0}
+		globalTintRising = {1,1,1}
 		charSelect = false
 		selectedBox = {x = 0, y = 0}
 		yOffset = -6
@@ -196,6 +201,7 @@ function love.load()
 		--floortile = love.graphics.newImage('Graphics/floortilemost.png')
 		--floortile = love.graphics.newImage('Graphics/floortilenew.png')
 		floortile = love.graphics.newImage('KenGraphics/darkrock.png')
+		grassfloortile = love.graphics.newImage('KenGraphics/grass.png')
 		invisibleTile = love.graphics.newImage('Graphics/cavesfloor.png')
 		whitetile = love.graphics.newImage('Graphics/whitetile.png')
 		doorwaybg = love.graphics.newImage('Graphics/doorwaybackground.png')
@@ -226,6 +232,7 @@ function love.load()
 	floor = tiles.tile
 
 	myShader = love.graphics.newShader[[
+		extern bool shaderTriggered;
 		extern number tint_r;
 		extern number tint_g;
 		extern number tint_b;
@@ -239,6 +246,7 @@ function love.load()
 		extern number tileYCenter;
 		vec4 effect( vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords ){
 		  	vec4 pixel = Texel(texture, texture_coords );//This is the current pixel color
+		  	if (!shaderTriggered) return pixel;
 			number xdist = player_x-screen_coords[0];
 			number ydist = player_y-screen_coords[1];
 			number playerDist = sqrt(xdist*xdist+ydist*ydist)/200;
@@ -278,6 +286,7 @@ function love.load()
 	function player:getTileLoc()
 		return {x = self.x/(floor.sprite:getWidth()*scale), y = self.y/(floor.sprite:getWidth()*scale)}
 	end
+	loadOpeningWorld()
 end
 
 function loadRandoms()
@@ -330,6 +339,20 @@ function startGame()
 	tools.resetTools()
 	--started = true
 	charSelect = true
+end
+
+function loadOpeningWorld()
+	loadRandoms()
+	loadLevel('RoomData/openingworld.json')
+	roomHeight = room.height
+	roomLength = room.length
+	player.tileX = math.floor(roomLength/2)
+	player.tileY = roomHeight-3
+	player.prevTileX = player.tileX
+	player.prevTileY = player.tileY
+	updateLight()
+	started = true
+	floorIndex = -1
 end
 
 function startTutorial()
@@ -414,6 +437,11 @@ function loadLevel(floorPath)
 				completedRooms[i][j]=0
 			end
 		end
+	end
+	roomHeight = room.height
+	roomLength = room.length
+	if floorIndex>-1 then
+		shaderTriggered = true
 	end
 end
 
@@ -963,6 +991,7 @@ function canBePowered(x,y,dir)
 end
 
 function love.draw()
+	myShader:send("shaderTriggered", shaderTriggered)
 	love.graphics.setBackgroundColor(0,0,0)
 	if not started and not charSelect then
 		love.graphics.draw(startscreen, 0, 0, 0, width/startscreen:getWidth(), height/startscreen:getHeight())
@@ -1006,8 +1035,14 @@ function love.draw()
 	love.graphics.setShader(myShader)
 	for i = 1, roomLength do
 		for j = 1, roomHeight do
-			love.graphics.draw(floortile, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height,
-			0, scale*16/floortile:getWidth(), scale*16/floortile:getWidth())
+			local toDrawFloor = nil
+			if floorIndex==-1 then
+				toDrawFloor = grassfloortile
+			else
+				toDrawFloor = floortile
+			end
+			love.graphics.draw(toDrawFloor, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height,
+			0, scale*16/toDrawFloor:getWidth(), scale*16/toDrawFloor:getWidth())
 		end
 	end
 	love.graphics.setShader()
@@ -1705,6 +1740,31 @@ function love.update(dt)
 	if gameTime.timeLeft<=0 and not loadTutorial then
 		kill()
 	end
+	if mushroomMode then
+		if globalTint[1]<0 then
+			globalTintRising[1] = 1
+		elseif globalTint[1]>0.3 then
+			globalTintRising[1] = -1
+		end
+		if globalTint[2]<0 then
+			globalTintRising[2] = 1
+		elseif globalTint[2]>0.3 then
+			globalTintRising[2] = -1
+		end
+		if globalTint[3]<0 then
+			globalTintRising[3] = 1
+		elseif globalTint[3]>0.3 then
+			globalTintRising[3] = -1
+		end
+
+		for i = 1, 3 do
+			globalTint[i] = globalTint[i]+dt/4*globalTintRising[i]
+		end
+		myShader:send("tint_r", globalTint[1])
+		myShader:send("tint_g", globalTint[2])
+		myShader:send("tint_b", globalTint[3])
+	end
+
 end
 
 function love.textinput(text)
@@ -1807,6 +1867,12 @@ function love.keypressed(key, unicode)
 	end
 	if key=="e" then
 		editorMode = not editorMode
+		if floorIndex == -1 then
+			started = false
+			charSelect = true
+			player.tileY = 1
+			player.tileX = 1
+		end
 		gameTime.timeLeft = gameTime.timeLeft+20000
 	end
 	--[[if key=='t' then

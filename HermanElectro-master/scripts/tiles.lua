@@ -874,6 +874,7 @@ function P.tunnel:getInfoText()
 	return self.toolsNeeded
 end
 function P.tunnel:postPowerUpdate()
+	if toolMax==nil then toolMax = 0 end
 	self.toolsNeeded = toolMax-self.toolsEntered
 	if self.toolsNeeded<0 then self.toolsNeeded = 0 end
 end
@@ -1503,6 +1504,13 @@ function P.endTilePaid:postPowerUpdate()
 end
 P.endTilePaid.onStep = P.endTilePaid.postPowerUpdate
 
+P.mushroom = P.tile:new{name = "mushroom", sprite = love.graphics.newImage('KenGraphics/mushroom.png')}
+function P.mushroom:onEnter()
+	mushroomMode = true
+	shaderTriggered = true
+	globalTint = {0,0.15,0.3}
+end
+
 
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
@@ -1622,5 +1630,6 @@ tiles[115] = P.superStickyButton
 tiles[116] = P.cornerRotater
 tiles[117] = P.pinkFog
 tiles[118] = P.endTilePaid
+tiles[119] = P.mushroom
 
 return tiles
