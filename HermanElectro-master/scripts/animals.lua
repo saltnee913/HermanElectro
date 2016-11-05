@@ -173,6 +173,8 @@ function P.cat:move(playerx, playery, room, isLit)
 	self.triggered = true
 	if self.waitCounter>0 then
 		self.waitCounter = self.waitCounter - 1
+		self.prevTileX = self.tileX
+		self.prevTileY = self.tileY
 		return
 	end
 

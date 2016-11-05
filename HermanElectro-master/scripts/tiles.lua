@@ -1452,6 +1452,7 @@ P.invisibleDecoy = P.tile:new{name = "invisibleDecoy", isVisible = false}
 
 P.superStickyButton = P.stickyButton:new{name = "superStickyButton", sprite = love.graphics.newImage('Graphics/superStickyButton.png'), upSprite = love.graphics.newImage('Graphics/superStickyButton.png')}
 P.unbreakableElectricFloor = P.electricFloor:new{name = "unbreakableElectricFloor", sprite = love.graphics.newImage('Graphics/unbreakableElectricFloor.png'), poweredSprite = love.graphics.newImage('Graphics/unbreakableElectricFloor.png')}
+P.unbrickableStayButton = P.stayButton:new{name = "unbrickableStayButton", sprite = love.graphics.newImage('Graphics/unbrickableStayButton.png'), upSprite = love.graphics.newImage('Graphics/unbrickableStayButton.png')}
 
 P.pinkFog = P.fog:new{name = "pinkFog", sprite = love.graphics.newImage('Graphics/pinkfog.png')}
 
@@ -1640,5 +1641,6 @@ tiles[116] = P.cornerRotater
 tiles[117] = P.pinkFog
 tiles[118] = P.endTilePaid
 tiles[119] = P.mushroom
+tiles[120] = P.unbrickableStayButton
 
 return tiles
