@@ -29,8 +29,11 @@ function P.getUnlockedCharacters()
 end
 
 P.character = Object:new{name = "Name", scale = 0, sprite = love.graphics.newImage('Graphics/herman_sketchanother.png'),
-  description = "description", startingTools = {0,0,0,0,0,0,0}, scale = 0.25 * width/1200, forcePowerUpdate = false, winUnlocks = {}}
+  description = "description", startingTools = {0,0,0,0,0,0,0}, scale = 0.25 * width/1200, forcePowerUpdate = false, winUnlocks = {}, tint = {0,0,0}}
 function P.character:onBegin()
+    myShader:send("tint_r", self.tint[1])
+    myShader:send("tint_g", self.tint[2])
+    myShader:send("tint_b", self.tint[3])
 	self:setStartingTools()
 	self:onCharLoad()
 end
@@ -58,7 +61,12 @@ function P.character:onToolUse()
 end
 function P.character:preTileEnter(tile)
 end
+function P.character:postMove()
+end
 function P.character:onTileLeave()
+end
+function P.character:getInfoText()
+	return ""
 end
 
 P.herman = P.character:new{name = "Herman", description = "The Electrician", scale = 0.3}
@@ -98,7 +106,7 @@ end
 
 local erikSprite = love.graphics.newImage('Graphics/beggar.png')
 P.erik = P.character:new{name = "Erik", description = "The Quick",
-  sprite = erikSprite, scale = scale*16/erikSprite:getWidth()}
+  sprite = erikSprite, scale = scale*16/erikSprite:getWidth(), tint = {0.4,0.4,0.4}}
 function P.erik:onCharLoad()
 	gameTime.timeLeft = 60
 	gameTime.roomTime = 10
@@ -144,7 +152,7 @@ function P.rick:onFloorEnter()
 end
 
 --alternative name: "Froggy, the Fresh"
-P.frederick = P.character:new{name = "Frederick", description = "The Frog", sprite = love.graphics.newImage('Graphics/frederick.png'), disabled = true}
+P.frederick = P.character:new{name = "Frederick", description = "The Frog", sprite = love.graphics.newImage('Graphics/frederick.png'), disabled = false}
 function P.frederick:onCharLoad()
 	tools.giveToolsByReference({tools.spring,tools.spring,tools.spring,tools.spring,tools.visionChanger,tools.visionChanger})
 end
@@ -308,9 +316,6 @@ function P.orson:onKeyPressed(key)
 						if room[i][j].down then room[i][j]:unstick()
 						else room[i][j]:onEnter() end
 					else room[i][j]:onEnter() end
-				elseif room[i][j]~=nil and room[i][j]:instanceof(tiles.stayButton) then
-					if room[i][j].down then room[i][j]:onLeave()
-					else room[i][j]:onEnter() end
 				end
 			end
 		end
@@ -343,6 +348,53 @@ function P.lenny:onTileLeave()
 	end
 end
 
+P.fish = P.character:new{name = "Fish", description = "Fish", life = 100, sprite = love.graphics.newImage('Graphics/fish.png'), tint = {0,0,0.4}}
+function P.fish:postMove()
+	self.life = self.life-1
+	if room[player.tileY][player.tileX]~=nil and room[player.tileY][player.tileX]:instanceof(tiles.puddle) then
+		self.life = 100
+	end
+	if self.life<=0 then
+		kill()
+	end
+end
+function P.fish:onCharLoad()
+	tools.giveToolsByReference({tools.waterBottle, tools.waterBottle, tools.waterBottle, tools.bucketOfWater, tools.bucketOfWater, tools.bucketOfWater, tools.bucketOfWater, tools.bucketOfWater})
+	self.life = 100
+end
+function P.fish:onFloorEnter()
+	tools.giveToolsByReference({tools.waterBottle, tools.waterBottle, tools.waterBottle, tools.bucketOfWater, tools.bucketOfWater, tools.bucketOfWater, tools.bucketOfWater, tools.bucketOfWater})
+end
+function P.fish:getInfoText()
+	return self.life
+end
+function P.fish:onToolUse()
+	if room[player.tileY][player.tileX]~=nil and room[player.tileY][player.tileX]:instanceof(tiles.puddle) then
+		self.life = 100
+	end
+	if self.life<=0 then
+		kill()
+	end
+end
+
+P.random2 = P.character:new{name = "Random2", allowedCharacters = {1,2,6,8,9,11,12,14}, description = "**RanDOm**", sprite = love.graphics.newImage('Graphics/random.png'), disabled = true}
+function P.random2:onRoomEnter()
+	local charNum = util.random(#self.allowedCharacters, 'misc')
+	if room.character==nil then
+		player.character = characters[charNum]
+		player.character.onRoomEnter = self.onRoomEnter
+		player.character.allowedCharacters = self.allowedCharacters
+		room.character = player.character
+	else
+		player.character = room.character
+	end
+end
+function P.random2:postMove()
+	if room.character==nil then
+		room.character = player.character
+	end
+end
+
 P[1] = P.herman
 P[2] = P.felix
 P[3] = P.most
@@ -359,5 +411,7 @@ P[13] = P.tim
 P[14] = P.orson
 P[15] = P.lenny
 P[16] = P.random
+P[17] = P.fish
+P[18] = P.random2
 
 return characters

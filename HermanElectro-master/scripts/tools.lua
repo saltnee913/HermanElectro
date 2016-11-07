@@ -68,11 +68,16 @@ function P.giveToolsByReference(toolArray)
 	P.giveTools(toolsToGive)
 end
 
-function P.giveRandomTools(numTools)
+function P.giveRandomTools(numTools,numSupers)
+	if numSupers == nil then numSupers = 0 end
 	local toolsToGive = {}
 	for i = 1, numTools do
 		slot = P.chooseNormalTool()
 		toolsToGive[#toolsToGive+1] = slot
+	end
+	local supersToGive = P.getSupertools(numSupers)
+	for i = 1, numSupers do
+		toolsToGive[#toolsToGive+1] = supersToGive[i]
 	end
 	P.giveTools(toolsToGive)
 end
@@ -235,7 +240,7 @@ function P.tool:getToolableTilesBox()
 		for j = -1*self.range, self.range do
 			local offset = {x = i, y = j}
 			local tileToCheck = {y = player.tileY + offset.y, x = player.tileX + offset.x}
-			if tileToCheck.x<=0 or i>roomLength then break end
+			if tileToCheck.x<=0 or tileToCheck.x>roomLength then break end
 			if room[tileToCheck.y]~=nil then
 				if (room[tileToCheck.y][tileToCheck.x] == nil and self:usableOnNothing(tileToCheck.y, tileToCheck.x))
 				or (room[tileToCheck.y][tileToCheck.x] ~= nil and self:usableOnTile(room[tileToCheck.y][tileToCheck.x], dist)) then
@@ -446,7 +451,7 @@ end
 P.wireCutters = P.tool:new{name = 'wire-cutters', image = love.graphics.newImage('Graphics/wirecutters.png')}
 function P.wireCutters:usableOnNonOverlay(tile)
 	return not tile.destroyed and ((tile:instanceof(tiles.wire) and not tile:instanceof(tiles.unbreakableWire))
-	or tile:instanceof(tiles.conductiveGlass) or tile:instanceof(tiles.reinforcedConductiveGlass) or tile:instanceof(tiles.electricFloor))
+	or tile:instanceof(tiles.conductiveGlass) or tile:instanceof(tiles.reinforcedConductiveGlass) or (tile:instanceof(tiles.electricFloor) and not tile:instanceof(tiles.unbreakableElectricFloor)))
 end
 function P.wireCutters:usableOnTile(tile)
 	return self:usableOnNonOverlay(tile) or (tile.overlay~=nil and self:usableOnNonOverlay(tile.overlay))
@@ -468,7 +473,7 @@ end
 
 P.waterBottle = P.tool:new{name = 'water-bottle', image = love.graphics.newImage('Graphics/waterbottle.png')}
 function P.waterBottle:usableOnTile(tile)
-	if not tile.destroyed and ((tile:instanceof(tiles.powerSupply) and not tile:instanceof(tiles.notGate)) or tile:instanceof(tiles.electricFloor) or tile:instanceof(tiles.untriggeredPowerSupply)) then
+	if not tile.destroyed and ((tile:instanceof(tiles.powerSupply) and not tile:instanceof(tiles.notGate)) or (tile:instanceof(tiles.electricFloor) and not tile:instanceof(tiles.unbreakableElectricFloor)) or tile:instanceof(tiles.untriggeredPowerSupply)) then
 		return true
 	--[[elseif not tile.laddered then
 		if tile:instanceof(tiles.breakablePit) and tile.strength == 0 then
@@ -506,7 +511,8 @@ end
 
 P.brick = P.tool:new{name = 'brick', baseRange = 3, image = love.graphics.newImage('Graphics/brick.png')}
 function P.brick:usableOnTile(tile, dist)
-	if not tile.bricked and tile:instanceof(tiles.button) and dist <= 3 then
+	if not tile.bricked and tile:instanceof(tiles.button) and not tile:instanceof(tiles.superStickyButton)
+		and not tile:instanceof(tiles.unbrickableStayButton) and dist <= 3 then
 		return true
 	end
 	if not tile.destroyed and tile:instanceof(tiles.glassWall) then
@@ -603,7 +609,7 @@ function P.chooseGoodSupertools()
 	return filledSlots
 end
 
-function P.giveSupertools(numTools)
+function P.getSupertools(numTools)
 	if numTools == nil then numTools = 1 end
 	local toolsToGive = {}
 	local filledSlots = {0,0,0}
@@ -629,7 +635,11 @@ function P.giveSupertools(numTools)
 		end
 		toolsToGive[#toolsToGive + 1] = slot
 	end
-	P.giveTools(toolsToGive)
+	return toolsToGive
+end
+
+function P.giveSupertools(numTools)
+	P.giveTools(P.getSupertools(numTools))
 end
 
 P.shovel = P.superTool:new{name = "shovel", baseRange = 1, image = love.graphics.newImage('Graphics/shovel.png')}
@@ -857,7 +867,7 @@ function P.sponge:usableOnTile(tile)
 	if tile:instanceof(tiles.dustyGlassWall) and tile.blocksVision then
 		return true
 	elseif tile:instanceof(tiles.puddle) then return true
-	elseif tile:instanceof(tiles.stickyButton) or (tile:instanceof(tiles.button) and tile.bricked) then return true end
+	elseif (tile:instanceof(tiles.stickyButton) and not tile:instanceof(tiles.superStickyButton)) or (tile:instanceof(tiles.button) and tile.bricked) then return true end
 	return false
 end
 function P.sponge:useToolTile(tile, tileY, tileX)
@@ -1537,6 +1547,47 @@ function P.roomUnlocker:useToolNothing()
 end
 P.roomUnlocker.useToolTile = P.roomUnlocker.useToolNothing
 
+P.axe = P.superTool:new{name = "axe", baseRange = 5, image = love.graphics.newImage('Graphics/axe.png')}
+P.axe.usableOnTile = P.saw.usableOnTile
+P.axe.usableOnAnimal = P.gun.usableOnAnimal
+P.axe.useToolAnimal = P.gun.useToolAnimal
+P.axe.useToolTile = P.saw.useToolTile
+
+P.lube = P.superTool:new{name = "lube", baseRange = 1, image = love.graphics.newImage('Graphics/lube.png')}
+function P.lube:usableOnTile(tile)
+	if tile:instanceof(tiles.dustyGlassWall) and tile.blocksVision then return true
+	elseif tile:instanceof(tiles.puddle) then return true
+	elseif (tile:instanceof(tiles.stickyButton) and not tile:instanceof(tiles.superStickyButton)) or (tile:instanceof(tiles.button) and tile.bricked) then return true end
+	if not tile.destroyed and ((tile:instanceof(tiles.powerSupply) and not tile:instanceof(tiles.notGate)) or (tile:instanceof(tiles.electricFloor) and not tile:instanceof(tiles.unbreakableElectricFloor)) or tile:instanceof(tiles.untriggeredPowerSupply)) then
+		return true
+	end
+	return false
+end
+function P.lube:usableOnNothing()
+	return true
+end
+P.lube.useToolNothing = P.waterBottle.useToolNothing
+function P.lube:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
+	if tile:instanceof(tiles.dustyGlassWall) then
+		tile.blocksVision = false
+		tile.sprite = tile.cleanSprite
+	elseif tile:instanceof(tiles.stickyButton) or tile:instanceof(tiles.button) then
+		room[tileY][tileX] = tiles.button:new()
+		room[tileY][tileX].bricked = false
+	elseif not tile.destroyed then
+		tile:destroy()
+	end
+end
+
+P.knife = P.superTool:new{name = "knife", baseRange = 5, image = love.graphics.newImage('Graphics/knife.png')}
+P.knife.usableOnAnimal = P.gun.usableOnAnimal
+P.knife.usableOnTile = P.wireCutters.usableOnTile
+P.knife.useToolAnimal = P.gun.useToolAnimal
+P.knife.useToolTile = P.wireCutters.useToolTile
+P.knife.usableOnNonOverlay = P.wireCutters.usableOnNonOverlay
+P.knife.usableOnPushable = P.wireCutters.usableOnPushable
+P.knife.useToolPushable = P.wireCutters.useToolPushable
 
 P.numNormalTools = 7
 
@@ -1606,5 +1657,7 @@ P[52] = P.wireBreaker
 P[53] = P.powerBreaker
 P[54] = P.gabeMaker
 P[55] = P.roomUnlocker
+P[56] = P.axe
+P[57] = P.lube
 
 return tools

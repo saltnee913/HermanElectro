@@ -5,7 +5,9 @@ require('scripts.object')
 local P = {}
 pushableList = P
 
-P.pushable = Object:new{name = "pushable", sawable = true, canBeAccelerated = true, conductive = false, prevTileX = 0, prevTileY = 0, tileX = 0, tileY = 0, destroyed = false, sprite = love.graphics.newImage('Graphics/box.png')}
+P.pushable = Object:new{name = "pushable", visible = true, sawable = true, canBeAccelerated = true, conductive = false, prevTileX = 0, prevTileY = 0, tileX = 0, tileY = 0, destroyed = false, sprite = love.graphics.newImage('Graphics/box.png')}
+function P.pushable:onStep()
+end
 function P.pushable:destroy()
 	self.destroyed = true
 end
@@ -15,6 +17,7 @@ function P.pushable:move(mover)
 	end
 	self.prevTileX = self.tileX
 	self.prevTileY = self.tileY
+		print(player.prevTileX.."   "..player.prevTileY.."   "..player.tileX.."   "..player.tileY)
 	if mover.tileX~=mover.prevTileX then
 		self.tileX = self.tileX+(mover.tileX-mover.prevTileX)
 	else
@@ -50,7 +53,6 @@ function P.pushable:move(mover)
 			return false
 		end
 	end
-
 	if room[self.tileY][self.tileX]~=nil and not room[self.tileY][self.tileX]:instanceof(tiles.endTile) and 
 		(self.prevTileX~=self.tileX or self.prevTileY~=self.tileY) then
 		room[self.tileY][self.tileX]:onEnter(self)
@@ -152,7 +154,7 @@ function P.animalBox:playerCanMove()
 	return self.destroyed
 end
 
-P.conductiveBox = P.box:new{name = "conductiveBox", powered = false, sprite = love.graphics.newImage('Graphics/conductiveBox.png'), poweredSprite = love.graphics.newImage('Graphics/conductiveboxpowered.png'), conductive = true}
+P.conductiveBox = P.box:new{name = "conductiveBox", powered = false, poweredLastUpdate = false, sprite = love.graphics.newImage('Graphics/conductiveBox.png'), poweredSprite = love.graphics.newImage('Graphics/conductiveboxpowered.png'), conductive = true}
 
 P.boombox = P.box:new{name = "boombox", sprite = love.graphics.newImage('Graphics/boombox.png'), sawable = false}
 
@@ -300,6 +302,15 @@ end
 
 P.jackInTheBox = P.conductiveBox:new{name = "jackInTheBox", sprite = love.graphics.newImage('Graphics/jackinthebox.png'),
   poweredSprite = love.graphics.newImage('Graphics/jackintheboxpowered.png'), sawable = false}
+function P.jackInTheBox:onStep()
+	if self.poweredLastUpdate then
+		for i = 1, #animals do
+			animals[i].waitCounter = 1
+		end
+	end
+end
+
+P.invisibleBox = P.box:new{visible = false}
 
 pushableList[1] = P.pushable
 pushableList[2] = P.box
@@ -311,5 +322,6 @@ pushableList[7] = P.batteringRam
 pushableList[8] = P.bombBox
 pushableList[9] = P.giftBox
 pushableList[10] = P.jackInTheBox
+pushableList[11] = P.invisibleBox
 
 return pushableList
