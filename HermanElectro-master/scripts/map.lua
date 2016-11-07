@@ -270,7 +270,7 @@ function P.createRoom(inRoom, arr)
 			return nil
 		end
 	end
-	--if arr[inRoom]==nil then print("isNil") end
+	--if arr[inRoom]==nil then print(inRoom.."isNil") end
 	local roomToLoad = arr[inRoom].layout
 	roomToLoad = (roomToLoad ~= nil) and roomToLoad 
 		or arr[inRoom].layouts[util.random(#arr[inRoom].layouts, 'mapGen')]
@@ -808,7 +808,7 @@ function P.generateMapFromJSON()
 		for j = 1, newmap.height do
 			if newmap[i] ~= nil and newmap[i][j] ~= nil and newmap[i][j] ~= 0 then
 				newmap.numRooms = newmap.numRooms + 1
-				newmap[i][j] = {roomid = newmap[i][j], room = P.createRoom(newmap[i][j], P.floorInfo.rooms.rooms), isFinal = false, isInitial = false, isCompleted = false}
+				newmap[i][j] = {roomid = newmap[i][j], room = P.createRoom(newmap[i][j]), isFinal = false, isInitial = false, isCompleted = false}
 				if P.getFieldForRoom(newmap[i][j].roomid, "isInitial") == true then
 					newmap[i][j].isInitial = true
 					newmap.initialX = j

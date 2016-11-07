@@ -1,10 +1,6 @@
 {
   	"loadRooms":
   	{
-  		"oldrooms":
-  		{
-  			"filePath": "RoomData/tut_rooms.json"
-  		},
       "rooms":
       {
         "filePath": "RoomData/tut_new.json"
@@ -20,7 +16,7 @@
         [0,             "tut_start",    "tut_death",    "tut_button",   "tut_wiring",   "tut_doors",      "tut_saw",       0]
         [0,             0,              0,              0,              0,              0,                "tut_glass",     0]
         [0,             0,              0,              0,              0,              0,                "tut_ef",        0]
-        [0,             0,              0,              "tut_final",    "tut_metal",    "tut_not",        "tut_and",       0]
+        [0,             0,              0,              "tut_final",    "tut_metal",    "tut_not_2",      "tut_and_2",     0]
         [0,             0,              0,              0,              0,              0,                0,               0]
   		],
   		"generateFunction": "generateMapFromJSON"
