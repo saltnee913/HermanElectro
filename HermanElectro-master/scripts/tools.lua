@@ -216,6 +216,7 @@ function P.tool:getToolableTiles()
 			for dist = 1, self.range do
 				local tileToCheck = {y = player.tileY + offset.y*dist, x = player.tileX + offset.x*dist}
 				if room[tileToCheck.y]~=nil then
+					if dir==5 and dist>1 then break end
 					if ((room[tileToCheck.y][tileToCheck.x] == nil or room[tileToCheck.y][tileToCheck.x]:usableOnNothing(tileToCheck.y, tileToCheck.x)) and (tileToCheck.x>0 and tileToCheck.x<=roomLength) and self:usableOnNothing(tileToCheck.y, tileToCheck.x))
 					or (room[tileToCheck.y][tileToCheck.x] ~= nil and self:usableOnTile(room[tileToCheck.y][tileToCheck.x], dist)) then
 						if litTiles[tileToCheck.y][tileToCheck.x]~=0 then
@@ -524,7 +525,7 @@ function P.brick:usableOnTile(tile, dist)
 	return false
 end
 function P.brick:usableOnAnimal(animal)
-	return not animal.dead and animal.waitCounter==0
+	return not animal.dead
 end
 function P.brick:useToolTile(tile)
 	self.numHeld = self.numHeld - 1
@@ -1589,6 +1590,83 @@ P.knife.usableOnNonOverlay = P.wireCutters.usableOnNonOverlay
 P.knife.usableOnPushable = P.wireCutters.usableOnPushable
 P.knife.useToolPushable = P.wireCutters.useToolPushable
 
+P.snowball = P.superTool:new{name = "snowball", baseRange = 5, image = love.graphics.newImage('Graphics/snowball.png')}
+function P.snowball:usableOnAnimal(animal)
+	return not animal.dead
+end
+function P.snowball:useToolAnimal(animal)
+	self.numHeld = self.numHeld-1
+	animal.waitCounter = animal.waitCounter+1
+end
+
+P.superSnowball = P.snowball:new{name = "superSnowball", image = love.graphics.newImage('Graphics/supersnowball.png')}
+function P.superSnowball:useToolAnimal(animal)
+	self.numHeld = self.numHeld-1
+	animal.frozen = true
+end
+
+P.snowballGlobal = P.snowball:new{name = "snowballGlobal", image = love.graphics.newImage('Graphics/snowballGlobal.png'), baseRange = 0}
+function P.snowballGlobal:usableOnNothing()
+	return true
+end
+function P.snowballGlobal:usableOnTile()
+	return true
+end
+function P.snowballGlobal:useToolNothing()
+	self.numHeld = self.numHeld-1
+	for i = 1, #animals do
+		animals[i].frozen = true
+	end
+end
+P.snowballGlobal.useToolTile = P.snowballGlobal.useToolNothing
+
+P.superBrick = P.brick:new{name = "superBrick", image = love.graphics.newImage('Graphics/superbrick.png'), baseRange = 5}
+function P.superBrick:usableOnTile(tile)
+	if not tile.bricked and tile:instanceof(tiles.button) then
+		return true
+	end
+	if not tile.destroyed and tile:instanceof(tiles.glassWall) then
+		return true
+	end
+	if tile:instanceof(tiles.mousetrap) and not tile.bricked then
+		return true
+	end
+	return false
+end
+function P.superBrick:useToolTile(tile)
+	self.numHeld = self.numHeld - 1
+	if tile:instanceof(tiles.glassWall) then
+		tile:destroy()
+	else
+		tile:lockInState(true)
+	end
+end
+function P.superBrick:useToolAnimal(animal)
+	self.numHeld = self.numHeld-1
+	animal.waitCounter = animal.waitCounter+2
+end
+
+P.superWaterBottle = P.waterBottle:new{name = "superWaterBottle", image = love.graphics.newImage('Graphics/superwaterbottle.png'), baseRange = 3}
+function P.waterBottle:usableOnTile(tile)
+	if not tile.destroyed and ((tile:instanceof(tiles.powerSupply) and not tile:instanceof(tiles.notGate)) or (tile:instanceof(tiles.electricFloor)) or tile:instanceof(tiles.untriggeredPowerSupply)) then
+		return true
+	end
+	return false
+end
+function P.waterBottle:useToolTile(tile)
+	self.numHeld = self.numHeld-1
+	if not tile.destroyed then
+		tile:destroy()
+	end
+end
+function P.waterBottle:usableOnNothing()
+	return true
+end
+function P.waterBottle:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld - 1
+	room[tileY][tileX] = tiles.puddle:new()
+end
+
 P.numNormalTools = 7
 
 --tools not included in list: trap (identical to glue in purpose)
@@ -1659,5 +1737,9 @@ P[54] = P.gabeMaker
 P[55] = P.roomUnlocker
 P[56] = P.axe
 P[57] = P.lube
+P[58] = P.snowball
+P[59] = P.superSnowball
+P[60] = P.snowballGlobal
+P[61] = P.superBrick
 
 return tools
