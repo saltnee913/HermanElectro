@@ -410,8 +410,8 @@ P[12] = P.francisco
 P[13] = P.tim
 P[14] = P.orson
 P[15] = P.lenny
-P[16] = P.random
-P[17] = P.fish
+P[16] = P.fish
+P[17] = P.random
 P[18] = P.random2
 
 return characters

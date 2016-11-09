@@ -17,8 +17,8 @@ boundaries = require('scripts.boundaries')
 animalList = require('scripts.animals')
 tools = require('scripts.tools')
 editor = require('scripts.editor')
-unlocks = require('scripts.unlocks')
 characters = require('scripts.characters')
+unlocks = require('scripts.unlocks')
 tutorial = require('scripts.tutorial')
 
 loadedOnce = false
@@ -447,6 +447,9 @@ end
 
 function kill()
 	if editorMode then return end
+	if completedRooms[mapy][mapx]>0 then
+		unlocks.unlockUnlockableRef(unlocks.portalUnlock)
+	end
 	player.dead = true
 	completedRooms[mapy][mapx] = 0 --to stop itemsNeeded tracking, it's a hack!
 end
@@ -2561,6 +2564,11 @@ function updateTools()
 			else specialTools[3] = i end
 		end
 	end
+
+	if tools.waterBottle.numHeld>=10 then
+		unlocks.unlockUnlockableRef(unlocks.fishUnlock)
+	end
+
 end
 
 function stepTrigger()
