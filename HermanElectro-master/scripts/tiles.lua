@@ -1189,8 +1189,16 @@ function P.entrancePortal:onEnter(player)
 		shouldBreak = false
 		for j = 1, roomLength do
 			if room[i][j]~=nil and room[i][j]:instanceof(tiles.exitPortal) then
-				player.tileX = j
-				player.tileY = i
+				movePlayer = true
+				for k = 1, #pushables do
+					if pushables[k].tileX == j and pushables[k].tileY == i then
+						movePlayer = false
+					end
+				end
+				if movePlayer then
+					player.tileX = j
+					player.tileY = i
+				end
 				shouldBreak = true
 				break
 			end

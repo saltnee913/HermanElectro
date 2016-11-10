@@ -47,7 +47,7 @@ function P.pushable:move(mover)
 	end
 
 	for i = 1, #animals do
-		if animals[i].tileX == self.tileX and animals[i].tileY == self.tileY then
+		if animals[i].tileX == self.tileX and animals[i].tileY == self.tileY and not animals[i].dead then
 			self.tileX = self.prevTileX
 			self.tileY = self.prevTileY
 			return false

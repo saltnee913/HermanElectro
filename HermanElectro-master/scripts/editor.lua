@@ -93,7 +93,7 @@ function P.keypressed(key, unicode)
 		print("],")
 		print("\"itemsNeeded\":")
 		print("[")
-		print("[saws, ladders, wireCutters, waterBottles, sponges, bricks, guns]")
+		print("[0,0,0,0,0,0,0]")
 		print("]")
 		print("},\n")
 	end
