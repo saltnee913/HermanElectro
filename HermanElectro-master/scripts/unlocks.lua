@@ -198,7 +198,7 @@ P[#P+1] = P.toolDoublerUnlock --done
 P[#P+1] = P.reviveUnlock --done
 P[#P+1] = P.gabeUnlock --done
 P[#P+1] = P.buttonFlipperUnlock --done
-P[#P+1] = P.suicideKingUnlock
+P[#P+1] = P.suicideKingUnlock --done
 
 --rooms
 P[#P+1] = P.beggarPartyUnlock --done
