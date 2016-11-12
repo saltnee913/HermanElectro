@@ -1474,7 +1474,6 @@ P.pinkFog = P.fog:new{name = "pinkFog", sprite = love.graphics.newImage('Graphic
 
 P.endTilePaid = P.tunnel:new{name = "endTilePaid", setTools = false, toolsNeededTotal = 0, sprite = love.graphics.newImage('Graphics/endtilepaid.png')}
 function P.endTilePaid:onEnter(player)
-
 end
 function P.endTilePaid:onEnter(player)
 	if self.toolsNeeded==0 then

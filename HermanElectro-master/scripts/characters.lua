@@ -76,7 +76,7 @@ function P.herman:onCharLoad()
 	tools.giveToolsByReference({tools.revive,tools.revive})
 end
 
-P.felix = P.character:new{name = "Felix", description = "The Sharpshooter", winUnlocks = {unlocks.missileUnlock}, sprite = love.graphics.newImage('Graphics/felix.png'), startingTools = {0,0,0,0,0,0,1}}
+P.felix = P.character:new{name = "Felix", description = "The Sharpshooter", winUnlocks = {unlocks.missileUnlock}, speedUnlocks = {unlocks.superGunUnlock}, sprite = love.graphics.newImage('Graphics/felix.png'), startingTools = {0,0,0,0,0,0,1}}
 function P.felix:onCharLoad()
 	tools[7] = tools.felixGun
 	if not tools.felixGun.isGun then
@@ -108,7 +108,7 @@ end
 local erikSprite = love.graphics.newImage('Graphics/beggar.png')
 P.erik = P.character:new{name = "Erik", description = "The Quick",
   sprite = erikSprite, scale = scale*16/erikSprite:getWidth(), tint = {0.4,0.4,0.4}}
-}
+
 function P.erik:onCharLoad()
 	gameTime.timeLeft = 60
 	gameTime.roomTime = 10
@@ -135,7 +135,7 @@ end
 
 P.rammy = P.character:new{name = "Rammy", description = "The Ram", winUnlocks = {unlocks.ramUnlock},
 	sprite = love.graphics.newImage('Graphics/ram.png')}
-}
+
 function P.rammy:preTileEnter(tile)
 	if tile.name == tiles.wall.name and not tile.destroyed then
 		tile:destroy()
@@ -305,7 +305,7 @@ function P.tim:onCharLoad()
 end
 
 P.orson = P.character:new{name = "Orson", shifted = false, description = "The Mastermind", 
-  winUnlocks = {unlocks.advancedGates}, speedUnlock = {unlocks.poweredEndUnlock}, sprite = love.graphics.newImage('Graphics/orson.png')}
+  winUnlocks = {unlocks.buttonFlipperUnlock}, speedUnlock = {unlocks.poweredEndUnlock}, sprite = love.graphics.newImage('Graphics/orson.png')}
 function P.orson:onCharLoad()
 	tools.brick.range = 100
 end

@@ -142,7 +142,8 @@ P.missileUnlock = P.unlock:new{name = 'missile', toolIds = {16}, sprite = tools.
 P.toolDoublerUnlock = P.unlock:new{name = 'tool doubler', toolIds = {42}, sprite = tools.toolDoubler.sprite}
 P.reviveUnlock = P.unlock:new{name = 'revived!', toolIds = {49}, sprite = tools.revive.sprite}
 P.gabeUnlock = P.unlock:new{name = 'gabe the angel', toolIds = {54}, sprite = love.graphics.newImage('Graphics/gabe.png')}
-
+P.buttonFlipperUnlock = P.unlock:new{name = 'button flipper', toolIds = {51}, sprite = love.graphics.newImage('Graphics/buttonflipper.png')}
+P.superGunUnlock = P.unlock:new{name = "super gun!", toolIds = {50}, sprite = love.graphics.newImage('Graphics/supergun.png')}
 
 P.roomUnlock = P.unlock:new{name = 'room', roomIds = {"1"}}
 P.beggarPartyUnlock = P.roomUnlock:new{name = 'beggars love you', roomIds = {"beggar_party"}, sprite = tiles.beggar.sprite}
@@ -175,8 +176,8 @@ P[#P+1] = P.ambiguousGates --done
 P[#P+1] = P.unbreakableEfloorUnlock --done
 P[#P+1] = P.untoolableButtons
 P[#P+1] = P.mousetrapUnlock
-P[#P+1] = P.breakablePitUnlock
-P[#P+1] = P.catUnlock
+P[#P+1] = P.breakablePitUnlock --done
+P[#P+1] = P.catUnlock --done
 P[#P+1] = P.spikesUnlock
 P[#P+1] = P.poweredEndUnlock --done
 P[#P+1] = P.snailsUnlock
@@ -196,6 +197,7 @@ P[#P+1] = P.missileUnlock --done
 P[#P+1] = P.toolDoublerUnlock --done
 P[#P+1] = P.reviveUnlock --done
 P[#P+1] = P.gabeUnlock --done
+P[#P+1] = P.buttonFlipperUnlock --done
 
 --rooms
 P[#P+1] = P.beggarPartyUnlock --done
