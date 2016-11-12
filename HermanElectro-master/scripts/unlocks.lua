@@ -113,7 +113,6 @@ P.fishUnlock = P.charUnlock:new{name = 'fish fish', charIds = {16}, sprite = lov
 P.tileUnlock = P.unlock:new{name = 'tile', tileIds = {1}, sprite = tiles.tile.sprite}
 P.boxesUnlock = P.tileUnlock:new{name = 'box', tileIds = {66,69,70,74,75,76,87,89,90}, sprite = pushables.box.sprite}
 P.acceleratorUnlock = P.tileUnlock:new{name = 'accelerator', tileIds = {86,88}, sprite = tiles.unpoweredAccelerator.sprite}
-P.portalUnlock = P.tileUnlock:new{name = 'portals', tileIds = {56,57}, sprite = tiles.entrancePortal.sprite}
 P.unbreakableWires = P.tileUnlock:new{name = 'unbreakable wires', tileIds = {40,82,83,84,85}, sprite = tiles.unbreakableWire.sprite}
 P.rotatersUnlock = P.tileUnlock:new{name = 'rotaters', tileIds = {27,116}, sprite = tiles.cornerRotater.sprite}
 P.ambiguousGates = P.tileUnlock:new{name = 'ambiguous gates', tileIds = {54,55}, sprite = tiles.ambiguousAndGate.sprite}
@@ -152,9 +151,10 @@ P.beggarPartyUnlock = P.roomUnlock:new{name = 'beggars love you', roomIds = {"be
 --multi unlocks
 P.bombsUnlock = P.unlock:new{name = 'boom!', tileIds = {39,44,65,87}, toolIds = {10}, sprite = tools.bomb.image}
 P.puddleUnlock = P.tileUnlock:new{name = 'oops you spilled something', tileIds = {71}, toolIds = {46}, sprite = tiles.puddle.sprite}
+P.portalUnlock = P.tileUnlock:new{name = 'portals', tileIds = {56,57}, toolIds = {62}, sprite = tiles.entrancePortal.sprite}
 
 
-P.winUnlocks = {P.boxesUnlock, P.rammyUnlock, P.bombsUnlock, P.unbreakableWires, P.ambiguousGates, P.unbreakableMisc}
+P.winUnlocks = {P.boxesUnlock, P.rammyUnlock, P.bombsUnlock, P.unbreakableWires, P.ambiguousGates, P.unbreakableEfloorUnlock}
 
 --characters
 P[#P+1] = P.erikUnlock --done
@@ -169,9 +169,8 @@ P[#P+1] = P.fishUnlock --done, but badly
 --tiles
 P[#P+1] = P.boxesUnlock --done
 P[#P+1] = P.acceleratorUnlock
-P[#P+1] = P.portalUnlock --done
 P[#P+1] = P.unbreakableWires --done
-P[#P+1] = P.rotatersUnlock --done
+P[#P+1] = P.rotatersUnlock
 P[#P+1] = P.ambiguousGates --done
 P[#P+1] = P.unbreakableEfloorUnlock --done
 P[#P+1] = P.untoolableButtons
@@ -205,5 +204,6 @@ P[#P+1] = P.beggarPartyUnlock --done
 --multi unlocks
 P[#P+1] = P.bombsUnlock --done
 P[#P+1] = P.puddleUnlock --done
+P[#P+1] = P.portalUnlock --done
 
 return unlocks
