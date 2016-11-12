@@ -117,7 +117,8 @@ P.portalUnlock = P.tileUnlock:new{name = 'portals', tileIds = {56,57}, sprite = 
 P.unbreakableWires = P.tileUnlock:new{name = 'unbreakable wires', tileIds = {40,82,83,84,85}, sprite = tiles.unbreakableWire.sprite}
 P.rotatersUnlock = P.tileUnlock:new{name = 'rotaters', tileIds = {27,116}, sprite = tiles.cornerRotater.sprite}
 P.ambiguousGates = P.tileUnlock:new{name = 'ambiguous gates', tileIds = {54,55}, sprite = tiles.ambiguousAndGate.sprite}
-P.unbreakableMisc = P.tileUnlock:new{name = 'more unbreakable stuff', tileIds = {114,115,120}, sprite = tiles.unbreakableElectricFloor.sprite}
+P.unbreakableEfloorUnlock = P.tileUnlock:new{name = 'ambiguous efloors', tileIds = {114}, sprite = tiles.unbreakableElectricFloor.sprite}
+P.untoolableButtons = P.tileUnlock:new{name = 'untoolable buttons', tileIds = {115,120}, sprite = tiles.unbrickableStayButton.sprite}
 P.mousetrapUnlock = P.tileUnlock:new{name = 'mousetraps', tileIds = {38,52}, sprite = tiles.mousetrap.sprite}
 P.breakablePitUnlock = P.tileUnlock:new{name = 'watch where you step', tileIds = {33}, sprite = tiles.breakablePit.sprite}
 P.catUnlock = P.tileUnlock:new{name = 'meow', tileIds = {23}, sprite = animalList.cat.sprite}
@@ -171,7 +172,8 @@ P[#P+1] = P.portalUnlock --done
 P[#P+1] = P.unbreakableWires --done
 P[#P+1] = P.rotatersUnlock --done
 P[#P+1] = P.ambiguousGates --done
-P[#P+1] = P.unbreakableMisc --done
+P[#P+1] = P.unbreakableEfloorUnlock --done
+P[#P+1] = P.untoolableButtons
 P[#P+1] = P.mousetrapUnlock
 P[#P+1] = P.breakablePitUnlock
 P[#P+1] = P.catUnlock
