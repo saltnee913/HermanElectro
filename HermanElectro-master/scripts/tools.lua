@@ -585,7 +585,13 @@ end
 P.superTool = P.tool:new{name = 'superTool', baseRange = 10, rarity = 1}
 
 function P.chooseSupertool()
-	return util.random(#tools-tools.numNormalTools,'toolDrop')+tools.numNormalTools
+	unlocks = require('scripts.unlocks')
+	unlockedSupertools = unlocks.getUnlockedSupertools()
+	local toolId
+	repeat
+		toolId = util.random(#tools-tools.numNormalTools,'toolDrop')+tools.numNormalTools
+	until(unlockedSupertools[toolId])
+	return toolId
 end
 
 --i know this is a copy of the function but if we called this every time we'd needlessly repeat the first part, bad practice still tho
