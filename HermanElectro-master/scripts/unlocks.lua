@@ -123,8 +123,8 @@ P.breakablePitUnlock = P.tileUnlock:new{name = 'watch where you step', tileIds =
 P.catUnlock = P.tileUnlock:new{name = 'meow', tileIds = {23}, sprite = animalList.cat.sprite}
 P.spikesUnlock = P.tileUnlock:new{name = 'pointy', tileIds = {28}, sprite = tiles.spikes.sprite}
 P.poweredEndUnlock = P.tileUnlock:new{name = 'powered end tiles', tileIds = {37}, sprite = tiles.poweredEnd.sprite}
-P.snailsUnlock = P.tileUnlock:new{name = 'snails!', tileIds = {43,45}, sprite = animals.snail.sprite}
-P.conductiveSnailsUnlock = P.tileUnlock:new{name = 'powered snails!', tileIds = {61,62}, sprite = animals.conductiveSnail.sprite}
+P.snailsUnlock = P.tileUnlock:new{name = 'snails!', tileIds = {43,45}, sprite = animalList.snail.sprite}
+P.conductiveSnailsUnlock = P.tileUnlock:new{name = 'powered snails!', tileIds = {61,62}, sprite = animalList.conductiveSnail.sprite}
 P.untriggeredPowerUnlock = P.tileUnlock:new{name = 'untriggered power supplies', tileIds = {63}, sprite = tiles.untriggeredPowerSupply.sprite}
 P.conditionalBoxes = P.tileUnlock:new{name = 'player only and dog only boxes', tileIds = {69,70}, sprite = pushables.playerBox.sprite}
 P.conductiveBoxes = P.tileUnlock:new{name = 'conductive boxes', tileIds = {74}, sprite = pushables.conductiveBox.sprite}
@@ -159,7 +159,7 @@ P.winUnlocks = {P.boxesUnlock, P.rammyUnlock, P.bombsUnlock, P.unbreakableWires,
 --characters
 P[#P+1] = P.erikUnlock --done
 P[#P+1] = P.rammyUnlock --done
-P[#P+1] = P.frederickUnlock
+P[#P+1] = P.frederickUnlock --done
 P[#P+1] = P.batteryUnlock
 P[#P+1] = P.wizardUnlock
 P[#P+1] = P.orsonUnlock --done
