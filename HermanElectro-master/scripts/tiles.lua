@@ -1191,6 +1191,8 @@ function P.donationMachine:onEnter(player)
 	local mult = 1
 	if tool > tools.numNormalTools then
 		mult = 2
+		unlocks = require('scripts.unlocks')
+		unlocks.unlockUnlockableRef(unlocks.snailsUnlock)
 	end
 	donations = donations+mult*math.ceil((10-(floorIndex))/2)
 	floorDonations = floorDonations+1

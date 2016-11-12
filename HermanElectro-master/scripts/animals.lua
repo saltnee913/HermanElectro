@@ -162,6 +162,12 @@ P.snail = P.animal:new{name = "snail", sprite = love.graphics.newImage('NewGraph
 function P.snail:onNullLeave()
 	return tiles.slime:new()
 end
+function P.snail:kill()
+	self.dead = true
+	self.sprite = self.deadSprite
+	unlocks = require('scripts.unlocks')
+	unlocks.unlockUnlockableRef(unlocks.conductiveSnailsUnlock)
+end
 
 P.conductiveSnail = P.snail:new{name = "conductiveSnail", sprite = love.graphics.newImage('NewGraphics/snailCDesign.png')}
 function P.conductiveSnail:onNullLeave()
