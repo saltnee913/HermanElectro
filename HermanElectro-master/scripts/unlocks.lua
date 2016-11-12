@@ -133,6 +133,7 @@ P.ramUnlock = P.tileUnlock:new{name = 'battering ram', tileIds = {76}, sprite = 
 P.jackInTheBoxUnlock = P.tileUnlock:new{name = 'jack in the box', tileIds = {90}, sprite = pushables.jackInTheBox.sprite}
 P.dirtyGlassUnlock = P.tileUnlock:new{name = 'who leaves all this dust here', tileIds = {72}, sprite = tiles.dustyGlassWall.sprite}
 P.fogUnlock = P.tileUnlock:new{name = "i can't see a thing", tileIds = {81,117}, sprite = tiles.fog.sprite}
+P.directionGatesUnlock = P.tileUnlock:new{name = "erik's shitty direction gates", tileIds = {67,68}, sprite = tiles.motionGate.sprite}
 
 
 P.toolUnlock = P.unlock:new{name = 'tool', toolIds = {}, sprite = tools.saw.sprite}
@@ -186,6 +187,7 @@ P[#P+1] = P.ramUnlock --done
 P[#P+1] = P.jackInTheBoxUnlock
 P[#P+1] = P.dirtyGlassUnlock
 P[#P+1] = P.fogUnlock --done
+P[#P+1] = P.directionGatesUnlock
 
 --tools
 P[#P+1] = P.missileUnlock --done
