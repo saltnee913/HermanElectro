@@ -108,7 +108,7 @@ end
 local erikSprite = love.graphics.newImage('Graphics/beggar.png')
 P.erik = P.character:new{name = "Erik", description = "The Quick",
   sprite = erikSprite, scale = scale*16/erikSprite:getWidth(), tint = {0.4,0.4,0.4}}
-}
+
 function P.erik:onCharLoad()
 	gameTime.timeLeft = 60
 	gameTime.roomTime = 10
@@ -135,7 +135,7 @@ end
 
 P.rammy = P.character:new{name = "Rammy", description = "The Ram", winUnlocks = {unlocks.ramUnlock},
 	sprite = love.graphics.newImage('Graphics/ram.png')}
-}
+
 function P.rammy:preTileEnter(tile)
 	if tile.name == tiles.wall.name and not tile.destroyed then
 		tile:destroy()
