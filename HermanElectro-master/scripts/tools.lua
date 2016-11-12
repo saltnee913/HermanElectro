@@ -538,6 +538,9 @@ end
 function P.brick:useToolAnimal(animal)
 	self.numHeld = self.numHeld-1
 	animal.waitCounter = animal.waitCounter+1
+	if animal.waitCounter>=3 then
+		unlocks.unlockUnlockableRef(unlocks.catUnlock)
+	end
 end
 
 P.gun = P.tool:new{name = 'gun', baseRange = 3, image = love.graphics.newImage('NewGraphics/gun copy.png')}
@@ -828,7 +831,7 @@ end
 function P.corpseGrabber:useToolAnimal(animal)
 	self.numHeld = self.numHeld-1
 	animal.pickedUp = true
-	tools.giveToolsByReference({tools.meat,tools.meat,tools.meat})
+	tools.giveToolsByReference({tools.sponge, tools.sponge, tools.sponge})
 	local counter = 0
 	for i = P.numNormalTools+1, #tools do
 		if tools[i].numHeld>0 then
@@ -1655,25 +1658,35 @@ function P.superBrick:useToolAnimal(animal)
 end
 
 P.superWaterBottle = P.waterBottle:new{name = "superWaterBottle", image = love.graphics.newImage('Graphics/superwaterbottle.png'), baseRange = 3}
-function P.waterBottle:usableOnTile(tile)
+function P.superWaterBottle:usableOnTile(tile)
 	if not tile.destroyed and ((tile:instanceof(tiles.powerSupply) and not tile:instanceof(tiles.notGate)) or (tile:instanceof(tiles.electricFloor)) or tile:instanceof(tiles.untriggeredPowerSupply)) then
 		return true
 	end
 	return false
 end
-function P.waterBottle:useToolTile(tile)
+function P.superWaterBottle:useToolTile(tile)
 	self.numHeld = self.numHeld-1
 	if not tile.destroyed then
 		tile:destroy()
 	end
 end
-function P.waterBottle:usableOnNothing()
+function P.superWaterBottle:usableOnNothing()
 	return true
 end
-function P.waterBottle:useToolNothing(tileY, tileX)
+function P.superWaterBottle:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld - 1
 	room[tileY][tileX] = tiles.puddle:new()
 end
+
+P.portalPlacer = P.superTool:new{name = "portalPlacer", image = love.graphics.newImage('Graphics/entranceportal.png'), baseRange = 1}
+function P.portalPlacer:usableOnNothing()
+	return true
+end
+function P.portalPlacer:useToolNothing(tileY, tileX)
+	room[tileY][tileX] = tiles.entrancePortal:new()
+end
+
+
 
 P.numNormalTools = 7
 
@@ -1687,7 +1700,7 @@ function P.resetTools()
 	P[4] = P.waterBottle
 	P[5] = P.sponge
 	P[6] = P.brick
-	P[7] = P.gun
+	P[7] = P.portalPlacer
 	for i = 1, #tools do
 		tools[i].range = tools[i].baseRange
 	end
@@ -1749,5 +1762,7 @@ P[58] = P.snowball
 P[59] = P.superSnowball
 P[60] = P.snowballGlobal
 P[61] = P.superBrick
+P[62] = P.portalPlacer
+P[63] = P.unbricker
 
 return tools
