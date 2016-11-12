@@ -1028,7 +1028,13 @@ function P.bomb:destroy()
 	self.gone = true
 end
 function P.bomb:explode(x,y)
-	if not editorMode and math.abs(player.tileY-x)<2 and math.abs(player.tileX-y)<2 then kill() end
+	if not editorMode and math.abs(player.tileY-x)<2 and math.abs(player.tileX-y)<2 then 
+		kill()
+		if self.name == P.bomb.name then
+			unlocks = require('scripts.unlocks')
+			unlocks.unlockUnlockableRef(unlocks.frederickUnlock)
+		end
+	end
 	for i = -1, 1 do
 		for j = -1, 1 do
 			if room[x+i]~=nil and room[x+i][y+j]~=nil then room[x+i][y+j]:destroy() end
