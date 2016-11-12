@@ -114,16 +114,17 @@ P.tileUnlock = P.unlock:new{name = 'tile', tileIds = {1}, sprite = tiles.tile.sp
 P.boxesUnlock = P.tileUnlock:new{name = 'box', tileIds = {66,69,70,74,75,76,87,89,90}, sprite = pushables.box.sprite}
 P.acceleratorUnlock = P.tileUnlock:new{name = 'accelerator', tileIds = {86,88}, sprite = tiles.unpoweredAccelerator.sprite}
 P.portalUnlock = P.tileUnlock:new{name = 'portals', tileIds = {56,57}, sprite = tiles.entrancePortal.sprite}
-P.unbreakableWires = P.tileUnlock:new{name = 'unbreakable wires', tileIds = {82,83,84,85}, sprite = tiles.unbreakableWire.sprite}
-P.advancedGates = P.tileUnlock:new{name = 'advanced gates', tileIds = {27,29,67,68,116}, sprite = tiles.cornerRotater.sprite}
-P.ambiguousGates = P.tileUnlock:new{name = 'ambiguous gates', tileIds = {40,54,55}, sprite = tiles.ambiguousAndGate.sprite}
+P.unbreakableWires = P.tileUnlock:new{name = 'unbreakable wires', tileIds = {40,82,83,84,85}, sprite = tiles.unbreakableWire.sprite}
+P.rotatersUnlock = P.tileUnlock:new{name = 'rotaters', tileIds = {27,116}, sprite = tiles.cornerRotater.sprite}
+P.ambiguousGates = P.tileUnlock:new{name = 'ambiguous gates', tileIds = {54,55}, sprite = tiles.ambiguousAndGate.sprite}
 P.unbreakableMisc = P.tileUnlock:new{name = 'more unbreakable stuff', tileIds = {114,115,120}, sprite = tiles.unbreakableElectricFloor.sprite}
 P.mousetrapUnlock = P.tileUnlock:new{name = 'mousetraps', tileIds = {38,52}, sprite = tiles.mousetrap.sprite}
 P.breakablePitUnlock = P.tileUnlock:new{name = 'watch where you step', tileIds = {33}, sprite = tiles.breakablePit.sprite}
 P.catUnlock = P.tileUnlock:new{name = 'meow', tileIds = {23}, sprite = animalList.cat.sprite}
 P.spikesUnlock = P.tileUnlock:new{name = 'pointy', tileIds = {28}, sprite = tiles.spikes.sprite}
 P.poweredEndUnlock = P.tileUnlock:new{name = 'powered end tiles', tileIds = {37}, sprite = tiles.poweredEnd.sprite}
-P.snailsUnlock = P.tileUnlock:new{name = 'snails!', tileIds = {43,45,61,62}}
+P.snailsUnlock = P.tileUnlock:new{name = 'snails!', tileIds = {43,45}, sprite = animals.snail.sprite}
+P.conductiveSnailsUnlock = P.tileUnlock:new{name = 'powered snails!', tileIds = {61,62}, sprite = animals.conductiveSnail.sprite}
 P.untriggeredPowerUnlock = P.tileUnlock:new{name = 'untriggered power supplies', tileIds = {63}, sprite = tiles.untriggeredPowerSupply.sprite}
 P.conditionalBoxes = P.tileUnlock:new{name = 'player only and dog only boxes', tileIds = {69,70}, sprite = pushables.playerBox.sprite}
 P.conductiveBoxes = P.tileUnlock:new{name = 'conductive boxes', tileIds = {74}, sprite = pushables.conductiveBox.sprite}
@@ -167,7 +168,7 @@ P[#P+1] = P.boxesUnlock --done
 P[#P+1] = P.acceleratorUnlock
 P[#P+1] = P.portalUnlock --done
 P[#P+1] = P.unbreakableWires --done
-P[#P+1] = P.advancedGates --done
+P[#P+1] = P.rotatersUnlock --done
 P[#P+1] = P.ambiguousGates --done
 P[#P+1] = P.unbreakableMisc --done
 P[#P+1] = P.mousetrapUnlock
@@ -176,6 +177,7 @@ P[#P+1] = P.catUnlock
 P[#P+1] = P.spikesUnlock
 P[#P+1] = P.poweredEndUnlock --done
 P[#P+1] = P.snailsUnlock
+P[#P+1] = P.conductiveSnailsUnlock
 P[#P+1] = P.untriggeredPowerUnlock
 P[#P+1] = P.conditionalBoxes --done
 P[#P+1] = P.conductiveBoxes --done
