@@ -44,6 +44,9 @@ function P.giveTools(toolArray)
 			toolsToDisp[#toolsToDisp+1] = toolArray[i]
 		end
 	end
+	if tools.revive.numHeld>=9 then
+		unlocks.unlockUnlockableRef(unlocks.suicideKingUnlock)
+	end
 	P.displayTools(toolsToDisp)
 	updateTools()
 end
@@ -890,8 +893,12 @@ function P.sponge:useToolTile(tile, tileY, tileX)
 		unlocks.unlockUnlockableRef(unlocks.puddleUnlock)
 		room[tileY][tileX] = nil
 	elseif tile:instanceof(tiles.stickyButton) or tile:instanceof(tiles.button) then
-		room[tileY][tileX] = tiles.button:new()
-		room[tileY][tileX].bricked = false
+		if tile:instanceof(tiles.stayButton) then
+			room[tileY][tileX] = tiles.stayButton:new()
+		else
+			room[tileY][tileX] = tiles.button:new()
+			room[tileY][tileX].bricked = false
+		end
 	end
 end
 
@@ -1686,6 +1693,14 @@ function P.portalPlacer:useToolNothing(tileY, tileX)
 	room[tileY][tileX] = tiles.entrancePortal:new()
 end
 
+P.suicideKing = P.superTool:new{name = "suicideKing", image = love.graphics.newImage('Graphics/entranceportal.png'), baseRange = 0}
+function P.suicideKing:usableOnNothing()
+	return true
+end
+function P.suicideKing:useToolNothing()
+	P.giveSupertools(3)
+end
+
 
 
 P.numNormalTools = 7
@@ -1763,6 +1778,6 @@ P[59] = P.superSnowball
 P[60] = P.snowballGlobal
 P[61] = P.superBrick
 P[62] = P.portalPlacer
-P[63] = P.unbricker
+P[63] = P.suicideKing
 
 return tools

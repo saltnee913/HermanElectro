@@ -141,6 +141,7 @@ P.reviveUnlock = P.unlock:new{name = 'revived!', toolIds = {49}, sprite = tools.
 P.gabeUnlock = P.unlock:new{name = 'gabe the angel', toolIds = {54}, sprite = love.graphics.newImage('Graphics/gabe.png')}
 P.buttonFlipperUnlock = P.unlock:new{name = 'button flipper', toolIds = {51}, sprite = love.graphics.newImage('Graphics/buttonflipper.png')}
 P.superGunUnlock = P.unlock:new{name = "super gun!", toolIds = {50}, sprite = love.graphics.newImage('Graphics/supergun.png')}
+P.suicideKingUnlock = P.unlock:new{name = "use with caution", toolIds = {64}, sprite = love.graphics.newImage('Graphics/entranceportal.png')}
 
 P.roomUnlock = P.unlock:new{name = 'room', roomIds = {"1"}}
 P.beggarPartyUnlock = P.roomUnlock:new{name = 'beggars love you', roomIds = {"beggar_party"}, sprite = tiles.beggar.sprite}
@@ -192,6 +193,7 @@ P[#P+1] = P.toolDoublerUnlock --done
 P[#P+1] = P.reviveUnlock --done
 P[#P+1] = P.gabeUnlock --done
 P[#P+1] = P.buttonFlipperUnlock --done
+P[#P+1] = P.suicideKingUnlock
 
 --rooms
 P[#P+1] = P.beggarPartyUnlock --done
