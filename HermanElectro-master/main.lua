@@ -329,6 +329,9 @@ function loadNextLevel(dontChangeTime)
 	if floorIndex ~= 2 then
 		player.character:onFloorEnter()
 	end
+	if floorIndex == 4 then
+		unlocks.unlockUnlockableRef(unlocks.boxesUnlock)
+	end
 end
 
 function startGame()
