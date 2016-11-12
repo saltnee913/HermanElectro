@@ -146,7 +146,7 @@ end
 
 local function doesRoomContainTile(roomData, tile)
 	layouts = roomData.layouts and roomData.layouts or {roomData.layout}
-	return util.deepContains(layouts, tile)
+	return util.deepContains(layouts, tile, true)
 end
 
 function P.filterRoomSetByUnlocks(arr)
