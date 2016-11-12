@@ -206,7 +206,10 @@ function P.spikes:willKillPlayer()
 end
 P.spikes.willKillAnimal = P.spikes.willKillPlayer
 
-P.button = P.tile:new{bricked = false, updatePowerOnEnter = true, justPressed = false, down = false, powered = false, dirSend = {1,1,1,1}, dirAccept = {0,0,0,0}, canBePowered = true, name = "button", pressed = false, sprite = love.graphics.newImage('Graphics/button.png'), poweredSprite = love.graphics.newImage('Graphics/button.png'), downSprite = love.graphics.newImage('Graphics/buttonPressed.png'), brickedSprite = love.graphics.newImage('Graphics/brickedButton.png'), upSprite = love.graphics.newImage('Graphics/button.png')}
+P.button = P.tile:new{bricked = false, updatePowerOnEnter = true, justPressed = false, down = false, powered = false, dirSend = {1,1,1,1}, 
+  dirAccept = {0,0,0,0}, canBePowered = true, name = "button", pressed = false, sprite = love.graphics.newImage('Graphics/button.png'), 
+  poweredSprite = love.graphics.newImage('Graphics/button.png'), downSprite = love.graphics.newImage('Graphics/buttonPressed.png'), 
+  brickedSprite = love.graphics.newImage('Graphics/brickedButton.png'), upSprite = love.graphics.newImage('Graphics/button.png'), timesPressed = 0}
 function P.button:resetState()
 	self.justPressed = false
 end
@@ -235,6 +238,11 @@ function P.button:onEnter(player)
 			self.dirAccept = {0,0,0,0}
 		else
 			self.dirAccept = {1,1,1,1}
+		end
+		self.timesPressed = self.timesPressed + 1
+		if self.timesPressed > 10 then
+			unlocks = require('scripts.unlocks')
+			unlocks.unlockUnlockableRef(unlocks.orsonUnlock)
 		end
 		--updateGameState()
 		self:updateSprite()

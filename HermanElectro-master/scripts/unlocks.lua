@@ -94,8 +94,6 @@ end
 P.unlock = Object:new{name = 'generic', unlocked = false, sprite = tiles.fog.sprite}
 
 
-P.roomUnlock = P.unlock:new{name = 'room', roomIds = {"1"}}
-P.beggarPartyUnlock = P.roomUnlock:new{name = 'beggars love you', roomIds = {"beggar_party"}, sprite = tiles.beggar.sprite}
 
 
 P.charUnlock = P.unlock:new{name = 'character', charIds = {1}}
@@ -137,46 +135,67 @@ P.fogUnlock = P.tileUnlock:new{name = "i can't see a thing", tileIds = {81,117},
 
 
 P.toolUnlock = P.unlock:new{name = 'tool', toolIds = {}, sprite = tools.saw.sprite}
+P.missileUnlock = P.unlock:new{name = 'missile', toolIds = {16}, sprite = tools.missile.sprite}
+P.toolDoublerUnlock = P.unlock:new{name = 'tool doubler', toolIds = {42}, sprite = tools.toolDoubler.sprite}
+P.reviveUnlock = P.unlock:new{name = 'revived!', toolIds = {49}, sprite = tools.revive.sprite}
+P.gabeUnlock = P.unlock:new{name = 'gabe the angel', toolIds = {54}, sprite = love.graphics.newImage('Graphics/gabe.png')}
 
 
+P.roomUnlock = P.unlock:new{name = 'room', roomIds = {"1"}}
+P.beggarPartyUnlock = P.roomUnlock:new{name = 'beggars love you', roomIds = {"beggar_party"}, sprite = tiles.beggar.sprite}
+
+
+--multi unlocks
 P.bombsUnlock = P.unlock:new{name = 'boom!', tileIds = {39,44,65,87}, toolIds = {10}, sprite = tools.bomb.image}
 P.puddleUnlock = P.tileUnlock:new{name = 'oops you spilled something', tileIds = {71}, toolIds = {46}, sprite = tiles.puddle.sprite}
 
 
-P.winUnlocks = {1, 2, 4}
+P.winUnlocks = {P.boxesUnlock, P.rammyUnlock, P.bombsUnlock, P.unbreakableWires, P.ambiguousGates, P.unbreakableMisc}
 
-P[#P+1] = P.erikUnlock
-P[#P+1] = P.rammyUnlock
+--characters
+P[#P+1] = P.erikUnlock --done
+P[#P+1] = P.rammyUnlock --done
 P[#P+1] = P.frederickUnlock
 P[#P+1] = P.batteryUnlock
 P[#P+1] = P.wizardUnlock
-P[#P+1] = P.orsonUnlock
-P[#P+1] = P.lennyUnlock
-P[#P+1] = P.fishUnlock
+P[#P+1] = P.orsonUnlock --done
+P[#P+1] = P.lennyUnlock --done
+P[#P+1] = P.fishUnlock --done, but badly
 
-P[#P+1] = P.boxesUnlock
+--tiles
+P[#P+1] = P.boxesUnlock --done
 P[#P+1] = P.acceleratorUnlock
-P[#P+1] = P.portalUnlock
-P[#P+1] = P.unbreakableWires
-P[#P+1] = P.advancedGates
-P[#P+1] = P.ambiguousGates
-P[#P+1] = P.unbreakableMisc
+P[#P+1] = P.portalUnlock --done
+P[#P+1] = P.unbreakableWires --done
+P[#P+1] = P.advancedGates --done
+P[#P+1] = P.ambiguousGates --done
+P[#P+1] = P.unbreakableMisc --done
 P[#P+1] = P.mousetrapUnlock
 P[#P+1] = P.breakablePitUnlock
 P[#P+1] = P.catUnlock
 P[#P+1] = P.spikesUnlock
-P[#P+1] = P.poweredEndUnlock
+P[#P+1] = P.poweredEndUnlock --done
 P[#P+1] = P.snailsUnlock
 P[#P+1] = P.untriggeredPowerUnlock
-P[#P+1] = P.conditionalBoxes
-P[#P+1] = P.conductiveBoxes
+P[#P+1] = P.conditionalBoxes --done
+P[#P+1] = P.conductiveBoxes --done
 P[#P+1] = P.boomboxUnlock
-P[#P+1] = P.ramUnlock
+P[#P+1] = P.ramUnlock --done
 P[#P+1] = P.jackInTheBoxUnlock
 P[#P+1] = P.dirtyGlassUnlock
-P[#P+1] = P.fogUnlock
+P[#P+1] = P.fogUnlock --done
 
-P[#P+1] = P.bombsUnlock
-P[#P+1] = P.puddleUnlock
+--tools
+P[#P+1] = P.missileUnlock --done
+P[#P+1] = P.toolDoublerUnlock --done
+P[#P+1] = P.reviveUnlock --done
+P[#P+1] = P.gabeUnlock --done
+
+--rooms
+P[#P+1] = P.beggarPartyUnlock --done
+
+--multi unlocks
+P[#P+1] = P.bombsUnlock --done
+P[#P+1] = P.puddleUnlock --done
 
 return unlocks

@@ -156,6 +156,14 @@ P.conductiveSnail = P.snail:new{name = "conductiveSnail", sprite = love.graphics
 function P.conductiveSnail:onNullLeave()
 	return tiles.conductiveSlime:new()
 end
+function P.conductiveSnail:kill()
+	self.dead = true
+	self.sprite = self.deadSprite
+	if room[self.tileY][self.tileX]:instanceof(tiles.conductiveSlime) then
+		unlocks = require('scripts.unlocks')
+		unlocks.unlockUnlockableRef(unlocks.lennyUnlock)
+	end
+end
 
 P.bat = P.animal:new{flying = true, name = "bat", sprite = love.graphics.newImage('Graphics/bat.png'), deadSprite = love.graphics.newImage('Graphics/pupdead.png')}
 function P.bat:checkDeath()

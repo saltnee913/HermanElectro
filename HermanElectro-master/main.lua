@@ -457,20 +457,23 @@ end
 function win()
 	if not won then
 		for i = 1, #unlocks.winUnlocks do
-			if unlocks[unlocks.winUnlocks[i]].unlocked == false then
-				unlocks.unlockUnlockable(unlocks.winUnlocks[i])
+			if winUnlocks[i].unlocked == false then
+				unlocks.unlockUnlockableRef(winUnlocks[i])
 				break
 			end
 		end
 		for i = 1, #player.character.winUnlocks do
 			local unlock = player.character.winUnlocks[i]
-			if unlocks[unlock].unlocked == false then
-				unlocks.unlockUnlockable(unlock)
+			if unlock.unlocked == false then
+				unlocks.unlockUnlockableRef(unlock)
 				break
 			end
 		end
 		if gameTime.timeLeft > gameTime.levelTime * floorIndex then
 			unlocks.unlockUnlockableRef(unlocks.erikUnlock)
+		end
+		if player.character.speedUnlock ~= nil and gameTime.timeLeft > player.character.speedUnlockTime then
+			unlocks.unlockUnlockableRef(player.character.speedUnlock)
 		end
 		won = true
 	end

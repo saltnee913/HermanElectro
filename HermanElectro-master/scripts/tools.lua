@@ -883,6 +883,8 @@ function P.sponge:useToolTile(tile, tileY, tileX)
 		tile.blocksVision = false
 		tile.sprite = tile.cleanSprite
 	elseif tile:instanceof(tiles.puddle) then
+		unlocks = require('scripts.unlocks')
+		unlocks.unlockUnlockableRef(unlocks.puddleUnlock)
 		room[tileY][tileX] = nil
 	elseif tile:instanceof(tiles.stickyButton) or tile:instanceof(tiles.button) then
 		room[tileY][tileX] = tiles.button:new()
