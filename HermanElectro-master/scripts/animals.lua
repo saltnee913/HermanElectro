@@ -182,7 +182,7 @@ function P.conductiveSnail:kill()
 	end
 end
 
-P.glueSnail = P.snail:new{name = "glueSnail", sprite = love.graphics.newImage('NewGraphics/snailDesign.png')}
+P.glueSnail = P.snail:new{name = "glueSnail", sprite = love.graphics.newImage('Graphics/gluesnail.png')}
 function P.glueSnail:onNullLeave()
 	return tiles.glue:new()
 end
