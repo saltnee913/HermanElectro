@@ -303,6 +303,7 @@ function P.cat:secondaryMove(playerx, playery)
 	return true
 end
 
+P.bombBuddy = P.animal:new{name = "bombBuddy", sprite = love.graphics.newImage('Graphics/bombbuddy.png'), deadSprite = love.graphics.newImage('Graphics/catdead.png')}
 
 animalList[1] = P.animal
 animalList[2] = P.pitbull
@@ -312,5 +313,6 @@ animalList[5] = P.snail
 animalList[6] = P.bat
 animalList[7] = P.conductiveSnail
 animalList[8] = P.glueSnail
+animalList[9] = P.bombBuddy
 
 return animalList

@@ -570,6 +570,14 @@ end
 function P.gun:useToolAnimal(animal)
 	self.numHeld = self.numHeld - 1
 	animal:kill()
+	if animal:instanceof(animalList.bombBuddy) then
+		local tileY = animal.tileY
+		local tileX = animal.tileX
+		room[tileY][tileX] = tiles.bomb:new()
+		room[tileY][tileX]:onEnd(tileY, tileX)
+		room[tileY][tileX]:explode(tileY, tileX)
+		room[tileY][tileX] = nil
+	end
 end
 
 P.felixGun = P.gun:new{name = 'felix gun', numHeld = 0, range = 5, isGun = true}
