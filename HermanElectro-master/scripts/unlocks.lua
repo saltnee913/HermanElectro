@@ -125,6 +125,7 @@ P.spikesUnlock = P.tileUnlock:new{name = 'pointy', tileIds = {28}, sprite = tile
 P.poweredEndUnlock = P.tileUnlock:new{name = 'powered end tiles', tileIds = {37}, sprite = tiles.poweredEnd.sprite}
 P.snailsUnlock = P.tileUnlock:new{name = 'snails!', tileIds = {43,45}, sprite = animalList.snail.sprite}
 P.conductiveSnailsUnlock = P.tileUnlock:new{name = 'powered snails!', tileIds = {61,62}, sprite = animalList.conductiveSnail.sprite}
+P.glueSnailUnlock = P.tileUnlock:new{name = 'glue snails!', tileIds = {121}, sprite = animalList.glueSnail.sprite}
 P.untriggeredPowerUnlock = P.tileUnlock:new{name = 'untriggered power supplies', tileIds = {63}, sprite = tiles.untriggeredPowerSupply.sprite}
 P.conditionalBoxes = P.tileUnlock:new{name = 'player only and dog only boxes', tileIds = {69,70}, sprite = pushables.playerBox.sprite}
 P.conductiveBoxes = P.tileUnlock:new{name = 'conductive boxes', tileIds = {74}, sprite = pushables.conductiveBox.sprite}
@@ -183,6 +184,7 @@ P[#P+1] = P.spikesUnlock
 P[#P+1] = P.poweredEndUnlock --done
 P[#P+1] = P.snailsUnlock --done
 P[#P+1] = P.conductiveSnailsUnlock --done
+P[#P+1] = P.glueSnailUnlock --done
 P[#P+1] = P.untriggeredPowerUnlock
 P[#P+1] = P.conditionalBoxes --done
 P[#P+1] = P.conductiveBoxes --done

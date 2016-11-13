@@ -1098,7 +1098,7 @@ P.inductor.getInfoText = P.capacitor.getInfoText
 
 P.slime = P.tile:new{name = "slime", sprite = love.graphics.newImage('Graphics/slime.png')}
 function P.slime:onEnter(player)
-	if player.character.name == "Lenny" then return end
+	if player.character.name == characters.lenny.name then return end
 	player.waitCounter = player.waitCounter+1
 end
 function P.slime:onEnterAnimal(animal)
@@ -1335,6 +1335,10 @@ end
 P.glue = P.tile:new{name = "glue", sprite = love.graphics.newImage('Graphics/glue.png')}
 function P.glue:onEnter(player)
 	player.waitCounter = player.waitCounter+1
+	if player.character.name == characters.lenny.name then
+		unlocks = require('scripts.unlocks')
+		unlocks.unlockUnlockableRef(unlocks.glueSnailUnlock)
+	end
 end
 
 function P.glue:onStay(player)
@@ -1343,6 +1347,10 @@ end
 function P.glue:onEnterAnimal(animal)
 	if animal.flying then return end
 	animal.waitCounter = animal.waitCounter+1
+	if animal:instanceof(animalList.snail) then
+		unlocks = require('scripts.unlocks')
+		unlocks.unlockUnlockableRef(unlocks.glueSnailUnlock)
+	end
 end
 P.glue.onStayAnimal = P.glue.onEnterAnimal
 
