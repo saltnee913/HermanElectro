@@ -176,7 +176,7 @@ end
 function P.conductiveSnail:kill()
 	self.dead = true
 	self.sprite = self.deadSprite
-	if room[self.tileY][self.tileX]:instanceof(tiles.conductiveSlime) then
+	if room[self.tileY] ~= nil and room[self.tileY][self.tileX] ~= nil and room[self.tileY][self.tileX]:instanceof(tiles.conductiveSlime) then
 		unlocks = require('scripts.unlocks')
 		unlocks.unlockUnlockableRef(unlocks.lennyUnlock)
 	end
