@@ -1693,7 +1693,7 @@ function P.portalPlacer:useToolNothing(tileY, tileX)
 	room[tileY][tileX] = tiles.entrancePortal:new()
 end
 
-P.suicideKing = P.superTool:new{name = "suicideKing", image = love.graphics.newImage('Graphics/entranceportal.png'), baseRange = 0}
+P.suicideKing = P.superTool:new{name = "suicideKing", image = love.graphics.newImage('Graphics/suicideking.png'), baseRange = 0}
 function P.suicideKing:usableOnNothing()
 	return true
 end

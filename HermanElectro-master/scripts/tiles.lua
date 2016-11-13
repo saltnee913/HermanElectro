@@ -1341,7 +1341,7 @@ function P.glue:onStay(player)
 	player.waitCounter = player.waitCounter+1
 end
 function P.glue:onEnterAnimal(animal)
-	if animal.flying then return end
+	if animal.flying or animal:instanceof(animalList.snail) then return end
 	animal.waitCounter = animal.waitCounter+1
 end
 P.glue.onStayAnimal = P.glue.onEnterAnimal
