@@ -46,7 +46,7 @@ function P.unlockUnlockable(unlockId)
 		writeUnlocks()
 		--need to check if we unlocked any supertools so that they can drop
 		if P[unlockId].toolIds ~= nil then
-			updateUnlockedSupertools()
+			P.updateUnlockedSupertools()
 		end
 	end
 end
@@ -156,7 +156,7 @@ P.portalUnlock = P.tileUnlock:new{name = 'portals', tileIds = {56,57}, toolIds =
 
 
 P.winUnlocks = {P.rammyUnlock, P.bombsUnlock, P.ambiguousGates, P.unbreakableEfloorUnlock}
-P.floorUnlocks = {nil, nil, P.boxesUnlock, P.unbreakableWires}
+P.floorUnlocks = {nil, P.catUnlock, P.boxesUnlock, P.unbreakableWires}
 
 --characters
 P[#P+1] = P.erikUnlock --done

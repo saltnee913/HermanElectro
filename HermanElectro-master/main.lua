@@ -460,8 +460,8 @@ end
 function win()
 	if not won then
 		for i = 1, #unlocks.winUnlocks do
-			if winUnlocks[i].unlocked == false then
-				unlocks.unlockUnlockableRef(winUnlocks[i])
+			if unlocks.winUnlocks[i].unlocked == false then
+				unlocks.unlockUnlockableRef(unlocks.winUnlocks[i])
 				break
 			end
 		end
