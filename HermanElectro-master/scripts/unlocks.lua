@@ -156,14 +156,14 @@ P.portalUnlock = P.tileUnlock:new{name = 'portals', tileIds = {56,57}, toolIds =
 
 
 P.winUnlocks = {P.rammyUnlock, P.bombsUnlock, P.ambiguousGates, P.unbreakableEfloorUnlock}
-P.floorUnlocks = {nil, P.catUnlock, P.boxesUnlock, P.unbreakableWires}
+P.floorUnlocks = {P.spikesUnlock, P.catUnlock, P.boxesUnlock, P.unbreakableWires, P.mousetrapUnlock, P.wizardUnlock}
 
 --characters
 P[#P+1] = P.erikUnlock --done
 P[#P+1] = P.rammyUnlock --done
 P[#P+1] = P.frederickUnlock --done
 P[#P+1] = P.batteryUnlock
-P[#P+1] = P.wizardUnlock
+P[#P+1] = P.wizardUnlock --done
 P[#P+1] = P.orsonUnlock --done
 P[#P+1] = P.lennyUnlock --done
 P[#P+1] = P.fishUnlock --done, but badly
@@ -176,7 +176,7 @@ P[#P+1] = P.rotatersUnlock
 P[#P+1] = P.ambiguousGates --done
 P[#P+1] = P.unbreakableEfloorUnlock --done
 P[#P+1] = P.untoolableButtons
-P[#P+1] = P.mousetrapUnlock
+P[#P+1] = P.mousetrapUnlock --done
 P[#P+1] = P.breakablePitUnlock --done
 P[#P+1] = P.catUnlock --done
 P[#P+1] = P.spikesUnlock
