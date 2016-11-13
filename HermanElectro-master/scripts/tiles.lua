@@ -1345,12 +1345,13 @@ function P.glue:onStay(player)
 	player.waitCounter = player.waitCounter+1
 end
 function P.glue:onEnterAnimal(animal)
-	if animal.flying or animal:instanceof(animalList.snail) then return end
-	animal.waitCounter = animal.waitCounter+1
 	if animal:instanceof(animalList.snail) then
 		unlocks = require('scripts.unlocks')
 		unlocks.unlockUnlockableRef(unlocks.glueSnailUnlock)
+		return
 	end
+	if animal.flying then return end
+	animal.waitCounter = animal.waitCounter+1
 end
 P.glue.onStayAnimal = P.glue.onEnterAnimal
 
