@@ -155,7 +155,8 @@ P.puddleUnlock = P.tileUnlock:new{name = 'oops you spilled something', tileIds =
 P.portalUnlock = P.tileUnlock:new{name = 'portals', tileIds = {56,57}, toolIds = {62}, sprite = tiles.entrancePortal.sprite}
 
 
-P.winUnlocks = {P.rammyUnlock, P.bombsUnlock, P.unbreakableWires, P.ambiguousGates, P.unbreakableEfloorUnlock}
+P.winUnlocks = {P.rammyUnlock, P.bombsUnlock, P.ambiguousGates, P.unbreakableEfloorUnlock}
+P.floorUnlocks = {nil, nil, P.boxesUnlock, P.unbreakableWires}
 
 --characters
 P[#P+1] = P.erikUnlock --done
