@@ -1259,6 +1259,8 @@ P.conductiveSlime.willKillAnimal = P.conductiveSlime.willKillPlayer
 
 P.conductiveSnailTile = P.pitbullTile:new{name = "conductiveSnail", animal = animalList[7]:new(), listIndex = 7}
 
+P.glueSnailTile = P.pitbullTile:new{name = "glueSnail", animal = animalList[8]:new(), listIndex = 8}
+
 P.untriggeredPowerSupply = P.conductiveTile:new{name = "untriggeredPowerSupply", sprite = love.graphics.newImage('Graphics/untriggeredpowersupply.png'), poweredSprite = love.graphics.newImage('Graphics/powersupply.png')}
 function P.untriggeredPowerSupply:postPowerUpdate(dir)
 	if self.poweredNeighbors[1]==1 or self.poweredNeighbors[2]==1 or self.poweredNeighbors[3]==1 or self.poweredNeighbors[4]==1 then
@@ -1665,5 +1667,6 @@ tiles[117] = P.pinkFog
 tiles[118] = P.endTilePaid
 tiles[119] = P.mushroom
 tiles[120] = P.unbrickableStayButton
+tiles[121] = P.glueSnailTile
 
 return tiles

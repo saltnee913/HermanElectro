@@ -182,6 +182,15 @@ function P.conductiveSnail:kill()
 	end
 end
 
+P.glueSnail = P.snail:new{name = "glueSnail", sprite = love.graphics.newImage('NewGraphics/snailDesign.png')}
+function P.glueSnail:onNullLeave()
+	return tiles.glue:new()
+end
+function P.glueSnail:kill()
+	self.dead = true
+	self.sprite = self.deadSprite
+end
+
 P.bat = P.animal:new{flying = true, name = "bat", sprite = love.graphics.newImage('Graphics/bat.png'), deadSprite = love.graphics.newImage('Graphics/pupdead.png')}
 function P.bat:checkDeath()
 end
@@ -302,5 +311,6 @@ animalList[4] = P.cat
 animalList[5] = P.snail
 animalList[6] = P.bat
 animalList[7] = P.conductiveSnail
+animalList[8] = P.glueSnail
 
 return animalList
