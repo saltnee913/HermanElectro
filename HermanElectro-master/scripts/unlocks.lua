@@ -46,7 +46,7 @@ function P.unlockUnlockable(unlockId)
 		writeUnlocks()
 		--need to check if we unlocked any supertools so that they can drop
 		if P[unlockId].toolIds ~= nil then
-			updateUnlockedSupertools()
+			P.updateUnlockedSupertools()
 		end
 	end
 end
