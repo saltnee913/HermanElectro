@@ -20,6 +20,7 @@ editor = require('scripts.editor')
 characters = require('scripts.characters')
 unlocks = require('scripts.unlocks')
 tutorial = require('scripts.tutorial')
+toolManuel = require('scripts.toolManuel')
 
 loadedOnce = false
 
@@ -1352,7 +1353,7 @@ function love.draw()
 	love.graphics.translate(-1*bigRoomTranslation.x*floor.sprite:getWidth()*scale, -1*bigRoomTranslation.y*floor.sprite:getHeight()*scale)
 
 	if not loadTutorial then
-		love.graphics.print(math.floor(gameTime.timeLeft), width/2-10, 20);
+		--love.graphics.print(math.floor(gameTime.timeLeft), width/2-10, 20);
 	end
 	for i = 0, mapHeight do
 		for j = 0, mapHeight do
@@ -1436,8 +1437,12 @@ function love.draw()
 		love.graphics.draw(winscreen, width/2-width/2000*320, 10, 0, width/1000, width/1000)
 	end
 	if gamePaused then
-		--love.graphics.draw(pausescreen, width/2-width/2000*320, 10, 0, width/1000, width/1000)
-		love.graphics.draw(pausescreen, 0, 0, 0, width/pausescreen:getWidth(), height/pausescreen:getHeight())
+		if toolManuel.opened then
+			toolManuel.draw()
+		else
+			--love.graphics.draw(pausescreen, width/2-width/2000*320, 10, 0, width/1000, width/1000)
+			love.graphics.draw(pausescreen, 0, 0, 0, width/pausescreen:getWidth(), height/pausescreen:getHeight())
+		end
 	end
 
 	if messageInfo.text~=nil then
@@ -1925,11 +1930,16 @@ function love.keypressed(key, unicode)
 		return
 	end
 
+	if toolManuel.opened then
+		toolManuel.keypressed(key, unicode)
+	end
 	if gamePaused then
 		if key=="escape" then
 			gamePaused = false
 		elseif key=="m" then
 			started = false
+		elseif key=="t" then
+			toolManuel.open()
 		end
 		return
 	end
