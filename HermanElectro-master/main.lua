@@ -329,7 +329,7 @@ function loadNextLevel(dontChangeTime)
 	if floorIndex ~= 2 then
 		player.character:onFloorEnter()
 	end
-	if unlocks.floorUnlocks[floorIndex-1] ~= nil then
+	if not loadTutorial and unlocks.floorUnlocks[floorIndex-1] ~= nil then
 		unlocks.unlockUnlockableRef(unlocks.floorUnlocks[floorIndex-1])
 	end
 end
