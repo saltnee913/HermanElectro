@@ -1932,8 +1932,7 @@ function love.keypressed(key, unicode)
 
 	if toolManuel.opened then
 		toolManuel.keypressed(key, unicode)
-	end
-	if gamePaused then
+	elseif gamePaused then
 		if key=="escape" then
 			gamePaused = false
 		elseif key=="m" then
