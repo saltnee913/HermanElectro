@@ -18,7 +18,7 @@ scale = (width - 2*wallSprite.width)/(20.3 * 16)*5/6
 --floor = tiles.tile
 
 --speed same as player (250)
-P.animal = Object:new{frozen = false, pickedUp = false, flying = false, triggered = false, waitCounter = 0, dead = false, name = "animal", tileX, tileY, prevx, prevy, prevTileX, prevTileY, x, y, speed = 250, width = 16*scale, height = 16*scale, sprite = love.graphics.newImage('Graphics/pitbull.png'), deadSprite = love.graphics.newImage('Graphics/pitbulldead.png'), tilesOn = {}, oldTilesOn = {}}
+P.animal = Object:new{frozen = false, conductive = false, pickedUp = false, flying = false, triggered = false, waitCounter = 0, dead = false, name = "animal", tileX, tileY, prevx, prevy, prevTileX, prevTileY, x, y, speed = 250, width = 16*scale, height = 16*scale, sprite = love.graphics.newImage('Graphics/pitbull.png'), deadSprite = love.graphics.newImage('Graphics/pitbulldead.png'), tilesOn = {}, oldTilesOn = {}}
 function P.animal:move(playerx, playery, room, isLit)
 	if self.dead or (not isLit and not self.triggered) or self.frozen then
 		return
@@ -305,6 +305,8 @@ end
 
 P.bombBuddy = P.animal:new{name = "bombBuddy", sprite = love.graphics.newImage('Graphics/bombbuddy.png'), deadSprite = love.graphics.newImage('Graphics/catdead.png')}
 
+P.conductiveDog = P.pup:new{name = "conductiveDog", powered = false, conductive = true, sprite = love.graphics.newImage('Graphics/conductiveDog.png')}
+
 animalList[1] = P.animal
 animalList[2] = P.pitbull
 animalList[3] = P.pup
@@ -314,5 +316,6 @@ animalList[6] = P.bat
 animalList[7] = P.conductiveSnail
 animalList[8] = P.glueSnail
 animalList[9] = P.bombBuddy
+animalList[10] = P.conductiveDog
 
 return animalList

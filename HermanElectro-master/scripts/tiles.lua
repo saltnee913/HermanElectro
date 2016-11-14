@@ -1263,6 +1263,8 @@ P.glueSnailTile = P.pitbullTile:new{name = "glueSnail", animal = animalList[8]:n
 
 P.bombBuddyTile = P.pitbullTile:new{name = "bombBuddyTile", animal = animalList[9]:new(), listindex = 9}
 
+P.conductiveDogTile = P.pitbullTile:new{name = "conductiveDogTile", animal = animalList[10]:new(), listindex = 10}
+
 P.untriggeredPowerSupply = P.conductiveTile:new{name = "untriggeredPowerSupply", sprite = love.graphics.newImage('Graphics/untriggeredpowersupply.png'), poweredSprite = love.graphics.newImage('Graphics/powersupply.png')}
 function P.untriggeredPowerSupply:postPowerUpdate(dir)
 	if self.poweredNeighbors[1]==1 or self.poweredNeighbors[2]==1 or self.poweredNeighbors[3]==1 or self.poweredNeighbors[4]==1 then
@@ -1680,5 +1682,6 @@ tiles[119] = P.mushroom
 tiles[120] = P.unbrickableStayButton
 tiles[121] = P.glueSnailTile
 tiles[122] = P.bombBuddyTile
+tiles[123] = P.conductiveDogTile
 
 return tiles
