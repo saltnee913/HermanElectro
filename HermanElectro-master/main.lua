@@ -21,6 +21,7 @@ characters = require('scripts.characters')
 unlocks = require('scripts.unlocks')
 tutorial = require('scripts.tutorial')
 toolManuel = require('scripts.toolManuel')
+unlocksScreen = require('scripts.unlocksScreen')
 
 loadedOnce = false
 
@@ -1075,7 +1076,7 @@ end
 function love.draw()
 	myShader:send("shaderTriggered", shaderTriggered)
 	love.graphics.setBackgroundColor(0,0,0)
-	if not started and not charSelect then
+	if not started and not charSelect and not unlocksScreen.opened then
 		love.graphics.draw(startscreen, 0, 0, 0, width/startscreen:getWidth(), height/startscreen:getHeight())
 		if seedOverride ~= nil then
 			love.graphics.setColor(0,255,0,255)
@@ -1104,6 +1105,9 @@ function love.draw()
 			love.graphics.print(charsToDraw[i].description, width/5*column-width/10-10, height/3*(row-1)+height/6-80)
 		end
 
+		return
+	elseif unlocksScreen.opened then
+		unlocksScreen.draw()
 		return
 	end
 
@@ -1913,7 +1917,7 @@ function love.keypressed(key, unicode)
 		end
 	end
 
-	if not started then
+	if not unlocksScreen.opened and not started then
 		if charSelect then return end
 		if key=="s" then
 			startGame()
@@ -1926,7 +1930,12 @@ function love.keypressed(key, unicode)
 			return
 		elseif key=="tab" then
 			enteringSeed = true
+		elseif key=="u" then
+			unlocksScreen.open()
 		end
+		return
+	elseif unlocksScreen.opened then
+		unlocksScreen.keypressed(key, unicode)
 		return
 	end
 
