@@ -22,7 +22,7 @@ unlocks = require('scripts.unlocks')
 tutorial = require('scripts.tutorial')
 toolManuel = require('scripts.toolManuel')
 unlocksScreen = require('scripts.unlocksScreen')
-
+stats = require('scripts.stats')
 loadedOnce = false
 
 saveDir = 'SaveData'
@@ -120,6 +120,7 @@ function love.load()
 	won = false
 
 	unlocks.load()
+	stats.load()
 
 	--[[local json = require('scripts.dkjson')
 	local roomsToFix, roomsArray = util.readJSON('RoomData/tut_rooms.json', true)
@@ -456,6 +457,9 @@ function kill()
 		unlocks.unlockUnlockableRef(unlocks.portalUnlock)
 	end
 	player.dead = true
+	unlockedChars = characters.getUnlockedCharacters()
+	stats.losses[player.character.name] = stats.losses[player.character.name]+1
+	stats.writeStats()
 	completedRooms[mapy][mapx] = 0 --to stop itemsNeeded tracking, it's a hack!
 end
 
@@ -481,7 +485,10 @@ function win()
 			unlocks.unlockUnlockableRef(player.character.speedUnlock)
 		end
 		won = true
+		stats.wins[player.character.name] = stats.wins[player.character.name]+1
+		stats.writeStats()
 	end
+	unlockedChars = characters.getUnlockedCharacters()
 end
 
 function updateLight()
@@ -1103,6 +1110,8 @@ function love.draw()
 			love.graphics.draw(charsToDraw[i].sprite, width/5*column-width/10-10, height/3*(row-1)+height/6+20, 0, charsToDraw[i].scale, charsToDraw[i].scale)
 			love.graphics.print(charsToDraw[i].name, width/5*column-width/10-10, height/3*(row-1)+height/6-100)
 			love.graphics.print(charsToDraw[i].description, width/5*column-width/10-10, height/3*(row-1)+height/6-80)
+			love.graphics.print("Wins: "..stats.wins[charsToDraw[i].name], width/5*column-width/10-10, height/3*(row-1)+height/6-60)
+			love.graphics.print("Losses: "..stats.losses[charsToDraw[i].name], width/5*column-width/10-10, height/3*(row-1)+height/6-40)
 		end
 
 		return
