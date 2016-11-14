@@ -888,7 +888,9 @@ function P.sponge:usableOnTile(tile)
 	if tile:instanceof(tiles.dustyGlassWall) and tile.blocksVision then
 		return true
 	elseif tile:instanceof(tiles.puddle) then return true
-	elseif (tile:instanceof(tiles.stickyButton) and not tile:instanceof(tiles.superStickyButton)) or (tile:instanceof(tiles.button) and tile.bricked) then return true end
+	elseif (tile:instanceof(tiles.stickyButton) and not tile:instanceof(tiles.superStickyButton)) or (tile:instanceof(tiles.button) and tile.bricked) then return true
+	elseif tile:instanceof(tiles.glue) then return true
+	elseif tile:instanceof(tiles.slime) or tile:instanceof(tiles.conductiveSlime) then return true end
 	return false
 end
 function P.sponge:useToolTile(tile, tileY, tileX)
@@ -907,6 +909,8 @@ function P.sponge:useToolTile(tile, tileY, tileX)
 			room[tileY][tileX] = tiles.button:new()
 			room[tileY][tileX].bricked = false
 		end
+	else
+		room[tileY][tileX] = nil
 	end
 end
 
