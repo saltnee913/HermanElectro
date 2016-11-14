@@ -1702,6 +1702,7 @@ function P.portalPlacer:usableOnNothing()
 	return true
 end
 function P.portalPlacer:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
 	room[tileY][tileX] = tiles.entrancePortal:new()
 end
 
@@ -1710,16 +1711,42 @@ function P.suicideKing:usableOnNothing()
 	return true
 end
 function P.suicideKing:useToolNothing()
+	self.numHeld = self.numHeld-1
 	P.giveSupertools(3)
 end
+P.suicideKing.usableOnTile = P.suicideKing.usableOnNothing
+P.suicideKing.useToolTile = P.suicideKing.useToolNothing
 
 P.screwdriver = P.superTool:new{name = "screwdriver", image = love.graphics.newImage('Graphics/screwdriver.png'), baseRange = 1}
 function P.screwdriver:usableOnTile(tile)
 	return tile:instanceof(tiles.spikes)
 end
 function P.screwdriver:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld - 1
 	room[tileY][tileX] = nil
 end
+
+P.laptop = P.superTool:new{name = "laptop", image = love.graphics.newImage('Graphics/laptop.png'), baseRange = 0}
+function P.laptop:usableOnNothing()
+	return true
+end
+function P.laptop:useToolNothing()
+	self.numHeld = self.numHeld-1
+	local roomid = mainMap[mapy][mapx].roomid
+	local toPrint = 'Room ID:'..roomid..', Items Needed:'
+	local itemsForRoom = map.getItemsNeeded(roomid)
+	if itemsForRoom~=nil then
+		for i=1,#itemsForRoom do
+			for toolIndex=1,tools.numNormalTools do
+				if itemsForRoom[i][toolIndex]~=0 then toPrint = toPrint..' '..itemsForRoom[i][toolIndex]..' '..tools[toolIndex].name end
+			end
+			if i~=#itemsForRoom then toPrint = toPrint..' or ' end
+		end
+	end
+	log(toPrint)
+end
+P.laptop.usableOnTile = P.laptop.usableOnNothing
+P.laptop.useToolTile = P.laptop.useToolNothing
 
 
 
@@ -1800,5 +1827,6 @@ P[61] = P.superBrick
 P[62] = P.portalPlacer
 P[63] = P.suicideKing
 P[64] = P.screwdriver
+P[65] = P.laptop
 
 return tools
