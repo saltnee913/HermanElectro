@@ -40,7 +40,7 @@ function P.displayUnlock(unlockId)
 end
 
 function P.unlockUnlockable(unlockId)
-	if P[unlockId].unlocked == false then
+	if P[unlockId].unlocked == false and not loadTutorial then
 		P.displayUnlock(unlockId)
 		P[unlockId].unlocked = true
 		writeUnlocks()
