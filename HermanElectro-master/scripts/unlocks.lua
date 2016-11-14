@@ -1,6 +1,7 @@
 local util = require('scripts.util')
 local tiles = require('scripts.tiles')
 local pushables = require('scripts.pushables')
+local tools = require('scripts.tools')
 require('scripts.object')
 
 local P = {}
@@ -137,14 +138,14 @@ P.dirtyGlassUnlock = P.tileUnlock:new{name = 'who leaves all this dust here', ti
 P.fogUnlock = P.tileUnlock:new{name = "i can't see a thing", tileIds = {81,117}, sprite = tiles.fog.sprite}
 P.directionGatesUnlock = P.tileUnlock:new{name = "erik's shitty direction gates", tileIds = {67,68}, sprite = tiles.motionGate.sprite}
 
-P.toolUnlock = P.unlock:new{name = 'tool', toolIds = {}, sprite = tools.saw.sprite}
-P.missileUnlock = P.unlock:new{name = 'missile', toolIds = {16}, sprite = tools.missile.sprite}
-P.toolDoublerUnlock = P.unlock:new{name = 'tool doubler', toolIds = {42}, sprite = tools.toolDoubler.sprite}
-P.reviveUnlock = P.unlock:new{name = 'revived!', toolIds = {49}, sprite = tools.revive.sprite}
+P.toolUnlock = P.unlock:new{name = 'tool', toolIds = {}, sprite = tools.saw.image}
+P.missileUnlock = P.unlock:new{name = 'missile', toolIds = {16}, sprite = tools.missile.image}
+P.toolDoublerUnlock = P.unlock:new{name = 'tool doubler', toolIds = {42}, sprite = tools.toolDoubler.image}
+P.reviveUnlock = P.unlock:new{name = 'revived!', toolIds = {49}, sprite = tools.revive.image}
 P.gabeUnlock = P.unlock:new{name = 'gabe the angel', toolIds = {54}, sprite = love.graphics.newImage('Graphics/gabe.png')}
-P.buttonFlipperUnlock = P.unlock:new{name = 'button flipper', toolIds = {51}, sprite = love.graphics.newImage('Graphics/buttonflipper.png')}
-P.superGunUnlock = P.unlock:new{name = "super gun!", toolIds = {50}, sprite = love.graphics.newImage('Graphics/supergun.png')}
-P.suicideKingUnlock = P.unlock:new{name = "use with caution", toolIds = {64}, sprite = love.graphics.newImage('Graphics/entranceportal.png')}
+P.buttonFlipperUnlock = P.unlock:new{name = 'button flipper', toolIds = {51}, sprite = tools.buttonFlipper.image}
+P.superGunUnlock = P.unlock:new{name = "super gun!", toolIds = {50}, sprite = tools.superGun.image}
+P.suicideKingUnlock = P.unlock:new{name = "use with caution", toolIds = {63}, sprite = tools.suicideKing.image}
 
 P.roomUnlock = P.unlock:new{name = 'room', roomIds = {"1"}}
 P.beggarPartyUnlock = P.roomUnlock:new{name = 'beggars love you', roomIds = {"beggar_party"}, sprite = tiles.beggar.sprite}
