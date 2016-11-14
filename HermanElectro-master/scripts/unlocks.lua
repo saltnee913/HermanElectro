@@ -146,6 +146,7 @@ P.gabeUnlock = P.unlock:new{name = 'gabe the angel', toolIds = {54}, sprite = lo
 P.buttonFlipperUnlock = P.unlock:new{name = 'button flipper', toolIds = {51}, sprite = tools.buttonFlipper.image}
 P.superGunUnlock = P.unlock:new{name = "super gun!", toolIds = {50}, sprite = tools.superGun.image}
 P.suicideKingUnlock = P.unlock:new{name = "use with caution", toolIds = {63}, sprite = tools.suicideKing.image}
+P.screwdriverUnlock = P.unlock:new{name = "screwdriver", toolIds = {64}, sprite = tools.screwdriver.image}
 
 P.roomUnlock = P.unlock:new{name = 'room', roomIds = {"1"}}
 P.beggarPartyUnlock = P.roomUnlock:new{name = 'beggars love you', roomIds = {"beggar_party"}, sprite = tiles.beggar.sprite}

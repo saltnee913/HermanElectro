@@ -1713,6 +1713,14 @@ function P.suicideKing:useToolNothing()
 	P.giveSupertools(3)
 end
 
+P.screwdriver = P.superTool:new{name = "screwdriver", image = love.graphics.newImage('Graphics/screwdriver.png'), baseRange = 1}
+function P.screwdriver:usableOnTile(tile)
+	return tile:instanceof(tiles.spikes)
+end
+function P.screwdriver:useToolTile(tile, tileY, tileX)
+	room[tileY][tileX] = nil
+end
+
 
 
 P.numNormalTools = 7
@@ -1791,5 +1799,6 @@ P[60] = P.snowballGlobal
 P[61] = P.superBrick
 P[62] = P.portalPlacer
 P[63] = P.suicideKing
+P[64] = P.screwdriver
 
 return tools
