@@ -1037,7 +1037,12 @@ function P.bomb:explode(x,y)
 	end
 	for i = -1, 1 do
 		for j = -1, 1 do
-			if room[x+i]~=nil and room[x+i][y+j]~=nil then room[x+i][y+j]:destroy() end
+			if room[x+i]~=nil and room[x+i][y+j]~=nil then
+				room[x+i][y+j]:destroy()
+				if room[x+i][y+j]:instanceof(tiles.bomb) then
+					unlocks.unlockUnlockableRef(unlocks.bombBuddyUnlock)
+				end
+			end
 		end
 	end
 	for k = 1, #animals do
@@ -1046,6 +1051,9 @@ function P.bomb:explode(x,y)
 	for k = 1, #pushables do
 		if math.abs(pushables[k].tileY-x)<2 and math.abs(pushables[k].tileX-y)<2 and not pushables[k].destroyed then
 			pushables[k]:destroy()
+			if pushables[k]:instanceof(pushableList.bombBox) then
+				unlocks.unlockUnlockableRef(unlocks.bombBuddyUnlock)
+			end
 		end
 	end
 	updatePower()

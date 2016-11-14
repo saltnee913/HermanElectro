@@ -135,7 +135,7 @@ P.jackInTheBoxUnlock = P.tileUnlock:new{name = 'jack in the box', tileIds = {90}
 P.dirtyGlassUnlock = P.tileUnlock:new{name = 'who leaves all this dust here', tileIds = {72}, sprite = tiles.dustyGlassWall.sprite}
 P.fogUnlock = P.tileUnlock:new{name = "i can't see a thing", tileIds = {81,117}, sprite = tiles.fog.sprite}
 P.directionGatesUnlock = P.tileUnlock:new{name = "erik's shitty direction gates", tileIds = {67,68}, sprite = tiles.motionGate.sprite}
-
+P.bombBuddyUnlock = P.tileUnlock:new{name = "bomb buddy :)", tileIds = {122}, sprite = animalList.bombBuddy.sprite}
 
 P.toolUnlock = P.unlock:new{name = 'tool', toolIds = {}, sprite = tools.saw.sprite}
 P.missileUnlock = P.unlock:new{name = 'missile', toolIds = {16}, sprite = tools.missile.sprite}
@@ -185,6 +185,7 @@ P[#P+1] = P.poweredEndUnlock --done
 P[#P+1] = P.snailsUnlock --done
 P[#P+1] = P.conductiveSnailsUnlock --done
 P[#P+1] = P.glueSnailUnlock --done
+P[#P+1] = P.bombBuddyUnlock --done
 P[#P+1] = P.untriggeredPowerUnlock
 P[#P+1] = P.conditionalBoxes --done
 P[#P+1] = P.conductiveBoxes --done
