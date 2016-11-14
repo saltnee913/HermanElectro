@@ -204,7 +204,9 @@ P[#P+1] = P.toolDoublerUnlock --done
 P[#P+1] = P.reviveUnlock --done
 P[#P+1] = P.gabeUnlock --done
 P[#P+1] = P.buttonFlipperUnlock --done
+P[#P+1] = P.superGunUnlock
 P[#P+1] = P.suicideKingUnlock --done
+P[#P+1] = P.screwdriverUnlock
 
 --rooms
 P[#P+1] = P.beggarPartyUnlock --done
