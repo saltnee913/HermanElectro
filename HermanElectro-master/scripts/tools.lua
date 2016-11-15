@@ -536,6 +536,7 @@ function P.brick:useToolTile(tile)
 		tile:destroy()
 	else
 		tile:lockInState(true)
+		unlocks:unlockUnlockableRef(unlocks.stayButtonUnlock)
 	end
 end
 function P.brick:useToolAnimal(animal)

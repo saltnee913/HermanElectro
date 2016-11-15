@@ -748,6 +748,9 @@ function P.endTile:onEnter(player)
 			win()
 			return
 		end
+	elseif mainMap[mapy][mapx].roomid == "final_2" then
+		win()
+		unlocks.unlockUnlockableRef(unlocks.stickyButtonUnlock)
 	end
 	if self.done then return end
 	beatRoom()
