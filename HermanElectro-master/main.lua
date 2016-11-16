@@ -315,6 +315,7 @@ function loadNextLevel(dontChangeTime)
  		gameTime.timeLeft = gameTime.timeLeft+gameTime.levelTime
  	end
 	if loadTutorial then
+		player.totalItemsGiven =  {0,0,0,0,0,0,0}
 		if floorIndex==1 then
 			loadLevel('RoomData/tut_map.json')
 		elseif floorIndex==2 then
