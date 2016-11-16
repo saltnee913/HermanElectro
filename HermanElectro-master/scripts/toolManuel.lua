@@ -9,13 +9,13 @@ P.tabBG = love.graphics.newImage('NewGraphics/manuelTabBG.png')
 P.tabBGSelected = love.graphics.newImage('NewGraphics/manuelTabSelectedBG.png')
 
 P.sawScreens = {love.graphics.newImage('NewGraphics/SawTutA.png')}
-P.ladderScreens = {love.graphics.newImage('NewGraphics/LadderTutA.png')}
-P.wireCutterScreens = {}
+P.ladderScreens = {love.graphics.newImage('NewGraphics/LadderTutA.png'), love.graphics.newImage('NewGraphics/LadderTutB.png')}
+P.wireCutterScreens = {love.graphics.newImage('NewGraphics/WireTutA.png'), love.graphics.newImage('NewGraphics/WireTutB.png')}
 P.waterScreens = {}
 P.spongeScreens = {}
 P.brickScreens = {}
 P.gunScreens = {}
-P.screens = {P.sawScreens, P.ladderScreens}--, P.wireCutterScreens, P.waterScreens, P.spongeScreens, P.brickScreens, P.gunScreens}
+P.screens = {P.sawScreens, P.ladderScreens, P.wireCutterScreens}--, P.waterScreens, P.spongeScreens, P.brickScreens, P.gunScreens}
 
 P.currentScreen = 1
 P.screenLevel = 1
