@@ -1369,7 +1369,7 @@ function love.draw()
 	love.graphics.translate(-1*bigRoomTranslation.x*floor.sprite:getWidth()*scale, -1*bigRoomTranslation.y*floor.sprite:getHeight()*scale)
 
 	if not loadTutorial then
-		--love.graphics.print(math.floor(gameTime.timeLeft), width/2-10, 20);
+		love.graphics.print(math.floor(gameTime.timeLeft), width/2-10, 20);
 	end
 	for i = 0, mapHeight do
 		for j = 0, mapHeight do
