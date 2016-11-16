@@ -317,6 +317,8 @@ function loadNextLevel(dontChangeTime)
 	if loadTutorial then
 		if floorIndex==1 then
 			loadLevel('RoomData/tut_map.json')
+		elseif floorIndex==2 then
+			loadLevel('RoomData/tut_map_tools.json')
 		else
 			loadLevel('RoomData/tut_map_2.json')
 		end
