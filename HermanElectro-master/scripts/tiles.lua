@@ -1209,6 +1209,13 @@ function P.donationMachine:onEnter(player)
 	floorDonations = floorDonations+1
 	gameTime.timeLeft = gameTime.timeLeft+mult*gameTime.donateTime
 end
+function P.donationMachine:destroy()
+	if donations>0 then
+		donations = donations-1
+		local toolsToGive = util.random(3, 'toolDrop')
+		tools.giveRandomTools(toolsToGive)
+	end
+end
 
 P.entrancePortal = P.tile:new{name = "entrancePortal", sprite = love.graphics.newImage('Graphics/entrancePortal.png')}
 function P.entrancePortal:onEnter(player)

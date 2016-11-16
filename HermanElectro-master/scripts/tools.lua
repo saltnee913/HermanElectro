@@ -1749,7 +1749,24 @@ end
 P.laptop.usableOnTile = P.laptop.usableOnNothing
 P.laptop.useToolTile = P.laptop.useToolNothing
 
+P.donationCracker = P.superTool:new{name = "donationCracker", image = love.graphics.newImage('Graphics/donationcracker.png'), baseRange = 1}
+function P.donationCracker:usableOnTile(tile)
+	return tile:instanceof(tiles.donationMachine)
+end
+function P.donationCracker:useToolTile()
+	self.numHeld = self.numHeld-1
+	tools.giveRandomTools(math.floor(donations*1.5))
+	donations = 0
+end
 
+P.wireExtender = P.superTool:new{name = "wireExtender", image = love.graphics.newImage('Graphics/wireextender.png')}
+function P.wireExtender:usableOnTile(tile)
+	return tile:instanceof(tiles.wire)
+end
+function P.wireExtender:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
+	room[tileY][tileX] = tiles.wire:new()
+end
 
 P.numNormalTools = 7
 
@@ -1829,5 +1846,7 @@ P[62] = P.portalPlacer
 P[63] = P.suicideKing
 P[64] = P.screwdriver
 P[65] = P.laptop
+P[66] = P.donationCracker
+P[67] = P.wireExtender
 
 return tools
