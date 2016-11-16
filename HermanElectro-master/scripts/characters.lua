@@ -53,7 +53,6 @@ function P.character:onPreUpdatePower()
 
 end
 function P.character:onPostUpdatePower()
-	
 end
 function P.character:onKeyPressed()
 	return false
@@ -65,6 +64,10 @@ end
 function P.character:postMove()
 end
 function P.character:onTileLeave()
+end
+function P.character:onPostUpdatePower()
+end
+function P.character:onPostUpdateLight()
 end
 function P.character:getInfoText()
 	return ""
@@ -385,6 +388,37 @@ function P.fish:onToolUse()
 	end
 end
 
+P.monk = P.character:new{name = "Monte", description = "The Blind Monk", sprite = love.graphics.newImage('Graphics/monk.png')}
+function P.monk:onCharLoad()
+	tools.giveToolsByReference({tools.lamp})
+end
+function P.monk:onFloorEnter()
+	tools.giveToolsByReference({tools.lamp})
+end
+function P.monk:onPostUpdateLight()
+	local allUnlit = false
+	local breakLoop = false
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]~=nil and room[i][j].lit then
+				allUnlit = true
+				breakLoop = true
+				break
+			end
+		end
+		if breakLoop then break end
+	end
+
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if litTiles[i][j]==1 and (math.abs(j-player.tileX)+math.abs(i-player.tileY)>2) then
+				litTiles[i][j]=0
+			elseif allUnlit then litTiles[i][j]=0
+			end
+		end
+	end
+end
+
 P.random2 = P.character:new{name = "Random2", allowedCharacters = {1,2,6,8,9,11,12,14}, description = "**RanDOm**", sprite = love.graphics.newImage('Graphics/random.png'), disabled = true}
 function P.random2:onRoomEnter()
 	local charNum = util.random(#self.allowedCharacters, 'misc')
@@ -421,5 +455,6 @@ P[15] = P.lenny
 P[16] = P.fish
 P[17] = P.random
 P[18] = P.random2
+P[19] = P.monk
 
 return characters

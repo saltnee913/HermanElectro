@@ -156,8 +156,8 @@ function P.powerSupply:destroy()
 	self.canBePowered = false
 	self.powered = false
 	self.destroyed = true
-	dirAccept = {0,0,0,0}
-	dirSend = {0,0,0,0}
+	self.dirAccept = {0,0,0,0}
+	self.dirSend = {0,0,0,0}
 end
 
 P.wire = P.conductiveTile:new{overlaying = true, powered = false, dirSend = {1,1,1,1}, dirAccept = {1,1,1,1}, destroyedSprite = love.graphics.newImage('Graphics/wirescut.png'), canBePowered = true, name = "wire", sprite = love.graphics.newImage('Graphics/wires.png'), poweredSprite = love.graphics.newImage('Graphics/poweredwires.png')}
@@ -1383,7 +1383,16 @@ P.boomboxTile = P.boxTile:new{name = "boomboxTile", pushable = pushableList[6]:n
 
 P.batteringRamTile = P.tile:new{name = "batteringRamTile", pushable = pushableList[7]:new(), listIndex = 7, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
 
-P.lamp = P.tile:new{name = "lamp", sprite = love.graphics.newImage('Graphics/lamp.png'), lit = true}
+P.lamp = P.powerSupply:new{name = "lamp", sprite = love.graphics.newImage('Graphics/lamp.png'), poweredSprite = love.graphics.newImage('Graphics/lamp.png'), lit = true, destroyedSprite = love.graphics.newImage('Graphics/destroyedlamp.png')}
+function P.lamp:destroy()
+	self.sprite = self.destroyedSprite
+	self.canBePowered = false
+	self.powered = false
+	self.destroyed = true
+	self.dirAccept = {0,0,0,0}
+	self.dirSend = {0,0,0,0}
+	self.lit = false
+end
 
 P.conductiveGlass = P.glassWall:new{name = "conductiveGlass", sprite = love.graphics.newImage('Graphics3D/conductiveglass.png'), poweredSprite = love.graphics.newImage('Graphics3D/conductiveglass.png'), canBePowered = true, dirAccept = {1,1,1,1}, dirSend = {1,1,1,1}}
 function P.conductiveGlass:getYOffset()

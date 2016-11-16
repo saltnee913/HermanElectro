@@ -505,6 +505,7 @@ function updateLight()
 		end
 	end
 	lightTest(player.tileY, player.tileX)
+	player.character:onPostUpdateLight()
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
 			if room[i][j]~=nil and room[i][j].lit then
@@ -823,7 +824,7 @@ end
 function lightTest(x, y)
 	--x refers to y-direction and vice versa
 	--1 for up, 2 for right, 3 for down, 4 for left
-	if room[x] == nil or litTiles[x][y] == 1 then
+	if room[x] == nil or (litTiles[x][y] == 1) then
 		return
 	end
 
@@ -834,7 +835,7 @@ function lightTest(x, y)
 		if room[x-1][y]~=nil and room[x-1][y].blocksVision then
 			litTiles[x-1][y] = 1
 		else
-			lightTest(x-1,y,3)
+			lightTest(x-1,y)
 		end
 	end
 
@@ -843,7 +844,7 @@ function lightTest(x, y)
 		if room[x+1][y]~=nil and room[x+1][y].blocksVision then
 			litTiles[x+1][y] = 1
 		else
-			lightTest(x+1,y,1)
+			lightTest(x+1,y)
 		end
 	end
 
@@ -851,7 +852,7 @@ function lightTest(x, y)
 		if room[x][y-1]~=nil and room[x][y-1].blocksVision then
 			litTiles[x][y-1] = 1
 		else
-			lightTest(x, y-1,2)
+			lightTest(x, y-1)
 		end
 	end
 
@@ -859,7 +860,7 @@ function lightTest(x, y)
 		if room[x][y+1]~=nil and room[x][y+1].blocksVision then
 			litTiles[x][y+1] = 1
 		else
-			lightTest(x, y+1,4)
+			lightTest(x, y+1)
 		end
 	end
 end
