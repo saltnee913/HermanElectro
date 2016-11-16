@@ -205,15 +205,15 @@ function P.cat:move(playerx, playery, room, isLit)
 		return
 	end
 	self.triggered = true
-	if self.waitCounter>0 then
-		self.waitCounter = self.waitCounter - 1
-		self.prevTileX = self.tileX
-		self.prevTileY = self.tileY
-		return
-	end
 
 	self.prevTileX = self.tileX
 	self.prevTileY = self.tileY
+
+	if self.waitCounter>0 then
+		return
+	end
+
+
 
 	local setOfMoves = {}
 	local currDist = math.abs(self.tileX-playerx)+math.abs(self.tileY-playery)
