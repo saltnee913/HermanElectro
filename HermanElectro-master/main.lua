@@ -1445,6 +1445,15 @@ function love.draw()
 		end
 	end
 	love.graphics.setColor(255,255,255)
+
+	if messageInfo.text~=nil then
+		love.graphics.setColor(255,255,255,100)
+		love.graphics.rectangle("fill", width/2-200, 100, 400, 100)
+		love.graphics.setColor(0,0,0,255)
+		love.graphics.print(messageInfo.text, width/2-180, 110)
+		love.graphics.setColor(255,255,255,255)
+	end
+	
 	if player.dead then
 		love.graphics.draw(deathscreen, width/2-width/2000*320, 10, 0, width/1000, width/1000)
 	end
@@ -1458,14 +1467,6 @@ function love.draw()
 			--love.graphics.draw(pausescreen, width/2-width/2000*320, 10, 0, width/1000, width/1000)
 			love.graphics.draw(pausescreen, 0, 0, 0, width/pausescreen:getWidth(), height/pausescreen:getHeight())
 		end
-	end
-
-	if messageInfo.text~=nil then
-		love.graphics.setColor(255,255,255,100)
-		love.graphics.rectangle("fill", width/2-200, 100, 400, 100)
-		love.graphics.setColor(0,0,0,255)
-		love.graphics.print(messageInfo.text, width/2-180, 110)
-		love.graphics.setColor(255,255,255,255)
 	end
 
 	--Display unlock screen
