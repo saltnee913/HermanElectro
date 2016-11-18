@@ -934,7 +934,9 @@ end
 P.breakablePit.willKillAnimal = P.breakablePit.willKillPlayer
 P.breakablePit.willDestroyPushable = P.breakablePit.willKillPlayer
 
-P.treasureTile = P.tile:new{name = "treasureTile", sprite = love.graphics.newImage('KenGraphics/orange.png'), done = false}
+local superWeights = util.readJSON('Values/superToolWeights.json')
+P.treasureTile = P.tile:new{name = "treasureTile", sprite = love.graphics.newImage('KenGraphics/orange.png'),
+  done = false, treasureWeights = superWeights.yellowTreasureTile}
 function P.treasureTile:onEnter()
 	if self.done then return end
 	self:giveReward()
@@ -962,7 +964,7 @@ function P.treasureTile:giveReward()
 	if rand<probSuper then
 		superCount = superCount+1
 	end
-	tools.giveRandomTools(basicCount,superCount)
+	tools.giveRandomTools(basicCount,superCount,self.treasureWeights)
 end
 
 P.mousetrap = P.conductiveTile:new{name = "mousetrap", bricked = false, formerPowered = nil, triggered = false, safe = false, sprite = love.graphics.newImage('Graphics/mousetrap.png'), safeSprite = love.graphics.newImage('Graphics/mousetrapsafe.png'), deadlySprite = love.graphics.newImage('Graphics/mousetrap.png'), brickedSprite = love.graphics.newImage('Graphics/mousetrapbricked.png')}
@@ -1197,11 +1199,11 @@ function P.donationMachine:getInfoText()
 	return donations
 end
 function P.donationMachine:onEnter(player)
-	if tool==0 or tool>tools.numNormalTools then return end
+	if tool==0 then return end
 	tools[tool].numHeld = tools[tool].numHeld - 1
 	local mult = 1
 	if tool > tools.numNormalTools then
-		mult = 2
+		mult = 1
 		unlocks = require('scripts.unlocks')
 		unlocks.unlockUnlockableRef(unlocks.snailsUnlock)
 	end
@@ -1244,7 +1246,7 @@ P.entrancePortal.onEnterAnimal = P.entrancePortal.onEnter
 
 P.exitPortal = P.tile:new{name = "exitPortal", sprite = love.graphics.newImage('Graphics/exitPortal.png')}
 
-P.treasureTile2 = P.treasureTile:new{name = "treasureTile2", sprite = love.graphics.newImage('KenGraphics/purple.png')}
+P.treasureTile2 = P.treasureTile:new{name = "treasureTile2", sprite = love.graphics.newImage('KenGraphics/purple.png'), treasureWeights = superWeights.treasureRoomTile}
 
 function P.treasureTile2:onEnter()
 	if self.done then return end
@@ -1259,7 +1261,7 @@ function P.treasureTile2:giveReward()
 	if reward<775 then
 		tools.giveRandomTools(1)
 	else
-		tools.giveRandomTools(1,1)
+		tools.giveRandomTools(1,1,self.treasureWeights)
 	end
 end
 
