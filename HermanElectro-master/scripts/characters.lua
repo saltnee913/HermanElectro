@@ -396,7 +396,7 @@ function P.monk:onCharLoad()
 	myShader:send("tint_r", self.tint[1])
     myShader:send("tint_g", self.tint[2])
     myShader:send("tint_b", self.tint[3])
-	tools.giveToolsByReference({tools.lamp, tools.lamp, tools.lamp, tools.lamp, tools.lamp, tools.lamp})
+	tools.giveToolsByReference({tools.lamp, tools.lamp, tools.lamp, tools.lamp, tools.lamp, tools.lamp, tools.delectrifier})
 end
 function P.monk:onFloorEnter()
 	for i = 1, 3 do
@@ -405,7 +405,7 @@ function P.monk:onFloorEnter()
 	myShader:send("tint_r", self.tint[1])
     myShader:send("tint_g", self.tint[2])
     myShader:send("tint_b", self.tint[3])
-	tools.giveToolsByReference({tools.lamp, tools.lamp, tools.lamp, tools.lamp, tools.lamp, tools.lamp})
+	tools.giveToolsByReference({tools.lamp, tools.lamp, tools.lamp, tools.lamp, tools.lamp, tools.lamp, tools.delectrifier})
 end
 function P.monk:postMove()
 	for i = 1, 3 do
