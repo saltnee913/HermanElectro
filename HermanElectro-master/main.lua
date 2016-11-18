@@ -1155,12 +1155,13 @@ function love.draw()
 			else
 				toDrawFloor = floortile
 			end
-			
+
 			local minLampDist = roomHeight+roomLength+1
 			local lampInfo = {x=-1, y=-1}
 			for j2 = 1, roomHeight do
 				for i2 = 1, roomLength do
-					if room[j2][i2]~=nil and room[j2][i2]:instanceof(tiles.lamp) and math.abs(j2-j)+math.abs(i2-i)<minLampDist then
+					if room[j2][i2]~=nil and room[j2][i2]:instanceof(tiles.lamp) and room[j2][i2].powered
+						and math.abs(j2-j)+math.abs(i2-i)<minLampDist then
 						lampInfo.x = i2
 						lampInfo.y = j2
 						minLampDist = math.abs(j2-j)+math.abs(i2-i)
