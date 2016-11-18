@@ -71,14 +71,14 @@ function P.giveToolsByReference(toolArray)
 	P.giveTools(toolsToGive)
 end
 
-function P.giveRandomTools(numTools,numSupers)
+function P.giveRandomTools(numTools,numSupers,superWeights)
 	if numSupers == nil then numSupers = 0 end
 	local toolsToGive = {}
 	for i = 1, numTools do
 		slot = P.chooseNormalTool()
 		toolsToGive[#toolsToGive+1] = slot
 	end
-	local supersToGive = P.getSupertools(numSupers)
+	local supersToGive = P.getSupertools(numSupers,superWeights)
 	for i = 1, numSupers do
 		toolsToGive[#toolsToGive+1] = supersToGive[i]
 	end
@@ -599,14 +599,34 @@ end
 
 P.superTool = P.tool:new{name = 'superTool', baseRange = 10, rarity = 1}
 
-function P.chooseSupertool()
+function P.chooseSupertool(superWeights)
 	unlocks = require('scripts.unlocks')
 	unlockedSupertools = unlocks.getUnlockedSupertools()
-	local toolId
-	repeat
-		toolId = util.random(#tools-tools.numNormalTools,'toolDrop')+tools.numNormalTools
-	until(unlockedSupertools[toolId])
-	return toolId
+	if superWeights == nil then
+		local toolId
+		repeat
+			toolId = util.random(#tools-tools.numNormalTools,'toolDrop')+tools.numNormalTools
+		until(unlockedSupertools[toolId])
+		return toolId
+	else
+		local toolId
+		local sum = 0
+		for i = 1, #superWeights do
+			if unlockedSupertools[i] and i > tools.numNormalTools then
+				sum = sum+superWeights[i]
+			end
+		end
+		local rand = util.random(sum,'toolDrop')
+		local toolId = tools.numNormalTools + 1
+		for i = 1, #superWeights do
+			if unlockedSupertools[i] then
+				rand = rand - superWeights[i]
+				if rand <= 0 then
+					toolId = i
+				end
+			end
+		end
+	end
 end
 
 --i know this is a copy of the function but if we called this every time we'd needlessly repeat the first part, bad practice still tho
@@ -631,7 +651,7 @@ function P.chooseGoodSupertools()
 	return filledSlots
 end
 
-function P.getSupertools(numTools)
+function P.getSupertools(numTools,superWeights)
 	if numTools == nil then numTools = 1 end
 	local toolsToGive = {}
 	local filledSlots = {0,0,0}
@@ -645,7 +665,7 @@ function P.getSupertools(numTools)
 	for superToolNumber = 1, numTools do
 		local goodSlot = false
 		while (not goodSlot) do
-			slot = tools.chooseSupertool()
+			slot = tools.chooseSupertool(superWeights)
 			if filledSlots[3]==0 then
 				goodSlot = true
 			end
