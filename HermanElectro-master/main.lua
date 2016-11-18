@@ -525,8 +525,8 @@ function updateLamps(tileY, tileX)
 	local lampx = lampInfo.x
 	local lampy = lampInfo.y
 	if lampx>0 and lampy>0 then
-		lampx = (lampInfo.x-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
-		lampy = (lampInfo.y-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
+		lampx = (lampInfo.x-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10+16*scale/2
+		lampy = (lampInfo.y-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10+16*scale/2
 	end
 
 	myShader:send("lampx", lampx)
@@ -1180,7 +1180,7 @@ function love.draw()
 				toDrawFloor = floortile
 			end
 
-			updateLamps(i,j)
+			updateLamps(j,i)
 
 			love.graphics.draw(toDrawFloor, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height,
 			0, scale*16/toDrawFloor:getWidth(), scale*16/toDrawFloor:getWidth())
@@ -1200,7 +1200,7 @@ function love.draw()
 	love.graphics.setShader(myShader)
 	for j = 1, roomHeight do
 		for i = 1, roomLength do
-			updateLamps(i,j)
+			updateLamps(j,i)
 
 			if (room[j][i]~=nil or litTiles[j][i]==0) and not (litTiles[j][i]==1 and room[j][i]:instanceof(tiles.invisibleTile)) then
 				if room[j][i]~=nil then room[j][i]:updateSprite() end
