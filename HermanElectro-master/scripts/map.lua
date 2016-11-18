@@ -484,7 +484,7 @@ function P.generateMapStandard()
 		if arr[roomid].dirEnter~=nil then
 			newDirEnter = arr[roomid].dirEnter
 		end
-		newmap[choice.x][choice.y] = {roomid = roomid, room = P.createRoom(roomid, arr), dirEnter = arr[roomid].dirEnter, isFinal = false, isInitial = false}
+		newmap[choice.x][choice.y] = {roomid = roomid, room = P.createRoom(roomid, arr), tint = {0,0,0}, dirEnter = arr[roomid].dirEnter, isFinal = false, isInitial = false}
 	end
 	--printMap(newmap)
 	return newmap
@@ -677,7 +677,7 @@ function P.generateMapWeighted()
 			roomid = roomChoices[util.chooseWeightedRandom(roomWeights, 'mapGen')]
 		end
 		usedRooms[#usedRooms+1] = roomid
-		newmap[choice.y][choice.x] = {roomid = roomid, room = P.createRoom(roomid), isFinal = false, isInitial = false}
+		newmap[choice.y][choice.x] = {roomid = roomid, room = P.createRoom(roomid), tint = {0,0,0}, isFinal = false, isInitial = false}
 	end
 	printMap(newmap)
 	return newmap

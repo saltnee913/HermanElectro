@@ -1825,6 +1825,8 @@ function enterRoom(dir)
 		end
 	end
 
+	if room.tint==nil then room.tint = {0,0,0} end
+
 	player.prevTileY = player.tileY
 	player.prevTileX = player.tileX
 
