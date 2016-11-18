@@ -1197,7 +1197,7 @@ function P.donationMachine:getInfoText()
 	return donations
 end
 function P.donationMachine:onEnter(player)
-	if tool==0 then return end
+	if tool==0 or tool>tools.numNormalTools then return end
 	tools[tool].numHeld = tools[tool].numHeld - 1
 	local mult = 1
 	if tool > tools.numNormalTools then

@@ -509,6 +509,30 @@ function win()
 	unlockedChars = characters.getUnlockedCharacters()
 end
 
+function updateLamps(tileY, tileX)
+	local lampInfo = {x=-1, y=-1}
+	local minLampDist = roomHeight+roomLength+1
+	for j2 = 1, roomHeight do
+		for i2 = 1, roomLength do
+			if room[j2][i2]~=nil and room[j2][i2]:instanceof(tiles.lamp) and math.abs(j2-tileY)+math.abs(i2-tileX)<minLampDist then
+				lampInfo.x = i2
+				lampInfo.y = j2
+				minLampDist = math.abs(j2-tileY)+math.abs(i2-tileX)
+			end
+		end
+	end
+
+	local lampx = lampInfo.x
+	local lampy = lampInfo.y
+	if lampx>0 and lampy>0 then
+		lampx = (lampInfo.x-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
+		lampy = (lampInfo.y-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
+	end
+
+	myShader:send("lampx", lampx)
+	myShader:send("lampy", lampy)
+end
+
 function updateLight()
 	litTiles = {}
 	for i = 1, roomHeight do
@@ -1156,27 +1180,8 @@ function love.draw()
 				toDrawFloor = floortile
 			end
 
-			local minLampDist = roomHeight+roomLength+1
-			local lampInfo = {x=-1, y=-1}
-			for j2 = 1, roomHeight do
-				for i2 = 1, roomLength do
-					if room[j2][i2]~=nil and room[j2][i2]:instanceof(tiles.lamp) and room[j2][i2].powered
-						and math.abs(j2-j)+math.abs(i2-i)<minLampDist then
-						lampInfo.x = i2
-						lampInfo.y = j2
-						minLampDist = math.abs(j2-j)+math.abs(i2-i)
-					end
-				end
-			end
-			local lampx = lampInfo.x
-			local lampy = lampInfo.y
-			if lampx>0 and lampy>0 then
-				lampx = (lampInfo.x-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
-				lampy = (lampInfo.y-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
-			end
+			updateLamps(i,j)
 
-			myShader:send("lampx", lampx)
-			myShader:send("lampy", lampy)
 			love.graphics.draw(toDrawFloor, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height,
 			0, scale*16/toDrawFloor:getWidth(), scale*16/toDrawFloor:getWidth())
 		end
@@ -1195,26 +1200,7 @@ function love.draw()
 	love.graphics.setShader(myShader)
 	for j = 1, roomHeight do
 		for i = 1, roomLength do
-			local minLampDist = roomHeight+roomLength+1
-			local lampInfo = {x=-1, y=-1}
-			for j2 = 1, roomHeight do
-				for i2 = 1, roomLength do
-					if room[j2][i2]~=nil and room[j2][i2]:instanceof(tiles.lamp) and math.abs(j2-j)+math.abs(i2-i)<minLampDist then
-						lampInfo.x = i2
-						lampInfo.y = j2
-						minLampDist = math.abs(j2-j)+math.abs(i2-i)
-					end
-				end
-			end
-			local lampx = lampInfo.x
-			local lampy = lampInfo.y
-			if lampx>0 and lampy>0 then
-				lampx = (lampInfo.x-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
-				lampy = (lampInfo.y-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
-			end
-
-			myShader:send("lampx", lampx)
-			myShader:send("lampy", lampy)
+			updateLamps(i,j)
 
 			if (room[j][i]~=nil or litTiles[j][i]==0) and not (litTiles[j][i]==1 and room[j][i]:instanceof(tiles.invisibleTile)) then
 				if room[j][i]~=nil then room[j][i]:updateSprite() end
@@ -1290,6 +1276,7 @@ function love.draw()
 		end
 		for i = 1, #animals do
 			if animals[i]~=nil and litTiles[animals[i].tileY][animals[i].tileX]==1 and not animals[i].pickedUp and animals[i].tileY==j then
+				updateLamps(animals[i].tileY, animals[i].tileX)
 				animals[i].x = (animals[i].tileX-1)*floor.sprite:getHeight()*scale+wallSprite.width
 		    	animals[i].y = (animals[i].tileY-1)*floor.sprite:getWidth()*scale+wallSprite.height
 				love.graphics.draw(animals[i].sprite, animals[i].x, animals[i].y, 0, scale, scale)
@@ -1357,6 +1344,7 @@ function love.draw()
 		end
 
 		if player.tileY == j then
+			updateLamps(player.tileY, player.tileX)
 			player.x = (player.tileX-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
 			player.y = (player.tileY-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
 			love.graphics.draw(player.character.sprite, math.floor(player.x-player.character.sprite:getWidth()*player.character.scale/2), math.floor(player.y-player.character.sprite:getHeight()*player.character.scale), 0, player.character.scale, player.character.scale)
@@ -2849,6 +2837,7 @@ function beatRoom(noDrops)
 	if not noDrops then
 		dropTools()
 	end
+	player.character:onRoomCompletion()
 end
 
 function onToolUse(tool)
