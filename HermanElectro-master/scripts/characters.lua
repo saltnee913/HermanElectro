@@ -396,7 +396,7 @@ function P.monk:onCharLoad()
 	myShader:send("tint_r", self.tint[1])
     myShader:send("tint_g", self.tint[2])
     myShader:send("tint_b", self.tint[3])
-	tools.giveToolsByReference({tools.lamp, tools.lamp, tools.lamp})
+	tools.giveToolsByReference({tools.lamp, tools.lamp, tools.lamp, tools.lamp, tools.lamp, tools.lamp})
 end
 function P.monk:onFloorEnter()
 	for i = 1, 3 do
@@ -405,14 +405,14 @@ function P.monk:onFloorEnter()
 	myShader:send("tint_r", self.tint[1])
     myShader:send("tint_g", self.tint[2])
     myShader:send("tint_b", self.tint[3])
-	tools.giveToolsByReference({tools.lamp, tools.lamp, tools.lamp})
+	tools.giveToolsByReference({tools.lamp, tools.lamp, tools.lamp, tools.lamp, tools.lamp, tools.lamp})
 end
 function P.monk:postMove()
 	for i = 1, 3 do
 		if self.tint[i]==0 then
 			self.tint[i]=0.01
 		end
-		self.tint[i] = self.tint[i]+(1-self.tint[i])/100
+		self.tint[i] = self.tint[i]+(1-self.tint[i])/300
 		if self.tint[i]>0.45 then self.tint[i] = 0.45 end
 	end
     myShader:send("tint_r", self.tint[1])
