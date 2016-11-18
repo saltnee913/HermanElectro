@@ -617,15 +617,17 @@ function P.chooseSupertool(superWeights)
 			end
 		end
 		local rand = util.random(sum,'toolDrop')
-		local toolId = tools.numNormalTools + 1
+		local toolId
 		for i = 1, #superWeights do
 			if unlockedSupertools[i] then
 				rand = rand - superWeights[i]
 				if rand <= 0 then
 					toolId = i
+					break
 				end
 			end
 		end
+		return toolId
 	end
 end
 
@@ -661,6 +663,20 @@ function P.getSupertools(numTools,superWeights)
 			filledSlots[slot] = i
 			slot = slot+1
 		end
+	end
+	if superWeights ~= nil then
+		local isSafe = false
+		for i = 1,3 do
+			if filledSlots[i] == 0 then
+				isSafe = true
+				break
+			end
+			if superWeights[filledSlots[i]] ~= 0 then
+				isSafe = true
+				break
+			end
+		end
+		if not isSafe then return end
 	end
 	for superToolNumber = 1, numTools do
 		local goodSlot = false
