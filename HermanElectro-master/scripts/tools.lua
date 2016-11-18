@@ -126,7 +126,7 @@ function P.useToolDir(toolid, dir)
 end
 
 --prioritizes animals
-function P.useToolTile(toolid, tileY, tileX)
+function P.useToolTile(tileY, tileX)
 	if P.toolableAnimals ~= nil then
 		for dir = 1, 5 do
 			for i = 1, #(P.toolableAnimals[dir]) do
@@ -717,6 +717,14 @@ function P.delectrifier:useToolTile(tile)
 	if tile.overlay ~= nil then
 		tile.overlay.canBePowered = false
 		if tile.overlay:instanceof(tiles.powerSupply) or tile.overlay:instanceof(tiles.notGate) or tile.overlay:instanceof(tiles.wire) then tile.overlay:destroy() end
+	end
+	if player.character == characters.monk and tile:instanceof(tiles.lamp) then
+		for i = 1, 3 do
+			player.character.tint[i] = 0
+		end
+	    myShader:send("tint_r", player.character.tint[1])
+	    myShader:send("tint_g", player.character.tint[2])
+	    myShader:send("tint_b", player.character.tint[3])
 	end
 end
 

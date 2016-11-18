@@ -244,15 +244,18 @@ function love.load()
 		extern number floorTint_b;
 		extern number player_x;
 		extern number player_y;
-		extern vec4 adjacentLighting;
-		extern number tileXCenter;
-		extern number tileYCenter;
+		extern number lampx = 0;
+		extern number lampy = 0;
+
 		vec4 effect( vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords ){
 		  	vec4 pixel = Texel(texture, texture_coords );//This is the current pixel color
 		  	if (!shaderTriggered) return pixel;
 			number xdist = player_x-screen_coords[0];
 			number ydist = player_y-screen_coords[1];
 			number playerDist = sqrt(xdist*xdist+ydist*ydist)/200;
+			number effectivetint_g = tint_g;
+			number effectivetint_b = tint_b;
+			number effectivetint_r = tint_r;
 			if (playerDist<2)
 				playerDist = 1+playerDist*playerDist/4;
 			if (playerDist<0)
@@ -260,11 +263,23 @@ function love.load()
 			number divVal = 100000;
 			if (playerDist<divVal)
 			  	divVal = playerDist;
-			pixel.r = (pixel.r*(1-(tint_g+tint_b))*(1-(floorTint_g+floorTint_b)))/divVal;
-			pixel.g = (pixel.g*(1-(tint_r+tint_b))*(1-(floorTint_r+floorTint_b)))/divVal;
-			pixel.b = (pixel.b*(1-(tint_r+tint_g))*(1-(floorTint_r+floorTint_g)))/divVal;
+			number lampdist = -1;
+			if (lampx>=0 && lampy>=0){
+				lampdist = sqrt((screen_coords[0]-lampx)*(screen_coords[0]-lampx)+(screen_coords[1]-lampy)*(screen_coords[1]-lampy));
+			}
+			if (lampdist>=0 && lampdist<200) {
+				divVal = 1;
+				effectivetint_g = 0;
+				effectivetint_b = 0;
+				effectivetint_r = 0;
+			}
+			pixel.r = (pixel.r*(1-(effectivetint_g+effectivetint_b))*(1-(floorTint_g+floorTint_b)))/divVal;
+			pixel.g = (pixel.g*(1-(effectivetint_r+effectivetint_b))*(1-(floorTint_r+floorTint_b)))/divVal;
+			pixel.b = (pixel.b*(1-(effectivetint_r+effectivetint_g))*(1-(floorTint_r+floorTint_g)))/divVal;
 			return pixel;
 		}
+
+
   	]]
 
 	if player == nil then
@@ -1140,6 +1155,28 @@ function love.draw()
 			else
 				toDrawFloor = floortile
 			end
+
+			local minLampDist = roomHeight+roomLength+1
+			local lampInfo = {x=-1, y=-1}
+			for j2 = 1, roomHeight do
+				for i2 = 1, roomLength do
+					if room[j2][i2]~=nil and room[j2][i2]:instanceof(tiles.lamp) and room[j2][i2].powered
+						and math.abs(j2-j)+math.abs(i2-i)<minLampDist then
+						lampInfo.x = i2
+						lampInfo.y = j2
+						minLampDist = math.abs(j2-j)+math.abs(i2-i)
+					end
+				end
+			end
+			local lampx = lampInfo.x
+			local lampy = lampInfo.y
+			if lampx>0 and lampy>0 then
+				lampx = (lampInfo.x-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
+				lampy = (lampInfo.y-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
+			end
+
+			myShader:send("lampx", lampx)
+			myShader:send("lampy", lampy)
 			love.graphics.draw(toDrawFloor, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height,
 			0, scale*16/toDrawFloor:getWidth(), scale*16/toDrawFloor:getWidth())
 		end
@@ -1158,6 +1195,27 @@ function love.draw()
 	love.graphics.setShader(myShader)
 	for j = 1, roomHeight do
 		for i = 1, roomLength do
+			local minLampDist = roomHeight+roomLength+1
+			local lampInfo = {x=-1, y=-1}
+			for j2 = 1, roomHeight do
+				for i2 = 1, roomLength do
+					if room[j2][i2]~=nil and room[j2][i2]:instanceof(tiles.lamp) and math.abs(j2-j)+math.abs(i2-i)<minLampDist then
+						lampInfo.x = i2
+						lampInfo.y = j2
+						minLampDist = math.abs(j2-j)+math.abs(i2-i)
+					end
+				end
+			end
+			local lampx = lampInfo.x
+			local lampy = lampInfo.y
+			if lampx>0 and lampy>0 then
+				lampx = (lampInfo.x-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
+				lampy = (lampInfo.y-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
+			end
+
+			myShader:send("lampx", lampx)
+			myShader:send("lampy", lampy)
+
 			if (room[j][i]~=nil or litTiles[j][i]==0) and not (litTiles[j][i]==1 and room[j][i]:instanceof(tiles.invisibleTile)) then
 				if room[j][i]~=nil then room[j][i]:updateSprite() end
 				local rot = 0
@@ -2505,7 +2563,7 @@ function love.mousepressed(x, y, button, istouch)
 	tools.updateToolableTiles(tool)
 
 	local currentTool = 0
-	if not clickActivated and not (tools.useToolTile(tool, tileLocY, tileLocX)) then
+	if not clickActivated and not (tools.useToolTile(tileLocY, tileLocX)) then
 		tool = 0
 	elseif not clickActivated then
 		if tool<=tools.numNormalTools then
