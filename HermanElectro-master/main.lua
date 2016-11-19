@@ -182,6 +182,8 @@ function love.load()
 	love.graphics.setNewFont(12)
 	love.graphics.setColor(255,255,255)
 	love.graphics.setBackgroundColor(255,255,255)
+	forcePowerUpdateNext = false
+
 	if not loadedOnce then
 		floorIndex = -1
 		--started = false
@@ -2225,6 +2227,10 @@ function love.keypressed(key, unicode)
     		end
     	end
     	enterMove()
+    	if forcePowerUpdateNext then
+    		noPowerUpdate = false
+    		forcePowerUpdateNext = false
+    	end
     	if room[player.tileY][player.tileX]~=nil then
     		if room[player.tileY][player.tileX].updatePowerOnEnter then
     			noPowerUpdate = false
@@ -2355,6 +2361,14 @@ function love.keypressed(key, unicode)
 	player.y = (player.tileY-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
     myShader:send("player_x", player.x+getTranslation().x*floor.sprite:getWidth()*scale+(width2-width)/2)
     myShader:send("player_y", player.y+getTranslation().y*floor.sprite:getWidth()*scale+(height2-height)/2)
+
+    for i = 1, roomHeight do
+    	for j = 1, roomHeight do
+    		if room[i][j]~=nil then
+    			room[i][j]:absoluteFinalUpdate()
+    		end
+    	end
+    end
 end
 
 function postAnimalMovement()
@@ -2367,11 +2381,12 @@ function postAnimalMovement()
 				room[animals[i].prevTileY][animals[i].prevTileX]:onLeaveAnimal(animals[i])
 				if room[animals[i].prevTileY][animals[i].prevTileX]:instanceof(tiles.wire) and
 				room[animals[i].prevTileY][animals[i].prevTileX].destroyed then
-					if animals[i]:onNullLeave()~=nil then
 					room[animals[i].prevTileY][animals[i].prevTileX] = animals[i]:onNullLeave()
-					end
+				elseif room[animals[i].prevTileY][animals[i].prevTileX]:instanceof(tiles.wall) and
+				room[animals[i].prevTileY][animals[i].prevTileX].destroyed then
+					room[animals[i].prevTileY][animals[i].prevTileX] = animals[i]:onNullLeave()
 				end
-			elseif animals[i]:onNullLeave()~=nil then
+			else
 				room[animals[i].prevTileY][animals[i].prevTileX] = animals[i]:onNullLeave()
 			end
 		end

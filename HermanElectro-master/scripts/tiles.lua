@@ -125,6 +125,8 @@ function P.tile:updateTileAndOverlay(dir)
 	self:updateToOverlay(dir)
 	self:updateTile(dir)
 end
+function P.tile:absoluteFinalUpdate()
+end
 
 P.invisibleTile = P.tile:new{isVisible = false, name = "invisibleTile"}
 local bounds = {}
@@ -1296,6 +1298,25 @@ function P.untriggeredPowerSupply:destroy()
 	self.dirAccept = {0,0,0,0}
 end
 
+P.untriggeredPowerSupplyTimer = P.conductiveTile:new{name = "untriggeredPowerSupplyTimer", readyToTransform = false, dirSend = {0,0,0,0}, canBePowered = true, sprite = love.graphics.newImage('Graphics/untriggeredpowersupplytimer.png'), poweredSprite = love.graphics.newImage('Graphics/powersupply.png')}
+function P.untriggeredPowerSupplyTimer:postPowerUpdate(dir)
+	if not self.charged and (self.poweredNeighbors[1]==1 or self.poweredNeighbors[2]==1 or self.poweredNeighbors[3]==1 or self.poweredNeighbors[4]==1) then
+		self.readyToTransform = true
+	end
+end
+function P.untriggeredPowerSupplyTimer:absoluteFinalUpdate()
+	if self.readyToTransform then
+		self.charged = true
+		self.dirSend = {1,1,1,1}
+		forcePowerUpdateNext = true
+		self.readyToTransform = false
+	end
+end
+function P.untriggeredPowerSupplyTimer:destroy()
+	self.charged = false
+	self.dirAccept = {0,0,0,0}
+end
+
 P.reinforcedGlass = P.concreteWall:new{name = "reinforcedGlass", blocksVision = false, sprite = love.graphics.newImage('Graphics3D/reinforcedglass.png'), poweredSprite = love.graphics.newImage('Graphics3D/reinforcedglass.png')}
 
 P.powerTriggeredBomb = P.unactivatedBomb:new{name = "powerTriggeredBomb", canBePowered = true, powered = false, dirAccept = {1,1,1,1}, dirSend = {0,0,0,0}}
@@ -1712,5 +1733,6 @@ tiles[120] = P.unbrickableStayButton
 tiles[121] = P.glueSnailTile
 tiles[122] = P.bombBuddyTile
 tiles[123] = P.conductiveDogTile
+tiles[124] = P.untriggeredPowerSupplyTimer
 
 return tiles
