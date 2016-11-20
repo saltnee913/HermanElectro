@@ -333,6 +333,7 @@ function loadNextLevel(dontChangeTime)
  	end
 	if loadTutorial then
 		player.totalItemsGiven =  {0,0,0,0,0,0,0}
+		player.totalItemsNeeded = {0,0,0,0,0,0,0}
 		if floorIndex==1 then
 			loadLevel('RoomData/tut_map.json')
 		elseif floorIndex==2 then
@@ -503,13 +504,15 @@ function kill()
 			log("Revived!")
 			stats.losses[player.character.name] = stats.losses[player.character.name]-1
 			onToolUse(i)
-			break
+			return
 		end
 	end
 	unlockedChars = characters.getUnlockedCharacters()
 	stats.losses[player.character.name] = stats.losses[player.character.name]+1
 	stats.writeStats()
-	completedRooms[mapy][mapx] = 0 --to stop itemsNeeded tracking, it's a hack!
+	if not loadTutorial then --hacky hack fix
+		completedRooms[mapy][mapx] = 0 --to stop itemsNeeded tracking, it's a hack!
+	end
 end
 
 function win()
