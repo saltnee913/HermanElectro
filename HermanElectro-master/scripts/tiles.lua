@@ -208,6 +208,8 @@ function P.spikes:willKillPlayer()
 end
 P.spikes.willKillAnimal = P.spikes.willKillPlayer
 
+P.conductiveSpikes = P.spikes:new{name = "conductiveSpikes", sprite = love.graphics.newImage('Graphics/conductivespikes.png'), poweredSprite = love.graphics.newImage('Graphics/conductivespikes.png'), canBePowered = true, dirSend = {1,1,1,1}, dirAccept = {1,1,1,1}}
+
 P.button = P.tile:new{bricked = false, updatePowerOnEnter = true, justPressed = false, down = false, powered = false, dirSend = {1,1,1,1}, 
   dirAccept = {0,0,0,0}, canBePowered = true, name = "button", pressed = false, sprite = love.graphics.newImage('Graphics/button.png'), 
   poweredSprite = love.graphics.newImage('Graphics/button.png'), downSprite = love.graphics.newImage('Graphics/buttonPressed.png'), 
@@ -1734,5 +1736,6 @@ tiles[121] = P.glueSnailTile
 tiles[122] = P.bombBuddyTile
 tiles[123] = P.conductiveDogTile
 tiles[124] = P.untriggeredPowerSupplyTimer
+tiles[125] = P.conductiveSpikes
 
 return tiles
