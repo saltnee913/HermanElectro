@@ -522,6 +522,9 @@ function P.brick:usableOnTile(tile, dist)
 	if not tile.destroyed and tile:instanceof(tiles.glassWall) then
 		return true
 	end
+	if tile:instanceof(tiles.hDoor) then
+		return true
+	end
 	if tile:instanceof(tiles.mousetrap) and not tile.bricked then
 		return true
 	end
@@ -532,7 +535,7 @@ function P.brick:usableOnAnimal(animal)
 end
 function P.brick:useToolTile(tile)
 	self.numHeld = self.numHeld - 1
-	if tile:instanceof(tiles.glassWall) then
+	if tile:instanceof(tiles.glassWall) or tile:instanceof(tiles.hDoor) then
 		tile:destroy()
 	else
 		tile:lockInState(true)
