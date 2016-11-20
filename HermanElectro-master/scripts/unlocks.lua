@@ -139,6 +139,7 @@ P.fogUnlock = P.tileUnlock:new{name = "i can't see a thing", tileIds = {81,117},
 P.directionGatesUnlock = P.tileUnlock:new{name = "erik's shitty direction gates", tileIds = {67,68}, sprite = tiles.motionGate.sprite}
 P.stickyButtonUnlock = P.tileUnlock:new{name = "sticky buttons", tileIds = {9}, sprite = tiles.stickyButton.sprite}
 P.stayButtonUnlock = P.tileUnlock:new{name = "stay buttons", tileIds = {10}, sprite = tiles.stayButton.sprite}
+P.doorUnlock = P.tileUnlock:new{name = "door unlock", tileIds = {18}, sprite = tiles.hDoor.sprite}
 
 P.toolUnlock = P.unlock:new{name = 'tool', toolIds = {}, sprite = tools.saw.image}
 P.missileUnlock = P.unlock:new{name = 'missile', toolIds = {16}, sprite = tools.missile.image}
@@ -199,6 +200,7 @@ P[#P+1] = P.jackInTheBoxUnlock
 P[#P+1] = P.dirtyGlassUnlock
 P[#P+1] = P.fogUnlock --done
 P[#P+1] = P.directionGatesUnlock
+P[#P+1] = P.doorUnlock
 --P[#P+1] = P.stickyButtonUnlock
 --P[#P+1] = P.stayButtonUnlock
 

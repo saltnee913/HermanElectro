@@ -120,6 +120,9 @@ function P.animal:checkDeath()
 		t = room[self.tileY][self.tileX]
 		if self.dead == false and t:willKillAnimal() then
 			self:kill()
+			if t:instanceof(tiles.vPoweredDoor) then
+				unlocks.unlockUnlockableRef(unlocks.doorUnlock)
+			end
 			if room[self.tileY][self.tileX]:instanceof(tiles.pit) or room[self.tileY][self.tileX]:instanceof(tiles.poweredFloor) then
 				local animalsInPit = 0
 				for i = 1, #animals do
