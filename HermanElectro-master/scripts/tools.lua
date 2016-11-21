@@ -575,12 +575,7 @@ function P.gun:useToolAnimal(animal)
 	self.numHeld = self.numHeld - 1
 	animal:kill()
 	if animal:instanceof(animalList.bombBuddy) then
-		local tileY = animal.tileY
-		local tileX = animal.tileX
-		room[tileY][tileX] = tiles.bomb:new()
-		room[tileY][tileX]:onEnd(tileY, tileX)
-		room[tileY][tileX]:explode(tileY, tileX)
-		room[tileY][tileX] = nil
+		animal:explode()
 	end
 end
 
@@ -863,6 +858,7 @@ function P.missile:usableOnAnimal(animal)
 end
 P.missile.getToolableTiles = P.tool.getToolableTilesBox
 P.missile.getToolableAnimals = P.tool.getToolableAnimalsBox
+P.missile.useToolAnimal = P.gun.useToolAnimal
 
 P.meat = P.tool:new{name = "meat", baseRange = 1, image = love.graphics.newImage('Graphics/meat.png')}
 function P.meat:usableOnNothing()

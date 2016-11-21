@@ -1057,7 +1057,12 @@ function P.bomb:explode(x,y)
 		end
 	end
 	for k = 1, #animals do
-		if math.abs(animals[k].tileY-x)<2 and math.abs(animals[k].tileX-y)<2 then animals[k]:kill() end
+		if not animals[k].dead and math.abs(animals[k].tileY-x)<2 and math.abs(animals[k].tileX-y)<2 then
+			animals[k]:kill()
+			if animals[k]:instanceof(animalList.bombBuddy) then
+				animals[k]:explode()
+			end
+		end
 	end
 	for k = 1, #pushables do
 		if math.abs(pushables[k].tileY-x)<2 and math.abs(pushables[k].tileX-y)<2 and not pushables[k].destroyed then

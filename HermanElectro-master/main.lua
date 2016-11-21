@@ -1847,7 +1847,7 @@ function enterRoom(dir)
 
 	--check if box blocking doorway
 	for i = 1, #pushables do
-		if pushables[i].tileY == player.tileY and pushables[i].tileX == player.tileX then
+		if not pushables[i].destroyed and pushables[i].tileY == player.tileY and pushables[i].tileX == player.tileX then
 			room = prevRoom
 			player.tileX = player.prevTileX
 			player.tileY = player.prevTileY

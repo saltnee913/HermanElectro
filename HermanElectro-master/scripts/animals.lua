@@ -152,6 +152,8 @@ end
 function P.animal:willKillPlayer(player)
 	return false
 end
+function P.animal:explode()
+end
 
 
 P.pitbull = P.animal:new{name = "pitbull"}
@@ -307,6 +309,11 @@ function P.cat:secondaryMove(playerx, playery)
 end
 
 P.bombBuddy = P.animal:new{name = "bombBuddy", sprite = love.graphics.newImage('Graphics/bombbuddy.png'), deadSprite = love.graphics.newImage('Graphics/catdead.png')}
+function P.bombBuddy:explode()
+	room[self.tileY][self.tileX] = tiles.bomb:new()
+	room[self.tileY][self.tileX]:onEnd(self.tileY, self.tileX)
+	room[self.tileY][self.tileX] = nil
+end
 
 P.conductiveDog = P.pup:new{name = "conductiveDog", powered = false, conductive = true, sprite = love.graphics.newImage('Graphics/conductiveDog.png')}
 
