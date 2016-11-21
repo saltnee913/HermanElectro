@@ -201,6 +201,7 @@ P.unbreakableCornerWire = P.unbreakableWire:new{name = "unbreakableCornerWire", 
 P.unbreakableTWire = P.unbreakableWire:new{name = "unbreakableTWire", dirSend = {0,1,1,1}, dirAccept = {0,1,1,1}, sprite = love.graphics.newImage('Graphics/unbreakabletwire.png'), poweredSprite = love.graphics.newImage('Graphics/unbreakabletwire.png')}
 P.unbreakableCrossWire = P.unbreakableWire:new{dirSend = {0,0,0,0}, dirAccept = {1,1,1,1}, name = "unbreakableCrossWire", sprite = love.graphics.newImage('Graphics/unbreakablecrosswires.png'), poweredSprite = love.graphics.newImage('Graphics/unbreakablecrosswires.png')}
 P.unbreakableCrossWire.updateTile = P.crossWire.updateTile
+P.unbreakablePowerSupply = P.powerSupply:new{name = "unbreakablePowerSupply", sprite = love.graphics.newImage('Graphics/unbreakablepowersupply.png'), poweredSprite = love.graphics.newImage('Graphics/unbreakablepowersupply.png')}
 
 P.spikes = P.tile:new{powered = false, dirSend = {0,0,0,0}, dirAccept = {0,0,0,0}, canBePowered = true, name = "spikes", sprite = love.graphics.newImage('GraphicsTony/Spikes2.png')}
 function P.spikes:willKillPlayer()
@@ -1738,5 +1739,6 @@ tiles[122] = P.bombBuddyTile
 tiles[123] = P.conductiveDogTile
 tiles[124] = P.untriggeredPowerSupplyTimer
 tiles[125] = P.conductiveSpikes
+tiles[126] = P.unbreakablePowerSupply
 
 return tiles
