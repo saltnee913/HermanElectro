@@ -2266,7 +2266,7 @@ function love.keypressed(key, unicode)
 	    	for k = 1, #animals do
 				local ani = animals[k]
 				if not map.blocksMovement(ani.tileY, ani.tileX) then
-					local movex = ani.tileXW
+					local movex = ani.tileX
 					local movey = ani.tileY
 					if player.active then
 						movex = player.tileX
