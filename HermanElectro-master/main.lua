@@ -555,6 +555,13 @@ function updateLamps(tileY, tileX)
 			end
 		end
 	end
+	for i = 1, #pushables do
+		if pushables[i]:instanceof(pushableList.lamp) and math.abs(pushables[i].tileY-tileY)+math.abs(pushables[i].tileX-tileX)<minLampDist then
+			lampInfo.x = pushables[i].tileX
+			lampInfo.y = pushables[i].tileY
+			minLampDist = math.abs(pushables[i].tileY-tileY)+math.abs(pushables[i].tileX-tileX)
+		end
+	end
 
 	local lampx = lampInfo.x
 	local lampy = lampInfo.y
@@ -586,6 +593,13 @@ function updateLight()
 			end
 		end
 	end
+
+	for i = 1, #pushables do
+		if pushables[i]:instanceof(pushableList.lamp) and not pushables[i].destroyed then
+			lightTest(pushables[i].tileY, pushables[i].tileX)
+		end
+	end
+	
 	--[[for i=1,roomHeight do
 		for j=1,roomLength do
 			checkLight(i,j, tileLoc2, tileLoc1)

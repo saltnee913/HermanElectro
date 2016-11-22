@@ -310,7 +310,9 @@ function P.jackInTheBox:onStep()
 	end
 end
 
-P.invisibleBox = P.box:new{visible = false}
+P.invisibleBox = P.box:new{name = "invisibleBox", visible = false}
+
+P.lamp = P.box:new{name = "lamp", sprite = love.graphics.newImage('Graphics/lamp.png')}
 
 pushableList[1] = P.pushable
 pushableList[2] = P.box
@@ -323,5 +325,6 @@ pushableList[8] = P.bombBox
 pushableList[9] = P.giftBox
 pushableList[10] = P.jackInTheBox
 pushableList[11] = P.invisibleBox
+pushableList[12] = P.lamp
 
 return pushableList

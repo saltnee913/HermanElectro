@@ -1618,6 +1618,8 @@ function P.mushroom:onEnter()
 	globalTint = {0,0.15,0.3}
 end
 
+P.lampTile = P.tile:new{name = "lampTile", pushable = pushableList[12]:new(), listIndex = 12, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
+
 P.hermanTransform = P.tile:new{name = "hermanTransform", characterIndex = 1}
 function P.hermanTransform:onEnter()
 	player.character = characters[self.characterIndex]
@@ -1761,5 +1763,6 @@ tiles[129] = P.lennyTransform
 tiles[130] = P.rammyTransform
 tiles[131] = P.erikTransform
 tiles[132] = P.fishTransform
+tiles[133] = P.lampTile
 
 return tiles
