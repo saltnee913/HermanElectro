@@ -1618,6 +1618,16 @@ function P.mushroom:onEnter()
 	globalTint = {0,0.15,0.3}
 end
 
+P.hermanTransform = P.tile:new{name = "hermanTransform", characterIndex = 1}
+function P.hermanTransform:onEnter()
+	player.character = characters[self.characterIndex]
+end
+P.felixTransform = P.hermanTransform:new{name = "felixTransform", characterIndex = 2}
+P.erikTransform = P.hermanTransform:new{name = "erikTransform", characterIndex = 4}
+P.rammyTransform = P.hermanTransform:new{name = "rammyTransform", characterIndex = 6}
+P.lennyTransform = P.hermanTransform:new{name = "lennyTransform", characterIndex = 15}
+P.fishTransform = P.hermanTransform:new{name = "fishTransform", characterIndex = 16}
+
 
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
@@ -1745,5 +1755,11 @@ tiles[123] = P.conductiveDogTile
 tiles[124] = P.untriggeredPowerSupplyTimer
 tiles[125] = P.conductiveSpikes
 tiles[126] = P.unbreakablePowerSupply
+tiles[127] = P.hermanTransform
+tiles[128] = P.felixTransform
+tiles[129] = P.lennyTransform
+tiles[130] = P.rammyTransform
+tiles[131] = P.erikTransform
+tiles[132] = P.fishTransform
 
 return tiles

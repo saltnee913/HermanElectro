@@ -2063,10 +2063,10 @@ function love.keypressed(key, unicode)
 	if key=="e" then
 		editorMode = not editorMode
 		if floorIndex == -1 then
-			started = false
-			charSelect = true
-			player.tileY = 1
-			player.tileX = 1
+			--started = false
+			--charSelect = true
+			--player.tileY = 1
+			--player.tileX = 1
 		end
 		gameTime.timeLeft = gameTime.timeLeft+20000
 	end
