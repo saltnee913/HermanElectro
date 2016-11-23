@@ -219,8 +219,9 @@ function love.load()
 		cornerwall = love.graphics.newImage('Graphics/toprightcorner.png')
 		startscreen = love.graphics.newImage('NewGraphics/startscreen3.png')
 
-		music = love.audio.newSource('Audio/hermantheme.mp3')
-		--music:play()
+		--music = love.audio.newSource('Audio/hermantheme.mp3')
+		music = love.audio.newSource('Audio/bones.mp3')
+		music:play()
 
 		width2, height2 = love.graphics.getDimensions()
 		if width2>height2*16/9 then
