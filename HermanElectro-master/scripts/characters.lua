@@ -461,6 +461,8 @@ function P.random2:postMove()
 	end
 end
 
+P.harriet = P.character:new{name = "Harriet", description = "Herman in drag", sprite = love.graphics.newImage('Graphics/nadia.png')}
+
 P[1] = P.herman
 P[2] = P.felix
 P[3] = P.most
@@ -480,5 +482,6 @@ P[16] = P.fish
 P[17] = P.random
 P[18] = P.random2
 P[19] = P.monk
+P[20] = P.harriet
 
 return characters
