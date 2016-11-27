@@ -162,7 +162,7 @@ P.portalUnlock = P.tileUnlock:new{name = 'portals', tileIds = {56,57}, toolIds =
 
 
 P.winUnlocks = {P.rammyUnlock, P.bombsUnlock, P.ambiguousGates, P.unbreakableEfloorUnlock}
-P.floorUnlocks = {P.spikesUnlock, P.catUnlock, P.boxesUnlock, P.unbreakableWires, P.mousetrapUnlock, P.wizardUnlock}
+P.floorUnlocks = {P.doorUnlock, P.catUnlock, P.boxesUnlock, P.unbreakableWires, P.mousetrapUnlock, P.wizardUnlock}
 
 --characters
 P[#P+1] = P.erikUnlock --done
@@ -185,7 +185,7 @@ P[#P+1] = P.untoolableButtons
 P[#P+1] = P.mousetrapUnlock --done
 P[#P+1] = P.breakablePitUnlock --done
 P[#P+1] = P.catUnlock --done
-P[#P+1] = P.spikesUnlock --done
+P[#P+1] = P.spikesUnlock
 P[#P+1] = P.poweredEndUnlock --done
 P[#P+1] = P.snailsUnlock --done
 P[#P+1] = P.conductiveSnailsUnlock --done
@@ -200,7 +200,7 @@ P[#P+1] = P.jackInTheBoxUnlock
 P[#P+1] = P.dirtyGlassUnlock
 P[#P+1] = P.fogUnlock --done
 P[#P+1] = P.directionGatesUnlock
-P[#P+1] = P.doorUnlock
+P[#P+1] = P.doorUnlock --done
 --P[#P+1] = P.stickyButtonUnlock
 --P[#P+1] = P.stayButtonUnlock
 
