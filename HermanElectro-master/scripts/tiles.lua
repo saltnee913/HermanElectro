@@ -1236,7 +1236,7 @@ function P.entrancePortal:onEnter(player)
 		shouldBreak = false
 		for j = 1, roomLength do
 			if room[i][j]~=nil and room[i][j]:instanceof(tiles.exitPortal) then
-				movePlayer = true
+				local movePlayer = true
 				for k = 1, #pushables do
 					if pushables[k].tileX == j and pushables[k].tileY == i then
 						movePlayer = false
@@ -1253,7 +1253,33 @@ function P.entrancePortal:onEnter(player)
 		if shouldBreak then break end
 	end
 end
-P.entrancePortal.onEnterAnimal = P.entrancePortal.onEnter
+function P.entrancePortal:onEnterAnimal(animal)
+	for i = 1, roomHeight do
+		shouldBreak = false
+		for j = 1, roomLength do
+			if room[i][j]~=nil and room[i][j]:instanceof(tiles.exitPortal) then
+				local moveAnimal = true
+				for k = 1, #pushables do
+					if pushables[k].tileX == j and pushables[k].tileY == i then
+						moveAnimal = false
+					end
+				end
+				for k = 1, #animals do
+					if animals[k].tileX == j and animals[k].tileY == i then
+						moveAnimal = false
+					end
+				end
+				if moveAnimal then
+					animal.tileX = j
+					animal.tileY = i
+				end
+				shouldBreak = true
+				break
+			end
+		end
+		if shouldBreak then break end
+	end
+end
 
 P.exitPortal = P.tile:new{name = "exitPortal", sprite = love.graphics.newImage('Graphics/exitPortal.png')}
 
