@@ -298,6 +298,8 @@ function love.load()
 		player.tileY = 6
 	end
 
+	map.clearBlacklist()
+
 	if loadTutorial then
 		player.enterX = player.tileX
 		player.enterY = player.tileY

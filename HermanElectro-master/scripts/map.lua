@@ -15,6 +15,12 @@ local MapInfo = Object:new{floor = 1, height = 0, numRooms = 0}
 
 map.itemsNeededFile = 'itemsNeeded.json'
 
+local blacklist = {}
+function P:clearBlacklist()
+	blacklist = {}
+end
+
+
 function writeToolsUsed()
 	local solutionArray = {}
 	if love.filesystem.exists(saveDir..'/'..P.itemsNeededFile) then 
@@ -157,6 +163,7 @@ function P.filterRoomSetByUnlocks(arr)
 					for j = 1, #unlocks[i].tileIds do
 						if doesRoomContainTile(v, unlocks[i].tileIds[j]) then
 							arr[k] = nil
+							print(j)
 						end
 					end
 				elseif unlocks[i].roomIds ~= nil then
@@ -392,7 +399,7 @@ function P.generateMapStandard()
 	treasureY = 0
 	donationX = 0
 	donationY = 0
-	local blacklist = {startRoomID}
+	blacklist[#blacklist+1] = startRoomID
 	local randomRoomArray = util.createRandomKeyArray(P.floorInfo.rooms.rooms, 'mapGen', blacklist)
 	local skippedRooms = {}
 	local skippedRoomsIndex = 1
@@ -484,6 +491,7 @@ function P.generateMapStandard()
 		if arr[roomid].dirEnter~=nil then
 			newDirEnter = arr[roomid].dirEnter
 		end
+		blacklist[#blacklist+1] = roomid
 		newmap[choice.x][choice.y] = {roomid = roomid, room = P.createRoom(roomid, arr), tint = {0,0,0}, dirEnter = arr[roomid].dirEnter, isFinal = false, isInitial = false}
 	end
 	--printMap(newmap)
@@ -694,7 +702,7 @@ function P.generateOneFloor()
 	newmap[math.floor(height/2)][math.floor(height/2)] = {roomid = startRoomID, room = P.createRoom(startRoomID, P.floorInfo.rooms.rooms), isFinal = false, isInitial = true, isCompleted = false}
 	newmap.initialY = math.floor(height/2)
 	newmap.initialX = math.floor(height/2)
-	local blacklist = {startRoomID}
+	blacklist[#blacklist+1] = startRoomID
 	local randomRoomArray = util.createRandomKeyArray(P.floorInfo.rooms.rooms, 'mapGen', blacklist)
 	local skippedRooms = {}
 	local skippedRoomsIndex = 1
