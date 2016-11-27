@@ -2005,8 +2005,8 @@ function love.keypressed(key, unicode)
 			local charNum = 1
 			charNum = charNum+5*selectedBox.y
 			charNum = charNum+selectedBox.x
-			if charNum > #characters then
-				charNum = #characters
+			if charNum > #charsToSelect then
+				charNum = #charsToSelect
 			end
 			player.character = charsToSelect[charNum]
 			player.character:onBegin()
