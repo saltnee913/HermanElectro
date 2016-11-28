@@ -16,8 +16,43 @@ local MapInfo = Object:new{floor = 1, height = 0, numRooms = 0}
 map.itemsNeededFile = 'itemsNeeded.json'
 
 local blacklist = {}
+local setBlacklist = {}
 function P:clearBlacklist()
 	blacklist = {}
+	setBlacklist = {}
+end
+
+local function removeSets(arr)
+	local sets = {}
+	local bad = false
+	for i = 1, #arr do
+		bad = false
+		local set = P.getFieldForRoom(arr[i], 'set')
+
+		--if something isn't in a set, then it is a set by itself
+		if set == nil then
+			set = arr[i]
+		end
+
+		for j = 1, #setBlacklist do
+			if setBlacklist[j] == set then
+				bad = true
+			end
+		end
+		if not bad then
+			if sets[set] == nil then
+				sets[set] = {}
+			end
+			sets[set][#sets[set]+1] = arr[i]
+		end
+	end
+	local newArr = {}
+	for k, v in pairs(sets) do
+		--choose an element from a set so they don't appear twice a floor
+		local setIndex = util.random(#v, 'mapGen')
+		newArr[#newArr+1] = v[setIndex]
+	end
+	return newArr
 end
 
 
@@ -401,6 +436,7 @@ function P.generateMapStandard()
 	donationY = 0
 	blacklist[#blacklist+1] = startRoomID
 	local randomRoomArray = util.createRandomKeyArray(P.floorInfo.rooms.rooms, 'mapGen', blacklist)
+	local randomRoomArray = removeSets(randomRoomArray)
 	local skippedRooms = {}
 	local skippedRoomsIndex = 1
 	for i = 0, numRooms-1 do
