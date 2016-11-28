@@ -601,7 +601,9 @@ function P.generateMapWeighted()
 		newmap[i] = {}
 	end
 	local roomsArray = P.floorInfo.rooms.rooms
-	local randomRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.rooms, 'mapGen')
+	blacklist[#blacklist+1] = startRoomID
+	local randomRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.rooms, 'mapGen', blacklist)
+	local randomRoomsArray = removeSets(randomRoomsArray)
 	local randomTreasureRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.treasureRooms, 'mapGen')
 	local randomFinalRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.finalRooms, 'mapGen')
 	local randomDonationRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.donationRooms, 'mapGen')
