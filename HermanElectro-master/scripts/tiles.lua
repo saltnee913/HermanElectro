@@ -1265,7 +1265,7 @@ function P.entrancePortal:onEnterAnimal(animal)
 					end
 				end
 				for k = 1, #animals do
-					if animals[k].tileX == j and animals[k].tileY == i then
+					if animals[k].tileX == j and animals[k].tileY == i and not animals[i].dead then
 						moveAnimal = false
 					end
 				end
@@ -1280,6 +1280,8 @@ function P.entrancePortal:onEnterAnimal(animal)
 		if shouldBreak then break end
 	end
 end
+P.entrancePortal.onStay = P.entrancePortal.onEnter
+P.entrancePortal.onStayAnimal = P.entrancePortal.onEnterAnimal
 
 P.exitPortal = P.tile:new{name = "exitPortal", sprite = love.graphics.newImage('Graphics/exitPortal.png')}
 

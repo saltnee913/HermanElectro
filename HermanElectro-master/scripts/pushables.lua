@@ -17,7 +17,6 @@ function P.pushable:move(mover)
 	end
 	self.prevTileX = self.tileX
 	self.prevTileY = self.tileY
-		print(player.prevTileX.."   "..player.prevTileY.."   "..player.tileX.."   "..player.tileY)
 	if mover.tileX~=mover.prevTileX then
 		self.tileX = self.tileX+(mover.tileX-mover.prevTileX)
 	else

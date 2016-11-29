@@ -2427,9 +2427,6 @@ function resetAnimals()
 	for i = 1, #animals do
 		if animals[i].waitCounter>0 then
 			animals[i].waitCounter = animals[i].waitCounter-1
-			if animals[i]:instanceof(animalList.cat) then
-				print(animals[i].waitCounter)
-			end
 		end
 	end
 end

@@ -430,7 +430,6 @@ function P.monk:postMove()
 end
 function P.monk:onRoomEnter()
 	self.tint = room.tint
-	print(room.tint[1])
 	myShader:send("tint_r", self.tint[1])
 	myShader:send("tint_g", self.tint[2])
 	myShader:send("tint_b", self.tint[3])
