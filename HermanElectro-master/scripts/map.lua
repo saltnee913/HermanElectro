@@ -722,7 +722,8 @@ function P.generateMapWeighted()
 			end
 			roomid = roomChoices[util.chooseWeightedRandom(roomWeights, 'mapGen')]
 		end
-		blacklist[#blacklist+1] = P.getFieldForRoom(roomid, 'set') or roomid
+		blacklist[#blacklist+1] = roomid
+		setBlacklist[#setBlacklist+1] = P.getFieldForRoom(roomid, 'set')
 		usedRooms[#usedRooms+1] = roomid
 		newmap[choice.y][choice.x] = {roomid = roomid, room = P.createRoom(roomid), tint = {0,0,0}, isFinal = false, isInitial = false}
 	end
