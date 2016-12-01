@@ -215,7 +215,6 @@ end
 
 P.chell = P.character:new{name = "Chell", description = "New Carla", sprite = love.graphics.newImage('Graphics/carlaperson.png')}
 function P.chell:onFailedMove(key)
-	print("aaa")
 	if key=="w" then
 		if player.tileY==1 and (room[roomHeight][player.tileX]==nil or not room[roomHeight][player.tileX].blocksMovement) then
 			player.tileY = roomHeight
