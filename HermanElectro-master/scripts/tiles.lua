@@ -636,7 +636,7 @@ local function getTileY(posY)
 	return (posY-1)*floor.sprite:getHeight()*scale+wallSprite.height
 end
 
-P.hDoor = P.tile:new{name = "hDoor", stopped = false, blocksVision = true, blocksMovement = true, canBePowered = false, dirSend = {0,0,0,0}, dirAccept = {0,0,0,0}, sprite = love.graphics.newImage('Graphics/door.png'), closedSprite = love.graphics.newImage('Graphics/door.png'), openSprite = love.graphics.newImage('Graphics/doorsopen.png')}
+P.hDoor = P.tile:new{name = "hDoor", stopped = false, blocksVision = true, blocksMovement = true, blocksProjectiles = true, canBePowered = false, dirSend = {0,0,0,0}, dirAccept = {0,0,0,0}, sprite = love.graphics.newImage('Graphics/door.png'), closedSprite = love.graphics.newImage('Graphics/door.png'), openSprite = love.graphics.newImage('Graphics/doorsopen.png')}
 function P.hDoor:updateTile(player)
 	if self.stopped then
 		self.sprite = self.openSprite
