@@ -75,6 +75,8 @@ function P.character:getInfoText()
 end
 function P.character:onRoomCompletion()
 end
+function P.character:onFailedMove()
+end
 
 P.herman = P.character:new{name = "Herman", description = "The Electrician", winUnlocks = {unlocks.reviveUnlock}, scale = 0.3}
 function P.herman:onCharLoad()
@@ -209,6 +211,28 @@ P.nadia = P.character:new{name = "Nadia", description = "The Naturalist", sprite
 function P.nadia:onCharLoad()
 	tools.giveToolsByReference({tools.meat})
 	player.safeFromAnimals = true
+end
+
+P.chell = P.character:new{name = "Chell", description = "New Carla", sprite = love.graphics.newImage('Graphics/carlaperson.png')}
+function P.chell:onFailedMove(key)
+	print("aaa")
+	if key=="w" then
+		if player.tileY==1 and (room[roomHeight][player.tileX]==nil or not room[roomHeight][player.tileX].blocksMovement) then
+			player.tileY = roomHeight
+		end
+	elseif key=="a" then
+		if player.tileX==1 and (room[player.tileY][roomLength]==nil or not room[player.tileY][roomLength].blocksMovement) then
+			player.tileX = roomLength
+		end
+	elseif key=="s" then
+		if player.tileY==roomHeight and (room[1][player.tileX]==nil or not room[1][player.tileX].blocksMovement) then
+			player.tileY = 1
+		end
+	elseif key=="d" then
+		if player.tileX==roomLength and (room[player.tileY][1]==nil or not room[player.tileY][1].blocksMovement) then
+			player.tileX = 1
+		end
+	end
 end
 
 P.crate = P.character:new{name = "Carla", roomTrigger = false, description = "The Crate", isCrate = false, 
@@ -482,5 +506,6 @@ P[17] = P.random
 P[18] = P.random2
 P[19] = P.monk
 P[20] = P.harriet
+P[21] = P.chell
 
 return characters

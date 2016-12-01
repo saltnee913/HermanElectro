@@ -2201,6 +2201,11 @@ function love.keypressed(key, unicode)
 		waitTurn = true
     	player.waitCounter = player.waitCounter-1
     end
+    if (key == "w" or key == "a" or key == "s" or key == "d") then
+    	if player.prevTileX==player.tileX and player.prevTileY==player.tileY then
+			player.character:onFailedMove(key)
+		end
+	end
 	if key == "1" or key == "2" or key == "3" or key == "4" or key == "5" or key == "6" or key == "7" or key == "8" or key == "9" or key == "0" then
 		numPressed = tonumber(key)
 		if numPressed == 0 then numPressed = 10 end
