@@ -921,38 +921,27 @@ function lightTest(x, y)
 	litTiles[x][y] = 1
 
 
+	if room[x][y] ~= nil and room[x][y].blocksVision then
+		return
+	end
+
 	if x>1 then
-		if room[x-1][y]~=nil and room[x-1][y].blocksVision then
-			litTiles[x-1][y] = 1
-		else
-			lightTest(x-1,y)
-		end
+		lightTest(x-1,y)
 	end
 
 
 	if x<roomHeight then
-		if room[x+1][y]~=nil and room[x+1][y].blocksVision then
-			litTiles[x+1][y] = 1
-		else
-			lightTest(x+1,y)
-		end
+		lightTest(x+1,y)
 	end
 
 	if y>1 then
-		if room[x][y-1]~=nil and room[x][y-1].blocksVision then
-			litTiles[x][y-1] = 1
-		else
-			lightTest(x, y-1)
-		end
+		lightTest(x, y-1)
 	end
 
 	if y<roomLength then
-		if room[x][y+1]~=nil and room[x][y+1].blocksVision then
-			litTiles[x][y+1] = 1
-		else
-			lightTest(x, y+1)
-		end
+		lightTest(x, y+1)
 	end
+	player.character.specialLightTest(x,y)
 end
 
 function powerTest(x, y, lastDir)

@@ -77,6 +77,8 @@ function P.character:onRoomCompletion()
 end
 function P.character:onFailedMove()
 end
+function P.character.specialLightTest(tileY,tileX)
+end
 
 P.herman = P.character:new{name = "Herman", description = "The Electrician", winUnlocks = {unlocks.reviveUnlock}, scale = 0.3}
 function P.herman:onCharLoad()
@@ -231,6 +233,20 @@ function P.chell:onFailedMove(key)
 		if player.tileX==roomLength and (room[player.tileY][1]==nil or not room[player.tileY][1].blocksMovement) then
 			player.tileX = 1
 		end
+	end
+end
+function P.chell.specialLightTest(tileY,tileX)
+	if tileX == 1 then
+		lightTest(tileY,roomLength)
+	end
+	if tileX == roomLength then
+		lightTest(tileY,1)
+	end
+	if tileY == 1 then
+		lightTest(roomHeight,tileX)
+	end
+	if tileY == roomHeight then
+		lightTest(1,tileX)
 	end
 end
 
