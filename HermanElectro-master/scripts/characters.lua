@@ -237,7 +237,7 @@ end
 P.crate = P.character:new{name = "Carla", roomTrigger = false, description = "The Crate", isCrate = false, 
   winUnlocks = {unlocks.conditionalBoxes}, speedUnlock = unlocks.conductiveBoxes,
   sprite = love.graphics.newImage('Graphics/carlaperson.png'),
-  humanSprite = love.graphics.newImage('Graphics/carlaperson.png'), crateSprite = love.graphics.newImage('Graphics/carlabox.png')}
+  humanSprite = love.graphics.newImage('Graphics/carlaperson.png'), crateSprite = love.graphics.newImage('Graphics/carlabox.png'), disabled = true}
 function P.crate:setCrate(isCrate)
 	self.sprite = isCrate and self.crateSprite or self.humanSprite
 	player.active = not isCrate
@@ -494,17 +494,18 @@ P[6] = P.rammy
 P[7] = P.rick
 P[8] = P.frederick
 P[9] = P.battery
-P[10] = P.crate
+P[10] = P.chell
 P[11] = P.giovanni
 P[12] = P.francisco
 P[13] = P.tim
 P[14] = P.orson
 P[15] = P.lenny
 P[16] = P.fish
-P[17] = P.random
-P[18] = P.random2
-P[19] = P.monk
-P[20] = P.harriet
-P[21] = P.chell
+P[17] = P.monk
+P[18] = P.harriet
+P[19] = P.crate
+
+P[#P+1] = P.random
+P[#P+1] = P.random2
 
 return characters
