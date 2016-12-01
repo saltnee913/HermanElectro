@@ -1265,7 +1265,7 @@ function P.entrancePortal:onEnterAnimal(animal)
 					end
 				end
 				for k = 1, #animals do
-					if animals[k].tileX == j and animals[k].tileY == i and not animals[i].dead then
+					if animals[k].tileX == j and animals[k].tileY == i and not animals[k].dead then
 						moveAnimal = false
 					end
 				end
