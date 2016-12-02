@@ -871,6 +871,7 @@ function P.generateMapFromJSON()
 	if map.floorInfo.tint == nil then
 		map.floorInfo.tint = {0,0,0}
 	end
+
     myShader:send("floorTint_r", map.floorInfo.tint[1])
     myShader:send("floorTint_g", map.floorInfo.tint[2])
     myShader:send("floorTint_b", map.floorInfo.tint[3])

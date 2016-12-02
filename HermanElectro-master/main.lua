@@ -221,7 +221,7 @@ function love.load()
 
 		--music = love.audio.newSource('Audio/hermantheme.mp3')
 		music = love.audio.newSource('Audio/bones.mp3')
-		music:play()
+		--music:play()
 
 		width2, height2 = love.graphics.getDimensions()
 		if width2>height2*16/9 then
@@ -249,13 +249,14 @@ function love.load()
 		extern number player_y;
 		extern number lampx = 0;
 		extern number lampy = 0;
+		extern vec4 lamps[10];
 
 		vec4 effect( vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords ){
 		  	vec4 pixel = Texel(texture, texture_coords );//This is the current pixel color
 		  	if (!shaderTriggered) return pixel;
 			number xdist = player_x-screen_coords[0];
 			number ydist = player_y-screen_coords[1];
-			number playerDist = sqrt(xdist*xdist+ydist*ydist)/200;
+			number playerDist = sqrt(xdist*xdist+ydist*ydist)/220;
 			number effectivetint_g = tint_g;
 			number effectivetint_b = tint_b;
 			number effectivetint_r = tint_r;
@@ -266,16 +267,17 @@ function love.load()
 			number divVal = 100000;
 			if (playerDist<divVal)
 			  	divVal = playerDist;
-			number lampdist = -1;
-			if (lampx>=0 && lampy>=0){
-				lampdist = sqrt((screen_coords[0]-lampx)*(screen_coords[0]-lampx)+(screen_coords[1]-lampy)*(screen_coords[1]-lampy));
-			}
-			if (lampdist>=0 && lampdist<200) {
-				divVal = 1;
-				effectivetint_g = 0;
-				effectivetint_b = 0;
-				effectivetint_r = 0;
-			}
+			for (int i=0;i<10;i=i+1) {
+				if (lamps[i][0]>=0) {
+					number lampxdist = lamps[i][0]-screen_coords[0];
+					number lampydist = lamps[i][1]-screen_coords[1];
+					number totalLampDist = sqrt(lampxdist*lampxdist+lampydist*lampydist);
+					if (totalLampDist<lamps[i][3]) {
+						//divVal = divVal-lamps[i][2]*(divVal-1)*(1-totalLampDist*totalLampDist/(200*200));
+						divVal = divVal-lamps[i][2]*(divVal-1);
+					}
+				}
+            }
 			pixel.r = (pixel.r*(1-(effectivetint_g+effectivetint_b))*(1-(floorTint_g+floorTint_b)))/divVal;
 			pixel.g = (pixel.g*(1-(effectivetint_r+effectivetint_b))*(1-(floorTint_r+floorTint_b)))/divVal;
 			pixel.b = (pixel.b*(1-(effectivetint_r+effectivetint_g))*(1-(floorTint_r+floorTint_g)))/divVal;
@@ -372,6 +374,7 @@ function startGame()
 end
 
 function loadOpeningWorld()
+	floorIndex = -1
 	loadRandoms()
 	loadLevel('RoomData/openingworld.json')
 	roomHeight = room.height
@@ -382,7 +385,6 @@ function loadOpeningWorld()
 	player.prevTileY = player.tileY
 	updateLight()
 	started = true
-	floorIndex = -1
 end
 
 function startTutorial()
@@ -470,7 +472,7 @@ function loadLevel(floorPath)
 	end
 	roomHeight = room.height
 	roomLength = room.length
-	if floorIndex>-1 then
+	if floorIndex>=-1 then
 		shaderTriggered = true
 	end
 end
@@ -547,34 +549,35 @@ function win()
 end
 
 function updateLamps(tileY, tileX)
-	local lampInfo = {x=-1, y=-1}
-	local minLampDist = roomHeight+roomLength+1
-	for j2 = 1, roomHeight do
-		for i2 = 1, roomLength do
-			if room[j2][i2]~=nil and room[j2][i2]:instanceof(tiles.lamp) and math.abs(j2-tileY)+math.abs(i2-tileX)<minLampDist then
-				lampInfo.x = i2
-				lampInfo.y = j2
-				minLampDist = math.abs(j2-tileY)+math.abs(i2-tileX)
+	local lampHolder = {}
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]~=nil and room[i][j]:instanceof(tiles.lamp) and #lampHolder<10 then
+				lampHolder[#lampHolder+1] = {j,i,room[i][j].intensity,room[i][j].range}
 			end
 		end
 	end
 	for i = 1, #pushables do
-		if pushables[i]:instanceof(pushableList.lamp) and math.abs(pushables[i].tileY-tileY)+math.abs(pushables[i].tileX-tileX)<minLampDist then
-			lampInfo.x = pushables[i].tileX
-			lampInfo.y = pushables[i].tileY
-			minLampDist = math.abs(pushables[i].tileY-tileY)+math.abs(pushables[i].tileX-tileX)
+		if pushables[i]:instanceof(pushableList.lamp) and #lampHolder<10 then
+			lampHolder[#lampHolder+1] = {pushables[i].tileX, pushables[i].tileY, pushables[i].intensity, pushables[i].range}
+		end
+	end
+	local index = #lampHolder
+	while index<10 do
+		lampHolder[#lampHolder+1] = {-1,-1,-1,-1}
+		index = index+1
+	end
+
+	for i = 1, #lampHolder do
+		if lampHolder[i][1]>=0 then
+			lampHolder[i][1] = (lampHolder[i][1]-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
+			lampHolder[i][2] = (lampHolder[i][2]-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
+			lampHolder[i][1] = lampHolder[i][1]+(width2-width)/2+getTranslation().x*floor.sprite:getWidth()*scale
+			lampHolder[i][2] = lampHolder[i][2]+(height2-height)/2+getTranslation().y*floor.sprite:getHeight()*scale
 		end
 	end
 
-	local lampx = lampInfo.x
-	local lampy = lampInfo.y
-	if lampx>0 and lampy>0 then
-		lampx = (lampInfo.x-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10+16*scale/2
-		lampy = (lampInfo.y-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10+16*scale/2
-	end
-
-	myShader:send("lampx", lampx)
-	myShader:send("lampy", lampy)
+	myShader:send("lamps", unpack(lampHolder))
 end
 
 function updateLight()
@@ -1955,6 +1958,14 @@ function love.update(dt)
 		myShader:send("tint_r", globalTint[1])
 		myShader:send("tint_g", globalTint[2])
 		myShader:send("tint_b", globalTint[3])
+	end
+
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room~=nil and room[i][j]~=nil then
+				room[i][j]:realtimeUpdate()
+			end
+		end
 	end
 
 end

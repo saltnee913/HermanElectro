@@ -311,7 +311,7 @@ end
 
 P.invisibleBox = P.box:new{name = "invisibleBox", visible = false}
 
-P.lamp = P.box:new{name = "lamp", sprite = love.graphics.newImage('Graphics/lamp.png')}
+P.lamp = P.box:new{name = "lamp", sprite = love.graphics.newImage('Graphics/lamp.png'), intensity = 1, range = 200}
 
 pushableList[1] = P.pushable
 pushableList[2] = P.box

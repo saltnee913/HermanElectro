@@ -127,6 +127,8 @@ function P.tile:updateTileAndOverlay(dir)
 end
 function P.tile:absoluteFinalUpdate()
 end
+function P.tile:realtimeUpdate()
+end
 
 P.invisibleTile = P.tile:new{isVisible = false, name = "invisibleTile"}
 local bounds = {}
@@ -1443,7 +1445,7 @@ P.boomboxTile = P.boxTile:new{name = "boomboxTile", pushable = pushableList[6]:n
 
 P.batteringRamTile = P.tile:new{name = "batteringRamTile", pushable = pushableList[7]:new(), listIndex = 7, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
 
-P.lamp = P.powerSupply:new{name = "lamp", sprite = love.graphics.newImage('Graphics/lamp.png'), poweredSprite = love.graphics.newImage('Graphics/lamp.png'), lit = true, destroyedSprite = love.graphics.newImage('Graphics/destroyedlamp.png')}
+P.lamp = P.powerSupply:new{name = "lamp", intensity = 1, range = 150, sprite = love.graphics.newImage('Graphics/lamp.png'), poweredSprite = love.graphics.newImage('Graphics/lamp.png'), lit = true, destroyedSprite = love.graphics.newImage('Graphics/destroyedlamp.png')}
 function P.lamp:destroy()
 	self.sprite = self.destroyedSprite
 	self.canBePowered = false
@@ -1452,6 +1454,20 @@ function P.lamp:destroy()
 	self.dirAccept = {0,0,0,0}
 	self.dirSend = {0,0,0,0}
 	self.lit = false
+end
+
+P.flickeringLamp = P.lamp:new{name = "flickeringLamp", deltaIntensity = 0, range = 50}
+function P.flickeringLamp:realtimeUpdate()
+	if (self.deltaIntensity==0) then
+		local triggerFlicker = util.random(60, 'misc')
+		if triggerFlicker==1 then
+			self.deltaIntensity = -0.1;
+		end
+	else
+		self.intensity = self.intensity+self.deltaIntensity;
+		if self.intensity<0 then self.deltaIntensity = 0.1
+		elseif self.intensity>1 then self.deltaIntensity = 0 end
+	end
 end
 
 P.conductiveGlass = P.glassWall:new{name = "conductiveGlass", sprite = love.graphics.newImage('Graphics3D/conductiveglass.png'), poweredSprite = love.graphics.newImage('Graphics3D/conductiveglass.png'), canBePowered = true, dirAccept = {1,1,1,1}, dirSend = {1,1,1,1}}
@@ -1792,5 +1808,6 @@ tiles[130] = P.rammyTransform
 tiles[131] = P.erikTransform
 tiles[132] = P.fishTransform
 tiles[133] = P.lampTile
+tiles[134] = P.flickeringLamp
 
 return tiles
