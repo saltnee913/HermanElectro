@@ -60,6 +60,7 @@
 		"startRoomID": "1",
 		//numRoomsToCheck is the amount of rooms to try when deciding a room's roomid, decreasing this increases rng
 		"numRoomsToCheck": 5,
-		"tint": [0.05,0.05,0.05]
+		"tint": [0,0,0],
+		"playerRange": 175
 	}
 }

@@ -250,13 +250,14 @@ function love.load()
 		extern number lampx = 0;
 		extern number lampy = 0;
 		extern vec4 lamps[10];
+		extern number player_range;
 
 		vec4 effect( vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords ){
 		  	vec4 pixel = Texel(texture, texture_coords );//This is the current pixel color
 		  	if (!shaderTriggered) return pixel;
 			number xdist = player_x-screen_coords[0];
 			number ydist = player_y-screen_coords[1];
-			number playerDist = sqrt(xdist*xdist+ydist*ydist)/220;
+			number playerDist = sqrt(xdist*xdist+ydist*ydist)/player_range;
 			number effectivetint_g = tint_g;
 			number effectivetint_b = tint_b;
 			number effectivetint_r = tint_r;
@@ -278,6 +279,11 @@ function love.load()
 					}
 				}
             }
+
+            if (divVal<1) {
+            	divVal=1;
+            }
+
 			pixel.r = (pixel.r*(1-(effectivetint_g+effectivetint_b))*(1-(floorTint_g+floorTint_b)))/divVal;
 			pixel.g = (pixel.g*(1-(effectivetint_r+effectivetint_b))*(1-(floorTint_r+floorTint_b)))/divVal;
 			pixel.b = (pixel.b*(1-(effectivetint_r+effectivetint_g))*(1-(floorTint_r+floorTint_g)))/divVal;
@@ -549,6 +555,7 @@ function win()
 end
 
 function updateLamps(tileY, tileX)
+	if not started then return end
 	local lampHolder = {}
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
@@ -1223,7 +1230,6 @@ function love.draw()
 				toDrawFloor = floortile
 			end
 
-			updateLamps(j,i)
 
 			love.graphics.draw(toDrawFloor, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height,
 			0, scale*16/toDrawFloor:getWidth(), scale*16/toDrawFloor:getWidth())
@@ -1243,8 +1249,6 @@ function love.draw()
 	love.graphics.setShader(myShader)
 	for j = 1, roomHeight do
 		for i = 1, roomLength do
-			updateLamps(j,i)
-
 			if (room[j][i]~=nil or litTiles[j][i]==0) and not (litTiles[j][i]==1 and room[j][i]:instanceof(tiles.invisibleTile)) then
 				if room[j][i]~=nil then room[j][i]:updateSprite() end
 				local rot = 0
@@ -1319,7 +1323,6 @@ function love.draw()
 		end
 		for i = 1, #animals do
 			if animals[i]~=nil and litTiles[animals[i].tileY][animals[i].tileX]==1 and not animals[i].pickedUp and animals[i].tileY==j then
-				updateLamps(animals[i].tileY, animals[i].tileX)
 				animals[i].x = (animals[i].tileX-1)*floor.sprite:getHeight()*scale+wallSprite.width
 		    	animals[i].y = (animals[i].tileY-1)*floor.sprite:getWidth()*scale+wallSprite.height
 				love.graphics.draw(animals[i].sprite, animals[i].x, animals[i].y, 0, scale, scale)
@@ -1387,7 +1390,6 @@ function love.draw()
 		end
 
 		if player.tileY == j then
-			updateLamps(player.tileY, player.tileX)
 			player.x = (player.tileX-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
 			player.y = (player.tileY-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
 			love.graphics.draw(player.character.sprite, math.floor(player.x-player.character.sprite:getWidth()*player.character.scale/2), math.floor(player.y-player.character.sprite:getHeight()*player.character.scale), 0, player.character.scale, player.character.scale)
@@ -1935,6 +1937,9 @@ function love.update(dt)
 	if gameTime.timeLeft<=0 and not loadTutorial then
 		kill()
 	end
+
+	updateLamps()
+
 	if mushroomMode then
 		if globalTint[1]<0 then
 			globalTintRising[1] = 1
