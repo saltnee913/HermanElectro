@@ -400,7 +400,7 @@ end
 
 P.fish = P.character:new{name = "Fish", description = "Fish", 
   winUnlocks = {unlocks.toolDoublerUnlock}, speedUnlockTime = 1600, speedUnlock = unlocks.fogUnlock,
-  life = 100, sprite = love.graphics.newImage('Graphics/fish.png'), tint = {0.6,0.6,1}}
+  life = 100, sprite = love.graphics.newImage('Graphics/fish.png'), tint = {0.9,0.9,1}}
 function P.fish:postMove()
 	self.life = self.life-1
 	if room[player.tileY][player.tileX]~=nil and room[player.tileY][player.tileX]:instanceof(tiles.puddle) then
