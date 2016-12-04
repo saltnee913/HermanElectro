@@ -94,8 +94,8 @@ end
 
 P.unlock = Object:new{name = 'generic', unlocked = false, sprite = tiles.fog.sprite}
 
-
-
+--unlocks to prevent tiles from appearing
+P.lockedTiles = P.tileUnlock:new{name = 'permanentlyLockedTiles', tileIds = {103,104,105,106,107,108,109,110,111,112,113}}
 
 P.charUnlock = P.unlock:new{name = 'character', charIds = {1}}
 --P.felixUnlock = P.charUnlock:new{name = 'felix the sharpshooter', charIds = {2}, sprite = love.graphics.newImage('Graphics/felix.png')}

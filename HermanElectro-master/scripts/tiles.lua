@@ -885,7 +885,7 @@ P.concreteWallConductiveT.updateSprite = P.concreteWallConductiveCorner.updateSp
 
 P.tunnel = P.tile:new{name = "tunnel", toolsNeeded = -1, toolsEntered = 0, sprite = love.graphics.newImage('KenGraphics/stairs.png')}
 function P.tunnel:onEnter(player)
-	if self.toolsNeeded==0 then loadNextLevel() return end
+	--[[if self.toolsNeeded==0 then loadNextLevel() return end
 	local noNormalTools = true
 	for i = 1, tools.numNormalTools do
 		if tools[i].numHeld>0 then noNormalTools = false end
@@ -896,16 +896,17 @@ function P.tunnel:onEnter(player)
 	self.toolsNeeded = self.toolsNeeded-1
 	self.toolsEntered = self.toolsEntered+1
 	--donations = donations+math.ceil((7-(floorIndex))/2)
-	floorDonations = floorDonations+1
+	floorDonations = floorDonations+1]]
+	loadNextLevel()
 end
-function P.tunnel:getInfoText()
+--[[function P.tunnel:getInfoText()
 	return self.toolsNeeded
 end
 function P.tunnel:postPowerUpdate()
 	if toolMax==nil then toolMax = 0 end
 	self.toolsNeeded = toolMax-self.toolsEntered
 	if self.toolsNeeded<0 then self.toolsNeeded = 0 end
-end
+end]]
 
 P.pit = P.tile:new{name = "pit", laddered = false, sprite = love.graphics.newImage('Graphics/pit.png'), destroyedSprite = love.graphics.newImage('Graphics/ladderedPit.png')}
 function P.pit:ladder()
