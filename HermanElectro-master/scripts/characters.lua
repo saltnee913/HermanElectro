@@ -32,7 +32,6 @@ P.character = Object:new{name = "Name", scale = 0, sprite = love.graphics.newIma
   description = "description", startingTools = {0,0,0,0,0,0,0}, scale = 0.25 * width/1200, forcePowerUpdate = false, winUnlocks = {}, tint = {0,0,0},
   speedUnlockTime = 1000, speedUnlock = nil}
 function P.character:onBegin()
-	self.tint = {0,0,0}
     myShader:send("tint_r", self.tint[1])
     myShader:send("tint_g", self.tint[2])
     myShader:send("tint_b", self.tint[3])
@@ -431,7 +430,9 @@ function P.fish:onToolUse()
 end
 
 P.monk = P.character:new{name = "Monte", description = "The Blind Monk", sprite = love.graphics.newImage('Graphics/monk.png')}
-function P.monk:onCharLoad()
+function P.monk:onBegin()
+	self.tint = {0,0,0}
+	self:super('onBegin')
 	--[[for i = 1, 3 do
 		self.tint[i] = 0.46
 	end

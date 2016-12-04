@@ -201,7 +201,6 @@ function P.filterRoomSetByUnlocks(arr)
 					for j = 1, #unlocks[i].tileIds do
 						if doesRoomContainTile(v, unlocks[i].tileIds[j]) then
 							arr[k] = nil
-							print(j)
 						end
 					end
 				elseif unlocks[i].roomIds ~= nil then

@@ -14,3 +14,7 @@ function Object:instanceof(super)
 	end
 	return false
 end
+
+function Object:super(func, ...)
+	return getmetatable(self)[func](self,unpack(arg))
+end

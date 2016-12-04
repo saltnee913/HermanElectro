@@ -259,9 +259,6 @@ function love.load()
 			number xdist = player_x-screen_coords[0];
 			number ydist = player_y-screen_coords[1];
 			number playerDist = sqrt(xdist*xdist+ydist*ydist)/(player_range+bonus_range);
-			number effectivetint_g = tint_g;
-			number effectivetint_b = tint_b;
-			number effectivetint_r = tint_r;
 			if (playerDist<2)
 				playerDist = 1+playerDist*playerDist/4;
 			if (playerDist<0)
@@ -285,9 +282,9 @@ function love.load()
             	divVal=1;
             }
 
-			pixel.r = (pixel.r*(1-(effectivetint_g+effectivetint_b))*(1-(floorTint_g+floorTint_b)))/divVal;
-			pixel.g = (pixel.g*(1-(effectivetint_r+effectivetint_b))*(1-(floorTint_r+floorTint_b)))/divVal;
-			pixel.b = (pixel.b*(1-(effectivetint_r+effectivetint_g))*(1-(floorTint_r+floorTint_g)))/divVal;
+			pixel.r = (pixel.r*(1-(tint_g+tint_b))*(1-(floorTint_g+floorTint_b)))/divVal;
+			pixel.g = (pixel.g*(1-(tint_r+tint_b))*(1-(floorTint_r+floorTint_b)))/divVal;
+			pixel.b = (pixel.b*(1-(tint_r+tint_g))*(1-(floorTint_r+floorTint_g)))/divVal;
 			return pixel;
 		}
 
