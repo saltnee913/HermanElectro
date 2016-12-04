@@ -1185,7 +1185,7 @@ function P.beggar:onEnter(player)
 	randomNum = util.random('toolDrop')
 	if randomNum<probabilityOfPayout then
 		self.counter = 0
-		tools.giveSupertools(1)
+		self:providePayment()
 		local killBeggar = util.random('toolDrop')
 		if killBeggar<0.5 then
 			self:destroy()
@@ -1200,7 +1200,27 @@ function P.beggar:destroy()
 	self.alive = false
 	local paysOut = util.random('toolDrop')
 	if paysOut<0.5 and not player.character.name==characters.felix.name then return end
+	self:providePayment()
+end
+function P.beggar:providePayment()
 	tools.giveSupertools(1)
+end
+
+P.redBeggar = P.beggar:new{name = "redBeggar", sprite = love.graphics.newImage('Graphics/redbeggar.png'), deadSprite = love.graphics.newImage('Graphics/redbeggardead.png')}
+function P.redBeggar:providePayment()
+	donations = donations+5
+end
+
+P.greenBeggar = P.beggar:new{name = "redBeggar", sprite = love.graphics.newImage('Graphics/greenbeggar.png'), deadSprite = love.graphics.newImage('Graphics/greenbeggardead.png')}
+function P.greenBeggar:providePayment()
+	tools.brick.range = tools.brick.range+1
+	tools.gun.range = tools.gun.range+1
+end
+
+P.blueBeggar = P.beggar:new{name = "redBeggar", sprite = love.graphics.newImage('Graphics/bluebeggar.png'), deadSprite = love.graphics.newImage('Graphics/bluebeggardead.png')}
+function P.blueBeggar:providePayment()
+	player.bonusRange = player.bonusRange+50
+	myShader:send("bonus_range", player.bonusRange)
 end
 
 P.ladder = P.tile:new{name = "ladder", sprite = love.graphics.newImage('Graphics/laddertile.png'), blocksAnimalMovement = true}
@@ -1809,5 +1829,8 @@ tiles[131] = P.erikTransform
 tiles[132] = P.fishTransform
 tiles[133] = P.lampTile
 tiles[134] = P.flickeringLamp
+tiles[135] = P.redBeggar
+tiles[136] = P.blueBeggar
+tiles[137] = P.greenBeggar
 
 return tiles

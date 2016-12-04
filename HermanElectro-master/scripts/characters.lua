@@ -83,7 +83,7 @@ end
 P.herman = P.character:new{name = "Herman", description = "The Electrician", winUnlocks = {unlocks.reviveUnlock}, scale = 0.3}
 function P.herman:onCharLoad()
 	if loadTutorial then return end
-	tools.giveToolsByReference({tools.revive,tools.revive})
+	tools.giveToolsByReference({tools.revive})
 end
 
 P.felix = P.character:new{name = "Felix", description = "The Sharpshooter", winUnlocks = {unlocks.missileUnlock}, speedUnlocks = {unlocks.superGunUnlock}, sprite = love.graphics.newImage('Graphics/felix.png'), startingTools = {0,0,0,0,0,0,1}}
