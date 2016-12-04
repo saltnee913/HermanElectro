@@ -266,25 +266,33 @@ function love.load()
 			number divVal = 100000;
 			if (playerDist<divVal)
 			  	divVal = playerDist;
+			number totaltint_r = tint_r/divVal;
+			number totaltint_g = tint_g/divVal;
+			number totaltint_b = tint_b/divVal;
+
+			//lamps
 			for (int i=0;i<10;i=i+1) {
 				if (lamps[i][0]>=0) {
 					number lampxdist = lamps[i][0]-screen_coords[0];
 					number lampydist = lamps[i][1]-screen_coords[1];
 					number totalLampDist = sqrt(lampxdist*lampxdist+lampydist*lampydist);
-					if (totalLampDist<lamps[i][3]) {
-						//divVal = divVal-lamps[i][2]*(divVal-1)*(1-totalLampDist*totalLampDist/(200*200));
-						divVal = divVal-lamps[i][2]*(divVal-1);
+					if (totalLampDist < lamps[i][3])
+					{
+						totaltint_r = lamps[i][2];//totaltint_r+lamps[i][2]/totalLampDist;
+						totaltint_g = lamps[i][2];//totaltint_g+lamps[i][2]/totalLampDist;
+						totaltint_b = lamps[i][2];//totaltint_b+lamps[i][2]/totalLampDist;
 					}
 				}
             }
 
-            if (divVal<1) {
-            	divVal=1;
-            }
+            if(totaltint_r>1) totaltint_r=1;
+            if(totaltint_g>1) totaltint_g=1;
+            if(totaltint_b>1) totaltint_b=1;
 
-			pixel.r = (pixel.r*(1-(tint_g+tint_b))*(1-(floorTint_g+floorTint_b)))/divVal;
-			pixel.g = (pixel.g*(1-(tint_r+tint_b))*(1-(floorTint_r+floorTint_b)))/divVal;
-			pixel.b = (pixel.b*(1-(tint_r+tint_g))*(1-(floorTint_r+floorTint_g)))/divVal;
+            pixel.r = pixel.r*totaltint_r*(1-(floorTint_g+floorTint_b));
+            pixel.g = pixel.g*totaltint_g*(1-(floorTint_r+floorTint_b));
+            pixel.b = pixel.b*totaltint_b*(1-(floorTint_r+floorTint_g));
+
 			return pixel;
 		}
 
@@ -1868,7 +1876,7 @@ function enterRoom(dir)
 		end
 	end
 
-	if room.tint==nil then room.tint = {0,0,0} end
+	if room.tint==nil then room.tint = {1,1,1} end
 
 	player.prevTileY = player.tileY
 	player.prevTileX = player.tileX

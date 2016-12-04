@@ -29,7 +29,7 @@ function P.getUnlockedCharacters()
 end
 
 P.character = Object:new{name = "Name", scale = 0, sprite = love.graphics.newImage('Graphics/herman_sketchanother.png'),
-  description = "description", startingTools = {0,0,0,0,0,0,0}, scale = 0.25 * width/1200, forcePowerUpdate = false, winUnlocks = {}, tint = {0,0,0},
+  description = "description", startingTools = {0,0,0,0,0,0,0}, scale = 0.25 * width/1200, forcePowerUpdate = false, winUnlocks = {}, tint = {1,1,1},
   speedUnlockTime = 1000, speedUnlock = nil}
 function P.character:onBegin()
     myShader:send("tint_r", self.tint[1])
@@ -400,7 +400,7 @@ end
 
 P.fish = P.character:new{name = "Fish", description = "Fish", 
   winUnlocks = {unlocks.toolDoublerUnlock}, speedUnlockTime = 1600, speedUnlock = unlocks.fogUnlock,
-  life = 100, sprite = love.graphics.newImage('Graphics/fish.png'), tint = {0,0,0.4}}
+  life = 100, sprite = love.graphics.newImage('Graphics/fish.png'), tint = {0.6,0.6,1}}
 function P.fish:postMove()
 	self.life = self.life-1
 	if room[player.tileY][player.tileX]~=nil and room[player.tileY][player.tileX]:instanceof(tiles.puddle) then
@@ -431,7 +431,7 @@ end
 
 P.monk = P.character:new{name = "Monte", description = "The Blind Monk", sprite = love.graphics.newImage('Graphics/monk.png')}
 function P.monk:onBegin()
-	self.tint = {0,0,0}
+	self.tint = {1,1,1}
 	self:super('onBegin')
 	--[[for i = 1, 3 do
 		self.tint[i] = 0.46
@@ -452,15 +452,12 @@ function P.monk:onFloorEnter()
 end
 function P.monk:postMove()
 	if completedRooms[mapy][mapx]==1 then
-		self.tint = {0,0,0}
-		room.tint = {0,0,0}
+		self.tint = {1,1,1}
+		room.tint = {1,1,1}
 	else
 		for i = 1, 3 do
-			if self.tint[i]==0 then
-				self.tint[i]=0.01
-			end
-			self.tint[i] = self.tint[i]+(1-self.tint[i])/30
-			if self.tint[i]>0.4 then self.tint[i] = 0.4 end
+			self.tint[i] = self.tint[i]-(self.tint[i])/15
+			if self.tint[i]<0.2 then self.tint[i] = 0.2 end
 		end
 		room.tint = self.tint
 	end
@@ -470,13 +467,14 @@ function P.monk:postMove()
 end
 function P.monk:onRoomEnter()
 	self.tint = room.tint
+	self.tint = room.tint
 	myShader:send("tint_r", self.tint[1])
 	myShader:send("tint_g", self.tint[2])
 	myShader:send("tint_b", self.tint[3])
 end
 function P.monk:onRoomCompletion()
-	self.tint = {0,0,0}
-	room.tint = {0,0,0}
+	self.tint = {1,1,1}
+	room.tint = {1,1,1}
 	while (tools.lamp.numHeld<3) do
 		tools.giveToolsByReference({tools.lamp})
 	end
