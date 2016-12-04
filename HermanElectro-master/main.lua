@@ -275,13 +275,10 @@ function love.load()
 				if (lamps[i][0]>=0) {
 					number lampxdist = lamps[i][0]-screen_coords[0];
 					number lampydist = lamps[i][1]-screen_coords[1];
-					number totalLampDist = sqrt(lampxdist*lampxdist+lampydist*lampydist);
-					if (totalLampDist < lamps[i][3])
-					{
-						totaltint_r = lamps[i][2];//totaltint_r+lamps[i][2]/totalLampDist;
-						totaltint_g = lamps[i][2];//totaltint_g+lamps[i][2]/totalLampDist;
-						totaltint_b = lamps[i][2];//totaltint_b+lamps[i][2]/totalLampDist;
-					}
+					number totalLampDist = sqrt(lampxdist*lampxdist+lampydist*lampydist)/lamps[i][3];
+					totaltint_r = totaltint_r+lamps[i][2]/totalLampDist;
+					totaltint_g = totaltint_g+lamps[i][2]/totalLampDist;
+					totaltint_b = totaltint_b+lamps[i][2]/totalLampDist;
 				}
             }
 
