@@ -1342,9 +1342,15 @@ P.conductiveSnailTile = P.pitbullTile:new{name = "conductiveSnail", animal = ani
 
 P.glueSnailTile = P.pitbullTile:new{name = "glueSnail", animal = animalList[8]:new(), listIndex = 8}
 
-P.bombBuddyTile = P.pitbullTile:new{name = "bombBuddyTile", animal = animalList[9]:new(), listindex = 9}
+P.bombBuddyTile = P.pitbullTile:new{name = "bombBuddyTile", animal = animalList[9]:new(), listIndex = 9}
 
-P.conductiveDogTile = P.pitbullTile:new{name = "conductiveDogTile", animal = animalList[10]:new(), listindex = 10}
+P.conductiveDogTile = P.pitbullTile:new{name = "conductiveDogTile", animal = animalList[10]:new(), listIndex = 10}
+
+P.wifeTile = P.pitbullTile:new{name = "wifeTile", animal = animalList[11]:new(), listIndex = 11}
+
+P.sonTile = P.pitbullTile:new{name = "sonTile", animal = animalList[12]:new(), listIndex = 12}
+
+P.daughterTile = P.pitbullTile:new{name = "daughterTile", animal = animalList[13]:new(), listIndex = 13}
 
 P.untriggeredPowerSupply = P.conductiveTile:new{name = "untriggeredPowerSupply", sprite = love.graphics.newImage('Graphics/untriggeredpowersupply.png'), poweredSprite = love.graphics.newImage('Graphics/powersupply.png')}
 function P.untriggeredPowerSupply:postPowerUpdate(dir)
@@ -1832,5 +1838,8 @@ tiles[134] = P.flickeringLamp
 tiles[135] = P.redBeggar
 tiles[136] = P.blueBeggar
 tiles[137] = P.greenBeggar
+tiles[138] = P.wifeTile
+tiles[139] = P.sonTile
+tiles[140] = P.daughterTile
 
 return tiles

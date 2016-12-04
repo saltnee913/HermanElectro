@@ -317,6 +317,10 @@ end
 
 P.conductiveDog = P.pup:new{name = "conductiveDog", powered = false, conductive = true, sprite = love.graphics.newImage('Graphics/conductiveDog.png')}
 
+P.wife = P.cat:new{name = "wife", sprite = love.graphics.newImage('Graphics/wife.png')}
+P.son = P.cat:new{name = "son", sprite = love.graphics.newImage('Graphics/son.png')}
+P.daughter = P.cat:new{name = "daughter", sprite = love.graphics.newImage('Graphics/daughter.png')}
+
 animalList[1] = P.animal
 animalList[2] = P.pitbull
 animalList[3] = P.pup
@@ -327,5 +331,8 @@ animalList[7] = P.conductiveSnail
 animalList[8] = P.glueSnail
 animalList[9] = P.bombBuddy
 animalList[10] = P.conductiveDog
+animalList[11] = P.wife
+animalList[12] = P.son
+animalList[13] = P.daughter
 
 return animalList
