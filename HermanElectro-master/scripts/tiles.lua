@@ -1217,7 +1217,7 @@ function P.redBeggar:providePayment()
 	donations = donations+5
 end
 
-P.greenBeggar = P.beggar:new{name = "redBeggar", sprite = love.graphics.newImage('Graphics/greenbeggar.png'), deadSprite = love.graphics.newImage('Graphics/greenbeggardead.png')}
+P.greenBeggar = P.beggar:new{name = "greenBeggar", sprite = love.graphics.newImage('Graphics/greenbeggar.png'), deadSprite = love.graphics.newImage('Graphics/greenbeggardead.png')}
 function P.greenBeggar:providePayment()
 	local greenTools = util.random('toolDrop')
 	local ttg = 0
@@ -1227,7 +1227,7 @@ function P.greenBeggar:providePayment()
 	tools.giveRandomTools(ttg)
 end
 
-P.blueBeggar = P.beggar:new{name = "redBeggar", sprite = love.graphics.newImage('Graphics/bluebeggar.png'), deadSprite = love.graphics.newImage('Graphics/bluebeggardead.png')}
+P.blueBeggar = P.beggar:new{name = "blueBeggar", sprite = love.graphics.newImage('Graphics/bluebeggar.png'), deadSprite = love.graphics.newImage('Graphics/bluebeggardead.png')}
 function P.blueBeggar:providePayment()
 	tools.giveSupertools(1)
 end
