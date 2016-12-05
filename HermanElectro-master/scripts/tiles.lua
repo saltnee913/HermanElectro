@@ -973,7 +973,8 @@ function P.treasureTile:giveReward()
 	if rand<probSuper then
 		superCount = superCount+1
 	end
-	tools.giveRandomTools(basicCount,superCount,self.treasureWeights)
+	if basicCount==0 and superCount==0 then donations = donations+5
+	else tools.giveRandomTools(basicCount,superCount,self.treasureWeights) end
 end
 
 P.mousetrap = P.conductiveTile:new{name = "mousetrap", bricked = false, formerPowered = nil, triggered = false, safe = false, sprite = love.graphics.newImage('Graphics/mousetrap.png'), safeSprite = love.graphics.newImage('Graphics/mousetrapsafe.png'), deadlySprite = love.graphics.newImage('Graphics/mousetrap.png'), brickedSprite = love.graphics.newImage('Graphics/mousetrapbricked.png')}
@@ -1200,6 +1201,7 @@ function P.beggar:destroy()
 	self.sprite = self.deadSprite
 	self.alive = false
 	local paysOut = util.random('toolDrop')
+	print(paysOut)
 	if paysOut<0.5 and not player.character.name==characters.felix.name then return end
 	self:providePayment()
 end
@@ -1217,11 +1219,12 @@ end
 
 P.greenBeggar = P.beggar:new{name = "redBeggar", sprite = love.graphics.newImage('Graphics/greenbeggar.png'), deadSprite = love.graphics.newImage('Graphics/greenbeggardead.png')}
 function P.greenBeggar:providePayment()
-	tools.giveRandomTools(1)
-	local secondTool = util.random('toolDrop')
-	if secondTool<0.5 then tools.giveRandomTools(1) return end
-	local thirdTool = util.random('toolDrop')
-	if thirdTool<0.1 then tools.giveRandomTools(1) return end
+	local greenTools = util.random('toolDrop')
+	local ttg = 0
+	if greenTools<0.5 then ttg = 1
+	elseif greenTools<0.95 then ttg = 2
+	else ttg = 3 end
+	tools.giveRandomTools(ttg)
 end
 
 P.blueBeggar = P.beggar:new{name = "redBeggar", sprite = love.graphics.newImage('Graphics/bluebeggar.png'), deadSprite = love.graphics.newImage('Graphics/bluebeggardead.png')}
