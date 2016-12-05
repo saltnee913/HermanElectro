@@ -94,7 +94,6 @@ end
 
 P.unlock = Object:new{name = 'generic', unlocked = false, sprite = tiles.fog.sprite}
 
---unlocks to prevent tiles from appearing
 
 P.charUnlock = P.unlock:new{name = 'character', charIds = {1}}
 --P.felixUnlock = P.charUnlock:new{name = 'felix the sharpshooter', charIds = {2}, sprite = love.graphics.newImage('Graphics/felix.png')}
@@ -140,6 +139,8 @@ P.directionGatesUnlock = P.tileUnlock:new{name = "erik's shitty direction gates"
 P.stickyButtonUnlock = P.tileUnlock:new{name = "sticky buttons", tileIds = {9}, sprite = tiles.stickyButton.sprite}
 P.stayButtonUnlock = P.tileUnlock:new{name = "stay buttons", tileIds = {10}, sprite = tiles.stayButton.sprite}
 P.doorUnlock = P.tileUnlock:new{name = "door unlock", tileIds = {18}, sprite = tiles.hDoor.sprite}
+--unlocks to prevent tiles from appearing
+P.lockedTiles = P.tileUnlock:new{name = 'permanentlyLockedTiles', tileIds = {103,104,105,106,107,108,109,110,111,112,113},hidden = true}
 
 P.toolUnlock = P.unlock:new{name = 'tool', toolIds = {}, sprite = tools.saw.image}
 P.missileUnlock = P.unlock:new{name = 'missile', toolIds = {16}, sprite = tools.missile.image}
@@ -221,5 +222,7 @@ P[#P+1] = P.beggarPartyUnlock --done
 P[#P+1] = P.bombsUnlock --done
 P[#P+1] = P.puddleUnlock --done
 P[#P+1] = P.portalUnlock --done
+
+P[#P+1] = P.lockedTiles
 
 return unlocks
