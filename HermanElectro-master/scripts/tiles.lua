@@ -962,7 +962,7 @@ function P.treasureTile:giveReward()
 	local basicCount = 0
 	local superCount = 0
 	local rand = util.random(1000,'toolDrop')
-	if rand<probBasic then
+	--[[if rand<probBasic then
 		basicCount = basicCount+1
 	end
 	rand = util.random(1000,'toolDrop')
@@ -974,7 +974,16 @@ function P.treasureTile:giveReward()
 		superCount = superCount+1
 	end
 	if basicCount==0 and superCount==0 then donations = donations+5
-	else tools.giveRandomTools(basicCount,superCount,self.treasureWeights) end
+	else tools.giveRandomTools(basicCount,superCount,self.treasureWeights) end]]
+	if rand<100-donations then
+		donations = donations+100
+	elseif rand<800-donations then
+		tools.giveRandomTools(1)
+	elseif rand<900-donations then
+		tools.giveRandomTools(2)
+	else
+		tools.giveRandomTools(1,1)
+	end
 end
 
 P.mousetrap = P.conductiveTile:new{name = "mousetrap", bricked = false, formerPowered = nil, triggered = false, safe = false, sprite = love.graphics.newImage('Graphics/mousetrap.png'), safeSprite = love.graphics.newImage('Graphics/mousetrapsafe.png'), deadlySprite = love.graphics.newImage('Graphics/mousetrap.png'), brickedSprite = love.graphics.newImage('Graphics/mousetrapbricked.png')}
@@ -1214,7 +1223,7 @@ end
 
 P.redBeggar = P.beggar:new{name = "redBeggar", sprite = love.graphics.newImage('Graphics/redbeggar.png'), deadSprite = love.graphics.newImage('Graphics/redbeggardead.png')}
 function P.redBeggar:providePayment()
-	donations = donations+5
+	donations = donations+100
 end
 
 P.greenBeggar = P.beggar:new{name = "greenBeggar", sprite = love.graphics.newImage('Graphics/greenbeggar.png'), deadSprite = love.graphics.newImage('Graphics/greenbeggardead.png')}
