@@ -1709,6 +1709,32 @@ P.rammyTransform = P.hermanTransform:new{name = "rammyTransform", characterIndex
 P.lennyTransform = P.hermanTransform:new{name = "lennyTransform", characterIndex = 15}
 P.fishTransform = P.hermanTransform:new{name = "fishTransform", characterIndex = 16}
 
+P.supertoolTile = P.tile:new{name = "supertoolTile", tool = nil}
+function P.supertoolTile:absoluteFinalUpdate()
+	if self.tool==nil then
+		local toolForTile = util.random(#tools-tools.numNormalTools, 'toolDrop')
+		self.tool = tools[toolForTile+tools.numNormalTools]
+		self:updateSprite()
+	end
+end
+function P.supertoolTile:updateSprite()
+	if self.tool~=nil then
+		self.sprite = self.tool.image
+	end
+end
+function P.supertoolTile:onEnter()
+	local stTypesHeld = 0
+	for i = tools.numNormalTools+1, #tools do
+		if tools[i].numHeld>0 then
+			stTypesHeld = stTypesHeld+1
+		end
+	end
+	if stTypesHeld<3 or self.tool.numHeld>0 then
+		self.tool.numHeld = self.tool.numHeld+1
+		self.isVisible = false
+		self.gone = true
+	end
+end
 
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
@@ -1850,5 +1876,6 @@ tiles[137] = P.greenBeggar
 tiles[138] = P.wifeTile
 tiles[139] = P.sonTile
 tiles[140] = P.daughterTile
+tiles[141] = P.supertoolTile
 
 return tiles
