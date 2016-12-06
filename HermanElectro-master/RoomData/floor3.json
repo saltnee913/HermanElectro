@@ -44,6 +44,14 @@
 				
 			}
 		},
+		"shops":
+		{
+			"filePath": "RoomData/shops.json",
+			"requirements":
+			{
+
+			}
+		},
 		"donationRooms":
 		{
 			"filePath": "RoomData/donationrooms.json",

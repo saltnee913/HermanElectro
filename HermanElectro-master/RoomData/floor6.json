@@ -20,6 +20,14 @@
 				}
 			}
 		},
+		"shops":
+		{
+			"filePath": "RoomData/shops.json",
+			"requirements":
+			{
+
+			}
+		},
 		"treasureRooms": 
 		{
 			"filePath": "RoomData/accessrooms.json",

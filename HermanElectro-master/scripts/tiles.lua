@@ -1712,6 +1712,7 @@ P.fishTransform = P.hermanTransform:new{name = "fishTransform", characterIndex =
 P.supertoolTile = P.tile:new{name = "supertoolTile", tool = nil}
 function P.supertoolTile:absoluteFinalUpdate()
 	if self.tool==nil then
+		print("aaa")
 		local toolForTile = util.random(#tools-tools.numNormalTools, 'toolDrop')
 		self.tool = tools[toolForTile+tools.numNormalTools]
 		self:updateSprite()
