@@ -1712,7 +1712,6 @@ P.fishTransform = P.hermanTransform:new{name = "fishTransform", characterIndex =
 P.supertoolTile = P.tile:new{name = "supertoolTile", tool = nil}
 function P.supertoolTile:absoluteFinalUpdate()
 	if self.tool==nil then
-		print("aaa")
 		local toolForTile = util.random(#tools-tools.numNormalTools, 'toolDrop')
 		self.tool = tools[toolForTile+tools.numNormalTools]
 		self:updateSprite()
@@ -1736,6 +1735,29 @@ function P.supertoolTile:onEnter()
 		self.gone = true
 	end
 end
+
+P.toolTile = P.tile:new{name = "toolTile", tool = nil}
+function P.toolTile:onEnter()
+	self.tool.numHeld = self.tool.numHeld+1
+	self.isVisible = false
+	self.gone = true
+end
+function P.toolTile:absoluteFinalUpdate()
+	if self.tool==nil then
+		local toolForTile = util.random(tools.numNormalTools, 'misc')
+		self.tool = tools[toolForTile]
+		self:updateSprite()
+	end
+end
+P.toolTile.updateSprite = P.supertoolTile.udpateSprite
+
+P.sawTile = P.toolTile:new{name = "sawTile", tool = tools.saw, sprite = tools.saw.image}
+P.wirecuttersTile = P.toolTile:new{name = "wirecuttersTile", tool = tools.wireCutters, sprite = tools.wireCutters.image}
+P.ladderTile = P.toolTile:new{name = "ladderTile", tool = tools.ladder, sprite = tools.ladder.image}
+P.brickTile = P.toolTile:new{name = "brickTile", tool = tools.brick, sprite = tools.brick.image}
+P.gunTile = P.toolTile:new{name = "gunTile", tool = tools.gun, sprite = tools.gun.image}
+P.spongeTile = P.toolTile:new{name = "spongeTile", tool = tools.sponge, sprite = tools.sponge.image}
+P.waterBottleTile = P.toolTile:new{name = "waterBottleTile", tool = tools.waterBottle, sprite = tools.waterBottle.image}
 
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
@@ -1878,5 +1900,13 @@ tiles[138] = P.wifeTile
 tiles[139] = P.sonTile
 tiles[140] = P.daughterTile
 tiles[141] = P.supertoolTile
+tiles[142] = P.sawTile
+tiles[143] = P.ladderTile
+tiles[144] = P.wirecuttersTile
+tiles[145] = P.waterBottleTile
+tiles[146] = P.spongeTile
+tiles[147] = P.brickTile
+tiles[148] = P.gunTile
+tiles[149] = P.toolTile
 
 return tiles
