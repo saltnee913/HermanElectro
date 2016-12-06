@@ -566,7 +566,9 @@ local function isRoomAllowed(room, usedRooms, newmap, choice)
 end
 
 function P.generateMapFinal()
-	local startRoomID = P.floorInfo.startRoomID
+	--local startRoomID = P.floorInfo.startRoomID
+	local accessNum = util.random(7, 'misc')
+	local startRoomID = 'a'..accessNum
 	local height = P.floorInfo.height
 	local numRooms = P.floorInfo.numRooms
 	local newmap = MapInfo:new{height = height, numRooms = numRooms}
@@ -582,7 +584,7 @@ function P.generateMapFinal()
 	
 	local roomIndex = -1
 
-	local randomRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.rooms, 'mapGen')
+	local randomRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.finalRooms, 'mapGen')
 
 	local roomChoiceid = ""
 	while roomChoiceid=="" or roomChoiceid==newmap[newmap.initialY][newmap.initialX].roomid do
@@ -590,6 +592,20 @@ function P.generateMapFinal()
 	end
 
 	newmap[choice.y][choice.x] = {roomid = roomChoiceid, room = P.createRoom(roomChoiceid), isFinal = false, isInitial = false}
+
+	local choice = {y = math.floor(height/2)-1, x = math.floor(height/2)}
+	
+	local roomIndex = -1
+
+	local randomRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.donationRooms, 'mapGen')
+
+	local roomChoiceid = ""
+	while roomChoiceid=="" or roomChoiceid==newmap[newmap.initialY][newmap.initialX].roomid do
+		roomChoiceid = util.chooseRandomElement(randomRoomsArray, 'mapGen')
+	end
+
+	newmap[choice.y][choice.x] = {roomid = roomChoiceid, room = P.createRoom(roomChoiceid), isFinal = false, isInitial = false}
+
 
 	return newmap
 end
