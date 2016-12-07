@@ -218,6 +218,7 @@ function love.load()
 		topwall = love.graphics.newImage('Graphics3D/topwall.png')
 		cornerwall = love.graphics.newImage('Graphics/toprightcorner.png')
 		startscreen = love.graphics.newImage('NewGraphics/startscreen3.png')
+		luckImage = love.graphics.newImage('Graphics/luck.png')
 
 		--music = love.audio.newSource('Audio/hermantheme.mp3')
 		music = love.audio.newSource('Audio/bones.mp3')
@@ -301,7 +302,7 @@ function love.load()
 			y = (6-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10, prevTileX = 3, prevTileY 	= 10,
 			prevx = (3-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10,
 			prevy = (10-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10,
-			width = 20, height = 20, speed = 250,
+			width = 20, height = 20, speed = 250, luckTimer = 0,
 			character = characters[1]}
 	else
 		player.dead = false
@@ -1452,11 +1453,17 @@ function love.draw()
 		love.graphics.draw(cornerwall, (cornerX-1)*floor.sprite:getWidth()*scale+wallSprite.width, (yOffset+(cornerY-1)*floor.sprite:getHeight())*scale+wallSprite.height, (i-2)*math.pi/2, scale, scale)
 	end
 
-	if tools.toolDisplayTimer.timeLeft > 0 then
-		local toolWidth = tools[1].image:getWidth()
-		local toolScale = player.character.sprite:getWidth() * player.character.scale/toolWidth
-		for i = 1, #tools.toolsShown do
-			love.graphics.draw(tools[tools.toolsShown[i]].image, (i-math.ceil(#tools.toolsShown)/2-1)*toolScale*toolWidth+player.x, player.y - player.character.sprite:getHeight()*player.character.scale - tools[1].image:getHeight()*toolScale, 0, toolScale, toolScale)
+	if tools.toolDisplayTimer.timeLeft > 0 or player.luckTimer>0 then
+		if player.luckTimer<tools.toolDisplayTimer.timeLeft then
+			local toolWidth = tools[1].image:getWidth()
+			local toolScale = player.character.sprite:getWidth() * player.character.scale/toolWidth
+			for i = 1, #tools.toolsShown do
+				love.graphics.draw(tools[tools.toolsShown[i]].image, (i-math.ceil(#tools.toolsShown)/2-1)*toolScale*toolWidth+player.x, player.y - player.character.sprite:getHeight()*player.character.scale - tools[1].image:getHeight()*toolScale, 0, toolScale, toolScale)
+			end
+		else
+			luckWidth = luckImage:getWidth()
+			luckScale = player.character.sprite:getWidth() * player.character.scale/luckWidth
+			love.graphics.draw(luckImage, -0.5*luckScale*luckWidth+player.x, player.y - player.character.sprite:getHeight()*player.character.scale - luckImage:getHeight()*luckScale, 0, luckScale, luckScale)
 		end
 	end
 
@@ -1928,6 +1935,9 @@ function love.update(dt)
 	--key press
 	keyTimer.timeLeft = keyTimer.timeLeft - dt
 	tools.updateTimer(dt)
+	if player.luckTimer>0 then
+		player.luckTimer = player.luckTimer-dt
+	end
 	unlocks.updateTimer(dt)
 	if room~=nil and room[player.tileY] ~= nil and room[player.tileY][player.tileX] ~= nil and room[player.tileY][player.tileX].updateTime ~= nil then
 		room[player.tileY][player.tileX]:updateTime(dt)
@@ -1949,7 +1959,7 @@ function love.update(dt)
 		elseif globalTint[1]>0.3 then
 			globalTintRising[1] = -1
 		end
-		if gsslobalTint[2]<0 then
+		if globalTint[2]<0 then
 			globalTintRising[2] = 1
 		elseif globalTint[2]>0.3 then
 			globalTintRising[2] = -1

@@ -1210,7 +1210,6 @@ function P.beggar:destroy()
 	self.sprite = self.deadSprite
 	self.alive = false
 	local paysOut = util.random('toolDrop')
-	print(paysOut)
 	if paysOut<0.5 and not player.character.name==characters.felix.name then return end
 	self:providePayment()
 end
@@ -1223,17 +1222,18 @@ end
 
 P.redBeggar = P.beggar:new{name = "redBeggar", sprite = love.graphics.newImage('Graphics/redbeggar.png'), deadSprite = love.graphics.newImage('Graphics/redbeggardead.png')}
 function P.redBeggar:providePayment()
-	donations = donations+100
-end
-
-P.greenBeggar = P.beggar:new{name = "greenBeggar", sprite = love.graphics.newImage('Graphics/greenbeggar.png'), deadSprite = love.graphics.newImage('Graphics/greenbeggardead.png')}
-function P.greenBeggar:providePayment()
 	local greenTools = util.random('toolDrop')
 	local ttg = 0
 	if greenTools<0.5 then ttg = 1
 	elseif greenTools<0.95 then ttg = 2
 	else ttg = 3 end
 	tools.giveRandomTools(ttg)
+end
+
+P.greenBeggar = P.beggar:new{name = "greenBeggar", sprite = love.graphics.newImage('Graphics/greenbeggar.png'), deadSprite = love.graphics.newImage('Graphics/greenbeggardead.png')}
+function P.greenBeggar:providePayment()
+	donations = donations+100
+	player.luckTimer = tools.toolDisplayTimer.base
 end
 
 P.blueBeggar = P.beggar:new{name = "blueBeggar", sprite = love.graphics.newImage('Graphics/bluebeggar.png'), deadSprite = love.graphics.newImage('Graphics/bluebeggardead.png')}
