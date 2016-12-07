@@ -205,7 +205,10 @@ function love.load()
 		--floortile = love.graphics.newImage('Graphics/floortile.png')
 		--floortile = love.graphics.newImage('Graphics/floortilemost.png')
 		--floortile = love.graphics.newImage('Graphics/floortilenew.png')
+		--floortile = love.graphics.newImage('KenGraphics/darkrock.png')
 		floortile = love.graphics.newImage('KenGraphics/darkrock.png')
+		floortile2 = love.graphics.newImage('KenGraphics/darkrock.png')
+		floortile3 = love.graphics.newImage('KenGraphics/darkrock.png')
 		grassfloortile = love.graphics.newImage('KenGraphics/grass.png')
 		invisibleTile = love.graphics.newImage('Graphics/cavesfloor.png')
 		whitetile = love.graphics.newImage('Graphics/whitetile.png')
@@ -1231,7 +1234,13 @@ function love.draw()
 			if floorIndex==-1 then
 				toDrawFloor = grassfloortile
 			else
-				toDrawFloor = floortile
+				if (i*i*i+j*j)%3==0 then
+					toDrawFloor = floortile
+				elseif (i*i*i+j*j)%3==1 then
+					toDrawFloor = floortile2
+				else
+					toDrawFloor = floortile3
+				end
 			end
 
 
