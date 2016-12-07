@@ -50,8 +50,7 @@
 		"requireUnlocks": true,
 		"height": 10,
 		"numRooms": 3,
-		"generateFunction": "generateMapWeighted",
-		"startRoomID": "big_1",
+		"generateFunction": "generateMapFinal",
 		//numRoomsToCheck is the amount of rooms to try when deciding a room's roomid, decreasing this increases rng
 		"numRoomsToCheck": 3,
 		"finalFloor": true,

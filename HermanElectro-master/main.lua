@@ -1949,7 +1949,7 @@ function love.update(dt)
 		elseif globalTint[1]>0.3 then
 			globalTintRising[1] = -1
 		end
-		if globalTint[2]<0 then
+		if gsslobalTint[2]<0 then
 			globalTintRising[2] = 1
 		elseif globalTint[2]>0.3 then
 			globalTintRising[2] = -1
@@ -2822,6 +2822,10 @@ function dropTools()
 				checkedRooms[y][x] = 1
 				if completedRooms[y]~=nil and completedRooms[y][x]~=nil and completedRooms[y][x] == 0 then
 					local dirEnter = map.getFieldForRoom(mainMap[y][x].roomid, "dirEnter")
+					if mainMap[y][x] ~= nil and mainMap[y][x].roomid == nil then
+						print(x .. ' ' .. y)
+						game.crash()
+					end
 					if ((dirEnter[1] == 1 and completedRooms[y-1]~=nil and completedRooms[y-1][x] ~=nil and completedRooms[y-1][x] == 1) or
 					(dirEnter[3] == 1 and completedRooms[y+1]~=nil and completedRooms[y+1][x] ~=nil and completedRooms[y+1][x] ==1) or
 					(dirEnter[4] == 1 and completedRooms[y][x-1]~=nil and completedRooms[y][x-1]==1) or

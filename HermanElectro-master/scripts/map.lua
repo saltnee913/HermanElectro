@@ -566,7 +566,11 @@ local function isRoomAllowed(room, usedRooms, newmap, choice)
 end
 
 function P.generateMapFinal()
-	local startRoomID = P.floorInfo.startRoomID
+	local randomAccessRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.rooms, 'mapGen')
+	local randomDonationRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.donationRooms, 'mapGen')
+	local randomFinalRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.finalRooms, 'mapGen')
+	local startRoomID = randomAccessRoomsArray[1]
+
 	local height = P.floorInfo.height
 	local numRooms = P.floorInfo.numRooms
 	local newmap = MapInfo:new{height = height, numRooms = numRooms}
@@ -574,23 +578,18 @@ function P.generateMapFinal()
 		newmap[i] = {}
 	end
 
-	newmap[math.floor(height/2)][math.floor(height/2)] = {roomid = startRoomID, room = P.createRoom(startRoomID, roomsArray), isFinal = false, isInitial = true, isCompleted = false}
-	newmap.initialY = math.floor(height/2)
-	newmap.initialX = math.floor(height/2)
+	local startx = math.floor(height/2)
+	local starty = math.floor(height/2)
+	newmap[starty][startx] = {roomid = startRoomID, room = P.createRoom(startRoomID), isFinal = false, isInitial = true, isCompleted = false}
+	newmap.initialY = starty
+	newmap.initialX = startx
 
-	local choice = {y = math.floor(height/2), x = math.floor(height/2)+1}
-	
-	local roomIndex = -1
-
-	local randomRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.rooms, 'mapGen')
-
-	local roomChoiceid = ""
-	while roomChoiceid=="" or roomChoiceid==newmap[newmap.initialY][newmap.initialX].roomid do
-		roomChoiceid = util.chooseRandomElement(randomRoomsArray, 'mapGen')
-	end
-
-	newmap[choice.y][choice.x] = {roomid = roomChoiceid, room = P.createRoom(roomChoiceid), isFinal = false, isInitial = false}
-
+	local endRoom = randomFinalRoomsArray[1]
+	newmap[starty][startx+1] = {room = endRoom, room = P.createRoom(endRoom), isFinal = false, isInitial = false}
+	local donationRoom = randomDonationRoomsArray[1]
+	newmap[starty+1][startx] = {room = donationRoom, room = P.createRoom(donationRoom), isFinal = false, isInitial = false}
+	print(donationRoom)
+	game.crash()
 	return newmap
 end
 
