@@ -90,7 +90,9 @@ function P.getUnlockedSupertools()
 	return unlockedSupertools
 end
 
-
+--[[ideas:
+	unlock for standing on bombbuddy
+]]
 
 P.unlock = Object:new{name = 'generic', unlocked = false, sprite = tiles.fog.sprite}
 

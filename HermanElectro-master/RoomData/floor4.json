@@ -25,6 +25,14 @@
 				}
 			}
 		},
+		"shops":
+		{
+			"filePath": "RoomData/shops.json",
+			"requirements":
+			{
+
+			}
+		},
 		"treasureRooms": 
 		{
 			"filePath": "RoomData/treasurerooms.json",
@@ -54,7 +62,7 @@
 	{
 		"requireUnlocks": true,
 		"height": 17,
-		"numRooms": 6,
+		"numRooms": 8,
 		"generateFunction": "generateMapWeighted",
 		"startRoomID": "1",
 		//numRoomsToCheck is the amount of rooms to try when deciding a room's roomid, decreasing this increases rng

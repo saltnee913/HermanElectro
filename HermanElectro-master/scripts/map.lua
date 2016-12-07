@@ -585,11 +585,9 @@ function P.generateMapFinal()
 	newmap.initialX = startx
 
 	local endRoom = randomFinalRoomsArray[1]
-	newmap[starty][startx+1] = {room = endRoom, room = P.createRoom(endRoom), isFinal = false, isInitial = false}
+	newmap[starty][startx+1] = {roomid = endRoom, room = P.createRoom(endRoom), isFinal = false, isInitial = false}
 	local donationRoom = randomDonationRoomsArray[1]
-	newmap[starty+1][startx] = {room = donationRoom, room = P.createRoom(donationRoom), isFinal = false, isInitial = false}
-	print(donationRoom)
-	game.crash()
+	newmap[starty+1][startx] = {roomid = donationRoom, room = P.createRoom(donationRoom), isFinal = false, isInitial = false}
 	return newmap
 end
 
@@ -608,6 +606,7 @@ function P.generateMapWeighted()
 	local randomTreasureRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.treasureRooms, 'mapGen')
 	local randomFinalRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.finalRooms, 'mapGen')
 	local randomDonationRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.donationRooms, 'mapGen')
+	local randomShopsArray = util.createRandomKeyArray(P.floorInfo.rooms.shops, 'mapGen')
 
 	--create first room
 	local startRoomID = P.floorInfo.startRoomID
@@ -669,6 +668,8 @@ function P.generateMapWeighted()
 			roomid = util.chooseRandomElement(randomTreasureRoomsArray, 'mapGen')
 		elseif numRooms - #usedRooms == 3 then
 			roomid = util.chooseRandomElement(randomDonationRoomsArray, 'mapGen')
+		elseif numRooms - #usedRooms == 4 then
+			roomid = util.chooseRandomElement(randomShopsArray, 'mapGen')
 		else
 			--creates an array of 5 possible choices with weights
 			local roomChoices = {}

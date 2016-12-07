@@ -3010,7 +3010,7 @@
     "itemsNeeded":
     [
       //[saws, ladders, wireCutters, waterBottles, sponges, bricks, guns]
-      [0,1,1,0,0,0,0]
+      [0,1,2,0,0,0,0]
     ]
     },
 
@@ -5837,8 +5837,7 @@
         ]],
       "itemsNeeded":
         [
-          [0,1,2,0,0,0,0],
-          [0,0,2,0,0,0,1]
+          [0,0,2,0,0,0,0]
         ],
       "set": "buttons_and_brown_pits"
     },
@@ -11129,7 +11128,8 @@
       ],
       "itemsNeeded":
       [
-         [0,0,1,0,0,0,0]
+         [0,0,1,0,0,0,0],
+         [1,0,0,0,0,0,0]
       ],
     },
 

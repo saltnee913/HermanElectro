@@ -1302,7 +1302,7 @@ function love.draw()
 							tempj2 = tempj2 + 1
 						end
 						love.graphics.draw(toDraw2, (tempi2-1)*floor.sprite:getWidth()*scale+wallSprite.width, (addY2+(tempj2-1)*floor.sprite:getWidth())*scale+wallSprite.height,
-						  rot2 * math.pi / 2, scale*16/toDraw:getWidth(), scale*16/toDraw:getWidth())
+						  rot2 * math.pi / 2, scale*16/toDraw2:getWidth(), scale*16/toDraw2:getWidth())
 						if room[j][i].dirSend[3] == 1 or room[j][i].dirAccept[3] == 1 or (overlay.dirWireHack ~= nil and overlay.dirWireHack[3] == 1) then
 							local toDraw3
 							if room[j][i].powered and (room[j][i].dirSend[3] == 1 or room[j][i].dirAccept[3] == 1) then
@@ -2396,7 +2396,7 @@ function love.keypressed(key, unicode)
     myShader:send("player_y", player.y+getTranslation().y*floor.sprite:getWidth()*scale+(height2-height)/2)
 
     for i = 1, roomHeight do
-    	for j = 1, roomHeight do
+    	for j = 1, roomLength do
     		if room[i][j]~=nil then
     			room[i][j]:absoluteFinalUpdate()
     		end
@@ -2822,10 +2822,6 @@ function dropTools()
 				checkedRooms[y][x] = 1
 				if completedRooms[y]~=nil and completedRooms[y][x]~=nil and completedRooms[y][x] == 0 then
 					local dirEnter = map.getFieldForRoom(mainMap[y][x].roomid, "dirEnter")
-					if mainMap[y][x] ~= nil and mainMap[y][x].roomid == nil then
-						print(x .. ' ' .. y)
-						game.crash()
-					end
 					if ((dirEnter[1] == 1 and completedRooms[y-1]~=nil and completedRooms[y-1][x] ~=nil and completedRooms[y-1][x] == 1) or
 					(dirEnter[3] == 1 and completedRooms[y+1]~=nil and completedRooms[y+1][x] ~=nil and completedRooms[y+1][x] ==1) or
 					(dirEnter[4] == 1 and completedRooms[y][x-1]~=nil and completedRooms[y][x-1]==1) or
@@ -2872,7 +2868,7 @@ function dropTools()
 				local slot = util.random(tools.numNormalTools, 'toolDrop')
 				tools[slot].numHeld = tools[slot].numHeld+1
 			end]]
-			tools.giveSupertools(1)
+			--tools.giveSupertools(1)
 		end
 	else
 		tools.giveToolsByArray(dropOverride)
