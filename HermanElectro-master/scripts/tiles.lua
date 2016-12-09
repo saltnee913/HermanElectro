@@ -507,6 +507,11 @@ function P.gate:rotate(times)
 		self.dirWireHack = shiftArray(self.dirWireHack)
 	end
 end
+function P.gate:destroy()
+	self.canBePowered = false
+	self.destroyed = true
+	self.charged = false
+end
 P.tile.cfr = P.gate.correctForRotation
 
 P.splitGate = P.gate:new{name = "splitGate", dirSend = {1,0,0,0}, dirAccept = {1,0,0,0}, sprite = love.graphics.newImage('Graphics/splitgate.png'), poweredSprite = love.graphics.newImage('Graphics/splitgate.png') }
@@ -569,7 +574,6 @@ function P.andGate:updateTile(dir)
 		self.dirSend = {0,0,0,0}
 	end
 end
-P.andGate.destroy = P.conductiveTile.destroy
 
 P.ambiguousAndGate = P.andGate:new{name = "ambiguousAndGate", sprite = love.graphics.newImage('Graphics/andgateambiguous.png')}
 P.ambiguousAndGate.poweredSprite = P.ambiguousAndGate.sprite
@@ -602,7 +606,6 @@ function P.orGate:updateTile(dir)
 		self.dirSend = {0,0,0,0}
 	end
 end
-P.orGate.destroy = P.conductiveTile.destroy
 
 P.xorGate = P.gate:new{name = "xorGate", dirSend = {1,0,0,0}, dirAccept = {0,1,0,1}, dirWireHack = {1,0,0,0}, sprite = love.graphics.newImage('Graphics/xorgate.png'), poweredSprite = love.graphics.newImage('Graphics/xorgate.png')}
 function P.xorGate:updateTile(dir)
@@ -628,7 +631,6 @@ function P.xorGate:updateTile(dir)
 		self.dirSend = {0,0,0,0}
 	end
 end
-P.xorGate.destroy = P.conductiveTile.destroy
 
 local function getTileX(posX)
 	return (posX-1)*floor.sprite:getWidth()*scale+wallSprite.width
