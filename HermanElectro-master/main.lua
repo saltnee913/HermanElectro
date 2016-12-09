@@ -211,7 +211,7 @@ function love.load()
 		floortile3 = love.graphics.newImage('KenGraphics/darkrock.png')]]
 		floortile = love.graphics.newImage('GraphicsBrush/grass1.png')
 		floortile2 = love.graphics.newImage('GraphicsBrush/grass2.png')
-		floortile3 = love.graphics.newImage('GraphicsBrush/grass3.png')	
+		floortile3 = love.graphics.newImage('GraphicsBrush/grass3.png')
 		grassfloortile = love.graphics.newImage('KenGraphics/grass.png')
 		invisibleTile = love.graphics.newImage('Graphics/cavesfloor.png')
 		whitetile = love.graphics.newImage('Graphics/whitetile.png')
