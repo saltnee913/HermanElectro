@@ -1140,12 +1140,11 @@ end
 
 P.gateBreaker = P.tool:new{name = "gateBreaker", baseRange = 1, image = love.graphics.newImage('Graphics/shovel.png')}
 function P.gateBreaker:usableOnTile(tile)
-	return tile:instanceof(tiles.gate)
+	return (tile:instanceof(tiles.gate) or tile:instanceof(tiles.notGate)) and not tile.destroyed
 end
 function P.gateBreaker:useToolTile(tile)
 	self.numHeld = self.numHeld-1
-	tile.destroyed = true
-	tile.canBePowered = false
+	tile:destroy()
 end
 
 P.conductiveBoxSpawner = P.boxSpawner:new{name = "conductiveBoxSpawner", image = love.graphics.newImage('Graphics/conductiveBox.png')}
