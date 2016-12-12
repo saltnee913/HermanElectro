@@ -85,8 +85,8 @@ function P.readJSON(filePath, askForRooms)
 	end
 end
 
-function P.writeJSON(filePath, data)
-	local str = json.encode(data)
+function P.writeJSON(filePath, data, state)
+	local str = json.encode(data, state)
 	if not love.filesystem.exists(saveDir) then
 		love.filesystem.createDirectory(saveDir)
 	end
