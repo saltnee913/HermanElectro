@@ -269,8 +269,9 @@ function love.load()
 		luckImage = love.graphics.newImage('Graphics/luck.png')
 
 		--music = love.audio.newSource('Audio/hermantheme.mp3')
-		music = love.audio.newSource('Audio/bones.mp3')
-		--music:play()
+		--music = love.audio.newSource('Audio/bones.mp3')
+		music = love.audio.newSource('Audio/newthemeidk.mp3')
+		music:play()
 
 		width2, height2 = love.graphics.getDimensions()
 		if width2>height2*16/9 then
