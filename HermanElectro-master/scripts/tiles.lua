@@ -395,7 +395,7 @@ end
 P.electricFloor.willKillAnimal = P.electricFloor.willKillPlayer
 
 P.poweredFloor = P.conductiveTile:new{name = "poweredFloor", laddered = false, destroyedSprite = love.graphics.newImage('Graphics/trapdoorwithladder.png'), destroyedPoweredSprite = love.graphics.newImage('Graphics/trapdoorclosedwithladder.png'), --[[sprite = love.graphics.newImage('Graphics/trapdoor.png'), poweredSprite = love.graphics.newImage('Graphics/trapdoorclosed.png')]]
-sprite = love.graphics.newImage('Graphics/trapdoor.png'), poweredSprite = love.graphics.newImage('Graphics/trapdoorclosed.png')}
+sprite = love.graphics.newImage('GraphicsBrush/trapdoor.png'), poweredSprite = love.graphics.newImage('GraphicsBrush/trapdoorclosed.png')}
 function P.poweredFloor:ladder()
 	self.sprite = self.destroyedSprite
 	self.poweredSprite = self.destroyedPoweredSprite
@@ -910,7 +910,7 @@ function P.tunnel:postPowerUpdate()
 	if self.toolsNeeded<0 then self.toolsNeeded = 0 end
 end]]
 
-P.pit = P.tile:new{name = "pit", laddered = false, sprite = love.graphics.newImage('Graphics/pit.png'), destroyedSprite = love.graphics.newImage('Graphics/ladderedPit.png')}
+P.pit = P.tile:new{name = "pit", laddered = false, sprite = love.graphics.newImage('GraphicsBrush/pituncovered.png'), destroyedSprite = love.graphics.newImage('Graphics/ladderedPit.png')}
 function P.pit:ladder()
 	self.sprite = self.destroyedSprite
 	self.laddered = true
@@ -925,7 +925,7 @@ end
 P.pit.willKillAnimal = P.pit.willKillPlayer
 P.pit.willDestroyPushable = P.pit.willKillPlayer
 
-P.breakablePit = P.pit:new{strength = 2, name = "breakablePit", sprite = love.graphics.newImage('KenGraphics/pitcovered.png'), halfBrokenSprite = love.graphics.newImage('KenGraphics/pithalfcovered.png'), brokenSprite = love.graphics.newImage('Graphics/pit.png')}
+P.breakablePit = P.pit:new{strength = 2, name = "breakablePit", sprite = love.graphics.newImage('GraphicsBrush/pitcovered.png'), halfBrokenSprite = love.graphics.newImage('GraphicsBrush/pithalfcovered.png'), brokenSprite = love.graphics.newImage('GraphicsBrush/pituncovered.png')}
 function P.breakablePit:onEnter(player)
 	if self.strength>0 then
 		self.strength = self.strength - 1
