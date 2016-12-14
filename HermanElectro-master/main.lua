@@ -98,6 +98,7 @@ function love.load()
 
 
 	gamePaused = false
+	gameMuted = false
 	gameTime = {timeLeft = 260, toolTime = 0, roomTime = 15, levelTime = 200, donateTime = 20}
 
 	enteringSeed = false
@@ -187,7 +188,7 @@ function love.load()
 	if not loadedOnce then
 		floorIndex = -1
 		--started = false
-		shaderTriggered = false
+		shaderTriggered = true
 		mushroomMode = false
 		globalTint = {0,0,0}
 		globalTintRising = {1,1,1}
@@ -227,8 +228,21 @@ function love.load()
 		luckImage = love.graphics.newImage('Graphics/luck.png')
 
 		--music = love.audio.newSource('Audio/hermantheme.mp3')
-		music = love.audio.newSource('Audio/bones.mp3')
-		--music:play()
+		--music = love.audio.newSource('Audio/bones.mp3')
+		songStart = love.audio.newSource('Audio/einstein.mp3')
+		song1 = love.audio.newSource('Audio/opening.mp3')
+		song2 = love.audio.newSource('Audio/floe.mp3')
+		song3 = love.audio.newSource('Audio/island.mp3')
+		song4 = love.audio.newSource('Audio/rubric.mp3')
+		song5 = love.audio.newSource('Audio/facades.mp3')
+		song6 = love.audio.newSource('Audio/closing.mp3')
+
+		music = {songStart, song1, song2, song3, song4, song5, song6}
+		for i = 1, #music do
+			music[i]:setLooping(true)
+		end
+
+		music[1]:play()
 
 		width2, height2 = love.graphics.getDimensions()
 		if width2>height2*16/9 then
@@ -369,6 +383,10 @@ function loadNextLevel(dontChangeTime)
 		end
 		loadLevel(map.floorOrder[floorIndex])
 		floorIndex = floorIndex + 1
+		for i = 1, #music do
+			music[i]:stop()
+		end
+		music[floorIndex]:play()
 	end
 	--hack to make it not happen on the first floor
 	if floorIndex ~= 2 then
@@ -2057,6 +2075,17 @@ function love.keypressed(key, unicode)
 			if selectedBox.x<4 then
 				selectedBox.x = selectedBox.x+1
 			end
+		end
+	end
+
+	if key=="m" then
+		gameMuted = not gameMuted
+		if gameMuted then
+			for i = 1, #music do
+				music[i]:stop()
+			end
+		else
+			--play appropriate music
 		end
 	end
 

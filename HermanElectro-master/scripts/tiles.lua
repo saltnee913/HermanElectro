@@ -395,7 +395,7 @@ end
 P.electricFloor.willKillAnimal = P.electricFloor.willKillPlayer
 
 P.poweredFloor = P.conductiveTile:new{name = "poweredFloor", laddered = false, destroyedSprite = love.graphics.newImage('Graphics/trapdoorwithladder.png'), destroyedPoweredSprite = love.graphics.newImage('Graphics/trapdoorclosedwithladder.png'), --[[sprite = love.graphics.newImage('Graphics/trapdoor.png'), poweredSprite = love.graphics.newImage('Graphics/trapdoorclosed.png')]]
-sprite = love.graphics.newImage('GraphicsTony/Pit5.png'), poweredSprite = love.graphics.newImage('GraphicsTony/Pit0.png')}
+sprite = love.graphics.newImage('Graphics/trapdoor.png'), poweredSprite = love.graphics.newImage('Graphics/trapdoorclosed.png')}
 function P.poweredFloor:ladder()
 	self.sprite = self.destroyedSprite
 	self.poweredSprite = self.destroyedPoweredSprite

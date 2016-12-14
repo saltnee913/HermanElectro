@@ -23,6 +23,8 @@
         [0                 ,0                 ,"final_2"         ,0               ,0             ,0  ,0 ],
         [0                 ,0                 ,0                 ,0               ,0             ,0  ,0 ],
       ],
-      "generateFunction": "generateMapFromJSON"
+      "generateFunction": "generateMapFromJSON",
+      "tint":[0,0,0],
+      "playerRange": 300
     }
 }

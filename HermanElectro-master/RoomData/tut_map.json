@@ -19,6 +19,8 @@
         [0,             "tut_doggo_door", "tut_doggo",  "tut_buttons",    "tut_metal",    "tut_not_2",      "tut_and_2",     0]
         [0,             0,                0,              0,              0,              0,                0,               0]
   		],
-  		"generateFunction": "generateMapFromJSON"
+  		"generateFunction": "generateMapFromJSON",
+      "tint":[0,0,0],
+      "playerRange": 300
   	}
 }
