@@ -33,7 +33,49 @@ local function addTo(toAdd, array)
 	end
 end
 
+local function areItemsSame(a,b)
+	local la = #a
+	local lb = #b
+	if la ~= lb then return false end
+	for i = 1, #a do
+		if a[i] ~= b[i] then return false end
+	end
+	return true
+end
+
+local function doItemsNeededCalcs()
+	local itemsNeededs = util.readJSON(saveDir..'/'..map.itemsNeededFile)
+	local arr = {}
+	for i = 1, #itemsNeededs do
+		local room = itemsNeededs[i][1]
+		local character = itemsNeededs[i][2]
+		if arr[character] == nil then arr[character] = {} end
+		ar = arr[character]
+			local items = {}
+			for j = 3, #itemsNeededs do
+				items[#items+1] = itemsNeededs[i][j]
+			end
+			if ar[room] == nil then
+				ar[room] = {}
+			end
+			local new = true
+			for j = 1, #ar[room] do
+				if areItemsSame(ar[room][j],items) then
+					new = false
+				end
+			end
+			if new then
+				ar[room][#ar[room]+1] = items
+			end
+		
+	end
+	local state = {indent = true}
+	util.writeJSON('test.json', arr, state)
+	game.crash()
+end
+
 function love.load()
+	--doItemsNeededCalcs()
 	--[[local json = require('scripts.dkjson')
 	local itemsNeededs = {}
 	local ls = {}
@@ -229,6 +271,7 @@ function love.load()
 
 		--music = love.audio.newSource('Audio/hermantheme.mp3')
 		--music = love.audio.newSource('Audio/bones.mp3')
+
 		songStart = love.audio.newSource('Audio/einstein.mp3')
 		song1 = love.audio.newSource('Audio/opening.mp3')
 		song2 = love.audio.newSource('Audio/floe.mp3')
@@ -243,6 +286,10 @@ function love.load()
 		end
 
 		music[1]:play()
+
+		--[[music = love.audio.newSource('Audio/newthemeidk.mp3')
+		music:play()]]
+
 
 		width2, height2 = love.graphics.getDimensions()
 		if width2>height2*16/9 then
