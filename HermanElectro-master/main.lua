@@ -315,10 +315,8 @@ function love.load()
 		extern number floorTint_b;
 		extern number player_x;
 		extern number player_y;
-		extern number lampx = 0;
-		extern number lampy = 0;
 		extern vec4 lamps[10];
-		extern number player_range;
+		extern number player_range = 300;
 		extern number bonus_range = 0;
 
 		vec4 effect( vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords ){
@@ -1968,6 +1966,11 @@ function enterRoom(dir)
 	keyTimer.timeLeft = keyTimer.suicideDelay
 	updateGameState(false)
 	tutorial.enterRoom()
+
+	player.x = (player.tileX-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
+	player.y = (player.tileY-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
+    myShader:send("player_x", player.x+getTranslation().x*floor.sprite:getWidth()*scale+(width2-width)/2)
+    myShader:send("player_y", player.y+getTranslation().y*floor.sprite:getWidth()*scale+(height2-height)/2)
 end
 
 oldTilesOn = {}

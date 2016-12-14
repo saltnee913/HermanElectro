@@ -877,12 +877,6 @@ function P.generateMapFromJSON()
 		map.floorInfo.playerRange = 200
 	end
 
-    myShader:send("floorTint_r", map.floorInfo.tint[1])
-    myShader:send("floorTint_g", map.floorInfo.tint[2])
-    myShader:send("floorTint_b", map.floorInfo.tint[3])
-    myShader:send("player_range", map.floorInfo.playerRange)
-
-
 	newmap[0] = {}
 	printMap(newmap)
 	return newmap
