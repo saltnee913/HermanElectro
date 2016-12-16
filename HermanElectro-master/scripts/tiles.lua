@@ -380,8 +380,8 @@ P.stayButton.onEnterAnimal = P.stayButton.onEnter
 P.stayButton.onLeaveAnimal = P.stayButton.onLeave
 --P.stayButton.onLeave = P.stayButton.onEnter
 
-P.electricFloor = P.conductiveTile:new{name = "electricfloor", sprite = love.graphics.newImage('GraphicsTony/EFloor0.png'),--[[sprite = love.graphics.newImage('Graphics/electricfloor.png'),]] destroyedSprite = love.graphics.newImage('Graphics/electricfloorcut.png'), --[[poweredSprite = love.graphics.newImage('Graphics/electricfloorpowered.png')]]
-poweredSprite = love.graphics.newImage('GraphicsTony/EFloor1.png')}
+P.electricFloor = P.conductiveTile:new{name = "electricfloor", sprite = love.graphics.newImage('GraphicsBrush/electricfloor.png'),--[[sprite = love.graphics.newImage('Graphics/electricfloor.png'),]] destroyedSprite = love.graphics.newImage('Graphics/electricfloorcut.png'), --[[poweredSprite = love.graphics.newImage('Graphics/electricfloorpowered.png')]]
+poweredSprite = love.graphics.newImage('GraphicsBrush/electricfloorpowered.png')}
 function P.electricFloor:destroy()
 	self.sprite = self.destroyedSprite
 	self.canBePowered = false
