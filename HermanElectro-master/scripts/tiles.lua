@@ -751,7 +751,7 @@ function P.hDoor:onLeave(player)
 	--
 end
 
-P.endTile = P.tile:new{name = "endTile", canBePowered = false, dirAccept = {0,0,0,0}, sprite = love.graphics.newImage('Graphics/end.png'), done = false}
+P.endTile = P.tile:new{name = "endTile", canBePowered = false, dirAccept = {0,0,0,0}, sprite = love.graphics.newImage('GraphicsBrush/endtile.png'), done = false}
 function P.endTile:onEnter(player)
 	if map.floorInfo.finalFloor == true then
 		if roomHeight>12 and not editorMode then
@@ -946,7 +946,7 @@ P.breakablePit.willKillAnimal = P.breakablePit.willKillPlayer
 P.breakablePit.willDestroyPushable = P.breakablePit.willKillPlayer
 
 local superWeights = util.readJSON('Values/superToolWeights.json')
-P.treasureTile = P.tile:new{name = "treasureTile", sprite = love.graphics.newImage('KenGraphics/orange.png'),
+P.treasureTile = P.tile:new{name = "treasureTile", sprite = love.graphics.newImage('GraphicsBrush/tt1.png'),
   done = false, treasureWeights = superWeights.yellowTreasureTile}
 function P.treasureTile:onEnter()
 	if self.done then return end
@@ -1327,7 +1327,7 @@ P.entrancePortal.onStayAnimal = P.entrancePortal.onEnterAnimal
 
 P.exitPortal = P.tile:new{name = "exitPortal", sprite = love.graphics.newImage('Graphics/exitPortal.png')}
 
-P.treasureTile2 = P.treasureTile:new{name = "treasureTile2", sprite = love.graphics.newImage('KenGraphics/purple.png'), treasureWeights = superWeights.treasureRoomTile}
+P.treasureTile2 = P.treasureTile:new{name = "treasureTile2", sprite = love.graphics.newImage('GraphicsBrush/tt2.png'), treasureWeights = superWeights.treasureRoomTile}
 
 function P.treasureTile2:onEnter()
 	if self.done then return end
@@ -1346,9 +1346,9 @@ function P.treasureTile2:giveReward()
 	end
 end
 
-P.treasureTile3 = P.treasureTile:new{name = "treasureTile3", sprite = love.graphics.newImage('KenGraphics/red.png')}
+P.treasureTile3 = P.treasureTile:new{name = "treasureTile3", sprite = love.graphics.newImage('GraphicsBrush/tt3.png')}
 
-P.treasureTile4 = P.treasureTile:new{name = "treasureTile4", sprite = love.graphics.newImage('KenGraphics/green.png')}
+P.treasureTile4 = P.treasureTile:new{name = "treasureTile4", sprite = love.graphics.newImage('GraphicsBrush/tt4.png')}
 
 P.conductiveSlime = P.conductiveTile:new{name = "conductiveSlime", sprite = love.graphics.newImage('Graphics/conductiveslime.png'), poweredSprite = love.graphics.newImage('Graphics/conductiveslimepowered.png')}
 P.conductiveSlime.onEnter = P.slime.onEnter
