@@ -249,12 +249,12 @@ function love.load()
 		--floortile = love.graphics.newImage('Graphics/floortilemost.png')
 		--floortile = love.graphics.newImage('Graphics/floortilenew.png')
 		--floortile = love.graphics.newImage('KenGraphics/darkrock.png')
-		--[[floortile = love.graphics.newImage('KenGraphics/darkrock.png')
+		floortile = love.graphics.newImage('KenGraphics/darkrock.png')
 		floortile2 = love.graphics.newImage('KenGraphics/darkrock.png')
-		floortile3 = love.graphics.newImage('KenGraphics/darkrock.png')]]
-		floortile = love.graphics.newImage('GraphicsBrush/grass1.png')
-		floortile2 = love.graphics.newImage('GraphicsBrush/grass2.png')
-		floortile3 = love.graphics.newImage('GraphicsBrush/grass3.png')
+		floortile3 = love.graphics.newImage('KenGraphics/darkrock.png')
+		--floortile = love.graphics.newImage('GraphicsBrush/grass1.png')
+		--floortile2 = love.graphics.newImage('GraphicsBrush/grass2.png')
+		--floortile3 = love.graphics.newImage('GraphicsBrush/grass3.png')
 		grassfloortile = love.graphics.newImage('KenGraphics/grass.png')
 		invisibleTile = love.graphics.newImage('Graphics/cavesfloor.png')
 		whitetile = love.graphics.newImage('Graphics/whitetile.png')
@@ -648,6 +648,7 @@ function updateLamps(tileY, tileX)
 		index = index+1
 	end
 
+	--fix coordinates (tile locs --> coordinates)
 	for i = 1, #lampHolder do
 		if lampHolder[i][1]>=0 then
 			lampHolder[i][1] = (lampHolder[i][1]-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10

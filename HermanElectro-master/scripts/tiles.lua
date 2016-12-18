@@ -1491,7 +1491,7 @@ P.boomboxTile = P.boxTile:new{name = "boomboxTile", pushable = pushableList[6], 
 
 P.batteringRamTile = P.tile:new{name = "batteringRamTile", pushable = pushableList[7], listIndex = 7, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
 
-P.lamp = P.powerSupply:new{name = "lamp", intensity = 1, range = 150, sprite = love.graphics.newImage('Graphics/lamp.png'), poweredSprite = love.graphics.newImage('Graphics/lamp.png'), lit = true, destroyedSprite = love.graphics.newImage('Graphics/destroyedlamp.png')}
+P.lamp = P.powerSupply:new{name = "lamp", intensity = 1, range = 25, sprite = love.graphics.newImage('Graphics/lamp.png'), poweredSprite = love.graphics.newImage('Graphics/lamp.png'), lit = true, destroyedSprite = love.graphics.newImage('Graphics/destroyedlamp.png')}
 function P.lamp:destroy()
 	self.sprite = self.destroyedSprite
 	self.canBePowered = false
