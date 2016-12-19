@@ -152,7 +152,7 @@ function P.conductiveTile:destroy()
 	self.charged = false
 end
 
-P.powerSupply = P.tile:new{powered = false, dirSend = {1,1,1,1}, dirAccept = {1,1,1,1}, canBePowered = true, name = "powerSupply", sprite = love.graphics.newImage('GraphicsTony/Power.png'), destroyedSprite = love.graphics.newImage('Graphics/powersupplydead.png'), poweredSprite = love.graphics.newImage('GraphicsTony/Power.png')}
+P.powerSupply = P.tile:new{powered = false, dirSend = {1,1,1,1}, dirAccept = {1,1,1,1}, canBePowered = true, name = "powerSupply", sprite = love.graphics.newImage('GraphicsColor/powersupply.png'), destroyedSprite = love.graphics.newImage('GraphicsColor/powersupplydead.png'), poweredSprite = love.graphics.newImage('GraphicsColor/powersupply.png')}
 function P.powerSupply:updateTile(dir)
 end
 function P.powerSupply:destroy()
@@ -380,8 +380,8 @@ P.stayButton.onEnterAnimal = P.stayButton.onEnter
 P.stayButton.onLeaveAnimal = P.stayButton.onLeave
 --P.stayButton.onLeave = P.stayButton.onEnter
 
-P.electricFloor = P.conductiveTile:new{name = "electricfloor", sprite = love.graphics.newImage('GraphicsBrush/electricfloor.png'),--[[sprite = love.graphics.newImage('Graphics/electricfloor.png'),]] destroyedSprite = love.graphics.newImage('Graphics/electricfloorcut.png'), --[[poweredSprite = love.graphics.newImage('Graphics/electricfloorpowered.png')]]
-poweredSprite = love.graphics.newImage('GraphicsBrush/electricfloorpowered.png')}
+P.electricFloor = P.conductiveTile:new{name = "electricfloor", sprite = love.graphics.newImage('GraphicsColor/electricfloor.png'),--[[sprite = love.graphics.newImage('Graphics/electricfloor.png'),]] destroyedSprite = love.graphics.newImage('Graphics/electricfloorcut.png'), --[[poweredSprite = love.graphics.newImage('Graphics/electricfloorpowered.png')]]
+poweredSprite = love.graphics.newImage('GraphicsColor/electricfloorpowered.png')}
 function P.electricFloor:destroy()
 	self.sprite = self.destroyedSprite
 	self.canBePowered = false
@@ -454,7 +454,7 @@ end
 function P.wall:rotate(times)
 end
 
-P.metalWall = P.wall:new{dirAccept = {1,1,1,1}, dirSend = {1,1,1,1}, canBePowered = true, name = "metalwall", blocksVision = true, destroyedSprite = love.graphics.newImage('Graphics/metalwallbroken.png'), sprite = love.graphics.newImage('GraphicsBrush/metalwall.png'), poweredSprite = love.graphics.newImage('GraphicsBrush/metalwallpowered.png') }
+P.metalWall = P.wall:new{dirAccept = {1,1,1,1}, dirSend = {1,1,1,1}, canBePowered = true, name = "metalwall", blocksVision = true, destroyedSprite = love.graphics.newImage('Graphics/metalwallbroken.png'), sprite = love.graphics.newImage('GraphicsColor/metalwall.png'), poweredSprite = love.graphics.newImage('GraphicsColor/metalwallpowered.png') }
 P.metalWall.updateTile = P.conductiveTile.updateTile
 function P.metalWall:destroy()
 	self.blocksProjectiles = false
@@ -662,8 +662,8 @@ function P.vDoor:onEnter(player)
 	
 end
 
-P.vPoweredDoor = P.tile:new{name = "vPoweredDoor", stopped = false, blocksMovement = false, blocksVision = false, canBePowered = true, dirSend = {1,0,1,0}, dirAccept = {1,0,1,0}, sprite = love.graphics.newImage('Graphics3D/powereddooropen.png'), closedSprite = love.graphics.newImage('Graphics3D/powereddoor.png'), openSprite = love.graphics.newImage('Graphics3D/powereddooropen.png'), poweredSprite = love.graphics.newImage('Graphics3D/powereddoor.png'),
-closedSprite2 = love.graphics.newImage('Graphics3D/powereddoor2.png'), openSprite2 = love.graphics.newImage('Graphics3D/powereddooropen2.png')}
+P.vPoweredDoor = P.tile:new{name = "vPoweredDoor", stopped = false, blocksMovement = false, blocksVision = false, canBePowered = true, dirSend = {1,0,1,0}, dirAccept = {1,0,1,0}, sprite = love.graphics.newImage('Graphics3D/powereddooropen.png'), closedSprite = love.graphics.newImage('GraphicsColor/powereddoor.png'), openSprite = love.graphics.newImage('GraphicsColor/powereddooropen.png'), poweredSprite = love.graphics.newImage('Graphics3D/powereddoor.png'),
+closedSprite2 = love.graphics.newImage('GraphicsColor/powereddoor2.png'), openSprite2 = love.graphics.newImage('GraphicsColor/powereddooropen2.png')}
 function P.vPoweredDoor:updateTile(player)
 	if self.stopped then
 		self.blocksVision = false
@@ -831,7 +831,7 @@ P.rotater.onLeaveAnimal = P.rotater.onLeave
 
 P.cornerRotater = P.rotater:new{name = "cornerRotater", dirSend = {1,1,0,0}, dirAccept = {1,1,0,0}, poweredSprite = love.graphics.newImage('Graphics/cornerRotater.png'), sprite = love.graphics.newImage('Graphics/cornerRotater.png')}
 
-P.concreteWall = P.wall:new{sawable = false, name = "concreteWall", sprite = love.graphics.newImage('GraphicsBrush/concretewall.png'), poweredSprite = love.graphics.newImage('Graphics3D/concretewall.png'), electrifiedPoweredSprite = love.graphics.newImage('Graphics/concretewallpowered.png'), electrifiedSprite = love.graphics.newImage('Graphics/concretewallelectrified.png'), destroyedSprite = love.graphics.newImage('Graphics/concretewallbroken.png'), sawable = false}
+P.concreteWall = P.wall:new{sawable = false, name = "concreteWall", sprite = love.graphics.newImage('GraphicsColor/concretewall.png'), poweredSprite = love.graphics.newImage('Graphics3D/concretewall.png'), electrifiedPoweredSprite = love.graphics.newImage('Graphics/concretewallpowered.png'), electrifiedSprite = love.graphics.newImage('Graphics/concretewallelectrified.png'), destroyedSprite = love.graphics.newImage('Graphics/concretewallbroken.png'), sawable = false}
 function P.concreteWall:destroy()
 	self.blocksProjectiles = false
 	self.blocksVision = false
@@ -910,7 +910,7 @@ function P.tunnel:postPowerUpdate()
 	if self.toolsNeeded<0 then self.toolsNeeded = 0 end
 end]]
 
-P.pit = P.tile:new{name = "pit", laddered = false, sprite = love.graphics.newImage('GraphicsBrush/pituncovered.png'), destroyedSprite = love.graphics.newImage('Graphics/ladderedPit.png')}
+P.pit = P.tile:new{name = "pit", laddered = false, sprite = love.graphics.newImage('GraphicsColor/pit.png'), destroyedSprite = love.graphics.newImage('Graphics/ladderedPit.png')}
 function P.pit:ladder()
 	self.sprite = self.destroyedSprite
 	self.laddered = true
