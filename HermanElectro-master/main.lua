@@ -246,6 +246,7 @@ function love.load()
 		black = love.graphics.newImage('GraphicsColor/smoke.png')
 		green = love.graphics.newImage('Graphics/green.png')
 		gray = love.graphics.newImage('Graphics/gray.png')
+		toolWrapper = love.graphics.newImage('GraphicsEli/marble1.png')
 		--floortile = love.graphics.newImage('Graphics/floortile.png')
 		--floortile = love.graphics.newImage('Graphics/floortilemost.png')
 		--floortile = love.graphics.newImage('Graphics/floortilenew.png')
@@ -1597,10 +1598,12 @@ function love.draw()
 	if not editorMode then
 		for i = 0, 6 do
 			love.graphics.setColor(255,255,255)
+			love.graphics.draw(toolWrapper, i*width/18, 0, 0, (width/18)/16, (width/18)/16)
 			if tool == i+1 then
 				love.graphics.setColor(50, 200, 50)
+				love.graphics.rectangle("fill", i*width/18, 0, width/18, width/18)
 			end
-			love.graphics.rectangle("fill", i*width/18, 0, width/18, width/18)
+			--love.graphics.rectangle("fill", i*width/18, 0, width/18, width/18)
 			love.graphics.setColor(0,0,0)
 			love.graphics.rectangle("line", i*width/18, 0, width/18, width/18)
 			love.graphics.setColor(255,255,255)
@@ -1616,10 +1619,12 @@ function love.draw()
 		end
 		for i = 0, 2 do
 			love.graphics.setColor(255,255,255)
+			love.graphics.draw(toolWrapper, (i+13)*width/18, 0, 0, (width/18)/16, (width/18)/16)
 			if tool == specialTools[i+1] and tool~=0 then
 				love.graphics.setColor(50, 200, 50)
+				love.graphics.rectangle("fill", (i+13)*width/18, 0, width/18, width/18)
 			end
-			love.graphics.rectangle("fill", (i+13)*width/18, 0, width/18, width/18)
+			--love.graphics.rectangle("fill", (i+13)*width/18, 0, width/18, width/18)
 			love.graphics.setColor(0,0,0)
 			love.graphics.rectangle("line", (i+13)*width/18, 0, width/18, width/18)
 			love.graphics.setColor(255,255,255)
