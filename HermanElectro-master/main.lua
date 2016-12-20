@@ -242,7 +242,8 @@ function love.load()
 		toolTime = 0
 		f1 = love.graphics.newImage('Graphics/concretewalls.png')
 		walls = love.graphics.newImage('Graphics/walls3.png')
-		black = love.graphics.newImage('Graphics/dark.png')
+		--black = love.graphics.newImage('Graphics/dark.png')
+		black = love.graphics.newImage('GraphicsColor/smoke.png')
 		green = love.graphics.newImage('Graphics/green.png')
 		gray = love.graphics.newImage('Graphics/gray.png')
 		--floortile = love.graphics.newImage('Graphics/floortile.png')
@@ -261,9 +262,12 @@ function love.load()
 		--[[floortile = love.graphics.newImage('KenGraphics/grass.png')
 		floortile2 = love.graphics.newImage('KenGraphics/grass.png')
 		floortile3 = love.graphics.newImage('KenGraphics/grass.png')]]
-		floortile = love.graphics.newImage('GraphicsColor/greenfloor.png')
+		--[[floortile = love.graphics.newImage('GraphicsColor/greenfloor.png')
 		floortile2 = love.graphics.newImage('GraphicsColor/greenfloor2.png')
-		floortile3 = love.graphics.newImage('GraphicsColor/greenfloor3.png')
+		floortile3 = love.graphics.newImage('GraphicsColor/greenfloor3.png')]]
+		floortile = love.graphics.newImage('GraphicsBrush/grass1.png')
+		floortile2 = love.graphics.newImage('GraphicsBrush/grass2.png')
+		floortile3 = love.graphics.newImage('GraphicsBrush/grass3.png')
 		grassfloortile = love.graphics.newImage('KenGraphics/grass.png')
 		invisibleTile = love.graphics.newImage('Graphics/cavesfloor.png')
 		whitetile = love.graphics.newImage('Graphics/whitetile.png')
@@ -1303,7 +1307,7 @@ function love.draw()
 	--love.graphics.draw(rocks, rocksQuad, 0, 0)
 	--love.graphics.draw(rocks, -mapx * width, -mapy * height, 0, 1, 1)
 
-	--love.graphics.setShader(myShader)
+	love.graphics.setShader(myShader)
 	for i = 1, roomLength do
 		for j = 1, roomHeight do
 			local toDrawFloor = nil
@@ -1335,7 +1339,7 @@ function love.draw()
 		end
 	end
 
-	--love.graphics.setShader(myShader)
+	love.graphics.setShader(myShader)
 	for j = 1, roomHeight do
 		for i = 1, roomLength do
 			if (room[j][i]~=nil or litTiles[j][i]==0) and not (litTiles[j][i]==1 and room[j][i]:instanceof(tiles.invisibleTile)) then
@@ -1369,8 +1373,9 @@ function love.draw()
 				if (room[j][i]~=nil --[[and room[j][i].name~="pitbull" and room[j][i].name~="cat" and room[j][i].name~="pup"]]) or litTiles[j][i]==0 then
 					local addY = 0
 					if room[j][i]~=nil and litTiles[j][i]~=0 then
-						addY = room[j][i]:getYOffset()
+						addY = room[j][i]:getYOffset()-2
 					end
+					if litTiles[j][i]==0 then addY = tiles.wall:getYOffset() end
 					love.graphics.draw(toDraw, (tempi-1)*floor.sprite:getWidth()*scale+wallSprite.width, (addY+(tempj-1)*floor.sprite:getWidth())*scale+wallSprite.height,
 					  rot * math.pi / 2, scale*16/toDraw:getWidth(), scale*16/toDraw:getWidth())
 					if litTiles[j][i]~=0 and room[j][i].overlay ~= nil then
@@ -1404,7 +1409,7 @@ function love.draw()
 						love.graphics.setColor(0,0,0)
 						love.graphics.setShader()
 						love.graphics.print(room[j][i]:getInfoText(), (tempi-1)*floor.sprite:getWidth()*scale+wallSprite.width, (tempj-1)*floor.sprite:getHeight()*scale+wallSprite.height);
-						--love.graphics.setShader(myShader)			
+						love.graphics.setShader(myShader)			
 						love.graphics.setColor(255,255,255)
 					end
 				end
@@ -1484,7 +1489,7 @@ function love.draw()
 			love.graphics.draw(player.character.sprite, math.floor(player.x-player.character.sprite:getWidth()*player.character.scale/2), math.floor(player.y-player.character.sprite:getHeight()*player.character.scale), 0, player.character.scale, player.character.scale)
 			love.graphics.setShader()
 			love.graphics.print(player.character:getInfoText(), math.floor(player.x-player.character.sprite:getWidth()*player.character.scale/2), math.floor(player.y-player.character.sprite:getHeight()*player.character.scale));
-			--love.graphics.setShader(myShader)
+			love.graphics.setShader(myShader)
 		end
 
 		if player.character.name == "Giovanni" and player.character.shiftPos.x>0 then
