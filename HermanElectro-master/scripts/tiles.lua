@@ -214,9 +214,9 @@ P.spikes.willKillAnimal = P.spikes.willKillPlayer
 P.conductiveSpikes = P.spikes:new{name = "conductiveSpikes", sprite = love.graphics.newImage('Graphics/conductivespikes.png'), poweredSprite = love.graphics.newImage('Graphics/conductivespikes.png'), canBePowered = true, dirSend = {1,1,1,1}, dirAccept = {1,1,1,1}}
 
 P.button = P.tile:new{bricked = false, updatePowerOnEnter = true, justPressed = false, down = false, powered = false, dirSend = {1,1,1,1}, 
-  dirAccept = {0,0,0,0}, canBePowered = true, name = "button", pressed = false, sprite = love.graphics.newImage('GraphicsBrush/button.png'), 
-  poweredSprite = love.graphics.newImage('Graphics/button.png'), downSprite = love.graphics.newImage('GraphicsBrush/buttondown.png'), 
-  brickedSprite = love.graphics.newImage('Graphics/brickedButton.png'), upSprite = love.graphics.newImage('GraphicsBrush/button.png'), timesPressed = 0}
+  dirAccept = {0,0,0,0}, canBePowered = true, name = "button", pressed = false, sprite = love.graphics.newImage('GraphicsEli/buttonOff2.png'), 
+  poweredSprite = love.graphics.newImage('GraphicsEli/buttonOff2.png'), downSprite = love.graphics.newImage('GraphicsEli/buttonOn2.png'), 
+  brickedSprite = love.graphics.newImage('GraphicsEli/buttonBricked2.png'), upSprite = love.graphics.newImage('GraphicsEli/buttonOff2.png'), timesPressed = 0}
 function P.button:resetState()
 	self.justPressed = false
 end
@@ -296,7 +296,11 @@ function P.button:updateTile(dir)
 	end
 end
 
-P.stickyButton = P.button:new{name = "stickyButton", downSprite = love.graphics.newImage('GraphicsBrush/stickybuttondown.png'), sprite = love.graphics.newImage('GraphicsBrush/stickybutton.png'), upSprite = love.graphics.newImage('GraphicsBrush/stickybutton.png')}
+P.stickyButton = P.button:new{name = "stickyButton", 
+  downSprite = love.graphics.newImage('GraphicsEli/buttonOn.png'),
+  sprite = love.graphics.newImage('GraphicsEli/buttonOff.png'), 
+  upSprite = love.graphics.newImage('GraphicsEli/buttonOff.png'), 
+  brickedSprite = love.graphics.newImage('GraphicsEli/buttonBricked.png')}
 function P.stickyButton:onEnter(player)
 	self.justPressed = true
 	self.down = true
@@ -316,7 +320,11 @@ end
 P.stickyButton.onEnterAnimal = P.stickyButton.onEnter
 P.stickyButton.onLeaveAnimal = P.stickyButton.onLeave
 
-P.stayButton = P.button:new{name = "stayButton", updatePowerOnLeave = true, sprite = love.graphics.newImage('GraphicsBrush/staybutton.png'), upSprite = love.graphics.newImage('GraphicsBrush/staybutton.png'), downSprite = love.graphics.newImage('GraphicsBrush/staybuttondown.png')}
+P.stayButton = P.button:new{name = "stayButton", updatePowerOnLeave = true, 
+  sprite = love.graphics.newImage('GraphicsEli/buttonOff3.png'), 
+  upSprite = love.graphics.newImage('GraphicsEli/buttonOff3.png'), 
+  downSprite = love.graphics.newImage('GraphicsEli/buttonOn3.png'), 
+  brickedSprite = love.graphics.newImage('GraphicsEli/buttonBricked3.png')}
 function P.stayButton:onEnter(player)
 	self.justPressed = true
 	if self.bricked then return end
