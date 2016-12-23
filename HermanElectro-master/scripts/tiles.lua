@@ -10,7 +10,7 @@ tiles = P
 P.tile = Object:new{formerPowered = nil, updatePowerOnEnter = false, text = "", updatePowerOnLeave = false, overlayable = false, overlaying = false, gone = false, lit = false, destroyed = false,
   blocksProjectiles = false, isVisible = true, rotation = 0, powered = false, blocksMovement = false, 
   blocksAnimalMovement = false, poweredNeighbors = {0,0,0,0}, blocksVision = false, dirSend = {1,1,1,1}, 
-  dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile",
+  dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile", emitsLight = false, litWhenPowered = true, intensity = 0.5, range = 25,
   sprite = love.graphics.newImage('Graphics/cavesfloor.png'), 
   poweredSprite = love.graphics.newImage('Graphics/cavesfloor.png'),
   wireHackOn = love.graphics.newImage('Graphics3D/wirehackon.png'),
@@ -152,7 +152,11 @@ function P.conductiveTile:destroy()
 	self.charged = false
 end
 
-P.powerSupply = P.tile:new{powered = false, dirSend = {1,1,1,1}, dirAccept = {1,1,1,1}, canBePowered = true, name = "powerSupply", sprite = love.graphics.newImage('GraphicsColor/powersupply2.png'), destroyedSprite = love.graphics.newImage('GraphicsColor/powersupplydead2.png'), poweredSprite = love.graphics.newImage('GraphicsColor/powersupply2.png')}
+P.powerSupply = P.tile:new{powered = false, dirSend = {1,1,1,1}, dirAccept = {1,1,1,1}, canBePowered = true, name = "powerSupply",
+  intensity = 0.6, range = 30,
+  sprite = love.graphics.newImage('GraphicsColor/powersupply2.png'), 
+  destroyedSprite = love.graphics.newImage('GraphicsColor/powersupplydead2.png'), 
+  poweredSprite = love.graphics.newImage('GraphicsColor/powersupply2.png')}
 function P.powerSupply:updateTile(dir)
 end
 function P.powerSupply:destroy()
@@ -197,7 +201,7 @@ P.verticalWire = P.wire:new{powered = false, dirSend = {1,0,1,0}, dirAccept = {1
 P.cornerWire = P.wire:new{dirSend = {0,1,1,0}, dirAccept = {0,1,1,0}, name = "cornerWire", sprite = love.graphics.newImage('Graphics/cornerWireUnpowered.png'), poweredSprite = love.graphics.newImage('Graphics/cornerWirePowered.png')}
 P.tWire = P.wire:new{dirSend = {0,1,1,1}, dirAccept = {0,1,1,1}, name = "tWire", sprite = love.graphics.newImage('Graphics/tWireUnpowered.png'), poweredSprite = love.graphics.newImage('Graphics/tWirePowered.png')}
 
-P.unbreakableWire = P.wire:new{name = "unbreakableWire", sprite = love.graphics.newImage('Graphics/unbreakablewire.png'), poweredSprite = love.graphics.newImage('Graphics/unbreakablewire.png'), wireHackOff = love.graphics.newImage('Graphics3D/unbreakablewirehack.png'), wireHackOn = love.graphics.newImage('Graphics3D/unbreakablewirehack.png')}
+P.unbreakableWire = P.wire:new{name = "unbreakableWire", litWhenPowered = false, sprite = love.graphics.newImage('Graphics/unbreakablewire.png'), poweredSprite = love.graphics.newImage('Graphics/unbreakablewire.png'), wireHackOff = love.graphics.newImage('Graphics3D/unbreakablewirehack.png'), wireHackOn = love.graphics.newImage('Graphics3D/unbreakablewirehack.png')}
 P.unbreakableHorizontalWire = P.unbreakableWire:new{name = "unbreakableHorizontalWire", dirSend = {0,1,0,1}, dirAccept = {0,1,0,1}, sprite = love.graphics.newImage('Graphics/unbreakablehorizontalwire.png'), poweredSprite = love.graphics.newImage('Graphics/unbreakablehorizontalwire.png')}
 P.unbreakableCornerWire = P.unbreakableWire:new{name = "unbreakableCornerWire", dirSend = {0,1,1,0}, dirAccept = {0,1,1,0}, sprite = love.graphics.newImage('Graphics/unbreakablecornerwire.png'), poweredSprite = love.graphics.newImage('Graphics/unbreakablecornerwire.png')}
 P.unbreakableTWire = P.unbreakableWire:new{name = "unbreakableTWire", dirSend = {0,1,1,1}, dirAccept = {0,1,1,1}, sprite = love.graphics.newImage('Graphics/unbreakabletwire.png'), poweredSprite = love.graphics.newImage('Graphics/unbreakabletwire.png')}
@@ -555,7 +559,7 @@ function P.notGate:destroy()
 	self.powered = false
 end
 
-P.ambiguousNotGate = P.notGate:new{name = "ambiguousNotGate", sprite = love.graphics.newImage('Graphics/notgateambiguous.png'), poweredSprite = love.graphics.newImage('Graphics/notgateambiguous.png')}
+P.ambiguousNotGate = P.notGate:new{name = "ambiguousNotGate", litWhenPowered = false, sprite = love.graphics.newImage('Graphics/notgateambiguous.png'), poweredSprite = love.graphics.newImage('Graphics/notgateambiguous.png')}
 
 P.andGate = P.gate:new{name = "andGate", dirSend = {1,0,0,0}, dirAccept = {0,1,0,1}, dirWireHack = {1,0,0,0}, sprite = love.graphics.newImage('GraphicsColor/andgate2.png'), poweredSprite = love.graphics.newImage('GraphicsColor/andgatepowered2.png'), 
   off = love.graphics.newImage('GraphicsColor/andgate2.png'),
@@ -583,7 +587,7 @@ function P.andGate:updateTile(dir)
 	end
 end
 
-P.ambiguousAndGate = P.andGate:new{name = "ambiguousAndGate", sprite = love.graphics.newImage('Graphics/andgateambiguous.png')}
+P.ambiguousAndGate = P.andGate:new{name = "ambiguousAndGate", litWhenPowered = false, sprite = love.graphics.newImage('Graphics/andgateambiguous.png')}
 P.ambiguousAndGate.poweredSprite = P.ambiguousAndGate.sprite
 P.ambiguousAndGate.off = P.ambiguousAndGate.sprite
 P.ambiguousAndGate.leftOn = P.ambiguousAndGate.sprite
@@ -1499,7 +1503,7 @@ P.boomboxTile = P.boxTile:new{name = "boomboxTile", pushable = pushableList[6], 
 
 P.batteringRamTile = P.tile:new{name = "batteringRamTile", pushable = pushableList[7], listIndex = 7, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
 
-P.lamp = P.powerSupply:new{name = "lamp", intensity = 0.5, range = 25, sprite = love.graphics.newImage('Graphics/lamp.png'), poweredSprite = love.graphics.newImage('Graphics/lamp.png'), lit = true, destroyedSprite = love.graphics.newImage('Graphics/destroyedlamp.png')}
+P.lamp = P.powerSupply:new{name = "lamp", emitsLight = true, intensity = 0.7, range = 50, sprite = love.graphics.newImage('Graphics/lamp.png'), poweredSprite = love.graphics.newImage('Graphics/lamp.png'), lit = true, destroyedSprite = love.graphics.newImage('Graphics/destroyedlamp.png')}
 function P.lamp:destroy()
 	self.sprite = self.destroyedSprite
 	self.canBePowered = false
@@ -1647,7 +1651,7 @@ P.invisibleBoxTile = P.tile:new{name = "invisibleBoxTile", pushable = pushableLi
 P.invisibleDecoy = P.tile:new{name = "invisibleDecoy", isVisible = false}
 
 P.superStickyButton = P.stickyButton:new{name = "superStickyButton", sprite = love.graphics.newImage('Graphics/superStickyButton.png'), upSprite = love.graphics.newImage('Graphics/superStickyButton.png')}
-P.unbreakableElectricFloor = P.electricFloor:new{name = "unbreakableElectricFloor", sprite = love.graphics.newImage('Graphics/unbreakableElectricFloor.png'), poweredSprite = love.graphics.newImage('Graphics/unbreakableElectricFloor.png')}
+P.unbreakableElectricFloor = P.electricFloor:new{name = "unbreakableElectricFloor", litWhenPowered = false, sprite = love.graphics.newImage('Graphics/unbreakableElectricFloor.png'), poweredSprite = love.graphics.newImage('Graphics/unbreakableElectricFloor.png')}
 P.unbrickableStayButton = P.stayButton:new{name = "unbrickableStayButton", sprite = love.graphics.newImage('Graphics/unbrickableStayButton.png'), upSprite = love.graphics.newImage('Graphics/unbrickableStayButton.png')}
 
 P.pinkFog = P.fog:new{name = "pinkFog", sprite = love.graphics.newImage('Graphics/pinkfog.png')}

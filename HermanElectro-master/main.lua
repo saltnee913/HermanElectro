@@ -329,7 +329,7 @@ function love.load()
 		extern number floorTint_b;
 		extern number player_x;
 		extern number player_y;
-		extern vec4 lamps[10];
+		extern vec4 lamps[100];
 		extern number player_range = 300;
 		extern number bonus_range = 0;
 
@@ -641,23 +641,25 @@ function win()
 	unlockedChars = characters.getUnlockedCharacters()
 end
 
+maxLamps = 100
+
 function updateLamps(tileY, tileX)
 	if not started then return end
 	local lampHolder = {}
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
-			if room[i][j]~=nil and room[i][j]:instanceof(tiles.lamp) and #lampHolder<10 then
+			if room[i][j]~=nil and (room[i][j].emitsLight or (room[i][j].litWhenPowered and room[i][j].powered)) and #lampHolder<maxLamps then
 				lampHolder[#lampHolder+1] = {j,i,room[i][j].intensity,room[i][j].range}
 			end
 		end
 	end
 	for i = 1, #pushables do
-		if pushables[i]:instanceof(pushableList.lamp) and #lampHolder<10 then
+		if pushables[i]:instanceof(pushableList.lamp) and #lampHolder<maxLamps then
 			lampHolder[#lampHolder+1] = {pushables[i].tileX, pushables[i].tileY, pushables[i].intensity, pushables[i].range}
 		end
 	end
 	local index = #lampHolder
-	while index<10 do
+	while index<maxLamps do
 		lampHolder[#lampHolder+1] = {-1,-1,-1,-1}
 		index = index+1
 	end
