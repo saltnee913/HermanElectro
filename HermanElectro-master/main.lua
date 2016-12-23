@@ -269,8 +269,9 @@ function love.load()
 
 
 		floortiles = {}
-		floortiles[1] = {love.graphics.newImage('GraphicsColor/greenfloor.png'),love.graphics.newImage('GraphicsColor/greenfloor2.png'),love.graphics.newImage('GraphicsColor/greenfloor3.png')}
-		floortiles[2] = {floortile,floortile2, floortile3}
+		floortiles[3] = {love.graphics.newImage('GraphicsBrush/purplefloor1.png'),love.graphics.newImage('GraphicsBrush/purplefloor2.png'),love.graphics.newImage('GraphicsBrush/purplefloor3.png')}
+		floortiles[2] = {love.graphics.newImage('GraphicsColor/greenfloor.png'),love.graphics.newImage('GraphicsColor/greenfloor2.png'),love.graphics.newImage('GraphicsColor/greenfloor3.png')}
+		floortiles[1] = {floortile,floortile2, floortile3}
 
 
 		invisibleTile = love.graphics.newImage('Graphics/cavesfloor.png')
