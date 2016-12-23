@@ -256,9 +256,6 @@ function love.load()
 		--[[floortile  = love.graphics.newImage('GraphicsEli/marble1.png')
 		floortile2 = love.graphics.newImage('GraphicsEli/marble2.png')
 		floortile3 = love.graphics.newImage('GraphicsEli/marble3.png')]]
-		--floortile = love.graphics.newImage('GraphicsBrush/grass1.png')
-		--floortile2 = love.graphics.newImage('GraphicsBrush/grass2.png')
-		--floortile3 = love.graphics.newImage('GraphicsBrush/grass3.png')
 		--[[floortile = love.graphics.newImage('KenGraphics/grass.png')
 		floortile2 = love.graphics.newImage('KenGraphics/grass.png')
 		floortile3 = love.graphics.newImage('KenGraphics/grass.png')]]
@@ -269,6 +266,13 @@ function love.load()
 		floortile2 = love.graphics.newImage('GraphicsBrush/grass2.png')
 		floortile3 = love.graphics.newImage('GraphicsBrush/grass3.png')
 		grassfloortile = love.graphics.newImage('KenGraphics/grass.png')
+
+
+		floortiles = {}
+		floortiles[1] = {love.graphics.newImage('GraphicsColor/greenfloor.png'),love.graphics.newImage('GraphicsColor/greenfloor2.png'),love.graphics.newImage('GraphicsColor/greenfloor3.png')}
+		floortiles[2] = {floortile,floortile2, floortile3}
+
+
 		invisibleTile = love.graphics.newImage('Graphics/cavesfloor.png')
 		whitetile = love.graphics.newImage('Graphics/whitetile.png')
 		doorwaybg = love.graphics.newImage('Graphics/doorwaybackground.png')
@@ -1340,11 +1344,11 @@ function love.draw()
 				toDrawFloor = grassfloortile
 			else
 				if (i*i*i+j*j)%3==0 then
-					toDrawFloor = floortile
+					toDrawFloor = floortiles[floorIndex-1][1]
 				elseif (i*i*i+j*j)%3==1 then
-					toDrawFloor = floortile2
+					toDrawFloor = floortiles[floorIndex-1][2]
 				else
-					toDrawFloor = floortile3
+					toDrawFloor = floortiles[floorIndex-1][3]
 				end
 			end
 
@@ -1353,7 +1357,7 @@ function love.draw()
 			0, scale*16/toDrawFloor:getWidth(), scale*16/toDrawFloor:getWidth())
 		end
 	end
-	toDrawFloor = floortile
+	toDrawFloor = floortiles[floorIndex-1][1]
 
 	if mapx<#completedRooms[mapy] and ((completedRooms[mapy][mapx]>0 and mainMap[mapy][mapx+1]~=nil) or
 	completedRooms[mapy][mapx+1]>0) then
