@@ -5,7 +5,7 @@ require('scripts.object')
 local P = {}
 pushableList = P
 
-P.pushable = Object:new{name = "pushable", visible = true, sawable = true, canBeAccelerated = true, conductive = false, prevTileX = 0, prevTileY = 0, tileX = 0, tileY = 0, destroyed = false, sprite = love.graphics.newImage('Graphics/box.png')}
+P.pushable = Object:new{name = "pushable", waitCounter=0, visible = true, sawable = true, canBeAccelerated = true, conductive = false, prevTileX = 0, prevTileY = 0, tileX = 0, tileY = 0, destroyed = false, sprite = love.graphics.newImage('Graphics/box.png')}
 function P.pushable:onStep()
 end
 function P.pushable:destroy()
@@ -17,7 +17,6 @@ function P.pushable:move(mover)
 	end
 	self.prevTileX = self.tileX
 	self.prevTileY = self.tileY
-		print(player.prevTileX.."   "..player.prevTileY.."   "..player.tileX.."   "..player.tileY)
 	if mover.tileX~=mover.prevTileX then
 		self.tileX = self.tileX+(mover.tileX-mover.prevTileX)
 	else
@@ -47,7 +46,7 @@ function P.pushable:move(mover)
 	end
 
 	for i = 1, #animals do
-		if animals[i].tileX == self.tileX and animals[i].tileY == self.tileY then
+		if animals[i].tileX == self.tileX and animals[i].tileY == self.tileY and not animals[i].dead then
 			self.tileX = self.prevTileX
 			self.tileY = self.prevTileY
 			return false
@@ -310,7 +309,9 @@ function P.jackInTheBox:onStep()
 	end
 end
 
-P.invisibleBox = P.box:new{visible = false}
+P.invisibleBox = P.box:new{name = "invisibleBox", visible = false}
+
+P.lamp = P.box:new{name = "lamp", sprite = love.graphics.newImage('Graphics/lamp.png'), intensity = 1, range = 200}
 
 pushableList[1] = P.pushable
 pushableList[2] = P.box
@@ -323,5 +324,6 @@ pushableList[8] = P.bombBox
 pushableList[9] = P.giftBox
 pushableList[10] = P.jackInTheBox
 pushableList[11] = P.invisibleBox
+pushableList[12] = P.lamp
 
 return pushableList

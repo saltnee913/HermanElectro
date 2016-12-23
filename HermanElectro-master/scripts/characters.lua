@@ -29,7 +29,8 @@ function P.getUnlockedCharacters()
 end
 
 P.character = Object:new{name = "Name", scale = 0, sprite = love.graphics.newImage('Graphics/herman_sketchanother.png'),
-  description = "description", startingTools = {0,0,0,0,0,0,0}, scale = 0.25 * width/1200, forcePowerUpdate = false, winUnlocks = {}, tint = {0,0,0}}
+  description = "description", startingTools = {0,0,0,0,0,0,0}, scale = 0.25 * width/1200, forcePowerUpdate = false, winUnlocks = {}, tint = {1,1,1},
+  speedUnlockTime = 1000, speedUnlock = nil}
 function P.character:onBegin()
     myShader:send("tint_r", self.tint[1])
     myShader:send("tint_g", self.tint[2])
@@ -52,7 +53,6 @@ function P.character:onPreUpdatePower()
 
 end
 function P.character:onPostUpdatePower()
-	
 end
 function P.character:onKeyPressed()
 	return false
@@ -65,17 +65,27 @@ function P.character:postMove()
 end
 function P.character:onTileLeave()
 end
+function P.character:onPostUpdatePower()
+end
+function P.character:onPostUpdateLight()
+end
 function P.character:getInfoText()
 	return ""
 end
-
-P.herman = P.character:new{name = "Herman", description = "The Electrician", scale = 0.3}
-function P.herman:onCharLoad()
-	if loadTutorial then return end
-	tools.giveToolsByReference({tools.revive,tools.revive})
+function P.character:onRoomCompletion()
+end
+function P.character:onFailedMove()
+end
+function P.character.specialLightTest(tileY,tileX)
 end
 
-P.felix = P.character:new{name = "Felix", description = "The Sharpshooter", sprite = love.graphics.newImage('Graphics/felix.png'), startingTools = {0,0,0,0,0,0,1}}
+P.herman = P.character:new{name = "Herman", description = "The Electrician", winUnlocks = {unlocks.reviveUnlock}, scale = 0.3}
+function P.herman:onCharLoad()
+	if loadTutorial then return end
+	tools.giveToolsByReference({tools.revive})
+end
+
+P.felix = P.character:new{name = "Felix", description = "The Sharpshooter", winUnlocks = {unlocks.missileUnlock}, speedUnlocks = {unlocks.superGunUnlock}, sprite = love.graphics.newImage('Graphics/felix.png'), startingTools = {0,0,0,0,0,0,1}}
 function P.felix:onCharLoad()
 	tools[7] = tools.felixGun
 	if not tools.felixGun.isGun then
@@ -97,7 +107,7 @@ function P.felix:onFloorEnter()
 end
 
 P.most = P.character:new{name = "Ben", description = "The Explorer",
-  sprite = love.graphics.newImage('GraphicsTony/Ben.png'), scale = 0.7 * width/1200, winUnlocks = {7}, disabled = true}
+  sprite = love.graphics.newImage('GraphicsTony/Ben.png'), scale = 0.7 * width/1200, disabled = true}
 function P.most:onCharLoad()
 	if map.floorOrder == map.defaultFloorOrder then
 		map.floorOrder = {'RoomData/bigfloor.json', 'RoomData/floor6.json'}
@@ -107,6 +117,7 @@ end
 local erikSprite = love.graphics.newImage('Graphics/beggar.png')
 P.erik = P.character:new{name = "Erik", description = "The Quick",
   sprite = erikSprite, scale = scale*16/erikSprite:getWidth(), tint = {0.4,0.4,0.4}}
+
 function P.erik:onCharLoad()
 	gameTime.timeLeft = 60
 	gameTime.roomTime = 10
@@ -131,8 +142,9 @@ function P.gabe:onRoomEnter()
 	player.flying = true
 end
 
-P.rammy = P.character:new{name = "Rammy", description = "The Ram",
+P.rammy = P.character:new{name = "Rammy", description = "The Ram", winUnlocks = {unlocks.ramUnlock},
 	sprite = love.graphics.newImage('Graphics/ram.png')}
+
 function P.rammy:preTileEnter(tile)
 	if tile.name == tiles.wall.name and not tile.destroyed then
 		tile:destroy()
@@ -202,8 +214,45 @@ function P.nadia:onCharLoad()
 	player.safeFromAnimals = true
 end
 
-P.crate = P.character:new{name = "Carla", roomTrigger = false, description = "The Crate", isCrate = false, sprite = love.graphics.newImage('Graphics/carlaperson.png'),
-  humanSprite = love.graphics.newImage('Graphics/carlaperson.png'), crateSprite = love.graphics.newImage('Graphics/carlabox.png')}
+P.chell = P.character:new{name = "Chell", description = "New Carla", sprite = love.graphics.newImage('Graphics/carlaperson.png')}
+function P.chell:onFailedMove(key)
+	if key=="w" then
+		if player.tileY==1 and (room[roomHeight][player.tileX]==nil or not room[roomHeight][player.tileX].blocksMovement) then
+			player.tileY = roomHeight
+		end
+	elseif key=="a" then
+		if player.tileX==1 and (room[player.tileY][roomLength]==nil or not room[player.tileY][roomLength].blocksMovement) then
+			player.tileX = roomLength
+		end
+	elseif key=="s" then
+		if player.tileY==roomHeight and (room[1][player.tileX]==nil or not room[1][player.tileX].blocksMovement) then
+			player.tileY = 1
+		end
+	elseif key=="d" then
+		if player.tileX==roomLength and (room[player.tileY][1]==nil or not room[player.tileY][1].blocksMovement) then
+			player.tileX = 1
+		end
+	end
+end
+function P.chell.specialLightTest(tileY,tileX)
+	if tileX == 1 then
+		lightTest(tileY,roomLength)
+	end
+	if tileX == roomLength then
+		lightTest(tileY,1)
+	end
+	if tileY == 1 then
+		lightTest(roomHeight,tileX)
+	end
+	if tileY == roomHeight then
+		lightTest(1,tileX)
+	end
+end
+
+P.crate = P.character:new{name = "Carla", roomTrigger = false, description = "The Crate", isCrate = false, 
+  winUnlocks = {unlocks.conditionalBoxes}, speedUnlock = unlocks.conductiveBoxes,
+  sprite = love.graphics.newImage('Graphics/carlaperson.png'),
+  humanSprite = love.graphics.newImage('Graphics/carlaperson.png'), crateSprite = love.graphics.newImage('Graphics/carlabox.png'), disabled = true}
 function P.crate:setCrate(isCrate)
 	self.sprite = isCrate and self.crateSprite or self.humanSprite
 	player.active = not isCrate
@@ -299,7 +348,8 @@ function P.tim:onCharLoad()
 	tools.giveToolsByReference({tools.ramSpawner,tools.boxSpawner,tools.boomboxSpawner})
 end
 
-P.orson = P.character:new{name = "Orson", shifted = false, description = "The Mastermind", sprite = love.graphics.newImage('Graphics/orson.png')}
+P.orson = P.character:new{name = "Orson", shifted = false, description = "The Mastermind", 
+  winUnlocks = {unlocks.buttonFlipperUnlock}, speedUnlock = {unlocks.poweredEndUnlock}, sprite = love.graphics.newImage('Graphics/orson.png')}
 function P.orson:onCharLoad()
 	tools.brick.range = 100
 end
@@ -348,7 +398,9 @@ function P.lenny:onTileLeave()
 	end
 end
 
-P.fish = P.character:new{name = "Fish", description = "Fish", life = 100, sprite = love.graphics.newImage('Graphics/fish.png'), tint = {0,0,0.4}}
+P.fish = P.character:new{name = "Fish", description = "Fish", 
+  winUnlocks = {unlocks.toolDoublerUnlock}, speedUnlockTime = 1600, speedUnlock = unlocks.fogUnlock,
+  life = 100, sprite = love.graphics.newImage('Graphics/fish.png'), tint = {0.9,0.9,1}}
 function P.fish:postMove()
 	self.life = self.life-1
 	if room[player.tileY][player.tileX]~=nil and room[player.tileY][player.tileX]:instanceof(tiles.puddle) then
@@ -377,6 +429,57 @@ function P.fish:onToolUse()
 	end
 end
 
+P.monk = P.character:new{name = "Monte", description = "The Blind Monk", sprite = love.graphics.newImage('Graphics/monk.png')}
+function P.monk:onBegin()
+	self.tint = {1,1,1}
+	self:super('onBegin')
+	--[[for i = 1, 3 do
+		self.tint[i] = 0.46
+	end
+	myShader:send("tint_r", self.tint[1])
+    myShader:send("tint_g", self.tint[2])
+    myShader:send("tint_b", self.tint[3])]]
+	--tools.giveToolsByReference({tools.lamp, tools.lamp, tools.lamp, tools.lamp, tools.lamp, tools.lamp, tools.delectrifier})
+end
+function P.monk:onFloorEnter()
+	--[[for i = 1, 3 do
+		self.tint[i] = 0
+	end
+	myShader:send("tint_r", self.tint[1])
+    myShader:send("tint_g", self.tint[2])
+    myShader:send("tint_b", self.tint[3])]]
+	--tools.giveToolsByReference({tools.lamp, tools.lamp, tools.lamp, tools.lamp, tools.lamp, tools.lamp, tools.delectrifier})
+end
+function P.monk:postMove()
+	if completedRooms[mapy][mapx]==1 then
+		self.tint = {1,1,1}
+		room.tint = {1,1,1}
+	else
+		for i = 1, 3 do
+			self.tint[i] = self.tint[i]-(self.tint[i])/15
+			if self.tint[i]<0.2 then self.tint[i] = 0.2 end
+		end
+		room.tint = self.tint
+	end
+	myShader:send("tint_r", self.tint[1])
+	myShader:send("tint_g", self.tint[2])
+	myShader:send("tint_b", self.tint[3])
+end
+function P.monk:onRoomEnter()
+	self.tint = room.tint
+	self.tint = room.tint
+	myShader:send("tint_r", self.tint[1])
+	myShader:send("tint_g", self.tint[2])
+	myShader:send("tint_b", self.tint[3])
+end
+function P.monk:onRoomCompletion()
+	self.tint = {1,1,1}
+	room.tint = {1,1,1}
+	while (tools.lamp.numHeld<3) do
+		tools.giveToolsByReference({tools.lamp})
+	end
+end
+
 P.random2 = P.character:new{name = "Random2", allowedCharacters = {1,2,6,8,9,11,12,14}, description = "**RanDOm**", sprite = love.graphics.newImage('Graphics/random.png'), disabled = true}
 function P.random2:onRoomEnter()
 	local charNum = util.random(#self.allowedCharacters, 'misc')
@@ -395,6 +498,8 @@ function P.random2:postMove()
 	end
 end
 
+P.harriet = P.character:new{name = "Harriet", description = "Herman in drag", sprite = love.graphics.newImage('Graphics/nadia.png')}
+
 P[1] = P.herman
 P[2] = P.felix
 P[3] = P.most
@@ -404,14 +509,18 @@ P[6] = P.rammy
 P[7] = P.rick
 P[8] = P.frederick
 P[9] = P.battery
-P[10] = P.crate
+P[10] = P.chell
 P[11] = P.giovanni
 P[12] = P.francisco
 P[13] = P.tim
 P[14] = P.orson
 P[15] = P.lenny
-P[16] = P.random
-P[17] = P.fish
-P[18] = P.random2
+P[16] = P.fish
+P[17] = P.monk
+P[18] = P.harriet
+P[19] = P.crate
+
+P[#P+1] = P.random
+P[#P+1] = P.random2
 
 return characters

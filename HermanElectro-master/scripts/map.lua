@@ -15,6 +15,47 @@ local MapInfo = Object:new{floor = 1, height = 0, numRooms = 0}
 
 map.itemsNeededFile = 'itemsNeeded.json'
 
+local blacklist = {}
+local setBlacklist = {}
+function P:clearBlacklist()
+	blacklist = {}
+	setBlacklist = {}
+end
+
+local function removeSets(arr)
+	local sets = {}
+	local bad = false
+	for i = 1, #arr do
+		bad = false
+		local set = P.getFieldForRoom(arr[i], 'set')
+
+		--if something isn't in a set, then it is a set by itself
+		if set == nil then
+			set = arr[i]
+		end
+
+		for j = 1, #setBlacklist do
+			if setBlacklist[j] == set then
+				bad = true
+			end
+		end
+		if not bad then
+			if sets[set] == nil then
+				sets[set] = {}
+			end
+			sets[set][#sets[set]+1] = arr[i]
+		end
+	end
+	local newArr = {}
+	for k, v in pairs(sets) do
+		--choose an element from a set so they don't appear twice a floor
+		local setIndex = util.random(#v, 'mapGen')
+		newArr[#newArr+1] = v[setIndex]
+	end
+	return newArr
+end
+
+
 function writeToolsUsed()
 	local solutionArray = {}
 	if love.filesystem.exists(saveDir..'/'..P.itemsNeededFile) then 
@@ -104,10 +145,13 @@ function P.loadFloor(inFloorFile)
 	if map.floorInfo.tint == nil then
 		map.floorInfo.tint = {0,0,0}
 	end
+	if map.floorInfo.playerRange == nil then
+		map.floorInfo.playerRange = 200
+	end
     myShader:send("floorTint_r", map.floorInfo.tint[1])
     myShader:send("floorTint_g", map.floorInfo.tint[2])
     myShader:send("floorTint_b", map.floorInfo.tint[3])
-	
+    myShader:send("player_range", map.floorInfo.playerRange)
 end
 
 function P.getNextRoom(roomid)
@@ -146,7 +190,7 @@ end
 
 local function doesRoomContainTile(roomData, tile)
 	layouts = roomData.layouts and roomData.layouts or {roomData.layout}
-	return util.deepContains(layouts, tile)
+	return util.deepContains(layouts, tile, true)
 end
 
 function P.filterRoomSetByUnlocks(arr)
@@ -270,7 +314,7 @@ function P.createRoom(inRoom, arr)
 			return nil
 		end
 	end
-	--if arr[inRoom]==nil then print("isNil") end
+	--if arr[inRoom]==nil then print(inRoom.."isNil") end
 	local roomToLoad = arr[inRoom].layout
 	roomToLoad = (roomToLoad ~= nil) and roomToLoad 
 		or arr[inRoom].layouts[util.random(#arr[inRoom].layouts, 'mapGen')]
@@ -392,8 +436,9 @@ function P.generateMapStandard()
 	treasureY = 0
 	donationX = 0
 	donationY = 0
-	local blacklist = {startRoomID}
+	blacklist[#blacklist+1] = startRoomID
 	local randomRoomArray = util.createRandomKeyArray(P.floorInfo.rooms.rooms, 'mapGen', blacklist)
+	local randomRoomArray = removeSets(randomRoomArray)
 	local skippedRooms = {}
 	local skippedRoomsIndex = 1
 	for i = 0, numRooms-1 do
@@ -484,7 +529,8 @@ function P.generateMapStandard()
 		if arr[roomid].dirEnter~=nil then
 			newDirEnter = arr[roomid].dirEnter
 		end
-		newmap[choice.x][choice.y] = {roomid = roomid, room = P.createRoom(roomid, arr), dirEnter = arr[roomid].dirEnter, isFinal = false, isInitial = false}
+		blacklist[#blacklist+1] = roomid
+		newmap[choice.x][choice.y] = {roomid = roomid, room = P.createRoom(roomid, arr), tint = {0,0,0}, dirEnter = arr[roomid].dirEnter, isFinal = false, isInitial = false}
 	end
 	--printMap(newmap)
 	return newmap
@@ -520,7 +566,11 @@ local function isRoomAllowed(room, usedRooms, newmap, choice)
 end
 
 function P.generateMapFinal()
-	local startRoomID = P.floorInfo.startRoomID
+	local randomAccessRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.rooms, 'mapGen')
+	local randomDonationRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.donationRooms, 'mapGen')
+	local randomFinalRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.finalRooms, 'mapGen')
+	local startRoomID = randomAccessRoomsArray[1]
+
 	local height = P.floorInfo.height
 	local numRooms = P.floorInfo.numRooms
 	local newmap = MapInfo:new{height = height, numRooms = numRooms}
@@ -528,23 +578,16 @@ function P.generateMapFinal()
 		newmap[i] = {}
 	end
 
-	newmap[math.floor(height/2)][math.floor(height/2)] = {roomid = startRoomID, room = P.createRoom(startRoomID, roomsArray), isFinal = false, isInitial = true, isCompleted = false}
-	newmap.initialY = math.floor(height/2)
-	newmap.initialX = math.floor(height/2)
+	local startx = math.floor(height/2)
+	local starty = math.floor(height/2)
+	newmap[starty][startx] = {roomid = startRoomID, room = P.createRoom(startRoomID), isFinal = false, isInitial = true, isCompleted = false}
+	newmap.initialY = starty
+	newmap.initialX = startx
 
-	local choice = {y = math.floor(height/2), x = math.floor(height/2)+1}
-	
-	local roomIndex = -1
-
-	local randomRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.rooms, 'mapGen')
-
-	local roomChoiceid = ""
-	while roomChoiceid=="" or roomChoiceid==newmap[newmap.initialY][newmap.initialX].roomid do
-		roomChoiceid = util.chooseRandomElement(randomRoomsArray, 'mapGen')
-	end
-
-	newmap[choice.y][choice.x] = {roomid = roomChoiceid, room = P.createRoom(roomChoiceid), isFinal = false, isInitial = false}
-
+	local endRoom = randomFinalRoomsArray[1]
+	newmap[starty][startx+1] = {roomid = endRoom, room = P.createRoom(endRoom), isFinal = false, isInitial = false}
+	local donationRoom = randomDonationRoomsArray[1]
+	newmap[starty+1][startx] = {roomid = donationRoom, room = P.createRoom(donationRoom), isFinal = false, isInitial = false}
 	return newmap
 end
 
@@ -557,10 +600,13 @@ function P.generateMapWeighted()
 		newmap[i] = {}
 	end
 	local roomsArray = P.floorInfo.rooms.rooms
-	local randomRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.rooms, 'mapGen')
+	blacklist[#blacklist+1] = startRoomID
+	local randomRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.rooms, 'mapGen', blacklist)
+	local randomRoomsArray = removeSets(randomRoomsArray)
 	local randomTreasureRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.treasureRooms, 'mapGen')
 	local randomFinalRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.finalRooms, 'mapGen')
 	local randomDonationRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.donationRooms, 'mapGen')
+	local randomShopsArray = util.createRandomKeyArray(P.floorInfo.rooms.shops, 'mapGen')
 
 	--create first room
 	local startRoomID = P.floorInfo.startRoomID
@@ -622,6 +668,8 @@ function P.generateMapWeighted()
 			roomid = util.chooseRandomElement(randomTreasureRoomsArray, 'mapGen')
 		elseif numRooms - #usedRooms == 3 then
 			roomid = util.chooseRandomElement(randomDonationRoomsArray, 'mapGen')
+		elseif numRooms - #usedRooms == 4 then
+			roomid = util.chooseRandomElement(randomShopsArray, 'mapGen')
 		else
 			--creates an array of 5 possible choices with weights
 			local roomChoices = {}
@@ -676,8 +724,10 @@ function P.generateMapWeighted()
 			end
 			roomid = roomChoices[util.chooseWeightedRandom(roomWeights, 'mapGen')]
 		end
+		blacklist[#blacklist+1] = roomid
+		setBlacklist[#setBlacklist+1] = P.getFieldForRoom(roomid, 'set')
 		usedRooms[#usedRooms+1] = roomid
-		newmap[choice.y][choice.x] = {roomid = roomid, room = P.createRoom(roomid), isFinal = false, isInitial = false}
+		newmap[choice.y][choice.x] = {roomid = roomid, room = P.createRoom(roomid), tint = {0,0,0}, isFinal = false, isInitial = false}
 	end
 	printMap(newmap)
 	return newmap
@@ -694,7 +744,7 @@ function P.generateOneFloor()
 	newmap[math.floor(height/2)][math.floor(height/2)] = {roomid = startRoomID, room = P.createRoom(startRoomID, P.floorInfo.rooms.rooms), isFinal = false, isInitial = true, isCompleted = false}
 	newmap.initialY = math.floor(height/2)
 	newmap.initialX = math.floor(height/2)
-	local blacklist = {startRoomID}
+	blacklist[#blacklist+1] = startRoomID
 	local randomRoomArray = util.createRandomKeyArray(P.floorInfo.rooms.rooms, 'mapGen', blacklist)
 	local skippedRooms = {}
 	local skippedRoomsIndex = 1
@@ -808,7 +858,7 @@ function P.generateMapFromJSON()
 		for j = 1, newmap.height do
 			if newmap[i] ~= nil and newmap[i][j] ~= nil and newmap[i][j] ~= 0 then
 				newmap.numRooms = newmap.numRooms + 1
-				newmap[i][j] = {roomid = newmap[i][j], room = P.createRoom(newmap[i][j], P.floorInfo.rooms.rooms), isFinal = false, isInitial = false, isCompleted = false}
+				newmap[i][j] = {roomid = newmap[i][j], room = P.createRoom(newmap[i][j]), isFinal = false, isInitial = false, isCompleted = false}
 				if P.getFieldForRoom(newmap[i][j].roomid, "isInitial") == true then
 					newmap[i][j].isInitial = true
 					newmap.initialX = j
@@ -823,9 +873,9 @@ function P.generateMapFromJSON()
 	if map.floorInfo.tint == nil then
 		map.floorInfo.tint = {0,0,0}
 	end
-    myShader:send("floorTint_r", map.floorInfo.tint[1])
-    myShader:send("floorTint_g", map.floorInfo.tint[2])
-    myShader:send("floorTint_b", map.floorInfo.tint[3])
+	if map.floorInfo.playerRange == nil then
+		map.floorInfo.playerRange = 200
+	end
 
 	newmap[0] = {}
 	printMap(newmap)

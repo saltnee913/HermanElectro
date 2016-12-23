@@ -3,7 +3,7 @@
     {
       "oldrooms":
       {
-        "filePath": "RoomData/tut_new.json"
+        "filePath": "RoomData/tut_rooms.json"
       },
       "rooms":
       {
@@ -14,15 +14,17 @@
     {
       "map":
       [
-        [0,               0,              0,               0,              0,               0,               0,              0]
-        [0,               0,              0,               0,              0,               0,               0,              0]
-        [0,               0,              0,               0,              0,               0,               0,              0]
-        [0,               "tut_start_2",  0,               0,              0,               0,               0,              0]
-        [0,               0,              0,               0,              0,               0,               0,              0]
-        [0,               0,              0,               0,              0,               0,               0,              0]
-        [0,               0,              0,               0,              0,               0,               0,              0]
-        [0,               0,              0,               0,              0,               0,               0,              0]
+        [0                 ,0                 ,0                 ,0               ,0             ,0  ,0 ],
+        [0                 ,"tut_2_trapdoors" ,"tut_5_ladder"    ,"tut_6_pitbull" ,0             ,0  ,0 ],
+        [0                 ,"tut_start_2"     ,0                 ,0               ,0             ,0  ,0 ],
+        ["tut_4_buttons"   ,"tut_3_walls"     ,"tut_7_stack"     ,0               ,0             ,0  ,0 ],
+        [0                 ,0                 ,"tut_bonus_srdt1" ,0               ,0             ,0  ,0 ],
+        [0                 ,0                 ,"tut_bonus_srdt2" ,0               ,0             ,0  ,0 ],
+        [0                 ,0                 ,"final_2"         ,0               ,0             ,0  ,0 ],
+        [0                 ,0                 ,0                 ,0               ,0             ,0  ,0 ],
       ],
-      "generateFunction": "generateMapFromJSON"
+      "generateFunction": "generateMapFromJSON",
+      "tint":[0,0,0],
+      "playerRange": 300
     }
 }

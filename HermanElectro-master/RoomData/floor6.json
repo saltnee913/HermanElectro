@@ -3,7 +3,7 @@
 	{
 		"rooms": 
 		{
-			"filePath": "RoomData/bigrooms.json",
+			"filePath": "RoomData/accessrooms.json",
 			"requirements":
 			{
 				"not":
@@ -20,9 +20,17 @@
 				}
 			}
 		},
+		"shops":
+		{
+			"filePath": "RoomData/shops.json",
+			"requirements":
+			{
+
+			}
+		},
 		"treasureRooms": 
 		{
-			"filePath": "RoomData/treasurerooms.json",
+			"filePath": "RoomData/accessrooms.json",
 			"requirements":
 			{
 				
@@ -30,7 +38,7 @@
 		},
 		"finalRooms": 
 		{
-			"filePath": "RoomData/bigrooms.json",
+			"filePath": "RoomData/endgamerooms.json",
 			"requirements":
 			{
 				
@@ -49,12 +57,13 @@
 	{
 		"requireUnlocks": true,
 		"height": 10,
-		"numRooms": 2,
+		"numRooms": 3,
 		"generateFunction": "generateMapFinal",
-		"startRoomID": "big_1",
+		"startRoomID": "1",
 		//numRoomsToCheck is the amount of rooms to try when deciding a room's roomid, decreasing this increases rng
-		"numRoomsToCheck": 5,
+		"numRoomsToCheck": 3,
 		"finalFloor": true,
-		"tint": [0.25,0.25,0.25]
+		"tint": [0,0,0],
+		"playerRange": 100
 	}
 }

@@ -18,9 +18,9 @@ scale = (width - 2*wallSprite.width)/(20.3 * 16)*5/6
 --floor = tiles.tile
 
 --speed same as player (250)
-P.animal = Object:new{pickedUp = false, flying = false, triggered = false, waitCounter = 0, dead = false, name = "animal", tileX, tileY, prevx, prevy, prevTileX, prevTileY, x, y, speed = 250, width = 16*scale, height = 16*scale, sprite = love.graphics.newImage('Graphics/pitbull.png'), deadSprite = love.graphics.newImage('Graphics/pitbulldead.png'), tilesOn = {}, oldTilesOn = {}}
+P.animal = Object:new{frozen = false, conductive = false, pickedUp = false, flying = false, triggered = false, waitCounter = 0, dead = false, name = "animal", tileX, tileY, prevx, prevy, prevTileX, prevTileY, x, y, speed = 250, width = 16*scale, height = 16*scale, sprite = love.graphics.newImage('Graphics/pitbull.png'), deadSprite = love.graphics.newImage('Graphics/pitbulldead.png'), tilesOn = {}, oldTilesOn = {}}
 function P.animal:move(playerx, playery, room, isLit)
-	if self.dead or (not isLit and not self.triggered) then
+	if self.dead or (not isLit and not self.triggered) or self.frozen then
 		return
 	end
 	self.triggered = true
@@ -120,6 +120,20 @@ function P.animal:checkDeath()
 		t = room[self.tileY][self.tileX]
 		if self.dead == false and t:willKillAnimal() then
 			self:kill()
+			if t:instanceof(tiles.vPoweredDoor) then
+				unlocks.unlockUnlockableRef(unlocks.doorUnlock)
+			end
+			if room[self.tileY][self.tileX]:instanceof(tiles.pit) or room[self.tileY][self.tileX]:instanceof(tiles.poweredFloor) then
+				local animalsInPit = 0
+				for i = 1, #animals do
+					if animals[i].tileY == self.tileY and animals[i].tileX == self.tileX then
+						animalsInPit = animalsInPit+1
+					end
+				end
+				if animalsInPit>=2 then
+					unlocks.unlockUnlockableRef(unlocks.breakablePitUnlock)
+				end
+			end
 		end
 	end
 end
@@ -138,6 +152,8 @@ end
 function P.animal:willKillPlayer(player)
 	return false
 end
+function P.animal:explode()
+end
 
 
 P.pitbull = P.animal:new{name = "pitbull"}
@@ -151,10 +167,33 @@ P.snail = P.animal:new{name = "snail", sprite = love.graphics.newImage('NewGraph
 function P.snail:onNullLeave()
 	return tiles.slime:new()
 end
+function P.snail:kill()
+	self.dead = true
+	self.sprite = self.deadSprite
+	unlocks = require('scripts.unlocks')
+	unlocks.unlockUnlockableRef(unlocks.conductiveSnailsUnlock)
+end
 
 P.conductiveSnail = P.snail:new{name = "conductiveSnail", sprite = love.graphics.newImage('NewGraphics/snailCDesign.png')}
 function P.conductiveSnail:onNullLeave()
 	return tiles.conductiveSlime:new()
+end
+function P.conductiveSnail:kill()
+	self.dead = true
+	self.sprite = self.deadSprite
+	if room[self.tileY] ~= nil and room[self.tileY][self.tileX] ~= nil and room[self.tileY][self.tileX]:instanceof(tiles.conductiveSlime) then
+		unlocks = require('scripts.unlocks')
+		unlocks.unlockUnlockableRef(unlocks.lennyUnlock)
+	end
+end
+
+P.glueSnail = P.snail:new{name = "glueSnail", sprite = love.graphics.newImage('Graphics/gluesnail.png')}
+function P.glueSnail:onNullLeave()
+	return tiles.glue:new()
+end
+function P.glueSnail:kill()
+	self.dead = true
+	self.sprite = self.deadSprite
 end
 
 P.bat = P.animal:new{flying = true, name = "bat", sprite = love.graphics.newImage('Graphics/bat.png'), deadSprite = love.graphics.newImage('Graphics/pupdead.png')}
@@ -167,19 +206,19 @@ function P.cat:move(playerx, playery, room, isLit)
 	local diffCatx = math.abs(playerx - self.tileX)
 	local diffCaty = math.abs(playery - self.tileY)
 
-	if self.dead or (not isLit and not self.triggered) then
+	if self.dead or (not isLit and not self.triggered) or self.frozen then
 		return
 	end
 	self.triggered = true
-	if self.waitCounter>0 then
-		self.waitCounter = self.waitCounter - 1
-		self.prevTileX = self.tileX
-		self.prevTileY = self.tileY
-		return
-	end
 
 	self.prevTileX = self.tileX
 	self.prevTileY = self.tileY
+
+	if self.waitCounter>0 then
+		return
+	end
+
+
 
 	local setOfMoves = {}
 	local currDist = math.abs(self.tileX-playerx)+math.abs(self.tileY-playery)
@@ -269,6 +308,18 @@ function P.cat:secondaryMove(playerx, playery)
 	return true
 end
 
+P.bombBuddy = P.animal:new{name = "bombBuddy", sprite = love.graphics.newImage('Graphics/bombbuddy.png'), deadSprite = love.graphics.newImage('Graphics/catdead.png')}
+function P.bombBuddy:explode()
+	room[self.tileY][self.tileX] = tiles.bomb:new()
+	room[self.tileY][self.tileX]:onEnd(self.tileY, self.tileX)
+	room[self.tileY][self.tileX] = nil
+end
+
+P.conductiveDog = P.pup:new{name = "conductiveDog", powered = false, conductive = true, sprite = love.graphics.newImage('Graphics/conductiveDog.png')}
+
+P.wife = P.cat:new{name = "wife", sprite = love.graphics.newImage('Graphics/wife.png')}
+P.son = P.cat:new{name = "son", sprite = love.graphics.newImage('Graphics/son.png')}
+P.daughter = P.cat:new{name = "daughter", sprite = love.graphics.newImage('Graphics/daughter.png')}
 
 animalList[1] = P.animal
 animalList[2] = P.pitbull
@@ -277,5 +328,11 @@ animalList[4] = P.cat
 animalList[5] = P.snail
 animalList[6] = P.bat
 animalList[7] = P.conductiveSnail
+animalList[8] = P.glueSnail
+animalList[9] = P.bombBuddy
+animalList[10] = P.conductiveDog
+animalList[11] = P.wife
+animalList[12] = P.son
+animalList[13] = P.daughter
 
 return animalList
