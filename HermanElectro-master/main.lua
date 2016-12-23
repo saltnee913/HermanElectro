@@ -403,6 +403,11 @@ function love.load()
 	--loadOpeningWorld()
 end
 
+function goToMainMenu()
+	started = false
+	music[1]:play()
+end
+
 function loadRandoms()
 	local seed
 	if seedOverride == nil then
@@ -2210,7 +2215,7 @@ function love.keypressed(key, unicode)
 		if key=="escape" then
 			gamePaused = false
 		elseif key=="m" then
-			started = false
+			goToMainMenu()
 		elseif key=="t" then
 			toolManuel.open()
 		end
@@ -2218,7 +2223,7 @@ function love.keypressed(key, unicode)
 	end
 	if won then
 		if key=="m" then
-			started = false
+			goToMainMenu()
 		end
 	end
 
