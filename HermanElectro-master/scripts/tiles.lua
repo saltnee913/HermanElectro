@@ -152,7 +152,7 @@ function P.conductiveTile:destroy()
 	self.charged = false
 end
 
-P.powerSupply = P.tile:new{powered = false, dirSend = {1,1,1,1}, dirAccept = {1,1,1,1}, canBePowered = true, name = "powerSupply", sprite = love.graphics.newImage('GraphicsColor/powersupply.png'), destroyedSprite = love.graphics.newImage('GraphicsColor/powersupplydead.png'), poweredSprite = love.graphics.newImage('GraphicsColor/powersupply.png')}
+P.powerSupply = P.tile:new{powered = false, dirSend = {1,1,1,1}, dirAccept = {1,1,1,1}, canBePowered = true, name = "powerSupply", sprite = love.graphics.newImage('GraphicsColor/powersupply2.png'), destroyedSprite = love.graphics.newImage('GraphicsColor/powersupplydead2.png'), poweredSprite = love.graphics.newImage('GraphicsColor/powersupply2.png')}
 function P.powerSupply:updateTile(dir)
 end
 function P.powerSupply:destroy()
@@ -535,7 +535,7 @@ function P.splitGate:updateTile(dir)
 	end
 end
 
-P.notGate = P.powerSupply:new{overlaying = false, name = "notGate", dirSend = {1,0,0,0}, dirAccept = {1,1,1,1}, sprite = love.graphics.newImage('GraphicsColor/notgatedead.png'), poweredSprite = love.graphics.newImage('GraphicsColor/notgate.png') }
+P.notGate = P.powerSupply:new{overlaying = false, name = "notGate", dirSend = {1,0,0,0}, dirAccept = {1,1,1,1}, sprite = love.graphics.newImage('GraphicsColor/notgatedead2.png'), poweredSprite = love.graphics.newImage('GraphicsColor/notgate2.png') }
 function P.notGate:updateTile(dir)
 	if self.destroyed then
 		self.powered = false
@@ -557,10 +557,10 @@ end
 
 P.ambiguousNotGate = P.notGate:new{name = "ambiguousNotGate", sprite = love.graphics.newImage('Graphics/notgateambiguous.png'), poweredSprite = love.graphics.newImage('Graphics/notgateambiguous.png')}
 
-P.andGate = P.gate:new{name = "andGate", dirSend = {1,0,0,0}, dirAccept = {0,1,0,1}, dirWireHack = {1,0,0,0}, sprite = love.graphics.newImage('GraphicsColor/andgate.png'), poweredSprite = love.graphics.newImage('GraphicsColor/andgatepowered.png'), 
-  off = love.graphics.newImage('GraphicsColor/andgate.png'),
-  leftOn = love.graphics.newImage('GraphicsColor/andgateleft.png'), 
-  rightOn = love.graphics.newImage('GraphicsColor/andgateright.png') }
+P.andGate = P.gate:new{name = "andGate", dirSend = {1,0,0,0}, dirAccept = {0,1,0,1}, dirWireHack = {1,0,0,0}, sprite = love.graphics.newImage('GraphicsColor/andgate2.png'), poweredSprite = love.graphics.newImage('GraphicsColor/andgatepowered2.png'), 
+  off = love.graphics.newImage('GraphicsColor/andgate2.png'),
+  leftOn = love.graphics.newImage('GraphicsColor/andgateleft2.png'), 
+  rightOn = love.graphics.newImage('GraphicsColor/andgateright2.png') }
 function P.andGate:updateTile(dir)
 	if self.charged then
 		self.powered = true
