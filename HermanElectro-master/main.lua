@@ -140,7 +140,6 @@ function love.load()
 
 
 	gamePaused = false
-	gameMuted = false
 	gameTime = {timeLeft = 260, toolTime = 0, roomTime = 15, levelTime = 200, donateTime = 20}
 
 	enteringSeed = false
@@ -293,13 +292,20 @@ function love.load()
 		song4 = love.audio.newSource('Audio/rubric.mp3')
 		song5 = love.audio.newSource('Audio/facades.mp3')
 		song6 = love.audio.newSource('Audio/closing.mp3')
+		songTut = love.audio.newSource('Audio/newthemeidk.mp3')
 
 		music = {songStart, song1, song2, song3, song4, song5, song6}
+		tutMusicIndex = #music+1
+		music.volume = 1
+		music[tutMusicIndex] = songTut
 		for i = 1, #music do
 			music[i]:setLooping(true)
 		end
+		function music:muted()
+			return self.volume == 0
+		end
 
-		music[1]:play()
+		playMusic(1)
 
 		--[[music = love.audio.newSource('Audio/newthemeidk.mp3')
 		music:play()]]
@@ -403,9 +409,23 @@ function love.load()
 	--loadOpeningWorld()
 end
 
+function playMusic(index)
+	music.currentIndex = index
+	for i = 1, #music do
+		music[i]:stop()
+	end
+	music[index]:setVolume(music.volume)
+	music[index]:play()
+end
+
+function setMusicVolume(volume)
+	music.volume = volume
+	music[music.currentIndex]:setVolume(volume)
+end
+
 function goToMainMenu()
 	started = false
-	music[1]:play()
+	playMusic(1)
 end
 
 function loadRandoms()
@@ -447,10 +467,7 @@ function loadNextLevel(dontChangeTime)
 		end
 		loadLevel(map.floorOrder[floorIndex])
 		floorIndex = floorIndex + 1
-		for i = 1, #music do
-			music[i]:stop()
-		end
-		music[floorIndex]:play()
+		playMusic(floorIndex)
 	end
 	--hack to make it not happen on the first floor
 	if floorIndex ~= 2 then
@@ -499,6 +516,7 @@ function startTutorial()
 	tools.resetTools()
 	player.character = characters.herman
 	player.character:onBegin()
+	playMusic(tutMusicIndex)
 	started = true
 end
 
@@ -2176,14 +2194,11 @@ function love.keypressed(key, unicode)
 		end
 	end
 
-	if key=="m" then
-		gameMuted = not gameMuted
-		if gameMuted then
-			for i = 1, #music do
-				music[i]:stop()
-			end
+	if key=="k" then
+		if not music:muted() then
+			setMusicVolume(0)
 		else
-			--play appropriate music
+			setMusicVolume(1)
 		end
 	end
 
