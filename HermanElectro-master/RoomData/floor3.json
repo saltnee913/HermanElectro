@@ -59,6 +59,7 @@
 			{
 				
 			}
+		}
 		,
 		"dungeons":
 		{
@@ -67,7 +68,8 @@
 			{
 				
 			}
-		}	},
+		}
+	},
 	"data":
 	{
 		"requireUnlocks": true,

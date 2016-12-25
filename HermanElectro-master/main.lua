@@ -1359,9 +1359,9 @@ function love.draw()
 					toDrawFloor = floortiles[floorIndex-1][3]
 				end
 			end
-
-			if (room.floorTileOverride~=nil) then
-				if room.floorTileOverride=="dungeon" then
+			fto = map.getFieldForRoom(mainMap[mapy][mapx].roomid, "floorTileOverride")
+			if (fto~=nil) then
+				if fto=="dungeon" then
 					toDrawFloor = dungeonFloor
 				end
 			end
