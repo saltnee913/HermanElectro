@@ -433,6 +433,7 @@ P.monk = P.character:new{name = "Monte", description = "The Blind Monk", sprite 
 function P.monk:onBegin()
 	self.tint = {1,1,1}
 	self:super('onBegin')
+	myShader:send("player_range", 100)
 	--[[for i = 1, 3 do
 		self.tint[i] = 0.46
 	end

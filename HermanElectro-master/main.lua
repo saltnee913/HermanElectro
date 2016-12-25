@@ -266,6 +266,7 @@ function love.load()
 		floortile2 = love.graphics.newImage('GraphicsBrush/grass2.png')
 		floortile3 = love.graphics.newImage('GraphicsBrush/grass3.png')
 		grassfloortile = love.graphics.newImage('KenGraphics/grass.png')
+		space = love.graphics.newImage('GraphicsColor/space.png')
 
 
 		floortiles = {}
@@ -1294,6 +1295,9 @@ end
 function love.draw()
 	myShader:send("shaderTriggered", shaderTriggered)
 	love.graphics.setBackgroundColor(0,0,0)
+	if started then
+		--love.graphics.draw(space, 0, 0, 0, width/space:getWidth(), height/space:getHeight())
+	end
 	if not started and not charSelect and not unlocksScreen.opened then
 		love.graphics.draw(startscreen, 0, 0, 0, width/startscreen:getWidth(), height/startscreen:getHeight())
 		if seedOverride ~= nil then
