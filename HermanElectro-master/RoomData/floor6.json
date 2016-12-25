@@ -51,6 +51,14 @@
 			{
 				
 			}
+		},
+		"dungeons":
+		{
+			"filePath": "RoomData/dungeons.json",
+			"requirements":
+			{
+				
+			}
 		}
 	},
 	"data":

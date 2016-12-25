@@ -770,7 +770,7 @@ function P.endTile:onEnter(player)
 			win()
 			return
 		end
-	elseif mainMap[mapy][mapx].roomid == "final_2" then
+	elseif validSpace() and mainMap[mapy][mapx].roomid == "final_2" then
 		win()
 		unlocks.unlockUnlockableRef(unlocks.stickyButtonUnlock)
 	end
@@ -1246,8 +1246,7 @@ end
 
 P.greenBeggar = P.beggar:new{name = "greenBeggar", sprite = love.graphics.newImage('Graphics/greenbeggar.png'), deadSprite = love.graphics.newImage('Graphics/greenbeggardead.png')}
 function P.greenBeggar:providePayment()
-	donations = donations+100
-	player.luckTimer = tools.toolDisplayTimer.base
+	tools.giveToolsByReference({tools.coin})
 end
 
 P.blueBeggar = P.beggar:new{name = "blueBeggar", sprite = love.graphics.newImage('Graphics/bluebeggar.png'), deadSprite = love.graphics.newImage('Graphics/bluebeggardead.png')}
@@ -1802,12 +1801,48 @@ function P.toolTaxTile:updateSprite()
 end
 function P.toolTaxTile:onEnter()
 	if not self.destroyed and self.tool.numHeld>0 then
-		self.tool.numHeld = self.tool.numHeld-1
-		self.tool = nil
 		self:destroy()
 	elseif not self.destroyed then
 		P.concreteWall:onEnter(player)
 	end
+end
+function P.toolTaxTile:destroy()
+	self.blocksProjectiles = false
+	self.blocksVision = false
+	self.sprite = self.destroyedSprite
+	self.destroyed = true
+	self.blocksMovement = false
+	self.dirAccept = {0,0,0,0}
+	self.dirSend = {0,0,0,0}
+	self.overlay = nil
+	self.tool.numHeld = self.tool.numHeld-1
+	self.tool = nil
+end
+
+P.dungeonEnter = P.tile:new{name = "dungeonEnter"}
+function P.dungeonEnter:onEnter()
+	player.regularMapLoc = {x = mapx, y = mapy}
+	mapx = 1
+	mapy = mapHeight+1
+	room = mainMap[mapy][mapx].room
+	roomHeight = room.height
+	roomLength = room.length
+	player.tileX = 1
+	player.prevTileX = player.tileX
+	player.tileY = math.floor(roomHeight/2)
+	player.prevTileY = player.tileY
+end
+P.dungeonExit = P.tile:new{name = "dungeonExit"}
+function P.dungeonExit:onEnter()
+	mapx = player.regularMapLoc.x
+	mapy = player.regularMapLoc.y
+	room = mainMap[mapy][mapx].room
+	roomHeight = room.height
+	roomLength = room.length
+	player.tileX = 1
+	player.prevTileX = player.tileX
+	player.tileY = math.floor(roomHeight/2)
+	player.prevTileY = player.tileY
 end
 
 tiles[1] = P.invisibleTile
@@ -1960,5 +1995,7 @@ tiles[147] = P.brickTile
 tiles[148] = P.gunTile
 tiles[149] = P.toolTile
 tiles[150] = P.toolTaxTile
+tiles[151] = P.dungeonEnter
+tiles[152] = P.dungeonExit
 
 return tiles

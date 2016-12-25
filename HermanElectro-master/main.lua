@@ -267,7 +267,7 @@ function love.load()
 		floortile3 = love.graphics.newImage('GraphicsBrush/grass3.png')
 		grassfloortile = love.graphics.newImage('KenGraphics/grass.png')
 		space = love.graphics.newImage('GraphicsColor/space.png')
-
+		dungeonFloor = love.graphics.newImage('GraphicsEli/gold1.png')
 
 		floortiles = {}		
 		floortiles[5] = {love.graphics.newImage('GraphicsEli/blueLines1.png'),love.graphics.newImage('GraphicsEli/blueLines2.png'),love.graphics.newImage('GraphicsEli/blueLines3.png')}
@@ -397,7 +397,7 @@ function love.load()
 			prevx = (3-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10,
 			prevy = (10-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10,
 			width = 20, height = 20, speed = 250, luckTimer = 0,
-			character = characters[1]}
+			character = characters[1], regularMapLoc = {x = 0, y = 0}}
 	else
 		player.dead = false
 		player.tileX = 1
@@ -1360,6 +1360,12 @@ function love.draw()
 				end
 			end
 
+			if (room.floorTileOverride~=nil) then
+				if room.floorTileOverride=="dungeon" then
+					toDrawFloor = dungeonFloor
+				end
+			end
+
 
 			love.graphics.draw(toDrawFloor, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height,
 			0, scale*16/toDrawFloor:getWidth(), scale*16/toDrawFloor:getWidth())
@@ -1367,22 +1373,22 @@ function love.draw()
 	end
 	toDrawFloor = floortiles[floorIndex-1][1]
 
-	if mapx<#completedRooms[mapy] and ((completedRooms[mapy][mapx]>0 and mainMap[mapy][mapx+1]~=nil) or
+	if validSpace() and mapx<#completedRooms[mapy] and ((completedRooms[mapy][mapx]>0 and mainMap[mapy][mapx+1]~=nil) or
 	completedRooms[mapy][mapx+1]>0) then
 		love.graphics.draw(toDrawFloor, (roomLength+1)*floor.sprite:getWidth()*scale+wallSprite.width, (math.floor(roomHeight/2))*floor.sprite:getHeight()*scale+wallSprite.height, math.pi/2, scale, scale)
 		love.graphics.draw(toDrawFloor, (roomLength+1)*floor.sprite:getWidth()*scale+wallSprite.width, (math.floor(roomHeight/2)-1)*floor.sprite:getHeight()*scale+wallSprite.height, math.pi/2, scale, scale)	
 	end
-	if mapx>0 and ((completedRooms[mapy][mapx]>0 and mainMap[mapy][mapx-1]~=nil) or
+	if validSpace() and mapx>0 and ((completedRooms[mapy][mapx]>0 and mainMap[mapy][mapx-1]~=nil) or
 	completedRooms[mapy][mapx-1]>0) then
 		love.graphics.draw(toDrawFloor, (0)*floor.sprite:getWidth()*scale+wallSprite.width, (math.floor(roomHeight/2))*floor.sprite:getHeight()*scale+wallSprite.height, math.pi/2, scale, scale)
 		love.graphics.draw(toDrawFloor, (0)*floor.sprite:getWidth()*scale+wallSprite.width, (math.floor(roomHeight/2)-1)*floor.sprite:getHeight()*scale+wallSprite.height, math.pi/2, scale, scale)	
 	end
-	if mapy>0 and ((completedRooms[mapy][mapx]>0 and mainMap[mapy-1][mapx]~=nil) or
+	if validSpace() and mapy>0 and ((completedRooms[mapy][mapx]>0 and mainMap[mapy-1][mapx]~=nil) or
 	completedRooms[mapy-1][mapx]>0) then
 		love.graphics.draw(toDrawFloor, (math.floor(roomLength/2)-1)*floor.sprite:getWidth()*scale+wallSprite.width, (-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale*16/topwall:getWidth(), scale*16/topwall:getWidth())
 		love.graphics.draw(toDrawFloor, (math.floor(roomLength/2))*floor.sprite:getWidth()*scale+wallSprite.width, (-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale*16/topwall:getWidth(), scale*16/topwall:getWidth())		
 	end
-	if mapy<#completedRooms and ((completedRooms[mapy][mapx]>0 and mainMap[mapy+1][mapx]~=nil) or
+	if validSpace() and mapy<#completedRooms and ((completedRooms[mapy][mapx]>0 and mainMap[mapy+1][mapx]~=nil) or
 	completedRooms[mapy+1][mapx]>0) then
 		love.graphics.draw(toDrawFloor, (math.floor(roomLength/2)-1)*floor.sprite:getWidth()*scale+wallSprite.width, (roomHeight)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale*16/topwall:getWidth(), scale*16/topwall:getWidth())
 		love.graphics.draw(toDrawFloor, (math.floor(roomLength/2))*floor.sprite:getWidth()*scale+wallSprite.width, (roomHeight)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale*16/topwall:getWidth(), scale*16/topwall:getWidth())		
@@ -2082,6 +2088,10 @@ function enterMove()
 	end
 end
 
+function validSpace()
+	return mapy<=mapHeight and mapx<=mapHeight and mapy>0 and mapx>0
+end
+
 keyTimer = {base = .05, timeLeft = .05, suicideDelay = .5}
 function love.update(dt)
 	if gamePaused then
@@ -2102,7 +2112,7 @@ function love.update(dt)
 	end
 
 	--game timer
-	if started and completedRooms[mapy][mapx]~=1 then
+	if started and validSpace() and completedRooms[mapy][mapx]~=1 then
 		gameTime.timeLeft = gameTime.timeLeft-dt
 	end
 	if gameTime.timeLeft<=0 and not loadTutorial then

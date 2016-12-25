@@ -532,6 +532,11 @@ function P.generateMapStandard()
 		blacklist[#blacklist+1] = roomid
 		newmap[choice.x][choice.y] = {roomid = roomid, room = P.createRoom(roomid, arr), tint = {0,0,0}, dirEnter = arr[roomid].dirEnter, isFinal = false, isInitial = false}
 	end
+	--add dungeon room to floor
+	arr = P.floorInfo.rooms.dungeons
+	roomid = util.chooseRandomKey(arr, 'mapGen')
+	newmap[height+1][1] = {roomid = roomid, room = P.createRoom(roomid, arr), tint = {0,0,0}, dirEnter = arr[roomid].dirEnter, isFinal = false, isInitial = false}
+
 	--printMap(newmap)
 	return newmap
 end
@@ -729,6 +734,12 @@ function P.generateMapWeighted()
 		usedRooms[#usedRooms+1] = roomid
 		newmap[choice.y][choice.x] = {roomid = roomid, room = P.createRoom(roomid), tint = {0,0,0}, isFinal = false, isInitial = false}
 	end
+
+	--add dungeon room to floor
+	arr = P.floorInfo.rooms.dungeons
+	roomid = util.chooseRandomKey(arr, 'mapGen')
+	newmap[height+1][1] = {roomid = roomid, room = P.createRoom(roomid, arr), tint = {0,0,0}, dirEnter = arr[roomid].dirEnter, isFinal = false, isInitial = false, floorTileOverride = "dungeon"}
+
 	printMap(newmap)
 	return newmap
 end

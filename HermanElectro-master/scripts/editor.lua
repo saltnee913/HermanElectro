@@ -9,16 +9,19 @@ roomsDesigned = 0
 function P.draw()
 	barLength = 660
 	love.graphics.setColor(255,255,255)
-	for i = 1, 150 do
+	for i = 1, 200 do
 		if tiles[i]~=nil then
 			toDraw = tiles[i].sprite
 			addx = 0
-			addy = -width/50
+			addy = -width/25
 			if i>50 and i<=100 then
 				addx = -width
-				addy = 0
-			elseif i>100 then
+				addy = -width/50
+			elseif i>100 and i<=150 then
 				addx = -2*width
+				addy = 0
+			elseif i>150 and i<200 then
+				addx = -3*width
 				addy = width/50
 			end
 			--love.graphics.rectangle("fill", (i-1)*width/25, height-width/25, width/25, width/25)
@@ -227,8 +230,11 @@ function P.mousepressed(x, y, button, istouch)
 	end
 	--tileLocX = math.ceil((x-wallSprite.width)/(scale*floor.sprite:getWidth()))-getTranslation().x
 	--tileLocY = math.ceil((y-wallSprite.height)/(scale*floor.sprite:getHeight()))-getTranslation().y
-	if mouseY>height-3*width/50 then
+	if mouseY>height-4*width/50 then
 		editorAdd = math.floor(mouseX/(width/50))+1
+		if mouseY>height-3*width/50 then
+			editorAdd = editorAdd+50
+		end
 		if mouseY>height-2*width/50 then
 			editorAdd = editorAdd+50
 		end

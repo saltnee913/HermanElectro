@@ -59,8 +59,15 @@
 			{
 				
 			}
-		}
-	},
+		,
+		"dungeons":
+		{
+			"filePath": "RoomData/dungeons.json",
+			"requirements":
+			{
+				
+			}
+		}	},
 	"data":
 	{
 		"requireUnlocks": true,

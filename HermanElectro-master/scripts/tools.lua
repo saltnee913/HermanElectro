@@ -1812,6 +1812,18 @@ function P.wireExtender:useToolTile(tile, tileY, tileX)
 	room[tileY][tileX] = tiles.wire:new()
 end
 
+P.coin = P.superTool:new{name = "coin", image = love.graphics.newImage('Graphics/coin.png'), range = 1}
+function P.coin:usableOnTile(tile)
+	self.numHeld = self.numHeld-1
+	if tile:instanceof(tiles.toolTaxTile) then
+		return true
+	end
+	return false
+end
+function P.coin:useToolTile(tile)
+	tile:destroy()
+end
+
 P.numNormalTools = 7
 
 --tools not included in list: trap (identical to glue in purpose)
@@ -1893,5 +1905,6 @@ P[65] = P.laptop
 P[66] = P.donationCracker
 P[67] = P.wireExtender
 P[68] = P.lamp
+P[69] = P.coin
 
 return tools
