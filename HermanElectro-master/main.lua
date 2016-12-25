@@ -268,10 +268,13 @@ function love.load()
 		grassfloortile = love.graphics.newImage('KenGraphics/grass.png')
 
 
-		floortiles = {}
+		floortiles = {}		
+		floortiles[5] = {love.graphics.newImage('GraphicsEli/blueLines1.png'),love.graphics.newImage('GraphicsEli/blueLines2.png'),love.graphics.newImage('GraphicsEli/blueLines3.png')}
+		floortiles[4] = {love.graphics.newImage('GraphicsEli/blueFloorBack.png'),love.graphics.newImage('GraphicsEli/blueFloorBack2.png'),love.graphics.newImage('GraphicsEli/blueFloorBack3.png')}
 		floortiles[3] = {love.graphics.newImage('GraphicsBrush/purplefloor1.png'),love.graphics.newImage('GraphicsBrush/purplefloor2.png'),love.graphics.newImage('GraphicsBrush/purplefloor3.png')}
 		floortiles[2] = {love.graphics.newImage('GraphicsColor/greenfloor.png'),love.graphics.newImage('GraphicsColor/greenfloor2.png'),love.graphics.newImage('GraphicsColor/greenfloor3.png')}
-		floortiles[1] = {floortile,floortile2, floortile3}
+		floortiles[1] = {floortile,floortile2, floortile3}		
+		floortiles[6] = floortiles[4]
 
 
 		invisibleTile = love.graphics.newImage('Graphics/cavesfloor.png')
