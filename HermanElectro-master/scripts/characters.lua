@@ -237,7 +237,7 @@ function P.chell:onFailedMove(key)
 	end
 end
 function P.chell.specialLightTest(tileY,tileX)
-	--[[if tileX == 1 then
+	if tileX == 1 then
 		lightTest(tileY,roomLength)
 	end
 	if tileX == roomLength then
@@ -248,7 +248,7 @@ function P.chell.specialLightTest(tileY,tileX)
 	end
 	if tileY == roomHeight then
 		lightTest(1,tileX)
-	end]]
+	end
 end
 
 P.crate = P.character:new{name = "Carla", roomTrigger = false, description = "The Crate", isCrate = false, 
@@ -571,27 +571,50 @@ function P.ed:onKeyPressed(key)
 	return false
 end
 
-P[1] = P.herman
-P[2] = P.felix
-P[3] = P.most
-P[4] = P.erik
-P[5] = P.gabe
-P[6] = P.rammy
-P[7] = P.rick
-P[8] = P.frederick
-P[9] = P.battery
-P[10] = P.chell
-P[11] = P.giovanni
-P[12] = P.francisco
-P[13] = P.tim
-P[14] = P.orson
-P[15] = P.lenny
-P[16] = P.fish
-P[17] = P.monk
-P[18] = P.harriet
-P[19] = P.crate
-P[20] = P.paris
-P[21] = P.ed
+P.sparky = P.character:new{name = "Sparky", description = "The Dog", smallSprite = love.graphics.newImage('Graphics/pup.png'),
+sprite = love.graphics.newImage('Graphics/pup.png'), bigSprite = love.graphics.newImage('Graphics/pitbull.png'), scaryMode = false, scale = 5}
+function P.sparky:onCharLoad()
+	myShader:send("b_and_w", true)
+	myShader:send("player_range", 500)
+end
+function P.sparky:onKeyPressed(key)
+	if key == 'rshift' or key == 'lshift' or key == 'shift' then
+		self.scaryMode = not self.scaryMode
+		self:updateSprite()
+		return true
+	end
+	return false
+end
+function P.sparky:updateSprite()
+	if self.scaryMode then
+		self.sprite = self.bigSprite
+	else
+		self.sprite = self.smallSprite
+	end
+end
+
+P[#P+1] = P.herman
+P[#P+1] = P.felix
+P[#P+1] = P.most
+P[#P+1] = P.erik
+P[#P+1] = P.gabe
+P[#P+1] = P.rammy
+P[#P+1] = P.rick
+P[#P+1] = P.frederick
+P[#P+1] = P.battery
+P[#P+1] = P.chell
+P[#P+1] = P.giovanni
+P[#P+1] = P.francisco
+P[#P+1] = P.tim
+P[#P+1] = P.orson
+P[#P+1] = P.lenny
+P[#P+1] = P.fish
+P[#P+1] = P.monk
+P[#P+1] = P.harriet
+P[#P+1] = P.crate
+P[#P+1] = P.paris
+P[#P+1] = P.ed
+P[#P+1] = P.sparky
 
 P[#P+1] = P.random
 P[#P+1] = P.random2

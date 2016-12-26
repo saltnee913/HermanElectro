@@ -368,6 +368,7 @@ function love.load()
 		extern vec4 lamps[100];
 		extern number player_range = 300;
 		extern number bonus_range = 0;
+		extern bool b_and_w = false;
 
 		vec4 effect( vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords ){
 		  	vec4 pixel = Texel(texture, texture_coords );//This is the current pixel color
@@ -402,9 +403,16 @@ function love.load()
             if(totaltint_g>1) totaltint_g=1;
             if(totaltint_b>1) totaltint_b=1;
 
-            pixel.r = pixel.r*totaltint_r*(1-(floorTint_g+floorTint_b));
+    		pixel.r = pixel.r*totaltint_r*(1-(floorTint_g+floorTint_b));
             pixel.g = pixel.g*totaltint_g*(1-(floorTint_r+floorTint_b));
             pixel.b = pixel.b*totaltint_b*(1-(floorTint_r+floorTint_g));
+            
+            if (b_and_w) {
+        		float avg = (pixel.r+pixel.g+pixel.b)/3;
+        		pixel.r = avg;
+        		pixel.g = avg;
+        		pixel.b = avg;
+            }
 
 			return pixel;
 		}

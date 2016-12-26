@@ -20,6 +20,10 @@ scale = (width - 2*wallSprite.width)/(20.3 * 16)*5/6
 --speed same as player (250)
 P.animal = Object:new{frozen = false, conductive = false, pickedUp = false, flying = false, triggered = false, waitCounter = 0, dead = false, name = "animal", tileX, tileY, prevx, prevy, prevTileX, prevTileY, x, y, speed = 250, width = 16*scale, height = 16*scale, sprite = love.graphics.newImage('Graphics/pitbull.png'), deadSprite = love.graphics.newImage('Graphics/pitbulldead.png'), tilesOn = {}, oldTilesOn = {}}
 function P.animal:move(playerx, playery, room, isLit)
+	if player.character.name == "Sparky" and player.character.scaryMode == true then
+		self:afraidPrimaryMove(playerx, playery)
+		return
+	end
 	if self.dead or (not isLit and not self.triggered) or self.frozen then
 		return
 	end
@@ -68,7 +72,6 @@ function P.animal:primaryMove(playerx, playery)
 	end
 	return true
 end
-
 function P.animal:pushableCheck()
 	if not (self.prevTileY == self.tileY and self.prevTileX == self.tileX) then
 		for i = 1, #pushables do
@@ -83,6 +86,10 @@ function P.animal:pushableCheck()
 end
 
 function P.animal:secondaryMove(playerx, playery)
+	if player.character.name == "Sparky" and player.character.scaryMode == true then
+		self:afraidSecondaryMove(playerx, playery)
+		return
+	end
 	local diffx = math.abs(playerx - self.tileX)
 	local diffy = math.abs(playery - self.tileY)
 
@@ -154,55 +161,7 @@ function P.animal:willKillPlayer(player)
 end
 function P.animal:explode()
 end
-
-
-P.pitbull = P.animal:new{name = "pitbull"}
-function P.pitbull:willKillPlayer()
-	return player.tileX == self.tileX and player.tileY == self.tileY and not self.dead
-end
-
-P.pup = P.animal:new{name = "pup", sprite = love.graphics.newImage('NewGraphics/pupDesign.png'), deadSprite = love.graphics.newImage('Graphics/pupdead.png')}
-
-P.snail = P.animal:new{name = "snail", sprite = love.graphics.newImage('NewGraphics/snailDesign.png'), deadSprite = love.graphics.newImage('Graphics/pupdead.png')}
-function P.snail:onNullLeave()
-	return tiles.slime:new()
-end
-function P.snail:kill()
-	self.dead = true
-	self.sprite = self.deadSprite
-	unlocks = require('scripts.unlocks')
-	unlocks.unlockUnlockableRef(unlocks.conductiveSnailsUnlock)
-end
-
-P.conductiveSnail = P.snail:new{name = "conductiveSnail", sprite = love.graphics.newImage('NewGraphics/snailCDesign.png')}
-function P.conductiveSnail:onNullLeave()
-	return tiles.conductiveSlime:new()
-end
-function P.conductiveSnail:kill()
-	self.dead = true
-	self.sprite = self.deadSprite
-	if room[self.tileY] ~= nil and room[self.tileY][self.tileX] ~= nil and room[self.tileY][self.tileX]:instanceof(tiles.conductiveSlime) then
-		unlocks = require('scripts.unlocks')
-		unlocks.unlockUnlockableRef(unlocks.lennyUnlock)
-	end
-end
-
-P.glueSnail = P.snail:new{name = "glueSnail", sprite = love.graphics.newImage('Graphics/gluesnail.png')}
-function P.glueSnail:onNullLeave()
-	return tiles.glue:new()
-end
-function P.glueSnail:kill()
-	self.dead = true
-	self.sprite = self.deadSprite
-end
-
-P.bat = P.animal:new{flying = true, name = "bat", sprite = love.graphics.newImage('Graphics/bat.png'), deadSprite = love.graphics.newImage('Graphics/pupdead.png')}
-function P.bat:checkDeath()
-end
-P.bat.willKillPlayer = P.pitbull.willKillPlayer
-
-P.cat = P.animal:new{name = "cat", sprite = love.graphics.newImage('NewGraphics/catDesign.png'), deadSprite = love.graphics.newImage('Graphics/catdead.png')}
-function P.cat:move(playerx, playery, room, isLit)
+function P.animal:afraidPrimaryMove(playerx, playery, room, isLit)
 	local diffCatx = math.abs(playerx - self.tileX)
 	local diffCaty = math.abs(playery - self.tileY)
 
@@ -258,7 +217,7 @@ function P.cat:move(playerx, playery, room, isLit)
 		end
 	end
 end
-function P.cat:tryMove(diffx, diffy)
+function P.animal:tryMove(diffx, diffy)
 	self.tileX = self.tileX+diffx
 	self.tileY = self.tileY+diffy
 
@@ -274,7 +233,7 @@ function P.cat:tryMove(diffx, diffy)
 	end
 end
 
-function P.cat:secondaryMove(playerx, playery)
+function P.animal:afraidSecondaryMove(playerx, playery)
 	local diffx = math.abs(playerx - self.tileX)
 	local diffy = math.abs(playery - self.tileY)
 
@@ -307,6 +266,48 @@ function P.cat:secondaryMove(playerx, playery)
 
 	return true
 end
+
+
+P.pitbull = P.animal:new{name = "pitbull"}
+function P.pitbull:willKillPlayer()
+	return player.tileX == self.tileX and player.tileY == self.tileY and not self.dead
+end
+
+P.pup = P.animal:new{name = "pup", sprite = love.graphics.newImage('NewGraphics/pupDesign.png'), deadSprite = love.graphics.newImage('Graphics/pupdead.png')}
+
+P.snail = P.animal:new{name = "snail", sprite = love.graphics.newImage('NewGraphics/snailDesign.png'), deadSprite = love.graphics.newImage('Graphics/pupdead.png')}
+function P.snail:onNullLeave()
+	return tiles.slime:new()
+end
+function P.snail:kill()
+	self.dead = true
+	self.sprite = self.deadSprite
+	unlocks = require('scripts.unlocks')
+	unlocks.unlockUnlockableRef(unlocks.conductiveSnailsUnlock)
+end
+
+P.conductiveSnail = P.snail:new{name = "conductiveSnail", sprite = love.graphics.newImage('NewGraphics/snailCDesign.png')}
+function P.conductiveSnail:onNullLeave()
+	return tiles.conductiveSlime:new()
+end
+
+P.glueSnail = P.snail:new{name = "glueSnail", sprite = love.graphics.newImage('Graphics/gluesnail.png')}
+function P.glueSnail:onNullLeave()
+	return tiles.glue:new()
+end
+function P.glueSnail:kill()
+	self.dead = true
+	self.sprite = self.deadSprite
+end
+
+P.bat = P.animal:new{flying = true, name = "bat", sprite = love.graphics.newImage('Graphics/bat.png'), deadSprite = love.graphics.newImage('Graphics/pupdead.png')}
+function P.bat:checkDeath()
+end
+P.bat.willKillPlayer = P.pitbull.willKillPlayer
+
+P.cat = P.animal:new{name = "cat", sprite = love.graphics.newImage('NewGraphics/catDesign.png'), deadSprite = love.graphics.newImage('Graphics/catdead.png')}
+P.cat.move = P.animal.afraidPrimaryMove
+P.cat.secondaryMove = P.animal.afraidSecondaryMove
 
 P.bombBuddy = P.animal:new{name = "bombBuddy", sprite = love.graphics.newImage('Graphics/bombbuddy.png'), deadSprite = love.graphics.newImage('Graphics/catdead.png')}
 function P.bombBuddy:explode()
