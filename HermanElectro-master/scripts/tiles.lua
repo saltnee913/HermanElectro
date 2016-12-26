@@ -843,7 +843,7 @@ P.rotater.onLeaveAnimal = P.rotater.onLeave
 
 P.cornerRotater = P.rotater:new{name = "cornerRotater", dirSend = {1,1,0,0}, dirAccept = {1,1,0,0}, poweredSprite = love.graphics.newImage('Graphics/cornerRotater.png'), sprite = love.graphics.newImage('Graphics/cornerRotater.png')}
 
-P.concreteWall = P.wall:new{sawable = false, name = "concreteWall", sprite = love.graphics.newImage('GraphicsColor/concretewall2.png'), poweredSprite = love.graphics.newImage('Graphics3D/concretewall.png'), electrifiedPoweredSprite = love.graphics.newImage('Graphics/concretewallpowered.png'), electrifiedSprite = love.graphics.newImage('Graphics/concretewallelectrified.png'), destroyedSprite = love.graphics.newImage('Graphics/concretewallbroken.png'), sawable = false}
+P.concreteWall = P.wall:new{sawable = false, name = "concreteWall", sprite = love.graphics.newImage('GraphicsColor/concretewall3.png'), poweredSprite = love.graphics.newImage('GraphicsColor/concretewall3.png'), electrifiedPoweredSprite = love.graphics.newImage('Graphics/concretewallpowered.png'), electrifiedSprite = love.graphics.newImage('Graphics/concretewallelectrified.png'), destroyedSprite = love.graphics.newImage('Graphics/concretewallbroken.png'), sawable = false}
 function P.concreteWall:destroy()
 	self.blocksProjectiles = false
 	self.blocksVision = false
@@ -1827,9 +1827,16 @@ function P.dungeonEnter:onEnter()
 	room = mainMap[mapy][mapx].room
 	roomHeight = room.height
 	roomLength = room.length
-	player.tileX = 1
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]~=nil and room[i][j]:instanceof(tiles.dungeonExit) then
+				player.tileY = i
+				player.tileX = j
+				break
+			end
+		end
+	end
 	player.prevTileX = player.tileX
-	player.tileY = math.floor(roomHeight/2)
 	player.prevTileY = player.tileY
 end
 P.dungeonExit = P.tile:new{name = "dungeonExit"}
@@ -1839,10 +1846,15 @@ function P.dungeonExit:onEnter()
 	room = mainMap[mapy][mapx].room
 	roomHeight = room.height
 	roomLength = room.length
-	player.tileX = 1
-	player.prevTileX = player.tileX
-	player.tileY = math.floor(roomHeight/2)
-	player.prevTileY = player.tileY
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]~=nil and room[i][j]:instanceof(tiles.dungeonEnter) then
+				player.tileY = i
+				player.tileX = j
+				break
+			end
+		end
+	end
 end
 
 tiles[1] = P.invisibleTile

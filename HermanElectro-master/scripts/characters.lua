@@ -76,7 +76,9 @@ function P.character:onRoomCompletion()
 end
 function P.character:onFailedMove()
 end
-function P.character.specialLightTest(tileY,tileX)
+function P.character:specialLightTest(tileY,tileX)
+end
+function P.character:immediatePostMove()
 end
 
 P.herman = P.character:new{name = "Herman", description = "The Electrician", winUnlocks = {unlocks.reviveUnlock}, scale = 0.3}
@@ -383,13 +385,13 @@ function P.lenny:onFloorEnter()
 end
 function P.lenny:onKeyPressed(key)
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
-		slime = not slime
+		self.slime = not self.slime
 		return true
 	end
 	return false
 end
 function P.lenny:onTileLeave()
-	if slime then
+	if self.slime then
 		if room[player.prevTileY][player.prevTileX]==nil or
 			(room[player.prevTileY][player.prevTileX]:instanceof(tiles.wire) and room[player.prevTileY][player.prevTileX].destroyed) then
 			room[player.prevTileY][player.prevTileX]=tiles.conductiveSlime:new()
@@ -501,6 +503,51 @@ end
 
 P.harriet = P.character:new{name = "Harriet", description = "Herman in drag", sprite = love.graphics.newImage('Graphics/nadia.png')}
 
+P.paris = P.character:new{name = "Paris", description = "The Swordsman", sword = false, swordsprite = love.graphics.newImage('Graphics/parisswordout.png'), sprite = love.graphics.newImage('Graphics/paris.png'), noswordsprite = love.graphics.newImage('Graphics/paris.png')}
+function P.paris:onKeyPressed(key)
+	if key == 'rshift' or key == 'lshift' or key == 'shift' then
+		self.sword = not self.sword
+		self:updateSprite()
+		if self.sword then self:checkNextTile() end
+		return true
+	end
+	return false
+end
+function P.paris:updateSprite()
+	if self.sword then
+		self.sprite = self.swordsprite
+	else
+		self.sprite = self.noswordsprite
+	end
+end
+function P.paris:postMove()
+	if self.sword then self:checkNextTile() end
+end
+function P.paris:checkNextTile()
+	local checkx = player.tileX
+	local checky = player.tileY
+	if (player.prevTileX==player.tileX+1) then
+		checkx = player.tileX-1
+	elseif (player.prevTileX==player.tileX-1) then
+		checkx = player.tileX+1
+	elseif (player.prevTileY==player.tileY+1) then
+		checky = player.tileY-1
+	elseif (player.prevTileY==player.tileY-1) then
+		checky = player.tileY+1
+	end
+	if (checkx>0 and checkx<=roomLength and checky>0 and checky<=roomHeight) then
+		local tile = room[checky][checkx]
+		for i = 1, #animals do
+			if animals[i].tileY == checky and animals[i].tileX == checkx then
+				animals[i]:kill()
+			end
+		end
+		if tile~=nil and tile:instanceof(tiles.wall) and not tile:instanceof(tiles.concreteWall) and tile.blocksVision then
+			tile.blocksVision = false
+		end
+	end
+end
+
 P[1] = P.herman
 P[2] = P.felix
 P[3] = P.most
@@ -520,6 +567,7 @@ P[16] = P.fish
 P[17] = P.monk
 P[18] = P.harriet
 P[19] = P.crate
+P[20] = P.paris
 
 P[#P+1] = P.random
 P[#P+1] = P.random2

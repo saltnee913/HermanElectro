@@ -183,7 +183,7 @@ local function postTileAddCleanup(tempAdd, tileLocY, tileLocX)
 	end
 
 	if tiles[tempAdd]~=nil and tiles[tempAdd].animal~=nil then
-		local animalToSpawn = room[tileLocY][tileLocX].animal
+		local animalToSpawn = animalList[room[tileLocY][tileLocX].listIndex]:new()
 		if not animalToSpawn.dead then
 			animals[#animals+1] = animalToSpawn
 			animalToSpawn.y = (tileLocY-1)*floor.sprite:getWidth()*scale+wallSprite.height
