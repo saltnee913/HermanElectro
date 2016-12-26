@@ -1422,6 +1422,7 @@ function P.bucketOfWater:spreadWater(tileY, tileX)
 		end
 	end
 end
+
 P.teleporter = P.tool:new{name = "teleporter", baseRange = 0, image = love.graphics.newImage('Graphics/teleporter.png')}
 function P.teleporter:usableOnNothing()
 	return true
@@ -1823,6 +1824,29 @@ end
 function P.coin:useToolTile(tile)
 	tile:destroy()
 end
+
+P.emptyBucket = P.superTool:new{name = "emptyBucket", image = love.graphics.newImage('Graphics/bucket.png'), imageEmpty = love.graphics.newImage('Graphics/bucket.png'),
+imageFull = love.graphics.newImage('Graphics/bucketofwater.png'), full = false, baseRange = 1}
+function P.emptyBucket:usableOnTile(tile)
+	if self.full then return false end
+	if not self.full then return tile:instanceof(tiles.puddle) end
+end
+
+function P.emptyBucket:usableOnNothing()
+	return self.full
+end
+function P.emptyBucket:useToolTile(tile, tileY, tileX)
+	self.image = self.imageFull
+	self.full = true
+	room[tileY][tileX] = nil
+end
+function P.emptyBucket:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
+	self.full = false
+	self.image = self.imageEmpty
+	self:spreadWater(tileY, tileX)
+end
+P.emptyBucket.spreadWater = P.bucketOfWater.spreadWater
 
 P.numNormalTools = 7
 
