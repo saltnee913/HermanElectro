@@ -548,6 +548,29 @@ function P.paris:checkNextTile()
 	end
 end
 
+P.ed = P.character:new{name = "Ed", description = "The Dim Bulb", sprite = love.graphics.newImage('Graphics/ed.png'), lightLevel = 100}
+function P.ed:onCharLoad()
+	myShader:send("player_range", self.lightLevel)
+end
+function P.ed:postMove()
+	if self.lightLevel>25 then
+		self.lightLevel = self.lightLevel-2
+	end
+	myShader:send("player_range", self.lightLevel)
+end
+function P.ed:onKeyPressed(key)
+	if key == 'rshift' or key == 'lshift' or key == 'shift' then
+		if room[player.tileY][player.tileX]~=nil and room[player.tileY][player.tileX]:instanceof(tiles.powerSupply) and
+		not room[player.tileY][player.tileX]:instanceof(tiles.notGate) then
+			room[player.tileY][player.tileX]:destroy()
+			self.lightLevel = self.lightLevel+150
+			myShader:send("player_range", self.lightLevel)
+		end
+		return true
+	end
+	return false
+end
+
 P[1] = P.herman
 P[2] = P.felix
 P[3] = P.most
@@ -568,6 +591,7 @@ P[17] = P.monk
 P[18] = P.harriet
 P[19] = P.crate
 P[20] = P.paris
+P[21] = P.ed
 
 P[#P+1] = P.random
 P[#P+1] = P.random2

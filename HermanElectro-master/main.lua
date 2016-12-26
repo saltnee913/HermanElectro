@@ -2239,8 +2239,8 @@ function love.keypressed(key, unicode)
 				charNum = #charsToSelect
 			end
 			player.character = charsToSelect[charNum]
-			player.character:onBegin()
 			loadFirstLevel()
+			player.character:onBegin()
 		elseif key == "up" then
 			if selectedBox.y>0 then
 				selectedBox.y = selectedBox.y-1
@@ -2271,7 +2271,11 @@ function love.keypressed(key, unicode)
 	if not unlocksScreen.opened and not started then
 		if charSelect then return end
 		if key=="s" then
-			startGame()
+			if titlescreenCounter>0 then
+				titlescreenCounter = -1
+			else
+				startGame()
+			end
 			return
 		elseif key == "t" then
 			startTutorial()
