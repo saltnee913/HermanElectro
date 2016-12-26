@@ -231,6 +231,17 @@ function P.animal:tryMove(diffx, diffy)
 		self.tileX = self.prevTileX
 		self.tileY = self.prevTileY
 	end
+
+	local sameSpotCounter = 0
+	for i = 1, #animals do
+		if animals[i].tileX == self.tileX and animals[i].tileY == self.tileY then
+			sameSpotCounter = sameSpotCounter+1
+		end
+	end
+	if sameSpotCounter>1 then
+		self.tileX = self.prevTileX
+		self.tileY = self.prevTileY
+	end
 end
 
 function P.animal:afraidSecondaryMove(playerx, playery)
