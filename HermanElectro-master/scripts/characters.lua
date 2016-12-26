@@ -118,13 +118,46 @@ end
 
 local erikSprite = love.graphics.newImage('Graphics/beggar.png')
 P.erik = P.character:new{name = "Erik", description = "The Quick",
-  sprite = erikSprite, scale = scale*16/erikSprite:getWidth(), tint = {0.4,0.4,0.4}}
-
+  sprite = erikSprite, scale = scale*16/erikSprite:getWidth()}
 function P.erik:onCharLoad()
-	gameTime.timeLeft = 60
-	gameTime.roomTime = 10
+	gameTime.timeLeft = 120
+	gameTime.roomTime = 15
 	gameTime.levelTime = 0
-	map.floorOrder = {'RoomData/floor1_erik.json', 'RoomData/floor2_erik.json', 'RoomData/floor3_erik.json', 'RoomData/floor6.json'}
+	gameTime.goesDownInCompleted = true
+	--map.floorOrder = {'RoomData/floor1_erik.json', 'RoomData/floor2_erik.json', 'RoomData/floor3_erik.json', 'RoomData/floor6.json'}
+end
+function P.erik:onFailedMove(key)
+	if key=="w" then
+		if player.tileY==1 and (room[roomHeight][player.tileX]==nil or not room[roomHeight][player.tileX].blocksMovement) then
+			player.tileY = roomHeight
+		end
+	elseif key=="a" then
+		if player.tileX==1 and (room[player.tileY][roomLength]==nil or not room[player.tileY][roomLength].blocksMovement) then
+			player.tileX = roomLength
+		end
+	elseif key=="s" then
+		if player.tileY==roomHeight and (room[1][player.tileX]==nil or not room[1][player.tileX].blocksMovement) then
+			player.tileY = 1
+		end
+	elseif key=="d" then
+		if player.tileX==roomLength and (room[player.tileY][1]==nil or not room[player.tileY][1].blocksMovement) then
+			player.tileX = 1
+		end
+	end
+end
+function P.erik.specialLightTest(tileY,tileX)
+	if tileX == 1 then
+		lightTest(tileY,roomLength)
+	end
+	if tileX == roomLength then
+		lightTest(tileY,1)
+	end
+	if tileY == 1 then
+		lightTest(roomHeight,tileX)
+	end
+	if tileY == roomHeight then
+		lightTest(1,tileX)
+	end
 end
 
 P.gabe = P.character:new{name = "Gabe", description = "The Angel",
@@ -216,7 +249,7 @@ function P.nadia:onCharLoad()
 	player.safeFromAnimals = true
 end
 
-P.chell = P.character:new{name = "Chell", description = "New Carla", sprite = love.graphics.newImage('Graphics/carlaperson.png'), tall = true}
+P.chell = P.character:new{name = "Chell", description = "New Carla", sprite = love.graphics.newImage('Graphics/carlaperson.png'), tall = true, disabled = true}
 function P.chell:onFailedMove(key)
 	if key=="w" then
 		if player.tileY==1 and (room[roomHeight][player.tileX]==nil or not room[roomHeight][player.tileX].blocksMovement) then

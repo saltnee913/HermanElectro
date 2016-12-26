@@ -140,7 +140,7 @@ function love.load()
 
 
 	gamePaused = false
-	gameTime = {timeLeft = 260, toolTime = 0, roomTime = 15, levelTime = 200, donateTime = 20}
+	gameTime = {timeLeft = 260, toolTime = 0, roomTime = 15, levelTime = 200, donateTime = 20, goesDownInCompleted = false}
 
 	enteringSeed = false
 	seedOverride = nil
@@ -2164,7 +2164,7 @@ function love.update(dt)
 	end
 
 	--game timer
-	if started and validSpace() and completedRooms[mapy][mapx]~=1 then
+	if started and validSpace() and (completedRooms[mapy][mapx]~=1 or gameTime.goesDownInCompleted) then
 		gameTime.timeLeft = gameTime.timeLeft-dt
 	end
 	if gameTime.timeLeft<=0 and not loadTutorial then
