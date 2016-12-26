@@ -1815,13 +1815,13 @@ end
 
 P.coin = P.superTool:new{name = "coin", image = love.graphics.newImage('Graphics/coin.png'), range = 1}
 function P.coin:usableOnTile(tile)
-	self.numHeld = self.numHeld-1
-	if tile:instanceof(tiles.toolTaxTile) then
+	if tile:instanceof(tiles.toolTaxTile) and not tile.destroyed then
 		return true
 	end
 	return false
 end
 function P.coin:useToolTile(tile)
+	self.numHeld = self.numHeld-1
 	tile:destroy()
 end
 
