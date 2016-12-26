@@ -153,7 +153,7 @@ function P.conductiveTile:destroy()
 end
 
 P.powerSupply = P.tile:new{powered = false, dirSend = {1,1,1,1}, dirAccept = {1,1,1,1}, canBePowered = true, name = "powerSupply",
-  intensity = 0.6, range = 30,
+  intensity = 0.0, range = 30,
   sprite = love.graphics.newImage('GraphicsColor/powersupply2.png'), 
   destroyedSprite = love.graphics.newImage('GraphicsColor/powersupplydead2.png'), 
   poweredSprite = love.graphics.newImage('GraphicsColor/powersupply2.png')}
@@ -219,8 +219,8 @@ P.conductiveSpikes = P.spikes:new{name = "conductiveSpikes", sprite = love.graph
 
 P.button = P.tile:new{bricked = false, updatePowerOnEnter = true, justPressed = false, down = false, powered = false, dirSend = {1,1,1,1}, 
   dirAccept = {0,0,0,0}, canBePowered = true, name = "button", pressed = false, sprite = love.graphics.newImage('GraphicsColor/buttonoff.png'), 
-  poweredSprite = love.graphics.newImage('GraphicsEli/buttonOff2.png'), downSprite = love.graphics.newImage('GraphicsColor/buttonon.png'), 
-  brickedSprite = love.graphics.newImage('GraphicsEli/buttonBricked2.png'), upSprite = love.graphics.newImage('GraphicsColor/buttonoff.png'), timesPressed = 0}
+  poweredSprite = love.graphics.newImage('GraphicsEli/buttonOff2.png'), downSprite = love.graphics.newImage('Graphics/buttonpressed.png'), 
+  brickedSprite = love.graphics.newImage('GraphicsEli/buttonBricked2.png'), upSprite = love.graphics.newImage('Graphics/button.png'), timesPressed = 0}
 function P.button:resetState()
 	self.justPressed = false
 end

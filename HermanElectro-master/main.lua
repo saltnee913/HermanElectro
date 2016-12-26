@@ -246,6 +246,7 @@ function love.load()
 		green = love.graphics.newImage('Graphics/green.png')
 		gray = love.graphics.newImage('Graphics/gray.png')
 		toolWrapper = love.graphics.newImage('GraphicsEli/marble1.png')
+		titlescreenCounter = 5
 		--floortile = love.graphics.newImage('Graphics/floortile.png')
 		--floortile = love.graphics.newImage('Graphics/floortilemost.png')
 		--floortile = love.graphics.newImage('Graphics/floortilenew.png')
@@ -307,6 +308,7 @@ function love.load()
 		topwall = love.graphics.newImage('Graphics3D/topwall.png')
 		cornerwall = love.graphics.newImage('Graphics/toprightcorner.png')
 		startscreen = love.graphics.newImage('NewGraphics/startscreen3.png')
+		titlescreen = love.graphics.newImage('Graphics/titlescreen.png')
 		luckImage = love.graphics.newImage('Graphics/luck.png')
 
 		--music = love.audio.newSource('Audio/hermantheme.mp3')
@@ -1314,6 +1316,10 @@ function canBePowered(x,y,dir)
 end
 
 function love.draw()
+	if titlescreenCounter>0 then
+		love.graphics.draw(titlescreen, 0, 0, 0, width/titlescreen:getWidth(), height/titlescreen:getHeight())
+		return
+	end
 	myShader:send("shaderTriggered", shaderTriggered)
 	love.graphics.setBackgroundColor(0,0,0)
 	if started then
@@ -2122,6 +2128,9 @@ end
 
 keyTimer = {base = .05, timeLeft = .05, suicideDelay = .5}
 function love.update(dt)
+	if (titlescreenCounter>0) then
+		titlescreenCounter = titlescreenCounter-dt
+	end
 	if gamePaused then
 		return
 	end
