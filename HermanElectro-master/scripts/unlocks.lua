@@ -93,6 +93,7 @@ end
 --[[ideas:
 	unlock for standing on bombbuddy
 	unlock for destroying tiletaxtile
+	use Ed's ability on a lamp
 ]]
 
 P.unlock = Object:new{name = 'generic', unlocked = false, sprite = tiles.fog.sprite}

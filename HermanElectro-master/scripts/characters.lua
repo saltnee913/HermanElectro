@@ -216,7 +216,7 @@ function P.nadia:onCharLoad()
 	player.safeFromAnimals = true
 end
 
-P.chell = P.character:new{name = "Chell", description = "New Carla", sprite = love.graphics.newImage('Graphics/carlaperson.png')}
+P.chell = P.character:new{name = "Chell", description = "New Carla", sprite = love.graphics.newImage('Graphics/carlaperson.png'), tall = true}
 function P.chell:onFailedMove(key)
 	if key=="w" then
 		if player.tileY==1 and (room[roomHeight][player.tileX]==nil or not room[roomHeight][player.tileX].blocksMovement) then
@@ -237,7 +237,7 @@ function P.chell:onFailedMove(key)
 	end
 end
 function P.chell.specialLightTest(tileY,tileX)
-	if tileX == 1 then
+	--[[if tileX == 1 then
 		lightTest(tileY,roomLength)
 	end
 	if tileX == roomLength then
@@ -248,7 +248,7 @@ function P.chell.specialLightTest(tileY,tileX)
 	end
 	if tileY == roomHeight then
 		lightTest(1,tileX)
-	end
+	end]]
 end
 
 P.crate = P.character:new{name = "Carla", roomTrigger = false, description = "The Crate", isCrate = false, 

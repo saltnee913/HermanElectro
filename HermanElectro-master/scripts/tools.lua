@@ -226,7 +226,7 @@ function P.tool:getToolableTiles()
 							usableTiles[dir][#(usableTiles[dir])+1] = tileToCheck
 						end
 					end
-					if room[tileToCheck.y][tileToCheck.x] ~= nil and room[tileToCheck.y][tileToCheck.x].blocksProjectiles then
+					if room[tileToCheck.y][tileToCheck.x] ~= nil and room[tileToCheck.y][tileToCheck.x].blocksProjectiles and not player.character.tall then
 						break
 					end
 				end
@@ -312,7 +312,7 @@ function P.tool:getToolableAnimals()
 			for dist = 1, closestAnimals[dir].dist do
 				if room[player.tileY + offset.y*dist] ~= nil then
 					local tile = room[player.tileY + offset.y*dist][player.tileX + offset.x*dist]
-					if tile~=nil and tile.blocksProjectiles then
+					if tile~=nil and tile.blocksProjectiles  and not player.character.tall then
 						isBlocked = true
 						break
 					end
@@ -390,7 +390,7 @@ function P.tool:getToolablePushables()
 			for dist = 1, closestPushables[dir].dist do
 				if room[player.tileY + offset.y*dist] ~= nil then
 					local tile = room[player.tileY + offset.y*dist][player.tileX + offset.x*dist]
-					if tile~=nil and tile.blocksProjectiles then
+					if tile~=nil and tile.blocksProjectiles  and not player.character.tall then
 						isBlocked = true
 						break
 					end
