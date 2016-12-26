@@ -227,6 +227,7 @@ function love.load()
 	forcePowerUpdateNext = false
 
 	if not loadedOnce then
+		love.graphics.setBackgroundColor(0,0,0)
 		floorIndex = -1
 		--started = false
 		shaderTriggered = true
@@ -1316,12 +1317,18 @@ function canBePowered(x,y,dir)
 end
 
 function love.draw()
-	if titlescreenCounter>0 then
-		love.graphics.draw(titlescreen, 0, 0, 0, width/titlescreen:getWidth(), height/titlescreen:getHeight())
-		return
-	end
 	myShader:send("shaderTriggered", shaderTriggered)
 	love.graphics.setBackgroundColor(0,0,0)
+	if titlescreenCounter>0 then
+		local sHeight = titlescreen:getHeight()
+		local sWidth = titlescreen:getWidth()
+		if sHeight/sWidth>height/width then
+			love.graphics.draw(titlescreen, width/2-(titlescreen:getHeight()/height)*sWidth/2, 0, 0, height/titlescreen:getHeight(), height/titlescreen:getHeight())
+		else
+			love.graphics.draw(titlescreen, 0, height/2-(width/titlescreen:getWidth())*sHeight/2, 0, width/titlescreen:getWidth(), width/titlescreen:getWidth())
+		end
+		return
+	end
 	if started then
 		--love.graphics.draw(space, 0, 0, 0, width/space:getWidth(), height/space:getHeight())
 	end
