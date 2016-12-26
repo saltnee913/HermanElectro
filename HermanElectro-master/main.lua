@@ -1323,7 +1323,7 @@ function love.draw()
 		local sHeight = titlescreen:getHeight()
 		local sWidth = titlescreen:getWidth()
 		if sHeight/sWidth>height/width then
-			love.graphics.draw(titlescreen, width/2-(titlescreen:getHeight()/height)*sWidth/2, 0, 0, height/titlescreen:getHeight(), height/titlescreen:getHeight())
+			love.graphics.draw(titlescreen, width/2-(height/titlescreen:getHeight())*sWidth/2, 0, 0, height/titlescreen:getHeight(), height/titlescreen:getHeight())
 		else
 			love.graphics.draw(titlescreen, 0, height/2-(width/titlescreen:getWidth())*sHeight/2, 0, width/titlescreen:getWidth(), width/titlescreen:getWidth())
 		end
