@@ -1926,9 +1926,9 @@ P[62] = P.portalPlacer
 P[63] = P.suicideKing
 P[64] = P.screwdriver
 P[65] = P.laptop
-P[66] = P.donationCracker
-P[67] = P.wireExtender
-P[68] = P.lamp
-P[69] = P.coin
+P[66] = P.wireExtender
+P[67] = P.lamp
+P[68] = P.coin
+P[69] = P.knife
 
 return tools

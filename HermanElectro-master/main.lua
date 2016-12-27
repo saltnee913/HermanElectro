@@ -91,7 +91,7 @@ function love.load()
 	ls[3][1] = {0,0,0,0,0,0,1}
 	ls[3][2] = {0,0,0,0,0,1,0}
 	ls[3][3] = {1,1,0,0,0,0,0}
-	 ls[4] = {}sas
+	 ls[4] = {}
 	ls[4][1] = {0,1,0,0,0,1,0}
 	ls[4][2] = {0,1,2,0,0,0,0}
 	ls[4][3] = {0,1,1,1,0,0,0}
@@ -225,7 +225,68 @@ function love.load()
 	love.graphics.setColor(255,255,255)
 	love.graphics.setBackgroundColor(255,255,255)
 	forcePowerUpdateNext = false
+	myShader = love.graphics.newShader[[
+		extern bool shaderTriggered;
+		extern number tint_r;
+		extern number tint_g;
+		extern number tint_b;
+		extern number floorTint_r;
+		extern number floorTint_g;
+		extern number floorTint_b;
+		extern number player_x;
+		extern number player_y;
+		extern vec4 lamps[100];
+		extern number player_range = 300;
+		extern number bonus_range = 0;
+		extern bool b_and_w = false;
 
+		vec4 effect( vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords ){
+		  	vec4 pixel = Texel(texture, texture_coords );//This is the current pixel color
+		  	if (!shaderTriggered) return pixel;
+			number xdist = player_x-screen_coords[0];
+			number ydist = player_y-screen_coords[1];
+			number playerDist = sqrt(xdist*xdist+ydist*ydist)/(player_range+bonus_range);
+			if (playerDist<2)
+				playerDist = 1+playerDist*playerDist/4;
+			if (playerDist<0)
+			  	playerDist = 1;
+			number divVal = 100000;
+			if (playerDist<divVal)
+			  	divVal = playerDist;
+			number totaltint_r = tint_r/divVal;
+			number totaltint_g = tint_g/divVal;
+			number totaltint_b = tint_b/divVal;
+
+			//lamps
+			for (int i=0;i<10;i=i+1) {
+				if (lamps[i][0]>=0) {
+					number lampxdist = lamps[i][0]-screen_coords[0];
+					number lampydist = lamps[i][1]-screen_coords[1];
+					number totalLampDist = sqrt(lampxdist*lampxdist+lampydist*lampydist)/lamps[i][3];
+					totaltint_r = totaltint_r+lamps[i][2]/totalLampDist;
+					totaltint_g = totaltint_g+lamps[i][2]/totalLampDist;
+					totaltint_b = totaltint_b+lamps[i][2]/totalLampDist;
+				}
+            }
+
+            if(totaltint_r>1) totaltint_r=1;
+            if(totaltint_g>1) totaltint_g=1;
+            if(totaltint_b>1) totaltint_b=1;
+
+    		pixel.r = pixel.r*totaltint_r*(1-(floorTint_g+floorTint_b));
+            pixel.g = pixel.g*totaltint_g*(1-(floorTint_r+floorTint_b));
+            pixel.b = pixel.b*totaltint_b*(1-(floorTint_r+floorTint_g));
+            
+            if (b_and_w) {
+        		float avg = (pixel.r+pixel.g+pixel.b)/3;
+        		pixel.r = avg;
+        		pixel.g = avg;
+        		pixel.b = avg;
+            }
+
+			return pixel;
+		}
+  	]]
 	if not loadedOnce then
 		love.graphics.setBackgroundColor(0,0,0)
 		floorIndex = -1
@@ -247,7 +308,7 @@ function love.load()
 		green = love.graphics.newImage('Graphics/green.png')
 		gray = love.graphics.newImage('Graphics/gray.png')
 		toolWrapper = love.graphics.newImage('GraphicsEli/marble1.png')
-		titlescreenCounter = 5
+		titlescreenCounter = 0
 		--floortile = love.graphics.newImage('Graphics/floortile.png')
 		--floortile = love.graphics.newImage('Graphics/floortilemost.png')
 		--floortile = love.graphics.newImage('Graphics/floortilenew.png')
@@ -355,70 +416,6 @@ function love.load()
 	scale = (width - 2*wallSprite.width)/(20.3 * 16)*5/6
 	floor = tiles.tile
 
-	myShader = love.graphics.newShader[[
-		extern bool shaderTriggered;
-		extern number tint_r;
-		extern number tint_g;
-		extern number tint_b;
-		extern number floorTint_r;
-		extern number floorTint_g;
-		extern number floorTint_b;
-		extern number player_x;
-		extern number player_y;
-		extern vec4 lamps[100];
-		extern number player_range = 300;
-		extern number bonus_range = 0;
-		extern bool b_and_w = false;
-
-		vec4 effect( vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords ){
-		  	vec4 pixel = Texel(texture, texture_coords );//This is the current pixel color
-		  	if (!shaderTriggered) return pixel;
-			number xdist = player_x-screen_coords[0];
-			number ydist = player_y-screen_coords[1];
-			number playerDist = sqrt(xdist*xdist+ydist*ydist)/(player_range+bonus_range);
-			if (playerDist<2)
-				playerDist = 1+playerDist*playerDist/4;
-			if (playerDist<0)
-			  	playerDist = 1;
-			number divVal = 100000;
-			if (playerDist<divVal)
-			  	divVal = playerDist;
-			number totaltint_r = tint_r/divVal;
-			number totaltint_g = tint_g/divVal;
-			number totaltint_b = tint_b/divVal;
-
-			//lamps
-			for (int i=0;i<10;i=i+1) {
-				if (lamps[i][0]>=0) {
-					number lampxdist = lamps[i][0]-screen_coords[0];
-					number lampydist = lamps[i][1]-screen_coords[1];
-					number totalLampDist = sqrt(lampxdist*lampxdist+lampydist*lampydist)/lamps[i][3];
-					totaltint_r = totaltint_r+lamps[i][2]/totalLampDist;
-					totaltint_g = totaltint_g+lamps[i][2]/totalLampDist;
-					totaltint_b = totaltint_b+lamps[i][2]/totalLampDist;
-				}
-            }
-
-            if(totaltint_r>1) totaltint_r=1;
-            if(totaltint_g>1) totaltint_g=1;
-            if(totaltint_b>1) totaltint_b=1;
-
-    		pixel.r = pixel.r*totaltint_r*(1-(floorTint_g+floorTint_b));
-            pixel.g = pixel.g*totaltint_g*(1-(floorTint_r+floorTint_b));
-            pixel.b = pixel.b*totaltint_b*(1-(floorTint_r+floorTint_g));
-            
-            if (b_and_w) {
-        		float avg = (pixel.r+pixel.g+pixel.b)/3;
-        		pixel.r = avg;
-        		pixel.g = avg;
-        		pixel.b = avg;
-            }
-
-			return pixel;
-		}
-
-
-  	]]
 
 	if player == nil then
 		player = { dead = false, safeFromAnimals = false, bonusRange = 0, active = true, flying = false, waitCounter = 0, tileX = 1, tileY = 6, x = (1-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10, 
@@ -444,7 +441,9 @@ function love.load()
 	function player:getTileLoc()
 		return {x = self.x/(floor.sprite:getWidth()*scale), y = self.y/(floor.sprite:getWidth()*scale)}
 	end
-	--loadOpeningWorld()
+	loadRandoms()
+	loadEndLevel(map.floorOrder[7])
+	loadOpeningWorld()
 end
 
 function playMusic(index)
@@ -538,6 +537,7 @@ function loadOpeningWorld()
 	player.prevTileY = player.tileY
 	updateLight()
 	started = true
+	player.character:onBegin()
 end
 
 function startTutorial()
@@ -599,6 +599,9 @@ function loadLevel(floorPath)
 			end
 		end
 	end
+
+	regularMap = mainMap
+
 	for i = 0, mapHeight do
 		visibleMap[i] = {}
 		for j = 0, mapHeight do
@@ -618,6 +621,65 @@ function loadLevel(floorPath)
 		completedRooms[i] = {}
 		for j=1, mapHeight do
 			if mainMap[i][j]==nil then
+				completedRooms[i][j]=-1
+			else
+				completedRooms[i][j]=0
+			end
+		end
+	end
+	roomHeight = room.height
+	roomLength = room.length
+	if floorIndex>=-1 then
+		shaderTriggered = true
+	end
+end
+
+function loadEndLevel(floorPath)
+	animals = {}
+	pushables = {}
+	map.loadFloor(floorPath)
+	exitMap = map.generateMap()
+	mapHeight = exitMap.height
+	mapx = exitMap.initialX
+	mapy = exitMap.initialY
+	visibleMap = {}
+	for i = 1, mapHeight do
+		for j = 1, mapHeight do
+			if exitMap[i][j]~=nil then
+				for i2 = 1, exitMap[i][j].room.height do
+					for j2 = 1, exitMap[i][j].room.length do
+						if exitMap[i][j].room[i2][j2]~=nil and exitMap[i][j].room[i2][j2].name == tiles.boxTile.name then
+							local rand = util.random('mapGen')
+							if rand<donations/100 or player.character.name==characters.tim.name then
+								exitMap[i][j].room[i2][j2] = tiles.giftBoxTile:new()
+							end
+						end
+					end
+				end
+			end
+		end
+	end
+
+
+	for i = 0, mapHeight do
+		visibleMap[i] = {}
+		for j = 0, mapHeight do
+			visibleMap[i][j] = 0
+		end
+	end
+
+	visibleMap[mapy][mapx] = 1
+	room = exitMap[mapy][mapx].room
+	prevRoom = room
+	litTiles = {}
+	for i = 1, roomHeight do
+		litTiles[i] = {}
+	end
+	completedRooms = {}
+	for i=0, mapHeight do
+		completedRooms[i] = {}
+		for j=1, mapHeight do
+			if exitMap[i][j]==nil then
 				completedRooms[i][j]=-1
 			else
 				completedRooms[i][j]=0
@@ -1419,19 +1481,22 @@ function love.draw()
 			0, scale*16/toDrawFloor:getWidth(), scale*16/toDrawFloor:getWidth())
 		end
 	end
-	toDrawFloor = floortiles[floorIndex-1][1]
+	if floorIndex>=1 then
+		toDrawFloor = floortiles[floorIndex-1][1]
+	end
 
 	if validSpace() and mapx<#completedRooms[mapy] and ((completedRooms[mapy][mapx]>0 and mainMap[mapy][mapx+1]~=nil) or
 	completedRooms[mapy][mapx+1]>0) then
+	e
 		love.graphics.draw(toDrawFloor, (roomLength+1)*floor.sprite:getWidth()*scale+wallSprite.width, (math.floor(roomHeight/2))*floor.sprite:getHeight()*scale+wallSprite.height, math.pi/2, scale, scale)
 		love.graphics.draw(toDrawFloor, (roomLength+1)*floor.sprite:getWidth()*scale+wallSprite.width, (math.floor(roomHeight/2)-1)*floor.sprite:getHeight()*scale+wallSprite.height, math.pi/2, scale, scale)	
 	end
-	if validSpace() and mapx>0 and ((completedRooms[mapy][mapx]>0 and mainMap[mapy][mapx-1]~=nil) or
+	if validSpace() and mapx>1 and ((completedRooms[mapy][mapx]>0 and mainMap[mapy][mapx-1]~=nil) or
 	completedRooms[mapy][mapx-1]>0) then
 		love.graphics.draw(toDrawFloor, (0)*floor.sprite:getWidth()*scale+wallSprite.width, (math.floor(roomHeight/2))*floor.sprite:getHeight()*scale+wallSprite.height, math.pi/2, scale, scale)
 		love.graphics.draw(toDrawFloor, (0)*floor.sprite:getWidth()*scale+wallSprite.width, (math.floor(roomHeight/2)-1)*floor.sprite:getHeight()*scale+wallSprite.height, math.pi/2, scale, scale)	
 	end
-	if validSpace() and mapy>0 and ((completedRooms[mapy][mapx]>0 and mainMap[mapy-1][mapx]~=nil) or
+	if validSpace() and mapy>1 and ((completedRooms[mapy][mapx]>0 and mainMap[mapy-1][mapx]~=nil) or
 	completedRooms[mapy-1][mapx]>0) then
 		love.graphics.draw(toDrawFloor, (math.floor(roomLength/2)-1)*floor.sprite:getWidth()*scale+wallSprite.width, (-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale*16/topwall:getWidth(), scale*16/topwall:getWidth())
 		love.graphics.draw(toDrawFloor, (math.floor(roomLength/2))*floor.sprite:getWidth()*scale+wallSprite.width, (-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale*16/topwall:getWidth(), scale*16/topwall:getWidth())		
@@ -2337,13 +2402,7 @@ function love.keypressed(key, unicode)
 		end
 		gameTime.timeLeft = gameTime.timeLeft+20000
 	end
-	--[[if key=='t' then
-		if toolMode == 1 then
-			toolMode = 2
-		else
-			toolMode = 1
-		end
-	end]]
+
 
 	--k ability: open doors with k on supertools
 	--[[if key=="k" then

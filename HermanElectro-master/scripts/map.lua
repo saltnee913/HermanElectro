@@ -8,7 +8,7 @@ local P = {}
 map = P
 
 --Temporary variable, we have to do this a better way later
-P.defaultFloorOrder = {'RoomData/floor1.json', 'RoomData/floor2.json', 'RoomData/floor3.json', 'RoomData/floor4.json', 'RoomData/floor5.json', 'RoomData/floor6.json'}
+P.defaultFloorOrder = {'RoomData/floor1.json', 'RoomData/floor2.json', 'RoomData/floor3.json', 'RoomData/floor4.json', 'RoomData/floor5.json', 'RoomData/floor6.json', 'RoomData/exitDungeonsMap.json'}
 P.floorOrder = P.defaultFloorOrder
 
 local MapInfo = Object:new{floor = 1, height = 0, numRooms = 0}
@@ -77,6 +77,19 @@ function writeToolsUsed()
 		end
 	end
 	util.writeJSON(P.itemsNeededFile, solutionArray)
+end
+
+function P.loadFloorExit(inFloorFile)
+	if mainMap ~= nil and mainMap.cheated ~= true then
+		writeToolsUsed()
+	end
+	local floorData = util.readJSON(inFloorFile)
+	P.floorInfo = {rooms = {}, roomsArray = {}}
+	for k, v in pairs(floorData.data) do
+		P.floorInfo[k] = v
+	end
+	theRooms = util.readJSON(floorData["loadRooms"]["rooms"]["filePath"])
+	P.floorInfo.roomList = theRooms["rooms"]
 end
 
 function P.loadFloor(inFloorFile)
@@ -887,7 +900,10 @@ function P.generateMapFromJSON()
 	if map.floorInfo.playerRange == nil then
 		map.floorInfo.playerRange = 200
 	end
-
+    myShader:send("floorTint_r", map.floorInfo.tint[1])
+    myShader:send("floorTint_g", map.floorInfo.tint[2])
+    myShader:send("floorTint_b", map.floorInfo.tint[3])
+    myShader:send("player_range", map.floorInfo.playerRange)
 	newmap[0] = {}
 	printMap(newmap)
 	return newmap

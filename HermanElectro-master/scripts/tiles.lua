@@ -1857,6 +1857,38 @@ function P.dungeonExit:onEnter()
 	end
 end
 
+P.endDungeonEnter = P.tile:new{name = "endDungeonEnter"}
+function P.endDungeonEnter:onEnter()
+	player.regularMapLoc = {x = mapx, y = mapy}
+	regularMap = mainMap
+	mainMap = exitMap
+	mapHeight = 3
+	mapx = 1
+	mapy = 1
+	room = mainMap[mapy][mapx].room
+	roomHeight = room.height
+	roomLength = room.length
+end
+
+P.endDungeonExit = P.tile:new{name = "endDungeonExit"}
+function P.endDungeonExit:onEnter()
+	mapx = player.regularMapLoc.x
+	mapy = player.regularMapLoc.y
+	mainMap = regularMap
+	room = mainMap[mapy][mapx].room
+	roomHeight = room.height
+	roomLength = room.length
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]~=nil and room[i][j]:instanceof(tiles.dungeonEnter) then
+				player.tileY = i
+				player.tileX = j
+				break
+			end
+		end
+	end
+end
+
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
 tiles[3] = P.powerSupply
@@ -2009,5 +2041,7 @@ tiles[149] = P.toolTile
 tiles[150] = P.toolTaxTile
 tiles[151] = P.dungeonEnter
 tiles[152] = P.dungeonExit
+tiles[153] = P.endDungeonEnter
+tiles[154] = P.endDungeonExit
 
 return tiles

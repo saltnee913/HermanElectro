@@ -85,6 +85,7 @@ P.herman = P.character:new{name = "Herman", description = "The Electrician", win
 function P.herman:onCharLoad()
 	if loadTutorial then return end
 	tools.giveToolsByReference({tools.revive})
+	myShader:send("player_range", 600)
 end
 
 P.felix = P.character:new{name = "Felix", description = "The Sharpshooter", winUnlocks = {unlocks.missileUnlock}, speedUnlocks = {unlocks.superGunUnlock}, sprite = love.graphics.newImage('Graphics/felix.png'), startingTools = {0,0,0,0,0,0,1}}
@@ -604,13 +605,13 @@ function P.ed:onKeyPressed(key)
 	return false
 end
 
-P.sparky = P.character:new{name = "Sparky", description = "The Dog", smallSprite = love.graphics.newImage('Graphics/pup.png'),
+P.leonard = P.character:new{name = "Leonard", description = "The Lion", smallSprite = love.graphics.newImage('Graphics/pup.png'),
 sprite = love.graphics.newImage('Graphics/pup.png'), bigSprite = love.graphics.newImage('Graphics/pitbull.png'), scaryMode = false, scale = 5}
-function P.sparky:onCharLoad()
+function P.leonard:onCharLoad()
 	myShader:send("b_and_w", true)
 	myShader:send("player_range", 500)
 end
-function P.sparky:onKeyPressed(key)
+function P.leonard:onKeyPressed(key)
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
 		self.scaryMode = not self.scaryMode
 		self:updateSprite()
@@ -618,7 +619,7 @@ function P.sparky:onKeyPressed(key)
 	end
 	return false
 end
-function P.sparky:updateSprite()
+function P.leonard:updateSprite()
 	if self.scaryMode then
 		self.sprite = self.bigSprite
 	else
@@ -647,7 +648,7 @@ P[#P+1] = P.harriet
 P[#P+1] = P.crate
 P[#P+1] = P.paris
 P[#P+1] = P.ed
-P[#P+1] = P.sparky
+P[#P+1] = P.leonard
 
 P[#P+1] = P.random
 P[#P+1] = P.random2

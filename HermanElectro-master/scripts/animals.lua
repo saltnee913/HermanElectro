@@ -20,7 +20,7 @@ scale = (width - 2*wallSprite.width)/(20.3 * 16)*5/6
 --speed same as player (250)
 P.animal = Object:new{frozen = false, conductive = false, pickedUp = false, flying = false, triggered = false, waitCounter = 0, dead = false, name = "animal", tileX, tileY, prevx, prevy, prevTileX, prevTileY, x, y, speed = 250, width = 16*scale, height = 16*scale, sprite = love.graphics.newImage('Graphics/pitbull.png'), deadSprite = love.graphics.newImage('Graphics/pitbulldead.png'), tilesOn = {}, oldTilesOn = {}}
 function P.animal:move(playerx, playery, room, isLit)
-	if player.character.name == "Sparky" and player.character.scaryMode == true then
+	if player.character.name == "Leonard" and player.character.scaryMode == true then
 		self:afraidPrimaryMove(playerx, playery)
 		return
 	end
@@ -86,7 +86,7 @@ function P.animal:pushableCheck()
 end
 
 function P.animal:secondaryMove(playerx, playery)
-	if player.character.name == "Sparky" and player.character.scaryMode == true then
+	if player.character.name == "Leonard" and player.character.scaryMode == true then
 		self:afraidSecondaryMove(playerx, playery)
 		return
 	end
@@ -300,6 +300,14 @@ end
 P.conductiveSnail = P.snail:new{name = "conductiveSnail", sprite = love.graphics.newImage('NewGraphics/snailCDesign.png')}
 function P.conductiveSnail:onNullLeave()
 	return tiles.conductiveSlime:new()
+end
+function P.conductiveSnail:kill()
+	self.dead = true
+	self.sprite = self.deadSprite
+	if room[self.tileY] ~= nil and room[self.tileY][self.tileX] ~= nil and room[self.tileY][self.tileX]:instanceof(tiles.conductiveSlime) then
+		unlocks = require('scripts.unlocks')
+		unlocks.unlockUnlockableRef(unlocks.lennyUnlock)
+	end
 end
 
 P.glueSnail = P.snail:new{name = "glueSnail", sprite = love.graphics.newImage('Graphics/gluesnail.png')}
