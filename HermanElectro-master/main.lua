@@ -626,7 +626,7 @@ end
 function startDebug()
 	loadRandoms()
 	loadTutorial = false
-	map.floorOrder = {'RoomData/debugFloor.json'}
+	map.floorOrder = {'RoomData/debugFloor.json', 'RoomData/exitDungeonsMap.json'}
 	love.load()
 	tools.resetTools()
 	charSelect = true
