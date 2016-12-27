@@ -1812,6 +1812,8 @@ function P.toolTaxTile:updateSprite()
 		self.overlay = P.spongeTile
 	elseif self.tool == tools.waterBottle then
 		self.overlay = P.waterBottleTile
+	elseif self.tool == tools.brick then
+		self.overlay = P.brickTile
 	end
 end
 function P.toolTaxTile:onEnter()
