@@ -84,7 +84,7 @@ function P.setRoomSetValues(fi)
 	if fi==1 then
 		inFloorFile = P.floorOrder[#P.floorOrder]
 	else
-		inFloorFile = P.floorOrder[fi-1]
+		inFloorFile = P.floorOrder[fi]
 	end
 	local floorData = util.readJSON(inFloorFile)
 	P.floorInfo = {rooms = {}, roomsArray = {}}
