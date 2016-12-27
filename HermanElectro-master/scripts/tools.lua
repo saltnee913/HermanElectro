@@ -1681,11 +1681,8 @@ function P.superSnowball:useToolAnimal(animal)
 	animal.frozen = true
 end
 
-<<<<<<< HEAD
-P.snowballGlobal = P.snowball:new{name = "snowballGlobal", image = love.graphics.newImage('Graphics/snowballGlobal.png'), baseRange = 0, quality = 2}
-=======
-P.snowballGlobal = P.snowball:new{name = "snowballGlobal", image = love.graphics.newImage('Graphics/snowballglobal.png'), baseRange = 0}
->>>>>>> ed7eb4a955222b8f23bd34e9101feb8e176981bd
+P.snowballGlobal = P.snowball:new{name = "snowballGlobal", image = love.graphics.newImage('Graphics/snowballglobal.png'), baseRange = 0, quality = 2}
+
 function P.snowballGlobal:usableOnNothing()
 	return true
 end
