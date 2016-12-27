@@ -911,7 +911,12 @@ function P.tunnel:onEnter(player)
 	self.toolsEntered = self.toolsEntered+1
 	--donations = donations+math.ceil((7-(floorIndex))/2)
 	floorDonations = floorDonations+1]]
-	loadNextLevel()
+	goDownFloor()
+end
+
+P.upTunnel = P.tunnel:new{name = "upTunnel"}
+function P.upTunnel:onEnter(player)
+	goUpFloor()
 end
 --[[function P.tunnel:getInfoText()
 	return self.toolsNeeded
@@ -2009,5 +2014,6 @@ tiles[149] = P.toolTile
 tiles[150] = P.toolTaxTile
 tiles[151] = P.dungeonEnter
 tiles[152] = P.dungeonExit
+tiles[153] = P.upTunnel
 
 return tiles

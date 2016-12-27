@@ -124,6 +124,7 @@ function P.erik:onCharLoad()
 	gameTime.roomTime = 15
 	gameTime.levelTime = 0
 	gameTime.goesDownInCompleted = true
+	tools.giveToolsByReference({tools.wings,tools.wings,tools.wings,tools.wings,tools.wings,tools.wings})
 	--map.floorOrder = {'RoomData/floor1_erik.json', 'RoomData/floor2_erik.json', 'RoomData/floor3_erik.json', 'RoomData/floor6.json'}
 end
 function P.erik:onFailedMove(key)

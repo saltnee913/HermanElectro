@@ -142,7 +142,7 @@ function love.load()
 	gamePaused = false
 	gameTime = {timeLeft = 260, toolTime = 0, roomTime = 15, levelTime = 200, donateTime = 20, goesDownInCompleted = false}
 
-	enteringSeed = false
+	enteringSeed = falsex
 	seedOverride = nil
 	typingCallback = nil
 	mouseDown = false
@@ -479,6 +479,36 @@ function loadRandoms()
 	util.newRandom('misc', seed*5)
 end
 
+function goDownFloor()
+	if map.loadedMaps[floorIndex] == nil then
+		loadNextLevel()
+	else
+		local mapToLoad = map.loadedMaps[floorIndex]
+		floorIndex = floorIndex+1
+		mainMap = mapToLoad.map
+		mapHeight = mapToLoad.mapHeight
+		roomHeight = mapToLoad.roomHeight
+		roomLength = mapToLoad.roomLength
+		completedRooms = mapToLoad.completedRooms
+		visibleMap = mapToLoad.visibleMap
+		prepareFloor()
+		playMusic(floorIndex)
+	end
+end
+
+function goUpFloor()
+	local mapToLoad = map.loadedMaps[floorIndex-2]
+	floorIndex = floorIndex - 1
+	mainMap = mapToLoad.map
+	mapHeight = mapToLoad.mapHeight
+	roomHeight = mapToLoad.roomHeight
+	roomLength = mapToLoad.roomLength
+	completedRooms = mapToLoad.completedRooms
+	visibleMap = mapToLoad.visibleMap
+	prepareFloor()
+	playMusic(floorIndex)
+end
+
 function loadNextLevel(dontChangeTime)
 	if dontChangeTime == nil then dontChangeTime = false end
 	--hacky way of getting info, but for now, it works
@@ -568,21 +598,32 @@ function startDebug()
 end
 
 function loadFirstLevel()
+	map.loadedMaps = {}
 	floorIndex = 1
 	loadNextLevel(true)
 	createAnimals()
 	createPushables()
 end
 
-function loadLevel(floorPath)
+function prepareFloor()
 	animals = {}
 	pushables = {}
+	mapx = mainMap.initialX
+	mapy = mainMap.initialY
+	room = mainMap[mapy][mapx].room
+	prevRoom = room
+	litTiles = {}
+	for i = 1, roomHeight do
+		litTiles[i] = {}
+	end
+end
+
+function loadLevel(floorPath)
 	map.loadFloor(floorPath)
 	mainMap = map.generateMap()
 	mapHeight = mainMap.height
 	mapx = mainMap.initialX
 	mapy = mainMap.initialY
-	visibleMap = {}
 	for i = 1, mapHeight do
 		for j = 1, mapHeight do
 			if mainMap[i][j]~=nil then
@@ -599,6 +640,8 @@ function loadLevel(floorPath)
 			end
 		end
 	end
+	prepareFloor()
+	visibleMap = {}
 	for i = 0, mapHeight do
 		visibleMap[i] = {}
 		for j = 0, mapHeight do
@@ -607,12 +650,6 @@ function loadLevel(floorPath)
 	end
 
 	visibleMap[mapy][mapx] = 1
-	room = mainMap[mapy][mapx].room
-	prevRoom = room
-	litTiles = {}
-	for i = 1, roomHeight do
-		litTiles[i] = {}
-	end
 	completedRooms = {}
 	for i=0, mapHeight do
 		completedRooms[i] = {}
@@ -629,6 +666,8 @@ function loadLevel(floorPath)
 	if floorIndex>=-1 then
 		shaderTriggered = true
 	end
+	map.loadedMaps[#map.loadedMaps+1] = {map = mainMap, mapHeight = mapHeight, 
+	  roomHeight = roomHeight, roomLength = roomLength, completedRooms = completedRooms, visibleMap = visibleMap}
 end
 
 function kill()
