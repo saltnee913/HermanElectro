@@ -552,8 +552,8 @@ function loadNextLevel(dontChangeTime)
 		if floorIndex > #map.floorOrder then
 			floorIndex = 1
 		end
-		floorIndex = floorIndex + 1
 		loadLevel(map.floorOrder[floorIndex])
+		floorIndex = floorIndex+1
 		playMusic(floorIndex)
 	end
 	--hack to make it not happen on the first floor
