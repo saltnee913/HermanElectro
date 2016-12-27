@@ -2495,8 +2495,7 @@ function love.keypressed(key, unicode)
 	end
 	keyTimer.timeLeft = keyTimer.base
 	waitTurn = false
-
-	if player.character:onKeyPressed(key) then
+	if player.character:onKeyPressedChar(key) then
 		updateGameState(false)
 	end
    	if player.waitCounter<=0 then
