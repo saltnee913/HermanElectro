@@ -335,7 +335,7 @@ function P.bombBuddy:explode()
 	room[self.tileY][self.tileX] = nil
 end
 
-P.conductiveDog = P.pup:new{name = "conductiveDog", powered = false, conductive = true, sprite = love.graphics.newImage('Graphics/conductiveDog.png')}
+P.conductiveDog = P.pup:new{name = "conductiveDog", powered = false, conductive = true, sprite = love.graphics.newImage('Graphics/conductivedog.png')}
 
 P.wife = P.cat:new{name = "wife", sprite = love.graphics.newImage('Graphics/wife.png')}
 P.son = P.cat:new{name = "son", sprite = love.graphics.newImage('Graphics/son.png')}

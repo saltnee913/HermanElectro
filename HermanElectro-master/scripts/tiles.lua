@@ -219,7 +219,7 @@ P.conductiveSpikes = P.spikes:new{name = "conductiveSpikes", sprite = love.graph
 
 P.button = P.tile:new{bricked = false, updatePowerOnEnter = true, justPressed = false, down = false, powered = false, dirSend = {1,1,1,1}, 
   dirAccept = {0,0,0,0}, canBePowered = true, name = "button", pressed = false, sprite = love.graphics.newImage('GraphicsColor/buttonoff.png'), 
-  poweredSprite = love.graphics.newImage('GraphicsEli/buttonOff2.png'), downSprite = love.graphics.newImage('Graphics/buttonpressed.png'), 
+  poweredSprite = love.graphics.newImage('GraphicsEli/buttonOff2.png'), downSprite = love.graphics.newImage('Graphics/buttonPressed.png'), 
   brickedSprite = love.graphics.newImage('GraphicsEli/buttonBricked2.png'), upSprite = love.graphics.newImage('Graphics/button.png'), timesPressed = 0}
 function P.button:resetState()
 	self.justPressed = false
@@ -841,7 +841,7 @@ end
 P.rotater.onEnterAnimal = P.rotater.onEnter
 P.rotater.onLeaveAnimal = P.rotater.onLeave
 
-P.cornerRotater = P.rotater:new{name = "cornerRotater", dirSend = {1,1,0,0}, dirAccept = {1,1,0,0}, poweredSprite = love.graphics.newImage('Graphics/cornerRotater.png'), sprite = love.graphics.newImage('Graphics/cornerRotater.png')}
+P.cornerRotater = P.rotater:new{name = "cornerRotater", dirSend = {1,1,0,0}, dirAccept = {1,1,0,0}, poweredSprite = love.graphics.newImage('Graphics/cornerrotater.png'), sprite = love.graphics.newImage('Graphics/cornerrotater.png')}
 
 P.concreteWall = P.wall:new{sawable = false, name = "concreteWall", sprite = love.graphics.newImage('GraphicsColor/concretewall3.png'), poweredSprite = love.graphics.newImage('GraphicsColor/concretewall3.png'), electrifiedPoweredSprite = love.graphics.newImage('Graphics/concretewallpowered.png'), electrifiedSprite = love.graphics.newImage('Graphics/concretewallelectrified.png'), destroyedSprite = love.graphics.newImage('Graphics/concretewallbroken.png'), sawable = false}
 function P.concreteWall:destroy()
@@ -911,7 +911,12 @@ function P.tunnel:onEnter(player)
 	self.toolsEntered = self.toolsEntered+1
 	--donations = donations+math.ceil((7-(floorIndex))/2)
 	floorDonations = floorDonations+1]]
-	loadNextLevel()
+	goDownFloor()
+end
+
+P.upTunnel = P.tunnel:new{name = "upTunnel"}
+function P.upTunnel:onEnter(player)
+	goUpFloor()
 end
 --[[function P.tunnel:getInfoText()
 	return self.toolsNeeded
@@ -1731,11 +1736,16 @@ P.rammyTransform = P.hermanTransform:new{name = "rammyTransform", characterIndex
 P.lennyTransform = P.hermanTransform:new{name = "lennyTransform", characterIndex = 15}
 P.fishTransform = P.hermanTransform:new{name = "fishTransform", characterIndex = 16}
 
-P.supertoolTile = P.tile:new{name = "supertoolTile", tool = nil}
+P.supertoolTile = P.tile:new{name = "supertoolTile", tool = nil, superQuality = 1}
 function P.supertoolTile:absoluteFinalUpdate()
 	if self.tool==nil then
-		local toolForTile = util.random(#tools-tools.numNormalTools, 'toolDrop')
-		self.tool = tools[toolForTile+tools.numNormalTools]
+		local quality = 0
+		local toolForTile = nil
+		while(quality ~= self.superQuality) do
+			toolForTile = tools[util.random(#tools-tools.numNormalTools, 'toolDrop')+tools.numNormalTools]
+			quality = toolForTile.quality
+		end
+		self.tool = toolForTile
 		self:updateSprite()
 	end
 end
@@ -1757,6 +1767,11 @@ function P.supertoolTile:onEnter()
 		self.gone = true
 	end
 end
+P.supertoolQ1 = P.supertoolTile:new{name = "supertoolTileQ1", superQuality = 1}
+P.supertoolQ2 = P.supertoolTile:new{name = "supertoolTileQ2", superQuality = 2}
+P.supertoolQ3 = P.supertoolTile:new{name = "supertoolTileQ3", superQuality = 3}
+P.supertoolQ4 = P.supertoolTile:new{name = "supertoolTileQ4", superQuality = 4}
+P.supertoolQ5 = P.supertoolTile:new{name = "supertoolTileQ5", superQuality = 5}
 
 P.toolTile = P.tile:new{name = "toolTile", tool = nil, dirSend = {0,0,0,0}}
 function P.toolTile:onEnter()
@@ -1797,6 +1812,8 @@ function P.toolTaxTile:updateSprite()
 		self.overlay = P.spongeTile
 	elseif self.tool == tools.waterBottle then
 		self.overlay = P.waterBottleTile
+	elseif self.tool == tools.brick then
+		self.overlay = P.brickTile
 	end
 end
 function P.toolTaxTile:onEnter()
@@ -2041,7 +2058,13 @@ tiles[149] = P.toolTile
 tiles[150] = P.toolTaxTile
 tiles[151] = P.dungeonEnter
 tiles[152] = P.dungeonExit
-tiles[153] = P.endDungeonEnter
-tiles[154] = P.endDungeonExit
+tiles[153] = P.upTunnel
+tiles[154] = P.supertoolQ1
+tiles[155] = P.supertoolQ2
+tiles[156] = P.supertoolQ3
+tiles[157] = P.supertoolQ4
+tiles[158] = P.supertoolQ5
+tiles[159] = P.endDungeonEnter
+tiles[160] = P.endDungeonExit
 
 return tiles

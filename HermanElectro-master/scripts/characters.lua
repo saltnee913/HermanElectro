@@ -28,7 +28,7 @@ function P.getUnlockedCharacters()
 	return toRet
 end
 
-P.character = Object:new{name = "Name", scale = 0, sprite = love.graphics.newImage('Graphics/herman_sketchanother.png'),
+P.character = Object:new{name = "Name", scale = 0, sprite = love.graphics.newImage('hermans/newherman_r.png'),
   description = "description", startingTools = {0,0,0,0,0,0,0}, scale = 0.25 * width/1200, forcePowerUpdate = false, winUnlocks = {}, tint = {1,1,1},
   speedUnlockTime = 1000, speedUnlock = nil}
 function P.character:onBegin()
@@ -54,7 +54,24 @@ function P.character:onPreUpdatePower()
 end
 function P.character:onPostUpdatePower()
 end
-function P.character:onKeyPressed()
+function P.character:onKeyPressed(key)
+	if self.sprites ~= nil then
+		if key == 'w' then
+			self.sprite = self.sprites[1]
+		end
+		if key == 'd' then
+			self.sprite = self.sprites[2]
+		end
+		if key == 's' then
+			self.sprite = self.sprites[3]
+		end
+		if key == 'a' then
+			self.sprite = self.sprites[4]
+		end
+	end
+	return self:onKeyPressedChar(key)
+end
+function P.character:onKeyPressedChar(key)
 	return false
 end
 function P.character:onToolUse()
@@ -81,7 +98,7 @@ end
 function P.character:immediatePostMove()
 end
 
-P.herman = P.character:new{name = "Herman", description = "The Electrician", winUnlocks = {unlocks.reviveUnlock}, scale = 0.3}
+P.herman = P.character:new{name = "Herman", description = "The Electrician", winUnlocks = {unlocks.reviveUnlock}, scale = 0.8, sprites = {love.graphics.newImage('hermans/newherman_r.png'),love.graphics.newImage('hermans/newherman_r.png'),love.graphics.newImage('hermans/newherman_r.png'),love.graphics.newImage('hermans/newherman_l.png')}}
 function P.herman:onCharLoad()
 	if loadTutorial then return end
 	tools.giveToolsByReference({tools.revive})
@@ -96,7 +113,7 @@ function P.felix:onCharLoad()
 	end
 	tools.giveToolsByReference({tools.bomb})
 end
-function P.felix:onKeyPressed(key)
+function P.felix:onKeyPressedChar(key)
 	--log(key)
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
 		tools.felixGun:switchEffects()
@@ -125,6 +142,7 @@ function P.erik:onCharLoad()
 	gameTime.roomTime = 15
 	gameTime.levelTime = 0
 	gameTime.goesDownInCompleted = true
+	tools.giveToolsByReference({tools.wings,tools.wings,tools.wings,tools.wings,tools.wings,tools.wings})
 	--map.floorOrder = {'RoomData/floor1_erik.json', 'RoomData/floor2_erik.json', 'RoomData/floor3_erik.json', 'RoomData/floor6.json'}
 end
 function P.erik:onFailedMove(key)
@@ -211,7 +229,7 @@ end
 P.battery = P.character:new{name = "Bob", description = "The Battery", sprite = love.graphics.newImage('Graphics/powersupplydead.png'),
   onSprite = love.graphics.newImage('Graphics/powersupply.png'), offSprite = love.graphics.newImage('Graphics/powersupplydead.png'), 
   scale = scale, storedTile = nil, forcePowerUpdate = false, powered = false}
-function P.battery:onKeyPressed(key)
+function P.battery:onKeyPressedChar(key)
 	--log(key)
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
 		if self.powered then
@@ -294,7 +312,7 @@ function P.crate:setCrate(isCrate)
 	player.active = not isCrate
 	self.isCrate = isCrate
 end
-function P.crate:onKeyPressed(key)
+function P.crate:onKeyPressedChar(key)
 	--log(key)
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
 		if not self.isCrate and not self.roomTrigger then
@@ -325,7 +343,7 @@ function P.crate:preTileEnter(tile)
 end
 
 P.giovanni = P.character:new{name = "Giovanni", description = "The Sorcerer", shiftPos = {x = -1, y = -1}, sprite = love.graphics.newImage('Graphics/giovanni.png'), sprite2 = love.graphics.newImage('Graphics/giovannighost.png')}
-function P.giovanni:onKeyPressed(key)
+function P.giovanni:onKeyPressedChar(key)
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
 		if self.shiftPos.x==-1 then
 			self.shiftPos.x = player.tileX
@@ -347,7 +365,7 @@ function P.giovanni:onRoomEnter()
 	self.shiftPos = {x = -1, y = -1}
 end
 P.giovanni.onFloorEnter = P.giovanni.onRoomEnter
-function P.giovanni:onKeyPressed(key)
+function P.giovanni:onKeyPressedChar(key)
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
 		if self.shiftPos.x==-1 then
 			self.shiftPos.x = player.tileX
@@ -392,7 +410,7 @@ end
 function P.orson:onPostUpdatePower()
 	self.shifted = false
 end
-function P.orson:onKeyPressed(key)
+function P.orson:onKeyPressedChar(key)
 	self.shifted = true
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
 		for i = 1, roomHeight do
@@ -417,7 +435,7 @@ end
 function P.lenny:onFloorEnter()	
 	tools.giveToolsByReference({tools.wings,tools.broom,tools.broom})
 end
-function P.lenny:onKeyPressed(key)
+function P.lenny:onKeyPressedChar(key)
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
 		self.slime = not self.slime
 		return true
@@ -538,7 +556,7 @@ end
 P.harriet = P.character:new{name = "Harriet", description = "Herman in drag", sprite = love.graphics.newImage('Graphics/nadia.png')}
 
 P.paris = P.character:new{name = "Paris", description = "The Swordsman", sword = false, swordsprite = love.graphics.newImage('Graphics/parisswordout.png'), sprite = love.graphics.newImage('Graphics/paris.png'), noswordsprite = love.graphics.newImage('Graphics/paris.png')}
-function P.paris:onKeyPressed(key)
+function P.paris:onKeyPressedChar(key)
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
 		self.sword = not self.sword
 		self:updateSprite()
@@ -592,7 +610,7 @@ function P.ed:postMove()
 	end
 	myShader:send("player_range", self.lightLevel)
 end
-function P.ed:onKeyPressed(key)
+function P.ed:onKeyPressedChar(key)
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
 		if room[player.tileY][player.tileX]~=nil and room[player.tileY][player.tileX]:instanceof(tiles.powerSupply) and
 		not room[player.tileY][player.tileX]:instanceof(tiles.notGate) then

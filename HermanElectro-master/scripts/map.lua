@@ -11,6 +11,8 @@ map = P
 P.defaultFloorOrder = {'RoomData/floor1.json', 'RoomData/floor2.json', 'RoomData/floor3.json', 'RoomData/floor4.json', 'RoomData/floor5.json', 'RoomData/floor6.json', 'RoomData/exitDungeonsMap.json'}
 P.floorOrder = P.defaultFloorOrder
 
+P.loadedMaps = {}
+
 local MapInfo = Object:new{floor = 1, height = 0, numRooms = 0}
 
 map.itemsNeededFile = 'itemsNeeded.json'
