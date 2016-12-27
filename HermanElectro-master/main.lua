@@ -142,7 +142,7 @@ function love.load()
 	gamePaused = false
 	gameTime = {timeLeft = 260, toolTime = 0, roomTime = 15, levelTime = 200, donateTime = 20, goesDownInCompleted = false}
 
-	enteringSeed = falsex
+	enteringSeed = false
 	seedOverride = nil
 	typingCallback = nil
 	mouseDown = false
