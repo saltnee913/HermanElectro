@@ -239,6 +239,7 @@ function love.load()
 		extern number player_range = 300;
 		extern number bonus_range = 0;
 		extern bool b_and_w = false;
+		extern vec4 spotlights[3];
 
 		vec4 effect( vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords ){
 		  	vec4 pixel = Texel(texture, texture_coords );//This is the current pixel color
@@ -256,6 +257,20 @@ function love.load()
 			number totaltint_r = tint_r/divVal;
 			number totaltint_g = tint_g/divVal;
 			number totaltint_b = tint_b/divVal;
+
+			//spotlights
+			for (int i=0;i<3;i=i+1) {
+				if (spotlights[i][0]>=0) {
+					number lampxdist = spotlights[i][0]-screen_coords[0];
+					number lampydist = spotlights[i][1]-screen_coords[1];
+					number totalLampDist = sqrt(lampxdist*lampxdist+lampydist*lampydist);
+					if (totalLampDist<spotlights[i][3]) {
+					totaltint_r = 1;
+					totaltint_g = 1;
+					totaltint_b = 0;
+					}
+				}
+            }
 
 			//lamps
 			for (int i=0;i<10;i=i+1) {
@@ -418,7 +433,7 @@ function love.load()
 
 
 	if player == nil then
-		player = { 	keysHeld = 0, dead = false, safeFromAnimals = false, bonusRange = 0, active = true, flying = false, waitCounter = 0, tileX = 1, tileY = 6, x = (1-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10, 
+		player = { 	keysHeld = 0, dead = false, safeFromAnimals = false, bonusRange = 0, active = true, flying = false, waitCounter = 0, tileX = 10, tileY = 6, x = (1-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10, 
 			y = (6-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10, prevTileX = 3, prevTileY 	= 10,
 			prevx = (3-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10,
 			prevy = (10-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10,
@@ -770,6 +785,20 @@ maxLamps = 100
 
 function updateLamps(tileY, tileX)
 	if not started then return end
+
+	spotlightsSend = {}
+	if spotlights~=nil and player.character.name=="Albert" then
+		for i = 1, #spotlights do
+			spotlightsSend[#spotlightsSend+1] = {spotlights[i].x, spotlights[i].y, spotlights[i].intensity, spotlights[i].range}		
+		end
+	end
+	local spotIndex = #spotlightsSend
+	while spotIndex<3 do
+		spotlightsSend[#spotlightsSend+1] = {-1,-1,-1,0}
+		spotIndex = spotIndex+1
+	end
+	myShader:send("spotlights", unpack(spotlightsSend))
+
 	local lampHolder = {}
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
@@ -778,6 +807,7 @@ function updateLamps(tileY, tileX)
 			end
 		end
 	end
+
 	for i = 1, #pushables do
 		if pushables[i]:instanceof(pushableList.lamp) and #lampHolder<maxLamps then
 			lampHolder[#lampHolder+1] = {pushables[i].tileX, pushables[i].tileY, pushables[i].intensity, pushables[i].range}
@@ -2209,6 +2239,9 @@ end
 
 keyTimer = {base = .05, timeLeft = .05, suicideDelay = .5}
 function love.update(dt)
+	if player~=nil and player.character~=nil then
+		player.character:update(dt)
+	end
 	if (titlescreenCounter>0) then
 		titlescreenCounter = titlescreenCounter-dt
 	end

@@ -28,7 +28,7 @@ function P.getUnlockedCharacters()
 	return toRet
 end
 
-P.character = Object:new{name = "Name", scale = 0, sprite = love.graphics.newImage('hermans/newherman_r.png'),
+P.character = Object:new{name = "Name", scale = 0, sprites = {love.graphics.newImage('hermans/newherman_r.png'),love.graphics.newImage('hermans/newherman_r.png'),love.graphics.newImage('hermans/newherman_r.png'),love.graphics.newImage('hermans/newherman_l.png')}, sprite = love.graphics.newImage('hermans/newherman_r.png'),
   description = "description", startingTools = {0,0,0,0,0,0,0}, scale = 0.25 * width/1200, forcePowerUpdate = false, winUnlocks = {}, tint = {1,1,1},
   speedUnlockTime = 1000, speedUnlock = nil}
 function P.character:onBegin()
@@ -55,7 +55,7 @@ end
 function P.character:onPostUpdatePower()
 end
 function P.character:onKeyPressed(key)
-	if self.sprites ~= nil then
+	--[[if self.sprites ~= nil then
 		if key == 'w' then
 			self.sprite = self.sprites[1]
 		end
@@ -69,7 +69,7 @@ function P.character:onKeyPressed(key)
 			self.sprite = self.sprites[4]
 		end
 	end
-	return self:onKeyPressedChar(key)
+	return self:onKeyPressedChar(key)]]
 end
 function P.character:onKeyPressedChar(key)
 	return false
@@ -96,6 +96,8 @@ end
 function P.character:specialLightTest(tileY,tileX)
 end
 function P.character:immediatePostMove()
+end
+function P.character:update()
 end
 
 P.herman = P.character:new{name = "Herman", description = "The Electrician", winUnlocks = {unlocks.reviveUnlock}, scale = 0.8, sprites = {love.graphics.newImage('hermans/newherman_r.png'),love.graphics.newImage('hermans/newherman_r.png'),love.graphics.newImage('hermans/newherman_r.png'),love.graphics.newImage('hermans/newherman_l.png')}}
@@ -645,6 +647,64 @@ function P.leonard:updateSprite()
 	end
 end
 
+P.albert = P.character:new{name = "Albert", description = "The Convict", spotlightRange =100, updateTimeFull = 3, updateTimeCurrent = 5, sprite = love.graphics.newImage('Graphics/albert.png')}
+function P.albert:onCharLoad()
+	self:setSpotlights()
+end
+function P.albert:onFloorEnter()
+	self:setSpotlights()
+end
+function P.albert:setSpotlights()
+	spotlights = {}
+	local maxSpotX = (roomLength-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10-self.spotlightRange/2
+	for i = 1, 3 do
+		spotlights[i] = {x = maxSpotX-200, y = 400, intensity = 1, range = self.spotlightRange, velX = 1, velY = 0}
+	end
+end
+function P.albert:update(dt)
+	for i = 1, 3 do
+		spotlights[i].x = spotlights[i].x+spotlights[i].velX
+		spotlights[i].y = spotlights[i].y+spotlights[i].velY
+		local killDist = math.sqrt(math.pow(spotlights[i].x-player.x,2)+math.pow(spotlights[i].y-player.y,2))
+		if (killDist<self.spotlightRange) then
+			kill()
+		end
+	end
+	self.updateTimeCurrent = self.updateTimeCurrent-dt
+	if self.updateTimeCurrent<0 then
+		self.updateTimeCurrent = self.updateTimeFull
+		self:updateSpotlights()
+	end
+end
+function P.albert:updateSpotlights()
+	maxSpotX = (roomLength-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10-self.spotlightRange
+	maxSpotY = (roomHeight-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10-self.spotlightRange
+	local dirOptions = {-1,0,1}
+	for i = 1, 3 do
+		local works = false
+		local dirX = 0
+		local dirY = 0
+		while (not works) do
+			works = true
+			dirX = util.random(3, 'misc')
+			dirY = util.random(3, 'misc')
+			dirX = dirOptions[dirX]
+			dirY = dirOptions[dirY]
+			if dirX<0 and spotlights[i].x<=self.spotlightRange then
+				works = false
+			elseif dirX>0 and spotlights[i].x>=maxSpotX then
+				works = false
+			elseif dirY<0 and spotlights[i].y<=self.spotlightRange then
+				works = false
+			elseif dirY>0 and spotlights[i].y>=maxSpotY then
+				works = false
+			end
+		end
+		spotlights[i].velX = dirX
+		spotlights[i].velY = dirY
+	end
+end
+
 P[#P+1] = P.herman
 P[#P+1] = P.felix
 P[#P+1] = P.most
@@ -667,6 +727,7 @@ P[#P+1] = P.crate
 P[#P+1] = P.paris
 P[#P+1] = P.ed
 P[#P+1] = P.leonard
+P[#P+1] = P.albert
 
 P[#P+1] = P.random
 P[#P+1] = P.random2
