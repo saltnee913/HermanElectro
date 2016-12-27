@@ -1681,7 +1681,7 @@ function P.superSnowball:useToolAnimal(animal)
 	animal.frozen = true
 end
 
-P.snowballGlobal = P.snowball:new{name = "snowballGlobal", image = love.graphics.newImage('Graphics/snowballGlobal.png'), baseRange = 0}
+P.snowballGlobal = P.snowball:new{name = "snowballGlobal", image = love.graphics.newImage('Graphics/snowballglobal.png'), baseRange = 0}
 function P.snowballGlobal:usableOnNothing()
 	return true
 end
@@ -1743,7 +1743,7 @@ function P.superWaterBottle:useToolNothing(tileY, tileX)
 	room[tileY][tileX] = tiles.puddle:new()
 end
 
-P.portalPlacer = P.superTool:new{name = "portalPlacer", image = love.graphics.newImage('Graphics/entranceportal.png'), baseRange = 1}
+P.portalPlacer = P.superTool:new{name = "portalPlacer", image = love.graphics.newImage('Graphics/entrancePortal.png'), baseRange = 1}
 function P.portalPlacer:usableOnNothing()
 	return true
 end
