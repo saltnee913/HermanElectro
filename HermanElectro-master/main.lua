@@ -442,7 +442,6 @@ function love.load()
 		return {x = self.x/(floor.sprite:getWidth()*scale), y = self.y/(floor.sprite:getWidth()*scale)}
 	end
 	loadRandoms()
-	loadEndLevel(map.floorOrder[7])
 	--loadOpeningWorld()
 end
 
@@ -671,65 +670,6 @@ function loadLevel(floorPath)
 	end
 	map.loadedMaps[#map.loadedMaps+1] = {map = mainMap, mapHeight = mapHeight, 
 	  roomHeight = roomHeight, roomLength = roomLength, completedRooms = completedRooms, visibleMap = visibleMap}
-end
-
-function loadEndLevel(floorPath)
-	animals = {}
-	pushables = {}
-	map.loadFloor(floorPath)
-	exitMap = map.generateMap()
-	mapHeight = exitMap.height
-	mapx = exitMap.initialX
-	mapy = exitMap.initialY
-	visibleMap = {}
-	for i = 1, mapHeight do
-		for j = 1, mapHeight do
-			if exitMap[i][j]~=nil then
-				for i2 = 1, exitMap[i][j].room.height do
-					for j2 = 1, exitMap[i][j].room.length do
-						if exitMap[i][j].room[i2][j2]~=nil and exitMap[i][j].room[i2][j2].name == tiles.boxTile.name then
-							local rand = util.random('mapGen')
-							if rand<donations/100 or player.character.name==characters.tim.name then
-								exitMap[i][j].room[i2][j2] = tiles.giftBoxTile:new()
-							end
-						end
-					end
-				end
-			end
-		end
-	end
-
-
-	for i = 0, mapHeight do
-		visibleMap[i] = {}
-		for j = 0, mapHeight do
-			visibleMap[i][j] = 0
-		end
-	end
-
-	visibleMap[mapy][mapx] = 1
-	room = exitMap[mapy][mapx].room
-	prevRoom = room
-	litTiles = {}
-	for i = 1, roomHeight do
-		litTiles[i] = {}
-	end
-	completedRooms = {}
-	for i=0, mapHeight do
-		completedRooms[i] = {}
-		for j=1, mapHeight do
-			if exitMap[i][j]==nil then
-				completedRooms[i][j]=-1
-			else
-				completedRooms[i][j]=0
-			end
-		end
-	end
-	roomHeight = room.height
-	roomLength = room.length
-	if floorIndex>=-1 then
-		shaderTriggered = true
-	end
 end
 
 function kill()
@@ -2236,7 +2176,7 @@ function enterMove()
 		if room~=nil and room[player.prevTileY][player.prevTileX]~=nil then
 			room[player.prevTileY][player.prevTileX]:onLeave(player)
 		end
-		player.character.onTileLeave()
+		player.character:onTileLeave()
 	end
 end
 
