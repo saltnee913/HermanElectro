@@ -480,10 +480,10 @@ function loadRandoms()
 end
 
 function goDownFloor()
-	if map.loadedMaps[floorIndex] == nil then
+	if map.loadedMaps[floorIndex+1] == nil then
 		loadNextLevel()
 	else
-		local mapToLoad = map.loadedMaps[floorIndex]
+		local mapToLoad = map.loadedMaps[floorIndex+1]
 		floorIndex = floorIndex+1
 		mainMap = mapToLoad.map
 		mapHeight = mapToLoad.mapHeight
@@ -497,7 +497,7 @@ function goDownFloor()
 end
 
 function goUpFloor()
-	local mapToLoad = map.loadedMaps[floorIndex-2]
+	local mapToLoad = map.loadedMaps[floorIndex-1]
 	floorIndex = floorIndex - 1
 	map.setRoomSetValues(floorIndex)
 	mainMap = mapToLoad.map

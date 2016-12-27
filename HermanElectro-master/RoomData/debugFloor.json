@@ -17,6 +17,14 @@
 				
 			}
 		},
+		"shops":
+		{
+			"filePath": "RoomData/shops.json",
+			"requirements":
+			{
+
+			}
+		},
 		"finalRooms": 
 		{
 			"filePath": "RoomData/finalrooms.json",
