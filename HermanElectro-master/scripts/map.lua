@@ -79,6 +79,41 @@ function writeToolsUsed()
 	util.writeJSON(P.itemsNeededFile, solutionArray)
 end
 
+function P.setRoomSetValues(fi)
+	local inFloorFile = nil
+	if fi==1 then
+		inFloorFile = P.floorOrder[#P.floorOrder]
+	else
+		inFloorFile = P.floorOrder[fi-1]
+	end
+	local floorData = util.readJSON(inFloorFile)
+	P.floorInfo = {rooms = {}, roomsArray = {}}
+	for k, v in pairs(floorData.data) do
+		P.floorInfo[k] = v
+	end
+	local loadRooms = floorData.loadRooms
+	for k, v in pairs(loadRooms) do
+		local roomsData, roomsArray = util.readJSON(v.filePath, true)
+		P.floorInfo.rooms[k] = roomsData.rooms
+		for k1, v1 in pairs(P.floorInfo.rooms[k]) do
+			v1.roomid=k1
+			if roomsData.superFields ~= nil then
+				for k2, v2 in pairs(roomsData.superFields) do
+					if v1[k2] == nil then v1[k2] = v2 end
+				end
+			end
+		end
+		P.filterRoomSet(P.floorInfo.rooms[k], v.requirements)
+		if P.floorInfo.requireUnlocks == true then
+			P.filterRoomSetByUnlocks(P.floorInfo.rooms[k])
+		end
+		for i = 1, #roomsArray do
+			if P.floorInfo.rooms[k][roomsArray[i]] ~= nil then
+				P.floorInfo.roomsArray[#(P.floorInfo.roomsArray)+1] = roomsArray[i]
+			end
+		end
+	end
+end
 
 function P.loadFloor(inFloorFile)
 	if mainMap ~= nil and mainMap.cheated ~= true then

@@ -418,7 +418,7 @@ function love.load()
 
 
 	if player == nil then
-		player = { dead = false, safeFromAnimals = false, bonusRange = 0, active = true, flying = false, waitCounter = 0, tileX = 1, tileY = 6, x = (1-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10, 
+		player = { 	keysHeld = 0, dead = false, safeFromAnimals = false, bonusRange = 0, active = true, flying = false, waitCounter = 0, tileX = 1, tileY = 6, x = (1-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10, 
 			y = (6-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10, prevTileX = 3, prevTileY 	= 10,
 			prevx = (3-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10,
 			prevy = (10-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10,
@@ -499,6 +499,7 @@ end
 function goUpFloor()
 	local mapToLoad = map.loadedMaps[floorIndex-2]
 	floorIndex = floorIndex - 1
+	map.setRoomSetValues(floorIndex)
 	mainMap = mapToLoad.map
 	mapHeight = mapToLoad.mapHeight
 	roomHeight = mapToLoad.roomHeight
@@ -517,8 +518,14 @@ function goToFloor(floorNum)
 	roomLength = mapToLoad.roomLength
 	completedRooms = mapToLoad.completedRooms
 	visibleMap = mapToLoad.visibleMap
+	map.setRoomSetValues(floorIndex)
 	prepareFloor()
 	playMusic(floorIndex)
+	currentid = tostring(mainMap[mapy][mapx].roomid)
+	if map.getFieldForRoom(currentid, 'autowin') then
+		completedRooms[mapy][mapx] = 1
+		unlockDoors()
+	end
 end
 
 function loadNextLevel(dontChangeTime)
@@ -546,7 +553,7 @@ function loadNextLevel(dontChangeTime)
 			floorIndex = 1
 		end
 		floorIndex = floorIndex + 1
-		loadLevel(map.floorOrder[floorIndex-1])
+		loadLevel(map.floorOrder[floorIndex])
 		playMusic(floorIndex)
 	end
 	--hack to make it not happen on the first floor

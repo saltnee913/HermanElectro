@@ -1885,6 +1885,37 @@ function P.endDungeonExit:onEnter()
 	goToFloor(player.returnFloorIndex)
 end
 
+P.key = P.tile:new{name = "key", sprite = love.graphics.newImage('Graphics/key.png')}
+function P.key:onEnter()
+	player.keysHeld = player.keysHeld+1
+	self.done = true
+	self.isCompleted = true
+	self.isVisible = false
+	self.gone = true
+end
+
+P.keyGate = P.reinforcedGlass:new{name = "keyTile", sprite = love.graphics.newImage('Graphics/keytile.png')}
+function P.keyGate:onEnter()
+	if player.keysHeld==3 then
+		self:open()
+	elseif not self.destroyed then
+		P.reinforcedGlass:onEnter(player)
+	end
+end
+--nothing can destroy the keyTile (including missiles) because of below code
+function P.keyGate:destroy()
+end
+function P.keyGate:open()
+	self.blocksProjectiles = false
+	self.blocksVision = false
+	self.sprite = self.destroyedSprite
+	self.destroyed = true
+	self.blocksMovement = false
+	self.dirAccept = {0,0,0,0}
+	self.dirSend = {0,0,0,0}
+	self.overlay = nil
+end
+
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
 tiles[3] = P.powerSupply
@@ -2045,5 +2076,7 @@ tiles[157] = P.supertoolQ4
 tiles[158] = P.supertoolQ5
 tiles[159] = P.endDungeonEnter
 tiles[160] = P.endDungeonExit
+tiles[161] = P.key
+tiles[162] = P.keyGate
 
 return tiles
