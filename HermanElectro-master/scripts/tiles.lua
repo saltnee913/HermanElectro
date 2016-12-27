@@ -1736,11 +1736,16 @@ P.rammyTransform = P.hermanTransform:new{name = "rammyTransform", characterIndex
 P.lennyTransform = P.hermanTransform:new{name = "lennyTransform", characterIndex = 15}
 P.fishTransform = P.hermanTransform:new{name = "fishTransform", characterIndex = 16}
 
-P.supertoolTile = P.tile:new{name = "supertoolTile", tool = nil}
+P.supertoolTile = P.tile:new{name = "supertoolTile", tool = nil, superQuality = 1}
 function P.supertoolTile:absoluteFinalUpdate()
 	if self.tool==nil then
-		local toolForTile = util.random(#tools-tools.numNormalTools, 'toolDrop')
-		self.tool = tools[toolForTile+tools.numNormalTools]
+		local quality = 0
+		local toolForTile = nil
+		while(quality ~= self.superQuality) do
+			toolForTile = tools[util.random(#tools-tools.numNormalTools, 'toolDrop')+tools.numNormalTools]
+			quality = toolForTile.quality
+		end
+		self.tool = toolForTile
 		self:updateSprite()
 	end
 end
@@ -1762,6 +1767,11 @@ function P.supertoolTile:onEnter()
 		self.gone = true
 	end
 end
+P.supertoolQ1 = P.supertoolTile:new{name = "supertoolTileQ1", superQuality = 1}
+P.supertoolQ2 = P.supertoolTile:new{name = "supertoolTileQ2", superQuality = 2}
+P.supertoolQ3 = P.supertoolTile:new{name = "supertoolTileQ3", superQuality = 3}
+P.supertoolQ4 = P.supertoolTile:new{name = "supertoolTileQ4", superQuality = 4}
+P.supertoolQ5 = P.supertoolTile:new{name = "supertoolTileQ5", superQuality = 5}
 
 P.toolTile = P.tile:new{name = "toolTile", tool = nil, dirSend = {0,0,0,0}}
 function P.toolTile:onEnter()
@@ -2015,5 +2025,10 @@ tiles[150] = P.toolTaxTile
 tiles[151] = P.dungeonEnter
 tiles[152] = P.dungeonExit
 tiles[153] = P.upTunnel
+tiles[154] = P.supertoolQ1
+tiles[155] = P.supertoolQ2
+tiles[156] = P.supertoolQ3
+tiles[157] = P.supertoolQ4
+tiles[158] = P.supertoolQ5
 
 return tiles
