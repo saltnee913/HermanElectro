@@ -1,7 +1,7 @@
 {
 	"loadRooms":
 	{
-		"rooms": 
+		"startRooms": 
 		{
 			"filePath": "RoomData/rooms.json",
 			"requirements":
@@ -26,7 +26,7 @@
 				}
 			}
 		},
-		"treasureRooms": 
+		"puzzleRooms": 
 		{
 			"filePath": "RoomData/treasurerooms.json",
 			"requirements":
@@ -70,9 +70,9 @@
 	"data":
 	{
 		"requireUnlocks": true,
-		"height": 3,
-		"numRooms": 1,
-		"generateFunction": "generateMapWeighted",
+		"height": 4,
+		"numRooms": 3,
+		"generateFunction": "generateEndDungeon",
 		"startRoomID": "1",
 		//numRoomsToCheck is the amount of rooms to try when deciding a room's roomid, decreasing this increases rng
 		"numRoomsToCheck": 5,

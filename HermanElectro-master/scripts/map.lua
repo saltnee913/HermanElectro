@@ -11,8 +11,6 @@ map = P
 P.defaultFloorOrder = {'RoomData/floor1.json', 'RoomData/floor2.json', 'RoomData/floor3.json', 'RoomData/floor4.json', 'RoomData/floor5.json', 'RoomData/floor6.json', 'RoomData/exitDungeonsMap.json'}
 P.floorOrder = P.defaultFloorOrder
 
-P.loadedMaps = {}
-
 local MapInfo = Object:new{floor = 1, height = 0, numRooms = 0}
 
 map.itemsNeededFile = 'itemsNeeded.json'
@@ -81,18 +79,6 @@ function writeToolsUsed()
 	util.writeJSON(P.itemsNeededFile, solutionArray)
 end
 
-function P.loadFloorExit(inFloorFile)
-	if mainMap ~= nil and mainMap.cheated ~= true then
-		writeToolsUsed()
-	end
-	local floorData = util.readJSON(inFloorFile)
-	P.floorInfo = {rooms = {}, roomsArray = {}}
-	for k, v in pairs(floorData.data) do
-		P.floorInfo[k] = v
-	end
-	theRooms = util.readJSON(floorData["loadRooms"]["rooms"]["filePath"])
-	P.floorInfo.roomList = theRooms["rooms"]
-end
 
 function P.loadFloor(inFloorFile)
 	if mainMap ~= nil and mainMap.cheated ~= true then
@@ -143,19 +129,19 @@ function P.loadFloor(inFloorFile)
 				P.floorInfo.roomsArray[#(P.floorInfo.roomsArray)+1] = roomsArray[i]
 			end
 		end
-		print(k..': '..amt)
+		--printk..': '..amt)
 		local toPrint = ""
 		for i = 0, 10 do
 			toPrint = toPrint..i..": "..numToolsArray[i+1]..", "
 		end
-		print(toPrint)
-		print("Tools:")
+		--printtoPrint)
+		--print"Tools:")
 		toolWords = {"saws", "ladders", "wireCutters", "waterBottles", "sponges", "bricks", "guns"}
 		toPrint = ""
 		for i = 1, 7 do
 			toPrint = toPrint..toolWords[i]..": "..toolAppearanceArray[i]..", "
 		end
-		print(toPrint)
+		--printtoPrint)
 	end
 	if map.floorInfo.tint == nil then
 		map.floorInfo.tint = {0,0,0}
@@ -329,7 +315,7 @@ function P.createRoom(inRoom, arr)
 			return nil
 		end
 	end
-	--if arr[inRoom]==nil then print(inRoom.."isNil") end
+	--if arr[inRoom]==nil then --printinRoom.."isNil") end
 	local roomToLoad = arr[inRoom].layout
 	roomToLoad = (roomToLoad ~= nil) and roomToLoad 
 		or arr[inRoom].layouts[util.random(#arr[inRoom].layouts, 'mapGen')]
@@ -376,7 +362,7 @@ function P.createRoom(inRoom, arr)
 			end
 		end
 	end
-	if(loadedRoom==nil) then print("ellie fucked up, and jmoney is fucking hype") end
+	--if(loadedRoom==nil) then print"ellie fucked up, and jmoney is fucking hype") end
 	return loadedRoom
 end
 
@@ -415,7 +401,7 @@ local function printMap(inMap)
 				p = p .. inMap[i][j].roomid .. ' '
 			end
 		end
-		print(p)
+		--printp)
 	end
 end
 
@@ -749,13 +735,36 @@ function P.generateMapWeighted()
 		usedRooms[#usedRooms+1] = roomid
 		newmap[choice.y][choice.x] = {roomid = roomid, room = P.createRoom(roomid), tint = {0,0,0}, isFinal = false, isInitial = false}
 	end
+	return newmap
+end
 
-	--add dungeon room to floor
-	arr = P.floorInfo.rooms.dungeons
-	roomid = util.chooseRandomKey(arr, 'mapGen')
-	newmap[height+1][1] = {roomid = roomid, room = P.createRoom(roomid, arr), tint = {0,0,0}, dirEnter = arr[roomid].dirEnter, isFinal = false, isInitial = false, floorTileOverride = "dungeon"}
+function P.generateEndDungeon()
+	local randomStartRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.startRooms, 'mapGen')
+	local randomPuzzleRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.puzzleRooms, 'mapGen')
+	local randomFinalRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.finalRooms, 'mapGen')
+	local startRoomID = randomStartRoomsArray[1]
 
-	printMap(newmap)
+	local height = P.floorInfo.height
+	local numRooms = P.floorInfo.numRooms
+	local newmap = MapInfo:new{height = height, numRooms = numRooms}
+	for i = 0, height+1 do
+		newmap[i] = {}
+	end
+
+	local startx = math.floor(height/2)
+	local starty = math.floor(height/2)
+	newmap[starty][startx] = {roomid = startRoomID, room = P.createRoom(startRoomID), isFinal = false, isInitial = true, isCompleted = false}
+	newmap.initialY = starty
+	newmap.initialX = startx
+
+	local puzzleRoom1 = randomPuzzleRoomsArray[1]
+	newmap[starty][startx+1] = {roomid = puzzleRoom1, room = P.createRoom(puzzleRoom1), isFinal = false, isInitial = false}
+	local puzzleRoom2 = randomPuzzleRoomsArray[1]
+	newmap[starty][startx-1] = {roomid = puzzleRoom2, room = P.createRoom(puzzleRoom2), isFinal = false, isInitial = false}
+	local puzzleRoom3 = randomPuzzleRoomsArray[1]
+	newmap[starty+1][startx] = {roomid = puzzleRoom3, room = P.createRoom(puzzleRoom3), isFinal = false, isInitial = false}
+	local finalRoom = randomFinalRoomsArray[1]
+	newmap[starty-1][startx] = {roomid = finalRoom, room = P.createRoom(finalRoom), isFinal = false, isInitial = false}
 	return newmap
 end
 
