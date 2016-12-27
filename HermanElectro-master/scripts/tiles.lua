@@ -1874,36 +1874,15 @@ function P.dungeonExit:onEnter()
 	end
 end
 
-P.endDungeonEnter = P.tile:new{name = "endDungeonEnter"}
+P.endDungeonEnter = P.tile:new{name = "endDungeonEnter", sprite = love.graphics.newImage('Graphics/eden.png')}
 function P.endDungeonEnter:onEnter()
-	player.regularMapLoc = {x = mapx, y = mapy}
-	regularMap = mainMap
-	mainMap = exitMap
-	mapHeight = 3
-	mapx = 1
-	mapy = 1
-	room = mainMap[mapy][mapx].room
-	roomHeight = room.height
-	roomLength = room.length
+	player.returnFloorIndex = floorIndex
+	goToFloor(1)
 end
 
-P.endDungeonExit = P.tile:new{name = "endDungeonExit"}
+P.endDungeonExit = P.tile:new{name = "endDungeonExit", sprite = love.graphics.newImage('Graphics/edex.png')}
 function P.endDungeonExit:onEnter()
-	mapx = player.regularMapLoc.x
-	mapy = player.regularMapLoc.y
-	mainMap = regularMap
-	room = mainMap[mapy][mapx].room
-	roomHeight = room.height
-	roomLength = room.length
-	for i = 1, roomHeight do
-		for j = 1, roomLength do
-			if room[i][j]~=nil and room[i][j]:instanceof(tiles.dungeonEnter) then
-				player.tileY = i
-				player.tileX = j
-				break
-			end
-		end
-	end
+	goToFloor(player.returnFloorIndex)
 end
 
 tiles[1] = P.invisibleTile

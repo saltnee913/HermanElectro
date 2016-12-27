@@ -423,7 +423,7 @@ function love.load()
 			prevx = (3-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10,
 			prevy = (10-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10,
 			width = 20, height = 20, speed = 250, luckTimer = 0,
-			character = characters[1], regularMapLoc = {x = 0, y = 0}}
+			character = characters[1], regularMapLoc = {x = 0, y = 0}, returnFloorIndex = 0}
 	else
 		player.dead = false
 		player.tileX = 1
@@ -450,8 +450,10 @@ function playMusic(index)
 	for i = 1, #music do
 		music[i]:stop()
 	end
-	music[index]:setVolume(music.volume)
-	music[index]:play()
+	if (index>0) then
+		music[index]:setVolume(music.volume)
+		music[index]:play()
+	end
 end
 
 function setMusicVolume(volume)
@@ -497,6 +499,18 @@ end
 function goUpFloor()
 	local mapToLoad = map.loadedMaps[floorIndex-2]
 	floorIndex = floorIndex - 1
+	mainMap = mapToLoad.map
+	mapHeight = mapToLoad.mapHeight
+	roomHeight = mapToLoad.roomHeight
+	roomLength = mapToLoad.roomLength
+	completedRooms = mapToLoad.completedRooms
+	visibleMap = mapToLoad.visibleMap
+	prepareFloor()
+	playMusic(floorIndex)
+end
+function goToFloor(floorNum)
+	floorIndex = floorNum
+	local mapToLoad = map.loadedMaps[floorIndex]
 	mainMap = mapToLoad.map
 	mapHeight = mapToLoad.mapHeight
 	roomHeight = mapToLoad.roomHeight
@@ -597,8 +611,10 @@ function startDebug()
 end
 
 function loadFirstLevel()
-	map.loadedMaps = {}
 	floorIndex = 1
+	map.loadedMaps = {}
+	loadLevel(map.floorOrder[#map.floorOrder])
+	endMap = mainMap
 	loadNextLevel(true)
 	createAnimals()
 	createPushables()
@@ -667,9 +683,9 @@ function loadLevel(floorPath)
 	roomLength = room.length
 	if floorIndex>=-1 then
 		shaderTriggered = true
+		map.loadedMaps[#map.loadedMaps+1] = {map = mainMap, mapHeight = mapHeight, 
+	  		roomHeight = roomHeight, roomLength = roomLength, completedRooms = completedRooms, visibleMap = visibleMap}
 	end
-	map.loadedMaps[#map.loadedMaps+1] = {map = mainMap, mapHeight = mapHeight, 
-	  roomHeight = roomHeight, roomLength = roomLength, completedRooms = completedRooms, visibleMap = visibleMap}
 end
 
 function kill()
@@ -1428,7 +1444,7 @@ function love.draw()
 	love.graphics.setShader(myShader)
 	for i = 1, roomLength do
 		for j = 1, roomHeight do
-			if floorIndex==-1 then
+			if floorIndex==-1 or floorIndex<=1 then
 				toDrawFloor = grassfloortile
 			else
 				if (i*i*i+j*j)%3==0 then
@@ -1460,7 +1476,7 @@ function love.draw()
 			0, scale*16/toDrawFloor:getWidth(), scale*16/toDrawFloor:getWidth())
 		end
 	end
-	if floorIndex>=1 then
+	if floorIndex>1 then
 		toDrawFloor = floortiles[floorIndex-1][1]
 	end
 
