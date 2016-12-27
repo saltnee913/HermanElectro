@@ -28,7 +28,7 @@ function P.getUnlockedCharacters()
 	return toRet
 end
 
-P.character = Object:new{name = "Name", scale = 0, sprite = love.graphics.newImage('Graphics/herman_sketchanother.png'),
+P.character = Object:new{name = "Name", scale = 0, sprite = love.graphics.newImage('hermans/newherman_r.png'), sprites = {love.graphics.newImage('hermans/newherman_r.png'),love.graphics.newImage('hermans/newherman_r.png'),love.graphics.newImage('hermans/newherman_r.png'),love.graphics.newImage('hermans/newherman_l.png')},
   description = "description", startingTools = {0,0,0,0,0,0,0}, scale = 0.25 * width/1200, forcePowerUpdate = false, winUnlocks = {}, tint = {1,1,1},
   speedUnlockTime = 1000, speedUnlock = nil}
 function P.character:onBegin()
@@ -54,7 +54,19 @@ function P.character:onPreUpdatePower()
 end
 function P.character:onPostUpdatePower()
 end
-function P.character:onKeyPressed()
+function P.character:onKeyPressed(key)
+	if key == 'w' then
+		self.sprite = self.sprites[1]
+	end
+	if key == 'd' then
+		self.sprite = self.sprites[2]
+	end
+	if key == 's' then
+		self.sprite = self.sprites[3]
+	end
+	if key == 'a' then
+		self.sprite = self.sprites[4]
+	end
 	return false
 end
 function P.character:onToolUse()
@@ -81,7 +93,7 @@ end
 function P.character:immediatePostMove()
 end
 
-P.herman = P.character:new{name = "Herman", description = "The Electrician", winUnlocks = {unlocks.reviveUnlock}, scale = 0.3}
+P.herman = P.character:new{name = "Herman", description = "The Electrician", winUnlocks = {unlocks.reviveUnlock}, scale = 1}
 function P.herman:onCharLoad()
 	if loadTutorial then return end
 	tools.giveToolsByReference({tools.revive})
