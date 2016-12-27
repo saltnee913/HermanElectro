@@ -93,7 +93,7 @@ end
 function P.character:immediatePostMove()
 end
 
-P.herman = P.character:new{name = "Herman", description = "The Electrician", winUnlocks = {unlocks.reviveUnlock}, scale = 1.2}
+P.herman = P.character:new{name = "Herman", description = "The Electrician", winUnlocks = {unlocks.reviveUnlock}, scale = 0.8}
 function P.herman:onCharLoad()
 	if loadTutorial then return end
 	tools.giveToolsByReference({tools.revive})
