@@ -1916,6 +1916,32 @@ function P.keyGate:open()
 	self.overlay = nil
 end
 
+P.gasPuddle = P.puddle:new{name = "gasPuddle", sprite = love.graphics.newImage('Graphics/gaspuddle.png')}
+function P.gasPuddle:updateTile(dir)
+	if self.charged then
+		self.powered = true
+		return
+	end
+	if self.poweredNeighbors[1]==1 or self.poweredNeighbors[2]==1 or self.poweredNeighbors[3]==1 or self.poweredNeighbors[4]==1 then
+		self.powered = true
+	else
+		self.powered = false
+	end
+
+	if self.powered then
+		self:destroy()
+	end
+end
+function P.gasPuddle:onEnd(x, y)
+	self:explode(x,y)
+end
+function P.gasPuddle:destroy()
+	self.gone = true
+end
+function P.gasPuddle:explode(x,y)
+	P.bomb:explode(x,y)
+end
+
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
 tiles[3] = P.powerSupply
@@ -2078,5 +2104,6 @@ tiles[159] = P.endDungeonEnter
 tiles[160] = P.endDungeonExit
 tiles[161] = P.key
 tiles[162] = P.keyGate
+tiles[163] = P.gasPuddle
 
 return tiles

@@ -1927,6 +1927,48 @@ function P.sock:useToolTile(tile)
 end
 P.sock.useToolNothing = P.sock.useToolTile
 
+P.gasPourer = P.superTool:new{name = "gasPourer", image = love.graphics.newImage('Graphics/gaspourer.png'), quality = 2, baseRange = 1}
+function P.gasPourer:usableOnNothing()
+	return true
+end
+function P.gasPourer:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
+	room[tileY][tileX] = tiles.gasPuddle:new()
+end
+
+P.gasPourerXtreme = P.gasPourer:new{name = "gasPourerXtreme", image = love.graphics.newImage('Graphics/gaspourerxtreme.png'), quality = 3, baseRange = 1}
+function P.gasPourerXtreme:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
+	room[tileY][tileX] = tiles.gasPuddle:new()
+end
+function P.gasPourerXtreme:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld - 1
+	self:spreadGas(tileY, tileX)
+end
+function P.gasPourerXtreme:spreadGas(tileY, tileX)
+	room[tileY][tileX] = tiles.gasPuddle:new()
+	if tileY>1 then
+		if room[tileY-1][tileX]==nil then
+			self:spreadGas(tileY-1, tileX)
+		end
+	end
+	if tileY<roomHeight then
+		if room[tileY+1][tileX]==nil then
+			self:spreadGas(tileY+1, tileX)
+		end
+	end
+	if tileX>1 then
+		if room[tileY][tileX-1]==nil then
+			self:spreadGas(tileY, tileX-1)
+		end
+	end
+	if tileX<roomLength then
+		if room[tileY][tileX+1]==nil then
+			self:spreadGas(tileY, tileX+1)
+		end
+	end
+end
+
 P.numNormalTools = 7
 
 --tools not included in list: trap (identical to glue in purpose)
@@ -1939,8 +1981,8 @@ P.numNormalTools = 7
 ]]
 
 function P.resetTools()
-	P[1] = P.emptyCup
-	P[2] = P.emptyBucket
+	P[1] = P.saw
+	P[2] = P.ladder
 	P[3] = P.wireCutters
 	P[4] = P.waterBottle
 	P[5] = P.sponge
@@ -2021,5 +2063,7 @@ P[72] = P.robotArm
 P[73] = P.sock
 P[74] = P.trap
 P[75] = P.emptyCup
+P[76] = P.gasPourer
+P[77] = P.gasPourerXtreme
 
 return tools
