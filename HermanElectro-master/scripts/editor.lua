@@ -94,6 +94,9 @@ function P.keypressed(key, unicode)
 		local tempRooms = {}
 		if love.filesystem.exists(saveDir..'/tempRooms.json') then
 			tempRooms = util.readJSON(saveDir .. '/tempRooms.json')
+			if tempRooms == nil then
+				tempRooms = {}
+			end
 		end
 		local newRoom = {}
 		newRoom.layout = {}
