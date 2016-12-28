@@ -90,7 +90,6 @@ function P.writeJSON(filePath, data, state)
 	if not love.filesystem.exists(saveDir) then
 		love.filesystem.createDirectory(saveDir)
 	end
-	print(str)
 	love.filesystem.write(saveDir..'/'..filePath, str)
 end
 

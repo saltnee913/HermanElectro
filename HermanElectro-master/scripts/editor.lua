@@ -34,71 +34,119 @@ function P.draw()
 	end
 end
 
+function printRoom()
+	print("\"name\":")
+	print("{")
+	print("\"layout\":")
+	print("[")
+	for i = 1, roomHeight do
+		prt = "["
+		for j =1, roomLength do
+			if room[i][j]~=nil then
+				for k = 1, #tiles do
+					if tiles[k]~=nil and room[i][j]~=nil and tiles[k].name == room[i][j].name then
+						if room[i][j].overlay ~= nil then
+							prt=prt..'['
+						end
+						addk = k
+						if k == 1 then
+							addk=0
+						end
+						prt = prt..addk
+						if(room[i][j].rotation ~= 0) then
+							prt = prt..'.'..room[i][j].rotation
+						end
+						if room[i][j].overlay ~= nil then
+							prt=prt..','
+							for k = 1, #tiles do
+								if room[i][j].overlay.name == tiles[k].name then
+									prt=prt..k
+								end
+							end
+							if(room[i][j].overlay.rotation ~= 0) then
+								prt = prt..'.'..room[i][j].overlay.rotation
+							end
+							prt=prt..']'
+						end
+						break
+					end
+				end
+			else
+				prt = prt..0
+			end
+			if j ~= roomLength then
+				prt = prt..","
+			end
+		end
+		prt = prt.."]"
+		print(prt)
+	end
+	print("],")
+	print("\"itemsNeeded\":")
+	print("[")
+	print("[0,0,0,0,0,0,0]")
+	print("]")
+	print("},\n")
+end
+
 function P.keypressed(key, unicode)
 	if key=="p" then
+		local tempRooms = {}
+		if love.filesystem.exists(saveDir..'/tempRooms.json') then
+			tempRooms = util.readJSON(saveDir .. '/tempRooms.json')
+		end
+		local newRoom = {}
+		newRoom.layout = {}
 		savedRoom = {}
 		for i = 1, roomHeight do
+			newRoom.layout[i] = {}
 			savedRoom[i] = {}
 			for j = 1, roomLength do
 				savedRoom[i][j] = room[i][j]
+				if room[i][j] == nil then
+					newRoom.layout[i][j] = 0
+				else
+					local tileWithRot = 0
+					--find the tile id
+					for k = 1, #tiles do
+						if tiles[k].name == room[i][j].name then
+							tileWithRot = k
+						end
+					end
+					--add in the rotation of the tile
+					if room[i][j].rotation ~= 0 then
+						tileWithRot = tileWithRot + room[i][j].rotation/10
+					end
+	
+					if room[i][j].overlay == nil then
+						newRoom.layout[i][j] = tileWithRot
+					else
+						local overlayWithRot = 0
+						for k = 1, #tiles do
+							if tiles[k].name == room[i][j].overlay.name then
+								overlayWithRot = k
+							end
+						end
+						if room[i][j].overlay.rotation ~= 0 then
+							overlayWithRot = overlayWithRot + room[i][j].overlay.rotation/10
+						end
+						newRoom.layout[i][j] = {tileWithRot,overlayWithRot}
+					end
+
+				end
 			end
 		end
 		savedAnimals = {}
 		for i = 1, #animals do
 			savedAnimals[i] = animals[i]
 		end
-		print("\"name\":")
-		print("{")
-		print("\"layout\":")
-		print("[")
-		for i = 1, roomHeight do
-			prt = "["
-			for j =1, roomLength do
-				if room[i][j]~=nil then
-					for k = 1, #tiles do
-						if tiles[k]~=nil and room[i][j]~=nil and tiles[k].name == room[i][j].name then
-							if room[i][j].overlay ~= nil then
-								prt=prt..'['
-							end
-							addk = k
-							if k == 1 then
-								addk=0
-							end
-							prt = prt..addk
-							if(room[i][j].rotation ~= 0) then
-								prt = prt..'.'..room[i][j].rotation
-							end
-							if room[i][j].overlay ~= nil then
-								prt=prt..','
-								for k = 1, #tiles do
-									if room[i][j].overlay.name == tiles[k].name then
-										prt=prt..k
-									end
-								end
-								if(room[i][j].overlay.rotation ~= 0) then
-									prt = prt..'.'..room[i][j].overlay.rotation
-								end
-								prt=prt..']'
-							end
-							break
-						end
-					end
-				else
-					prt = prt..0
-				end
-				if j ~= roomLength then
-					prt = prt..","
-				end
-			end
-			prt = prt.."]"
-			print(prt)
-		end
-		print("],")
-		print("\"itemsNeeded\":")
-		print("[")
-		print("[0,0,0,0,0,0,0]")
-		print("]")
-		print("},\n")
+		newRoom.itemsNeeded = {}
+		newRoom.itemsNeeded[1] = {0,0,0,0,0,0,0}
+		tempRooms[#tempRooms+1] = {name = newRoom}
+		local state = {indent = true}
+		util.writeJSON('/tempRooms.json', tempRooms, state)
+		local json = require('scripts.dkjson')
+		print(json.encode({name = newRoom}, state))
 	end
 	if key=='tab' then
 		roomHack = mainMap[mapy][mapx].roomid .. ''
