@@ -1936,7 +1936,7 @@ function P.gasPourer:useToolNothing(tileY, tileX)
 	room[tileY][tileX] = tiles.gasPuddle:new()
 end
 
-P.gasPourerXtreme = P.gasPourer:new{name = "gasPourerXtreme", image = love.graphics.newImage('Graphics/gaspourerxtreme.png'), quality = 3, baseRange = 1}
+P.gasPourerXtreme = P.gasPourer:new{name = "gasPourerXtreme", image = love.graphics.newImage('Graphics/gaspourerxtreme.png'), quality = 4, baseRange = 1}
 function P.gasPourerXtreme:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld-1
 	room[tileY][tileX] = tiles.gasPuddle:new()
@@ -1967,6 +1967,22 @@ function P.gasPourerXtreme:spreadGas(tileY, tileX)
 			self:spreadGas(tileY, tileX+1)
 		end
 	end
+end
+
+P.buttonPlacer = P.superTool:new{name = "buttonPlacer", image = love.graphics.newImage('Graphics/buttonplacer.png'), baseRange = 1, quality = 2}
+function P.buttonPlacer:usableOnNothing()
+	return true
+end
+function P.buttonPlacer:useToolNothing(tileY, tileX)
+	room[tileY][tileX] = tiles.button:new()
+end
+
+P.wireToButton = P.superTool:new{name = "wireToButton", image = love.graphics.newImage('Graphics/wiretobutton.png'), baseRange = 1, quality = 4}
+function P.wireToButton:usableOnTile(tile)
+	return tile:instanceof(tiles.wire)
+end
+function P.wireToButton:useToolTile(tile, tileY, tileX)
+	room[tileY][tileX] = tiles.button:new()
 end
 
 P.numNormalTools = 7
@@ -2065,5 +2081,7 @@ P[74] = P.trap
 P[75] = P.emptyCup
 P[76] = P.gasPourer
 P[77] = P.gasPourerXtreme
+P[78] = P.buttonPlacer
+P[79] = P.wireToButton
 
 return tools
