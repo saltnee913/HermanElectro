@@ -1985,15 +1985,34 @@ function P.wireToButton:useToolTile(tile, tileY, tileX)
 	room[tileY][tileX] = tiles.button:new()
 end
 
+P.foresight = P.superTool:new{name = "foresight", image = love.graphics.newImage('Graphics/foresight.png'), baseRange = 0}
+function P.foresight:usableOnTile(tile)
+	return true
+end
+P.foresight.usableOnNothing = P.foresight.usableOnTile
+function P.foresight:useToolTile(tile)
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]~=nil and room[i][j]:instanceof(tiles.treasureTile) then
+				local supOrBas = util.random(5, 'toolDrop')
+				if (supOrBas<5) then
+					room[i][j] = tiles.toolTile:new()
+				else
+					room[i][j] = tiles.supertoolTile:new()
+				end
+			end
+		end
+	end
+end
+P.foresight.useToolNothing = P.foresight.useToolTile
+
 P.numNormalTools = 7
 
 --tools not included in list: trap (identical to glue in purpose)
 --some tools are weak, but necessary for balance
 
 --[[ideas:
-	shadowstep: power doesn't update on next step
-	fear: all animals behave like cats for one room
-	rangeUpgrade: range up for next tool use
+
 ]]
 
 function P.resetTools()
@@ -2083,5 +2102,6 @@ P[76] = P.gasPourer
 P[77] = P.gasPourerXtreme
 P[78] = P.buttonPlacer
 P[79] = P.wireToButton
+P[80] = P.foresight
 
 return tools
