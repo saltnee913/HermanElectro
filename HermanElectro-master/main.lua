@@ -438,7 +438,7 @@ function love.load()
 			prevx = (3-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10,
 			prevy = (10-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10,
 			width = 20, height = 20, speed = 250, luckTimer = 0,
-			character = characters[1], regularMapLoc = {x = 0, y = 0}, returnFloorIndex = 0, attributes = {flying = false, fear = false, tall = false, extendedRange = {range = 0, toolUses = 0}, sockStep = 0}}
+			character = characters[1], regularMapLoc = {x = 0, y = 0}, returnFloorIndex = 0, attributes = {flying = false, fear = false, tall = false, extendedRange = {range = 0, toolUses = -1}, sockStep = -1}}
 	else
 		player.dead = false
 		player.tileX = 1
@@ -3017,7 +3017,7 @@ function updateGameState(noPowerUpdate, noLightUpdate)
 		end
 	end
 	checkWin()
-	if not noPowerUpdate and player.attributes.sockStep<=0 then updatePower() end
+	if not noPowerUpdate and player.attributes.sockStep<0 then updatePower() end
 	if not noLightUpdate then
 		updateLight()
 	end
