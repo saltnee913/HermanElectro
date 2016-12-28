@@ -1829,7 +1829,7 @@ end
 P.emptyBucket = P.superTool:new{name = "emptyBucket", image = love.graphics.newImage('Graphics/bucket.png'), imageEmpty = love.graphics.newImage('Graphics/bucket.png'),
   imageFull = love.graphics.newImage('Graphics/bucketofwater.png'), full = false, baseRange = 1, quality = 2}
 function P.emptyBucket:usableOnTile(tile)
-	if self.full then return false end
+	if self.full then return P.bucketOfWater:usableOnTile(tile) end
 	if not self.full then return tile:instanceof(tiles.puddle) end
 end
 
@@ -1837,9 +1837,15 @@ function P.emptyBucket:usableOnNothing()
 	return self.full
 end
 function P.emptyBucket:useToolTile(tile, tileY, tileX)
-	self.image = self.imageFull
-	self.full = true
-	room[tileY][tileX] = nil
+	if not self.full then
+		self.image = self.imageFull
+		self.full = true
+		room[tileY][tileX] = nil
+	else
+		P.bucketOfWater:useToolTile(tile, tileY, tileX)
+		self.image = self.imageEmpty
+		self.full = false
+	end
 end
 function P.emptyBucket:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld-1
@@ -1848,6 +1854,33 @@ function P.emptyBucket:useToolNothing(tileY, tileX)
 	self:spreadWater(tileY, tileX)
 end
 P.emptyBucket.spreadWater = P.bucketOfWater.spreadWater
+
+P.emptyCup = P.emptyBucket:new{name = "emptyCup"}
+function P.emptyCup:usableOnNothing()
+	return self.full
+end
+function P.emptyCup:useToolNothing(tileY, tileX)
+	P.waterBottle:useToolNothing(tileY, tileX)
+	self.image = self.imageEmpty
+	self.full = false
+end
+function P.emptyCup:usableOnTile(tile)
+	if self.full then return P.waterBottle:usableOnTile(tile) end
+	if not self.full then return tile:instanceof(tiles.puddle) end
+end
+
+function P.emptyCup:useToolTile(tile, tileY, tileX)
+	if not self.full then
+		self.image = self.imageFull
+		self.full = true
+		room[tileY][tileX] = nil
+	else
+		self.numHeld = self.numHeld-1
+		P.waterBottle:useToolTile(tile, tileY, tileX)
+		self.image = self.imageEmpty
+		self.full = false
+	end
+end
 
 P.mask = P.superTool:new{name = "mask", image = love.graphics.newImage('Graphics/mask.png'), baseRange = 0, quality = 1}
 function P.mask:usableOnTile(tile)
@@ -1882,6 +1915,75 @@ function P.robotArm:useToolTile(tile)
 end
 P.robotArm.useToolNothing = P.robotArm.useToolTile
 
+P.sock = P.superTool:new{name = "sock", image = love.graphics.newImage('Graphics/sock.png'), quality = 1, baseRange = 0}
+function P.sock:usableOnTile(tile)
+	return true
+end
+P.sock.usableOnNothing = P.sock.usableOnTile
+function P.sock:useToolTile(tile)
+	self.numHeld = self.numHeld-1
+	player.attributes.sockStep = 1
+	forcePowerUpdateNext = false
+end
+P.sock.useToolNothing = P.sock.useToolTile
+
+P.gasPourer = P.superTool:new{name = "gasPourer", image = love.graphics.newImage('Graphics/gaspourer.png'), quality = 2, baseRange = 1}
+function P.gasPourer:usableOnNothing()
+	return true
+end
+function P.gasPourer:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
+	room[tileY][tileX] = tiles.gasPuddle:new()
+end
+
+P.gasPourerXtreme = P.gasPourer:new{name = "gasPourerXtreme", image = love.graphics.newImage('Graphics/gaspourerxtreme.png'), quality = 4, baseRange = 1}
+function P.gasPourerXtreme:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
+	room[tileY][tileX] = tiles.gasPuddle:new()
+end
+function P.gasPourerXtreme:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld - 1
+	self:spreadGas(tileY, tileX)
+end
+function P.gasPourerXtreme:spreadGas(tileY, tileX)
+	room[tileY][tileX] = tiles.gasPuddle:new()
+	if tileY>1 then
+		if room[tileY-1][tileX]==nil then
+			self:spreadGas(tileY-1, tileX)
+		end
+	end
+	if tileY<roomHeight then
+		if room[tileY+1][tileX]==nil then
+			self:spreadGas(tileY+1, tileX)
+		end
+	end
+	if tileX>1 then
+		if room[tileY][tileX-1]==nil then
+			self:spreadGas(tileY, tileX-1)
+		end
+	end
+	if tileX<roomLength then
+		if room[tileY][tileX+1]==nil then
+			self:spreadGas(tileY, tileX+1)
+		end
+	end
+end
+
+P.buttonPlacer = P.superTool:new{name = "buttonPlacer", image = love.graphics.newImage('Graphics/buttonplacer.png'), baseRange = 1, quality = 2}
+function P.buttonPlacer:usableOnNothing()
+	return true
+end
+function P.buttonPlacer:useToolNothing(tileY, tileX)
+	room[tileY][tileX] = tiles.button:new()
+end
+
+P.wireToButton = P.superTool:new{name = "wireToButton", image = love.graphics.newImage('Graphics/wiretobutton.png'), baseRange = 1, quality = 4}
+function P.wireToButton:usableOnTile(tile)
+	return tile:instanceof(tiles.wire)
+end
+function P.wireToButton:useToolTile(tile, tileY, tileX)
+	room[tileY][tileX] = tiles.button:new()
+end
 
 P.numNormalTools = 7
 
@@ -1973,5 +2075,13 @@ P[68] = P.coin
 P[69] = P.knife
 P[70] = P.mask
 P[71] = P.growthHormones
+P[72] = P.robotArm
+P[73] = P.sock
+P[74] = P.trap
+P[75] = P.emptyCup
+P[76] = P.gasPourer
+P[77] = P.gasPourerXtreme
+P[78] = P.buttonPlacer
+P[79] = P.wireToButton
 
 return tools
