@@ -3017,7 +3017,7 @@ function updateGameState(noPowerUpdate, noLightUpdate)
 		end
 	end
 	checkWin()
-	if not noPowerUpdate and player.attributes.sockStep<0 then updatePower() end
+	if not noPowerUpdate and player.attributes.sockStep<=0 then updatePower() end
 	if not noLightUpdate then
 		updateLight()
 	end
