@@ -1829,7 +1829,7 @@ end
 P.emptyBucket = P.superTool:new{name = "emptyBucket", image = love.graphics.newImage('Graphics/bucket.png'), imageEmpty = love.graphics.newImage('Graphics/bucket.png'),
   imageFull = love.graphics.newImage('Graphics/bucketofwater.png'), full = false, baseRange = 1, quality = 2}
 function P.emptyBucket:usableOnTile(tile)
-	if self.full then return false end
+	if self.full then return P.bucketOfWater:usableOnTile(tile) end
 	if not self.full then return tile:instanceof(tiles.puddle) end
 end
 
@@ -1837,9 +1837,15 @@ function P.emptyBucket:usableOnNothing()
 	return self.full
 end
 function P.emptyBucket:useToolTile(tile, tileY, tileX)
-	self.image = self.imageFull
-	self.full = true
-	room[tileY][tileX] = nil
+	if not self.full then
+		self.image = self.imageFull
+		self.full = true
+		room[tileY][tileX] = nil
+	else
+		P.bucketOfWater:useToolTile(tile, tileY, tileX)
+		self.image = self.imageEmpty
+		self.full = false
+	end
 end
 function P.emptyBucket:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld-1
@@ -1848,6 +1854,33 @@ function P.emptyBucket:useToolNothing(tileY, tileX)
 	self:spreadWater(tileY, tileX)
 end
 P.emptyBucket.spreadWater = P.bucketOfWater.spreadWater
+
+P.emptyCup = P.emptyBucket:new{name = "emptyCup"}
+function P.emptyCup:usableOnNothing()
+	return self.full
+end
+function P.emptyCup:useToolNothing(tileY, tileX)
+	P.waterBottle:useToolNothing(tileY, tileX)
+	self.image = self.imageEmpty
+	self.full = false
+end
+function P.emptyCup:usableOnTile(tile)
+	if self.full then return P.waterBottle:usableOnTile(tile) end
+	if not self.full then return tile:instanceof(tiles.puddle) end
+end
+
+function P.emptyCup:useToolTile(tile, tileY, tileX)
+	if not self.full then
+		self.image = self.imageFull
+		self.full = true
+		room[tileY][tileX] = nil
+	else
+		self.numHeld = self.numHeld-1
+		P.waterBottle:useToolTile(tile, tileY, tileX)
+		self.image = self.imageEmpty
+		self.full = false
+	end
+end
 
 P.mask = P.superTool:new{name = "mask", image = love.graphics.newImage('Graphics/mask.png'), baseRange = 0, quality = 1}
 function P.mask:usableOnTile(tile)
@@ -1906,8 +1939,8 @@ P.numNormalTools = 7
 ]]
 
 function P.resetTools()
-	P[1] = P.sock
-	P[2] = P.ladder
+	P[1] = P.emptyCup
+	P[2] = P.emptyBucket
 	P[3] = P.wireCutters
 	P[4] = P.waterBottle
 	P[5] = P.sponge
@@ -1986,5 +2019,7 @@ P[70] = P.mask
 P[71] = P.growthHormones
 P[72] = P.robotArm
 P[73] = P.sock
+P[74] = P.trap
+P[75] = P.emptyCup
 
 return tools
