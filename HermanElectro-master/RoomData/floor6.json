@@ -72,6 +72,6 @@
 		"numRoomsToCheck": 3,
 		"finalFloor": true,
 		"tint": [0,0,0],
-		"playerRange": 100
+		"playerRange": 300
 	}
 }
