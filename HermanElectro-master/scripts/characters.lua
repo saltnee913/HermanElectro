@@ -82,8 +82,6 @@ function P.character:postMove()
 end
 function P.character:onTileLeave()
 end
-function P.character:onPostUpdatePower()
-end
 function P.character:onPostUpdateLight()
 end
 function P.character:getInfoText()
@@ -98,6 +96,8 @@ end
 function P.character:immediatePostMove()
 end
 function P.character:update()
+end
+function P.character:absoluteFinalUpdate()
 end
 
 P.herman = P.character:new{name = "Herman", description = "The Electrician", winUnlocks = {unlocks.reviveUnlock}, scale = 0.8, sprites = {love.graphics.newImage('hermans/newherman_r.png'),love.graphics.newImage('hermans/newherman_r.png'),love.graphics.newImage('hermans/newherman_r.png'),love.graphics.newImage('hermans/newherman_l.png')}}
@@ -631,7 +631,7 @@ function P.olivia:onCharLoad()
 	myShader:send("b_and_w", true)
 	myShader:send("player_range", 500)
 end
-function P.olivia:onKeyPressed(key)
+function P.olivia:onKeyPressedChar(key)
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
 		self.scaryMode = not self.scaryMode
 		self:updateSprite()
@@ -705,6 +705,37 @@ function P.albert:updateSpotlights()
 	end
 end
 
+P.xavier = P.character:new{name = "Xavier", description = "The Sock Ninja", sockMode = false, sprite = love.graphics.newImage('Graphics/xavier2.png'), sockSprite = love.graphics.newImage('Graphics/xavier.png'),
+noSockSprite = love.graphics.newImage('Graphics/xavier2.png')}
+function P.xavier:onKeyPressedChar(key)
+	if key == 'rshift' or key == 'lshift' or key == 'shift' then
+		self.sockMode = not self.sockMode
+		if player.attributes.sockStep>=0 then
+			self.sockMode = false
+		end
+		if not self.sockMode then
+			player.attributes.sockStep = -1
+			forcePowerUpdateNext = true
+		end
+	end
+	if self.sockMode then
+		player.attributes.sockStep = 1
+	end
+	self:updateSprite()
+	return false
+end
+function P.xavier:absoluteFinalUpdate()
+	self:updateSprite()
+end
+function P.xavier:updateSprite()
+	if self.sockMode or player.attributes.sockStep>=0 then
+		self.sprite = self.sockSprite
+	else
+		self.sprite = self.noSockSprite
+	end
+end
+
+
 P[#P+1] = P.herman
 P[#P+1] = P.felix
 P[#P+1] = P.most
@@ -724,6 +755,7 @@ P[#P+1] = P.fish
 P[#P+1] = P.monk
 P[#P+1] = P.harriet
 P[#P+1] = P.crate
+P[#P+1] = P.xavier
 P[#P+1] = P.paris
 P[#P+1] = P.ed
 P[#P+1] = P.olivia

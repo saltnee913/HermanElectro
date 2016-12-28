@@ -1882,6 +1882,17 @@ function P.robotArm:useToolTile(tile)
 end
 P.robotArm.useToolNothing = P.robotArm.useToolTile
 
+P.sock = P.superTool:new{name = "sock", image = love.graphics.newImage('Graphics/sock.png'), quality = 1, baseRange = 0}
+function P.sock:usableOnTile(tile)
+	return true
+end
+P.sock.usableOnNothing = P.sock.usableOnTile
+function P.sock:useToolTile(tile)
+	self.numHeld = self.numHeld-1
+	player.attributes.sockStep = 1
+	forcePowerUpdateNext = false
+end
+P.sock.useToolNothing = P.sock.useToolTile
 
 P.numNormalTools = 7
 
@@ -1895,7 +1906,7 @@ P.numNormalTools = 7
 ]]
 
 function P.resetTools()
-	P[1] = P.saw
+	P[1] = P.sock
 	P[2] = P.ladder
 	P[3] = P.wireCutters
 	P[4] = P.waterBottle
@@ -1973,5 +1984,7 @@ P[68] = P.coin
 P[69] = P.knife
 P[70] = P.mask
 P[71] = P.growthHormones
+P[72] = P.robotArm
+P[73] = P.sock
 
 return tools

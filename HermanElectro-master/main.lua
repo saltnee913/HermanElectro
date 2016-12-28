@@ -438,7 +438,7 @@ function love.load()
 			prevx = (3-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10,
 			prevy = (10-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10,
 			width = 20, height = 20, speed = 250, luckTimer = 0,
-			character = characters[1], regularMapLoc = {x = 0, y = 0}, returnFloorIndex = 0, attributes = {flying = false, fear = false, tall = false, extendedRange = {range = 0, toolUses = 0}}}
+			character = characters[1], regularMapLoc = {x = 0, y = 0}, returnFloorIndex = 0, attributes = {flying = false, fear = false, tall = false, extendedRange = {range = 0, toolUses = 0}, sockStep = 0}}
 	else
 		player.dead = false
 		player.tileX = 1
@@ -2089,6 +2089,7 @@ function resetPlayerAttributesRoom()
 	player.attributes.flying = false
 	player.attributes.fear = false
 	player.attributes.tall = false
+	player.attributes.sockStep = 0
 	player.attributes.extendedRange = {range = 0, toolUses = 0}
 end
 
@@ -2096,6 +2097,15 @@ function resetPlayerAttributesTool()
 	player.attributes.extendedRange.toolUses = player.attributes.extendedRange.toolUses-1
 	if player.attributes.extendedRange.toolUses<0 then
 		player.attributes.extendedRange.range = 0
+	end
+end
+
+function resetPlayerAttributesStep()
+	if player.attributes.sockStep>=0 then
+		player.attributes.sockStep = player.attributes.sockStep-1
+		if player.attributes.sockStep<0 then
+			forcePowerUpdateNext = true
+		end
 	end
 end
 
@@ -2558,8 +2568,10 @@ function love.keypressed(key, unicode)
     	player.waitCounter = player.waitCounter-1
     end
     if (key == "w" or key == "a" or key == "s" or key == "d") then
-    	if player.prevTileX==player.tileX and player.prevTileY==player.tileY then
+    	if not playerMoved() then
 			player.character:onFailedMove(key)
+		else
+    		resetPlayerAttributesStep()
 		end
 	end
 	if key == "1" or key == "2" or key == "3" or key == "4" or key == "5" or key == "6" or key == "7" or key == "8" or key == "9" or key == "0" then
@@ -2608,7 +2620,7 @@ function love.keypressed(key, unicode)
     		end
     	end
     	enterMove()
-    	if forcePowerUpdateNext then
+    	if forcePowerUpdateNext and playerMoved() then
     		noPowerUpdate = false
     		forcePowerUpdateNext = false
     	end
@@ -2639,7 +2651,7 @@ function love.keypressed(key, unicode)
 		 	end
 	    end
     	updateGameState(noPowerUpdate, false)
-	    if player.tileY~=player.prevTileY or player.tileX~=player.prevTileX or waitTurn then
+	    if playerMoved() or waitTurn then
 	    	stepTrigger()
 	    	for k = 1, #animals do
 				local ani = animals[k]
@@ -2713,7 +2725,7 @@ function love.keypressed(key, unicode)
 			pushables[i].prevTileX = pushables[i].tileX
 			pushables[i].prevTileY = pushables[i].tileY
 		end
-		if player.tileX~=player.prevTileX or player.tileY~=player.prevTileY then
+		if playerMoved() then
 			player.character:postMove()
 		end
     end
@@ -2750,6 +2762,12 @@ function love.keypressed(key, unicode)
     		end
     	end
     end
+
+    player.character:absoluteFinalUpdate()
+end
+
+function playerMoved()
+	return player.tileX~=player.prevTileX or player.tileY~=player.prevTileY
 end
 
 function postAnimalMovement()
@@ -2995,8 +3013,7 @@ function updateGameState(noPowerUpdate, noLightUpdate)
 		end
 	end
 	checkWin()
-
-	if not noPowerUpdate then updatePower() end
+	if not noPowerUpdate and player.attributes.sockStep<0 then updatePower() end
 	if not noLightUpdate then
 		updateLight()
 	end
