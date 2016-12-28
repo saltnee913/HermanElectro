@@ -914,7 +914,7 @@ function P.tunnel:onEnter(player)
 	goDownFloor()
 end
 
-P.upTunnel = P.tunnel:new{name = "upTunnel"}
+P.upTunnel = P.tunnel:new{name = "upTunnel", sprite = love.graphics.newImage('KenGraphics/stairsUp.png')}
 function P.upTunnel:onEnter(player)
 	goUpFloor()
 end

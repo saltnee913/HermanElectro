@@ -512,17 +512,21 @@ function goDownFloor()
 end
 
 function goUpFloor()
-	local mapToLoad = map.loadedMaps[floorIndex-1]
-	floorIndex = floorIndex - 1
-	map.setRoomSetValues(floorIndex)
-	mainMap = mapToLoad.map
-	mapHeight = mapToLoad.mapHeight
-	roomHeight = mapToLoad.roomHeight
-	roomLength = mapToLoad.roomLength
-	completedRooms = mapToLoad.completedRooms
-	visibleMap = mapToLoad.visibleMap
-	prepareFloor()
-	playMusic(floorIndex)
+	if floorIndex == 2 then
+		goToMainMenu()
+	else
+		local mapToLoad = map.loadedMaps[floorIndex-1]
+		floorIndex = floorIndex - 1
+		map.setRoomSetValues(floorIndex)
+		mainMap = mapToLoad.map
+		mapHeight = mapToLoad.mapHeight
+		roomHeight = mapToLoad.roomHeight
+		roomLength = mapToLoad.roomLength
+		completedRooms = mapToLoad.completedRooms
+		visibleMap = mapToLoad.visibleMap
+		prepareFloor()
+		playMusic(floorIndex)
+	end
 end
 function goToFloor(floorNum)
 	floorIndex = floorNum
