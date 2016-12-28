@@ -1977,7 +1977,7 @@ function P.buttonPlacer:useToolNothing(tileY, tileX)
 	room[tileY][tileX] = tiles.button:new()
 end
 
-P.wireToButton = P.superTool:new{name = "wireToButton", image = love.graphics.newImage('Graphics/wiretobutton.png'), baseRange = 1, quality = 4}
+P.wireToButton = P.superTool:new{name = "wireToButton", image = love.graphics.newImage('Graphics/wiretobutton.png'), baseRange = 1, quality = 3}
 function P.wireToButton:usableOnTile(tile)
 	return tile:instanceof(tiles.wire)
 end
@@ -1985,7 +1985,7 @@ function P.wireToButton:useToolTile(tile, tileY, tileX)
 	room[tileY][tileX] = tiles.button:new()
 end
 
-P.foresight = P.superTool:new{name = "foresight", image = love.graphics.newImage('Graphics/foresight.png'), baseRange = 0}
+P.foresight = P.superTool:new{name = "foresight", image = love.graphics.newImage('Graphics/foresight.png'), baseRange = 0, quality = 1}
 function P.foresight:usableOnTile(tile)
 	return true
 end
