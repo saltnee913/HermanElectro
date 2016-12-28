@@ -185,7 +185,7 @@ P.gabe = P.character:new{name = "Gabe", description = "The Angel",
 	sprite = love.graphics.newImage('Graphics/gabe.png'), realChar = nil, reset = false, disabled = true}
 function P.gabe:onCharLoad()
 	if not self.reset then
-		player.flying = true
+		player.attributes.flying = true
 		self.reset = true
 	elseif self.realChar ~= nil then
 		player.character = self.realChar
@@ -195,7 +195,7 @@ function P.gabe:onCharLoad()
 	end
 end
 function P.gabe:onRoomEnter()
-	player.flying = true
+	player.attributes.flying = true
 end
 
 P.rammy = P.character:new{name = "Rammy", description = "The Ram", winUnlocks = {unlocks.ramUnlock},
@@ -625,13 +625,13 @@ function P.ed:onKeyPressedChar(key)
 	return false
 end
 
-P.leonard = P.character:new{name = "Leonard", description = "The Lion", smallSprite = love.graphics.newImage('Graphics/pup.png'),
+P.olivia = P.character:new{name = "Olivia", description = "The Reveler", smallSprite = love.graphics.newImage('Graphics/pup.png'),
 sprite = love.graphics.newImage('Graphics/pup.png'), bigSprite = love.graphics.newImage('Graphics/pitbull.png'), scaryMode = false, scale = 5}
-function P.leonard:onCharLoad()
+function P.olivia:onCharLoad()
 	myShader:send("b_and_w", true)
 	myShader:send("player_range", 500)
 end
-function P.leonard:onKeyPressed(key)
+function P.olivia:onKeyPressed(key)
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
 		self.scaryMode = not self.scaryMode
 		self:updateSprite()
@@ -639,7 +639,7 @@ function P.leonard:onKeyPressed(key)
 	end
 	return false
 end
-function P.leonard:updateSprite()
+function P.olivia:updateSprite()
 	if self.scaryMode then
 		self.sprite = self.bigSprite
 	else
@@ -726,7 +726,7 @@ P[#P+1] = P.harriet
 P[#P+1] = P.crate
 P[#P+1] = P.paris
 P[#P+1] = P.ed
-P[#P+1] = P.leonard
+P[#P+1] = P.olivia
 P[#P+1] = P.albert
 
 P[#P+1] = P.random

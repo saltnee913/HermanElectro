@@ -433,12 +433,12 @@ function love.load()
 
 
 	if player == nil then
-		player = { 	keysHeld = 0, dead = false, safeFromAnimals = false, bonusRange = 0, active = true, flying = false, waitCounter = 0, tileX = 10, tileY = 6, x = (1-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10, 
+		player = { 	keysHeld = 0, dead = false, safeFromAnimals = false, bonusRange = 0, active = true, waitCounter = 0, tileX = 10, tileY = 6, x = (1-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10, 
 			y = (6-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10, prevTileX = 3, prevTileY 	= 10,
 			prevx = (3-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10,
 			prevy = (10-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10,
 			width = 20, height = 20, speed = 250, luckTimer = 0,
-			character = characters[1], regularMapLoc = {x = 0, y = 0}, returnFloorIndex = 0}
+			character = characters[1], regularMapLoc = {x = 0, y = 0}, returnFloorIndex = 0, attributes = {flying = false, fear = false, tall = false, extendedRange = {range = 0, toolUses = 0}}}
 	else
 		player.dead = false
 		player.tileX = 1
@@ -2038,7 +2038,7 @@ end
 
 function createAnimals()
 	animalCounter = 1
-	--if room.animals~=nil then animals = room.animals return end
+	if room.animals~=nil then animals = room.animals return end
 	animals = {}
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
@@ -2085,11 +2085,25 @@ function createPushables()
 	end
 end
 
+function resetPlayerAttributesRoom()
+	player.attributes.flying = false
+	player.attributes.fear = false
+	player.attributes.tall = false
+	player.attributes.extendedRange = {range = 0, toolUses = 0}
+end
+
+function resetPlayerAttributesTool()
+	player.attributes.extendedRange.toolUses = player.attributes.extendedRange.toolUses-1
+	if player.attributes.extendedRange.toolUses<0 then
+		player.attributes.extendedRange.range = 0
+	end
+end
+
 function enterRoom(dir)
 	if not validSpace() then return end
 	log("")
 	resetTranslation()
-	player.flying = false
+	resetPlayerAttributesRoom()
 	--set pushables of prev. room to pushables array, saving for next entry
 	room.pushables = pushables
 	room.animals = animals
@@ -2864,7 +2878,7 @@ function checkDeath()
 	end
 	if room[player.tileY][player.tileX]~=nil then
 		t = room[player.tileY][player.tileX]
-		if t:willKillPlayer() and not player.flying then
+		if t:willKillPlayer() and not player.attributes.flying then
 			kill()
 		end
 	end
@@ -3221,6 +3235,7 @@ function beatRoom(noDrops)
 end
 
 function onToolUse(tool)
+	resetPlayerAttributesTool()
 	player.character:onToolUse(tool)
 	if mainMap[mapy][mapx].toolsUsed == nil then
 		mainMap[mapy][mapx].toolsUsed = {}

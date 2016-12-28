@@ -216,7 +216,7 @@ function P.tool:getToolableTiles()
 				end
 			end
 		else
-			for dist = 1, self.range do
+			for dist = 1, self.range+player.attributes.extendedRange.range do
 				local tileToCheck = {y = player.tileY + offset.y*dist, x = player.tileX + offset.x*dist}
 				if room[tileToCheck.y]~=nil then
 					if dir==5 and dist>1 then break end
@@ -226,7 +226,7 @@ function P.tool:getToolableTiles()
 							usableTiles[dir][#(usableTiles[dir])+1] = tileToCheck
 						end
 					end
-					if room[tileToCheck.y][tileToCheck.x] ~= nil and room[tileToCheck.y][tileToCheck.x].blocksProjectiles and not player.character.tall then
+					if room[tileToCheck.y][tileToCheck.x] ~= nil and room[tileToCheck.y][tileToCheck.x].blocksProjectiles and not player.attributes.tall then
 						break
 					end
 				end
@@ -240,8 +240,8 @@ end
 function P.tool:getToolableTilesBox()
 	local usableTiles = {{},{},{},{},{}}
 	dir = 1
-	for i=-1*self.range, self.range do
-		for j = -1*self.range, self.range do
+	for i=-1*(self.range+player.attributes.extendedRange.range), self.range+player.attributes.extendedRange.range do
+		for j = -1*(self.range+player.attributes.extendedRange.range), self.range+player.attributes.extendedRange.range do
 			local offset = {x = i, y = j}
 			local tileToCheck = {y = player.tileY + offset.y, x = player.tileX + offset.x}
 			if tileToCheck.x<=0 or tileToCheck.x>roomLength then break end
@@ -301,7 +301,7 @@ function P.tool:getToolableAnimals()
 	end
 	for dir = 1, 5 do
 		usableAnimals[dir] = {}
-		if closestAnimals[dir].dist <= self.range then
+		if closestAnimals[dir].dist <= self.range+player.attributes.extendedRange.range then
 			local offset
 			if dir == 5 then
 				offset = {y = 0, x = 0}
@@ -312,7 +312,7 @@ function P.tool:getToolableAnimals()
 			for dist = 1, closestAnimals[dir].dist do
 				if room[player.tileY + offset.y*dist] ~= nil then
 					local tile = room[player.tileY + offset.y*dist][player.tileX + offset.x*dist]
-					if tile~=nil and tile.blocksProjectiles  and not player.character.tall then
+					if tile~=nil and tile.blocksProjectiles  and not player.attributes.tall then
 						isBlocked = true
 						break
 					end
@@ -330,7 +330,7 @@ end
 function P.tool:getToolableAnimalsBox()
 	local usableAnimals = {{},{},{},{},{}}
 	for animalIndex = 1, #animals do
-		if not animals[animalIndex].dead and math.abs(animals[animalIndex].tileY - player.tileY)+math.abs(animals[animalIndex].tileX - player.tileX)<=self.range then
+		if not animals[animalIndex].dead and math.abs(animals[animalIndex].tileY - player.tileY)+math.abs(animals[animalIndex].tileX - player.tileX)<=self.range+player.attributes.extendedRange.range then
 			if litTiles[animals[animalIndex].tileY][animals[animalIndex].tileX]~=0 then
 				usableAnimals[1][#usableAnimals[1]+1] = animals[animalIndex]
 			end
@@ -379,7 +379,7 @@ function P.tool:getToolablePushables()
 	end
 	for dir = 1, 5 do
 		usablePushables[dir] = {}
-		if closestPushables[dir].dist <= self.range then
+		if closestPushables[dir].dist <= self.range+player.attributes.extendedRange.range then
 			local offset
 			if dir == 5 then
 				offset = {y = 0, x = 0}
@@ -408,7 +408,7 @@ end
 function P.tool:getToolablePushablesBox()
 	local usablePushables = {{},{},{},{},{}}
 	for pushableIndex = 1, #pushables do
-		if not pushables[pushableIndex].dead and math.abs(pushables[pushableIndex].tileY - player.tileY)+math.abs(pushables[pushableIndex].tileX - player.tileX)<=self.range then
+		if not pushables[pushableIndex].dead and math.abs(pushables[pushableIndex].tileY - player.tileY)+math.abs(pushables[pushableIndex].tileX - player.tileX)<=self.range+player.attributes.extendedRange.range then
 			if litTiles[pushables[pushableIndex].tileY][pushables[pushableIndex].tileX]~=0 then
 				usablePushables[1][#usablePushables[1]+1] = pushables[pushableIndex]
 			end
@@ -1849,10 +1849,50 @@ function P.emptyBucket:useToolNothing(tileY, tileX)
 end
 P.emptyBucket.spreadWater = P.bucketOfWater.spreadWater
 
+P.mask = P.superTool:new{name = "mask", image = love.graphics.newImage('Graphics/mask.png'), baseRange = 0, quality = 1}
+function P.mask:usableOnTile(tile)
+	return true
+end
+P.mask.usableOnNothing = P.mask.usableOnTile
+function P.mask:useToolTile(tile)
+	self.numHeld = self.numHeld-1
+	player.attributes.fear = true
+end
+P.mask.useToolNothing = P.mask.useToolTile
+
+P.growthHormones = P.superTool:new{name = "growthHormones", image = love.graphics.newImage('Graphics/growthHormones.png'), baseRange = 0, quality = 1}
+function P.growthHormones:usableOnTile(tile)
+	return true
+end
+P.growthHormones.usableOnNothing = P.growthHormones.usableOnTile
+function P.growthHormones:useToolTile(tile)
+	self.numHeld = self.numHeld-1
+	player.attributes.tall = true
+end
+P.growthHormones.useToolNothing = P.growthHormones.useToolTile
+
+P.robotArm = P.superTool:new{name = "robotArm", image = love.graphics.newImage('Graphics/robotArm.png'), quality = 1, baseRange = 0}
+function P.robotArm:usableOnTile(tile)
+	return true
+end
+P.robotArm.usableOnNothing = P.robotArm.usableOnTile
+function P.robotArm:useToolTile(tile)
+	self.numHeld = self.numHeld-1
+	player.attributes.extendedRange = {range = 6, toolUses = 1}
+end
+P.robotArm.useToolNothing = P.robotArm.useToolTile
+
+
 P.numNormalTools = 7
 
 --tools not included in list: trap (identical to glue in purpose)
 --some tools are weak, but necessary for balance
+
+--[[ideas:
+	shadowstep: power doesn't update on next step
+	fear: all animals behave like cats for one room
+	rangeUpgrade: range up for next tool use
+]]
 
 function P.resetTools()
 	P[1] = P.saw
@@ -1931,5 +1971,7 @@ P[66] = P.wireExtender
 P[67] = P.lamp
 P[68] = P.coin
 P[69] = P.knife
+P[70] = P.mask
+P[71] = P.growthHormones
 
 return tools
