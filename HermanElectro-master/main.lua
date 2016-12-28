@@ -2093,7 +2093,7 @@ function resetPlayerAttributesRoom()
 	player.attributes.flying = false
 	player.attributes.fear = false
 	player.attributes.tall = false
-	player.attributes.sockStep = 0
+	player.attributes.sockStep = -1
 	player.attributes.extendedRange = {range = 0, toolUses = 0}
 end
 
@@ -3016,6 +3016,7 @@ function updateGameState(noPowerUpdate, noLightUpdate)
 			end
 		end
 	end
+	print(player.attributes.sockStep)
 	checkWin()
 	if not noPowerUpdate and player.attributes.sockStep<0 then updatePower() end
 	if not noLightUpdate then
