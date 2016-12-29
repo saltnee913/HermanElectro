@@ -2080,7 +2080,7 @@ function P.tileCloner:nothingIsSomething()
 	return true
 end
 
-P.shopReroller = P.superTool:new{name = "shopReroller", image = love.graphics.newImage('Graphics/shopreroller.png')}
+P.shopReroller = P.superTool:new{name = "shopReroller", image = love.graphics.newImage('Graphics/shopreroller.png'), quality = 1}
 function P.shopReroller:usableOnTile(tile)
 	return true
 end
@@ -2101,7 +2101,7 @@ function P.shopReroller:useToolTile(tile)
 end
 P.shopReroller.useToolNothing = P.shopReroller.useToolTile
 
-P.ghostStep = P.superTool:new{name = "ghostStep", image = love.graphics.newImage('Graphics/ghoststep.png')}
+P.ghostStep = P.superTool:new{name = "ghostStep", image = love.graphics.newImage('Graphics/ghoststep.png'), baseRange = 6, quality = 1}
 function P.ghostStep:usableOnTile()
 	return true
 end
