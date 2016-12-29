@@ -1889,11 +1889,6 @@ function love.draw()
 		love.graphics.draw(unlocks.frame, 0, height-unlocks.frame:getHeight()*uScale, 0, uScale, uScale)
 		love.graphics.draw(unlock.sprite, offsetX*uScale, height-(unlock.sprite:getHeight()*tScale+offsetY)*uScale, 0, uScale*tScale, uScale*tScale)
 	end
-	if not editorMode then
-		botText = "e to toggle editor mode"
-	else
-		botText = "e to toggle editor mode, r to clear screen, p to print matrix of room, click to select/place tiles below"
-	end
 	barLength = 200
 	if editorMode then
 		editor.draw()
@@ -1901,10 +1896,6 @@ function love.draw()
 	if loadTutorial then
 		tutorial.draw()
 	end
-	love.graphics.setColor(0,0,0)
-	love.graphics.rectangle("fill", 5, height-2.5*width/30, barLength, 15)
-	love.graphics.setColor(255,255,255)
-	love.graphics.print(botText, 10, height-2.5*width/30)
 	if debugText ~= nil then
 		love.graphics.setColor(0,255,0,255)
 		love.graphics.print(debugText, 0, 100)
