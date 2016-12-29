@@ -59,7 +59,6 @@ function P.animal:primaryMove(playerx, playery)
 			self.tileY = self.tileY-1
 		end
 	end
-
 	if room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX]:blocksMovementAnimal(self) then
 		self.tileY = self.prevTileY
 		self.tileX = self.prevTileX
