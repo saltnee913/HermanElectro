@@ -2663,7 +2663,7 @@ function love.keypressed(key, unicode)
 	    	stepTrigger()
 	    	for k = 1, #animals do
 				local ani = animals[k]
-				if not map.blocksMovement(ani.tileY, ani.tileX) then
+				if not map.blocksMovementAnimal(ani.tileY, ani.tileX) then
 					local movex = ani.tileX
 					local movey = ani.tileY
 					if player.active then
