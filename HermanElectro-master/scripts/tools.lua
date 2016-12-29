@@ -2073,6 +2073,28 @@ end
 function P.tileCloner:nothingIsSomething()
 	return true
 end
+
+P.shopReroller = P.superTool:new{name = "shopReroller", image = love.graphics.newImage('Graphics/shopreroller.png')}
+function P.shopReroller:usableOnTile(tile)
+	return true
+end
+P.shopReroller.usableOnNothing = P.shopReroller.usableOnTile
+function P.shopReroller:useToolTile(tile)
+	self.numHeld = self.numHeld-1
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]~=nil then
+				if room[i][j]:instanceof(tiles.supertoolTile) then
+					room[i][j] = tiles.supertoolTile:new()
+				elseif room[i][j]:instanceof(tiles.toolTile) then
+					room[i][j] = tiles.toolTile:new()
+				end
+			end
+		end
+	end
+end
+P.shopReroller.useToolNothing = P.shopReroller.useToolTile
+
 P.numNormalTools = 7
 
 --tools not included in list: trap (identical to glue in purpose)
@@ -2173,5 +2195,6 @@ P[80] = P.foresight
 P[81] = P.tileDisplacer
 P[82] = P.tileSwapper
 P[83] = P.tileCloner
+P[84] = P.shopReroller
 
 return tools
