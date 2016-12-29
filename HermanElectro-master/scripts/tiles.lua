@@ -130,7 +130,8 @@ end
 function P.tile:realtimeUpdate()
 end
 function P.tile:obstructsVision()
-	return self:getHeight()-3<=player.elevation
+	if not self.blocksVision then return false
+	else return self:getHeight()-3>player.elevation end
 end
 function P.tile:obstructsMovement()
 	return math.abs(self.yOffset+player.elevation)>3
