@@ -312,7 +312,6 @@ function love.load()
 		globalTintRising = {1,1,1}
 		charSelect = false
 		selectedBox = {x = 0, y = 0}
-		yOffset = -6
 		regularLength = 24
 		regularHeight = 12
 		toolTime = 0
@@ -433,7 +432,7 @@ function love.load()
 
 
 	if player == nil then
-		player = { 	keysHeld = 0, dead = false, safeFromAnimals = false, bonusRange = 0, active = true, waitCounter = 0, tileX = 10, tileY = 6, x = (1-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10, 
+		player = { 	keysHeld = 0, dead = false, elevation = 0, safeFromAnimals = false, bonusRange = 0, active = true, waitCounter = 0, tileX = 10, tileY = 6, x = (1-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10, 
 			y = (6-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10, prevTileX = 3, prevTileY 	= 10,
 			prevx = (3-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10,
 			prevy = (10-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10,
@@ -880,7 +879,8 @@ function checkLight(i, j, x, y)
 	for inc = 0, length*2 do
 		xcoord = math.floor(ox)
 		ycoord = math.floor(oy)
-		if room[xcoord]~=nil and room[xcoord][ycoord]~=nil and room[xcoord][ycoord].blocksVision and not (xcoord==i and ycoord ==j) then
+		if room[xcoord]~=nil and room[xcoord][ycoord]~=nil and room[xcoord][ycoord].blocksVision and
+			-1*room[xcoord][ycoord]:getYOffset()>player.elevation and not (xcoord==i and ycoord ==j) then
 			return
 		end
 		ox=ox+vx
@@ -1180,7 +1180,7 @@ function lightTest(x, y)
 	litTiles[x][y] = 1
 
 
-	if room[x][y] ~= nil and room[x][y].blocksVision then
+	if room[x][y] ~= nil and room[x][y]:obstructsVision() then
 		return
 	end
 
@@ -1588,7 +1588,7 @@ function love.draw()
 					if room[j][i]~=nil and litTiles[j][i]~=0 then
 						addY = room[j][i]:getYOffset()
 					end
-					if litTiles[j][i]==0 then addY = tiles.wall:getYOffset()+1 end
+					if litTiles[j][i]==0 then addY = tiles.halfWall:getYOffset() end
 					love.graphics.draw(toDraw, (tempi-1)*floor.sprite:getWidth()*scale+wallSprite.width, (addY+(tempj-1)*floor.sprite:getWidth())*scale+wallSprite.height,
 					  rot * math.pi / 2, scale*16/toDraw:getWidth(), scale*16/toDraw:getWidth())
 					if litTiles[j][i]~=0 and room[j][i].overlay ~= nil then
@@ -1699,7 +1699,7 @@ function love.draw()
 		if player.tileY == j then
 			player.x = (player.tileX-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
 			player.y = (player.tileY-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
-			love.graphics.draw(player.character.sprite, math.floor(player.x-player.character.sprite:getWidth()*player.character.scale/2), math.floor(player.y-player.character.sprite:getHeight()*player.character.scale), 0, player.character.scale, player.character.scale)
+			love.graphics.draw(player.character.sprite, math.floor(player.x-player.character.sprite:getWidth()*player.character.scale/2), math.floor(player.y-player.character.sprite:getHeight()*player.character.scale-player.elevation*scale), 0, player.character.scale, player.character.scale)
 			love.graphics.setShader()
 			love.graphics.print(player.character:getInfoText(), math.floor(player.x-player.character.sprite:getWidth()*player.character.scale/2), math.floor(player.y-player.character.sprite:getHeight()*player.character.scale));
 			love.graphics.setShader(myShader)
@@ -2774,6 +2774,14 @@ function playerMoved()
 	return player.tileX~=player.prevTileX or player.tileY~=player.prevTileY
 end
 
+function updateElevation()
+	if room[player.tileY][player.tileX]==nil then
+		player.elevation = 0
+	else
+		player.elevation = room[player.tileY][player.tileX]:getHeight()
+	end
+end
+
 function postAnimalMovement()
 	resolveConflicts()
 	for i = 1, #animals do
@@ -3022,6 +3030,7 @@ function updateGameState(noPowerUpdate, noLightUpdate)
 		updateLight()
 	end
 	updateTools()
+	updateElevation()
 	if tool ~= 0 and tool ~= nil and tools[tool].numHeld == 0 then tool = 0 end
 	tools.updateToolableTiles(tool)
 	--checkAllDeath()

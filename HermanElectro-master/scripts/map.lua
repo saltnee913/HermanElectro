@@ -252,7 +252,7 @@ function P.filterRoomSetByUnlocks(arr)
 end
 
 function P.blocksMovement(tileY, tileX)
-	return room[tileY] ~= nil and room[tileY][tileX] ~= nil and room[tileY][tileX].blocksMovement
+	return room[tileY] ~= nil and room[tileY][tileX] ~= nil and room[tileY][tileX]:obstructsMovement()
 end
 
 local function tilesWhitelistHelper(arr, tiles)

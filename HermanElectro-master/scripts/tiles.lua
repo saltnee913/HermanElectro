@@ -7,7 +7,7 @@ tools = require('scripts.tools')
 local P = {}
 tiles = P
 
-P.tile = Object:new{formerPowered = nil, updatePowerOnEnter = false, text = "", updatePowerOnLeave = false, overlayable = false, overlaying = false, gone = false, lit = false, destroyed = false,
+P.tile = Object:new{yOffset = 0, formerPowered = nil, updatePowerOnEnter = false, text = "", updatePowerOnLeave = false, overlayable = false, overlaying = false, gone = false, lit = false, destroyed = false,
   blocksProjectiles = false, isVisible = true, rotation = 0, powered = false, blocksMovement = false, 
   blocksAnimalMovement = false, poweredNeighbors = {0,0,0,0}, blocksVision = false, dirSend = {1,1,1,1}, 
   dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile", emitsLight = false, litWhenPowered = false, intensity = 0.5, range = 25,
@@ -128,6 +128,15 @@ end
 function P.tile:absoluteFinalUpdate()
 end
 function P.tile:realtimeUpdate()
+end
+function P.tile:obstructsVision()
+	return math.abs(self.yOffset+player.elevation)>3
+end
+function P.tile:obstructsMovement()
+	return math.abs(self.yOffset+player.elevation)>3
+end
+function P.tile:getHeight()
+	return -1*self.yOffset
 end
 
 P.invisibleTile = P.tile:new{isVisible = false, name = "invisibleTile"}
@@ -422,9 +431,9 @@ end
 P.poweredFloor.willKillAnimal = P.poweredFloor.willKillPlayer
 P.poweredFloor.willDestroyPushable = P.poweredFloor.willKillPlayer
 
-P.wall = P.tile:new{overlayable = true, electrified = false, onFire = false, blocksProjectiles = true, blocksMovement = true, canBePowered = false, name = "wall", blocksVision = true, electrifiedSprite = love.graphics.newImage('Graphics/woodwallelectrified.png'), destroyedSprite = love.graphics.newImage('Graphics/woodwallbroken.png'), sprite = love.graphics.newImage('GraphicsBrush/woodwall2.png'), poweredSprite = love.graphics.newImage('Graphics3D/woodwall.png'), electrifiedPoweredSprite = love.graphics.newImage('Graphics/woodwallpowered.png'), sawable = true}
+P.wall = P.tile:new{overlayable = true, yOffset = -6, electrified = false, onFire = false, blocksProjectiles = true, blocksMovement = true, canBePowered = false, name = "wall", blocksVision = true, electrifiedSprite = love.graphics.newImage('Graphics/woodwallelectrified.png'), destroyedSprite = love.graphics.newImage('Graphics/woodwallbroken.png'), sprite = love.graphics.newImage('GraphicsBrush/woodwall2.png'), poweredSprite = love.graphics.newImage('Graphics3D/woodwall.png'), electrifiedPoweredSprite = love.graphics.newImage('Graphics/woodwallpowered.png'), sawable = true}
 function P.wall:onEnter(player)	
-	if not self.destroyed then
+	if math.abs(player.elevation+self:getYOffset())>3 then
 		--player.x = player.prevx
 		--player.y = player.prevy
 		player.tileX = player.prevTileX
@@ -433,6 +442,8 @@ function P.wall:onEnter(player)
 		--player.prevy = player.y
 		player.prevTileX = player.tileX
 		player.prevTileY = player.tileY
+	else
+		player.elevation = -1*self:getYOffset()
 	end
 end
 P.wall.onStay = P.wall.onEnter
@@ -450,8 +461,7 @@ function P.wall:onEnterAnimal(animal)
 end
 P.wall.onStayAnimal = P.wall.onEnterAnimal
 function P.wall:getYOffset()
-	if self.destroyed then return 0 end
-	return yOffset
+	return self.yOffset
 end
 function P.wall:destroy()
 	self.blocksProjectiles = false
@@ -462,6 +472,22 @@ function P.wall:destroy()
 	self.dirAccept = {0,0,0,0}
 	self.dirSend = {0,0,0,0}
 	self.overlay = nil
+	self.yOffset = 0
+end
+function P.wall:onLeave()
+	updateElevation()
+	if math.abs(player.elevation+self:getYOffset())>3 then
+		--player.x = player.prevx
+		--player.y = player.prevy
+		player.tileX = player.prevTileX
+		player.tileY = player.prevTileY
+		--player.prevx = player.x
+		--player.prevy = player.y
+		player.prevTileX = player.tileX
+		player.prevTileY = player.tileY
+	else
+		updateElevation()
+	end
 end
 function P.wall:rotate(times)
 end
@@ -1942,6 +1968,8 @@ function P.gasPuddle:explode(x,y)
 	P.bomb:explode(x,y)
 end
 
+P.halfWall = P.concreteWall:new{name = "halfWall", sprite = love.graphics.newImage('GraphicsColor/halfwall.png'), yOffset = -3}
+
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
 tiles[3] = P.powerSupply
@@ -2105,5 +2133,6 @@ tiles[160] = P.endDungeonExit
 tiles[161] = P.key
 tiles[162] = P.keyGate
 tiles[163] = P.gasPuddle
+tiles[164] = P.halfWall
 
 return tiles
