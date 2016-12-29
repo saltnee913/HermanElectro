@@ -193,6 +193,10 @@ end
 function P.tool:checkDeath()
 	return true
 end
+--says if tool works on "nothing" tiles as if they are legitimate
+function P.tool:nothingIsSomething()
+	return false
+end
 
 --returns a table of tables of coordinates by direction
 function P.tool:getToolableTiles()
@@ -2006,6 +2010,69 @@ function P.foresight:useToolTile(tile)
 end
 P.foresight.useToolNothing = P.foresight.useToolTile
 
+P.tileDisplacer = P.superTool:new{name = "tileDisplacer", heldTile = nil, image = love.graphics.newImage('Graphics/tiledisplacer.png'), baseImage = love.graphics.newImage('Graphics/tiledisplacer.png'), baseRange = 3, quality = 5}
+function P.tileDisplacer:usableOnTile(tile)
+	return self.heldTile==nil
+end
+function P.tileDisplacer:usableOnNothing()
+	return self.heldTile~=nil
+end
+function P.tileDisplacer:useToolTile(tile, tileY, tileX)
+	self.image = tile.sprite
+	self.heldTile = tile
+	room[tileY][tileX] = nil
+end
+function P.tileDisplacer:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
+	room[tileY][tileX] = self.heldTile
+	self.heldTile=nil
+	self.image = self.baseImage
+end
+function P.tileDisplacer:nothingIsSomething()
+	return true
+end
+
+P.tileSwapper = P.superTool:new{name = "tileSwapper", toSwapCoords = nil, image = love.graphics.newImage('Graphics/tileswapper.png'), baseImage = love.graphics.newImage('Graphics/tileswapper.png'), baseRange = 3, quality = 5}
+function P.tileSwapper:usableOnTile(tile)
+	return true
+end
+function P.tileSwapper:useToolTile(tile, tileY, tileX)
+	if self.toSwapCoords==nil then
+		self.toSwapCoords = {y = tileY, x = tileX}
+		self.image = room[tileY][tileX].sprite
+	else
+		self.numHeld = self.numHeld-1
+		local saveTile = room[tileY][tileX]
+		room[tileY][tileX] = room[self.toSwapCoords.y][self.toSwapCoords.x]
+		room[self.toSwapCoords.y][self.toSwapCoords.x] = saveTile
+		self.toSwapCoords = nil
+		self.image = self.baseImage
+	end
+end
+function P.tileSwapper:nothingIsSomething()
+	return true
+end
+
+P.tileCloner = P.superTool:new{name = "tileCloner", heldTile = nil, image = love.graphics.newImage('Graphics/tilecloner.png'), baseImage = love.graphics.newImage('Graphics/tilecloner.png'), baseRange = 3, quality = 4}
+function P.tileCloner:usableOnTile(tile)
+	return self.heldTile==nil
+end
+function P.tileCloner:usableOnNothing()
+	return self.heldTile~=nil
+end
+function P.tileCloner:useToolTile(tile, tileY, tileX)
+	self.image = tile.sprite
+	self.heldTile = tile
+end
+function P.tileCloner:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
+	room[tileY][tileX] = self.heldTile
+	self.heldTile = nil
+	self.image = self.baseImage
+end
+function P.tileCloner:nothingIsSomething()
+	return true
+end
 P.numNormalTools = 7
 
 --tools not included in list: trap (identical to glue in purpose)
@@ -2103,5 +2170,8 @@ P[77] = P.gasPourerXtreme
 P[78] = P.buttonPlacer
 P[79] = P.wireToButton
 P[80] = P.foresight
+P[81] = P.tileDisplacer
+P[82] = P.tileSwapper
+P[83] = P.tileCloner
 
 return tools

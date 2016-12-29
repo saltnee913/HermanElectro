@@ -101,7 +101,7 @@ function P.tile:allowVision()
 	self.blocksVision = false
 end
 function P.tile:usableOnNothing()
-	return self.destroyed
+	return self.destroyed and not (tool~=nil and tools[tool]:nothingIsSomething())
 end
 function P.tile:updateToOverlay(dir)
 	if self.overlay == nil then
