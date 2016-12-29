@@ -137,7 +137,7 @@ function P.tile:obstructsMovement()
 	return math.abs(player.elevation-self:getHeight())>3 and self.blocksMovement
 end
 function P.tile:obstructsMovementAnimal()
-	return self:getHeight()>0 and self.blocksMovement
+	return self:getHeight()~=0 and (self.blocksMovement or self.blocksMovementAnimal)
 end
 function P.tile:getHeight()
 	if self.destroyed then
@@ -1992,7 +1992,7 @@ end
 
 P.halfWall = P.concreteWall:new{name = "halfWall", sprite = love.graphics.newImage('GraphicsColor/halfwall.png'), yOffset = -3}
 
-P.elevator = P.conductiveTile:new{name = "elevator", yOffset = -3, sprite = love.graphics.newImage('GraphicsColor/elevatordown.png'), poweredSprite = love.graphics.newImage('GraphicsColor/elevatorup.png')}
+P.elevator = P.conductiveTile:new{name = "elevator", blocksAnimalMovement = true, yOffset = -3, sprite = love.graphics.newImage('GraphicsColor/elevatordown.png'), poweredSprite = love.graphics.newImage('GraphicsColor/elevatorup.png')}
 function P.elevator:postPowerUpdate()
 	if self.powered then
 		self.yOffset = -6
@@ -2003,8 +2003,25 @@ end
 P.elevator.onEnter = P.wall.onEnter
 P.elevator.onLeave = P.wall.onLeave
 
-P.elevatedButton = P.button:new{name = "elevatedButton", yOffset = -3}
+P.elevatedButton = P.button:new{name = "elevatedButton", yOffset = -3, upSprite = love.graphics.newImage('Graphics/buttonupel.png'), downSprite = love.graphics.newImage('Graphics/buttondownel.png')}
 
+P.delevator = P.elevator:new{name = "delevator", blocksAnimalMovement = true, yOffset = 0, sprite = love.graphics.newImage('GraphicsColor/delevatorup.png'), poweredSprite = love.graphics.newImage('GraphicsColor/delevatordown.png')}
+function P.delevator:postPowerUpdate()
+	if self.powered then self.yOffset = 0
+	else self.yOffset = -3 end
+end
+function P.delevator:getHeight()
+	if self.powered then
+		return -3
+	else
+		return 3
+	end
+end
+
+P.groundDown = P.tile:new{name = "groundDown", sprite = love.graphics.newImage('GraphicsColor/grounddown.png')}
+function P.groundDown:getHeight()
+	return -3
+end
 
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
@@ -2172,5 +2189,7 @@ tiles[163] = P.gasPuddle
 tiles[164] = P.halfWall
 tiles[165] = P.elevator
 tiles[166] = P.elevatedButton
+tiles[167] = P.delevator
+tiles[168] = P.groundDown
 
 return tiles

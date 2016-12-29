@@ -1496,42 +1496,21 @@ function love.draw()
 	--love.graphics.draw(rocks, -mapx * width, -mapy * height, 0, 1, 1)
 	local toDrawFloor = nil
 	love.graphics.setShader(myShader)
-	for i = 1, roomLength do
-		for j = 1, roomHeight do
-			if floorIndex==-1 or floorIndex<=1 then
-				toDrawFloor = grassfloortile
-			else
-				if (i*i*i+j*j)%3==0 then
-					toDrawFloor = floortiles[floorIndex-1][1]
-				elseif (i*i*i+j*j)%3==1 then
-					toDrawFloor = floortiles[floorIndex-1][2]
-				else
-					toDrawFloor = floortiles[floorIndex-1][3]
-				end
-				if (room[j][i]==nil) then
-					if (i*i+j*j*j-1)%27==0 then
-						toDrawFloor = secondaryTiles[floorIndex-1][1]
-					elseif (i*i+j*j*j-1)%29==1 then
-						toDrawFloor = secondaryTiles[floorIndex-1][2]
-					elseif (i*i+j*j*j-1)%31==2 then
-						toDrawFloor = secondaryTiles[floorIndex-1][3]
-					end
-				end
-			end
-			fto = map.getFieldForRoom(mainMap[mapy][mapx].roomid, "floorTileOverride")
-			if (fto~=nil) then
-				if fto=="dungeon" then
-					toDrawFloor = dungeonFloor
-				end
-			end
-
-
-			love.graphics.draw(toDrawFloor, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height,
-			0, scale*16/toDrawFloor:getWidth(), scale*16/toDrawFloor:getWidth())
-		end
-	end
 	if floorIndex>1 then
 		toDrawFloor = floortiles[floorIndex-1][1]
+	end
+	if floorIndex<1 then
+		toDrawFloor = grassfloortile
+	else
+		if floortiles[floorIndex-1]~=nil then
+			toDrawFloor = floortiles[floorIndex-1][1]
+		end
+		fto = map.getFieldForRoom(mainMap[mapy][mapx].roomid, "floorTileOverride")
+		if (fto~=nil) then
+			if fto=="dungeon" then
+				toDrawFloor = dungeonFloor
+			end
+		end
 	end
 
 	if validSpace() and mapx<#completedRooms[mapy] and ((completedRooms[mapy][mapx]>0 and mainMap[mapy][mapx+1]~=nil) or
@@ -1568,6 +1547,36 @@ function love.draw()
 	love.graphics.setShader(myShader)
 	for j = 1, roomHeight do
 		for i = 1, roomLength do
+			if floorIndex==-1 or floorIndex<=1 then
+				toDrawFloor = grassfloortile
+			else
+				if (i*i*i+j*j)%3==0 then
+					toDrawFloor = floortiles[floorIndex-1][1]
+				elseif (i*i*i+j*j)%3==1 then
+					toDrawFloor = floortiles[floorIndex-1][2]
+				else
+					toDrawFloor = floortiles[floorIndex-1][3]
+				end
+				if (room[j][i]==nil) then
+					if (i*i+j*j*j-1)%27==0 then
+						toDrawFloor = secondaryTiles[floorIndex-1][1]
+					elseif (i*i+j*j*j-1)%29==1 then
+						toDrawFloor = secondaryTiles[floorIndex-1][2]
+					elseif (i*i+j*j*j-1)%31==2 then
+						toDrawFloor = secondaryTiles[floorIndex-1][3]
+					end
+				end
+			end
+			fto = map.getFieldForRoom(mainMap[mapy][mapx].roomid, "floorTileOverride")
+			if (fto~=nil) then
+				if fto=="dungeon" then
+					toDrawFloor = dungeonFloor
+				end
+			end
+
+
+			love.graphics.draw(toDrawFloor, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height,
+			0, scale*16/toDrawFloor:getWidth(), scale*16/toDrawFloor:getWidth())
 			if (room[j][i]~=nil or litTiles[j][i]==0) and not (litTiles[j][i]==1 and room[j][i]:instanceof(tiles.invisibleTile)) then
 				if room[j][i]~=nil then room[j][i]:updateSprite() end
 				local rot = 0
