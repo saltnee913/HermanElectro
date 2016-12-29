@@ -836,6 +836,19 @@ function updateLamps(tileY, tileX)
 end
 
 function updateLight()
+	if editor.visionHack then
+		litTiles = {}
+		for i = 1, roomHeight do
+			litTiles[i]={}
+		end
+		for i = 1, roomHeight do
+			for j = 1, roomLength do
+				litTiles[i][j]=1
+			end
+		end
+		player.character:onPostUpdateLight()
+		return
+	end
 	litTiles = {}
 	for i = 1, roomHeight do
 		litTiles[i]={}

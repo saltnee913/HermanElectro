@@ -6,6 +6,8 @@ P.stealInput = false
 
 roomsDesigned = 0
 
+P.visionHack = false
+
 function P.draw()
 	barLength = 660
 	love.graphics.setColor(255,255,255)
@@ -179,7 +181,9 @@ function P.keypressed(key, unicode)
 	elseif key == "r" and savedRoom~=nil then
 		room = savedRoom
     	animals = savedAnimals
-    end
+    elseif key == "l" then
+		P.visionHack = not P.visionHack
+    end 
 end
 
 function P.inputSteal(key, unicode)
