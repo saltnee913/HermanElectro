@@ -45,7 +45,7 @@ end
 function P.tile:lockInState(state)
 end
 function P.tile:getYOffset()
-	return 0
+	return self.yOffset
 end
 function P.tile:updateTile(dir)
 	if self.poweredNeighbors[1]==1 or self.poweredNeighbors[2]==1 or self.poweredNeighbors[3]==1 or self.poweredNeighbors[4]==1 then
@@ -461,9 +461,6 @@ function P.wall:onEnterAnimal(animal)
 	end
 end
 P.wall.onStayAnimal = P.wall.onEnterAnimal
-function P.wall:getYOffset()
-	return self.yOffset
-end
 function P.wall:destroy()
 	self.blocksProjectiles = false
 	self.blocksVision = false
@@ -511,7 +508,6 @@ end
 P.maskedMetalWall = P.metalWall:new{sprite = love.graphics.newImage('Graphics/maskedMetalWall.png'), poweredSprite = love.graphics.newImage('Graphics/maskedMetalWall.png')}
 
 P.glassWall = P.wall:new{sawable = false, canBePowered = false, dirAccept = {0,0,0,0}, dirSend = {0,0,0,0}, bricked = false, name = "glasswall", blocksVision = false, electrifiedSprite = love.graphics.newImage('Graphics/glasswallelectrified.png'), destroyedSprite = love.graphics.newImage('Graphics/glassbroken.png'), sprite = love.graphics.newImage('GraphicsColor/glass.png'), poweredSprite = love.graphics.newImage('Graphics3D/glass.png'), electrifiedPoweredSprite = love.graphics.newImage('Graphics/glasswallpowered.png'), sawable = false }
-P.glassWall.getYOffset = P.wall.getYOffset
 function P.glassWall:destroy()
 	self.blocksProjectiles = false
 	self.sprite = self.destroyedSprite
@@ -745,9 +741,6 @@ end
 function P.vPoweredDoor:destroy()
 	self.stopped = true
 	self.open = true
-end
-function P.vPoweredDoor:getYOffset()
-	return yOffset
 end
 function P.vPoweredDoor:rotate(times)
 	self.rotation = self.rotation + times
@@ -1560,9 +1553,6 @@ function P.flickeringLamp:realtimeUpdate()
 end
 
 P.conductiveGlass = P.glassWall:new{name = "conductiveGlass", sprite = love.graphics.newImage('Graphics3D/conductiveglass.png'), poweredSprite = love.graphics.newImage('Graphics3D/conductiveglass.png'), canBePowered = true, dirAccept = {1,1,1,1}, dirSend = {1,1,1,1}}
-function P.conductiveGlass:getYOffset()
-	return yOffset
-end
 
 P.reinforcedConductiveGlass = P.reinforcedGlass:new{name = "reinforcedConductiveGlass", sprite = love.graphics.newImage('Graphics3D/reinforcedconductiveglass.png'), poweredSprite = love.graphics.newImage('Graphics3D/reinforcedconductiveglass.png'), canBePowered = true, dirAccept = {1,1,1,1}, dirSend = {1,1,1,1}}
 
