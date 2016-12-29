@@ -113,7 +113,7 @@ function P.keypressed(key, unicode)
 				else
 					local tileWithRot = 0
 					--find the tile id
-					for k = 1, #tiles do
+					for k = 2, #tiles do
 						if tiles[k].name == room[i][j].name then
 							tileWithRot = k
 						end
@@ -127,7 +127,7 @@ function P.keypressed(key, unicode)
 						newRoom.layout[i][j] = tileWithRot
 					else
 						local overlayWithRot = 0
-						for k = 1, #tiles do
+						for k = 2, #tiles do
 							if tiles[k].name == room[i][j].overlay.name then
 								overlayWithRot = k
 							end

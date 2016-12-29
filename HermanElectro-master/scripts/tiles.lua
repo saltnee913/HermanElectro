@@ -134,13 +134,17 @@ function P.tile:obstructsVision()
 	else return self:getHeight()-3>player.elevation end
 end
 function P.tile:obstructsMovement()
-	return math.abs(self.yOffset+player.elevation)>3 and self.blocksMovement
+	return math.abs(player.elevation-self:getHeight())>3 and self.blocksMovement
 end
 function P.tile:obstructsMovementAnimal()
 	return self:getHeight()>0 and self.blocksMovement
 end
 function P.tile:getHeight()
-	return -1*self.yOffset
+	if self.destroyed then
+		return 0
+	else
+		return -1*self.yOffset
+	end
 end
 
 P.invisibleTile = P.tile:new{isVisible = false, name = "invisibleTile"}
@@ -437,7 +441,7 @@ P.poweredFloor.willDestroyPushable = P.poweredFloor.willKillPlayer
 
 P.wall = P.tile:new{overlayable = true, yOffset = -6, electrified = false, onFire = false, blocksProjectiles = true, blocksMovement = true, canBePowered = false, name = "wall", blocksVision = true, electrifiedSprite = love.graphics.newImage('Graphics/woodwallelectrified.png'), destroyedSprite = love.graphics.newImage('Graphics/woodwallbroken.png'), sprite = love.graphics.newImage('GraphicsBrush/woodwall2.png'), poweredSprite = love.graphics.newImage('Graphics3D/woodwall.png'), electrifiedPoweredSprite = love.graphics.newImage('Graphics/woodwallpowered.png'), sawable = true}
 function P.wall:onEnter(player)	
-	if math.abs(player.elevation+self:getYOffset())>3 then
+	if math.abs(player.elevation-self:getHeight())>3 then
 		--player.x = player.prevx
 		--player.y = player.prevy
 		player.tileX = player.prevTileX
@@ -447,7 +451,7 @@ function P.wall:onEnter(player)
 		player.prevTileX = player.tileX
 		player.prevTileY = player.tileY
 	else
-		player.elevation = -1*self:getYOffset()
+		player.elevation = self:getHeight()
 	end
 end
 P.wall.onStay = P.wall.onEnter
@@ -477,7 +481,7 @@ function P.wall:destroy()
 end
 function P.wall:onLeave()
 	updateElevation()
-	if math.abs(player.elevation+self:getYOffset())>3 then
+	if math.abs(player.elevation-self:getHeight())>3 then
 		--player.x = player.prevx
 		--player.y = player.prevy
 		player.tileX = player.prevTileX
@@ -695,6 +699,13 @@ function P.hDoor:getHeight()
 	return 6
 end
 P.hDoor.destroy = P.hDoor.onEnter
+function P.hDoor:getHeight()
+	if not self.blocksMovement then
+		return 0 
+	else
+		return 6
+	end
+end
 
 P.vDoor= P.tile:new{name = "hDoor", blocksVision = true, canBePowered = false, dirSend = {0,0,0,0}, dirAccept = {0,0,0,0}, sprite = love.graphics.newImage('Graphics/door.png'), closedSprite = love.graphics.newImage('Graphics/door.png'), openSprite = love.graphics.newImage('Graphics/doorsopen.png')}
 function P.vDoor:onEnter(player)
@@ -769,6 +780,13 @@ function P.vPoweredDoor:updateSprite()
 	end
 end
 P.vPoweredDoor.willKillAnimal = P.vPoweredDoor.willKillPlayer
+function P.vPoweredDoor:getHeight()
+	if not self.blocksMovement then
+		return 0 
+	else
+		return -1*self.yOffset
+	end
+end
 
 P.hPoweredDoor = P.vPoweredDoor:new{name = "hPoweredDoor", dirSend = {0,1,0,1}, dirAccept = {0,1,0,1}}
 function P.hPoweredDoor:updateTile(player)
