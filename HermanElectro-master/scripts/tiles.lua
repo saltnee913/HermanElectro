@@ -699,7 +699,7 @@ function P.hDoor:getHeight()
 	if not self.blocksMovement then
 		return 0 
 	else
-		return -1*self.yOffset
+		return 6
 	end
 end
 
