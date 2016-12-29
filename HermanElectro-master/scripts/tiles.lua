@@ -778,10 +778,8 @@ end
 P.vPoweredDoor.willKillAnimal = P.vPoweredDoor.willKillPlayer
 function P.vPoweredDoor:getHeight()
 	if not self.blocksMovement then
-		log(0)
 		return 0 
 	else
-		log(-1*self.yOffset)
 		return -1*self.yOffset
 	end
 end
