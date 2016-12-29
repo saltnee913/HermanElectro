@@ -134,7 +134,7 @@ function P.tile:obstructsVision()
 	else return self:getHeight()-3>player.elevation end
 end
 function P.tile:obstructsMovement()
-	return math.abs(self.yOffset+player.elevation)>3
+	return math.abs(self.yOffset+player.elevation)>3 and self.blocksMovement
 end
 function P.tile:getHeight()
 	return -1*self.yOffset
