@@ -2101,6 +2101,15 @@ function P.shopReroller:useToolTile(tile)
 end
 P.shopReroller.useToolNothing = P.shopReroller.useToolTile
 
+P.ghostStep = P.superTool:new{name = "ghostStep", image = love.graphics.newImage('Graphics/ghoststep.png')}
+function P.ghostStep:usableOnTile()
+	return true
+end
+function P.ghostStep:useToolTile(tile)
+	self.numHeld = self.numHeld-1
+	tile:onEnter(player)
+end
+
 P.numNormalTools = 7
 
 --tools not included in list: trap (identical to glue in purpose)
@@ -2202,5 +2211,6 @@ P[81] = P.tileDisplacer
 P[82] = P.tileSwapper
 P[83] = P.tileCloner
 P[84] = P.shopReroller
+P[85] = P.ghostStep
 
 return tools
