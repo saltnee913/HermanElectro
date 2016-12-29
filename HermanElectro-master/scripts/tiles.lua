@@ -136,6 +136,9 @@ end
 function P.tile:obstructsMovement()
 	return math.abs(player.elevation-self:getHeight())>3 and self.blocksMovement
 end
+function P.tile:obstructsMovementAnimal()
+	return self:getHeight()>0 and self.blocksMovement
+end
 function P.tile:getHeight()
 	return -1*self.yOffset
 end
@@ -687,6 +690,9 @@ function P.hDoor:onEnter(player)
 	self.sprite = self.openSprite
 	self.blocksVision = false
 	self.blocksMovement = false	
+end
+function P.hDoor:getHeight()
+	return 6
 end
 P.hDoor.destroy = P.hDoor.onEnter
 function P.hDoor:getHeight()
@@ -1573,6 +1579,9 @@ P.conductiveGlass = P.glassWall:new{name = "conductiveGlass", sprite = love.grap
 P.reinforcedConductiveGlass = P.reinforcedGlass:new{name = "reinforcedConductiveGlass", sprite = love.graphics.newImage('Graphics3D/reinforcedconductiveglass.png'), poweredSprite = love.graphics.newImage('Graphics3D/reinforcedconductiveglass.png'), canBePowered = true, dirAccept = {1,1,1,1}, dirSend = {1,1,1,1}}
 
 P.fog = P.tile:new{name = "fog", sprite = love.graphics.newImage('Graphics/fog.png'), blocksVision = true}
+function P.fog:obstructsVision()
+	return player.elevation==0
+end
 
 P.accelerator = P.conductiveTile:new{name = "accelerator", sprite = love.graphics.newImage('Graphics/accelerator.png'), poweredSprite = love.graphics.newImage('Graphics/accelerator.png')}
 function P.accelerator:yAccel()

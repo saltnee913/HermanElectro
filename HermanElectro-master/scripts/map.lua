@@ -254,6 +254,9 @@ end
 function P.blocksMovement(tileY, tileX)
 	return room[tileY] ~= nil and room[tileY][tileX] ~= nil and room[tileY][tileX]:obstructsMovement()
 end
+function P.blocksMovementAnimal(tileY, tileX)
+	return room[tileY] ~= nil and room[tileY][tileX] ~= nil and room[tileY][tileX]:obstructsMovementAnimal()
+end
 
 local function tilesWhitelistHelper(arr, tiles)
 	for i = 1, #arr do
