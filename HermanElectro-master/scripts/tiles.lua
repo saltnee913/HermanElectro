@@ -496,6 +496,10 @@ function P.wall:onLeave()
 end
 function P.wall:rotate(times)
 end
+function P.wall:getYOffset()
+	if self.destroyed then return 0
+	else return self.yOffset end
+end
 
 P.metalWall = P.wall:new{dirAccept = {1,1,1,1}, dirSend = {1,1,1,1}, canBePowered = true, name = "metalwall", blocksVision = true, destroyedSprite = love.graphics.newImage('Graphics/metalwallbroken.png'), sprite = love.graphics.newImage('GraphicsColor/metalwall2.png'), poweredSprite = love.graphics.newImage('GraphicsColor/metalwallpowered2.png') }
 P.metalWall.updateTile = P.conductiveTile.updateTile
@@ -1996,6 +2000,11 @@ function P.elevator:postPowerUpdate()
 		self.yOffset = -3
 	end
 end
+P.elevator.onEnter = P.wall.onEnter
+P.elevator.onLeave = P.wall.onLeave
+
+P.elevatedButton = P.button:new{name = "elevatedButton", yOffset = -3}
+
 
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
@@ -2162,5 +2171,6 @@ tiles[162] = P.keyGate
 tiles[163] = P.gasPuddle
 tiles[164] = P.halfWall
 tiles[165] = P.elevator
+tiles[166] = P.elevatedButton
 
 return tiles

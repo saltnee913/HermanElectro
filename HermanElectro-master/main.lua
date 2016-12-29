@@ -3018,6 +3018,7 @@ function love.mousemoved(x, y, dx, dy)
 end
 
 function updateGameState(noPowerUpdate, noLightUpdate)
+	updateElevation()
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
 			if room[i]~=nil and room[i][j]~=nil then
@@ -3034,7 +3035,6 @@ function updateGameState(noPowerUpdate, noLightUpdate)
 		updateLight()
 	end
 	updateTools()
-	updateElevation()
 	if tool ~= 0 and tool ~= nil and tools[tool].numHeld == 0 then tool = 0 end
 	tools.updateToolableTiles(tool)
 	--checkAllDeath()
