@@ -893,7 +893,7 @@ function checkLight(i, j, x, y)
 		xcoord = math.floor(ox)
 		ycoord = math.floor(oy)
 		if room[xcoord]~=nil and room[xcoord][ycoord]~=nil and room[xcoord][ycoord].blocksVision and
-			-1*room[xcoord][ycoord]:getYOffset()>player.elevation and not (xcoord==i and ycoord ==j) then
+			room[xcoord][ycoord]:getHeight()>player.elevation and not (xcoord==i and ycoord ==j) then
 			return
 		end
 		ox=ox+vx
