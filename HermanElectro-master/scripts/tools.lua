@@ -214,7 +214,7 @@ function P.tool:getToolableTiles()
 			if room[tileToCheck.y]~=nil then
 				if ((room[tileToCheck.y][tileToCheck.x] == nil or room[tileToCheck.y][tileToCheck.x]:usableOnNothing(tileToCheck.y, tileToCheck.x)) and (tileToCheck.x>0 and tileToCheck.x<=roomLength) and self:usableOnNothing(tileToCheck.y, tileToCheck.x))
 				or (room[tileToCheck.y][tileToCheck.x] ~= nil and self:usableOnTile(room[tileToCheck.y][tileToCheck.x], dist) and
-				math.abs(room[tileToCheck.y][tileToCheck.x]:getHeight()-player.elevation)==0) then
+				player.elevation<=math.abs(room[tileToCheck.y][tileToCheck.x]:getHeight())) then
 					if litTiles[tileToCheck.y][tileToCheck.x]~=0 then
 						usableTiles[5][#(usableTiles[5])+1] = tileToCheck
 					end
@@ -227,7 +227,7 @@ function P.tool:getToolableTiles()
 					if dir==5 and dist>1 then break end
 					if ((room[tileToCheck.y][tileToCheck.x] == nil or room[tileToCheck.y][tileToCheck.x]:usableOnNothing(tileToCheck.y, tileToCheck.x)) and (tileToCheck.x>0 and tileToCheck.x<=roomLength) and self:usableOnNothing(tileToCheck.y, tileToCheck.x))
 					or (room[tileToCheck.y][tileToCheck.x] ~= nil and self:usableOnTile(room[tileToCheck.y][tileToCheck.x], dist) and
-					math.abs(room[tileToCheck.y][tileToCheck.x]:getHeight()-player.elevation)==0) then
+					player.elevation<=math.abs(room[tileToCheck.y][tileToCheck.x]:getHeight())) then
 						if litTiles[tileToCheck.y][tileToCheck.x]~=0 then
 							usableTiles[dir][#(usableTiles[dir])+1] = tileToCheck
 						end
@@ -254,7 +254,7 @@ function P.tool:getToolableTilesBox()
 			if room[tileToCheck.y]~=nil then
 				if (room[tileToCheck.y][tileToCheck.x] == nil and self:usableOnNothing(tileToCheck.y, tileToCheck.x))
 				or (room[tileToCheck.y][tileToCheck.x] ~= nil and self:usableOnTile(room[tileToCheck.y][tileToCheck.x], dist) and
-				math.abs(room[tileToCheck.y][tileToCheck.x]:getHeight()-player.elevation)==0) then
+				player.elevation<=math.abs(room[tileToCheck.y][tileToCheck.x]:getHeight())) then
 					if math.abs(tileToCheck.y-player.tileY)+math.abs(tileToCheck.x-player.tileX)<=self.range then
 						if litTiles[tileToCheck.y][tileToCheck.x]~=0 then
 							usableTiles[dir][#(usableTiles[dir])+1] = tileToCheck
