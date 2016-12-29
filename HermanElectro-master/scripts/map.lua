@@ -778,7 +778,7 @@ end
 
 function P.generateEndDungeon()
 	local randomStartRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.startRooms, 'mapGen')
-	local puzzleRooms = util.createIndexArray(P.floorInfo.rooms.puzzleRooms)
+	local puzzleRooms = util.createRandomKeyArray(P.floorInfo.rooms.puzzleRooms, 'mapGen')
 	local randomFinalRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.finalRooms, 'mapGen')
 	local startRoomID = randomStartRoomsArray[1]
 
@@ -796,19 +796,19 @@ function P.generateEndDungeon()
 	newmap.initialX = startx
 
 	local puzzleRoom1 = puzzleRooms[util.random(#puzzleRooms,'mapGen')]
-	--while(map.getFieldForRoom(puzzleRoom1, 'dirEnter')[2]==0) do
-		--puzzleRoom1 = puzzleRooms[util.random(#puzzleRooms,'mapGen')]
-	--end
+	while(map.getFieldForRoom(puzzleRoom1, 'dirEnter')[2]==0) do
+		puzzleRoom1 = puzzleRooms[util.random(#puzzleRooms,'mapGen')]
+	end
 	newmap[starty][startx+1] = {roomid = puzzleRoom1, room = P.createRoom(puzzleRoom1), isFinal = false, isInitial = false}
 	local puzzleRoom2 = puzzleRooms[util.random(#puzzleRooms,'mapGen')]
-	--while(map.getFieldForRoom(puzzleRoom2, 'dirEnter')[4]==0) do
-		--puzzleRoom2 = puzzleRooms[util.random(#puzzleRooms,'mapGen')]
-	--end
+	while(map.getFieldForRoom(puzzleRoom2, 'dirEnter')[4]==0) do
+		puzzleRoom2 = puzzleRooms[util.random(#puzzleRooms,'mapGen')]
+	end
 	newmap[starty][startx-1] = {roomid = puzzleRoom2, room = P.createRoom(puzzleRoom2), isFinal = false, isInitial = false}
 	local puzzleRoom3 = puzzleRooms[util.random(#puzzleRooms,'mapGen')]
-	--while(map.getFieldForRoom(puzzleRoom3, 'dirEnter')[1]==0) do
-		--puzzleRoom3 = puzzleRooms[util.random(#puzzleRooms,'mapGen')]
-	--end
+	while(map.getFieldForRoom(puzzleRoom3, 'dirEnter')[1]==0) do
+		puzzleRoom3 = puzzleRooms[util.random(#puzzleRooms,'mapGen')]
+	end
 	newmap[starty+1][startx] = {roomid = puzzleRoom3, room = P.createRoom(puzzleRoom3), isFinal = false, isInitial = false}
 	local finalRoom = randomFinalRoomsArray[1]
 	newmap[starty-1][startx] = {roomid = finalRoom, room = P.createRoom(finalRoom), isFinal = false, isInitial = false}
