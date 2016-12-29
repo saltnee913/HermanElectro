@@ -1970,6 +1970,15 @@ end
 
 P.halfWall = P.concreteWall:new{name = "halfWall", sprite = love.graphics.newImage('GraphicsColor/halfwall.png'), yOffset = -3}
 
+P.elevator = P.conductiveTile:new{name = "elevator", yOffset = -3, sprite = love.graphics.newImage('GraphicsColor/elevatordown.png'), poweredSprite = love.graphics.newImage('GraphicsColor/elevatorup.png')}
+function P.elevator:postPowerUpdate()
+	if self.powered then
+		self.yOffset = -6
+	else
+		self.yOffset = -3
+	end
+end
+
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
 tiles[3] = P.powerSupply
@@ -2134,5 +2143,6 @@ tiles[161] = P.key
 tiles[162] = P.keyGate
 tiles[163] = P.gasPuddle
 tiles[164] = P.halfWall
+tiles[165] = P.elevator
 
 return tiles
