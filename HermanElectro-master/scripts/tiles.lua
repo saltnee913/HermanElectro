@@ -140,7 +140,11 @@ function P.tile:obstructsMovementAnimal()
 	return self:getHeight()>0 and self.blocksMovement
 end
 function P.tile:getHeight()
-	return -1*self.yOffset
+	if self.destroyed then
+		return 0
+	else
+		return -1*self.yOffset
+	end
 end
 
 P.invisibleTile = P.tile:new{isVisible = false, name = "invisibleTile"}
