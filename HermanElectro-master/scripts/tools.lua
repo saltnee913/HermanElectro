@@ -213,7 +213,8 @@ function P.tool:getToolableTiles()
 			local tileToCheck = {y = player.tileY, x = player.tileX}
 			if room[tileToCheck.y]~=nil then
 				if ((room[tileToCheck.y][tileToCheck.x] == nil or room[tileToCheck.y][tileToCheck.x]:usableOnNothing(tileToCheck.y, tileToCheck.x)) and (tileToCheck.x>0 and tileToCheck.x<=roomLength) and self:usableOnNothing(tileToCheck.y, tileToCheck.x))
-				or (room[tileToCheck.y][tileToCheck.x] ~= nil and self:usableOnTile(room[tileToCheck.y][tileToCheck.x], dist)) then
+				or (room[tileToCheck.y][tileToCheck.x] ~= nil and self:usableOnTile(room[tileToCheck.y][tileToCheck.x], dist) and
+				math.abs(room[tileToCheck.y][tileToCheck.x]:getHeight()-player.elevation)==0) then
 					if litTiles[tileToCheck.y][tileToCheck.x]~=0 then
 						usableTiles[5][#(usableTiles[5])+1] = tileToCheck
 					end
@@ -225,7 +226,8 @@ function P.tool:getToolableTiles()
 				if room[tileToCheck.y]~=nil then
 					if dir==5 and dist>1 then break end
 					if ((room[tileToCheck.y][tileToCheck.x] == nil or room[tileToCheck.y][tileToCheck.x]:usableOnNothing(tileToCheck.y, tileToCheck.x)) and (tileToCheck.x>0 and tileToCheck.x<=roomLength) and self:usableOnNothing(tileToCheck.y, tileToCheck.x))
-					or (room[tileToCheck.y][tileToCheck.x] ~= nil and self:usableOnTile(room[tileToCheck.y][tileToCheck.x], dist)) then
+					or (room[tileToCheck.y][tileToCheck.x] ~= nil and self:usableOnTile(room[tileToCheck.y][tileToCheck.x], dist) and
+					math.abs(room[tileToCheck.y][tileToCheck.x]:getHeight()-player.elevation)==0) then
 						if litTiles[tileToCheck.y][tileToCheck.x]~=0 then
 							usableTiles[dir][#(usableTiles[dir])+1] = tileToCheck
 						end
@@ -251,7 +253,8 @@ function P.tool:getToolableTilesBox()
 			if tileToCheck.x<=0 or tileToCheck.x>roomLength then break end
 			if room[tileToCheck.y]~=nil then
 				if (room[tileToCheck.y][tileToCheck.x] == nil and self:usableOnNothing(tileToCheck.y, tileToCheck.x))
-				or (room[tileToCheck.y][tileToCheck.x] ~= nil and self:usableOnTile(room[tileToCheck.y][tileToCheck.x], dist)) then
+				or (room[tileToCheck.y][tileToCheck.x] ~= nil and self:usableOnTile(room[tileToCheck.y][tileToCheck.x], dist) and
+				math.abs(room[tileToCheck.y][tileToCheck.x]:getHeight()-player.elevation)==0) then
 					if math.abs(tileToCheck.y-player.tileY)+math.abs(tileToCheck.x-player.tileX)<=self.range then
 						if litTiles[tileToCheck.y][tileToCheck.x]~=0 then
 							usableTiles[dir][#(usableTiles[dir])+1] = tileToCheck
@@ -266,6 +269,7 @@ end
 
 --returns a table of tables of the animals themselves by direction
 function P.tool:getToolableAnimals()
+	if player.elevation~=0 then return {{},{},{},{},{}} end
 	local usableAnimals = {}
 	local closestAnimals = {{dist = 1000}, {dist = 1000}, {dist = 1000}, {dist = 1000}, {dist = 1000}}
 	for animalIndex = 1, #animals do
@@ -332,6 +336,7 @@ end
 
 --for tools that can be used in more than four basic directions
 function P.tool:getToolableAnimalsBox()
+	if player.elevation~=0 then return {{},{},{},{},{}} end
 	local usableAnimals = {{},{},{},{},{}}
 	for animalIndex = 1, #animals do
 		if not animals[animalIndex].dead and math.abs(animals[animalIndex].tileY - player.tileY)+math.abs(animals[animalIndex].tileX - player.tileX)<=self.range+player.attributes.extendedRange.range then
@@ -344,6 +349,7 @@ function P.tool:getToolableAnimalsBox()
 end
 
 function P.tool:getToolablePushables()
+	if player.elevation~=0 then return {{},{},{},{},{}} end
 	local usablePushables = {}
 	local closestPushables = {{dist = 1000}, {dist = 1000}, {dist = 1000}, {dist = 1000}, {dist = 1000}}
 	for pushableIndex = 1, #pushables do
@@ -410,7 +416,7 @@ end
 
 --for tools that can be used in more than four basic directions
 function P.tool:getToolablePushablesBox()
-	local usablePushables = {{},{},{},{},{}}
+	if player.elevation~=0 then return {{},{},{},{},{}} end
 	for pushableIndex = 1, #pushables do
 		if not pushables[pushableIndex].dead and math.abs(pushables[pushableIndex].tileY - player.tileY)+math.abs(pushables[pushableIndex].tileX - player.tileX)<=self.range+player.attributes.extendedRange.range then
 			if litTiles[pushables[pushableIndex].tileY][pushables[pushableIndex].tileX]~=0 then
