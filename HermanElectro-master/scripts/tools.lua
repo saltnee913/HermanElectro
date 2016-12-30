@@ -2220,5 +2220,6 @@ P[82] = P.tileSwapper
 P[83] = P.tileCloner
 P[84] = P.shopReroller
 P[85] = P.ghostStep
+P[86] = P.stoolPlacer
 
 return tools
