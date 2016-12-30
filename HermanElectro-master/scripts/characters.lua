@@ -735,9 +735,25 @@ function P.xavier:updateSprite()
 	end
 end
 
+P.aurelius = P.character:new{name = "Aurelius", description = "The Golden", sprite = love.graphics.newImage('Graphics/aurelius.png')}
+function P.aurelius:onFloorEnter()
+	for i = 1, tools.numNormalTools do
+		for j = 1, tools[i].numHeld do
+			tools.giveToolsByReference{tools.coin}
+		end
+		tools[i].numHeld = 0
+	end
+end
 
 P[#P+1] = P.herman
 P[#P+1] = P.felix
+P[#P+1] = P.aurelius
+P[#P+1] = P.xavier
+P[#P+1] = P.paris
+P[#P+1] = P.ed
+P[#P+1] = P.olivia
+P[#P+1] = P.albert
+P[#P+1] = P.fish
 P[#P+1] = P.most
 P[#P+1] = P.erik
 P[#P+1] = P.gabe
@@ -751,15 +767,10 @@ P[#P+1] = P.francisco
 P[#P+1] = P.tim
 P[#P+1] = P.orson
 P[#P+1] = P.lenny
-P[#P+1] = P.fish
 P[#P+1] = P.monk
 P[#P+1] = P.harriet
 P[#P+1] = P.crate
-P[#P+1] = P.xavier
-P[#P+1] = P.paris
-P[#P+1] = P.ed
-P[#P+1] = P.olivia
-P[#P+1] = P.albert
+
 
 P[#P+1] = P.random
 P[#P+1] = P.random2

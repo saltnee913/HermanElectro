@@ -2023,6 +2023,9 @@ function P.groundDown:getHeight()
 	return -3
 end
 
+P.tallWall = P.concreteWall:new{name = "tallWall", sprite = love.graphics.newImage('GraphicsColor/tallwall.png'), yOffset = -9}
+
+
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
 tiles[3] = P.powerSupply
@@ -2191,5 +2194,6 @@ tiles[165] = P.elevator
 tiles[166] = P.elevatedButton
 tiles[167] = P.delevator
 tiles[168] = P.groundDown
+tiles[169] = P.tallWall
 
 return tiles
