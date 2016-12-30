@@ -2110,6 +2110,14 @@ function P.ghostStep:useToolTile(tile)
 	tile:onEnter(player)
 end
 
+P.stoolPlacer = P.superTool:new{name = "stoolPlacer", image = love.graphics.newImage('GraphicsColor/halfwall.png'), baseRange = 1, quality = 3}
+function P.stoolPlacer:usableOnNothing()
+	return true
+end
+function P.stoolPlacer:useToolNothing(tileY, tileX)
+	room[tileY][tileX] = tiles.halfWall:new()
+end
+
 P.numNormalTools = 7
 
 --tools not included in list: trap (identical to glue in purpose)
