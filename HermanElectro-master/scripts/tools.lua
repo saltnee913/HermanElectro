@@ -2118,6 +2118,47 @@ function P.stoolPlacer:useToolNothing(tileY, tileX)
 	room[tileY][tileX] = tiles.halfWall:new()
 end
 
+P.lemonadeCup = P.superTool:new{name = "lemonadeCup", image = love.graphics.newImage('Graphics/lemonadecup.png'), baseRange = 1, quality = 1}
+function P.lemonadeCup:usableOnNothing()
+	return true
+end
+function P.lemonadeCup:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
+	room[tileY][tileX] = tiles.lemonade:new()
+end
+
+P.lemonParty = P.superTool:new{name = "lemonParty", image = love.graphics.newImage('Graphics/lemonparty.png'), baseRange = 1, quality = 2}
+function P.lemonParty:usableOnNothing()
+	return true
+end
+function P.lemonParty:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld - 1
+	self:spreadLemonade(tileY, tileX)
+end
+function P.lemonParty:spreadLemonade(tileY, tileX)
+	room[tileY][tileX] = tiles.lemonade:new()
+	if tileY>1 then
+		if room[tileY-1][tileX]==nil then
+			self:spreadLemonade(tileY-1, tileX)
+		end
+	end
+	if tileY<roomHeight then
+		if room[tileY+1][tileX]==nil then
+			self:spreadLemonade(tileY+1, tileX)
+		end
+	end
+	if tileX>1 then
+		if room[tileY][tileX-1]==nil then
+			self:spreadLemonade(tileY, tileX-1)
+		end
+	end
+	if tileX<roomLength then
+		if room[tileY][tileX+1]==nil then
+			self:spreadLemonade(tileY, tileX+1)
+		end
+	end
+end
+
 P.numNormalTools = 7
 
 --tools not included in list: trap (identical to glue in purpose)
@@ -2221,5 +2262,7 @@ P[83] = P.tileCloner
 P[84] = P.shopReroller
 P[85] = P.ghostStep
 P[86] = P.stoolPlacer
+P[87] = P.lemonadeCup
+P[88] = P.lemonParty
 
 return tools

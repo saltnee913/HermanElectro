@@ -1777,6 +1777,10 @@ P.lampTile = P.tile:new{name = "lampTile", pushable = pushableList[12], listInde
 P.hermanTransform = P.tile:new{name = "hermanTransform", characterIndex = 1}
 function P.hermanTransform:onEnter()
 	player.character = characters[self.characterIndex]
+	myShader:send("player_range", 500)
+end
+function P.hermanTransform:postPowerUpdate()
+	self.sprite = characters[self.characterIndex].sprite
 end
 P.felixTransform = P.hermanTransform:new{name = "felixTransform", characterIndex = 2}
 P.erikTransform = P.hermanTransform:new{name = "erikTransform", characterIndex = 4}
@@ -2025,6 +2029,37 @@ end
 
 P.tallWall = P.concreteWall:new{name = "tallWall", sprite = love.graphics.newImage('GraphicsColor/tallwall.png'), yOffset = -9}
 
+P.lemonade = P.tile:new{name = "lemonade", sprite = love.graphics.newImage('Graphics/lemonade.png')}
+function P.lemonade:willKillAnimal()
+	return true
+end
+
+P.gameStairs = P.tile:new{name = "gameStairs", sprite = love.graphics.newImage('KenGraphics/gamestairs.png')}
+function P.gameStairs:onEnter()
+	loadTutorial = false
+	map.floorOrder = map.defaultFloorOrder
+	loadFirstLevel()
+end
+
+P.tutStairs = P.tile:new{name = "tutStairs", sprite = love.graphics.newImage('KenGraphics/tutstairs.png')}
+function P.tutStairs:onEnter()
+	startTutorial()
+end
+
+P.unlockTile = P.tile:new{name = "unlockTile"}
+function P.unlockTile:postPowerUpdate(i, j)
+	local unlockNum = (i-1)*roomLength+j
+	if unlocks[unlockNum]~=nil then
+		self.sprite = unlocks[unlockNum].sprite
+		if unlocks[unlockNum].unlocked then
+			self.overlay = P.darkOverlay
+		else
+			self.overlay = nil
+		end
+	end
+end
+
+P.darkOverlay = P.tile:new{name = "darkOverlay", sprite = love.graphics.newImage('NewGraphics/unlocksDarken.png')}
 
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
@@ -2195,5 +2230,9 @@ tiles[166] = P.elevatedButton
 tiles[167] = P.delevator
 tiles[168] = P.groundDown
 tiles[169] = P.tallWall
+tiles[170] = P.gameStairs
+tiles[171] = P.tutStairs
+tiles[172] = P.unlockTile
+tiles[173] = P.darkOverlay
 
 return tiles

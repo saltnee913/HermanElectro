@@ -424,7 +424,6 @@ function love.load()
 			width = width2
 			height = width2*9/16
 		end
-		loadedOnce = true
 	end
 	--print(love.graphics.getWidth(f1))
 	scale = (width - 2*wallSprite.width)/(20.3 * 16)*5/6
@@ -456,7 +455,11 @@ function love.load()
 		return {x = self.x/(floor.sprite:getWidth()*scale), y = self.y/(floor.sprite:getWidth()*scale)}
 	end
 	loadRandoms()
-	--loadOpeningWorld()
+	if not loadedOnce then
+		loadOpeningWorld()
+	end
+
+	loadedOnce = true
 end
 
 function playMusic(index)
@@ -476,8 +479,17 @@ function setMusicVolume(volume)
 end
 
 function goToMainMenu()
-	started = false
+	--started = false
+	loadOpeningWorld()
+	emptyTools()
+	gamePaused = false
 	playMusic(1)
+end
+
+function emptyTools()
+	for i = 1, #tools do
+		tools[i].numHeld = 0
+	end
 end
 
 function loadRandoms()
@@ -606,6 +618,7 @@ function loadOpeningWorld()
 	updateLight()
 	started = true
 	player.character:onBegin()
+	unlockDoors()
 end
 
 function startTutorial()
@@ -636,6 +649,7 @@ function startDebug()
 end
 
 function loadFirstLevel()
+	emptyTools()
 	floorIndex = 1
 	map.loadedMaps = {}
 	loadLevel(map.floorOrder[#map.floorOrder])
@@ -706,11 +720,13 @@ function loadLevel(floorPath)
 	end
 	roomHeight = room.height
 	roomLength = room.length
-	if floorIndex>=-1 then
+	if floorIndex>-1 then
 		shaderTriggered = true
 		map.loadedMaps[#map.loadedMaps+1] = {map = mainMap, mapHeight = mapHeight, 
 	  		roomHeight = roomHeight, roomLength = roomLength, completedRooms = completedRooms, visibleMap = visibleMap}
 	end
+
+	updateGameState()
 end
 
 function kill()
@@ -1496,20 +1512,16 @@ function love.draw()
 	--love.graphics.draw(rocks, -mapx * width, -mapy * height, 0, 1, 1)
 	local toDrawFloor = nil
 	love.graphics.setShader(myShader)
-	if floorIndex>1 then
+
+	if floorIndex<=1 then
+		toDrawFloor = dungeonFloor
+	else
 		toDrawFloor = floortiles[floorIndex-1][1]
 	end
-	if floorIndex<1 then
-		toDrawFloor = grassfloortile
-	else
-		if floortiles[floorIndex-1]~=nil then
-			toDrawFloor = floortiles[floorIndex-1][1]
-		end
-		fto = map.getFieldForRoom(mainMap[mapy][mapx].roomid, "floorTileOverride")
-		if (fto~=nil) then
-			if fto=="dungeon" then
-				toDrawFloor = dungeonFloor
-			end
+	fto = map.getFieldForRoom(mainMap[mapy][mapx].roomid, "floorTileOverride")
+	if (fto~=nil) then
+		if fto=="dungeon" then
+			toDrawFloor = dungeonFloor
 		end
 	end
 
@@ -1547,8 +1559,8 @@ function love.draw()
 	love.graphics.setShader(myShader)
 	for j = 1, roomHeight do
 		for i = 1, roomLength do
-			if floorIndex==-1 or floorIndex<=1 then
-				toDrawFloor = grassfloortile
+			if floorIndex<=1 then
+				toDrawFloor = dungeonFloor
 			else
 				if (i*i*i+j*j)%3==0 then
 					toDrawFloor = floortiles[floorIndex-1][1]
@@ -1577,6 +1589,7 @@ function love.draw()
 
 			love.graphics.draw(toDrawFloor, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height,
 			0, scale*16/toDrawFloor:getWidth(), scale*16/toDrawFloor:getWidth())
+			
 			if (room[j][i]~=nil or litTiles[j][i]==0) and not (litTiles[j][i]==1 and room[j][i]:instanceof(tiles.invisibleTile)) then
 				if room[j][i]~=nil then room[j][i]:updateSprite() end
 				local rot = 0
@@ -1605,14 +1618,14 @@ function love.draw()
 				if litTiles[j][i]==1 and room[j][i]~=nil and (not room[j][i].isVisible) and (not room[j][i]:instanceof(tiles.invisibleTile)) then
 					toDraw = invisibleTile
 				end
-				if (room[j][i]~=nil --[[and room[j][i].name~="pitbull" and room[j][i].name~="cat" and room[j][i].name~="pup"]]) or litTiles[j][i]==0 then
+				if (room[j][i]~=nil --[[and room[j][i].name~="pitbull" and room[j][i].nddddddddddwwame~="cat" and room[j][i].name~="pup"]]) or litTiles[j][i]==0 then
 					local addY = 0
 					if room[j][i]~=nil and litTiles[j][i]~=0 then
 						addY = room[j][i]:getYOffset()
 					end
 					if litTiles[j][i]==0 then addY = tiles.halfWall:getYOffset() end
 					love.graphics.draw(toDraw, (tempi-1)*floor.sprite:getWidth()*scale+wallSprite.width, (addY+(tempj-1)*floor.sprite:getWidth())*scale+wallSprite.height,
-					  rot * math.pi / 2, scale*16/toDraw:getWidth(), scale*16/toDraw:getWidth())
+					  rot * math.pi / 2, scale*16/toDraw:getWidth(), scale*16/toDraw:getHeight())
 					if litTiles[j][i]~=0 and room[j][i].overlay ~= nil then
 						local overlay = room[j][i].overlay
 						local toDraw2 = overlay.powered and overlay.poweredSprite or overlay.sprite
@@ -2127,6 +2140,12 @@ function resetPlayerAttributesStep()
 end
 
 function enterRoom(dir)
+	mushroomMode = false
+	globalTint = {1,1,1}
+	myShader:send("tint_r", globalTint[1])
+	myShader:send("tint_g", globalTint[2])
+	myShader:send("tint_b", globalTint[3])
+
 	if not validSpace() then return end
 	log("")
 	resetTranslation()
