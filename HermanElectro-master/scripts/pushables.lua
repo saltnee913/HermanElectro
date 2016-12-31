@@ -54,12 +54,12 @@ function P.pushable:move(mover)
 	end
 	if room[self.tileY][self.tileX]~=nil and not room[self.tileY][self.tileX]:instanceof(tiles.endTile) and 
 		(self.prevTileX~=self.tileX or self.prevTileY~=self.tileY) then
-		room[self.tileY][self.tileX]:onEnter(self)
+		room[self.tileY][self.tileX]:onEnterPushable(self)
 	end
 
 	if not (self.prevTileY == self.tileY and self.prevTileX == self.tileX) then
 		if room[self.prevTileY][self.prevTileX]~=nil then
-			room[self.prevTileY][self.prevTileX]:onLeave(self)
+			room[self.prevTileY][self.prevTileX]:onLeavePushable(self)
 		end
 		if room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX]:willDestroyPushable() then
 			self.destroyed = true
@@ -107,12 +107,12 @@ function P.pushable:moveNoMover()
 
 	if room[self.tileY][self.tileX]~=nil and not room[self.tileY][self.tileX]:instanceof(tiles.endTile) and 
 		(self.prevTileX~=self.tileX or self.prevTileY~=self.tileY) then
-		room[self.tileY][self.tileX]:onEnter(self)
+		room[self.tileY][self.tileX]:onEnterPushable(self)
 	end
 
 	if not (self.prevTileY == self.tileY and self.prevTileX == self.tileX) then
 		if room[self.prevTileY][self.prevTileX]~=nil then
-			room[self.prevTileY][self.prevTileX]:onLeave(self)
+			room[self.prevTileY][self.prevTileX]:onLeavePushable(self)
 		end
 		if room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX]:willDestroyPushable() then
 			self.destroyed = true
@@ -189,12 +189,12 @@ function P.batteringRam:move(mover)
 	if room[self.tileY][self.tileX]~=nil and not room[self.tileY][self.tileX]:instanceof(tiles.endTile) then
 		local tile = room[self.tileY][self.tileX]
 		if tile.sawable or tile:instanceof(tiles.glassWall) then tile:destroy() end
-		room[self.tileY][self.tileX]:onEnter(self)
+		room[self.tileY][self.tileX]:onEnterPushable(self)
 	end
 
 	if not (self.prevTileY == self.tileY and self.prevTileX == self.tileX) then
 		if room[self.prevTileY][self.prevTileX]~=nil then
-			room[self.prevTileY][self.prevTileX]:onLeave(self)
+			room[self.prevTileY][self.prevTileX]:onLeavePushable(self)
 		end
 		if room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX]:willDestroyPushable() then
 			self.destroyed = true
@@ -241,12 +241,12 @@ function P.batteringRam:moveNoMover()
 	if room[self.tileY][self.tileX]~=nil and not room[self.tileY][self.tileX]:instanceof(tiles.endTile) then
 		local tile = room[self.tileY][self.tileX]
 		if tile.sawable or tile:instanceof(tiles.glassWall) then tile:destroy() end
-		room[self.tileY][self.tileX]:onEnter(self)
+		room[self.tileY][self.tileX]:onEnterPushable(self)
 	end
 
 	if not (self.prevTileY == self.tileY and self.prevTileX == self.tileX) then
 		if room[self.prevTileY][self.prevTileX]~=nil then
-			room[self.prevTileY][self.prevTileX]:onLeave(self)
+			room[self.prevTileY][self.prevTileX]:onLeavePushable(self)
 		end
 		if room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX]:willDestroyPushable() then
 			self.destroyed = true

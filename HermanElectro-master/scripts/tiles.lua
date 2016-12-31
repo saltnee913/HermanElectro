@@ -18,11 +18,20 @@ P.tile = Object:new{yOffset = 0, formerPowered = nil, updatePowerOnEnter = false
 function P.tile:onEnter(player) 
 	--self.name = "fuckyou"
 end
+function P.tile:onEnterPushable(pushable)
+	self:onEnter(pushable)
+end
 function P.tile:onLeave(player) 
 	--self.name = "fuckme"
 end
+function P.tile:onLeavePushable(pushable)
+	self:onLeave(pushable)
+end
 function P.tile:onStay(player) 
 	--player.x = player.x+1
+end
+function P.tile:onStayPushable(pushable)
+	self:onStay(pushable)
 end
 function P.tile:onStayAnimal(animal)
 end
@@ -455,6 +464,11 @@ function P.wall:onEnter(player)
 	end
 end
 P.wall.onStay = P.wall.onEnter
+function P.wall.onEnterPushable(pushable)
+	pushable.tileX = pushable.prevTileX
+	pushable.tileY = pushable.prevTileY
+end
+
 function P.wall:onEnterAnimal(animal)
 	if not self.destroyed and not animal.flying then
 		animal.x = animal.prevx
