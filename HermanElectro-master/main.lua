@@ -1625,7 +1625,7 @@ function love.draw()
 					end
 					if litTiles[j][i]==0 then addY = tiles.halfWall:getYOffset() end
 					love.graphics.draw(toDraw, (tempi-1)*floor.sprite:getWidth()*scale+wallSprite.width, (addY+(tempj-1)*floor.sprite:getWidth())*scale+wallSprite.height,
-					  rot * math.pi / 2, scale*16/toDraw:getWidth(), scale*16/toDraw:getHeight())
+					  rot * math.pi / 2, scale*16/toDraw:getWidth(), scale*16/toDraw:getWidth())
 					if litTiles[j][i]~=0 and room[j][i].overlay ~= nil then
 						local overlay = room[j][i].overlay
 						local toDraw2 = overlay.powered and overlay.poweredSprite or overlay.sprite
