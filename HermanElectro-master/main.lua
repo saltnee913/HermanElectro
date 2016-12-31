@@ -2848,7 +2848,7 @@ end
 
 function resetAnimals()
 	for i = 1, #animals do
-		if animals[i].waitCounter>0 then
+		if animals[i].waitCounter>0 and animals[i].triggered then
 			animals[i].waitCounter = animals[i].waitCounter-1
 		end
 	end
