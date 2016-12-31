@@ -1996,12 +1996,12 @@ end
 
 P.halfWall = P.concreteWall:new{name = "halfWall", sprite = love.graphics.newImage('GraphicsColor/halfwall.png'), yOffset = -3}
 
-P.elevator = P.conductiveTile:new{name = "elevator", blocksAnimalMovement = true, yOffset = -3, sprite = love.graphics.newImage('GraphicsColor/elevatordown.png'), poweredSprite = love.graphics.newImage('GraphicsColor/elevatorup.png')}
+P.elevator = P.conductiveTile:new{name = "elevator", blocksAnimalMovement = true, yOffset = -3, sprite = love.graphics.newImage('GraphicsColor/elevatordown2.png'), poweredSprite = love.graphics.newImage('GraphicsColor/elevatorup.png')}
 function P.elevator:postPowerUpdate()
 	if self.powered then
 		self.yOffset = -6
 	else
-		self.yOffset = -3
+		self.yOffset = 0
 	end
 end
 P.elevator.onEnter = P.wall.onEnter
@@ -2016,7 +2016,7 @@ function P.delevator:postPowerUpdate()
 end
 function P.delevator:getHeight()
 	if self.powered then
-		return -3
+		return -6
 	else
 		return 3
 	end
@@ -2024,7 +2024,7 @@ end
 
 P.groundDown = P.tile:new{name = "groundDown", sprite = love.graphics.newImage('GraphicsColor/grounddown.png')}
 function P.groundDown:getHeight()
-	return -3
+	return -6
 end
 
 P.tallWall = P.concreteWall:new{name = "tallWall", sprite = love.graphics.newImage('GraphicsColor/tallwall.png'), yOffset = -9}
