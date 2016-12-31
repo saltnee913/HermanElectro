@@ -2050,9 +2050,7 @@ end
 
 P.gameStairs = P.tile:new{name = "gameStairs", sprite = love.graphics.newImage('KenGraphics/gamestairs.png')}
 function P.gameStairs:onEnter()
-	loadTutorial = false
-	map.floorOrder = map.defaultFloorOrder
-	loadFirstLevel()
+	startGame()
 end
 
 P.tutStairs = P.tile:new{name = "tutStairs", sprite = love.graphics.newImage('KenGraphics/tutstairs.png')}

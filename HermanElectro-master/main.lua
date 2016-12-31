@@ -454,7 +454,6 @@ function love.load()
 	function player:getTileLoc()
 		return {x = self.x/(floor.sprite:getWidth()*scale), y = self.y/(floor.sprite:getWidth()*scale)}
 	end
-	loadRandoms()
 	if not loadedOnce then
 		loadOpeningWorld()
 	end
@@ -600,9 +599,9 @@ function startGame()
 	loadTutorial = false
 	map.floorOrder = map.defaultFloorOrder
 	love.load()
+	loadFirstLevel()
 	tools.resetTools()
-	--started = true
-	charSelect = true
+	player.character:onBegin()
 end
 
 function loadOpeningWorld()
@@ -2538,9 +2537,7 @@ function love.keypressed(key, unicode)
 					end
 				end
 			else
-				love.load()
-				loadFirstLevel()
-				player.character:onBegin()
+				startGame()
 			end
 		end
 	end
