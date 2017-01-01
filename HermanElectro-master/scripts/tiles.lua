@@ -2102,6 +2102,11 @@ function P.tutStairs:onEnter()
 	startTutorial()
 end
 
+P.debugStairs = P.tile:new{name = "debugStairs", sprite = love.graphics.newImage('KenGraphics/tutstairs.png')}
+function P.debugStairs:onEnter()
+	startDebug()
+end
+
 P.unlockTile = P.tile:new{name = "unlockTile"}
 function P.unlockTile:postPowerUpdate(i, j)
 	local unlockNum = (i-1)*roomLength+j
@@ -2290,5 +2295,6 @@ tiles[170] = P.gameStairs
 tiles[171] = P.tutStairs
 tiles[172] = P.unlockTile
 tiles[173] = P.darkOverlay
+tiles[174] = P.debugStairs
 
 return tiles

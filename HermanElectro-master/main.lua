@@ -643,8 +643,9 @@ function startDebug()
 	loadTutorial = false
 	map.floorOrder = {'RoomData/debugFloor.json', 'RoomData/exitDungeonsMap.json'}
 	love.load()
+	loadFirstLevel()
 	tools.resetTools()
-	charSelect = true
+	player.character:onBegin()
 end
 
 function loadFirstLevel()
