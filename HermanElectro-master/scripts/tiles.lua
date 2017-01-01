@@ -15,6 +15,9 @@ P.tile = Object:new{yOffset = 0, formerPowered = nil, updatePowerOnEnter = false
   poweredSprite = love.graphics.newImage('Graphics/cavesfloor.png'),
   wireHackOn = love.graphics.newImage('Graphics3D/wirehackon.png'),
   wireHackOff = love.graphics.newImage('Graphics3D/wirehackoff.png')}
+function P.tile:lightTest(x,y)
+	return false
+end
 function P.tile:onEnter(player) 
 	--self.name = "fuckyou"
 end
@@ -732,7 +735,7 @@ function P.vDoor:onEnter(player)
 	
 end
 
-P.vPoweredDoor = P.tile:new{name = "vPoweredDoor", stopped = false, yOffset = -6, blocksMovement = false, blocksVision = false, canBePowered = true, dirSend = {1,0,1,0}, dirAccept = {1,0,1,0}, sprite = love.graphics.newImage('Graphics3D/powereddooropen.png'), closedSprite = love.graphics.newImage('GraphicsColor/powereddoor.png'), openSprite = love.graphics.newImage('GraphicsColor/powereddooropen.png'), poweredSprite = love.graphics.newImage('Graphics3D/powereddoor.png'),
+P.vPoweredDoor = P.hDoor:new{name = "vPoweredDoor", stopped = false, yOffset = -6, blocksMovement = false, blocksVision = false, canBePowered = true, dirSend = {1,0,1,0}, dirAccept = {1,0,1,0}, sprite = love.graphics.newImage('Graphics3D/powereddooropen.png'), closedSprite = love.graphics.newImage('GraphicsColor/powereddoor.png'), openSprite = love.graphics.newImage('GraphicsColor/powereddooropen.png'), poweredSprite = love.graphics.newImage('Graphics3D/powereddoor.png'),
 closedSprite2 = love.graphics.newImage('GraphicsColor/powereddoor2.png'), openSprite2 = love.graphics.newImage('GraphicsColor/powereddooropen2.png')}
 function P.vPoweredDoor:updateTile(player)
 	if self.stopped then
@@ -798,11 +801,28 @@ function P.vPoweredDoor:updateSprite()
 	end
 end
 P.vPoweredDoor.willKillAnimal = P.vPoweredDoor.willKillPlayer
-function P.vPoweredDoor:getHeight()
+function P.vPoweredDoor:lightTest(x,y)
 	if not self.blocksMovement then
-		return 0 
+		return false
+	end
+	if self.rotation % 2 == 0 then
+
+		if x>1 then
+			lightTest(x-1,y)
+		end
+	
+	
+		if x<roomHeight then
+			lightTest(x+1,y)
+		end
 	else
-		return -1*self.yOffset
+		if y>1 then
+			lightTest(x, y-1)
+		end
+
+		if y<roomLength then
+			lightTest(x, y+1)
+		end
 	end
 end
 
