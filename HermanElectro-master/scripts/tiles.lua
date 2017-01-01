@@ -468,8 +468,10 @@ function P.wall:onEnter(player)
 end
 P.wall.onStay = P.wall.onEnter
 function P.wall:onEnterPushable(pushable)
-	pushable.tileX = pushable.prevTileX
-	pushable.tileY = pushable.prevTileY
+	if not self.destroyed then
+		pushable.tileX = pushable.prevTileX
+		pushable.tileY = pushable.prevTileY
+	end
 end
 
 function P.wall:onEnterAnimal(animal)

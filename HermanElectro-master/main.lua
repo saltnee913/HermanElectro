@@ -2064,7 +2064,9 @@ end
 
 function log(text)
 	debugText = text
-	print('LOG: '..debugText)
+	if text ~= nil or text == "" then
+		print('LOG: '..debugText)
+	end
 end
 
 function adjacent(xloc, yloc)
