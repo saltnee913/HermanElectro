@@ -747,6 +747,9 @@ function kill()
 						if not room[i][j]:instanceof(tiles.endTile) and not room[i][j]:instanceof(tiles.tunnel) then
 							room[i][j]=tiles.invisibleTile:new()
 						end
+						if room[i][j]:instanceof(tiles.poweredEnd) then
+							room[i][j]=tiles.endTile:new()
+						end
 					end
 				end
 			end
