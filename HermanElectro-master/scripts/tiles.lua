@@ -759,7 +759,7 @@ function P.vDoor:onEnter(player)
 	
 end
 
-P.vPoweredDoor = P.hDoor:new{name = "vPoweredDoor", stopped = false, yOffset = -6, blocksMovement = false, blocksVision = false, canBePowered = true, dirSend = {1,0,1,0}, dirAccept = {1,0,1,0}, sprite = love.graphics.newImage('Graphics3D/powereddooropen.png'), closedSprite = love.graphics.newImage('GraphicsColor/powereddoor.png'), openSprite = love.graphics.newImage('GraphicsColor/powereddooropen.png'), poweredSprite = love.graphics.newImage('Graphics3D/powereddoor.png'),
+P.vPoweredDoor = P.tile:new{name = "vPoweredDoor", stopped = false, yOffset = -6, blocksMovement = false, blocksVision = false, canBePowered = true, dirSend = {1,0,1,0}, dirAccept = {1,0,1,0}, sprite = love.graphics.newImage('Graphics3D/powereddooropen.png'), closedSprite = love.graphics.newImage('GraphicsColor/powereddoor.png'), openSprite = love.graphics.newImage('GraphicsColor/powereddooropen.png'), poweredSprite = love.graphics.newImage('Graphics3D/powereddoor.png'),
 closedSprite2 = love.graphics.newImage('GraphicsColor/powereddoor2.png'), openSprite2 = love.graphics.newImage('GraphicsColor/powereddooropen2.png')}
 function P.vPoweredDoor:updateTile(player)
 	if self.stopped then
@@ -825,6 +825,13 @@ function P.vPoweredDoor:updateSprite()
 	end
 end
 P.vPoweredDoor.willKillAnimal = P.vPoweredDoor.willKillPlayer
+function P.vPoweredDoor:getHeight()
+	if not self.blocksMovement then
+		return 0 
+	else
+		return 6
+	end
+end
 function P.vPoweredDoor:lightTest(x,y)
 	if not self.blocksMovement then
 		return false
