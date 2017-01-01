@@ -2064,6 +2064,7 @@ end
 
 function log(text)
 	debugText = text
+	print('LOG: '..debugText)
 end
 
 function adjacent(xloc, yloc)
