@@ -2016,7 +2016,7 @@ function P.foresight:useToolTile(tile)
 end
 P.foresight.useToolNothing = P.foresight.useToolTile
 
-P.tileDisplacer = P.superTool:new{name = "tileDisplacer", heldTile = nil, image = love.graphics.newImage('Graphics/tiledisplacer.png'), baseImage = love.graphics.newImage('Graphics/tiledisplacer.png'), baseRange = 3, quality = 5}
+P.tileDisplacer = P.superTool:new{name = "tileDisplacer", heldTile = nil, image = love.graphics.newImage('Graphics/tiledisplacer.png'), baseImage = love.graphics.newImage('Graphics/tiledisplacer.png'), baseRange = 3, quality = 4}
 function P.tileDisplacer:usableOnTile(tile)
 	return self.heldTile==nil
 end
