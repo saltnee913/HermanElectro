@@ -1207,28 +1207,36 @@ function lightTest(x, y)
 
 	litTiles[x][y] = 1
 
-
+	local canObstruct = false
 	if room[x][y] ~= nil and room[x][y]:obstructsVision() and (player.tileY ~= x or player.tileX ~= y) then
-		return
+		canObstruct = true
 	end
 
 	if x>1 then
-		lightTest(x-1,y)
+		if not canObstruct or room[x-1][y]~=nil and room[x-1][y]:getHeight()>=room[x][y]:getHeight() then
+			lightTest(x-1,y)
+		end
 	end
 
 
 	if x<roomHeight then
-		lightTest(x+1,y)
+		if not canObstruct or room[x+1][y]~=nil and room[x+1][y]:getHeight()>=room[x][y]:getHeight() then
+			lightTest(x+1,y)
+		end
 	end
 
 	if y>1 then
-		lightTest(x, y-1)
+		if not canObstruct or room[x][y-1]~=nil and room[x][y-1]:getHeight()>=room[x][y]:getHeight() then
+			lightTest(x,y-1)
+		end
 	end
 
 	if y<roomLength then
-		lightTest(x, y+1)
+		if not canObstruct or room[x][y+1]~=nil and room[x][y+1]:getHeight()>=room[x][y]:getHeight() then
+			lightTest(x,y+1)
+		end
 	end
-	player.character.specialLightTest(x,y)
+	player.character:specialLightTest(x,y)
 end
 
 function powerTest(x, y, lastDir)

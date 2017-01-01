@@ -166,7 +166,7 @@ function P.erik:onFailedMove(key)
 		end
 	end
 end
-function P.erik.specialLightTest(tileY,tileX)
+function P.erik:specialLightTest(tileY,tileX)
 	if tileX == 1 then
 		lightTest(tileY,roomLength)
 	end
