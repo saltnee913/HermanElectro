@@ -1207,6 +1207,9 @@ function lightTest(x, y)
 
 	litTiles[x][y] = 1
 
+	if room[x][y] ~= nil and room[x][y]:lightTest(x,y) then
+		return
+	end
 
 	if room[x][y] ~= nil and room[x][y]:obstructsVision() and (player.tileY ~= x or player.tileX ~= y) then
 		return
