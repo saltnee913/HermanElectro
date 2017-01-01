@@ -727,6 +727,30 @@ function P.hDoor:getHeight()
 		return 6
 	end
 end
+function P.hDoor:lightTest(x,y)
+	if not self.blocksMovement then
+		return false
+	end
+	if self.rotation % 2 == 1 then
+
+		if x>1 then
+			lightTest(x-1,y)
+		end
+	
+	
+		if x<roomHeight then
+			lightTest(x+1,y)
+		end
+	else
+		if y>1 then
+			lightTest(x, y-1)
+		end
+
+		if y<roomLength then
+			lightTest(x, y+1)
+		end
+	end
+end
 
 P.vDoor= P.tile:new{name = "hDoor", blocksVision = true, canBePowered = false, dirSend = {0,0,0,0}, dirAccept = {0,0,0,0}, sprite = love.graphics.newImage('Graphics/door.png'), closedSprite = love.graphics.newImage('Graphics/door.png'), openSprite = love.graphics.newImage('Graphics/doorsopen.png')}
 function P.vDoor:onEnter(player)
