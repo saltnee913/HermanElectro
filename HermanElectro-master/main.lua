@@ -1633,10 +1633,6 @@ function love.draw()
 						love.graphics.draw(toDraw, (tempi-1)*floor.sprite:getWidth()*scale+wallSprite.width, (addY+(tempj-1)*floor.sprite:getWidth())*scale+wallSprite.height,
 					  	rot * math.pi / 2, scale*16/toDraw:getWidth(), scale*16/toDraw:getWidth())
 					end
-					if isBlack then
-						love.graphics.draw(toDraw, (tempi-1)*floor.sprite:getWidth()*scale+wallSprite.width-30, (addY+(tempj-1)*floor.sprite:getWidth())*scale+wallSprite.height-40,
-					  	rot * math.pi / 2, scale*32/toDraw:getWidth(), scale*48/toDraw:getWidth())
-					end
 					if litTiles[j][i]~=0 and room[j][i].overlay ~= nil then
 						local overlay = room[j][i].overlay
 						local toDraw2 = overlay.powered and overlay.poweredSprite or overlay.sprite
@@ -1673,6 +1669,53 @@ function love.draw()
 					end
 				end
 			end
+		end
+		for j = 1, roomHeight do
+			for i = 1, roomLength do
+				local isBlack=false
+			
+				if (room[j][i]~=nil or litTiles[j][i]==0) and not (litTiles[j][i]==1 and room[j][i]:instanceof(tiles.invisibleTile)) then
+				if room[j][i]~=nil then room[j][i]:updateSprite() end
+				local rot = 0
+				local tempi = i
+				local tempj = j
+				if j <= table.getn(room) or i <= table.getn(room[0]) then
+					if litTiles[j][i] == 0 then
+						toDraw = black
+						isBlack = true
+					elseif room[j][i]~=nil and (room[j][i].powered == false or not room[j][i].canBePowered) then
+						toDraw = room[j][i].sprite
+						rot = room[j][i].rotation
+					elseif room[j][i]~=nil then
+						toDraw = room[j][i].poweredSprite
+						rot = room[j][i].rotation
+					--else
+						--toDraw = floortile
+					end
+					if room[j][i]~=nil and room[j][i]:getYOffset()~=0 then rot = 0 end
+					if rot == 1 or rot == 2 then
+						tempi = tempi + 1
+					end
+					if rot == 2 or rot == 3 then
+						tempj = tempj + 1
+					end
+				end
+				if litTiles[j][i]==1 and room[j][i]~=nil and (not room[j][i].isVisible) and (not room[j][i]:instanceof(tiles.invisibleTile)) then
+					toDraw = invisibleTile
+				end
+				if (room[j][i]~=nil --[[and room[j][i].name~="pitbull" and room[j][i].nddddddddddwwame~="cat" and room[j][i].name~="pup"]]) or litTiles[j][i]==0 then
+					local addY = 0
+					if room[j][i]~=nil and litTiles[j][i]~=0 then
+						addY = room[j][i]:getYOffset()
+					end
+					if litTiles[j][i]==0 then addY = tiles.halfWall:getYOffset() end
+					if isBlack then
+						love.graphics.draw(toDraw, (tempi-1)*floor.sprite:getWidth()*scale+wallSprite.width-30, (addY+(tempj-1)*floor.sprite:getWidth())*scale+wallSprite.height-50,
+					  	rot * math.pi / 2, scale*32/toDraw:getWidth(), scale*32/toDraw:getWidth())
+					end
+				end
+			end
+		end
 		end
 		for i = 1, #animals do
 			if animals[i]~=nil and litTiles[animals[i].tileY][animals[i].tileX]==1 and not animals[i].pickedUp and animals[i].tileY==j then
