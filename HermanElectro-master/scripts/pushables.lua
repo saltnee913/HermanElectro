@@ -68,7 +68,7 @@ function P.pushable:move(mover)
 		self.canBeAccelerated = false
 		return true
 	elseif room[self.tileY][self.tileX]~=nil then
-		room[self.tileY][self.tileX]:onStay(self)
+		room[self.tileY][self.tileX]:onStayPushable(self)
 	end
 	
 	return false
@@ -120,7 +120,7 @@ function P.pushable:moveNoMover()
 		end
 		return true
 	elseif room[self.tileY][self.tileX]~=nil then
-		room[self.tileY][self.tileX]:onStay(self)
+		room[self.tileY][self.tileX]:onStayPushable(self)
 	end
 	
 	return false
@@ -202,7 +202,7 @@ function P.batteringRam:move(mover)
 		end
 		return true
 	elseif room[self.tileY][self.tileX]~=nil then
-		room[self.tileY][self.tileX]:onStay(self)
+		room[self.tileY][self.tileX]:onStayPushable(self)
 	end
 
 	--[[below code allows batteringRam to kill player or animals if pushed on them
@@ -254,7 +254,7 @@ function P.batteringRam:moveNoMover()
 		end
 		return true
 	elseif room[self.tileY][self.tileX]~=nil then
-		room[self.tileY][self.tileX]:onStay(self)
+		room[self.tileY][self.tileX]:onStayPushable(self)
 	end
 
 	--[[below code allows batteringRam to kill player or animals if pushed on them

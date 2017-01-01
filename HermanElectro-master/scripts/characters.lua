@@ -187,7 +187,7 @@ function P.gabe:onCharLoad()
 	if not self.reset then
 		player.attributes.flying = true
 		self.reset = true
-	elseif self.realChar ~= nil then
+	elseif self.realChar ~= nil and not self.realChar:instanceof(P.gabe) then
 		player.character = self.realChar
 		player.character:onBegin()
 		self.realChar = nil
