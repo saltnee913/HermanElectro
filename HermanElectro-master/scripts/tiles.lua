@@ -906,6 +906,9 @@ function P.pitbullTile:new(o)
 	o.animal = o.animal
 	return o
 end
+function P.pitbullTile:usableOnNothing()
+	return true
+end
 P.pupTile = P.pitbullTile:new{name = "pup", animal = animalList[3], listIndex = 3}
 P.catTile = P.pitbullTile:new{name = "cat", animal = animalList[4], listIndex = 4}
 
