@@ -1711,8 +1711,8 @@ function love.draw()
 					end
 					if litTiles[j][i]==0 then addY = tiles.halfWall:getYOffset() end
 					if isBlack then
-						love.graphics.draw(toDraw, (tempi-1)*floor.sprite:getWidth()*scale+wallSprite.width-30, (addY+(tempj-1)*floor.sprite:getWidth())*scale+wallSprite.height-50,
-					  	rot * math.pi / 2, scale*32/toDraw:getWidth(), scale*32/toDraw:getWidth())
+						love.graphics.draw(toDraw, (tempi-1)*floor.sprite:getWidth()*scale+wallSprite.width-20, (addY+(tempj-1)*floor.sprite:getWidth())*scale+wallSprite.height-30,
+					  	rot * math.pi / 2, scale*24/toDraw:getWidth(), scale*24/toDraw:getWidth())
 					end
 				end
 			end
