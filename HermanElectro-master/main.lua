@@ -1852,6 +1852,9 @@ function love.draw()
 			local toolScale = player.character.sprite:getWidth() * player.character.scale/toolWidth
 			for i = 1, #tools.toolsShown do
 				love.graphics.draw(tools[tools.toolsShown[i]].image, (i-math.ceil(#tools.toolsShown)/2-1)*toolScale*toolWidth+player.x, player.y - player.character.sprite:getHeight()*player.character.scale - tools[1].image:getHeight()*toolScale, 0, toolScale, toolScale)
+				if tools.toolsShown[i] > tools.numNormalTools then --if tool is a supertool
+					love.graphics.print(tools[tools.toolsShown[i]].name, width/2-180, 110)
+				end
 			end
 		else
 			luckWidth = luckImage:getWidth()
