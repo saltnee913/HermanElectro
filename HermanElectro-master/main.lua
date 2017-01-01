@@ -1855,8 +1855,6 @@ function love.draw()
 				love.graphics.draw(supertool.image, (i-math.ceil(#tools.toolsShown)/2-1)*toolScale*toolWidth+player.x, player.y - player.character.sprite:getHeight()*player.character.scale - tools[1].image:getHeight()*toolScale, 0, toolScale, toolScale)
 				if tools.toolsShown[i] > tools.numNormalTools then --if tool is a supertool
 					love.graphics.print(supertool.name, width/2-180, 110)
-					print(supertool.name)
-					print(supertool.description)
 					love.graphics.print(supertool.description, width/2-180, 120)
 				end
 			end
