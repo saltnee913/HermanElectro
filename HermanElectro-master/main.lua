@@ -1592,6 +1592,8 @@ function love.draw()
 
 			love.graphics.draw(toDrawFloor, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height,
 			0, scale*16/toDrawFloor:getWidth(), scale*16/toDrawFloor:getWidth())
+
+			local isBlack=false
 			
 			if (room[j][i]~=nil or litTiles[j][i]==0) and not (litTiles[j][i]==1 and room[j][i]:instanceof(tiles.invisibleTile)) then
 				if room[j][i]~=nil then room[j][i]:updateSprite() end
@@ -1601,6 +1603,7 @@ function love.draw()
 				if j <= table.getn(room) or i <= table.getn(room[0]) then
 					if litTiles[j][i] == 0 then
 						toDraw = black
+						isBlack = true
 					elseif room[j][i]~=nil and (room[j][i].powered == false or not room[j][i].canBePowered) then
 						toDraw = room[j][i].sprite
 						rot = room[j][i].rotation
@@ -1627,8 +1630,14 @@ function love.draw()
 						addY = room[j][i]:getYOffset()
 					end
 					if litTiles[j][i]==0 then addY = tiles.halfWall:getYOffset() end
-					love.graphics.draw(toDraw, (tempi-1)*floor.sprite:getWidth()*scale+wallSprite.width, (addY+(tempj-1)*floor.sprite:getWidth())*scale+wallSprite.height,
-					  rot * math.pi / 2, scale*16/toDraw:getWidth(), scale*16/toDraw:getWidth())
+					if not isBlack then
+						love.graphics.draw(toDraw, (tempi-1)*floor.sprite:getWidth()*scale+wallSprite.width, (addY+(tempj-1)*floor.sprite:getWidth())*scale+wallSprite.height,
+					  	rot * math.pi / 2, scale*16/toDraw:getWidth(), scale*16/toDraw:getWidth())
+					end
+					if isBlack then
+						love.graphics.draw(toDraw, (tempi-1)*floor.sprite:getWidth()*scale+wallSprite.width-30, (addY+(tempj-1)*floor.sprite:getWidth())*scale+wallSprite.height-40,
+					  	rot * math.pi / 2, scale*32/toDraw:getWidth(), scale*48/toDraw:getWidth())
+					end
 					if litTiles[j][i]~=0 and room[j][i].overlay ~= nil then
 						local overlay = room[j][i].overlay
 						local toDraw2 = overlay.powered and overlay.poweredSprite or overlay.sprite
