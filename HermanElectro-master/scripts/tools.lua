@@ -2159,13 +2159,26 @@ function P.lemonParty:spreadLemonade(tileY, tileX)
 	end
 end
 
+P.inflation = P.superTool:new{name = "inflation", image = love.graphics.newImage('Graphics/inflation.png'), baseRange = 0, quality = 2}
+function P.inflation:usableOnNothing()
+	return true
+end
+P.inflation.usableOnTile = P.inflation.usableOnNothing
+function P.inflation:useToolNothing()
+	self.numHeld = self.numHeld-1
+	tools.coin.numHeld = tools.coin.numHeld*2
+end
+P.inflation.useToolTile = P.inflation.useToolNothing
+
 P.numNormalTools = 7
 
 --tools not included in list: trap (identical to glue in purpose)
 --some tools are weak, but necessary for balance
 
 --[[ideas:
-
+	deflation: double coins
+	chance for wood to reveal trapdoor; tool to locate wood that will do so
+	switch player's position with end tile
 ]]
 
 function P.resetTools()
@@ -2264,5 +2277,6 @@ P[85] = P.ghostStep
 P[86] = P.stoolPlacer
 P[87] = P.lemonadeCup
 P[88] = P.lemonParty
+P[89] = P.inflation
 
 return tools
