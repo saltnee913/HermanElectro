@@ -1228,7 +1228,7 @@ function lightTest(x, y)
 	if y<roomLength then
 		lightTest(x, y+1)
 	end
-	player.character.specialLightTest(x,y)
+	player.character:specialLightTest(x,y)
 end
 
 function powerTest(x, y, lastDir)
