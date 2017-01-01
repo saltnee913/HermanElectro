@@ -467,7 +467,7 @@ function P.wall:onEnter(player)
 	end
 end
 P.wall.onStay = P.wall.onEnter
-function P.wall.onEnterPushable(pushable)
+function P.wall:onEnterPushable(pushable)
 	pushable.tileX = pushable.prevTileX
 	pushable.tileY = pushable.prevTileY
 end
