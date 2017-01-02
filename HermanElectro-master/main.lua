@@ -2067,7 +2067,7 @@ end
 
 function log(text)
 	debugText = text
-	if text ~= nil or text == "" then
+	if text ~= nil and text ~= "" then
 		print('LOG: '..debugText)
 	end
 end
