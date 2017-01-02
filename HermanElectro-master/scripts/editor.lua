@@ -183,6 +183,13 @@ function P.keypressed(key, unicode)
     	animals = savedAnimals
     elseif key == "l" then
 		P.visionHack = not P.visionHack
+    elseif key == "=" then
+    	--unlock everything
+    	for i = 1, #unlocks do
+    		if not unlocks[i].hidden then
+    			unlocks.unlockUnlockable(i)
+    		end
+    	end
     end 
 end
 

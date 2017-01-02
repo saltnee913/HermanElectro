@@ -249,7 +249,7 @@ P.conductiveSpikes = P.spikes:new{name = "conductiveSpikes", sprite = love.graph
 P.button = P.tile:new{bricked = false, meated = false, updatePowerOnEnter = true, justPressed = false, down = false, powered = false, dirSend = {1,1,1,1}, 
   dirAccept = {0,0,0,0}, canBePowered = true, name = "button", pressed = false, sprite = love.graphics.newImage('GraphicsColor/buttonoff.png'), 
   poweredSprite = love.graphics.newImage('GraphicsEli/buttonOff2.png'), downSprite = love.graphics.newImage('Graphics/buttonPressed.png'), 
-  brickedSprite = love.graphics.newImage('GraphicsEli/buttonBricked2.png'), upSprite = love.graphics.newImage('Graphics/button.png'), timesPressed = 0}
+  brickedSprite = love.graphics.newImage('GraphicsEli/buttonBricked2.png'), upSprite = love.graphics.newImage('Graphics/button.png')}
 function P.button:resetState()
 	self.justPressed = false
 end
@@ -278,11 +278,6 @@ function P.button:onEnter(player)
 			self.dirAccept = {0,0,0,0}
 		else
 			self.dirAccept = {1,1,1,1}
-		end
-		self.timesPressed = self.timesPressed + 1
-		if self.timesPressed > 10 then
-			unlocks = require('scripts.unlocks')
-			unlocks.unlockUnlockableRef(unlocks.orsonUnlock)
 		end
 		--updateGameState()
 		self:updateSprite()
