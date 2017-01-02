@@ -706,13 +706,13 @@ function P.generateMapWeighted()
 		local choice = util.chooseRandomElement(available, 'mapGen')
 		local roomid
 
-		if numRooms - #usedRooms == 1 then
+		--[[if numRooms - #usedRooms == 1 then
 			roomid = util.chooseRandomElement(randomFinalRoomsArray, 'mapGen')
-		elseif numRooms - #usedRooms == 2 then
+		else]]if numRooms - #usedRooms == 1 then
 			roomid = util.chooseRandomElement(randomTreasureRoomsArray, 'mapGen')
-		elseif numRooms - #usedRooms == 3 then
+		elseif numRooms - #usedRooms == 2 then
 			roomid = util.chooseRandomElement(randomDonationRoomsArray, 'mapGen')
-		elseif numRooms - #usedRooms == 4 then
+		elseif numRooms - #usedRooms == 3 then
 			roomid = util.chooseRandomElement(randomShopsArray, 'mapGen')
 		else
 			--creates an array of 5 possible choices with weights
@@ -773,6 +773,30 @@ function P.generateMapWeighted()
 		usedRooms[#usedRooms+1] = roomid
 		newmap[choice.y][choice.x] = {roomid = roomid, room = P.createRoom(roomid), tint = {0,0,0}, isFinal = false, isInitial = false}
 	end
+	local max = 0;
+	local maxx = 0;
+	local maxy = 0;
+	for i=1,height do
+		for j=1,height do
+			if newmap[i][j] ~= nil and newmap[i][j].roomid ~= nil and P.isRoomType(newmap[i][j].roomid, "rooms") then
+				if math.abs(i-math.floor(height))+math.abs(j-math.floor(height)) > max then
+					max = math.abs(i-math.floor(height))+math.abs(j-math.floor(height))
+					maxx=i
+					maxy=j
+				end
+				if math.abs(i-math.floor(height))+math.abs(j-math.floor(height)) == max then
+					if util.random(2, 'mapGen') == 2 then
+						max = math.abs(i-math.floor(height))+math.abs(j-math.floor(height))
+						maxx=i
+						maxy=j
+					end
+				end
+			end
+		end
+	end
+	print (maxx)
+	print (maxy)
+	newmap[maxx][maxy] = {roomid = randomFinalRoomsArray[1], room = P.createRoom(randomFinalRoomsArray[1]), tint = {0,0,0}, isFinal = true, isInitial = false}
 	return newmap
 end
 

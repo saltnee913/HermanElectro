@@ -468,8 +468,10 @@ function P.wall:onEnter(player)
 end
 P.wall.onStay = P.wall.onEnter
 function P.wall:onEnterPushable(pushable)
-	pushable.tileX = pushable.prevTileX
-	pushable.tileY = pushable.prevTileY
+	if not self.destroyed then
+		pushable.tileX = pushable.prevTileX
+		pushable.tileY = pushable.prevTileY
+	end
 end
 
 function P.wall:onEnterAnimal(animal)
@@ -759,7 +761,7 @@ function P.vDoor:onEnter(player)
 	
 end
 
-P.vPoweredDoor = P.hDoor:new{name = "vPoweredDoor", stopped = false, yOffset = -6, blocksMovement = false, blocksVision = false, canBePowered = true, dirSend = {1,0,1,0}, dirAccept = {1,0,1,0}, sprite = love.graphics.newImage('Graphics3D/powereddooropen.png'), closedSprite = love.graphics.newImage('GraphicsColor/powereddoor.png'), openSprite = love.graphics.newImage('GraphicsColor/powereddooropen.png'), poweredSprite = love.graphics.newImage('Graphics3D/powereddoor.png'),
+P.vPoweredDoor = P.tile:new{name = "vPoweredDoor", stopped = false, yOffset = -6, blocksMovement = false, blocksVision = false, canBePowered = true, dirSend = {1,0,1,0}, dirAccept = {1,0,1,0}, sprite = love.graphics.newImage('Graphics3D/powereddooropen.png'), closedSprite = love.graphics.newImage('GraphicsColor/powereddoor.png'), openSprite = love.graphics.newImage('GraphicsColor/powereddooropen.png'), poweredSprite = love.graphics.newImage('Graphics3D/powereddoor.png'),
 closedSprite2 = love.graphics.newImage('GraphicsColor/powereddoor2.png'), openSprite2 = love.graphics.newImage('GraphicsColor/powereddooropen2.png')}
 function P.vPoweredDoor:updateTile(player)
 	if self.stopped then
@@ -825,6 +827,13 @@ function P.vPoweredDoor:updateSprite()
 	end
 end
 P.vPoweredDoor.willKillAnimal = P.vPoweredDoor.willKillPlayer
+function P.vPoweredDoor:getHeight()
+	if not self.blocksMovement then
+		return 0 
+	else
+		return 6
+	end
+end
 function P.vPoweredDoor:lightTest(x,y)
 	if not self.blocksMovement then
 		return false
@@ -905,6 +914,9 @@ function P.pitbullTile:new(o)
 	self.__index = self
 	o.animal = o.animal
 	return o
+end
+function P.pitbullTile:usableOnNothing()
+	return true
 end
 P.pupTile = P.pitbullTile:new{name = "pup", animal = animalList[3], listIndex = 3}
 P.catTile = P.pitbullTile:new{name = "cat", animal = animalList[4], listIndex = 4}
@@ -2122,6 +2134,29 @@ end
 
 P.darkOverlay = P.tile:new{name = "darkOverlay", sprite = love.graphics.newImage('NewGraphics/unlocksDarken.png')}
 
+P.playerTile = P.tile:new{name = "playerTransform", character = nil, text = "Herman", darkSprite = P.tile.sprite}
+function P.playerTile:onLoad()
+	if self.character==nil then
+		local unlockedChars = characters.getUnlockedCharacters()
+		for i = 1, #unlockedChars do
+			if unlockedChars[i].name == self.text then
+				self.character = unlockedChars[i]
+			end
+		end
+		if self.character == nil then
+			self.sprite = self.darkSprite
+		else
+			self.sprite = self.character.sprite
+		end
+	end
+end
+function P.playerTile:onEnter()
+	if self.character ~= nil then
+		player.character = self.character
+		myShader:send("player_range", 500)
+	end
+end
+
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
 tiles[3] = P.powerSupply
@@ -2296,5 +2331,6 @@ tiles[171] = P.tutStairs
 tiles[172] = P.unlockTile
 tiles[173] = P.darkOverlay
 tiles[174] = P.debugStairs
+tiles[175] = P.playerTile
 
 return tiles
