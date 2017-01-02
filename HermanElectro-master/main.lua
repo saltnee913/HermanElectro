@@ -646,6 +646,7 @@ function loadNextLevel(dontChangeTime)
 	if unlocks.floorUnlocks[floorIndex-1] ~= nil then
 		unlocks.unlockUnlockableRef(unlocks.floorUnlocks[floorIndex-1])
 	end
+	updateGameState()
 end
 
 function startGame()
@@ -672,6 +673,7 @@ function loadOpeningWorld()
 	started = true
 	player.character:onBegin()
 	unlockDoors()
+	updateGameState()
 end
 
 function startTutorial()
@@ -711,6 +713,7 @@ function loadFirstLevel()
 	loadNextLevel(true)
 	createAnimals()
 	createPushables()
+	updateGameState()
 end
 
 function prepareFloor()
@@ -779,8 +782,6 @@ function loadLevel(floorPath)
 		map.loadedMaps[#map.loadedMaps+1] = {map = mainMap, mapHeight = mapHeight, 
 	  		roomHeight = roomHeight, roomLength = roomLength, completedRooms = completedRooms, visibleMap = visibleMap}
 	end
-
-	updateGameState()
 end
 
 function kill()
