@@ -1076,9 +1076,8 @@ end
 P.breakablePit.willKillAnimal = P.breakablePit.willKillPlayer
 P.breakablePit.willDestroyPushable = P.breakablePit.willKillPlayer
 
-local superWeights = util.readJSON('Values/superToolWeights.json')
 P.treasureTile = P.tile:new{name = "treasureTile", sprite = love.graphics.newImage('GraphicsBrush/tt1.png'),
-  done = false, treasureWeights = superWeights.yellowTreasureTile}
+  done = false}
 function P.treasureTile:onEnter()
 	if self.done then return end
 	self:giveReward()
@@ -1457,7 +1456,7 @@ P.entrancePortal.onStayAnimal = P.entrancePortal.onEnterAnimal
 
 P.exitPortal = P.tile:new{name = "exitPortal", sprite = love.graphics.newImage('Graphics/exitPortal.png')}
 
-P.treasureTile2 = P.treasureTile:new{name = "treasureTile2", sprite = love.graphics.newImage('GraphicsBrush/tt2.png'), treasureWeights = superWeights.treasureRoomTile}
+P.treasureTile2 = P.treasureTile:new{name = "treasureTile2", sprite = love.graphics.newImage('GraphicsBrush/tt2.png')}
 
 function P.treasureTile2:onEnter()
 	if self.done then return end
@@ -1472,7 +1471,7 @@ function P.treasureTile2:giveReward()
 	if reward<775 then
 		tools.giveRandomTools(1)
 	else
-		tools.giveRandomTools(1,1,self.treasureWeights)
+		tools.giveRandomTools(1,1)
 	end
 end
 
