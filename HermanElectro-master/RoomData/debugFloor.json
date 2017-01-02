@@ -56,6 +56,13 @@
 			{
 				
 			}
+		},
+		"exitDungeons":
+		{
+			"filePath": "RoomData/edPuzzle.json",
+			"requirements": {
+
+			}
 		}
 	},
 	"data":

@@ -5,7 +5,7 @@ require('scripts.object')
 local P = {}
 pushableList = P
 
-P.pushable = Object:new{name = "pushable", waitCounter=0, visible = true, sawable = true, canBeAccelerated = true, conductive = false, prevTileX = 0, prevTileY = 0, tileX = 0, tileY = 0, destroyed = false, sprite = love.graphics.newImage('Graphics/box.png')}
+P.pushable = Object:new{name = "pushable", charged = false, aitCounter=0, visible = true, sawable = true, canBeAccelerated = true, conductive = false, prevTileX = 0, prevTileY = 0, tileX = 0, tileY = 0, destroyed = false, sprite = love.graphics.newImage('Graphics/box.png')}
 function P.pushable:onStep()
 end
 function P.pushable:destroy()
@@ -311,7 +311,7 @@ end
 
 P.invisibleBox = P.box:new{name = "invisibleBox", visible = false}
 
-P.lamp = P.box:new{name = "lamp", sprite = love.graphics.newImage('Graphics/lamp.png'), intensity = 1, range = 200}
+P.lamp = P.conductiveBox:new{name = "lamp", sprite = love.graphics.newImage('Graphics/lamp.png'), poweredSprite = love.graphics.newImage('Graphics/lamp.png'), intensity = 1, charged = true, range = 200}
 
 pushableList[1] = P.pushable
 pushableList[2] = P.box
