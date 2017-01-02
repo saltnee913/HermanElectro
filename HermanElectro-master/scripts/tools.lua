@@ -921,7 +921,7 @@ function P.meat:useToolNothing(tileY, tileX)
 	room[tileY][tileX] = tiles.meat:new()
 end
 function P.meat:usableOnTile(tile)
-	if tile:getHeight()==0 then
+	if tile:instanceof(tiles.button) and not tile.attractsAnimals then
 		return true
 	end
 	return false

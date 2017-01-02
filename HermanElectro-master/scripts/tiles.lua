@@ -1944,6 +1944,7 @@ function P.toolTaxTile:updateSprite()
 end
 function P.toolTaxTile:onEnter()
 	if not self.destroyed and self.tool.numHeld>0 then
+		self.tool.numHeld = self.tool.numHeld-1
 		self:destroy()
 	elseif not self.destroyed then
 		P.concreteWall:onEnter(player)
@@ -1958,7 +1959,6 @@ function P.toolTaxTile:destroy()
 	self.dirAccept = {0,0,0,0}
 	self.dirSend = {0,0,0,0}
 	self.overlay = nil
-	self.tool.numHeld = self.tool.numHeld-1
 	self.tool = nil
 end
 
