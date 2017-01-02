@@ -1147,6 +1147,54 @@ function P.boxSpawner:useToolNothing(tileY, tileX)
 	pushables[#pushables+1] = toSpawn
 end
 
+P.playerBoxSpawner = P.boxSpawner:new{name = "playerBoxSpawner", image = love.graphics.newImage('Graphics/playerBox.png'), quality = 2}
+function P.playerBoxSpawner:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
+	local toSpawn = pushableList[3]:new()
+	toSpawn.tileY = tileY
+	toSpawn.tileX = tileX
+	pushables[#pushables+1] = toSpawn
+end
+function P.playerBoxSpawner:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
+	local toSpawn = pushableList[3]:new()
+	toSpawn.tileY = tileY
+	toSpawn.tileX = tileX
+	pushables[#pushables+1] = toSpawn
+end
+
+P.bombBoxSpawner = P.boxSpawner:new{name = "bombBoxSpawner", image = love.graphics.newImage('Graphics/bombBox.png'), quality = 3}
+function P.bombBoxSpawner:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
+	local toSpawn = pushableList[8]:new()
+	toSpawn.tileY = tileY
+	toSpawn.tileX = tileX
+	pushables[#pushables+1] = toSpawn
+end
+function P.bombBoxSpawner:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
+	local toSpawn = pushableList[8]:new()
+	toSpawn.tileY = tileY
+	toSpawn.tileX = tileX
+	pushables[#pushables+1] = toSpawn
+end
+
+P.jackInTheBoxSpawner = P.boxSpawner:new{name = "jackInTheBoxSpawner", image = love.graphics.newImage('Graphics/jackinthebox.png'), quality = 2}
+function P.jackInTheBoxSpawner:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
+	local toSpawn = pushableList[10]:new()
+	toSpawn.tileY = tileY
+	toSpawn.tileX = tileX
+	pushables[#pushables+1] = toSpawn
+end
+function P.jackInTheBoxSpawner:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
+	local toSpawn = pushableList[10]:new()
+	toSpawn.tileY = tileY
+	toSpawn.tileX = tileX
+	pushables[#pushables+1] = toSpawn
+end
+
 P.lamp = P.boxSpawner:new{name = "lamp", baseRange = 1, image = love.graphics.newImage('Graphics/lamp.png'), quality = 3}
 function P.lamp:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld-1
@@ -1248,7 +1296,7 @@ local function killDogs(tileY, tileX)
 	else
 		for i = 1, #animals do
 			if animals[i].tileY == player.tileY then
-				if (tileX >= player.tileX and animals[i].tileX > player.tileX) or
+				if (tileX >= player.tileX and animals[i].tileX >= player.tileX) or
 				  (tileX < player.tileX and animals[i].tileX < player.tileX) then
 					animals[i]:kill()
 				end
@@ -2216,7 +2264,7 @@ function P.shopReroller:useToolTile(tile)
 end
 P.shopReroller.useToolNothing = P.shopReroller.useToolTile
 
-P.ghostStep = P.superTool:new{name = "ghostStep", description ="You should tap that!", image = love.graphics.newImage('Graphics/ghoststep.png'), baseRange = 6, quality = 1}
+P.ghostStep = P.superTool:new{name = "ghostStep", description ="You should tap that!", image = love.graphics.newImage('Graphics/ghoststep.png'), baseRange = 4, quality = 1}
 function P.ghostStep:usableOnTile()
 	return true
 end
@@ -2306,18 +2354,95 @@ function P.wallDungeonDetector:useToolNothing()
 end
 P.wallDungeonDetector.useToolTile = P.wallDungeonDetector.useToolNothing
 
+P.greed = P.superTool:new{name = "Greed", description = "Your greed is your demise", image = love.graphics.newImage('GraphicsBrush/endtile.png'), baseRange = 0, quality = 1}
+function P.greed:usableOnNothing()
+	return true
+end
+P.greed.usableOnTile = P.greed.usableOnNothing
+function P.greed:useToolNothing()
+	self.numHeld = self.numHeld-1
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]~=nil and room[i][j]:instanceof(tiles.endTile) then
+				player.prevTileX = player.tileX
+				player.prevTileY = player.tileY
+				room[i][j] = nil
+				player.tileX = j
+				player.tileY = i
+				room[player.prevTileY][player.prevTileX] = tiles.endTile:new()
+				return
+			end
+		end
+	end
+end
+P.greed.useToolTile = P.greed.useToolNothing
+
+P.towel = P.superTool:new{name = "Primer", description = "Get that blue paint off!", image = love.graphics.newImage('Graphics/towel.png')}
+function P.towel:usableOnTile(tile)
+	if tile.destroyed then return false end
+	if tile:instanceof(tiles.superStickyButton) then return true
+	elseif tile:instanceof(tiles.unbreakableElectricFloor) then return true
+	elseif tile:instanceof(tiles.unbrickableStayButton) then return true
+	elseif tile:instanceof(tiles.unbreakablePowerSupply) then return true
+	elseif tile:instanceof(tiles.unbreakableWire) then return true
+	else return false end
+end
+function P.towel:useToolTile(tile, tileY, tileX)
+	if tile:instanceof(tiles.superStickyButton) then
+		local isDown = room[tileY][tileX].down
+		room[tileY][tileX] = tiles.stickyButton:new()
+		room[tileY][tileX].down = isDown
+	elseif tile:instanceof(tiles.unbreakableElectricFloor) then
+		room[tileY][tileX] = tiles.electricFloor:new()
+	elseif tile:instanceof(tiles.unbrickableStayButton) then
+		room[tileY][tileX] = tiles.stayButton:new()
+	elseif tile:instanceof(tiles.unbreakablePowerSupply) then
+		room[tileY][tileX] = tiles.powerSupply:new()
+	elseif tile:instanceof(tiles.unbreakableWire) then
+		local rot = room[tileY][tileX].rotation
+		if tile:instanceof(tiles.unbreakableCrossWire) then
+			room[tileY][tileX] = tiles.crossWire:new()
+		elseif tile:instanceof(tiles.unbreakableHorizontalWire) then
+			room[tileY][tileX] = tiles.horizontalWire:new()
+		elseif tile:instanceof(tiles.unbreakableTWire) then
+			room[tileY][tileX] = tiles.tWire:new()
+		elseif tile:instanceof(tiles.unbreakableCornerWire) then
+			room[tileY][tileX] = tiles.cornerWire:new()
+		elseif tile:instanceof(tiles.unbreakableWire) then
+			room[tileY][tileX] = tiles.wire:new()
+		end
+		room[tileY][tileX].rotation = rot
+	else return false end
+end
+
+P.playerCloner  = P.superTool:new{name = "Clone Spawner", description = "Make a new you", cloneExists = false, baseRange = 0, image = love.graphics.newImage('Graphics/playercloner.png'),
+imageNoClone = love.graphics.newImage('Graphics/playercloner.png'), imageClone = love.graphics.newImage('Graphics/playercloner2.png')}
+function P.playerCloner:usableOnNothing()
+	return true
+end
+function P.playerCloner:usableOnTile(tile)
+	return true
+end
+
+function P.playerCloner:useToolNothing()
+	if not self.cloneExists then
+		self.cloneExists = true
+		player.clonePos = {x = player.tileX, y = player.tileY, z = player.elevation}
+		self.image = self.imageClone
+	else
+		self.numHeld = self.numHeld-1
+		self.cloneExists = false
+		player.tileX = player.clonePos.x
+		player.tileY = player.clonePos.y
+		player.elevation = player.clonePos.z
+		player.clonePos = {x = 0, y = 0, z = 0}
+		self.image = self.imageNoClone
+	end
+end
+P.playerCloner.useToolTile = P.playerCloner.useToolNothing
 P.numNormalTools = 7
 
---tools not included in list: trap (identical to glue in purpose)
---some tools are weak, but necessary for balance
-
 --[[ideas:
-	Giovanni clone spawner
-	chance for wood to reveal trapdoor; tool to locate wood that will do so
-	switch player's position with end tile
-	bombBox spawner, noAnimalPushBox spawner, jackInTheBox spawner
-	tile debuffer -- blue->regular
-	more lasers/guns -- electricity gun?
 ]]
 
 function P.resetTools()
@@ -2426,5 +2551,10 @@ P:addTool(P.inflation)
 P:addTool(P.emptyBucket)
 P:addTool(P.superWaterBottle)
 P:addTool(P.wallDungeonDetector)
+P:addTool(P.towel)
+P:addTool(P.playerCloner)
+P:addTool(P.playerBoxSpawner)
+P:addTool(P.bombBoxSpawner)
+P:addTool(P.jackInTheBoxSpawner)
 
 return tools

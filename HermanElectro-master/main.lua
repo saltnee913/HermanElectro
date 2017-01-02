@@ -307,7 +307,7 @@ function love.load()
 		floorIndex = -1
 		--started = false
 		shaderTriggered = true
-		mushroomMode = false
+		mushroomMode = falsed
 		globalTint = {0,0,0}
 		globalTintRising = {1,1,1}
 		charSelect = false
@@ -432,7 +432,7 @@ function love.load()
 
 
 	if player == nil then
-		player = { 	keysHeld = 0, dead = false, elevation = 0, safeFromAnimals = false, bonusRange = 0, active = true, waitCounter = 0, tileX = 10, tileY = 6, x = (1-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10, 
+		player = { 	keysHeld = 0, clonePos = {x = 0, y = 0, z = 0}, dead = false, elevation = 0, safeFromAnimals = false, bonusRange = 0, active = true, waitCounter = 0, tileX = 10, tileY = 6, x = (1-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10, 
 			y = (6-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10, prevTileX = 3, prevTileY 	= 10,
 			prevx = (3-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10,
 			prevy = (10-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10,
@@ -1875,11 +1875,18 @@ function love.draw()
 			love.graphics.setShader(myShader)
 		end
 
-		if player.character.name == "Giovanni" and player.character.shiftPos.x>0 then
-			if player.character.shiftPos.y == j then
+		if (player.character.name == "Giovanni" and player.character.shiftPos.x>0)
+		or player.clonePos.x>0 then
+			if player.clonePos.x>0 then
+				if player.clonePos.y == j then
+					local playerx = (player.clonePos.x-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
+					local playery = (player.clonePos.y-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
+					love.graphics.draw(player.character.sprite, playerx-player.character.sprite:getWidth()*player.character.scale/2, playery-player.character.sprite:getHeight()*player.character.scale-player.elevation*scale, 0, player.character.scale, player.character.scale)
+				end
+			elseif player.character.shiftPos.y == j then
 				local playerx = (player.character.shiftPos.x-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
 				local playery = (player.character.shiftPos.y-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
-				love.graphics.draw(player.character.sprite2, playerx-player.character.sprite:getWidth()*player.character.scale/2, playery-player.character.sprite:getHeight()*player.character.scale, 0, player.character.scale, player.character.scale)
+				love.graphics.draw(player.character.sprite2, playerx-player.character.sprite:getWidth()*player.character.scale/2, playery-player.character.sprite:getHeight()*player.character.scale-player.elevation*scale, 0, player.character.scale, player.character.scale)
 			end
 		end
 		--love.graphics.draw(walls, 0, 0, 0, width/walls:getWidth(), height/walls:getHeight())
