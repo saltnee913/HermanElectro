@@ -427,6 +427,7 @@ function love.load()
 	end
 	--print(love.graphics.getWidth(f1))
 	scale = (width - 2*wallSprite.width)/(20.3 * 16)*5/6
+	
 	floor = tiles.tile
 
 

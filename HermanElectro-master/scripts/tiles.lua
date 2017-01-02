@@ -493,6 +493,16 @@ function P.wall:destroy()
 	self.dirSend = {0,0,0,0}
 	self.overlay = nil
 	self.yOffset = 0
+	local dungeonChance = util.random(100, 'misc')
+	if dungeonChance==1 then
+		for i = 1, roomHeight do
+			for j = 1, roomLength do
+				if room[i][j]==self then
+					room[i][j] = tiles.dungeonEnter:new()
+				end
+			end
+		end
+	end
 end
 function P.wall:onLeave()
 	updateElevation()
