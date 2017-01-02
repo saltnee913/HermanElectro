@@ -71,14 +71,14 @@ function P.giveToolsByReference(toolArray)
 	P.giveTools(toolsToGive)
 end
 
-function P.giveRandomTools(numTools,numSupers,superWeights)
+function P.giveRandomTools(numTools,numSupers,qualities)
 	if numSupers == nil then numSupers = 0 end
 	local toolsToGive = {}
 	for i = 1, numTools do
 		slot = P.chooseNormalTool()
 		toolsToGive[#toolsToGive+1] = slot
 	end
-	local supersToGive = P.getSupertools(numSupers,superWeights)
+	local supersToGive = P.getSupertools(numSupers,qualities)
 	for i = 1, numSupers do
 		toolsToGive[#toolsToGive+1] = supersToGive[i]
 	end
@@ -633,17 +633,19 @@ function P.felixGun:switchEffects()
 end
 
 
-P.superTool = P.tool:new{name = 'superTool', baseRange = 10, quality = 5, description = 'qwerty'}
+P.numQualities = 5
+P.superTool = P.tool:new{name = 'superTool', baseRange = 10, quality = P.numQualities, description = 'qwerty'}
+
 
 
 P.cuttingTorch = P.superTool:new{name = 'cutting-torch', image = love.graphics.newImage('Graphics/cuttingtorch.png')}
 function P.cuttingTorch:usableOnTile(tile)
 	return false
 end
-function P.chooseSupertool(superWeights)
+function P.chooseSupertool(quality)
 	unlocks = require('scripts.unlocks')
 	unlockedSupertools = unlocks.getUnlockedSupertools()
-	if superWeights == nil then
+	if qualities == nil then
 		local toolId
 		repeat
 			toolId = util.random(#tools-tools.numNormalTools,'toolDrop')+tools.numNormalTools
@@ -651,23 +653,9 @@ function P.chooseSupertool(superWeights)
 		return toolId
 	else
 		local toolId
-		local sum = 0
-		for i = 1, #superWeights do
-			if unlockedSupertools[i] and i > tools.numNormalTools then
-				sum = sum+superWeights[i]
-			end
-		end
-		local rand = util.random(sum,'toolDrop')
-		local toolId
-		for i = 1, #superWeights do
-			if unlockedSupertools[i] then
-				rand = rand - superWeights[i]
-				if rand <= 0 then
-					toolId = i
-					break
-				end
-			end
-		end
+		repeat
+			toolId = util.random(#tools-tools.numNormalTools,'toolDrop')+tools.numNormalTools
+		until(unlockedSupertools[toolId] and tools[toolId].quality == quality)
 		return toolId
 	end
 end
@@ -694,7 +682,7 @@ function P.chooseGoodSupertools()
 	return filledSlots
 end
 
-function P.getSupertools(numTools,superWeights)
+function P.getSupertools(numTools,qualities)
 	if numTools == nil then numTools = 1 end
 	local toolsToGive = {}
 	local filledSlots = {0,0,0}
@@ -705,40 +693,23 @@ function P.getSupertools(numTools,superWeights)
 			slot = slot+1
 		end
 	end
-	if superWeights ~= nil then
-		local isSafe = false
-		for i = 1,3 do
-			if filledSlots[i] == 0 then
-				isSafe = true
-				break
-			end
-			if superWeights[filledSlots[i]] ~= 0 then
-				isSafe = true
-				break
-			end
-		end
-		if not isSafe then return end
-	end
 	for superToolNumber = 1, numTools do
-		local goodSlot = false
-		while (not goodSlot) do
-			slot = tools.chooseSupertool(superWeights)
-			if filledSlots[3]==0 then
-				goodSlot = true
-			end
-			for i = 1, 3 do
-				if filledSlots[i]==slot then
-					goodSlot = true
-				end
-			end
+		local slotToPlace = util.random(3, 'toolDrop')
+		if filledSlots[slotToPlace] ~= 0 then
+			toolsToGive[#toolsToGive + 1] = filledSlots[slotToPlace]
+		else
+			local quality = nil
+			if qualities ~= nil then quality = qualities[superToolNumber] end
+			slot = tools.chooseSupertool(quality)
+			filledSlots[slotToPlace] = slot
+			toolsToGive[#toolsToGive + 1] = slot
 		end
-		toolsToGive[#toolsToGive + 1] = slot
 	end
 	return toolsToGive
 end
 
-function P.giveSupertools(numTools)
-	P.giveTools(P.getSupertools(numTools))
+function P.giveSupertools(numTools,qualities)
+	P.giveRandomTools(0,numTools,qualities)
 end
 
 P.shovel = P.superTool:new{name = "shovel", description = "Hole making apparatus.", baseRange = 1, image = love.graphics.newImage('Graphics/shovel.png'), quality = 2}

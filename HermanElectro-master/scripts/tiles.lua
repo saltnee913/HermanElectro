@@ -1060,9 +1060,8 @@ end
 P.breakablePit.willKillAnimal = P.breakablePit.willKillPlayer
 P.breakablePit.willDestroyPushable = P.breakablePit.willKillPlayer
 
-local superWeights = util.readJSON('Values/superToolWeights.json')
 P.treasureTile = P.tile:new{name = "treasureTile", sprite = love.graphics.newImage('GraphicsBrush/tt1.png'),
-  done = false, treasureWeights = superWeights.yellowTreasureTile}
+  done = false}
 function P.treasureTile:onEnter()
 	if self.done then return end
 	self:giveReward()
@@ -1099,7 +1098,19 @@ function P.treasureTile:giveReward()
 	elseif rand<900-donations then
 		tools.giveRandomTools(2)
 	else
-		tools.giveRandomTools(1,1)
+		local quality
+		if rand<910 then
+			quality = 1
+		elseif rand<950 then
+			quality = 2
+		elseif rand<985 then
+			quality = 3
+		elseif rand<999 then
+			quality = 4
+		else
+			quality = 5
+		end
+		tools.giveRandomTools(1,1,{quality})
 	end
 end
 
@@ -1348,7 +1359,19 @@ end
 
 P.blueBeggar = P.beggar:new{name = "blueBeggar", sprite = love.graphics.newImage('Graphics/bluebeggar.png'), deadSprite = love.graphics.newImage('Graphics/bluebeggardead.png')}
 function P.blueBeggar:providePayment()
-	tools.giveSupertools(1)
+	local quality = util.random('toolDrop')
+	if quality < 0.075 then
+		quality = 1
+	elseif quality < 0.6 then
+		quality = 2
+	elseif quality < 0.885 then
+		quality = 3
+	elseif quality < 0.985 then
+		quality = 4
+	else
+		quality = 5
+	end
+	tools.giveSupertools(1, {quality})
 end
 
 P.ladder = P.tile:new{name = "ladder", sprite = love.graphics.newImage('Graphics/laddertile.png'), blocksAnimalMovement = true}
@@ -1435,7 +1458,7 @@ P.entrancePortal.onStayAnimal = P.entrancePortal.onEnterAnimal
 
 P.exitPortal = P.tile:new{name = "exitPortal", sprite = love.graphics.newImage('Graphics/exitPortal.png')}
 
-P.treasureTile2 = P.treasureTile:new{name = "treasureTile2", sprite = love.graphics.newImage('GraphicsBrush/tt2.png'), treasureWeights = superWeights.treasureRoomTile}
+P.treasureTile2 = P.treasureTile:new{name = "treasureTile2", sprite = love.graphics.newImage('GraphicsBrush/tt2.png')}
 
 function P.treasureTile2:onEnter()
 	if self.done then return end
@@ -1450,7 +1473,13 @@ function P.treasureTile2:giveReward()
 	if reward<775 then
 		tools.giveRandomTools(1)
 	else
-		tools.giveRandomTools(1,1,self.treasureWeights)
+		local quality
+		if reward<888 then
+			quality = 2
+		else
+			quality = 3
+		end
+		tools.giveRandomTools(1,1,{quality})
 	end
 end
 
