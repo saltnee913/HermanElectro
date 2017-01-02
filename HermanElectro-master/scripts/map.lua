@@ -778,24 +778,27 @@ function P.generateMapWeighted()
 	local maxy = 0;
 	for i=1,height do
 		for j=1,height do
-			if newmap[i][j] ~= nil and newmap[i][j].roomid ~= nil and P.isRoomType(newmap[i][j].roomid, "rooms") then
-				if math.abs(i-math.floor(height))+math.abs(j-math.floor(height)) > max then
-					max = math.abs(i-math.floor(height))+math.abs(j-math.floor(height))
-					maxx=i
-					maxy=j
-				end
-				if math.abs(i-math.floor(height))+math.abs(j-math.floor(height)) == max then
-					if util.random(2, 'mapGen') == 2 then
+			if newmap[i][j] ~= nil and P.isRoomType(newmap[i][j].roomid, "rooms") then
+				if (newmap[i+1][j+1] == nil or P.isRoomType(newmap[i+1][j+1].roomid, "rooms")) and
+					(newmap[i+1][j-1] == nil or P.isRoomType(newmap[i+1][j-1].roomid, "rooms")) and
+					(newmap[i-1][j+1] == nil or P.isRoomType(newmap[i-1][j+1].roomid, "rooms")) and 
+					(newmap[i-1][j-1] == nil or P.isRoomType(newmap[i-1][j-1].roomid, "rooms")) then
+					if math.abs(i-math.floor(height))+math.abs(j-math.floor(height)) > max then
 						max = math.abs(i-math.floor(height))+math.abs(j-math.floor(height))
 						maxx=i
 						maxy=j
+					end
+					if math.abs(i-math.floor(height))+math.abs(j-math.floor(height)) == max then
+						if util.random(2, 'mapGen') == 2 then
+							max = math.abs(i-math.floor(height))+math.abs(j-math.floor(height))
+							maxx=i
+							maxy=j
+						end
 					end
 				end
 			end
 		end
 	end
-	print (maxx)
-	print (maxy)
 	newmap[maxx][maxy] = {roomid = randomFinalRoomsArray[1], room = P.createRoom(randomFinalRoomsArray[1]), tint = {0,0,0}, isFinal = true, isInitial = false}
 	return newmap
 end

@@ -2199,88 +2199,94 @@ end
 
 P.resetTools()
 
-P[8] = P.crowbar
-P[9] = P.visionChanger 
-P[10] = P.bomb
-P[11] = P.electrifier
-P[12] = P.delectrifier
-P[13] = P.unsticker --remove
-P[14] = P.doorstop --disable?
-P[15] = P.charger
-P[16] = P.missile --add chance to spawn dungeon when missiling ground
-P[17] = P.shovel --can club dogs, beggars(?)
-P[18] = P.woodGrabber --This is shit, adds nothing
-P[19] = P.corpseGrabber -- Remove aswell?
-P[20] = P.pitbullChanger -- Spice this up
-P[21] = P.meat -- Add: Can be placed on buttons, does not activate button.
-P[22] = P.rotater
-P[23] = P.teleporter -- Add: chance to teleport to dungeon 
-P[24] = P.boxCutter
-P[25] = P.broom --remove
-P[26] = P.magnet
-P[27] = P.spring --add functionality to spring you on top of wall/spring off
-P[28] = P.glue
-P[29] = P.endFinder --remove
-P[30] = P.map --buff: show special room colors
-P[31] = P.ramSpawner
-P[32] = P.gateBreaker --make more flavorful? Almost Dumb
-P[33] = P.conductiveBoxSpawner
-P[34] = P.superWireCutters -- Flavor
-P[35] = P.boxSpawner
-P[36] = P.boomboxSpawner
-P[37] = P.laser
-P[38] = P.gas --no beggar kills
-P[39] = P.superLaser --add animal kills
-P[40] = P.armageddon
-P[41] = P.toolIncrementer --more flavor: toolbox? Dumb?
-P[42] = P.toolDoubler --more flavor: 50% off? two for the price of one? one tool slot only?
-P[43] = P.roomReroller --lower chances of treasure tile
-P[44] = P.wings --fix bug
-P[45] = P.swapper --greater range, radial instead of directional
-P[46] = P.bucketOfWater
-P[47] = P.flame
-P[48] = P.toolReroller --more flavor
-P[49] = P.revive --more flavor -- phoenix?
-P[50] = P.superGun --more flavor
-P[51] = P.buttonFlipper --works on stay buttons; more flavor
-P[52] = P.wireBreaker --make sure works on overlays; more flavor
-P[53] = P.powerBreaker --more flavor
-P[54] = P.gabeMaker --die and become angel
-P[55] = P.roomUnlocker -- more flavor: some kind of key
-P[56] = P.axe -- Laser Gun Comparison
-P[57] = P.lube 
-P[58] = P.snowball --It's like better glue...
-P[59] = P.superSnowball --more flavor: big snowball or something
-P[60] = P.snowballGlobal --way more flavor
-P[61] = P.superBrick -- rework -- break wood walls or something from a range
-P[62] = P.portalPlacer --more flavor
-P[63] = P.suicideKing --only good w/ revive
-P[64] = P.screwdriver
-P[65] = P.laptop --shows character-unique solutions
-P[66] = P.wireExtender --more flavor
-P[67] = P.lamp --make pushable
-P[68] = P.coin 
-P[69] = P.knife -- Tool Feautre merge, Like Axe
-P[70] = P.mask
-P[71] = P.growthHormones --steroids?
-P[72] = P.robotArm
-P[73] = P.sock
-P[74] = P.trap --make mousetrap; more flavor about catching mice or something
-P[75] = P.emptyCup
-P[76] = P.gasPourer --more flavor
-P[77] = P.gasPourerXtreme --more flavor, keep Xtreme
-P[78] = P.buttonPlacer --flavor
-P[79] = P.wireToButton --flavor
-P[80] = P.foresight
-P[81] = P.tileDisplacer --flavor
-P[82] = P.tileSwapper --flavor
-P[83] = P.tileCloner --flavor
-P[84] = P.shopReroller -- possible tweaks 
-P[85] = P.ghostStep --check stayButton interaction
-P[86] = P.stoolPlacer
-P[87] = P.lemonadeCup
-P[88] = P.lemonParty
-P[89] = P.inflation -- questionable or dope?
-P[90] = P.emptyBucket
+
+function P:addTool(tool)
+	self[#self+1] = tool
+	tool.toolid = #self
+end
+
+P:addTool(P.crowbar)
+P:addTool(P.visionChanger) 
+P:addTool(P.bomb)
+P:addTool(P.electrifier)
+P:addTool(P.delectrifier)
+--P:addTool(P.unsticker) --remove
+--P:addTool(P.doorstop) --disable?
+P:addTool(P.charger)
+P:addTool(P.missile) --add chance to spawn dungeon when missiling ground
+P:addTool(P.shovel) --can club dogs, beggars(?)
+P:addTool(P.woodGrabber) --This is shit, adds nothing
+--P:addTool(P.corpseGrabber) -- Remove aswell?
+P:addTool(P.pitbullChanger) -- Spice this up
+P:addTool(P.meat) -- Add: Can be placed on buttons, does not activate button.
+P:addTool(P.rotater)
+P:addTool(P.teleporter) -- Add: chance to teleport to dungeon 
+P:addTool(P.boxCutter)
+--P:addTool(P.broom) --remove
+P:addTool(P.magnet)
+P:addTool(P.spring) --add functionality to spring you on top of wall/spring off
+P:addTool(P.glue)
+--P:addTool(P.endFinder) --remove
+P:addTool(P.map) --buff: show special room colors
+P:addTool(P.ramSpawner)
+P:addTool(P.gateBreaker) --make more flavorful? Almost Dumb
+P:addTool(P.conductiveBoxSpawner)
+P:addTool(P.superWireCutters) -- Flavor
+P:addTool(P.boxSpawner)
+P:addTool(P.boomboxSpawner)
+P:addTool(P.laser)
+P:addTool(P.gas) --no beggar kills
+P:addTool(P.superLaser) --add animal kills
+P:addTool(P.armageddon)
+P:addTool(P.toolIncrementer) --more flavor: toolbox? Dumb?
+P:addTool(P.toolDoubler) --more flavor: 50% off? two for the price of one? one tool slot only?
+P:addTool(P.roomReroller) --lower chances of treasure tile
+P:addTool(P.wings) --fix bug
+P:addTool(P.swapper) --greater range, radial instead of directional
+P:addTool(P.bucketOfWater)
+P:addTool(P.flame)
+P:addTool(P.toolReroller) --more flavor
+P:addTool(P.revive) --more flavor -- phoenix?
+P:addTool(P.superGun) --more flavor
+P:addTool(P.buttonFlipper) --works on stay buttons; more flavor
+P:addTool(P.wireBreaker) --make sure works on overlays; more flavor
+P:addTool(P.powerBreaker) --more flavor
+P:addTool(P.gabeMaker) --die and become angel
+P:addTool(P.roomUnlocker) -- more flavor: some kind of key
+P:addTool(P.axe) -- Laser Gun Comparison
+P:addTool(P.lube) 
+P:addTool(P.snowball) --It's like better glue...
+P:addTool(P.superSnowball) --more flavor: big snowball or something
+P:addTool(P.snowballGlobal) --way more flavor
+P:addTool(P.superBrick) -- rework -- break wood walls or something from a range
+P:addTool(P.portalPlacer) --more flavor
+P:addTool(P.suicideKing) --only good w/ revive
+P:addTool(P.screwdriver)
+P:addTool(P.laptop) --shows character-unique solutions
+P:addTool(P.wireExtender) --more flavor
+P:addTool(P.lamp) --make pushable
+P:addTool(P.coin) 
+P:addTool(P.knife) -- Tool Feautre merge, Like Axe
+P:addTool(P.mask)
+P:addTool(P.growthHormones) --steroids?
+P:addTool(P.robotArm)
+P:addTool(P.sock)
+P:addTool(P.trap) --make mousetrap; more flavor about catching mice or something
+P:addTool(P.emptyCup)
+P:addTool(P.gasPourer) --more flavor
+P:addTool(P.gasPourerXtreme) --more flavor, keep Xtreme
+P:addTool(P.buttonPlacer) --flavor
+P:addTool(P.wireToButton) --flavor
+P:addTool(P.foresight)
+P:addTool(P.tileDisplacer) --flavor
+P:addTool(P.tileSwapper) --flavor
+P:addTool(P.tileCloner) --flavor
+P:addTool(P.shopReroller) -- possible tweaks 
+P:addTool(P.ghostStep) --check stayButton interaction
+P:addTool(P.stoolPlacer)
+P:addTool(P.lemonadeCup)
+P:addTool(P.lemonParty)
+P:addTool(P.inflation) -- questionable or dope?
+P:addTool(P.emptyBucket)
 
 return tools
