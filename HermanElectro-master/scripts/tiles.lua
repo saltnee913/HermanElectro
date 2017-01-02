@@ -1863,8 +1863,11 @@ function P.supertoolTile:absoluteFinalUpdate()
 	if self.tool==nil then
 		local quality = 0
 		local toolForTile = nil
-		while(quality ~= self.superQuality) do
-			toolForTile = tools[util.random(#tools-tools.numNormalTools, 'toolDrop')+tools.numNormalTools]
+		local toolForTileId = 1
+		local unlockedSupers = unlocks.getUnlockedSupertools()
+		while(quality ~= self.superQuality or not unlockedSupers[toolForTileId]) do
+			toolForTileId = util.random(#tools-tools.numNormalTools, 'toolDrop')+tools.numNormalTools
+			toolForTile = tools[toolForTileId]
 			quality = toolForTile.quality
 		end
 		self.tool = toolForTile

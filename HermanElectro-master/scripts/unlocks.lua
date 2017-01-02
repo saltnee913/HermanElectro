@@ -78,7 +78,7 @@ function P.updateUnlockedSupertools()
 		unlock = unlocks[i]
 		if unlock.toolIds ~= nil and unlock.unlocked == false then
 			for k = 1, #unlock.toolIds do
-				unlockedSupertools[unlock.toolIds[k]] = false
+				unlockedSupertools[unlock.toolIds[k].toolid] = false
 			end
 		end
 	end
@@ -147,23 +147,23 @@ P.doorUnlock = P.tileUnlock:new{name = "door unlock", tileIds = {18}, sprite = t
 P.lockedTiles = P.tileUnlock:new{name = 'permanentlyLockedTiles', tileIds = {103,104,105,106,107,108,109,110,111,112,113},hidden = true}
 
 P.toolUnlock = P.unlock:new{name = 'tool', toolIds = {}, sprite = tools.saw.image}
-P.missileUnlock = P.unlock:new{name = 'missile', toolIds = {16}, sprite = tools.missile.image}
-P.toolDoublerUnlock = P.unlock:new{name = 'tool doubler', toolIds = {42}, sprite = tools.toolDoubler.image}
-P.reviveUnlock = P.unlock:new{name = 'revived!', toolIds = {49}, sprite = tools.revive.image}
-P.gabeUnlock = P.unlock:new{name = 'gabe the angel', toolIds = {54}, sprite = love.graphics.newImage('Graphics/gabe.png')}
-P.buttonFlipperUnlock = P.unlock:new{name = 'button flipper', toolIds = {51}, sprite = tools.buttonFlipper.image}
-P.superGunUnlock = P.unlock:new{name = "super gun!", toolIds = {50}, sprite = tools.superGun.image}
-P.suicideKingUnlock = P.unlock:new{name = "use with caution", toolIds = {63}, sprite = tools.suicideKing.image}
-P.screwdriverUnlock = P.unlock:new{name = "screwdriver", toolIds = {64}, sprite = tools.screwdriver.image}
+P.missileUnlock = P.unlock:new{name = 'missile', toolIds = {tools.missile}, sprite = tools.missile.image}
+P.toolDoublerUnlock = P.unlock:new{name = 'tool doubler', toolIds = {tools.toolDoubler}, sprite = tools.toolDoubler.image}
+P.reviveUnlock = P.unlock:new{name = 'revived!', toolIds = {tools.revive}, sprite = tools.revive.image}
+P.gabeUnlock = P.unlock:new{name = 'gabe the angel', toolIds = {tools.gabeMaker}, sprite = love.graphics.newImage('Graphics/gabe.png')}
+P.buttonFlipperUnlock = P.unlock:new{name = 'button flipper', toolIds = {tools.buttonFlipper}, sprite = tools.buttonFlipper.image}
+P.superGunUnlock = P.unlock:new{name = "super gun!", toolIds = {tools.superGun}, sprite = tools.superGun.image}
+P.suicideKingUnlock = P.unlock:new{name = "use with caution", toolIds = {tools.suicideKing}, sprite = tools.suicideKing.image}
+P.screwdriverUnlock = P.unlock:new{name = "screwdriver", toolIds = {tools.screwdriver}, sprite = tools.screwdriver.image}
 
 P.roomUnlock = P.unlock:new{name = 'room', roomIds = {"1"}}
 P.beggarPartyUnlock = P.roomUnlock:new{name = 'beggars love you', roomIds = {"beggar_party"}, sprite = tiles.beggar.sprite}
 
 
 --multi unlocks
-P.bombsUnlock = P.unlock:new{name = 'boom!', tileIds = {39,44,65,87}, toolIds = {10}, sprite = tools.bomb.image}
-P.puddleUnlock = P.tileUnlock:new{name = 'oops you spilled something', tileIds = {71}, toolIds = {46}, sprite = tiles.puddle.sprite}
-P.portalUnlock = P.tileUnlock:new{name = 'portals', tileIds = {56,57}, toolIds = {62}, sprite = tiles.entrancePortal.sprite}
+P.bombsUnlock = P.unlock:new{name = 'boom!', tileIds = {39,44,65,87}, toolIds = {tools.bomb}, sprite = tools.bomb.image}
+P.puddleUnlock = P.tileUnlock:new{name = 'oops you spilled something', tileIds = {71}, toolIds = {tools.bucketOfWater}, sprite = tiles.puddle.sprite}
+P.portalUnlock = P.tileUnlock:new{name = 'portals', tileIds = {56,57}, toolIds = {tools.portalPlacer}, sprite = tiles.entrancePortal.sprite}
 
 
 P.winUnlocks = {P.rammyUnlock, P.bombsUnlock, P.ambiguousGates, P.unbreakableEfloorUnlock}
