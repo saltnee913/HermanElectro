@@ -441,6 +441,7 @@ function love.load()
 		player.dead = false
 		player.tileX = 1
 		player.tileY = 6
+		player.keysHeld = 0
 	end
 
 	map.clearBlacklist()
