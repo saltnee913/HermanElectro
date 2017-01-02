@@ -174,7 +174,6 @@ P[#P+1] = P.rammyUnlock --done
 P[#P+1] = P.frederickUnlock --done
 P[#P+1] = P.batteryUnlock
 P[#P+1] = P.wizardUnlock --done
-P[#P+1] = P.orsonUnlock --done
 P[#P+1] = P.lennyUnlock --done
 P[#P+1] = P.fishUnlock --done, but badly
 
