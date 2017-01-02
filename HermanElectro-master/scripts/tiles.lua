@@ -473,6 +473,7 @@ function P.wall:onEnterPushable(pushable)
 		pushable.tileY = pushable.prevTileY
 	end
 end
+P.wall.onStayPushable = P.wall.onEnterPushable
 
 function P.wall:onEnterAnimal(animal)
 	if not self.destroyed and not animal.flying then

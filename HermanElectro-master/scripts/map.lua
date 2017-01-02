@@ -410,7 +410,7 @@ function P.getFieldForRoom(inRoom, inField)
 			return v[inRoom][inField]
 		end
 	end
-	log('invalid room id: '..inRoom)
+	log('invalid room id: '..(inRoom==nil and 'nil' or inRoom))
 	return nil
 end
 
@@ -779,10 +779,6 @@ function P.generateMapWeighted()
 	for i=1,height do
 		for j=1,height do
 			if newmap[i][j] ~= nil and P.isRoomType(newmap[i][j].roomid, "rooms") then
-				if (newmap[i+1][j+1] == nil or P.isRoomType(newmap[i+1][j+1].roomid, "rooms")) and
-					(newmap[i+1][j-1] == nil or P.isRoomType(newmap[i+1][j-1].roomid, "rooms")) and
-					(newmap[i-1][j+1] == nil or P.isRoomType(newmap[i-1][j+1].roomid, "rooms")) and 
-					(newmap[i-1][j-1] == nil or P.isRoomType(newmap[i-1][j-1].roomid, "rooms")) then
 					if math.abs(i-math.floor(height))+math.abs(j-math.floor(height)) > max then
 						max = math.abs(i-math.floor(height))+math.abs(j-math.floor(height))
 						maxx=i
@@ -795,10 +791,22 @@ function P.generateMapWeighted()
 							maxy=j
 						end
 					end
-				end
+				
 			end
 		end
 	end
+
+	if newmap[maxx][maxy+1] == nil then
+		maxy = maxy+1;
+	elseif newmap[maxx][maxy-1] == nil then
+		maxy = maxy-1;
+	elseif newmap[maxx+1][maxy] == nil then
+		maxx = maxx+1;
+	elseif newmap[maxx-1][maxy] == nil then
+		maxx = maxx-1;
+	end
+
+
 	newmap[maxx][maxy] = {roomid = randomFinalRoomsArray[1], room = P.createRoom(randomFinalRoomsArray[1]), tint = {0,0,0}, isFinal = true, isInitial = false}
 		
 	arr = P.floorInfo.rooms.dungeons
