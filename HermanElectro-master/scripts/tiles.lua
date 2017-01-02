@@ -1148,13 +1148,7 @@ function P.mousetrap:updateSprite()
 	self.poweredSprite = self.sprite
 end
 function P.mousetrap:willKillPlayer()
-	if self.triggered then
-		self.triggered = false
-		self.safe = true
-		self:updateSprite()
-		return true
-	end
-	return false
+	return not self.triggered
 end
 function P.mousetrap:postPowerUpdate()
 	if self.bricked then return end
@@ -1624,7 +1618,7 @@ P.conductiveBoxTile = P.tile:new{name = "conductiveBoxTile", pushable = pushable
 
 P.boomboxTile = P.boxTile:new{name = "boomboxTile", pushable = pushableList[6], listIndex = 6, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
 
-P.batteringRamTile = P.tile:new{name = "batteringRamTile", pushable = pushableList[7], listIndex = 7, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
+P.batteringRamTile = P.boxTile:new{name = "batteringRamTile", pushable = pushableList[7], listIndex = 7, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
 
 P.lamp = P.powerSupply:new{name = "lamp", emitsLight = true, intensity = 0.7, range = 50, sprite = love.graphics.newImage('Graphics/lamp.png'), poweredSprite = love.graphics.newImage('Graphics/lamp.png'), lit = true, destroyedSprite = love.graphics.newImage('Graphics/destroyedlamp.png')}
 function P.lamp:destroy()

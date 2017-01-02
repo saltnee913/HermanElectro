@@ -221,7 +221,7 @@ function P.tool:getToolableTiles()
 				end
 			end
 		else
-			for dist = 1, self.range+player.attributes.extendedRange.range do
+			for dist = 1, self.range+player.attributes.extendedRange do
 				local tileToCheck = {y = player.tileY + offset.y*dist, x = player.tileX + offset.x*dist}
 				if room[tileToCheck.y]~=nil then
 					if dir==5 and dist>1 then break end
@@ -246,8 +246,8 @@ end
 function P.tool:getToolableTilesBox()
 	local usableTiles = {{},{},{},{},{}}
 	dir = 1
-	for i=-1*(self.range+player.attributes.extendedRange.range), self.range+player.attributes.extendedRange.range do
-		for j = -1*(self.range+player.attributes.extendedRange.range), self.range+player.attributes.extendedRange.range do
+	for i=-1*(self.range+player.attributes.extendedRange), self.range+player.attributes.extendedRange do
+		for j = -1*(self.range+player.attributes.extendedRange), self.range+player.attributes.extendedRange do
 			local offset = {x = i, y = j}
 			local tileToCheck = {y = player.tileY + offset.y, x = player.tileX + offset.x}
 			if tileToCheck.x<=0 or tileToCheck.x>roomLength then break end
@@ -309,7 +309,7 @@ function P.tool:getToolableAnimals()
 	end
 	for dir = 1, 5 do
 		usableAnimals[dir] = {}
-		if closestAnimals[dir].dist <= self.range+player.attributes.extendedRange.range then
+		if closestAnimals[dir].dist <= self.range+player.attributes.extendedRange then
 			local offset
 			if dir == 5 then
 				offset = {y = 0, x = 0}
@@ -339,7 +339,7 @@ function P.tool:getToolableAnimalsBox()
 	if player.elevation~=0 then return {{},{},{},{},{}} end
 	local usableAnimals = {{},{},{},{},{}}
 	for animalIndex = 1, #animals do
-		if not animals[animalIndex].dead and math.abs(animals[animalIndex].tileY - player.tileY)+math.abs(animals[animalIndex].tileX - player.tileX)<=self.range+player.attributes.extendedRange.range then
+		if not animals[animalIndex].dead and math.abs(animals[animalIndex].tileY - player.tileY)+math.abs(animals[animalIndex].tileX - player.tileX)<=self.range+player.attributes.extendedRange then
 			if litTiles[animals[animalIndex].tileY][animals[animalIndex].tileX]~=0 then
 				usableAnimals[1][#usableAnimals[1]+1] = animals[animalIndex]
 			end
@@ -389,7 +389,7 @@ function P.tool:getToolablePushables()
 	end
 	for dir = 1, 5 do
 		usablePushables[dir] = {}
-		if closestPushables[dir].dist <= self.range+player.attributes.extendedRange.range then
+		if closestPushables[dir].dist <= self.range+player.attributes.extendedRange then
 			local offset
 			if dir == 5 then
 				offset = {y = 0, x = 0}
@@ -418,7 +418,7 @@ end
 function P.tool:getToolablePushablesBox()
 	if player.elevation~=0 then return {{},{},{},{},{}} end
 	for pushableIndex = 1, #pushables do
-		if not pushables[pushableIndex].dead and math.abs(pushables[pushableIndex].tileY - player.tileY)+math.abs(pushables[pushableIndex].tileX - player.tileX)<=self.range+player.attributes.extendedRange.range then
+		if not pushables[pushableIndex].dead and math.abs(pushables[pushableIndex].tileY - player.tileY)+math.abs(pushables[pushableIndex].tileX - player.tileX)<=self.range+player.attributes.extendedRange then
 			if litTiles[pushables[pushableIndex].tileY][pushables[pushableIndex].tileX]~=0 then
 				usablePushables[1][#usablePushables[1]+1] = pushables[pushableIndex]
 			end
@@ -994,7 +994,7 @@ function P.trap:usableOnNothing()
 end
 function P.trap:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld-1
-	room[tileY][tileX] = tiles.trap:new()
+	room[tileY][tileX] = tiles.mousetrap:new()
 end
 
 P.boxCutter = P.superTool:new{name = "boxCutter", baseRange = 1, image = love.graphics.newImage('Graphics/boxcutter.png'), quality = 3}
@@ -1036,10 +1036,13 @@ end
 
 P.spring = P.superTool:new{name = "spring", useWithArrowKeys = false, baseRange = 4, image = love.graphics.newImage('Graphics/spring.png'), quality = 3}
 function P.spring:usableOnTile(tile)
+	if tile:getHeight()>0 then
+		return true
+	end
 	for i = 1, #pushables do
 		if pushables[i].tileX == tile.tileX and pushables[i].tileY == tile.tileY then return false end
 	end
-	return not tile.blocksMovement
+	return true
 end
 function P.spring:usableOnNothing()
 	return true
@@ -1050,6 +1053,7 @@ function P.spring:useToolTile(tile, tileY, tileX)
 	player.prevTileY = player.tileY
 	player.tileX = tileX
 	player.tileY = tileY
+	updateElevation()
 	room[tileY][tileX]:onEnter(player)
 	if room[player.prevTileY][player.prevTileX]~=nil then
 		room[player.prevTileY][player.prevTileX]:onLeave(player)
@@ -1057,13 +1061,14 @@ function P.spring:useToolTile(tile, tileY, tileX)
 end
 function P.spring:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld-1
+	if room[player.prevTileY][player.prevTileX]~=nil then
+		room[player.prevTileY][player.prevTileX]:onLeave(player)
+	end
 	player.prevTileX = player.tileX
 	player.prevTileY = player.tileY
 	player.tileX = tileX
 	player.tileY = tileY
-	if room[player.prevTileY][player.prevTileX]~=nil then
-		room[player.prevTileY][player.prevTileX]:onLeave(player)
-	end
+	updateElevation()
 end
 P.spring.getToolableTiles = P.tool.getToolableTilesBox
 
@@ -1094,15 +1099,6 @@ function P.endFinder:useToolTile()
 	end
 end
 P.endFinder.useToolNothing = P.endFinder.useToolTile
-
-P.lamp = P.superTool:new{name = "lamp", baseRange = 3, image = love.graphics.newImage('Graphics/lamp.png'), quality = 3}
-function P.lamp:usableOnNothing()
-	return true
-end
-function P.lamp:useToolNothing(tileY, tileX)
-	self.numHeld = self.numHeld-1
-	room[tileY][tileX] = tiles.lamp:new()
-end
 
 P.boxSpawner = P.superTool:new{name = "boxSpawner", baseRange = 1, image = love.graphics.newImage('Graphics/box.png'), quality = 2}
 function P.boxSpawner:usableOnNothing(tileY, tileX)
@@ -1137,6 +1133,22 @@ function P.boxSpawner:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld-1
 	local toSpawn = pushableList[2]:new()
 	if player.character.name == "Tim" then toSpawn = pushableList.giftBox:new() end
+	toSpawn.tileY = tileY
+	toSpawn.tileX = tileX
+	pushables[#pushables+1] = toSpawn
+end
+
+P.lamp = P.boxSpawner:new{name = "lamp", baseRange = 1, image = love.graphics.newImage('Graphics/lamp.png'), quality = 3}
+function P.lamp:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
+	local toSpawn = pushableList.lamp:new()
+	toSpawn.tileY = tileY
+	toSpawn.tileX = tileX
+	pushables[#pushables+1] = toSpawn
+end
+function P.lamp:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
+	local toSpawn = pushableList[7]:new()
 	toSpawn.tileY = tileY
 	toSpawn.tileX = tileX
 	pushables[#pushables+1] = toSpawn
@@ -1236,11 +1248,24 @@ P.superLaser = P.laser:new{name = "superLaser", baseRange = 100, image = love.gr
 function P.superLaser:usableOnTile()
 	return true
 end
+P.superLaser.usableOnAnimal = P.superLaser.usableOnTile
+P.superLaser.usableOnTile = P.superLaser.usableOnAnimal
 function P.superLaser:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
 	if tileY == player.tileY then
 		for i = 1, roomLength do
 			if room[tileY][i]~=nil then
 				room[tileY][i]:destroy()
+			end
+		end
+		for i = 1, #animals do
+			if animals[i].tileY == tileY then
+				animals[i]:kill()
+			end
+		end
+		for i = 1, #pushables do
+			if pushables[i].tileY == tileY then
+				pushables[i]:destroy()
 			end
 		end
 	elseif tileX == player.tileX then
@@ -1249,9 +1274,57 @@ function P.superLaser:useToolTile(tile, tileY, tileX)
 				room[i][tileX]:destroy()
 			end
 		end
+		for i = 1, #animals do
+			if animals[i].tileX == tileX then
+				animals[i]:kill()
+			end
+		end
+		for i = 1, #pushables do
+			if pushables[i].tileX == tileX then
+				pushables[i]:destroy()
+			end
+		end
 	end
-	self.numHeld = self.numHeld-1
 end
+function P.superLaser:useToolAnimal(animal)
+	local tileX = animal.tileX
+	local tileY = animal.tileY
+	self.numHeld = self.numHeld-1
+	if tileY == player.tileY then
+		for i = 1, roomLength do
+			if room[tileY][i]~=nil then
+				room[tileY][i]:destroy()
+			end
+		end
+		for i = 1, #animals do
+			if animals[i].tileY == tileY then
+				animals[i]:kill()
+			end
+		end
+		for i = 1, #pushables do
+			if pushables[i].tileY == tileY then
+				pushables[i]:destroy()
+			end
+		end
+	elseif tileX == player.tileX then
+		for i = 1, roomHeight do
+			if room[i][tileX]~=nil then
+				room[i][tileX]:destroy()
+			end
+		end
+		for i = 1, #animals do
+			if animals[i].tileX == tileX then
+				animals[i]:kill()
+			end
+		end
+		for i = 1, #pushables do
+			if pushables[i].tileX == tileX then
+				pushables[i]:destroy()
+			end
+		end
+	end
+end
+P.superLaser.useToolPushable = P.superLaser.useToolAnimal
 
 
 P.gas = P.superTool:new{name = "gas", baseRange = 0, image = love.graphics.newImage('Graphics/gas.png'), quality = 3}
@@ -1389,7 +1462,7 @@ function P.wings:useToolNothing()
 	if player.flying then
 		unlocks.unlockUnlockableRef(unlocks.gabeUnlock)
 	end
-	player.flying = true
+	player.attributes.flying = true
 	self.numHeld = self.numHeld-1
 end
 P.wings.useToolTile = P.wings.useToolNothing
@@ -1550,14 +1623,19 @@ P.map = P.superTool:new{name = "map", baseRange = 0, image = love.graphics.newIm
 function P.map:usableOnNothing()
 	return true
 end
+P.map.usableOnTile = P.map.usableOnNothing
 function P.map:useToolNothing(tileY, tileX)
 	for i = 1, mapHeight do
 		for j = 1, mapHeight do
 			visibleMap[i][j]=1
+			if mainMap[i][j]~=nil and map.getFieldForRoom(mainMap[i][j].roomid, 'autowin') then
+				completedRooms[i][j]=0.5
+			end
 		end
 	end
 	self.numHeld = self.numHeld-1
 end
+P.map.useToolTile = P.map.useToolNothing
 
 P.buttonFlipper = P.superTool:new{name = "buttonFlipper", baseRange = 0, image = love.graphics.newImage('Graphics/buttonflipper.png'), quality = 2}
 function P.buttonFlipper:usableOnNothing()
@@ -1930,7 +2008,7 @@ end
 P.robotArm.usableOnNothing = P.robotArm.usableOnTile
 function P.robotArm:useToolTile(tile)
 	self.numHeld = self.numHeld-1
-	player.attributes.extendedRange = {range = 6, toolUses = 1}
+	player.attributes.extendedRange = 3
 end
 P.robotArm.useToolNothing = P.robotArm.useToolTile
 
@@ -2111,12 +2189,16 @@ end
 P.shopReroller.useToolNothing = P.shopReroller.useToolTile
 
 P.ghostStep = P.superTool:new{name = "ghostStep", image = love.graphics.newImage('Graphics/ghoststep.png'), baseRange = 6, quality = 1}
-function P.ghostStep:usableOnTile()
+function P.ghostStep:usableOnTile(t)
 	return true
 end
 function P.ghostStep:useToolTile(tile)
+	local stayCoords = {x = player.tileX, y = player.tileY}
 	self.numHeld = self.numHeld-1
 	tile:onEnter(player)
+	player.tileX = stayCoords.x
+	player.tileY = stayCoords.y
+	updateGameState()
 end
 
 P.stoolPlacer = P.superTool:new{name = "stoolPlacer", image = love.graphics.newImage('GraphicsColor/halfwall.png'), baseRange = 1, quality = 3}
@@ -2227,75 +2309,76 @@ P:addTool(P.shovel)
 --P:addTool(P.woodGrabber)
 --P:addTool(P.corpseGrabber)
 P:addTool(P.pitbullChanger)
-P:addTool(P.meat) -- Add: Can be placed on buttons, does not activate button.
+P:addTool(P.meat)
 P:addTool(P.rotater)
-P:addTool(P.teleporter) -- Add: chance to teleport to dungeon 
+P:addTool(P.teleporter)
 P:addTool(P.boxCutter)
---P:addTool(P.broom) --remove
+--P:addTool(P.broom)
 P:addTool(P.magnet)
-P:addTool(P.spring) --add functionality to spring you on top of wall/spring off
+P:addTool(P.spring)
 P:addTool(P.glue)
---P:addTool(P.endFinder) --remove
-P:addTool(P.map) --buff: show special room colors
+--P:addTool(P.endFinder)
+P:addTool(P.map)
 P:addTool(P.ramSpawner)
-P:addTool(P.gateBreaker) --make more flavorful? Almost Dumb
+P:addTool(P.gateBreaker)
 P:addTool(P.conductiveBoxSpawner)
-P:addTool(P.superWireCutters) -- Flavor
+P:addTool(P.superWireCutters)
 P:addTool(P.boxSpawner)
 P:addTool(P.boomboxSpawner)
 P:addTool(P.laser)
-P:addTool(P.gas) --no beggar kills
-P:addTool(P.superLaser) --add animal kills
+P:addTool(P.gas)
+P:addTool(P.superLaser)
 P:addTool(P.armageddon)
-P:addTool(P.toolIncrementer) --more flavor: toolbox? Dumb?
-P:addTool(P.toolDoubler) --more flavor: 50% off? two for the price of one? one tool slot only?
-P:addTool(P.roomReroller) --lower chances of treasure tile
-P:addTool(P.wings) --fix bug
-P:addTool(P.swapper) --greater range, radial instead of directional
+P:addTool(P.toolIncrementer)
+P:addTool(P.toolDoubler)
+P:addTool(P.roomReroller)
+P:addTool(P.wings)
+P:addTool(P.swapper)
 P:addTool(P.bucketOfWater)
 P:addTool(P.flame)
-P:addTool(P.toolReroller) --more flavor
-P:addTool(P.revive) --more flavor -- phoenix?
-P:addTool(P.superGun) --more flavor
-P:addTool(P.buttonFlipper) --works on stay buttons; more flavor
-P:addTool(P.wireBreaker) --make sure works on overlays; more flavor
-P:addTool(P.powerBreaker) --more flavor
-P:addTool(P.gabeMaker) --die and become angel
-P:addTool(P.roomUnlocker) -- more flavor: some kind of key
-P:addTool(P.axe) -- Laser Gun Comparison
+P:addTool(P.toolReroller)
+P:addTool(P.revive)
+P:addTool(P.superGun)
+P:addTool(P.buttonFlipper)
+P:addTool(P.wireBreaker)
+P:addTool(P.powerBreaker)
+P:addTool(P.gabeMaker)
+P:addTool(P.roomUnlocker)
+P:addTool(P.axe) 
 P:addTool(P.lube) 
-P:addTool(P.snowball) --It's like better glue...
-P:addTool(P.superSnowball) --more flavor: big snowball or something
-P:addTool(P.snowballGlobal) --way more flavor
-P:addTool(P.superBrick) -- rework -- break wood walls or something from a range
-P:addTool(P.portalPlacer) --more flavor
-P:addTool(P.suicideKing) --only good w/ revive
+P:addTool(P.snowball)
+P:addTool(P.superSnowball)
+P:addTool(P.snowballGlobal)
+P:addTool(P.superBrick)
+P:addTool(P.portalPlacer)
+P:addTool(P.suicideKing)
 P:addTool(P.screwdriver)
-P:addTool(P.laptop) --shows character-unique solutions
-P:addTool(P.wireExtender) --more flavor
-P:addTool(P.lamp) --make pushable
+P:addTool(P.laptop)
+P:addTool(P.wireExtender)
+P:addTool(P.lamp)
 P:addTool(P.coin) 
-P:addTool(P.knife) -- Tool Feautre merge, Like Axe
+P:addTool(P.knife)
 P:addTool(P.mask)
-P:addTool(P.growthHormones) --steroids?
+P:addTool(P.growthHormones)
 P:addTool(P.robotArm)
 P:addTool(P.sock)
-P:addTool(P.trap) --make mousetrap; more flavor about catching mice or something
+P:addTool(P.trap)
 P:addTool(P.emptyCup)
-P:addTool(P.gasPourer) --more flavor
-P:addTool(P.gasPourerXtreme) --more flavor, keep Xtreme
-P:addTool(P.buttonPlacer) --flavor
-P:addTool(P.wireToButton) --flavor
+P:addTool(P.gasPourer)
+P:addTool(P.gasPourerXtreme)
+P:addTool(P.buttonPlacer)
+P:addTool(P.wireToButton)
 P:addTool(P.foresight)
-P:addTool(P.tileDisplacer) --flavor
-P:addTool(P.tileSwapper) --flavor
-P:addTool(P.tileCloner) --flavor
-P:addTool(P.shopReroller) -- possible tweaks 
-P:addTool(P.ghostStep) --check stayButton interaction
+P:addTool(P.tileDisplacer)
+P:addTool(P.tileSwapper)
+P:addTool(P.tileCloner)
+P:addTool(P.shopReroller)
+P:addTool(P.ghostStep)
 P:addTool(P.stoolPlacer)
 P:addTool(P.lemonadeCup)
 P:addTool(P.lemonParty)
-P:addTool(P.inflation) -- questionable or dope?
+P:addTool(P.inflation)
 P:addTool(P.emptyBucket)
+P:addTool(P.superWaterBottle)
 
 return tools
