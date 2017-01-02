@@ -108,7 +108,6 @@ P.batteryUnlock = P.charUnlock:new{name = 'bob the battery', charIds = {9}, spri
 --P.carlaUnlock
 P.wizardUnlock = P.charUnlock:new{name = 'giovanni the sorceror', charIds = {11}, sprite = love.graphics.newImage('Graphics/giovannighost.png')}
 --P.gabeUnlock = P.charUnlock:new{name = 'gabe the angel', charIds = {5}, sprite = love.graphics.newImage('Graphics/gabe.png')}
-P.orsonUnlock = P.charUnlock:new{name = 'orson the mastermind', charIds = {14}, sprite = love.graphics.newImage('Graphics/orson.png')}
 P.lennyUnlock = P.charUnlock:new{name = 'lenny the ghost snail', charIds = {15}, sprite = love.graphics.newImage('Graphics/lenny.png')}
 P.fishUnlock = P.charUnlock:new{name = 'fish fish', charIds = {16}, sprite = love.graphics.newImage('Graphics/fish.png')}
 

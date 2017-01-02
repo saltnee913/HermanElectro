@@ -404,7 +404,7 @@ function P.tim:onCharLoad()
 end
 
 P.orson = P.character:new{name = "Orson", shifted = false, description = "The Mastermind", 
-  winUnlocks = {unlocks.buttonFlipperUnlock}, speedUnlock = {unlocks.poweredEndUnlock}, sprite = love.graphics.newImage('Graphics/orson.png')}
+  winUnlocks = {unlocks.buttonFlipperUnlock}, speedUnlock = {unlocks.poweredEndUnlock}, sprite = love.graphics.newImage('Graphics/orson.png'), disabled = true}
 function P.orson:onCharLoad()
 	tools.brick.range = 100
 end
