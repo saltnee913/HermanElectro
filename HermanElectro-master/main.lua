@@ -509,15 +509,38 @@ function goDownFloor()
 		loadNextLevel()
 	else
 		local mapToLoad = map.loadedMaps[floorIndex+1]
-		floorIndex = floorIndex+1
+		floorIndex = floorIndex + 1
+		map.setRoomSetValues(floorIndex)
 		mainMap = mapToLoad.map
 		mapHeight = mapToLoad.mapHeight
+		for i = 1, mapHeight do
+			for j = 1, mapHeight do
+				if mainMap[i][j]~=nil and mainMap[i][j].isInitial then
+					mapy = i
+					mapx = j
+					room = mainMap[i][j].room
+				end
+			end
+		end
 		roomHeight = mapToLoad.roomHeight
 		roomLength = mapToLoad.roomLength
 		completedRooms = mapToLoad.completedRooms
 		visibleMap = mapToLoad.visibleMap
-		prepareFloor()
-		playMusic(floorIndex)
+		for i = 1, roomHeight do
+			for j = 1, roomLength do
+				if room[i][j]~=nil and room[i][j]:instanceof(tiles.upTunnel) then
+					player.tileY = i
+					player.tileX = j
+				end
+			end
+		end
+		animals = {}
+		pushables = {}
+		prevRoom = room
+		litTiles = {}
+		for i = 1, roomHeight do
+			litTiles[i] = {}
+		end
 	end
 end
 
@@ -530,11 +553,34 @@ function goUpFloor()
 		map.setRoomSetValues(floorIndex)
 		mainMap = mapToLoad.map
 		mapHeight = mapToLoad.mapHeight
+		for i = 1, mapHeight do
+			for j = 1, mapHeight do
+				if mainMap[i][j]~=nil and map.isRoomType(mainMap[i][j].roomid, 'finalRooms') then
+					mapy = i
+					mapx = j
+					room = mainMap[i][j].room
+				end
+			end
+		end
 		roomHeight = mapToLoad.roomHeight
 		roomLength = mapToLoad.roomLength
 		completedRooms = mapToLoad.completedRooms
 		visibleMap = mapToLoad.visibleMap
-		prepareFloor()
+		for i = 1, roomHeight do
+			for j = 1, roomLength do
+				if room[i][j]~=nil and room[i][j]:instanceof(tiles.tunnel) then
+					player.tileY = i
+					player.tileX = j
+				end
+			end
+		end
+		animals = {}
+		pushables = {}
+		prevRoom = room
+		litTiles = {}
+		for i = 1, roomHeight do
+			litTiles[i] = {}
+		end
 		playMusic(floorIndex)
 	end
 end
@@ -584,6 +630,14 @@ function loadNextLevel(dontChangeTime)
 		loadLevel(map.floorOrder[floorIndex])
 		floorIndex = floorIndex+1
 		playMusic(floorIndex)
+	end
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]~=nil and room[i][j]:instanceof(tiles.upTunnel) then
+				player.tileY = i
+				player.tileX = j
+			end
+		end
 	end
 	--hack to make it not happen on the first floor
 	if floorIndex ~= 2 then

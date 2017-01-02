@@ -431,12 +431,6 @@ function P.orson:onKeyPressedChar(key)
 end
 
 P.lenny = P.character:new{name = "Lenny", description = "The Ghost Snail", slime = false, sprite = love.graphics.newImage('Graphics/lenny.png')}
-function P.lenny:onCharLoad()
-	--tools.giveToolsByReference({tools.wings,tools.broom,tools.broom})
-end
-function P.lenny:onFloorEnter()	
-	--tools.giveToolsByReference({tools.wings,tools.broom,tools.broom})
-end
 function P.lenny:onKeyPressedChar(key)
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
 		self.slime = not self.slime
