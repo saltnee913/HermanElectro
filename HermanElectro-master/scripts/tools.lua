@@ -698,7 +698,8 @@ function P.getSupertools(numTools,qualities)
 		if filledSlots[slotToPlace] ~= 0 then
 			toolsToGive[#toolsToGive + 1] = filledSlots[slotToPlace]
 		else
-			local quality = (qualities == nil) and nil or qualities[superToolNumber]
+			local quality = nil
+			if qualities ~= nil then quality = qualities[superToolNumber] end
 			slot = tools.chooseSupertool(quality)
 			filledSlots[slotToPlace] = slot
 			toolsToGive[#toolsToGive + 1] = slot
@@ -707,8 +708,8 @@ function P.getSupertools(numTools,qualities)
 	return toolsToGive
 end
 
-function P.giveSupertools(numTools)
-	P.giveTools(P.getSupertools(numTools))
+function P.giveSupertools(numTools,qualities)
+	P.giveRandomTools(0,numTools,qualities)
 end
 
 P.shovel = P.superTool:new{name = "shovel", description = "Hole making apparatus.", baseRange = 1, image = love.graphics.newImage('Graphics/shovel.png'), quality = 2}
