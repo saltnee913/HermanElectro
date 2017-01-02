@@ -320,6 +320,7 @@ function love.load()
 		--black = love.graphics.newImage('Graphics/dark.png')
 		black = love.graphics.newImage('GraphicsColor/smoke.png')
 		green = love.graphics.newImage('Graphics/green.png')
+		blue = love.graphics.newImage('Graphics/blue.png')
 		gray = love.graphics.newImage('Graphics/gray.png')
 		toolWrapper = love.graphics.newImage('GraphicsEli/marble1.png')
 		titlescreenCounter = 0
@@ -427,7 +428,6 @@ function love.load()
 	end
 	--print(love.graphics.getWidth(f1))
 	scale = (width - 2*wallSprite.width)/(20.3 * 16)*5/6
-	
 	floor = tiles.tile
 
 
@@ -511,8 +511,8 @@ function goDownFloor()
 		loadNextLevel()
 	else
 		local mapToLoad = map.loadedMaps[floorIndex+1]
-		map.setRoomSetValues(floorIndex)
 		floorIndex = floorIndex + 1
+		map.setRoomSetValues(floorIndex)
 		mainMap = mapToLoad.map
 		mapHeight = mapToLoad.mapHeight
 		for i = 1, mapHeight do
@@ -543,7 +543,6 @@ function goDownFloor()
 		for i = 1, roomHeight do
 			litTiles[i] = {}
 		end
-		playMusic(floorIndex)
 	end
 end
 
@@ -1732,6 +1731,15 @@ function love.draw()
 							love.graphics.draw(toDraw3, (tempi-1)*floor.sprite:getWidth()*scale+wallSprite.width, (addY+(tempj)*floor.sprite:getWidth())*scale+wallSprite.height,
 							  0, scale*16/toDraw3:getWidth(), -1*addY/toDraw3:getHeight()*(scale*16/toDraw3:getWidth()))
 						end
+					end
+					if room[j][i]~=nil and room[j][i].blueHighlighted then
+						local addY = 0
+						local yScale = scale
+						if room[j][i]~=nil and litTiles[j][i]~=0 then
+							addY = room[j][i]:getYOffset()
+							yScale = scale*(16-addY)/16
+						else addY=0 end
+						love.graphics.draw(blue, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (addY+(j-1)*floor.sprite:getHeight())*scale+wallSprite.height, 0, scale, yScale)
 					end
 					if room[j][i]~=nil and litTiles[j][i]==1 and room[j][i]:getInfoText()~=nil then
 						love.graphics.setColor(0,0,0)

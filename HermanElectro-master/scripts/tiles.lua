@@ -7,7 +7,7 @@ tools = require('scripts.tools')
 local P = {}
 tiles = P
 
-P.tile = Object:new{yOffset = 0, attractsAnimals = false, formerPowered = nil, updatePowerOnEnter = false, text = "", updatePowerOnLeave = false, overlayable = false, overlaying = false, gone = false, lit = false, destroyed = false,
+P.tile = Object:new{yOffset = 0, blueHighlighted = false, attractsAnimals = false, formerPowered = nil, updatePowerOnEnter = false, text = "", updatePowerOnLeave = false, overlayable = false, overlaying = false, gone = false, lit = false, destroyed = false,
   blocksProjectiles = false, isVisible = true, rotation = 0, powered = false, blocksMovement = false, 
   blocksAnimalMovement = false, poweredNeighbors = {0,0,0,0}, blocksVision = false, dirSend = {1,1,1,1}, 
   dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile", emitsLight = false, litWhenPowered = false, intensity = 0.5, range = 25,
@@ -446,7 +446,7 @@ end
 P.poweredFloor.willKillAnimal = P.poweredFloor.willKillPlayer
 P.poweredFloor.willDestroyPushable = P.poweredFloor.willKillPlayer
 
-P.wall = P.tile:new{overlayable = true, yOffset = -6, electrified = false, onFire = false, blocksProjectiles = true, blocksMovement = true, canBePowered = false, name = "wall", blocksVision = true, electrifiedSprite = love.graphics.newImage('Graphics/woodwallelectrified.png'), destroyedSprite = love.graphics.newImage('Graphics/woodwallbroken.png'), sprite = love.graphics.newImage('GraphicsBrush/woodwall2.png'), poweredSprite = love.graphics.newImage('Graphics3D/woodwall.png'), electrifiedPoweredSprite = love.graphics.newImage('Graphics/woodwallpowered.png'), sawable = true}
+P.wall = P.tile:new{overlayable = true, hidesDungeon = false, yOffset = -6, electrified = false, onFire = false, blocksProjectiles = true, blocksMovement = true, canBePowered = false, name = "wall", blocksVision = true, electrifiedSprite = love.graphics.newImage('Graphics/woodwallelectrified.png'), destroyedSprite = love.graphics.newImage('Graphics/woodwallbroken.png'), sprite = love.graphics.newImage('GraphicsBrush/woodwall2.png'), poweredSprite = love.graphics.newImage('Graphics3D/woodwall.png'), electrifiedPoweredSprite = love.graphics.newImage('Graphics/woodwallpowered.png'), sawable = true}
 function P.wall:onEnter(player)	
 	if math.abs(player.elevation-self:getHeight())>3 then
 		--player.x = player.prevx
@@ -489,12 +489,12 @@ function P.wall:destroy()
 	self.sprite = self.destroyedSprite
 	self.destroyed = true
 	self.blocksMovement = false
+	self.canBePowered = false
 	self.dirAccept = {0,0,0,0}
 	self.dirSend = {0,0,0,0}
 	self.overlay = nil
 	self.yOffset = 0
-	local dungeonChance = util.random(100, 'misc')
-	if dungeonChance==1 then
+	if self.hidesDungeon then
 		for i = 1, roomHeight do
 			for j = 1, roomLength do
 				if room[i][j]==self then
@@ -502,6 +502,12 @@ function P.wall:destroy()
 				end
 			end
 		end
+	end
+end
+function P.wall:onLoad()
+	local dungeonChance = util.random(100, 'misc')
+	if dungeonChance==1 then
+		self.hidesDungeon = true
 	end
 end
 function P.wall:onLeave()
@@ -528,32 +534,10 @@ end
 
 P.metalWall = P.wall:new{dirAccept = {1,1,1,1}, dirSend = {1,1,1,1}, canBePowered = true, name = "metalwall", blocksVision = true, destroyedSprite = love.graphics.newImage('Graphics/metalwallbroken.png'), sprite = love.graphics.newImage('GraphicsColor/metalwall2.png'), poweredSprite = love.graphics.newImage('GraphicsColor/metalwallpowered2.png') }
 P.metalWall.updateTile = P.conductiveTile.updateTile
-function P.metalWall:destroy()
-	self.blocksProjectiles = false
-	self.blocksVision = false
-	self.sprite = self.destroyedSprite
-	self.destroyed = true
-	self.charged = false
-	self.canBePowered = false
-	self.dirAccept = {0,0,0,0}
-	self.dirSend = {0,0,0,0}
-	self.blocksMovement = false
-	self.overlay = nil
-end
 
 P.maskedMetalWall = P.metalWall:new{sprite = love.graphics.newImage('Graphics/maskedMetalWall.png'), poweredSprite = love.graphics.newImage('Graphics/maskedMetalWall.png')}
 
 P.glassWall = P.wall:new{sawable = false, canBePowered = false, dirAccept = {0,0,0,0}, dirSend = {0,0,0,0}, bricked = false, name = "glasswall", blocksVision = false, electrifiedSprite = love.graphics.newImage('Graphics/glasswallelectrified.png'), destroyedSprite = love.graphics.newImage('Graphics/glassbroken.png'), sprite = love.graphics.newImage('GraphicsColor/glass.png'), poweredSprite = love.graphics.newImage('Graphics3D/glass.png'), electrifiedPoweredSprite = love.graphics.newImage('Graphics/glasswallpowered.png'), sawable = false }
-function P.glassWall:destroy()
-	self.blocksProjectiles = false
-	self.sprite = self.destroyedSprite
-	self.destroyed = true
-	self.blocksMovement = false
-	self.blocksVision = false
-	self.dirAccept = {0,0,0,0}
-	self.dirSend = {0,0,0,0}
-	self.overlay = nil
-end
 
 P.gate = P.conductiveTile:new{overlaying = true, name = "gate", dirSend = {0,0,0,0}, dirAccept = {0,0,0,0}, dirWireHack = {0,0,0,0}, gotten = {0,0,0,0}}
 function P.gate:updateTile(dir)
@@ -968,16 +952,6 @@ P.rotater.onLeaveAnimal = P.rotater.onLeave
 P.cornerRotater = P.rotater:new{name = "cornerRotater", dirSend = {1,1,0,0}, dirAccept = {1,1,0,0}, poweredSprite = love.graphics.newImage('Graphics/cornerrotater.png'), sprite = love.graphics.newImage('Graphics/cornerrotater.png')}
 
 P.concreteWall = P.wall:new{sawable = false, name = "concreteWall", sprite = love.graphics.newImage('GraphicsColor/concretewall3.png'), poweredSprite = love.graphics.newImage('GraphicsColor/concretewall3.png'), electrifiedPoweredSprite = love.graphics.newImage('Graphics/concretewallpowered.png'), electrifiedSprite = love.graphics.newImage('Graphics/concretewallelectrified.png'), destroyedSprite = love.graphics.newImage('Graphics/concretewallbroken.png'), sawable = false}
-function P.concreteWall:destroy()
-	self.blocksProjectiles = false
-	self.blocksVision = false
-	self.sprite = self.destroyedSprite
-	self.destroyed = true
-	self.blocksMovement = false
-	self.dirAccept = {0,0,0,0}
-	self.dirSend = {0,0,0,0}
-	self.overlay = nil
-end
 
 P.concreteWallConductive = P.concreteWall:new{name = "concreteWallConductive", sprite = love.graphics.newImage('Graphics3D/concretewallconductive.png'), poweredSprite = love.graphics.newImage('Graphics3D/concretewallconductive.png'), canBePowered = true, dirAccept = {1,1,1,1}, dirSend = {1,1,1,1}}
 

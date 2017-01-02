@@ -2289,6 +2289,23 @@ function P.inflation:useToolNothing()
 end
 P.inflation.useToolTile = P.inflation.useToolNothing
 
+P.wallDungeonDetector = P.superTool:new{name = "Wall-to-English Translator", image = love.graphics.newImage('Graphics/wtetranslator.png'), description = "If these walls could talk....", baseRange = 0, quality = 2}
+function P.wallDungeonDetector:usableOnNothing()
+	return true
+end
+P.wallDungeonDetector.usableOnTile = P.wallDungeonDetector.usableOnNothing
+function P.wallDungeonDetector:useToolNothing()
+	self.numHeld = self.numHeld-1
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]~=nil and room[i][j]:instanceof(tiles.wall) and room[i][j].hidesDungeon then
+				room[i][j].blueHighlighted = true
+			end
+		end
+	end
+end
+P.wallDungeonDetector.useToolTile = P.wallDungeonDetector.useToolNothing
+
 P.numNormalTools = 7
 
 --tools not included in list: trap (identical to glue in purpose)
@@ -2408,5 +2425,6 @@ P:addTool(P.lemonParty)
 P:addTool(P.inflation)
 P:addTool(P.emptyBucket)
 P:addTool(P.superWaterBottle)
+P:addTool(P.wallDungeonDetector)
 
 return tools
