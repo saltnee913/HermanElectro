@@ -2210,23 +2210,23 @@ P:addTool(P.visionChanger)
 P:addTool(P.bomb)
 P:addTool(P.electrifier)
 P:addTool(P.delectrifier)
-P:addTool(P.unsticker) --remove
-P:addTool(P.doorstop) --disable?
+--P:addTool(P.unsticker) --remove
+--P:addTool(P.doorstop) --disable?
 P:addTool(P.charger)
 P:addTool(P.missile) --add chance to spawn dungeon when missiling ground
 P:addTool(P.shovel) --can club dogs, beggars(?)
 P:addTool(P.woodGrabber) --This is shit, adds nothing
-P:addTool(P.corpseGrabber) -- Remove aswell?
+--P:addTool(P.corpseGrabber) -- Remove aswell?
 P:addTool(P.pitbullChanger) -- Spice this up
 P:addTool(P.meat) -- Add: Can be placed on buttons, does not activate button.
 P:addTool(P.rotater)
 P:addTool(P.teleporter) -- Add: chance to teleport to dungeon 
 P:addTool(P.boxCutter)
-P:addTool(P.broom) --remove
+--P:addTool(P.broom) --remove
 P:addTool(P.magnet)
 P:addTool(P.spring) --add functionality to spring you on top of wall/spring off
 P:addTool(P.glue)
-P:addTool(P.endFinder) --remove
+--P:addTool(P.endFinder) --remove
 P:addTool(P.map) --buff: show special room colors
 P:addTool(P.ramSpawner)
 P:addTool(P.gateBreaker) --make more flavorful? Almost Dumb
