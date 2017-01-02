@@ -988,14 +988,14 @@ function P.trap:useToolNothing(tileY, tileX)
 	room[tileY][tileX] = tiles.trap:new()
 end
 
-P.boxCutter = P.tool:new{name = "boxCutter", baseRange = 1, image = love.graphics.newImage('Graphics/boxcutter.png'), quality = 3}
+P.boxCutter = P.tool:new{name = "boxCutter", baseRange = 1, image = love.graphics.newImage('Graphics/boxcutter.png'), quality = 2}
 function P.boxCutter:usableOnPushable(pushable)
 	return true
 end
 function P.boxCutter:useToolPushable(pushable)
 	self.numHeld = self.numHeld - 1
 	pushable.destroyed = true
-	P.giveRandomTools(3)
+	P.giveRandomTools(1)
 end
 
 P.broom = P.tool:new{name = "broom", image = love.graphics.newImage('Graphics/broom.png'), quality = 1}
@@ -2176,9 +2176,12 @@ P.numNormalTools = 7
 --some tools are weak, but necessary for balance
 
 --[[ideas:
-	deflation: double coins
+	Giovanni clone spawner
 	chance for wood to reveal trapdoor; tool to locate wood that will do so
 	switch player's position with end tile
+	bombBox spawner, noAnimalPushBox spawner, jackInTheBox spawner
+	tile debuffer -- blue->regular
+	more lasers/guns -- electricity gun?
 ]]
 
 function P.resetTools()
@@ -2197,86 +2200,87 @@ end
 P.resetTools()
 
 P[8] = P.crowbar
-P[9] = P.visionChanger
+P[9] = P.visionChanger 
 P[10] = P.bomb
 P[11] = P.electrifier
 P[12] = P.delectrifier
-P[13] = P.unsticker
-P[14] = P.doorstop
+P[13] = P.unsticker --remove
+P[14] = P.doorstop --disable?
 P[15] = P.charger
-P[16] = P.missile
-P[17] = P.shovel
-P[18] = P.woodGrabber
-P[19] = P.corpseGrabber
-P[20] = P.pitbullChanger
-P[21] = P.meat
+P[16] = P.missile --add chance to spawn dungeon when missiling ground
+P[17] = P.shovel --can club dogs, beggars(?)
+P[18] = P.woodGrabber --This is shit, adds nothing
+P[19] = P.corpseGrabber -- Remove aswell?
+P[20] = P.pitbullChanger -- Spice this up
+P[21] = P.meat -- Add: Can be placed on buttons, does not activate button.
 P[22] = P.rotater
-P[23] = P.teleporter
+P[23] = P.teleporter -- Add: chance to teleport to dungeon 
 P[24] = P.boxCutter
-P[25] = P.broom
+P[25] = P.broom --remove
 P[26] = P.magnet
-P[27] = P.spring
+P[27] = P.spring --add functionality to spring you on top of wall/spring off
 P[28] = P.glue
-P[29] = P.endFinder
-P[30] = P.map
+P[29] = P.endFinder --remove
+P[30] = P.map --buff: show special room colors
 P[31] = P.ramSpawner
-P[32] = P.gateBreaker
+P[32] = P.gateBreaker --make more flavorful? Almost Dumb
 P[33] = P.conductiveBoxSpawner
-P[34] = P.superWireCutters
+P[34] = P.superWireCutters -- Flavor
 P[35] = P.boxSpawner
 P[36] = P.boomboxSpawner
 P[37] = P.laser
-P[38] = P.gas
-P[39] = P.superLaser
+P[38] = P.gas --no beggar kills
+P[39] = P.superLaser --add animal kills
 P[40] = P.armageddon
-P[41] = P.toolIncrementer
-P[42] = P.toolDoubler
-P[43] = P.roomReroller
-P[44] = P.wings
-P[45] = P.swapper
+P[41] = P.toolIncrementer --more flavor: toolbox? Dumb?
+P[42] = P.toolDoubler --more flavor: 50% off? two for the price of one? one tool slot only?
+P[43] = P.roomReroller --lower chances of treasure tile
+P[44] = P.wings --fix bug
+P[45] = P.swapper --greater range, radial instead of directional
 P[46] = P.bucketOfWater
 P[47] = P.flame
-P[48] = P.toolReroller
-P[49] = P.revive
-P[50] = P.superGun
-P[51] = P.buttonFlipper
-P[52] = P.wireBreaker
-P[53] = P.powerBreaker
-P[54] = P.gabeMaker
-P[55] = P.roomUnlocker
-P[56] = P.axe
-P[57] = P.lube
-P[58] = P.snowball
-P[59] = P.superSnowball
-P[60] = P.snowballGlobal
-P[61] = P.superBrick
-P[62] = P.portalPlacer
-P[63] = P.suicideKing
+P[48] = P.toolReroller --more flavor
+P[49] = P.revive --more flavor -- phoenix?
+P[50] = P.superGun --more flavor
+P[51] = P.buttonFlipper --works on stay buttons; more flavor
+P[52] = P.wireBreaker --make sure works on overlays; more flavor
+P[53] = P.powerBreaker --more flavor
+P[54] = P.gabeMaker --die and become angel
+P[55] = P.roomUnlocker -- more flavor: some kind of key
+P[56] = P.axe -- Laser Gun Comparison
+P[57] = P.lube 
+P[58] = P.snowball --It's like better glue...
+P[59] = P.superSnowball --more flavor: big snowball or something
+P[60] = P.snowballGlobal --way more flavor
+P[61] = P.superBrick -- rework -- break wood walls or something from a range
+P[62] = P.portalPlacer --more flavor
+P[63] = P.suicideKing --only good w/ revive
 P[64] = P.screwdriver
-P[65] = P.laptop
-P[66] = P.wireExtender
-P[67] = P.lamp
-P[68] = P.coin
-P[69] = P.knife
+P[65] = P.laptop --shows character-unique solutions
+P[66] = P.wireExtender --more flavor
+P[67] = P.lamp --make pushable
+P[68] = P.coin 
+P[69] = P.knife -- Tool Feautre merge, Like Axe
 P[70] = P.mask
-P[71] = P.growthHormones
+P[71] = P.growthHormones --steroids?
 P[72] = P.robotArm
 P[73] = P.sock
-P[74] = P.trap
+P[74] = P.trap --make mousetrap; more flavor about catching mice or something
 P[75] = P.emptyCup
-P[76] = P.gasPourer
-P[77] = P.gasPourerXtreme
-P[78] = P.buttonPlacer
-P[79] = P.wireToButton
+P[76] = P.gasPourer --more flavor
+P[77] = P.gasPourerXtreme --more flavor, keep Xtreme
+P[78] = P.buttonPlacer --flavor
+P[79] = P.wireToButton --flavor
 P[80] = P.foresight
-P[81] = P.tileDisplacer
-P[82] = P.tileSwapper
-P[83] = P.tileCloner
-P[84] = P.shopReroller
-P[85] = P.ghostStep
+P[81] = P.tileDisplacer --flavor
+P[82] = P.tileSwapper --flavor
+P[83] = P.tileCloner --flavor
+P[84] = P.shopReroller -- possible tweaks 
+P[85] = P.ghostStep --check stayButton interaction
 P[86] = P.stoolPlacer
 P[87] = P.lemonadeCup
 P[88] = P.lemonParty
-P[89] = P.inflation
+P[89] = P.inflation -- questionable or dope?
+P[90] = P.emptyBucket
 
 return tools

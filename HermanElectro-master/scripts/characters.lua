@@ -432,10 +432,10 @@ end
 
 P.lenny = P.character:new{name = "Lenny", description = "The Ghost Snail", slime = false, sprite = love.graphics.newImage('Graphics/lenny.png')}
 function P.lenny:onCharLoad()
-	tools.giveToolsByReference({tools.wings,tools.broom,tools.broom})
+	--tools.giveToolsByReference({tools.wings,tools.broom,tools.broom})
 end
 function P.lenny:onFloorEnter()	
-	tools.giveToolsByReference({tools.wings,tools.broom,tools.broom})
+	--tools.giveToolsByReference({tools.wings,tools.broom,tools.broom})
 end
 function P.lenny:onKeyPressedChar(key)
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
@@ -485,7 +485,7 @@ function P.fish:onToolUse()
 	end
 end
 
-P.monk = P.character:new{name = "Monte", description = "The Blind Monk", sprite = love.graphics.newImage('Graphics/monk.png')}
+P.monk = P.character:new{name = "Monte", description = "The Blind Monk", sprite = love.graphics.newImage('Graphics/monk.png'), disabled = true}
 function P.monk:onBegin()
 	self.tint = {1,1,1}
 	self:super('onBegin')
@@ -555,9 +555,9 @@ function P.random2:postMove()
 	end
 end
 
-P.harriet = P.character:new{name = "Harriet", description = "Herman in drag", sprite = love.graphics.newImage('Graphics/nadia.png')}
+P.harriet = P.character:new{name = "Harriet", description = "Herman in drag", sprite = love.graphics.newImage('Graphics/nadia.png'), disabled = true}
 
-P.paris = P.character:new{name = "Paris", description = "The Swordsman", sword = false, swordsprite = love.graphics.newImage('Graphics/parisswordout.png'), sprite = love.graphics.newImage('Graphics/paris.png'), noswordsprite = love.graphics.newImage('Graphics/paris.png')}
+P.paris = P.character:new{name = "Paris", description = "The Swordsman", sword = false, swordsprite = love.graphics.newImage('Graphics/parisswordout.png'), sprite = love.graphics.newImage('Graphics/paris.png'), noswordsprite = love.graphics.newImage('Graphics/paris.png'), disabled = true}
 function P.paris:onKeyPressedChar(key)
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
 		self.sword = not self.sword
@@ -602,7 +602,7 @@ function P.paris:checkNextTile()
 	end
 end
 
-P.ed = P.character:new{name = "Ed", description = "The Dim Bulb", sprite = love.graphics.newImage('Graphics/ed.png'), lightLevel = 100}
+P.ed = P.character:new{name = "Ed", description = "The Dim Bulb", sprite = love.graphics.newImage('Graphics/ed.png'), lightLevel = 100, disabled = true}
 function P.ed:onCharLoad()
 	myShader:send("player_range", self.lightLevel)
 end
@@ -647,7 +647,7 @@ function P.olivia:updateSprite()
 	end
 end
 
-P.albert = P.character:new{name = "Albert", description = "The Convict", spotlightRange =100, updateTimeFull = 3, updateTimeCurrent = 5, sprite = love.graphics.newImage('Graphics/albert.png')}
+P.albert = P.character:new{name = "Albert", description = "The Convict", spotlightRange =100, updateTimeFull = 3, updateTimeCurrent = 5, sprite = love.graphics.newImage('Graphics/albert.png'), disabled = true}
 function P.albert:onCharLoad()
 	self:setSpotlights()
 end
