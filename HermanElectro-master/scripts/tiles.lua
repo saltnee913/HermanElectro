@@ -1098,7 +1098,19 @@ function P.treasureTile:giveReward()
 	elseif rand<900-donations then
 		tools.giveRandomTools(2)
 	else
-		tools.giveRandomTools(1,1)
+		local quality
+		if rand<910 then
+			quality = 1
+		elseif rand<950 then
+			quality = 2
+		elseif rand<985 then
+			quality = 3
+		elseif rand<999 then
+			quality = 4
+		else
+			quality = 5
+		end
+		tools.giveRandomTools(1,1,{quality})
 	end
 end
 
@@ -1347,7 +1359,19 @@ end
 
 P.blueBeggar = P.beggar:new{name = "blueBeggar", sprite = love.graphics.newImage('Graphics/bluebeggar.png'), deadSprite = love.graphics.newImage('Graphics/bluebeggardead.png')}
 function P.blueBeggar:providePayment()
-	tools.giveSupertools(1)
+	local quality = util.random('toolDrop')
+	if quality < 0.075 then
+		quality = 1
+	elseif quality < 0.6 then
+		quality = 2
+	elseif quality < 0.885 then
+		quality = 3
+	elseif quality < 0.985 then
+		quality = 4
+	else
+		quality = 5
+	end
+	tools.giveSupertools(1, {quality})
 end
 
 P.ladder = P.tile:new{name = "ladder", sprite = love.graphics.newImage('Graphics/laddertile.png'), blocksAnimalMovement = true}
@@ -1449,7 +1473,13 @@ function P.treasureTile2:giveReward()
 	if reward<775 then
 		tools.giveRandomTools(1)
 	else
-		tools.giveRandomTools(1,1)
+		local quality
+		if reward<888 then
+			quality = 2
+		else
+			quality = 3
+		end
+		tools.giveRandomTools(1,1,{quality})
 	end
 end
 
