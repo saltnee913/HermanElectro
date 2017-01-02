@@ -1214,7 +1214,7 @@ function P.laser:usableOnTile()
 	return true
 end
 P.laser.usableOnNothing = P.laser.usableOnTile
-function P.laser:useToolTile(tile, tileY, tileX)
+local function killDogs(tileY, tileX)
 	if tileX == player.tileX then
 		for i = 1, #animals do
 			if animals[i].tileX == player.tileX then
@@ -1234,10 +1234,14 @@ function P.laser:useToolTile(tile, tileY, tileX)
 			end
 		end
 	end
+end
+function P.laser:useToolTile(tile, tileY, tileX)
+	killDogs(tileY, tileX)
 	self.numHeld = self.numHeld-1
 end
 function P.laser:useToolNothing(tileY, tileX)
-	P.laser:useToolTile(nil, tileY, tileX)
+	killDogs(tileY, tileX)
+	self.numHeld = self.numHeld-1
 end
 
 --should superLaser kill animals? can't decide
@@ -1245,21 +1249,35 @@ P.superLaser = P.laser:new{name = "superLaser", description = "The Big Bad Beam"
 function P.superLaser:usableOnTile()
 	return true
 end
-function P.superLaser:useToolTile(tile, tileY, tileX)
+P.superLaser.usableOnNothing = P.superLaser.usableOnTile
+local function killBlocks(tileY, tileX)
 	if tileY == player.tileY then
 		for i = 1, roomLength do
 			if room[tileY][i]~=nil then
-				room[tileY][i]:destroy()
+				if (tileX >= player.tileX and i >= player.tileX) or
+				  (tileX < player.tileX and i < player.tileX) then
+					room[tileY][i]:destroy()
+				end
 			end
 		end
 	elseif tileX == player.tileX then
 		for i = 1, roomHeight do
 			if room[i][tileX]~=nil then
-				room[i][tileX]:destroy()
+				if (tileY > player.tileY and i > player.tileY) or
+				  (tileY < player.tileY and i < player.tileY) then
+					room[i][tileX]:destroy()
+				end
 			end
 		end
 	end
+end
+function P.superLaser:useToolTile(tile, tileY, tileX)
+	killDogs(tileY, tileX)
+	killBlocks(tileY, tileX)
 	self.numHeld = self.numHeld-1
+end
+function P.superLaser:useToolNothing(tileY, tileX)
+	self:useToolTile(nil, tileY, tileX)
 end
 
 
