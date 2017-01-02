@@ -509,8 +509,8 @@ function goDownFloor()
 		loadNextLevel()
 	else
 		local mapToLoad = map.loadedMaps[floorIndex+1]
-		floorIndex = floorIndex + 1
 		map.setRoomSetValues(floorIndex)
+		floorIndex = floorIndex + 1
 		mainMap = mapToLoad.map
 		mapHeight = mapToLoad.mapHeight
 		for i = 1, mapHeight do
@@ -541,6 +541,7 @@ function goDownFloor()
 		for i = 1, roomHeight do
 			litTiles[i] = {}
 		end
+		playMusic(floorIndex)
 	end
 end
 
