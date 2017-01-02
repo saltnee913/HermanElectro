@@ -7,7 +7,7 @@ tools = require('scripts.tools')
 local P = {}
 tiles = P
 
-P.tile = Object:new{yOffset = 0, formerPowered = nil, updatePowerOnEnter = false, text = "", updatePowerOnLeave = false, overlayable = false, overlaying = false, gone = false, lit = false, destroyed = false,
+P.tile = Object:new{yOffset = 0, attractsAnimals = false, formerPowered = nil, updatePowerOnEnter = false, text = "", updatePowerOnLeave = false, overlayable = false, overlaying = false, gone = false, lit = false, destroyed = false,
   blocksProjectiles = false, isVisible = true, rotation = 0, powered = false, blocksMovement = false, 
   blocksAnimalMovement = false, poweredNeighbors = {0,0,0,0}, blocksVision = false, dirSend = {1,1,1,1}, 
   dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile", emitsLight = false, litWhenPowered = false, intensity = 0.5, range = 25,
@@ -246,7 +246,7 @@ P.spikes.willKillAnimal = P.spikes.willKillPlayer
 
 P.conductiveSpikes = P.spikes:new{name = "conductiveSpikes", sprite = love.graphics.newImage('Graphics/conductivespikes.png'), poweredSprite = love.graphics.newImage('Graphics/conductivespikes.png'), canBePowered = true, dirSend = {1,1,1,1}, dirAccept = {1,1,1,1}}
 
-P.button = P.tile:new{bricked = false, updatePowerOnEnter = true, justPressed = false, down = false, powered = false, dirSend = {1,1,1,1}, 
+P.button = P.tile:new{bricked = false, meated = false, updatePowerOnEnter = true, justPressed = false, down = false, powered = false, dirSend = {1,1,1,1}, 
   dirAccept = {0,0,0,0}, canBePowered = true, name = "button", pressed = false, sprite = love.graphics.newImage('GraphicsColor/buttonoff.png'), 
   poweredSprite = love.graphics.newImage('GraphicsEli/buttonOff2.png'), downSprite = love.graphics.newImage('Graphics/buttonPressed.png'), 
   brickedSprite = love.graphics.newImage('GraphicsEli/buttonBricked2.png'), upSprite = love.graphics.newImage('Graphics/button.png'), timesPressed = 0}
@@ -1322,7 +1322,7 @@ end
 
 P.batTile = P.pitbullTile:new{name = "bat", animal = animalList[6], listIndex = 6}
 
-P.meat = P.tile:new{name = "meat", sprite = love.graphics.newImage('Graphics/meat.png')}
+P.meat = P.tile:new{name = "meat", sprite = love.graphics.newImage('Graphics/meat.png'), attractsAnimals = true}
 
 P.beggar = P.tile:new{name = "beggar", alive = true, counter = 0, sprite = love.graphics.newImage('Graphics/beggar.png'), deadSprite = love.graphics.newImage('Graphics/beggardead.png')}
 function P.beggar:onEnter(player)
@@ -2121,7 +2121,7 @@ end
 
 P.tallWall = P.concreteWall:new{name = "tallWall", sprite = love.graphics.newImage('GraphicsColor/tallwall.png'), yOffset = -9}
 
-P.lemonade = P.tile:new{name = "lemonade", sprite = love.graphics.newImage('Graphics/lemonade.png')}
+P.lemonade = P.puddle:new{name = "lemonade", canBePowered = false, sprite = love.graphics.newImage('Graphics/lemonade.png')}
 function P.lemonade:willKillAnimal()
 	return true
 end
@@ -2354,5 +2354,6 @@ tiles[172] = P.unlockTile
 tiles[173] = P.darkOverlay
 tiles[174] = P.debugStairs
 tiles[175] = P.playerTile
+tiles[176] = P.lemonade
 
 return tiles

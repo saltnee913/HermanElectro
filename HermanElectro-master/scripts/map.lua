@@ -808,6 +808,11 @@ function P.generateMapWeighted()
 
 
 	newmap[maxx][maxy] = {roomid = randomFinalRoomsArray[1], room = P.createRoom(randomFinalRoomsArray[1]), tint = {0,0,0}, isFinal = true, isInitial = false}
+		
+	arr = P.floorInfo.rooms.dungeons
+	roomid = util.chooseRandomKey(arr, 'mapGen')
+	newmap[height+1][1] = {roomid = roomid, room = P.createRoom(roomid, arr), tint = {0,0,0}, dirEnter = arr[roomid].dirEnter, isFinal = false, isInitial = false}	
+
 	return newmap
 end
 
