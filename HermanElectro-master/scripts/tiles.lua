@@ -2134,6 +2134,29 @@ end
 
 P.darkOverlay = P.tile:new{name = "darkOverlay", sprite = love.graphics.newImage('NewGraphics/unlocksDarken.png')}
 
+P.playerTile = P.tile:new{name = "playerTransform", character = nil, text = "Herman", darkSprite = P.tile.sprite}
+function P.playerTile:onLoad()
+	if self.character==nil then
+		local unlockedChars = characters.getUnlockedCharacters()
+		for i = 1, #unlockedChars do
+			if unlockedChars[i].name == self.text then
+				self.character = unlockedChars[i]
+			end
+		end
+		if self.character == nil then
+			self.sprite = self.darkSprite
+		else
+			self.sprite = self.character.sprite
+		end
+	end
+end
+function P.playerTile:onEnter()
+	if self.character ~= nil then
+		player.character = self.character
+		myShader:send("player_range", 500)
+	end
+end
+
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
 tiles[3] = P.powerSupply
@@ -2308,5 +2331,6 @@ tiles[171] = P.tutStairs
 tiles[172] = P.unlockTile
 tiles[173] = P.darkOverlay
 tiles[174] = P.debugStairs
+tiles[175] = P.playerTile
 
 return tiles
