@@ -430,12 +430,6 @@ function P.orson:onKeyPressedChar(key)
 end
 
 P.lenny = P.character:new{name = "Lenny", description = "The Ghost Snail", slime = false, sprite = love.graphics.newImage('Graphics/lenny.png')}
-function P.lenny:onCharLoad()
-	--tools.giveToolsByReference({tools.wings,tools.broom,tools.broom})
-end
-function P.lenny:onFloorEnter()	
-	--tools.giveToolsByReference({tools.wings,tools.broom,tools.broom})
-end
 function P.lenny:onKeyPressedChar(key)
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
 		self.slime = not self.slime
@@ -745,27 +739,42 @@ function P.aurelius:onFloorEnter()
 end
 
 P[#P+1] = P.herman
-P[#P+1] = P.felix
+P[#P+1] = P.francisco
 P[#P+1] = P.aurelius
+
+P[#P+1] = P.rammy
+P[#P+1] = P.frederick
+P[#P+1] = P.lenny
+
 P[#P+1] = P.xavier
+P[#P+1] = P.giovanni
+P[#P+1] = P.felix
+
+P[#P+1] = P.battery
+
+P[#P+1] = P.erik
+P[#P+1] = P.fish
+
+
+
 P[#P+1] = P.paris
 P[#P+1] = P.ed
 P[#P+1] = P.olivia
 P[#P+1] = P.albert
-P[#P+1] = P.fish
+
 P[#P+1] = P.most
-P[#P+1] = P.erik
+
 P[#P+1] = P.gabe
-P[#P+1] = P.rammy
+
 P[#P+1] = P.rick
-P[#P+1] = P.frederick
-P[#P+1] = P.battery
+
+
 P[#P+1] = P.chell
-P[#P+1] = P.giovanni
-P[#P+1] = P.francisco
+
+
 P[#P+1] = P.tim
 P[#P+1] = P.orson
-P[#P+1] = P.lenny
+
 P[#P+1] = P.monk
 P[#P+1] = P.harriet
 P[#P+1] = P.crate

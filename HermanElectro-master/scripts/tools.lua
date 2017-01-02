@@ -2215,7 +2215,7 @@ P:addTool(P.delectrifier)
 P:addTool(P.charger)
 P:addTool(P.missile) --add chance to spawn dungeon when missiling ground
 P:addTool(P.shovel) --can club dogs, beggars(?)
-P:addTool(P.woodGrabber) --This is shit, adds nothing
+--P:addTool(P.woodGrabber) --This is shit, adds nothing
 --P:addTool(P.corpseGrabber) -- Remove aswell?
 P:addTool(P.pitbullChanger) -- Spice this up
 P:addTool(P.meat) -- Add: Can be placed on buttons, does not activate button.

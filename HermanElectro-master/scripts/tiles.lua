@@ -2003,11 +2003,29 @@ P.endDungeonEnter = P.tile:new{name = "endDungeonEnter", sprite = love.graphics.
 function P.endDungeonEnter:onEnter()
 	player.returnFloorIndex = floorIndex
 	goToFloor(1)
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]~=nil and room[i][j]:instanceof(tiles.endDungeonExit) then
+				player.tileY = i
+				player.tileX = j
+				break
+			end
+		end
+	end
 end
 
 P.endDungeonExit = P.tile:new{name = "endDungeonExit", sprite = love.graphics.newImage('Graphics/edex.png')}
 function P.endDungeonExit:onEnter()
 	goToFloor(player.returnFloorIndex)
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]~=nil and room[i][j]:instanceof(tiles.endDungeonEnter) then
+				player.tileY = i
+				player.tileX = j
+				break
+			end
+		end
+	end
 end
 
 P.key = P.tile:new{name = "key", sprite = love.graphics.newImage('Graphics/key.png')}
