@@ -1211,24 +1211,34 @@ end
 
 
 P.laser = P.superTool:new{name = "laser", baseRange = 100, image = love.graphics.newImage('Graphics/laser.png'), quality = 2}
-function P.laser:usableOnAnimal(animal)
-	return not animal.dead
+function P.laser:usableOnTile()
+	return true
 end
-function P.laser:useToolAnimal(animal)
-	if animal.tileX == player.tileX then
+P.laser.usableOnNothing = P.laser.usableOnTile
+function P.laser:useToolTile(tile, tileY, tileX)
+	if tileX == player.tileX then
 		for i = 1, #animals do
 			if animals[i].tileX == player.tileX then
-				animals[i]:kill()
+				if (tileY > player.tileY and animals[i].tileY > player.tileY) or
+				  (tileY < player.tileY and animals[i].tileY < player.tileY) then 
+					animals[i]:kill()
+				end
 			end
 		end
 	else
 		for i = 1, #animals do
 			if animals[i].tileY == player.tileY then
-				animals[i]:kill()
+				if (tileX >= player.tileX and animals[i].tileX > player.tileX) or
+				  (tileX < player.tileX and animals[i].tileX < player.tileX) then
+					animals[i]:kill()
+				end
 			end
 		end
 	end
 	self.numHeld = self.numHeld-1
+end
+function P.laser:useToolNothing(tileY, tileX)
+	P.laser:useToolTile(nil, tileY, tileX)
 end
 
 --should superLaser kill animals? can't decide
