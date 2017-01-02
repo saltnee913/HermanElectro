@@ -1869,7 +1869,7 @@ function P.superWaterBottle:useToolNothing(tileY, tileX)
 	room[tileY][tileX] = tiles.puddle:new()
 end
 
-P.portalPlacer = P.superTool:new{name = "portalPlacer", description = "Thinking with portals is a more fun", image = love.graphics.newImage('Graphics/entrancePortal.png'), baseRange = 1, quality = 1}
+P.portalPlacer = P.superTool:new{name = "portalPlacer", description = "Thinking with portals is more fun", image = love.graphics.newImage('Graphics/entrancePortal.png'), baseRange = 1, quality = 1}
 function P.portalPlacer:usableOnNothing()
 	return true
 end
@@ -2052,7 +2052,7 @@ function P.sock:useToolTile(tile)
 end
 P.sock.useToolNothing = P.sock.useToolTile
 
-P.gasPourer = P.superTool:new{name = "gasPourer", image = love.graphics.newImage('Graphics/gaspourer.png'), quality = 2, baseRange = 1}
+P.gasPourer = P.superTool:new{name = "gasPourer", description = "Sentient cloud", image = love.graphics.newImage('Graphics/gaspourer.png'), quality = 2, baseRange = 1}
 function P.gasPourer:usableOnNothing()
 	return true
 end
@@ -2061,7 +2061,7 @@ function P.gasPourer:useToolNothing(tileY, tileX)
 	room[tileY][tileX] = tiles.gasPuddle:new()
 end
 
-P.gasPourerXtreme = P.gasPourer:new{name = "gasPourerXtreme", image = love.graphics.newImage('Graphics/gaspourerxtreme.png'), quality = 4, baseRange = 1}
+P.gasPourerXtreme = P.gasPourer:new{name = "gasPourerXtreme", description = "Explosive landfill", image = love.graphics.newImage('Graphics/gaspourerxtreme.png'), quality = 4, baseRange = 1}
 function P.gasPourerXtreme:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld-1
 	room[tileY][tileX] = tiles.gasPuddle:new()
@@ -2094,7 +2094,7 @@ function P.gasPourerXtreme:spreadGas(tileY, tileX)
 	end
 end
 
-P.buttonPlacer = P.superTool:new{name = "buttonPlacer", image = love.graphics.newImage('Graphics/buttonplacer.png'), baseRange = 1, quality = 2}
+P.buttonPlacer = P.superTool:new{name = "buttonPlacer", description = "", image = love.graphics.newImage('Graphics/buttonplacer.png'), baseRange = 1, quality = 2}
 function P.buttonPlacer:usableOnNothing()
 	return true
 end
@@ -2102,7 +2102,7 @@ function P.buttonPlacer:useToolNothing(tileY, tileX)
 	room[tileY][tileX] = tiles.button:new()
 end
 
-P.wireToButton = P.superTool:new{name = "wireToButton", image = love.graphics.newImage('Graphics/wiretobutton.png'), baseRange = 1, quality = 3}
+P.wireToButton = P.superTool:new{name = "wireToButton", description = "Some things need an off switch", image = love.graphics.newImage('Graphics/wiretobutton.png'), baseRange = 1, quality = 3}
 function P.wireToButton:usableOnTile(tile)
 	return tile:instanceof(tiles.wire)
 end
@@ -2110,7 +2110,7 @@ function P.wireToButton:useToolTile(tile, tileY, tileX)
 	room[tileY][tileX] = tiles.button:new()
 end
 
-P.foresight = P.superTool:new{name = "foresight", image = love.graphics.newImage('Graphics/foresight.png'), baseRange = 0, quality = 1}
+P.foresight = P.superTool:new{name = "foresight", description = "", image = love.graphics.newImage('Graphics/foresight.png'), baseRange = 0, quality = 1}
 function P.foresight:usableOnTile(tile)
 	return true
 end
@@ -2131,7 +2131,7 @@ function P.foresight:useToolTile(tile)
 end
 P.foresight.useToolNothing = P.foresight.useToolTile
 
-P.tileDisplacer = P.superTool:new{name = "tileDisplacer", heldTile = nil, image = love.graphics.newImage('Graphics/tiledisplacer.png'), baseImage = love.graphics.newImage('Graphics/tiledisplacer.png'), baseRange = 3, quality = 4}
+P.tileDisplacer = P.superTool:new{name = "tileDisplacer", description = "Deportation", heldTile = nil, image = love.graphics.newImage('Graphics/tiledisplacer.png'), baseImage = love.graphics.newImage('Graphics/tiledisplacer.png'), baseRange = 3, quality = 4}
 function P.tileDisplacer:usableOnTile(tile)
 	return self.heldTile==nil
 end
@@ -2153,7 +2153,7 @@ function P.tileDisplacer:nothingIsSomething()
 	return true
 end
 
-P.tileSwapper = P.superTool:new{name = "tileSwapper", toSwapCoords = nil, image = love.graphics.newImage('Graphics/tileswapper.png'), baseImage = love.graphics.newImage('Graphics/tileswapper.png'), baseRange = 3, quality = 5}
+P.tileSwapper = P.superTool:new{name = "tileSwapper", description = "", toSwapCoords = nil, image = love.graphics.newImage('Graphics/tileswapper.png'), baseImage = love.graphics.newImage('Graphics/tileswapper.png'), baseRange = 3, quality = 5}
 function P.tileSwapper:usableOnTile(tile)
 	return true
 end
@@ -2216,7 +2216,7 @@ function P.shopReroller:useToolTile(tile)
 end
 P.shopReroller.useToolNothing = P.shopReroller.useToolTile
 
-P.ghostStep = P.superTool:new{name = "ghostStep", description ="Tap a tile from a distance.", image = love.graphics.newImage('Graphics/ghoststep.png'), baseRange = 6, quality = 1}
+P.ghostStep = P.superTool:new{name = "ghostStep", description ="You should tap that!", image = love.graphics.newImage('Graphics/ghoststep.png'), baseRange = 6, quality = 1}
 function P.ghostStep:usableOnTile()
 	return true
 end
@@ -2229,7 +2229,7 @@ function P.ghostStep:useToolTile(tile)
 	updateGameState()
 end
 
-P.stoolPlacer = P.superTool:new{name = "stoolPlacer", image = love.graphics.newImage('GraphicsColor/halfwall.png'), baseRange = 1, quality = 3}
+P.stoolPlacer = P.superTool:new{name = "stoolPlacer", description = "Wanna get high?", image = love.graphics.newImage('GraphicsColor/halfwall.png'), baseRange = 1, quality = 3}
 function P.stoolPlacer:usableOnNothing()
 	return true
 end
@@ -2237,7 +2237,7 @@ function P.stoolPlacer:useToolNothing(tileY, tileX)
 	room[tileY][tileX] = tiles.halfWall:new()
 end
 
-P.lemonadeCup = P.superTool:new{name = "lemonadeCup", image = love.graphics.newImage('Graphics/lemonadecup.png'), baseRange = 1, quality = 1}
+P.lemonadeCup = P.superTool:new{name = "lemonadeCup", description = "Dainty cup", image = love.graphics.newImage('Graphics/lemonadecup.png'), baseRange = 1, quality = 1}
 function P.lemonadeCup:usableOnNothing()
 	return true
 end
@@ -2246,7 +2246,7 @@ function P.lemonadeCup:useToolNothing(tileY, tileX)
 	room[tileY][tileX] = tiles.lemonade:new()
 end
 
-P.lemonParty = P.superTool:new{name = "lemonParty", image = love.graphics.newImage('Graphics/lemonparty.png'), baseRange = 1, quality = 2}
+P.lemonParty = P.superTool:new{name = "lemonParty", description = "Ben Most is a stupid piece of toast.",image = love.graphics.newImage('Graphics/lemonparty.png'), baseRange = 1, quality = 2}
 function P.lemonParty:usableOnNothing()
 	return true
 end
@@ -2278,7 +2278,7 @@ function P.lemonParty:spreadLemonade(tileY, tileX)
 	end
 end
 
-P.inflation = P.superTool:new{name = "inflation", image = love.graphics.newImage('Graphics/inflation.png'), baseRange = 0, quality = 2}
+P.inflation = P.superTool:new{name = "inflation", description = "Double Your Dough", image = love.graphics.newImage('Graphics/inflation.png'), baseRange = 0, quality = 2}
 function P.inflation:usableOnNothing()
 	return true
 end
