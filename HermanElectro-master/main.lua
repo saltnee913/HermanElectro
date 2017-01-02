@@ -2819,7 +2819,7 @@ function love.keypressed(key, unicode)
 					local animalDist = math.abs(movey-ani.tileY)+math.abs(movex-ani.tileX)
 					for i = 1, roomHeight do
 						for j = 1, roomLength do
-							if room[i][j]~=nil and room[i][j]:instanceof(tiles.meat) then
+							if room[i][j]~=nil and room[i][j].attractsAnimals then
 								if math.abs(i-ani.tileY)+math.abs(j-ani.tileX)<animalDist then
 									animalDist = math.abs(i-ani.tileY)+math.abs(j-ani.tileX)
 									movex = j
@@ -3016,7 +3016,7 @@ function resolveConflicts()
 			    		local animalDist = math.abs(movey-animals[i].tileY)+math.abs(movex-animals[i].tileX)
 			    		for j = 1, roomHeight do
 			    			for k = 1, roomLength do
-			    				if room[j][k]~=nil and room[j][k]:instanceof(tiles.meat) then
+			    				if room[j][k]~=nil and room[j][k].attractsAnimals then
 			    					if math.abs(j-animals[i].tileY)+math.abs(k-animals[i].tileX)<animalDist then
 			    						animalDist = math.abs(j-animals[i].tileY)+math.abs(k-animals[i].tileX)
 			    						movex = k
@@ -3393,6 +3393,9 @@ function dropTools()
 			end
 		end
 		if not done then
+			if floorIndex>=1 then
+				tools.giveRandomTools(floorIndex)
+			end
 			--[[for i = 1, toolMin+1 do
 				local slot = util.random(tools.numNormalTools, 'toolDrop')
 				tools[slot].numHeld = tools[slot].numHeld+1

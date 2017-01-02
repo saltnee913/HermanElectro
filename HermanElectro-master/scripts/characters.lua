@@ -359,7 +359,6 @@ function P.giovanni:onKeyPressedChar(key)
 	end
 end
 function P.giovanni:onCharLoad()
-	tools.giveToolsByReference({tools.pitbullChanger,tools.pitbullChanger})
 	self.shiftPos = {x = -1, y = -1}
 end
 function P.giovanni:onRoomEnter()
@@ -384,10 +383,7 @@ end
 
 P.francisco = P.character:new{name = "Francisco", description = "The Cartographer", nextRoom = {yLoc = -1, xLoc = -1}, sprite = love.graphics.newImage('Graphics/francisco.png')}
 function P.francisco:onCharLoad()
-	tools.giveToolsByReference({tools.map})
-end
-function P.francisco:onFloorEnter()
-	tools.giveToolsByReference({tools.map})
+	tools.giveToolsByReference({tools.coin})
 end
 
 P.random = P.character:new{name = "Random", description = "", sprite = love.graphics.newImage('Graphics/random.png')}
@@ -726,6 +722,9 @@ function P.xavier:updateSprite()
 	else
 		self.sprite = self.noSockSprite
 	end
+end
+function P.xavier:onRoomEnter()
+	self.sockMode = false
 end
 
 P.aurelius = P.character:new{name = "Aurelius", description = "The Golden", sprite = love.graphics.newImage('Graphics/aurelius.png')}

@@ -896,8 +896,17 @@ P.missile = P.superTool:new{name = "missile", useWithArrowKeys = false, baseRang
 function P.missile:usableOnTile(tile)
 	return not tile.destroyed and (tile:instanceof(tiles.wire) or tile:instanceof(tiles.electricFloor) or tile:instanceof(tiles.wall)) or tile:instanceof(tiles.powerSupply) and not tile.destroyed
 end
+function P.missile:usableOnNothing()
+	return true
+end
 function P.missile:usableOnAnimal(animal)
 	return not animal.dead
+end
+function P.missile:useToolNothing(tileY, tileX)
+	local dungeonSpawn = util.random(2, 'misc')
+	if dungeonSpawn==1 then
+		room[tileY][tileX] = tiles.dungeonEnter:new()
+	end
 end
 P.missile.getToolableTiles = P.tool.getToolableTilesBox
 P.missile.getToolableAnimals = P.tool.getToolableAnimalsBox
@@ -912,14 +921,14 @@ function P.meat:useToolNothing(tileY, tileX)
 	room[tileY][tileX] = tiles.meat:new()
 end
 function P.meat:usableOnTile(tile)
-	if not tile.bricked and tile:instanceof(tiles.button) then
+	if tile:getHeight()==0 then
 		return true
 	end
 	return false
 end
 function P.meat:useToolTile(tile)
 	self.numHeld = self.numHeld - 1
-	tile:lockInState(true)
+	tile.attractsAnimals = true
 end
 
 P.corpseGrabber = P.superTool:new{name = "corpseGrabber", baseRange = 1, image = love.graphics.newImage('Graphics/corpseGrabber.png'), quality = 3}
@@ -2210,14 +2219,14 @@ P:addTool(P.visionChanger)
 P:addTool(P.bomb)
 P:addTool(P.electrifier)
 P:addTool(P.delectrifier)
---P:addTool(P.unsticker) --remove
---P:addTool(P.doorstop) --disable?
+--P:addTool(P.unsticker)
+--P:addTool(P.doorstop)
 P:addTool(P.charger)
-P:addTool(P.missile) --add chance to spawn dungeon when missiling ground
-P:addTool(P.shovel) --can club dogs, beggars(?)
---P:addTool(P.woodGrabber) --This is shit, adds nothing
---P:addTool(P.corpseGrabber) -- Remove aswell?
-P:addTool(P.pitbullChanger) -- Spice this up
+P:addTool(P.missile)
+P:addTool(P.shovel)
+--P:addTool(P.woodGrabber)
+--P:addTool(P.corpseGrabber)
+P:addTool(P.pitbullChanger)
 P:addTool(P.meat) -- Add: Can be placed on buttons, does not activate button.
 P:addTool(P.rotater)
 P:addTool(P.teleporter) -- Add: chance to teleport to dungeon 
