@@ -410,7 +410,7 @@ function P.getFieldForRoom(inRoom, inField)
 			return v[inRoom][inField]
 		end
 	end
-	log('invalid room id: '..inRoom)
+	log('invalid room id: '..(inRoom==nil and 'nil' or inRoom))
 	return nil
 end
 
