@@ -411,6 +411,7 @@ function P.getFieldForRoom(inRoom, inField)
 		end
 	end
 	log('invalid room id: '..(inRoom==nil and 'nil' or inRoom))
+	game.crash()
 	return nil
 end
 
