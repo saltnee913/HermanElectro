@@ -2233,6 +2233,10 @@ function createAnimals()
 						animalToSpawn.tileY = i
 						animalToSpawn.prevTileX = j
 						animalToSpawn.prevTileY = i
+						local willDropChance = util.random(150,'toolDrop')
+						if willDropChance==1 and animalToSpawn.canDropTool then
+							animalToSpawn.willDropTool = true
+						end
 						animalToSpawn.loaded = true
 					end
 					animalCounter=animalCounter+1

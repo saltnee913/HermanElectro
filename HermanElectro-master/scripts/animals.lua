@@ -18,7 +18,7 @@ scale = (width - 2*wallSprite.width)/(20.3 * 16)*5/6
 --floor = tiles.tile
 
 --speed same as player (250)
-P.animal = Object:new{frozen = false, conductive = false, pickedUp = false, flying = false, triggered = false, waitCounter = 1, dead = false, name = "animal", tileX, tileY, prevx, prevy, prevTileX, prevTileY, x, y, speed = 250, width = 16*scale, height = 16*scale, sprite = love.graphics.newImage('Graphics/pitbull.png'), deadSprite = love.graphics.newImage('Graphics/pitbulldead.png'), tilesOn = {}, oldTilesOn = {}}
+P.animal = Object:new{frozen = false, conductive = false, pickedUp = false, canDropTool = false, willDropTool = false, flying = false, triggered = false, waitCounter = 1, dead = false, name = "animal", tileX, tileY, prevx, prevy, prevTileX, prevTileY, x, y, speed = 250, width = 16*scale, height = 16*scale, sprite = love.graphics.newImage('Graphics/pitbull.png'), deadSprite = love.graphics.newImage('Graphics/pitbulldead.png'), tilesOn = {}, oldTilesOn = {}}
 function P.animal:move(playerx, playery, room, isLit)
 	if player.attributes.shelled then
 		return
@@ -153,6 +153,9 @@ end
 function P.animal:kill()
 	self.dead = true
 	self.sprite = self.deadSprite
+	if self.willDropTool then
+		self:dropTool()
+	end
 end
 function P.animal:update()
 	--checkBoundaries()
@@ -280,22 +283,46 @@ function P.animal:afraidSecondaryMove(playerx, playery)
 end
 
 
-P.pitbull = P.animal:new{name = "pitbull"}
+P.pitbull = P.animal:new{name = "pitbull", canDropTool = true}
 function P.pitbull:willKillPlayer()
 	return player.tileX == self.tileX and player.tileY == self.tileY and not self.dead
 end
+function P.pitbull:dropTool()
+	room[self.tileY][self.tileX] = tiles.supertoolTile:new()
+	room[self.tileY][self.tileX].tool = tools.meat
+	room[self.tileY][self.tileX]:updateSprite()
+	for i = 1, #animals do
+		if animals[i]==self then
+			table.remove(animals, i)
+		end
+	end
+end
 
-P.pup = P.animal:new{name = "pup", sprite = love.graphics.newImage('NewGraphics/pupDesign.png'), deadSprite = love.graphics.newImage('Graphics/pupdead.png')}
+P.pup = P.animal:new{name = "pup", sprite = love.graphics.newImage('NewGraphics/pupDesign.png'), deadSprite = love.graphics.newImage('Graphics/pupdead.png'), canDropTool = true}
+P.pup.dropTool = P.pitbull.dropTool
 
-P.snail = P.animal:new{name = "snail", sprite = love.graphics.newImage('NewGraphics/snailDesign.png'), deadSprite = love.graphics.newImage('Graphics/pupdead.png')}
+P.snail = P.animal:new{name = "snail", sprite = love.graphics.newImage('NewGraphics/snailDesign.png'), deadSprite = love.graphics.newImage('Graphics/pupdead.png'), canDropTool = true}
 function P.snail:onNullLeave()
 	return tiles.slime:new()
 end
 function P.snail:kill()
 	self.dead = true
 	self.sprite = self.deadSprite
+	if self.canDropTool then
+		self:dropTool()
+	end
 	unlocks = require('scripts.unlocks')
 	unlocks.unlockUnlockableRef(unlocks.conductiveSnailsUnlock)
+end
+function P.snail:dropTool()
+	room[self.tileY][self.tileX] = tiles.supertoolTile:new()
+	room[self.tileY][self.tileX].tool = tools.shell
+	room[self.tileY][self.tileX]:updateSprite()
+	for i = 1, #animals do
+		if animals[i]==self then
+			table.remove(animals, i)
+		end
+	end
 end
 
 P.conductiveSnail = P.snail:new{name = "conductiveSnail", sprite = love.graphics.newImage('NewGraphics/snailCDesign.png')}

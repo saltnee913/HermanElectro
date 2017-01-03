@@ -2424,14 +2424,7 @@ function P.salt:usableOnAnimal(animal)
 end
 function P.salt:useToolAnimal(animal)
 	animal:kill()
-	room[animal.tileY][animal.tileX] = tiles.supertoolTile:new()
-	room[animal.tileY][animal.tileX].tool = tools.shell
-	room[animal.tileY][animal.tileX]:updateSprite()
-	for i = 1, #animals do
-		if animals[i]==animal then
-			table.remove(animals, i)
-		end
-	end
+	animal:dropTool()
 end
 
 P.shell = P.superTool:new{name = "Shell", description = "Curl up and hide", image = love.graphics.newImage('Graphics/shell.png'), baseRange = 0, quality = 2}
@@ -2450,7 +2443,7 @@ P.numNormalTools = 7
 ]]
 
 function P.resetTools()
-	P[1] = P.salt
+	P[1] = P.saw
 	P[2] = P.ladder
 	P[3] = P.wireCutters
 	P[4] = P.waterBottle
