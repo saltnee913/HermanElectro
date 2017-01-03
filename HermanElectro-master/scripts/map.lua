@@ -410,8 +410,7 @@ function P.getFieldForRoom(inRoom, inField)
 			return v[inRoom][inField]
 		end
 	end
-	log('invalid room id: '..(inRoom==nil and 'nil' or inRoom))
-	game.crash()
+	log('invalid room id: '..inRoom)
 	return nil
 end
 
@@ -797,23 +796,18 @@ function P.generateMapWeighted()
 		end
 	end
 
-	if newmap[maxx][maxy+1] == nil then
+	if newmap[maxx][maxy+1] == nil and newmap[maxx][maxy+2] == nil and newmap[maxx+1][maxy+1]==nil and newmap[maxx-1][maxy+1]==nil then
 		maxy = maxy+1;
-	elseif newmap[maxx][maxy-1] == nil then
+	elseif newmap[maxx][maxy-1] == nil and newmap[maxx][maxy-2] == nil and newmap[maxx+1][maxy-1]==nil and newmap[maxx-1][maxy-1]==nil  then
 		maxy = maxy-1;
-	elseif newmap[maxx+1][maxy] == nil then
+	elseif newmap[maxx+1][maxy] == nil and newmap[maxx+2][maxy] == nil and newmap[maxx+1][maxy+1]==nil and newmap[maxx+1][maxy-1]==nil  then
 		maxx = maxx+1;
-	elseif newmap[maxx-1][maxy] == nil then
+	elseif newmap[maxx-1][maxy] == nil and newmap[maxx-2][maxy] == nil and newmap[maxx-1][maxy+1]==nil and newmap[maxx-1][maxy-1]==nil  then
 		maxx = maxx-1;
-	end
+	else print "fuck" end
 
 
 	newmap[maxx][maxy] = {roomid = randomFinalRoomsArray[1], room = P.createRoom(randomFinalRoomsArray[1]), tint = {0,0,0}, isFinal = true, isInitial = false}
-		
-	arr = P.floorInfo.rooms.dungeons
-	roomid = util.chooseRandomKey(arr, 'mapGen')
-	newmap[height+1][1] = {roomid = roomid, room = P.createRoom(roomid, arr), tint = {0,0,0}, dirEnter = arr[roomid].dirEnter, isFinal = false, isInitial = false}	
-
 	return newmap
 end
 
@@ -836,18 +830,21 @@ function P.generateEndDungeon()
 	newmap.initialY = starty
 	newmap.initialX = startx
 
+	if not unlocks.isDungeonUnlocked() then
+		return newmap
+	end
 	local puzzleRoom1 = puzzleRooms[util.random(#puzzleRooms,'mapGen')]
 	while(map.getFieldForRoom(puzzleRoom1, 'dirEnter')[2]==0) do
 		puzzleRoom1 = puzzleRooms[util.random(#puzzleRooms,'mapGen')]
 	end
 	newmap[starty][startx+1] = {roomid = puzzleRoom1, room = P.createRoom(puzzleRoom1), isFinal = false, isInitial = false}
 	local puzzleRoom2 = puzzleRooms[util.random(#puzzleRooms,'mapGen')]
-	while(map.getFieldForRoom(puzzleRoom2, 'dirEnter')[4]==0) do
+	while(puzzleRoom2 == puzzleRoom1 or map.getFieldForRoom(puzzleRoom2, 'dirEnter')[4]==0) do
 		puzzleRoom2 = puzzleRooms[util.random(#puzzleRooms,'mapGen')]
 	end
 	newmap[starty][startx-1] = {roomid = puzzleRoom2, room = P.createRoom(puzzleRoom2), isFinal = false, isInitial = false}
 	local puzzleRoom3 = puzzleRooms[util.random(#puzzleRooms,'mapGen')]
-	while(map.getFieldForRoom(puzzleRoom3, 'dirEnter')[1]==0) do
+	while(puzzleRoom3 == puzzleRoom2 or puzzleRoom3 == puzzleRoom1 or map.getFieldForRoom(puzzleRoom3, 'dirEnter')[1]==0) do
 		puzzleRoom3 = puzzleRooms[util.random(#puzzleRooms,'mapGen')]
 	end
 	newmap[starty+1][startx] = {roomid = puzzleRoom3, room = P.createRoom(puzzleRoom3), isFinal = false, isInitial = false}

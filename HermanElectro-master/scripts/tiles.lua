@@ -1147,6 +1147,13 @@ function P.mousetrap:postPowerUpdate()
 		self:updateSprite()
 	end
 end
+function P.mousetrap:absoluteFinalUpdate()
+	if self.triggered then
+		self.safe = true
+		self.triggered = false
+		self:updateSprite()
+	end
+end
 P.mousetrap.willKillAnimal = P.mousetrap.willKillPlayer
 function P.mousetrap:lockInState(state)
 	self.bricked = true
@@ -2002,8 +2009,16 @@ function P.dungeonExit:onEnter()
 	end
 end
 
-P.endDungeonEnter = P.tile:new{name = "endDungeonEnter", sprite = love.graphics.newImage('Graphics/eden.png')}
+P.endDungeonEnter = P.tile:new{name = "endDungeonEnter", sprite = love.graphics.newImage('Graphics/eden.png'), disabled = false}
+function P.endDungeonEnter:onLoad()
+	local unlocks = require('scripts.unlocks')
+	self.disabled = not unlocks.isDungeonUnlocked()
+	self.isVisible = not self.disabled
+end
 function P.endDungeonEnter:onEnter()
+	if self.disabled then
+		return
+	end
 	player.returnFloorIndex = floorIndex
 	goToFloor(1)
 	for i = 1, roomHeight do
@@ -2158,7 +2173,7 @@ end
 
 P.darkOverlay = P.tile:new{name = "darkOverlay", sprite = love.graphics.newImage('NewGraphics/unlocksDarken.png')}
 
-P.playerTile = P.tile:new{name = "playerTransform", character = nil, text = "Herman", darkSprite = P.tile.sprite}
+P.playerTile = P.tile:new{name = "playerTransform", character = nil, text = "Herman", isVisible = false}
 function P.playerTile:onLoad()
 	if self.character==nil then
 		local unlockedChars = characters.getUnlockedCharacters()
@@ -2167,10 +2182,9 @@ function P.playerTile:onLoad()
 				self.character = unlockedChars[i]
 			end
 		end
-		if self.character == nil then
-			self.sprite = self.darkSprite
-		else
+		if self.character ~= nil then
 			self.sprite = self.character.sprite
+			self.isVisible = true
 		end
 	end
 end
