@@ -7,7 +7,7 @@ tools = require('scripts.tools')
 local P = {}
 tiles = P
 
-P.tile = Object:new{yOffset = 0, blueHighlighted = false, attractsAnimals = false, formerPowered = nil, updatePowerOnEnter = false, text = "", updatePowerOnLeave = false, overlayable = false, overlaying = false, gone = false, lit = false, destroyed = false,
+P.tile = Object:new{yOffset = 0, blueHighlighted = false, attractsAnimals = false, scaresAnimals = false, formerPowered = nil, updatePowerOnEnter = false, text = "", updatePowerOnLeave = false, overlayable = false, overlaying = false, gone = false, lit = false, destroyed = false,
   blocksProjectiles = false, isVisible = true, rotation = 0, powered = false, blocksMovement = false, 
   blocksAnimalMovement = false, poweredNeighbors = {0,0,0,0}, blocksVision = false, dirSend = {1,1,1,1}, 
   dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile", emitsLight = false, litWhenPowered = false, intensity = 0.5, range = 25,
@@ -1315,6 +1315,8 @@ P.batTile = P.pitbullTile:new{name = "bat", animal = animalList[6], listIndex = 
 
 P.meat = P.tile:new{name = "meat", sprite = love.graphics.newImage('Graphics/meat.png'), attractsAnimals = true}
 
+P.rottenMeat = P.tile:new{name = "rottenMeat", sprite = love.graphics.newImage('Graphics/rottenmeat.png'), scaresAnimals = true}
+
 P.beggar = P.tile:new{name = "beggar", alive = true, counter = 0, sprite = love.graphics.newImage('Graphics/beggar.png'), deadSprite = love.graphics.newImage('Graphics/beggardead.png')}
 function P.beggar:onEnter(player)
 	--[[if tool==0 or tool>7 then return end
@@ -2371,5 +2373,6 @@ tiles[173] = P.darkOverlay
 tiles[174] = P.debugStairs
 tiles[175] = P.playerTile
 tiles[176] = P.lemonade
+tiles[177] = P.rottenMeat
 
 return tiles

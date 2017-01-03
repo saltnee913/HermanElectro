@@ -23,7 +23,10 @@ function P.animal:move(playerx, playery, room, isLit)
 	if player.attributes.shelled then
 		return
 	elseif player.attributes.fear then
-		self:afraidPrimaryMove(playerx, playery)
+		self:afraidPrimaryMove(playerx, playery, room, isLit)
+		return
+	elseif room[playery][playerx]~=nil and room[playery][playerx].scaresAnimals then
+		self:afraidPrimaryMove(playerx, playery, room, isLit)
 		return
 	end
 	if self.dead or (not isLit and not self.triggered) or self.frozen then
@@ -153,7 +156,7 @@ end
 function P.animal:kill()
 	self.dead = true
 	self.sprite = self.deadSprite
-	if self.willDropTool then
+	if self.willDropTool and room[self.tileY][self.tileX]==nil then
 		self:dropTool()
 	end
 end
@@ -289,7 +292,12 @@ function P.pitbull:willKillPlayer()
 end
 function P.pitbull:dropTool()
 	room[self.tileY][self.tileX] = tiles.supertoolTile:new()
-	room[self.tileY][self.tileX].tool = tools.meat
+	local whichTool = util.random(m2, 'toolDrop')
+	if whichTool==1 then
+		room[self.tileY][self.tileX].tool = tools.meat
+	else
+		room[self.tileY][self.tileX].tool = tools.rottenMeat
+	end
 	room[self.tileY][self.tileX]:updateSprite()
 	for i = 1, #animals do
 		if animals[i]==self then
@@ -308,7 +316,7 @@ end
 function P.snail:kill()
 	self.dead = true
 	self.sprite = self.deadSprite
-	if self.canDropTool then
+	if self.willDropTool and room[self.tileY][self.tileX]==nil then
 		self:dropTool()
 	end
 	unlocks = require('scripts.unlocks')
@@ -332,10 +340,11 @@ end
 function P.conductiveSnail:kill()
 	self.dead = true
 	self.sprite = self.deadSprite
-	if room[self.tileY] ~= nil and room[self.tileY][self.tileX] ~= nil and room[self.tileY][self.tileX]:instanceof(tiles.conductiveSlime) then
-		unlocks = require('scripts.unlocks')
-		unlocks.unlockUnlockableRef(unlocks.lennyUnlock)
+	if self.willDropTool and room[self.tileY][self.tileX]==nil then
+		self:dropTool()
 	end
+	unlocks = require('scripts.unlocks')
+	unlocks.unlockUnlockableRef(unlocks.lennyUnlock)
 end
 
 P.glueSnail = P.snail:new{name = "glueSnail", sprite = love.graphics.newImage('Graphics/gluesnail.png')}
@@ -345,6 +354,9 @@ end
 function P.glueSnail:kill()
 	self.dead = true
 	self.sprite = self.deadSprite
+	if self.willDropTool and room[self.tileY][self.tileX]==nil then
+		self:dropTool()
+	end
 end
 
 P.bat = P.animal:new{flying = true, name = "bat", sprite = love.graphics.newImage('Graphics/bat.png'), deadSprite = love.graphics.newImage('Graphics/pupdead.png')}

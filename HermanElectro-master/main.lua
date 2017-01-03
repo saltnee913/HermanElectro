@@ -433,15 +433,17 @@ function love.load()
 	scale = (width - 2*wallSprite.width)/(20.3 * 16)*5/6
 	floor = tiles.tile
 
+	local setChar = characters[1]
+	if player~=nil and player.character~=nil then
+		setChar = player.character
+	end
+
 	player = { 	keysHeld = 0, clonePos = {x = 0, y = 0, z = 0}, dead = false, elevation = 0, safeFromAnimals = false, bonusRange = 0, active = true, waitCounter = 0, tileX = 10, tileY = 6, x = (1-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10, 
 			y = (6-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10, prevTileX = 3, prevTileY 	= 10,
 			prevx = (3-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10,
 			prevy = (10-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10,
 			width = 20, height = 20, speed = 250, luckTimer = 0, regularMapLoc = {x = 0, y = 0}, returnFloorIndex = 0, attributes = {flying = false, fear = false, shelled = false, tall = false, extendedRange = 0, sockStep = -1}}
-	
-	if player.character==nil then
-		player.character = characters[1]
-	end
+	player.character = setChar
 
 	map.clearBlacklist()
 
@@ -2849,7 +2851,7 @@ function love.keypressed(key, unicode)
 					local animalDist = math.abs(movey-ani.tileY)+math.abs(movex-ani.tileX)
 					for i = 1, roomHeight do
 						for j = 1, roomLength do
-							if room[i][j]~=nil and room[i][j].attractsAnimals then
+							if room[i][j]~=nil and (room[i][j].attractsAnimals or room[i][j].scaresAnimals) then
 								if math.abs(i-ani.tileY)+math.abs(j-ani.tileX)<animalDist then
 									animalDist = math.abs(i-ani.tileY)+math.abs(j-ani.tileX)
 									movex = j
