@@ -584,6 +584,7 @@ function P.gun:useToolAnimal(animal)
 	if animal:instanceof(animalList.bombBuddy) then
 		animal:explode()
 	end
+	gabeUnlock = false
 end
 
 P.sponge = P.tool:new{name = "sponge", baseRange = 1, image = love.graphics.newImage('NewGraphics/sponge copy.png')}
@@ -1506,9 +1507,9 @@ end
 P.wings.usableOnTile = P.roomReroller.usableOnNothing
 
 function P.wings:useToolNothing()
-	if player.flying then
+	--[[if player.attributes.flying then
 		unlocks.unlockUnlockableRef(unlocks.gabeUnlock)
-	end
+	end]]
 	player.attributes.flying = true
 	self.numHeld = self.numHeld-1
 end

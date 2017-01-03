@@ -216,6 +216,7 @@ function love.load()
 	animalCounter = 1
 	pushables = {}
 	messageInfo = {x = 0, y = 0, text = nil}
+	gabeUnlock = true
 	--width = 16*screenScale
 	--height = 9*screenScale
 	--wallSprite = {width = 78*screenScale/50, height = 72*screenScale/50, heightForHitbox = 62*screenScale/50}
@@ -852,6 +853,9 @@ function win()
 		end
 		if player.character.speedUnlock ~= nil and gameTime.timeLeft > player.character.speedUnlockTime then
 			unlocks.unlockUnlockableRef(player.character.speedUnlock)
+		end
+		if gabeUnlock then
+			unlocks.unlockUnlockableRef(unlocks.gabeUnlock)
 		end
 		won = true
 		stats.wins[player.character.name] = stats.wins[player.character.name]+1
@@ -3207,6 +3211,7 @@ function updateGameState(noPowerUpdate, noLightUpdate)
 	updateTools()
 	if tool ~= 0 and tool ~= nil and tools[tool].numHeld == 0 then tool = 0 end
 	tools.updateToolableTiles(tool)
+	updateElevation()
 	--checkAllDeath()
 end
 
