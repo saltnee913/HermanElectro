@@ -2423,6 +2423,7 @@ function P.salt:usableOnAnimal(animal)
 	return animal:instanceof(animalList.snail)
 end
 function P.salt:useToolAnimal(animal)
+	self.numHeld = self.numHeld-1
 	animal:kill()
 	animal:dropTool()
 end
@@ -2433,9 +2434,58 @@ function P.shell:usableOnNothing()
 end
 P.shell.usableOnTile = P.shell.usableOnNothing
 function P.shell:useToolNothing()
+	self.numHeld = self.numHeld-1
 	player.attributes.shelled = true
 end
 P.shell.useToolTile = P.shell.useToolNothing
+
+P.glitch = P.superTool:new{name = "Glitch", description = "...what just happened?", image = love.graphics.newImage('Graphics/glitch.png'), baseRange = 1, quality = 3}
+function P.glitch:usableOnNothing()
+	return true
+end
+P.glitch.usableOnTile = P.glitch.usableOnNothing
+function P.glitch:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
+	player.prevTileX = player.tileX
+	player.prevTileY = player.tileY
+	player.tileX = tileX
+	player.tileY = tileY
+	globalPowerBlock = true
+end
+function P.glitch:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
+	player.prevTileX = player.tileX
+	player.prevTileY = player.tileY
+	player.tileX = tileX
+	player.tileY = tileY
+	globalDeathBlock = true
+	globalPowerBlock = true
+end
+
+P.shift = P.superTool:new{name = "Shift", description = "Now slide to the left", image = love.graphics.newImage('Graphics/shift.png'), baseRange = 1, quality = 2}
+function P.shift:usableOnNothing()
+	return true
+end
+function P.shift:usableOnTile(tile)
+	return not tile:obstructsMovement()
+end
+function P.shift:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
+	player.prevTileX = player.tileX
+	player.prevTileY = player.tileY
+	player.tileX = tileX
+	player.tileY = tileY
+	room[player.tileY][player.tileX]:onEnter()
+end
+function P.shift:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
+	player.prevTileX = player.tileX
+	player.prevTileY = player.tileY
+	player.tileX = tileX
+	player.tileY = tileY
+	room[player.tileY][player.tileX]:onEnter()
+end
+
 
 P.numNormalTools = 7
 
@@ -2443,8 +2493,8 @@ P.numNormalTools = 7
 ]]
 
 function P.resetTools()
-	P[1] = P.saw
-	P[2] = P.ladder
+	P[1] = P.glitch
+	P[2] = P.shift
 	P[3] = P.wireCutters
 	P[4] = P.waterBottle
 	P[5] = P.sponge
@@ -2555,5 +2605,7 @@ P:addTool(P.bombBoxSpawner)
 P:addTool(P.jackInTheBoxSpawner)
 P:addTool(P.salt)
 P:addTool(P.shell)
+P:addTool(P.shift)
+P:addTool(P.glitch)
 
 return tools

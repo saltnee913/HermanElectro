@@ -150,6 +150,8 @@ function love.load()
 	tempAdd = 1
 	editorMode = false
 	editorAdd = 0
+	globalPowerBlock = false
+	globalDeathBlock = false
 
 	donations = 0
 
@@ -783,7 +785,7 @@ function loadLevel(floorPath)
 end
 
 function kill()
-	if editorMode then return end
+	if editorMode or globalDeathBlock then return end
 	if validSpace() and completedRooms[mapy][mapx]>0 then
 		unlocks.unlockUnlockableRef(unlocks.portalUnlock)
 	end
@@ -2946,6 +2948,12 @@ function love.keypressed(key, unicode)
     end
 
     player.character:absoluteFinalUpdate()
+    postKeypressReset()
+end
+
+function postKeypressReset()
+	globalPowerBlock = false
+	globalDeathBlock = false
 end
 
 function playerMoved()
@@ -3204,7 +3212,7 @@ function updateGameState(noPowerUpdate, noLightUpdate)
 		end
 	end
 	checkCurrentTile()
-	if not noPowerUpdate and player.attributes.sockStep<0 then updatePower() end
+	if not noPowerUpdate and not globalPowerBlock and player.attributes.sockStep<0 then updatePower() end
 	if not noLightUpdate then
 		updateLight()
 	end
