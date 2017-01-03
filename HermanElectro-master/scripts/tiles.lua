@@ -2166,7 +2166,7 @@ end
 
 P.darkOverlay = P.tile:new{name = "darkOverlay", sprite = love.graphics.newImage('NewGraphics/unlocksDarken.png')}
 
-P.playerTile = P.tile:new{name = "playerTransform", character = nil, text = "Herman", darkSprite = P.tile.sprite}
+P.playerTile = P.tile:new{name = "playerTransform", character = nil, text = "Herman", isVisible = false}
 function P.playerTile:onLoad()
 	if self.character==nil then
 		local unlockedChars = characters.getUnlockedCharacters()
@@ -2175,10 +2175,9 @@ function P.playerTile:onLoad()
 				self.character = unlockedChars[i]
 			end
 		end
-		if self.character == nil then
-			self.sprite = self.darkSprite
-		else
+		if self.character ~= nil then
 			self.sprite = self.character.sprite
+			self.isVisible = true
 		end
 	end
 end
