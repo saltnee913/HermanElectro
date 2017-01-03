@@ -839,12 +839,12 @@ function P.generateEndDungeon()
 	end
 	newmap[starty][startx+1] = {roomid = puzzleRoom1, room = P.createRoom(puzzleRoom1), isFinal = false, isInitial = false}
 	local puzzleRoom2 = puzzleRooms[util.random(#puzzleRooms,'mapGen')]
-	while(map.getFieldForRoom(puzzleRoom2, 'dirEnter')[4]==0) do
+	while(puzzleRoom2 == puzzleRoom1 or map.getFieldForRoom(puzzleRoom2, 'dirEnter')[4]==0) do
 		puzzleRoom2 = puzzleRooms[util.random(#puzzleRooms,'mapGen')]
 	end
 	newmap[starty][startx-1] = {roomid = puzzleRoom2, room = P.createRoom(puzzleRoom2), isFinal = false, isInitial = false}
 	local puzzleRoom3 = puzzleRooms[util.random(#puzzleRooms,'mapGen')]
-	while(map.getFieldForRoom(puzzleRoom3, 'dirEnter')[1]==0) do
+	while(puzzleRoom3 == puzzleRoom2 or puzzleRoom3 == puzzleRoom1 or map.getFieldForRoom(puzzleRoom3, 'dirEnter')[1]==0) do
 		puzzleRoom3 = puzzleRooms[util.random(#puzzleRooms,'mapGen')]
 	end
 	newmap[starty+1][startx] = {roomid = puzzleRoom3, room = P.createRoom(puzzleRoom3), isFinal = false, isInitial = false}
