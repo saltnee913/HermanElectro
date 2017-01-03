@@ -316,7 +316,7 @@ end
 function P.snail:kill()
 	self.dead = true
 	self.sprite = self.deadSprite
-	if self.canDropTool and room[self.tileY][self.tileX]==nil then
+	if self.willDropTool and room[self.tileY][self.tileX]==nil then
 		self:dropTool()
 	end
 	unlocks = require('scripts.unlocks')
@@ -340,10 +340,11 @@ end
 function P.conductiveSnail:kill()
 	self.dead = true
 	self.sprite = self.deadSprite
-	if room[self.tileY] ~= nil and room[self.tileY][self.tileX] ~= nil and room[self.tileY][self.tileX]:instanceof(tiles.conductiveSlime) then
-		unlocks = require('scripts.unlocks')
-		unlocks.unlockUnlockableRef(unlocks.lennyUnlock)
+	if self.willDropTool and room[self.tileY][self.tileX]==nil then
+		self:dropTool()
 	end
+	unlocks = require('scripts.unlocks')
+	unlocks.unlockUnlockableRef(unlocks.lennyUnlock)
 end
 
 P.glueSnail = P.snail:new{name = "glueSnail", sprite = love.graphics.newImage('Graphics/gluesnail.png')}
@@ -353,6 +354,9 @@ end
 function P.glueSnail:kill()
 	self.dead = true
 	self.sprite = self.deadSprite
+	if self.willDropTool and room[self.tileY][self.tileX]==nil then
+		self:dropTool()
+	end
 end
 
 P.bat = P.animal:new{flying = true, name = "bat", sprite = love.graphics.newImage('Graphics/bat.png'), deadSprite = love.graphics.newImage('Graphics/pupdead.png')}
