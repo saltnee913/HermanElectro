@@ -2118,7 +2118,7 @@ end
 
 P.groundDown = P.tile:new{name = "groundDown", sprite = love.graphics.newImage('GraphicsColor/grounddown.png')}
 function P.groundDown:getHeight()
-	return -6
+	return -3
 end
 
 P.tallWall = P.concreteWall:new{name = "tallWall", sprite = love.graphics.newImage('GraphicsColor/tallwall.png'), yOffset = -9}
