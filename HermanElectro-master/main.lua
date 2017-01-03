@@ -2851,7 +2851,7 @@ function love.keypressed(key, unicode)
 					local animalDist = math.abs(movey-ani.tileY)+math.abs(movex-ani.tileX)
 					for i = 1, roomHeight do
 						for j = 1, roomLength do
-							if room[i][j]~=nil and room[i][j].attractsAnimals then
+							if room[i][j]~=nil and (room[i][j].attractsAnimals or room[i][j].scaresAnimals) then
 								if math.abs(i-ani.tileY)+math.abs(j-ani.tileX)<animalDist then
 									animalDist = math.abs(i-ani.tileY)+math.abs(j-ani.tileX)
 									movex = j

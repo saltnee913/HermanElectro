@@ -23,7 +23,10 @@ function P.animal:move(playerx, playery, room, isLit)
 	if player.attributes.shelled then
 		return
 	elseif player.attributes.fear then
-		self:afraidPrimaryMove(playerx, playery)
+		self:afraidPrimaryMove(playerx, playery, room, isLit)
+		return
+	elseif room[playery][playerx]~=nil and room[playery][playerx].scaresAnimals then
+		self:afraidPrimaryMove(playerx, playery, room, isLit)
 		return
 	end
 	if self.dead or (not isLit and not self.triggered) or self.frozen then
@@ -289,7 +292,12 @@ function P.pitbull:willKillPlayer()
 end
 function P.pitbull:dropTool()
 	room[self.tileY][self.tileX] = tiles.supertoolTile:new()
-	room[self.tileY][self.tileX].tool = tools.meat
+	local whichTool = util.random(m2, 'toolDrop')
+	if whichTool==1 then
+		room[self.tileY][self.tileX].tool = tools.meat
+	else
+		room[self.tileY][self.tileX].tool = tools.rottenMeat
+	end
 	room[self.tileY][self.tileX]:updateSprite()
 	for i = 1, #animals do
 		if animals[i]==self then

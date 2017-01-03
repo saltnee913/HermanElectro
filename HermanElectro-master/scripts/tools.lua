@@ -903,6 +903,22 @@ function P.meat:useToolTile(tile)
 	tile.attractsAnimals = true
 end
 
+P.rottenMeat = P.meat:new{image = love.graphics.newImage('Graphics/rottenmeat.png')}
+function P.meat:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
+	room[tileY][tileX] = tiles.rottenMeat:new()
+end
+function P.meat:usableOnTile(tile)
+	if tile:instanceof(tiles.button) and not tile.scaresAnimals then
+		return true
+	end
+	return false
+end
+function P.meat:useToolTile(tile)
+	self.numHeld = self.numHeld - 1
+	tile.scaresAnimals = true
+end
+
 P.corpseGrabber = P.superTool:new{name = "corpseGrabber", description = "Removed.", baseRange = 1, image = love.graphics.newImage('Graphics/corpseGrabber.png'), quality = 3}
 function P.corpseGrabber:usableOnAnimal(animal)
 	return animal.dead and not animal.pickedUp
@@ -2678,5 +2694,6 @@ P:addTool(P.shell)
 P:addTool(P.shift)
 P:addTool(P.glitch)
 P:addTool(P.tileMagnet)
+P:addTool(P.rottenMeat)
 
 return tools
