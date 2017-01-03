@@ -2002,8 +2002,16 @@ function P.dungeonExit:onEnter()
 	end
 end
 
-P.endDungeonEnter = P.tile:new{name = "endDungeonEnter", sprite = love.graphics.newImage('Graphics/eden.png')}
+P.endDungeonEnter = P.tile:new{name = "endDungeonEnter", sprite = love.graphics.newImage('Graphics/eden.png'), disabled = false}
+function P.endDungeonEnter:onLoad()
+	local unlocks = require('scripts.unlocks')
+	self.disabled = not unlocks.isDungeonUnlocked()
+	self.isVisible = not self.disabled
+end
 function P.endDungeonEnter:onEnter()
+	if self.disabled then
+		return
+	end
 	player.returnFloorIndex = floorIndex
 	goToFloor(1)
 	for i = 1, roomHeight do

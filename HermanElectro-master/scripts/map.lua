@@ -836,6 +836,9 @@ function P.generateEndDungeon()
 	newmap.initialY = starty
 	newmap.initialX = startx
 
+	if not unlocks.isDungeonUnlocked() then
+		return newmap
+	end
 	local puzzleRoom1 = puzzleRooms[util.random(#puzzleRooms,'mapGen')]
 	while(map.getFieldForRoom(puzzleRoom1, 'dirEnter')[2]==0) do
 		puzzleRoom1 = puzzleRooms[util.random(#puzzleRooms,'mapGen')]
