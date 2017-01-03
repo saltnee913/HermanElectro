@@ -1092,7 +1092,17 @@ function P.boxSpawner:usableOnNothing(tileY, tileX)
 	end
 	return true
 end
-function P.boxSpawner:usableOnTile(tile, tileY, tileX)
+function P.boxSpawner:usableOnTile(tile)
+	local tileX = 0
+	local tileY = 0
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]==tile then
+				tileX = j
+				tileY = i
+			end
+		end
+	end
 	if tileY==player.tileY and tileX==player.tileX then return false end
 	for i = 1, #animals do
 		if animals[i].tileY==tileY and animals[i].tileX==tileX then return false end
@@ -2486,6 +2496,66 @@ function P.shift:useToolTile(tile, tileY, tileX)
 	room[player.tileY][player.tileX]:onEnter()
 end
 
+P.tileMagnet = P.superTool:new{name = "Super Magnet", description = "It pulls its weight", image = love.graphics.newImage('Graphics/tilemagnet.png'), quality = 3, baseRange = 4}
+function P.tileMagnet:usableOnTile(tile, dist)
+	local tileX = 0
+	local tileY = 0
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]==tile then
+				tileX = j
+				tileY = i
+			end
+		end
+	end
+	if dist==1 then
+		return false
+	else
+		local useLoc = {x = 0, y = 0}
+		if player.tileX==tileX then
+			if player.tileY>tileY then
+				useLoc = {x = tileX, y = tileY+1}
+			else
+				useLoc = {x = tileX, y = tileY-1}
+			end
+		else
+			if player.tileX>tileX then
+				useLoc = {x = tileX+1, y = tileY}
+			else
+				useLoc = {x = tileX-1, y = tileY}
+			end
+		end
+		for i = 1, #animals do
+			if animals[i].tileX == useLoc.x and animals[i].tileY == useLoc.y then
+				return false
+			end
+		end
+		for i = 1, #pushables do
+			if pushables[i].tileX == useLoc.x and pushables[i].tileY == useLoc.y then
+				return false
+			end
+		end
+	end
+	return true
+end
+function P.tileMagnet:useToolTile(tile, tileY, tileX)
+	local useLoc = {x = 0, y = 0}
+	if player.tileX==tileX then
+		if player.tileY>tileY then
+			useLoc = {x = tileX, y = tileY+1}
+		else
+			useLoc = {x = tileX, y = tileY-1}
+		end
+	else
+		if player.tileX>tileX then
+			useLoc = {x = tileX+1, y = tileY}
+		else
+			useLoc = {x = tileX-1, y = tileY}
+		end
+	end
+	room[useLoc.y][useLoc.x] = tile
+	room[tileY][tileX] = nil
+end
 
 P.numNormalTools = 7
 
@@ -2607,5 +2677,6 @@ P:addTool(P.salt)
 P:addTool(P.shell)
 P:addTool(P.shift)
 P:addTool(P.glitch)
+P:addTool(P.tileMagnet)
 
 return tools

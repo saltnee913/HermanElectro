@@ -153,7 +153,7 @@ end
 function P.animal:kill()
 	self.dead = true
 	self.sprite = self.deadSprite
-	if self.willDropTool then
+	if self.willDropTool and room[self.tileY][self.tileX]==nil then
 		self:dropTool()
 	end
 end
@@ -308,7 +308,7 @@ end
 function P.snail:kill()
 	self.dead = true
 	self.sprite = self.deadSprite
-	if self.canDropTool then
+	if self.canDropTool and room[self.tileY][self.tileX]==nil then
 		self:dropTool()
 	end
 	unlocks = require('scripts.unlocks')
