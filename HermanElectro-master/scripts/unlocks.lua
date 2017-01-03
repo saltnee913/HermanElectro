@@ -89,6 +89,9 @@ function P.getUnlockedSupertools()
 	end
 	return unlockedSupertools
 end
+function P.isDungeonUnlocked()
+	return P[P.dungeonUnlockId].unlocked
+end
 
 --[[ideas:
 	unlock for standing on bombbuddy
@@ -164,6 +167,8 @@ P.bombsUnlock = P.unlock:new{name = 'boom!', tileIds = {39,44,65,87}, toolIds = 
 P.puddleUnlock = P.tileUnlock:new{name = 'oops you spilled something', tileIds = {71}, toolIds = {tools.bucketOfWater}, sprite = tiles.puddle.sprite}
 P.portalUnlock = P.tileUnlock:new{name = 'portals', tileIds = {56,57}, toolIds = {tools.portalPlacer}, sprite = tiles.entrancePortal.sprite}
 
+P.dungeonUnlock = P.unlock:new{name = 'dungeon', sprite = tiles.endDungeonEnter.sprite}
+
 
 P.winUnlocks = {P.rammyUnlock, P.bombsUnlock, P.ambiguousGates, P.unbreakableEfloorUnlock}
 P.floorUnlocks = {P.doorUnlock, P.catUnlock, P.boxesUnlock, P.unbreakableWires, P.mousetrapUnlock, P.wizardUnlock}
@@ -224,6 +229,9 @@ P[#P+1] = P.beggarPartyUnlock --done
 P[#P+1] = P.bombsUnlock --done
 P[#P+1] = P.puddleUnlock --done
 P[#P+1] = P.portalUnlock --done
+
+P[#P+1] = P.dungeonUnlock
+P.dungeonUnlockId = #P
 
 P[#P+1] = P.lockedTiles
 
