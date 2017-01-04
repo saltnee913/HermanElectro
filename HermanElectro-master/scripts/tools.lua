@@ -1312,6 +1312,46 @@ function P.laser:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld-1
 end
 
+P.icegun = P.superTool:new{name = "Freeze ray", description = "Piercing shot", baseRange = 100, image = love.graphics.newImage('Graphics/icegun.png'), quality = 2}
+function P.icegun:usableOnTile()
+	return true
+end
+P.icegun.usableOnNothing = P.icegun.usableOnTile
+local function iceDogs(tileY, tileX)
+	if tileX == player.tileX then
+		for i = 1, #animals do
+			if animals[i].tileX == player.tileX then
+				if (tileY > player.tileY and animals[i].tileY > player.tileY) or
+				  (tileY < player.tileY and animals[i].tileY < player.tileY) then 
+					if not animals[i].dead then
+						animals[i].frozen = true
+					end
+				end
+			end
+		end
+	else
+		for i = 1, #animals do
+			if animals[i].tileY == player.tileY then
+				if (tileX >= player.tileX and animals[i].tileX >= player.tileX) or
+				  (tileX < player.tileX and animals[i].tileX < player.tileX) then
+					if not animals[i].dead then
+						animals[i].frozen = true
+					end
+				end
+			end
+		end
+	end
+end
+
+function P.icegun:useToolTile(tile, tileY, tileX)
+	iceDogs(tileY, tileX)
+	self.numHeld = self.numHeld-1
+end
+function P.icegun:useToolNothing(tileY, tileX)
+	iceDogs(tileY, tileX)
+	self.numHeld = self.numHeld-1
+end
+
 --should superLaser kill animals? can't decide
 P.superLaser = P.laser:new{name = "superLaser", description = "The Big Bad Beam", baseRange = 100, image = love.graphics.newImage('Graphics/laser.png'), quality = 4}
 function P.superLaser:usableOnTile()
@@ -2786,7 +2826,7 @@ P.numNormalTools = 7
 ]]
 
 function P.resetTools()
-	P[1] = P.saw
+	P[1] = P.icegun
 	P[2] = P.ladder
 	P[3] = P.wireCutters
 	P[4] = P.waterBottle
@@ -2904,6 +2944,7 @@ P:addTool(P.luckyPenny)
 P:addTool(P.bouncer)
 P:addTool(P.block)
 P:addTool(P.stealthBomber)
+P:addTool(P.icegun)
 
 P.resetTools()
 
