@@ -1236,7 +1236,7 @@ function P.gateBreaker:useToolTile(tile)
 	tile:destroy()
 end
 
-P.conductiveBoxSpawner = P.boxSpawner:new{name = "conductiveBoxSpawner", description = "No description necessary", image = love.graphics.newImage('Graphics/conductiveBox.png'), quality = 2}
+P.conductiveBoxSpawner = P.boxSpawner:new{name = "conductiveBoxSpawner", description = "", image = love.graphics.newImage('Graphics/conductiveBox.png'), quality = 2}
 function P.conductiveBoxSpawner:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld-1
 	local toSpawn = pushableList[5]:new()
@@ -1252,7 +1252,7 @@ function P.conductiveBoxSpawner:useToolNothing(tileY, tileX)
 	pushables[#pushables+1] = toSpawn
 end
 
-P.boomboxSpawner = P.boxSpawner:new{name = "boomboxSpawner", description = "Rock n' Roll", image = love.graphics.newImage('Graphics/boombox.png'), quality = 3}
+P.boomboxSpawner = P.boxSpawner:new{name = "boomboxSpawner", description = "Rock n' Roll", image = love.graphics.newImage('Graphics/boombox.png'), quality = 2}
 function P.boomboxSpawner:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld-1
 	local toSpawn = pushableList[6]:new()
@@ -1268,7 +1268,7 @@ function P.boomboxSpawner:useToolNothing(tileY, tileX)
 	pushables[#pushables+1] = toSpawn
 end
 
-P.superWireCutters = P.wireCutters:new{name = "superWireCutters", description = "Sharper wire cutters.", image = love.graphics.newImage('Graphics/wirecutters.png'), quality = 3}
+P.superWireCutters = P.wireCutters:new{name = "superWireCutters", description = "Sharper wire cutters.", image = love.graphics.newImage('Graphics/wirecutters.png'), quality = 2}
 function P.superWireCutters:usableOnNonOverlay(tile)
 	return not tile.destroyed and (tile:instanceof(tiles.wire)
 	or tile:instanceof(tiles.conductiveGlass) or tile:instanceof(tiles.reinforcedConductiveGlass) or tile:instanceof(tiles.electricFloor))
@@ -2826,7 +2826,7 @@ P.numNormalTools = 7
 ]]
 
 function P.resetTools()
-	P[1] = P.icegun
+	P[1] = P.saw
 	P[2] = P.ladder
 	P[3] = P.wireCutters
 	P[4] = P.waterBottle
