@@ -2786,7 +2786,7 @@ P.numNormalTools = 7
 ]]
 
 function P.resetTools()
-	P[1] = P.block
+	P[1] = P.saw
 	P[2] = P.ladder
 	P[3] = P.wireCutters
 	P[4] = P.waterBottle
@@ -2902,11 +2902,8 @@ P:addTool(P.rottenMeat)
 P:addTool(P.pickaxe)
 P:addTool(P.luckyPenny)
 P:addTool(P.bouncer)
-<<<<<<< HEAD
 P:addTool(P.block)
-=======
 P:addTool(P.stealthBomber)
->>>>>>> origin/master
 
 P.resetTools()
 
