@@ -2514,30 +2514,58 @@ function P.glitch:useToolTile(tile, tileY, tileX)
 	globalPowerBlock = true
 end
 
-P.twitch = P.superTool:new{name = "Twitch", description = "", image = love.graphics.newImage('Graphics/glitch.png'), baseRange = 1, quality = 3}
-function P.twitch:usableOnNothing()
-	return true
+P.bouncer = P.superTool:new{name = "Bouncer", description = "This club is for attractive people only", image = love.graphics.newImage('Graphics/bouncer.png'), baseRange = 1, quality = 2}
+function P.bouncer:usableOnTile(tile, tileY, tileX)
+	if tile.blocksMovement and tile:obstructsMovement() then return true end
 end
-P.twitch.usableOnTile = P.twitch.usableOnNothing
-function P.twitch:useToolNothing(tileY, tileX)
-	self.numHeld = self.numHeld-1
-	
-	if room[player.tileY][player.tileX] ~= nil then
-		room[player.tileY][player.tileX]:onLeave(player)
-	end
 
-	globalDeathBlock = true
-end
-function P.twitch:useToolTile(tile, tileY, tileX)
+function P.bouncer:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld-1
-	
-	if room[tileY][tileX] ~= nil then
-		room[tileY][tileX]:onEnter(player)
+
+	player.prevTileY = player.tileY
+	player.prevTileX = player.tileX
+
+	local tpLoc = {x = player.tileX, y = player.tileY}
+	local lastLoc = {x = player.tileX, y = player.tileY}
+
+	for dist = 1, 3 do
+		if tileY>player.tileY then
+			if room[player.tileY-dist]~=nil and not (room[player.tileY-dist][player.tileX]~=nil and
+			room[player.tileY-dist][player.tileX]:obstructsVision()) then
+				tpLoc.y = player.tileY-dist
+			end
+		elseif tileY<player.tileY then
+			if room[player.tileY+dist]~=nil and not (room[player.tileY+dist][player.tileX]~=nil and
+			room[player.tileY+dist][player.tileX]:obstructsVision()) then
+				tpLoc.y = player.tileY+dist
+			end
+		elseif tileX>player.tileX then
+			if player.tileX-dist>0 and not (room[player.tileY][player.tileX-dist]~=nil and
+			room[player.tileY][player.tileX-dist]:obstructsVision()) then
+				tpLoc.x = player.tileX-dist
+			end
+		elseif tileX<player.tileX then
+			if player.tileX+dist<=roomLength and not (room[player.tileY][player.tileX+dist]~=nil and
+			room[player.tileY][player.tileX+dist]:obstructsVision()) then
+				tpLoc.x = player.tileX+dist
+			end
+		end
+		for i = 1, #pushables do
+			if pushables[i].tileY==tpLoc.y and pushables[i].tileX==tpLoc.x then
+				tpLoc = {x = lastLoc.x, y = lastLoc.y}
+			end
+		end
+		if tpLoc.x==lastLoc.x and tpLoc.y==lastLoc.y then break end
+		lastLoc = {x = tpLoc.x, y = tpLoc.y}
 	end
-	if room[player.tileY][player.tileX] ~= nil then
-		room[player.tileY][player.tileX]:onLeave(player)
+	player.tileY = tpLoc.y
+	player.tileX = tpLoc.x
+	if room[player.tileY][player.tileX]~=nil then
+		room[player.tileY][player.tileX]:onEnter(player)
 	end
-	globalDeathBlock = true	
+	if room[player.prevTileY][player.prevTileX]~=nil then
+		room[player.prevTileY][player.prevTileX]:onLeave(player)
+	end
 end
 
 P.shift = P.superTool:new{name = "Shift", description = "Now slide to the left", image = love.graphics.newImage('Graphics/shift.png'), baseRange = 1, quality = 2}
@@ -2651,7 +2679,7 @@ end
 
 P.luckyPenny = P.coin:new{name = "Lucky Penny", description = "May all your wishes come true", quality = 2, image = love.graphics.newImage('Graphics/luckypenny.png')}
 
-P.helmet = P.superTool:new{name = "Knight's Helmet", description = "You're feeling slanted", quality = 3, image = love.graphics.newImage('Graphics/helmet.png'), baseRange = 1}
+P.helmet = P.superTool:new{name = "Knight's Helmet", description = "You're feeling slanted", quality = 3, image = love.graphics.newImage('Graphics/helmet.png'), baseRange = 2}
 P.helmet.getToolableTiles = P.tool.getToolableTilesBox
 function P.helmet:usableOnTile(tile, tileY, tileX)
 	if tile:obstructsMovement() then return false
@@ -2681,8 +2709,8 @@ P.numNormalTools = 7
 ]]
 
 function P.resetTools()
-	P[1] = P.twitch
-	P[2] = P.ladder
+	P[1] = P.helmet
+	P[2] = P.bouncer
 	P[3] = P.wireCutters
 	P[4] = P.waterBottle
 	P[5] = P.sponge
@@ -2796,7 +2824,7 @@ P:addTool(P.tileMagnet)
 P:addTool(P.rottenMeat)
 P:addTool(P.pickaxe)
 P:addTool(P.luckyPenny)
-P:addTool(P.twitch)
+P:addTool(P.bouncer)
 
 P.resetTools()
 
