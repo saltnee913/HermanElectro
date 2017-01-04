@@ -2644,9 +2644,6 @@ function P.resetTools()
 	end
 end
 
-P.resetTools()
-
-
 function P:addTool(tool)
 	self[#self+1] = tool
 	tool.toolid = #self
@@ -2750,5 +2747,7 @@ P:addTool(P.tileMagnet)
 P:addTool(P.rottenMeat)
 P:addTool(P.pickaxe)
 P:addTool(P.luckyPenny)
+
+P.resetTools()
 
 return tools

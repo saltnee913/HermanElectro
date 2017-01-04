@@ -23,6 +23,16 @@ function P.chooseWeightedRandom(arr, random)
 	return -1
 end
 
+function P.getSupertoolTypesHeld()
+	local numSup = 0
+	for i = tools.numNormalTools, #tools do
+		if tools[i].numHeld>0 then
+			numSup = numSup+1
+		end
+	end
+	return numSup
+end
+
 function P.chooseRandomElement(arr, random)
 	return arr[util.random(#arr, random)]
 end
