@@ -2514,6 +2514,44 @@ function P.glitch:useToolTile(tile, tileY, tileX)
 	globalPowerBlock = true
 end
 
+P.twitch = P.superTool:new{name = "Twitch", description = "", image = love.graphics.newImage('Graphics/glitch.png'), baseRange = 1, quality = 3}
+function P.twitch:usableOnNothing()
+	return true
+end
+P.twitch.usableOnTile = P.twitch.usableOnNothing
+function P.twitch:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
+
+	
+	player.prevTileX = player.tileX
+	player.prevTileY = player.tileY
+	if room[tileY][tileX] ~= nil then
+	room[tileY][tileX]:onEnter(player)
+	end
+	if room[player.tileY][player.tileX] ~= nil then
+	room[player.tileY][player.tileX]:onLeave(player)
+end
+	player.tileX = tileX
+	player.tileY = tileY
+	globalDeathBlock = true
+end
+function P.twitch:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
+	player.prevTileX = player.tileX
+	player.prevTileY = player.tileY
+	if room[tileY][tileX] ~= nil then
+		room[tileY][tileX]:onEnter(player)
+	end
+	if room[player.tileY][player.tileX] ~= nil then
+	room[player.tileY][player.tileX]:onLeave(player)
+end
+	player.tileX = tileX
+	player.tileY = tileY
+	globalDeathBlock = true
+	
+	
+end
+
 P.shift = P.superTool:new{name = "Shift", description = "Now slide to the left", image = love.graphics.newImage('Graphics/shift.png'), baseRange = 1, quality = 2}
 function P.shift:usableOnNothing()
 	return true
@@ -2632,7 +2670,7 @@ P.numNormalTools = 7
 ]]
 
 function P.resetTools()
-	P[1] = P.saw
+	P[1] = P.twitch
 	P[2] = P.ladder
 	P[3] = P.wireCutters
 	P[4] = P.waterBottle
@@ -2747,7 +2785,7 @@ P:addTool(P.tileMagnet)
 P:addTool(P.rottenMeat)
 P:addTool(P.pickaxe)
 P:addTool(P.luckyPenny)
-
+P:addTool(P.twitch)
 P.resetTools()
 
 return tools
