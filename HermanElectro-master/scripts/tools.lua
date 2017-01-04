@@ -252,6 +252,7 @@ function P.tool:getToolableTilesBox()
 			local tileToCheck = {y = player.tileY + offset.y, x = player.tileX + offset.x}
 			if tileToCheck.x<=0 or tileToCheck.x>roomLength then break end
 			if room[tileToCheck.y]~=nil then
+				local dist = offset.y+offset.x
 				if (room[tileToCheck.y][tileToCheck.x] == nil and self:usableOnNothing(tileToCheck.y, tileToCheck.x))
 				or (room[tileToCheck.y][tileToCheck.x] ~= nil and self:usableOnTile(room[tileToCheck.y][tileToCheck.x], dist) and
 				player.elevation<=math.abs(room[tileToCheck.y][tileToCheck.x]:getHeight())) then
@@ -2703,9 +2704,73 @@ function P.helmet:useToolTile(tile, tileY, tileX)
 	player.tileY = tileY
 	room[player.tileY][player.tileX]:onEnter(player)
 end
+
+P.stealthBomber = P.superTool:new{name = "Steal Bomber", description = "Drop 'n' Go", image = love.graphics.newImage('Graphics/stealthbomber.png'), baseRange = 2, quality = 3}
+P.stealthBomber.getToolableTiles = P.tool.getToolableTilesBox
+function P.stealthBomber:usableOnNothing(tileY, tileX)
+	for i = 1, #pushables do
+		if pushables[i].tileY==tileY and pushables[i].tileX==tileX then
+			return false
+		end
+	end
+	return math.abs(tileY-player.tileY)+math.abs(tileX-player.tileX)>1 and (tileY==player.tileY or tileX==player.tileX)
+end
+function P.stealthBomber:usableOnTile(tile, dist)
+	local tileY=0
+	local tileX=0
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]==tile then
+				tileX = j
+				tileY = i
+			end
+		end
+	end
+	for i = 1, #pushables do
+		if pushables[i].tileY==tileY and pushables[i].tileX==tileX then
+			return false
+		end
+	end
+	return dist>1 and (tileY==player.tileY or tileX==player.tileX)
+end
+function P.stealthBomber:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
+	player.prevTileX = player.tileX
+	player.prevTileY = player.tileY
+	player.tileX = tileX
+	player.tileY = tileY
+
+	if room[(player.tileY+player.prevTileY)/2][(player.tileX+player.prevTileX)/2]~= nil then
+		room[(player.tileY+player.prevTileY)/2][(player.tileX+player.prevTileX)/2]:destroy()
+	end
+
+	if room[player.prevTileY][player.prevTileX]~=nil then
+		room[player.prevTileY][player.prevTileX]:onLeave(player)
+	end
+	updateElevation()
+end
+function P.stealthBomber:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
+	player.prevTileX = player.tileX
+	player.prevTileY = player.tileY
+	player.tileX = tileX
+	player.tileY = tileY
+
+	if room[(player.tileY+player.prevTileY)/2][(player.tileX+player.prevTileX)/2]~= nil then
+		room[(player.tileY+player.prevTileY)/2][(player.tileX+player.prevTileYX)/2]:destroy()
+	end
+
+	updateElevation()
+	room[tileY][tileX]:onEnter(player)
+	if room[player.prevTileY][player.prevTileX]~=nil then
+		room[player.prevTileY][player.prevTileX]:onLeave(player)
+	end
+end
+
 P.numNormalTools = 7
 
 --[[ideas:
+--hop over tile and destroy
 ]]
 
 function P.resetTools()
@@ -2825,6 +2890,7 @@ P:addTool(P.rottenMeat)
 P:addTool(P.pickaxe)
 P:addTool(P.luckyPenny)
 P:addTool(P.bouncer)
+P:addTool(P.stealthBomber)
 
 P.resetTools()
 
