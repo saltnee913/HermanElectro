@@ -2527,7 +2527,6 @@ function P.shift:useToolNothing(tileY, tileX)
 	player.prevTileY = player.tileY
 	player.tileX = tileX
 	player.tileY = tileY
-	room[player.tileY][player.tileX]:onEnter()
 end
 function P.shift:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld-1
@@ -2626,13 +2625,37 @@ end
 
 P.luckyPenny = P.coin:new{name = "Lucky Penny", description = "May all your wishes come true", quality = 2, image = love.graphics.newImage('Graphics/luckypenny.png')}
 
+P.helmet = P.superTool:new{name = "Knight's Helmet", description = "You're feeling slanted", quality = 3, image = love.graphics.newImage('Graphics/helmet.png'), baseRange = 1}
+P.helmet.getToolableTiles = P.tool.getToolableTilesBox
+function P.helmet:usableOnTile(tile, tileY, tileX)
+	if tile:obstructsMovement() then return false
+	else return tileY~=player.tileY and tileX~=player.tileX end
+end
+function P.helmet:usableOnNothing(tileY, tileX)
+	return tileY~=player.tileY and tileX~=player.tileX
+end
+function P.helmet:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
+	player.prevTileX = player.tileX
+	player.prevTileY = player.tileY
+	player.tileX = tileX
+	player.tileY = tileY
+end
+function P.helmet:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
+	player.prevTileX = player.tileX
+	player.prevTileY = player.tileY
+	player.tileX = tileX
+	player.tileY = tileY
+	room[player.tileY][player.tileX]:onEnter(player)
+end
 P.numNormalTools = 7
 
 --[[ideas:
 ]]
 
 function P.resetTools()
-	P[1] = P.saw
+	P[1] = P.helmet
 	P[2] = P.ladder
 	P[3] = P.wireCutters
 	P[4] = P.waterBottle
