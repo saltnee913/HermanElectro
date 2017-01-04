@@ -2643,7 +2643,7 @@ P:addTool(P.teleporter)
 P:addTool(P.boxCutter)
 --P:addTool(P.broom)
 P:addTool(P.magnet)
-P:addTool(P.spring)
+P:addTool(P.spring) --Fix this shit
 P:addTool(P.glue)
 --P:addTool(P.endFinder)
 P:addTool(P.map)

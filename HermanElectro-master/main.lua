@@ -512,7 +512,7 @@ function goDownFloor()
 	else
 		local mapToLoad = map.loadedMaps[floorIndex+1]
 		floorIndex = floorIndex + 1
-		map.setRoomSetValues(floorIndex)
+		map.floorInfo = mapToLoad.floorInfo
 		mainMap = mapToLoad.map
 		mapHeight = mapToLoad.mapHeight
 		for i = 1, mapHeight do
@@ -552,7 +552,7 @@ function goUpFloor()
 	else
 		local mapToLoad = map.loadedMaps[floorIndex-1]
 		floorIndex = floorIndex - 1
-		map.setRoomSetValues(floorIndex)
+		map.floorInfo = mapToLoad.floorInfo
 		mainMap = mapToLoad.map
 		mapHeight = mapToLoad.mapHeight
 		for i = 1, mapHeight do
@@ -595,7 +595,7 @@ function goToFloor(floorNum)
 	roomLength = mapToLoad.roomLength
 	completedRooms = mapToLoad.completedRooms
 	visibleMap = mapToLoad.visibleMap
-	map.setRoomSetValues(floorIndex)
+	map.floorInfo = mapToLoad.floorInfo
 	prepareFloor()
 	playMusic(floorIndex)
 	currentid = tostring(mainMap[mapy][mapx].roomid)
@@ -781,7 +781,7 @@ function loadLevel(floorPath)
 	roomLength = room.length
 	if floorIndex>-1 then
 		shaderTriggered = true
-		map.loadedMaps[#map.loadedMaps+1] = {map = mainMap, mapHeight = mapHeight, 
+		map.loadedMaps[#map.loadedMaps+1] = {map = mainMap, mapHeight = mapHeight, floorInfo = map.floorInfo,
 	  		roomHeight = roomHeight, roomLength = roomLength, completedRooms = completedRooms, visibleMap = visibleMap}
 	end
 end
