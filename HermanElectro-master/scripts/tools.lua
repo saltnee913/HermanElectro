@@ -1312,7 +1312,7 @@ function P.laser:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld-1
 end
 
-P.icegun = P.superTool:new{name = "Freeze ray", description = "Piercing shot", baseRange = 100, image = love.graphics.newImage('Graphics/icegun.png'), quality = 2}
+P.icegun = P.superTool:new{name = "Freeze ray", description = "Piercing Permafrost", baseRange = 100, image = love.graphics.newImage('Graphics/icegun.png'), quality = 2}
 function P.icegun:usableOnTile()
 	return true
 end
