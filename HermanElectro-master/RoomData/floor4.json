@@ -69,8 +69,8 @@
 	"data":
 	{
 		"requireUnlocks": true,
-		"height": 17,
-		"numRooms": 8,
+		"height": 10,
+		"numRooms": 9,
 		"generateFunction": "generateMapWeighted",
 		"startRoomID": "1",
 		//numRoomsToCheck is the amount of rooms to try when deciding a room's roomid, decreasing this increases rng

@@ -705,15 +705,26 @@ function P.generateMapWeighted()
 		end
 		--choose a room slot
 		local choice = util.chooseRandomElement(available, 'mapGen')
+		if numRooms-#usedRooms == 4 then
+			local max = {x = choice.x, y = choice.y}
+			for i = 1, #available do
+				if math.abs(available[i].x-max.x)+math.abs(available[i].y-max.y)>
+				math.abs(max.x-math.floor(height/2))+math.abs(max.y-math.floor(height/2)) then
+					max.x = available[i].x
+					max.y = available[i].y
+				end
+			end
+			choice = {x = max.x, y = max.y}
+		end
 		local roomid
 
-		--[[if numRooms - #usedRooms == 1 then
+		if numRooms - #usedRooms == 4 then
 			roomid = util.chooseRandomElement(randomFinalRoomsArray, 'mapGen')
-		else]]if numRooms - #usedRooms == 1 then
+		elseif numRooms - #usedRooms == 3 then
 			roomid = util.chooseRandomElement(randomTreasureRoomsArray, 'mapGen')
 		elseif numRooms - #usedRooms == 2 then
 			roomid = util.chooseRandomElement(randomDonationRoomsArray, 'mapGen')
-		elseif numRooms - #usedRooms == 3 then
+		elseif numRooms - #usedRooms == 1 then
 			roomid = util.chooseRandomElement(randomShopsArray, 'mapGen')
 		else
 			--creates an array of 5 possible choices with weights
@@ -774,41 +785,12 @@ function P.generateMapWeighted()
 		usedRooms[#usedRooms+1] = roomid
 		newmap[choice.y][choice.x] = {roomid = roomid, room = P.createRoom(roomid), tint = {0,0,0}, isFinal = false, isInitial = false}
 	end
-	local max = 0;
-	local maxx = 0;
-	local maxy = 0;
-	for i=1,height do
-		for j=1,height do
-			if newmap[i][j] ~= nil and P.isRoomType(newmap[i][j].roomid, "rooms") then
-					if math.abs(i-math.floor(height))+math.abs(j-math.floor(height)) > max then
-						max = math.abs(i-math.floor(height))+math.abs(j-math.floor(height))
-						maxx=i
-						maxy=j
-					end
-					if math.abs(i-math.floor(height))+math.abs(j-math.floor(height)) == max then
-						if util.random(2, 'mapGen') == 2 then
-							max = math.abs(i-math.floor(height))+math.abs(j-math.floor(height))
-							maxx=i
-							maxy=j
-						end
-					end
-				
-			end
-		end
-	end
+	
+	--add dungeon room to floor
+	arr = P.floorInfo.rooms.dungeons
+	roomid = util.chooseRandomKey(arr, 'mapGen')
+	newmap[height+1][1] = {roomid = roomid, room = P.createRoom(roomid, arr), tint = {0,0,0}, dirEnter = arr[roomid].dirEnter, isFinal = false, isInitial = false, floorTileOverride = "dungeon"}
 
-	if newmap[maxx][maxy+1] == nil and newmap[maxx][maxy+2] == nil and newmap[maxx+1][maxy+1]==nil and newmap[maxx-1][maxy+1]==nil then
-		maxy = maxy+1;
-	elseif newmap[maxx][maxy-1] == nil and newmap[maxx][maxy-2] == nil and newmap[maxx+1][maxy-1]==nil and newmap[maxx-1][maxy-1]==nil  then
-		maxy = maxy-1;
-	elseif newmap[maxx+1][maxy] == nil and newmap[maxx+2][maxy] == nil and newmap[maxx+1][maxy+1]==nil and newmap[maxx+1][maxy-1]==nil  then
-		maxx = maxx+1;
-	elseif newmap[maxx-1][maxy] == nil and newmap[maxx-2][maxy] == nil and newmap[maxx-1][maxy+1]==nil and newmap[maxx-1][maxy-1]==nil  then
-		maxx = maxx-1;
-	else print "fuck" end
-
-
-	newmap[maxx][maxy] = {roomid = randomFinalRoomsArray[1], room = P.createRoom(randomFinalRoomsArray[1]), tint = {0,0,0}, isFinal = true, isInitial = false}
 	return newmap
 end
 
