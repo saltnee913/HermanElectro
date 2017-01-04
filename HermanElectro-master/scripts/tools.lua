@@ -2087,7 +2087,7 @@ end
 P.robotArm.usableOnNothing = P.robotArm.usableOnTile
 function P.robotArm:useToolTile(tile)
 	self.numHeld = self.numHeld-1
-	player.attributes.extendedRange = 3
+	player.attributes.extendedRange = player.attributes.extendedRange+3
 end
 P.robotArm.useToolNothing = P.robotArm.useToolTile
 
@@ -2573,6 +2573,31 @@ function P.tileMagnet:useToolTile(tile, tileY, tileX)
 	room[tileY][tileX] = nil
 end
 
+P.pickaxe = P.superTool:new{name = "Pickaxe", description = "Get cracking", baseRange = 1, image = love.graphics.newImage('Graphics/pickaxe.png'), quality = 3}
+function P.pickaxe:usableOnTile(tile)
+	if tile:instanceof(tiles.wall) then return true end
+	return false
+end
+function P.pickaxe:usableOnPushable()
+	return true
+end
+function P.pickaxe:usableOnNothing()
+	return true
+end
+function P.pickaxe:useToolNothing(tileY, tileX)
+	P.shovel:useToolNothing(tileY, tileX)
+end
+function P.pickaxe:useToolTile(tile)
+	self.numHeld = self.numHeld-1
+	if tile.sawable then
+		tile:destroy()
+	else tile.sawable = true end
+end
+function P.pickaxe:useToolPushable(pushable)
+	self.numHeld = self.numHeld-1
+	pushable:destroy()
+end
+
 P.numNormalTools = 7
 
 --[[ideas:
@@ -2695,5 +2720,6 @@ P:addTool(P.shift)
 P:addTool(P.glitch)
 P:addTool(P.tileMagnet)
 P:addTool(P.rottenMeat)
+P:addTool(P.pickaxe)
 
 return tools
