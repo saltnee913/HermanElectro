@@ -28,7 +28,7 @@ function P.getUnlockedCharacters()
 	return toRet
 end
 
-P.character = Object:new{name = "Name", dirFacing = "down", scale = 0, sprites = {love.graphics.newImage('hermans/newherman_r.png'),love.graphics.newImage('hermans/newherman_r.png'),love.graphics.newImage('hermans/newherman_r.png'),love.graphics.newImage('hermans/newherman_l.png')}, sprite = love.graphics.newImage('hermans/newherman_r.png'),
+P.character = Object:new{name = "Name", dirFacing = "down", scale = 0, sprite = love.graphics.newImage('hermans/newherman_r.png'),
   description = "description", startingTools = {0,0,0,0,0,0,0}, scale = 0.25 * width/1200, forcePowerUpdate = false, winUnlocks = {}, tint = {1,1,1},
   speedUnlockTime = 1000, speedUnlock = nil}
 function P.character:onBegin()

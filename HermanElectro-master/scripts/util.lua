@@ -25,7 +25,7 @@ end
 
 function P.getSupertoolTypesHeld()
 	local numSup = 0
-	for i = tools.numNormalTools, #tools do
+	for i = tools.numNormalTools+1, #tools do
 		if tools[i].numHeld>0 then
 			numSup = numSup+1
 		end

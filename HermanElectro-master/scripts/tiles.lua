@@ -1369,7 +1369,24 @@ end
 
 P.greenBeggar = P.beggar:new{name = "greenBeggar", sprite = love.graphics.newImage('Graphics/greenbeggar.png'), deadSprite = love.graphics.newImage('Graphics/greenbeggardead.png')}
 function P.greenBeggar:providePayment()
-	tools.giveToolsByReference({tools.coin})
+	local luckyCoin = util.random(100, 'toolDrop')
+	local ttg = tools.coin
+	if luckyCoin<getLuckBonus() then
+		ttg = tools.luckyPenny
+	end
+
+	if util.getSupertoolTypesHeld()<3 or ttg.numHeld>0 then
+		tools.giveToolsByReference({ttg})
+	else
+		for i = 1, roomHeight do
+			for j = 1, roomLength do
+				if room[i][j]==self then
+					room[i][j] = tiles.supertoolTile:new()
+					room[i][j].tool = ttg
+				end
+			end
+		end
+	end
 end
 
 P.blueBeggar = P.beggar:new{name = "blueBeggar", sprite = love.graphics.newImage('Graphics/bluebeggar.png'), deadSprite = love.graphics.newImage('Graphics/bluebeggardead.png')}
@@ -1898,12 +1915,7 @@ function P.supertoolTile:updateSprite()
 	end
 end
 function P.supertoolTile:onEnter()
-	local stTypesHeld = 0
-	for i = tools.numNormalTools+1, #tools do
-		if tools[i].numHeld>0 then
-			stTypesHeld = stTypesHeld+1
-		end
-	end
+	local stTypesHeld = util.getSupertoolTypesHeld()
 	if stTypesHeld<3 or self.tool.numHeld>0 then
 		tools.giveToolsByReference({self.tool})
 		self.isVisible = false
