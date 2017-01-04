@@ -28,7 +28,7 @@ function P.getUnlockedCharacters()
 	return toRet
 end
 
-P.character = Object:new{name = "Name", scale = 0, sprites = {love.graphics.newImage('hermans/newherman_r.png'),love.graphics.newImage('hermans/newherman_r.png'),love.graphics.newImage('hermans/newherman_r.png'),love.graphics.newImage('hermans/newherman_l.png')}, sprite = love.graphics.newImage('hermans/newherman_r.png'),
+P.character = Object:new{name = "Name", dirFacing = "down", scale = 0, sprites = {love.graphics.newImage('hermans/newherman_r.png'),love.graphics.newImage('hermans/newherman_r.png'),love.graphics.newImage('hermans/newherman_r.png'),love.graphics.newImage('hermans/newherman_l.png')}, sprite = love.graphics.newImage('hermans/newherman_r.png'),
   description = "description", startingTools = {0,0,0,0,0,0,0}, scale = 0.25 * width/1200, forcePowerUpdate = false, winUnlocks = {}, tint = {1,1,1},
   speedUnlockTime = 1000, speedUnlock = nil}
 function P.character:onBegin()
@@ -55,21 +55,25 @@ end
 function P.character:onPostUpdatePower()
 end
 function P.character:onKeyPressed(key)
-	--[[if self.sprites ~= nil then
+	if self.sprites ~= nil then
 		if key == 'w' then
+			self.dirFacing = "up"
 			self.sprite = self.sprites[1]
 		end
 		if key == 'd' then
+			self.dirFacing = "right"
 			self.sprite = self.sprites[2]
 		end
 		if key == 's' then
+			self.dirFacing = "down"
 			self.sprite = self.sprites[3]
 		end
 		if key == 'a' then
+			self.dirFacing = "left"
 			self.sprite = self.sprites[4]
 		end
 	end
-	return self:onKeyPressedChar(key)]]
+	return self:onKeyPressedChar(key)
 end
 function P.character:onKeyPressedChar(key)
 	return false

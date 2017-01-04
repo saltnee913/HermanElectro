@@ -1989,12 +1989,18 @@ P.coin = P.superTool:new{name = "coin", description = "All costs must be payed",
 function P.coin:usableOnTile(tile)
 	if tile:instanceof(tiles.toolTaxTile) and not tile.destroyed then
 		return true
+	elseif tile:instanceof(tiles.puddle) then
+		return true
 	end
 	return false
 end
 function P.coin:useToolTile(tile)
 	self.numHeld = self.numHeld-1
-	tile:destroy()
+	if tile:instanceof(tiles.puddle) then
+		player.baseLuckBonus = player.baseLuckBonus+3.5
+	else
+		tile:destroy()
+	end
 end
 
 P.emptyBucket = P.superTool:new{name = "emptyBucket", description = "Fill her up!", image = love.graphics.newImage('Graphics/bucket.png'), imageEmpty = love.graphics.newImage('Graphics/bucket.png'),
@@ -2444,14 +2450,34 @@ function P.playerCloner:useToolNothing()
 end
 P.playerCloner.useToolTile = P.playerCloner.useToolNothing
 
-P.salt = P.superTool:new{name = "Salt", description = "The Deadliest Weapon", image = love.graphics.newImage('Graphics/salt.png'), baseRange = 2, quality = 2}
+P.salt = P.superTool:new{name = "Salt", description = "The deadliest weapon...don't spill!", image = love.graphics.newImage('Graphics/salt.png'), baseRange = 2, quality = 2}
 function P.salt:usableOnAnimal(animal)
 	return animal:instanceof(animalList.snail)
 end
 function P.salt:useToolAnimal(animal)
 	self.numHeld = self.numHeld-1
 	animal:kill()
-	animal:dropTool()
+	local threwBehind = false
+	if player.character.dirFacing=="right" then
+		if animal.tileX<player.tileX then
+			threwBehind = true
+		end
+	elseif player.character.dirFacing=="down" then
+		if animal.tileY<player.tileY then
+			threwBehind = true
+		end
+	elseif player.character.dirFacing=="left" then
+		if animal.tileX>player.tileX then
+			threwBehind = true
+		end
+	elseif player.character.dirFacing=="up" then
+		if animal.tileY>player.tileY then
+			threwBehind = true
+		end
+	end
+	if threwBehind then
+		animal:dropTool()
+	end
 end
 
 P.shell = P.superTool:new{name = "Shell", description = "Curl up and hide", image = love.graphics.newImage('Graphics/shell.png'), baseRange = 0, quality = 2}
@@ -2598,6 +2624,8 @@ function P.pickaxe:useToolPushable(pushable)
 	pushable:destroy()
 end
 
+P.luckyPenny = P.coin:new{name = "Lucky Penny", description = "May all your wishes come true", quality = 2, image = love.graphics.newImage('Graphics/luckypenny.png')}
+
 P.numNormalTools = 7
 
 --[[ideas:
@@ -2721,5 +2749,6 @@ P:addTool(P.glitch)
 P:addTool(P.tileMagnet)
 P:addTool(P.rottenMeat)
 P:addTool(P.pickaxe)
+P:addTool(P.luckyPenny)
 
 return tools

@@ -438,7 +438,7 @@ function love.load()
 		setChar = player.character
 	end
 
-	player = { 	keysHeld = 0, clonePos = {x = 0, y = 0, z = 0}, dead = false, elevation = 0, safeFromAnimals = false, bonusRange = 0, active = true, waitCounter = 0, tileX = 10, tileY = 6, x = (1-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10, 
+	player = { 	baseLuckBonus = 0, keysHeld = 0, clonePos = {x = 0, y = 0, z = 0}, dead = false, elevation = 0, safeFromAnimals = false, bonusRange = 0, active = true, waitCounter = 0, tileX = 10, tileY = 6, x = (1-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10, 
 			y = (6-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10, prevTileX = 3, prevTileY 	= 10,
 			prevx = (3-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10,
 			prevy = (10-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10,
@@ -2291,6 +2291,12 @@ function resetPlayerAttributesStep()
 	end
 end
 
+function getLuckBonus()
+	local luckBonus = player.baseLuckBonus
+	luckBonus = luckBonus+3.5*tools.luckyPenny.numHeld
+	return luckBonus
+end
+
 function enterRoom(dir)
 	mushroomMode = false
 	globalTint = {1,1,1}
@@ -2705,7 +2711,7 @@ function love.keypressed(key, unicode)
 	end
 	keyTimer.timeLeft = keyTimer.base
 	waitTurn = false
-	if player.character:onKeyPressedChar(key) then
+	if player.character:onKeyPressed(key) then
 		updateGameState(false)
 	end
    	if player.waitCounter<=0 then

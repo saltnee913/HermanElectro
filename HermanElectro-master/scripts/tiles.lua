@@ -494,6 +494,12 @@ function P.wall:destroy()
 	self.dirSend = {0,0,0,0}
 	self.overlay = nil
 	self.yOffset = 0
+	if not self.hidesDungeon then
+		local bonusDungeonChance = util.random(100, 'misc')
+		if bonusDungeonChance<getLuckBonus() then
+			self.hidesDungeon = true
+		end
+	end
 	if self.hidesDungeon then
 		for i = 1, roomHeight do
 			for j = 1, roomLength do

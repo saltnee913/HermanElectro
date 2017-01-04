@@ -156,7 +156,14 @@ end
 function P.animal:kill()
 	self.dead = true
 	self.sprite = self.deadSprite
-	if self.willDropTool and room[self.tileY][self.tileX]==nil then
+	if self.canDropTool and not self.willDropTool then
+		local bonusDropChance = util.random(100, 'toolDrop')
+		if bonusDropChance<getLuckBonus() then
+			self.willDropTool = true
+		end
+	end
+	if self.willDropTool and (room[self.tileY][self.tileX]==nil or room[self.tileY][self.tileX].destroyed
+	or room[self.tileY][self.tileX]:instanceof(tiles.pitbullTile)) then
 		self:dropTool()
 	end
 end
@@ -292,7 +299,7 @@ function P.pitbull:willKillPlayer()
 end
 function P.pitbull:dropTool()
 	room[self.tileY][self.tileX] = tiles.supertoolTile:new()
-	local whichTool = util.random(m2, 'toolDrop')
+	local whichTool = util.random(2, 'toolDrop')
 	if whichTool==1 then
 		room[self.tileY][self.tileX].tool = tools.meat
 	else
@@ -316,7 +323,14 @@ end
 function P.snail:kill()
 	self.dead = true
 	self.sprite = self.deadSprite
-	if self.willDropTool and room[self.tileY][self.tileX]==nil then
+	if self.canDropTool and not self.willDropTool then
+		local bonusDropChance = util.random(100, 'toolDrop')
+		if bonusDropChance<getLuckBonus() then
+			self.willDropTool = true
+		end
+	end
+	if self.willDropTool and (room[self.tileY][self.tileX]==nil or room[self.tileY][self.tileX].destroyed
+	or room[self.tileY][self.tileX]:instanceof(tiles.pitbullTile)) then
 		self:dropTool()
 	end
 	unlocks = require('scripts.unlocks')
@@ -340,7 +354,14 @@ end
 function P.conductiveSnail:kill()
 	self.dead = true
 	self.sprite = self.deadSprite
-	if self.willDropTool and room[self.tileY][self.tileX]==nil then
+	if self.canDropTool and not self.willDropTool then
+		local bonusDropChance = util.random(100, 'toolDrop')
+		if bonusDropChance<getLuckBonus() then
+			self.willDropTool = true
+		end
+	end
+	if self.willDropTool and (room[self.tileY][self.tileX]==nil or room[self.tileY][self.tileX].destroyed
+	or room[self.tileY][self.tileX]:instanceof(tiles.pitbullTile)) then
 		self:dropTool()
 	end
 	unlocks = require('scripts.unlocks')
@@ -354,7 +375,14 @@ end
 function P.glueSnail:kill()
 	self.dead = true
 	self.sprite = self.deadSprite
-	if self.willDropTool and room[self.tileY][self.tileX]==nil then
+	if self.canDropTool and not self.willDropTool then
+		local bonusDropChance = util.random(100, 'toolDrop')
+		if bonusDropChance<getLuckBonus() then
+			self.willDropTool = true
+		end
+	end
+	if self.willDropTool and (room[self.tileY][self.tileX]==nil or room[self.tileY][self.tileX].destroyed
+	or room[self.tileY][self.tileX]:instanceof(tiles.pitbullTile)) then
 		self:dropTool()
 	end
 end
