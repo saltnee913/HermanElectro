@@ -2591,6 +2591,18 @@ function P.shift:useToolTile(tile, tileY, tileX)
 	room[player.tileY][player.tileX]:onEnter()
 end
 
+P.block = P.superTool:new{name = "Mental block", description = "Poof", image = love.graphics.newImage('Graphics/woodwall.png'), baseRange = 1, quality = 3}
+function P.block:usableOnNothing()
+	return true
+end
+function P.block:usableOnTile(tile)
+	return false
+end
+function P.block:useToolNothing(tileLocY, tileLocX)
+	self.numHeld = self.numHeld-1
+	room[tileLocY][tileLocX] = tiles.wall:new()
+end
+
 P.tileMagnet = P.superTool:new{name = "Super Magnet", description = "It pulls its weight", image = love.graphics.newImage('Graphics/tilemagnet.png'), quality = 3, baseRange = 4}
 function P.tileMagnet:usableOnTile(tile, dist)
 	local tileX = 0
@@ -2709,7 +2721,7 @@ P.numNormalTools = 7
 ]]
 
 function P.resetTools()
-	P[1] = P.saw
+	P[1] = P.block
 	P[2] = P.ladder
 	P[3] = P.wireCutters
 	P[4] = P.waterBottle
@@ -2825,6 +2837,7 @@ P:addTool(P.rottenMeat)
 P:addTool(P.pickaxe)
 P:addTool(P.luckyPenny)
 P:addTool(P.bouncer)
+P:addTool(P.block)
 
 P.resetTools()
 
