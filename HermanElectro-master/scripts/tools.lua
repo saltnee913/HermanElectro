@@ -2953,7 +2953,7 @@ P:addTool(P.bombBoxSpawner)
 P:addTool(P.jackInTheBoxSpawner)
 P:addTool(P.salt)
 P:addTool(P.shell)
-P:addTool(P.shift) Lets talk about this one
+P:addTool(P.shift) --Lets talk about this one
 P:addTool(P.glitch)
 P:addTool(P.tileMagnet)
 P:addTool(P.rottenMeat)
