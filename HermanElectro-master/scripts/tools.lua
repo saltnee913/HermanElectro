@@ -1105,7 +1105,7 @@ function P.lamp:useToolNothing(tileY, tileX)
 	room[tileY][tileX] = tiles.lamp:new()
 end
 
-P.boxSpawner = P.superTool:new{name = "boxSpawner", description = "Pushables #0", baseRange = 1, image = love.graphics.newImage('Graphics/box.png'), quality = 2}
+P.boxSpawner = P.superTool:new{name = "boxSpawner", description = "Pushable #0", baseRange = 1, image = love.graphics.newImage('Graphics/box.png'), quality = 2}
 function P.boxSpawner:usableOnNothing(tileY, tileX)
 	if tileY==player.tileY and tileX==player.tileX then return false end
 	for i = 1, #animals do
@@ -1243,7 +1243,7 @@ function P.gateBreaker:useToolTile(tile)
 	tile:destroy()
 end
 
-P.conductiveBoxSpawner = P.boxSpawner:new{name = "conductiveBoxSpawner", description = "", image = love.graphics.newImage('Graphics/conductiveBox.png'), quality = 2}
+P.conductiveBoxSpawner = P.boxSpawner:new{name = "conductiveBoxSpawner", description = "", image = love.graphics.newImage('Graphics/conductiveBox.png'), quality = 3}
 function P.conductiveBoxSpawner:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld-1
 	local toSpawn = pushableList[5]:new()
@@ -1507,7 +1507,7 @@ function P.toolReroller:useToolNothing()
 	self.numHeld = self.numHeld-1
 end
 
-P.roomReroller = P.superTool:new{name = "roomReroller", description = "Tile transformation", baseRange = 0, image = love.graphics.newImage('Graphics/roomreroller.png'), quality = 4}
+P.roomReroller = P.superTool:new{name = "roomReroller", description = "Tile transformation", baseRange = 0, image = love.graphics.newImage('Graphics/roomreroller.png'), quality = 5}
 function P.roomReroller:usableOnNothing()
 	return true
 end
@@ -1832,7 +1832,7 @@ function P.gabeMaker:useToolNothing(tileY, tileX)
 end
 P.gabeMaker.useToolTile = P.gabeMaker.useToolNothing
 
-P.roomUnlocker = P.superTool:new{name = "roomUnlocker", description = "Gatecrashing", baseRange = 0, image = love.graphics.newImage('Graphics/roomunlocker.png'), quality = 1}
+P.roomUnlocker = P.superTool:new{name = "Room Unlocker", description = "Gatecrashing", baseRange = 0, image = love.graphics.newImage('Graphics/roomunlocker.png'), quality = 2}
 function P.roomUnlocker:usableOnNothing()
 	return true
 end
@@ -1843,7 +1843,7 @@ function P.roomUnlocker:useToolNothing()
 end
 P.roomUnlocker.useToolTile = P.roomUnlocker.useToolNothing
 
-P.axe = P.superTool:new{name = "axe", description = "Throw it or swing it.", baseRange = 5, image = love.graphics.newImage('Graphics/axe.png'), quality = 2}
+P.axe = P.superTool:new{name = "Axe", description = "Throw it or swing it.", baseRange = 5, image = love.graphics.newImage('Graphics/axe.png'), quality = 2}
 P.axe.usableOnTile = P.saw.usableOnTile
 P.axe.usableOnAnimal = P.gun.usableOnAnimal
 P.axe.useToolAnimal = P.gun.useToolAnimal
@@ -1876,7 +1876,7 @@ function P.lube:useToolTile(tile, tileY, tileX)
 	end
 end
 
-P.knife = P.superTool:new{name = "knife", description = "Take the plunge, or cut your ties.", baseRange = 5, image = love.graphics.newImage('Graphics/knife.png'), quality = 2}
+P.knife = P.superTool:new{name = "knife", description = "Take the plunge and cut your ties.", baseRange = 5, image = love.graphics.newImage('Graphics/knife.png'), quality = 2}
 P.knife.usableOnAnimal = P.gun.usableOnAnimal
 P.knife.usableOnTile = P.wireCutters.usableOnTile
 P.knife.useToolAnimal = P.gun.useToolAnimal
@@ -1900,7 +1900,7 @@ function P.superSnowball:useToolAnimal(animal)
 	animal.frozen = true
 end
 
-P.snowballGlobal = P.snowball:new{name = "snowballGlobal", description = "Iceage", image = love.graphics.newImage('Graphics/snowballglobal.png'), baseRange = 0, quality = 2}
+P.snowballGlobal = P.snowball:new{name = "snowballGlobal", description = "Iceage", image = love.graphics.newImage('Graphics/snowballglobal.png'), baseRange = 0, quality = 3}
 
 function P.snowballGlobal:usableOnNothing()
 	return true
@@ -2157,7 +2157,7 @@ function P.sock:useToolTile(tile)
 end
 P.sock.useToolNothing = P.sock.useToolTile
 
-P.gasPourer = P.superTool:new{name = "gasPourer", description = "Sentient cloud", image = love.graphics.newImage('Graphics/gaspourer.png'), quality = 2, baseRange = 1}
+P.gasPourer = P.superTool:new{name = "gasPourer", description = "Sentient cloud", image = love.graphics.newImage('Graphics/gaspourer.png'), quality = 4, baseRange = 1}
 function P.gasPourer:usableOnNothing()
 	return true
 end
@@ -2300,7 +2300,7 @@ function P.tileCloner:nothingIsSomething()
 	return true
 end
 
-P.shopReroller = P.superTool:new{name = "shopReroller", description = "Re-roll rquirements and items.", image = love.graphics.newImage('Graphics/shopreroller.png'), quality = 1}
+P.shopReroller = P.superTool:new{name = "shopReroller", description = "Re-roll rquirements and items.", image = love.graphics.newImage('Graphics/shopreroller.png'), quality = 2}
 function P.shopReroller:usableOnTile(tile)
 	return true
 end
@@ -2321,7 +2321,7 @@ function P.shopReroller:useToolTile(tile)
 end
 P.shopReroller.useToolNothing = P.shopReroller.useToolTile
 
-P.ghostStep = P.superTool:new{name = "ghostStep", description ="You should tap that!", image = love.graphics.newImage('Graphics/ghoststep.png'), baseRange = 4, quality = 1}
+P.ghostStep = P.superTool:new{name = "ghostStep", description ="You should tap that!", image = love.graphics.newImage('Graphics/ghoststep.png'), baseRange = 4, quality = 4}
 function P.ghostStep:usableOnTile()
 	return true
 end
@@ -2498,7 +2498,7 @@ function P.playerCloner:useToolNothing()
 end
 P.playerCloner.useToolTile = P.playerCloner.useToolNothing
 
-P.salt = P.superTool:new{name = "Salt", description = "The deadliest weapon...don't spill!", image = love.graphics.newImage('Graphics/salt.png'), baseRange = 2, quality = 2}
+P.salt = P.superTool:new{name = "Salt", description = "The deadliest weapon...don't spill!", image = love.graphics.newImage('Graphics/salt.png'), baseRange = 2, quality = 1}
 function P.salt:usableOnAnimal(animal)
 	return animal:instanceof(animalList.snail)
 end
@@ -2562,7 +2562,7 @@ function P.glitch:useToolTile(tile, tileY, tileX)
 	globalPowerBlock = true
 end
 
-P.bouncer = P.superTool:new{name = "Bouncer", description = "This club is for attractive people only", image = love.graphics.newImage('Graphics/bouncer.png'), baseRange = 1, quality = 2}
+P.bouncer = P.superTool:new{name = "Bouncer", description = "This club is for attractive people only", image = love.graphics.newImage('Graphics/bouncer.png'), baseRange = 1, quality = 1}
 function P.bouncer:usableOnTile(tile, tileY, tileX)
 	if tile.blocksMovement and tile:obstructsMovement() then return true end
 end
@@ -2764,7 +2764,7 @@ function P.helmet:useToolTile(tile, tileY, tileX)
 	room[player.tileY][player.tileX]:onEnter(player)
 end
 
-P.stealthBomber = P.superTool:new{name = "Steal Bomber", description = "Drop 'n' Go", image = love.graphics.newImage('Graphics/stealthbomber.png'), baseRange = 2, quality = 3}
+P.stealthBomber = P.superTool:new{name = "Stealth Bomber", description = "Drop 'n' Go", image = love.graphics.newImage('Graphics/stealthbomber.png'), baseRange = 2, quality = 3}
 P.stealthBomber.getToolableTiles = P.tool.getToolableTilesBox
 function P.stealthBomber:usableOnNothing(tileY, tileX)
 	for i = 1, #pushables do
@@ -2910,18 +2910,18 @@ P:addTool(P.gabeMaker)
 P:addTool(P.roomUnlocker)
 P:addTool(P.axe) 
 P:addTool(P.lube) 
-P:addTool(P.snowball)
+--P:addTool(P.snowball)
 P:addTool(P.superSnowball)
 P:addTool(P.snowballGlobal)
 P:addTool(P.superBrick)
 P:addTool(P.portalPlacer)
-P:addTool(P.suicideKing)
+--P:addTool(P.suicideKing) EXPLAIN THIS SHIT
 P:addTool(P.screwdriver)
 P:addTool(P.laptop)
 P:addTool(P.wireExtender)
 P:addTool(P.lamp)
 P:addTool(P.coin) 
-P:addTool(P.knife)
+--P:addTool(P.knife) BROKEN!
 P:addTool(P.mask)
 P:addTool(P.growthHormones)
 P:addTool(P.robotArm)
@@ -2952,7 +2952,7 @@ P:addTool(P.bombBoxSpawner)
 P:addTool(P.jackInTheBoxSpawner)
 P:addTool(P.salt)
 P:addTool(P.shell)
-P:addTool(P.shift)
+--P:addTool(P.shift) Lets talk about this one
 P:addTool(P.glitch)
 P:addTool(P.tileMagnet)
 P:addTool(P.rottenMeat)
