@@ -2616,7 +2616,7 @@ function P.bouncer:useToolTile(tile, tileY, tileX)
 	end
 end
 
-P.shift = P.superTool:new{name = "Shift", description = "Now slide to the left", image = love.graphics.newImage('Graphics/shift.png'), baseRange = 1, quality = 2}
+P.shift = P.superTool:new{name = "Shift", description = "Now slide to the left", image = love.graphics.newImage('Graphics/shift.png'), baseRange = 1, quality = 1}
 function P.shift:usableOnNothing()
 	return true
 end
@@ -2737,7 +2737,7 @@ function P.pickaxe:useToolPushable(pushable)
 	pushable:destroy()
 end
 
-P.luckyPenny = P.coin:new{name = "Lucky Penny", description = "May all your wishes come true", quality = 2, image = love.graphics.newImage('Graphics/luckypenny.png')}
+P.luckyPenny = P.coin:new{name = "Lucky Penny", description = "May all your wishes come true", quality = 3, image = love.graphics.newImage('Graphics/luckypenny.png')}
 
 P.helmet = P.superTool:new{name = "Knight's Helmet", description = "You're feeling slanted", quality = 3, image = love.graphics.newImage('Graphics/helmet.png'), baseRange = 2}
 P.helmet.getToolableTiles = P.tool.getToolableTilesBox
@@ -2953,12 +2953,12 @@ P:addTool(P.bombBoxSpawner)
 P:addTool(P.jackInTheBoxSpawner)
 P:addTool(P.salt)
 P:addTool(P.shell)
---P:addTool(P.shift) Lets talk about this one
+P:addTool(P.shift) Lets talk about this one
 P:addTool(P.glitch)
 P:addTool(P.tileMagnet)
 P:addTool(P.rottenMeat)
 P:addTool(P.pickaxe)
---P:addTool(P.luckyPenny)
+P:addTool(P.luckyPenny)
 P:addTool(P.bouncer)
 P:addTool(P.block)
 P:addTool(P.stealthBomber)
