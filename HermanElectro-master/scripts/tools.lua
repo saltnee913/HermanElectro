@@ -2434,7 +2434,7 @@ function P.greed:useToolNothing()
 end
 P.greed.useToolTile = P.greed.useToolNothing
 
-P.towel = P.superTool:new{name = "Primer", description = "Get that blue paint off!", image = love.graphics.newImage('Graphics/towel.png')}
+P.towel = P.superTool:new{name = "Primer", description = "Get that blue paint off!", image = love.graphics.newImage('Graphics/towel.png'), quality = 4}
 function P.towel:usableOnTile(tile)
 	if tile.destroyed then return false end
 	if tile:instanceof(tiles.superStickyButton) then return true
@@ -2473,7 +2473,7 @@ function P.towel:useToolTile(tile, tileY, tileX)
 end
 
 P.playerCloner  = P.superTool:new{name = "Clone Spawner", description = "Make a new you", cloneExists = false, baseRange = 0, image = love.graphics.newImage('Graphics/playercloner.png'),
-imageNoClone = love.graphics.newImage('Graphics/playercloner.png'), imageClone = love.graphics.newImage('Graphics/playercloner2.png')}
+imageNoClone = love.graphics.newImage('Graphics/playercloner.png'), imageClone = love.graphics.newImage('Graphics/playercloner2.png'), quality = 3}
 function P.playerCloner:usableOnNothing()
 	return true
 end
