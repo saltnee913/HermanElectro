@@ -2216,6 +2216,50 @@ function P.playerTile:onEnter()
 	end
 end
 
+P.tree = P.wall:new{name = "tree", level = 0, sprite = love.graphics.newImage('Graphics/tree0.png'),
+spriteList = {love.graphics.newImage('Graphics/tree1.png'), love.graphics.newImage('Graphics/tree2.png'), love.graphics.newImage('Graphics/tree3.png')}}
+function P.tree:updateSprite()
+	if self.level==1 then
+		self.sprite = self.spriteList[1]
+	elseif self.level==2 then
+		self.sprite = self.spriteList[2]
+	elseif self.level==3 then
+		self.sprite = self.spriteList[3]
+	end
+end
+function P.tree:getHeight()
+	if self.level==0 then
+		return 0
+	elseif self.level==1 then
+		return 3
+	elseif self.level==2 then
+		return 6
+	elseif self.level==3 then
+		return 9
+	end
+end
+function P.tree:getYOffset()
+	if self.level==0 then
+		return 0
+	elseif self.level==1 then
+		return -3
+	elseif self.level==2 then
+		return -6
+	elseif self.level==3 then
+		return -9
+	end
+end
+function P.tree:destroy()
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]==self then
+				room[i][j] = tiles.supertoolTile:new()
+				room[i][j].tool = tools.seeds
+			end
+		end
+	end
+end
+
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
 tiles[3] = P.powerSupply
@@ -2393,5 +2437,6 @@ tiles[174] = P.debugStairs
 tiles[175] = P.playerTile
 tiles[176] = P.lemonade
 tiles[177] = P.rottenMeat
+tiles[178] = P.tree
 
 return tiles

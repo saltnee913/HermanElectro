@@ -496,11 +496,18 @@ function P.waterBottle:usableOnTile(tile)
 		elseif tile:instanceof(tiles.poweredFloor) or tile:instanceof(tiles.pit) then
 			return true
 		end]]
+	elseif tile:instanceof(tiles.tree) and tile.level<3 then
+		return true
 	end
 	return false
 end
 function P.waterBottle:useToolTile(tile)
 	self.numHeld = self.numHeld-1
+	if tile:instanceof(tiles.tree) then
+		tile.level = tile.level+1
+		tile:updateSprite()
+		return
+	end
 	if not tile.destroyed then
 		tile:destroy()
 	--[[elseif not tile.laddered then
@@ -2819,6 +2826,16 @@ function P.stealthBomber:useToolTile(tile, tileY, tileX)
 	end
 end
 
+P.seeds = P.superTool:new{name = "Seeds", description = "Go forth and sow your wild oats", baseRange = 1, quality = 2, image = love.graphics.newImage('Graphics/seeds.png')}
+function P.seeds:usableOnNothing()
+	return true
+end
+function P.seeds:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
+	room[tileY][tileX] = tiles.tree:new()
+end
+
+
 P.numNormalTools = 7
 
 --[[ideas:
@@ -2945,6 +2962,7 @@ P:addTool(P.bouncer)
 P:addTool(P.block)
 P:addTool(P.stealthBomber)
 P:addTool(P.icegun)
+P:addTool(P.seeds)
 
 P.resetTools()
 
