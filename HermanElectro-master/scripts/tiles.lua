@@ -2000,6 +2000,8 @@ function P.dungeonEnter:onEnter()
 	room = mainMap[mapy][mapx].room
 	roomHeight = room.height
 	roomLength = room.length
+	createAnimals()
+	createPushables()
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
 			if room[i][j]~=nil and room[i][j]:instanceof(tiles.dungeonExit) then
@@ -2011,6 +2013,7 @@ function P.dungeonEnter:onEnter()
 	end
 	player.prevTileX = player.tileX
 	player.prevTileY = player.tileY
+	player.justTeleported = true
 end
 P.dungeonExit = P.tile:new{name = "dungeonExit"}
 function P.dungeonExit:onEnter()
@@ -2019,6 +2022,7 @@ function P.dungeonExit:onEnter()
 	room = mainMap[mapy][mapx].room
 	roomHeight = room.height
 	roomLength = room.length
+	player.tileX = -1
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
 			if room[i][j]~=nil and room[i][j]:instanceof(tiles.dungeonEnter) then
@@ -2028,6 +2032,40 @@ function P.dungeonExit:onEnter()
 			end
 		end
 	end
+
+	if player.tileX==-1 then
+		for i = 1, roomHeight do
+			for j = 1, roomLength do
+				if room[i][j]~=nil and room[i][j]:instanceof(tiles.wall) and room[i][j].hidesDungeon then
+					room[i][j]:destroy()
+					player.tileY = i
+					player.tileX = j
+					break
+				end
+			end
+		end
+	end
+
+	if player.tileX==-1 then
+		local dirEnterInfo = map.getFieldForRoom(mainMap[mapy][mapx].roomid, "dirEnter")
+		if dirEnterInfo[1]==1 then
+			player.tileY = 1
+			player.tileX = math.floor(roomLength/2)
+		elseif dirEnterInfo[2]==1 then
+			player.tileY = math.floor(roomHeight/2)
+			player.tileX = roomLength
+		elseif dirEnterInfo[3]==1 then
+			player.tileY = roomHeight
+			player.tileX = math.floor(roomLength/2)
+		elseif dirEnterInfo[4]==1 then
+			player.tileY = math.floor(roomHeight/2)
+			player.tileX = 1
+		end
+	end
+
+	createAnimals()
+	createPushables()
+	player.justTeleported = true
 end
 
 P.endDungeonEnter = P.tile:new{name = "endDungeonEnter", sprite = love.graphics.newImage('Graphics/eden.png'), disabled = false}

@@ -788,7 +788,7 @@ function loadLevel(floorPath)
 end
 
 function kill()
-	if editorMode or globalDeathBlock then return end
+	if editorMode or globalDeathBlock or floorIndex<1 then return end
 	if validSpace() and completedRooms[mapy][mapx]>0 then
 		unlocks.unlockUnlockableRef(unlocks.portalUnlock)
 	end
@@ -2443,9 +2443,8 @@ function enterMove()
 			room[player.tileY][player.tileX]:onEnter(player)
 		end
 	end
-
 	if not (player.prevTileY == player.tileY and player.prevTileX == player.tileX) then
-		if room~=nil and room[player.prevTileY][player.prevTileX]~=nil then
+		if room~=nil and not player.justTeleported and room[player.prevTileY][player.prevTileX]~=nil then
 			room[player.prevTileY][player.prevTileX]:onLeave(player)
 		end
 		player.character:onTileLeave()
@@ -2970,6 +2969,7 @@ end
 function postKeypressReset()
 	globalPowerBlock = false
 	globalDeathBlock = false
+	player.justTeleported = false
 end
 
 function playerMoved()
