@@ -2724,6 +2724,7 @@ function P.pickaxe:usableOnNothing()
 	return true
 end
 function P.pickaxe:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
 	P.shovel:useToolNothing(tileY, tileX)
 end
 function P.pickaxe:useToolTile(tile)
@@ -2854,7 +2855,7 @@ function P.resetTools()
 		tools[i].range = tools[i].baseRange
 	end
 end
-
+toolNum = 0
 function P:addTool(tool)
 	self[#self+1] = tool
 	tool.toolid = #self
@@ -2908,10 +2909,10 @@ P:addTool(P.wireBreaker)
 P:addTool(P.powerBreaker)
 P:addTool(P.gabeMaker)
 P:addTool(P.roomUnlocker)
---P:addTool(P.axe) 
---P:addTool(P.lube) 
+P:addTool(P.axe) 
+P:addTool(P.lube) 
 --P:addTool(P.snowball)
---P:addTool(P.knife) BROKEN!
+P:addTool(P.knife)
 P:addTool(P.superSnowball)
 P:addTool(P.snowballGlobal)
 P:addTool(P.superBrick)
