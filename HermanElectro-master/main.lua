@@ -6,6 +6,7 @@ screenScale = 70
 
 debug = true
 loadTutorial = false
+easyMode = false
 gamePaused = false
 
 util = require('scripts.util')
@@ -447,7 +448,7 @@ function love.load()
 
 	map.clearBlacklist()
 
-	if loadTutorial then
+	if loadTutorial or easyMode then
 		player.enterX = player.tileX
 		player.enterY = player.tileY
 		player.totalItemsGiven = {0,0,0,0,0,0,0}
@@ -2378,7 +2379,7 @@ function enterRoom(dir)
 	end
 	currentid = tostring(mainMap[mapy][mapx].roomid)
 	if map.getFieldForRoom(currentid, 'autowin') then completedRooms[mapy][mapx] = 1 end
-	if loadTutorial then
+	if loadTutorial or easyMode then
 		player.enterX = player.tileX
 		player.enterY = player.tileY
 	end
@@ -2654,6 +2655,9 @@ function love.keypressed(key, unicode)
 		end
 		gameTime.timeLeft = gameTime.timeLeft+20000
 	end
+	if key=="y" then
+		easyMode = not easyMode
+	end
 
 
 	--k ability: open doors with k on supertools
@@ -2669,7 +2673,7 @@ function love.keypressed(key, unicode)
 		mainMap.cheated = true--kind of hacky
 	else
 		if key == 'r' then
-			if loadTutorial then
+			if loadTutorial or easyMode then
 				player.dead = false
 				player.y = (player.enterY-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
 				player.tileY = player.enterY
@@ -2686,6 +2690,10 @@ function love.keypressed(key, unicode)
 					end
 					tools[i].numHeld = player.totalItemsGiven[i] - player.totalItemsNeeded[i]
 					if tools[i].numHeld < 0 then tools[i].numHeld = 0 end
+				end
+				if easyMode then
+					listOfItemsNeeded = map.getItemsNeeded(mainMap[mapy][mapx].roomid)
+					tools.giveToolsByArray(listOfItemsNeeded[1])
 				end
 				completedRooms[mapy][mapx] = 0
 				for i = 0, mainMap.height do
