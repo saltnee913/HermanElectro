@@ -7,7 +7,7 @@ require('scripts.object')
 local P = {}
 unlocks = P
 
-P.unlocksFile = 'unlocks.json'
+P.unlocksFile = 'cocks.json'
 
 P.unlocksDisplay = {base = 3, timeLeft = 0, unlockToShow = 1}
 P.frame = love.graphics.newImage('Graphics/unlocksframe.png')
@@ -78,7 +78,9 @@ function P.updateUnlockedSupertools()
 		unlock = unlocks[i]
 		if unlock.toolIds ~= nil and unlock.unlocked == false then
 			for k = 1, #unlock.toolIds do
+				if unlockedSupertools[unlock.toolIds[k].toolid] ~= nil then
 				unlockedSupertools[unlock.toolIds[k].toolid] = false
+			end
 			end
 		end
 	end
