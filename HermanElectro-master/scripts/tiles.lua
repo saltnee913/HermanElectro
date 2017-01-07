@@ -929,7 +929,7 @@ function P.sign:onLeave(player)
 	messageInfo.text = nil
 end
 
-P.rotater = P.button:new{canBePowered = true, dirAccept = {1,0,1,0}, dirSend = {1,0,1,0}, sprite = love.graphics.newImage('Graphics/rotater.png'), poweredSprite = love.graphics.newImage('Graphics/rotater.png')}
+P.rotater = P.button:new{name = "rotater", canBePowered = true, dirAccept = {1,0,1,0}, dirSend = {1,0,1,0}, sprite = love.graphics.newImage('Graphics/rotater.png'), poweredSprite = love.graphics.newImage('Graphics/rotater.png')}
 function P.rotater:updateSprite()
 end
 function P.rotater:onEnter(player)
@@ -2164,7 +2164,7 @@ end
 
 P.halfWall = P.concreteWall:new{name = "halfWall", sprite = love.graphics.newImage('GraphicsColor/halfwall.png'), yOffset = -3}
 
-P.elevator = P.conductiveTile:new{name = "elevator", blocksAnimalMovement = true, yOffset = -3, sprite = love.graphics.newImage('GraphicsColor/elevatordown2.png'), poweredSprite = love.graphics.newImage('GraphicsColor/elevatorup.png')}
+P.elevator = P.conductiveTile:new{name = "elevator", blocksVision = true, blocksAnimalMovement = true, yOffset = -3, sprite = love.graphics.newImage('GraphicsColor/elevatordown2.png'), poweredSprite = love.graphics.newImage('GraphicsColor/elevatorup.png')}
 function P.elevator:postPowerUpdate()
 	if self.powered then
 		self.yOffset = -6
