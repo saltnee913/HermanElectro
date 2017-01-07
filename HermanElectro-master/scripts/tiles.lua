@@ -1145,7 +1145,7 @@ function P.mousetrap:updateSprite()
 	self.poweredSprite = self.sprite
 end
 function P.mousetrap:willKillPlayer()
-	return self.triggered
+	return not self.safe
 end
 function P.mousetrap:postPowerUpdate()
 	if self.bricked then return end
