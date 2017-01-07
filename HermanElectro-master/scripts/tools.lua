@@ -911,7 +911,8 @@ function P.meat:useToolTile(tile)
 	tile.attractsAnimals = true
 end
 
-P.rottenMeat = P.meat:new{image = love.graphics.newImage('Graphics/rottenmeat.png')}
+P.rottenMeat = P.superTool:new{image = love.graphics.newImage('Graphics/rottenmeat.png'), quality = 3}
+P.rottenMeat.usableOnNothing = P.meat.usableOnNothing
 function P.meat:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld-1
 	room[tileY][tileX] = tiles.rottenMeat:new()
@@ -2836,6 +2837,24 @@ function P.seeds:useToolNothing(tileY, tileX)
 	room[tileY][tileX] = tiles.tree:new()
 end
 
+P.supertoolDoubler = P.superTool:new{name = "Supertool Doubler", description = "Power, multiplied", baseRange = 0, quality = 3, image = love.graphics.newImage('Graphics/supertooldoubler.png')}
+function P.supertoolDoubler:usableOnNothing()
+	return true
+end
+function P.supertoolDoubler:usableOnTile()
+	return true
+end
+function P.supertoolDoubler:useToolNothing()
+	self.numHeld = self.numHeld-1
+
+	for i = tools.numNormalTools+1, #tools do
+		if tools[i].numHeld>0 then
+			tools[i].numHeld = tools[i].numHeld*2
+		end
+	end
+end
+P.supertoolDoubler.useToolTile = P.supertoolDoubler.useToolNothing
+
 
 P.numNormalTools = 7
 
@@ -2965,6 +2984,7 @@ P:addTool(P.block)
 P:addTool(P.stealthBomber)
 P:addTool(P.icegun)
 P:addTool(P.seeds)
+P:addTool(P.supertoolDoubler)
 
 P.resetTools()
 
