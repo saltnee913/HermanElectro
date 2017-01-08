@@ -2245,7 +2245,7 @@ function createAnimals()
 						animalToSpawn.loaded = true
 					end
 					animalCounter=animalCounter+1
-					--room[i][j] = nil
+					room[i][j] = nil
 				end
 			end
 		end
@@ -2268,6 +2268,7 @@ function createPushables()
 					pushables[index].prevTileX = pushables[index].tileX
 					pushables[index].prevTileY = pushables[index].tileY
 				end
+				room[i][j] = nil
 			end
 		end
 	end
