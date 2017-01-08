@@ -2866,6 +2866,76 @@ function P.coffee:useToolNothing()
 end
 P.coffee.useToolTile = P.coffee.useToolNothing
 
+P.boxDisplacer = P.superTool:new{name = "boxDisplacer", description = "", heldBox = nil, image = love.graphics.newImage('Graphics/tiledisplacer.png'), baseImage = love.graphics.newImage('Graphics/tiledisplacer.png'), baseRange = 3, quality = 3}
+function P.boxDisplacer:usableOnPushable(pushable)
+	return (not pushable.destroyed) and self.heldBox==nil
+end
+function P.boxDisplacer:usableOnNothing()
+	return self.heldBox~=nil
+end
+function P.boxDisplacer:usableOnTile(tile)
+	return tile:getHeight()==0 and (not tile:obstructsVision()) and self.heldBox~=nil
+end
+function P.boxDisplacer:useToolPushable(pushable)
+	self.heldBox = pushable
+	for i = 1, #pushables do
+		if pushables[i]==pushable then
+			table.remove(pushables, i)
+			return
+		end
+	end
+	self.image = self.heldBox.sprite
+end
+function P.boxDisplacer:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
+	table.insert(pushables, self.heldBox)
+	pushables[#pushables].tileY = tileY
+	pushables[#pushables].tileX = tileX
+	self.heldBox = nil
+	self.image = self.baseImage
+end
+function P.boxDisplacer:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
+	table.insert(pushables, self.heldBox)
+	pushables[#pushables].tileY = tileY
+	pushables[#pushables].tileX = tileX
+	self.heldBox = nil
+	self.image = self.baseImage
+end
+
+P.boxCloner = P.superTool:new{name = "boxCloner", description = "Gain a copy.", heldBox = nil, image = love.graphics.newImage('Graphics/tilecloner.png'), baseImage = love.graphics.newImage('Graphics/tilecloner.png'), baseRange = 3, quality = 4}
+function P.boxCloner:usableOnPushable(pushable)
+	return (not pushable.destroyed) and self.heldBox==nil
+end
+function P.boxCloner:usableOnNothing()
+	return self.heldBox~=nil
+end
+function P.boxCloner:usableOnTile(tile)
+	return tile:getHeight()==0 and (not tile:obstructsVision()) and self.heldBox~=nil
+end
+function P.boxCloner:useToolPushable(pushable)
+	self.heldBox = pushable
+	self.image = pushable.sprite
+end
+function P.boxCloner:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
+	local boxAdd = deepCopy(self.heldBox)
+	table.insert(pushables, boxAdd)
+	pushables[#pushables].tileY = tileY
+	pushables[#pushables].tileX = tileX
+	self.heldBox = nil
+	self.image = self.baseImage
+end
+function P.boxCloner:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
+	local boxAdd = deepCopy(self.heldBox)
+	table.insert(pushables, boxAdd)
+	pushables[#pushables].tileY = tileY
+	pushables[#pushables].tileX = tileX
+	self.heldBox = nil
+	self.image = self.baseImage
+end
+
 P.numNormalTools = 7
 
 --[[ideas:
@@ -2873,7 +2943,7 @@ P.numNormalTools = 7
 ]]
 
 function P.resetTools()
-	P[1] = P.coffee
+	P[1] = P.saw
 	P[2] = P.ladder
 	P[3] = P.wireCutters
 	P[4] = P.waterBottle
@@ -2996,6 +3066,8 @@ P:addTool(P.icegun)
 P:addTool(P.seeds)
 P:addTool(P.supertoolDoubler)
 P:addTool(P.coffee)
+P:addTool(P.boxDisplacer)
+P:addTool(P.boxCloner)
 
 P.resetTools()
 
