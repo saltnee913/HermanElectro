@@ -439,11 +439,11 @@ function love.load()
 		setChar = player.character
 	end
 
-	player = { 	baseLuckBonus = 0, keysHeld = 0, clonePos = {x = 0, y = 0, z = 0}, dead = false, elevation = 0, safeFromAnimals = false, bonusRange = 0, active = true, waitCounter = 0, tileX = 10, tileY = 6, x = (1-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10, 
+	player = { 	baseLuckBonus = 0, keysHeld = 0, biscuitHeld = false, clonePos = {x = 0, y = 0, z = 0}, dead = false, elevation = 0, safeFromAnimals = false, bonusRange = 0, active = true, waitCounter = 0, tileX = 10, tileY = 6, x = (1-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10, 
 			y = (6-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10, prevTileX = 3, prevTileY 	= 10,
 			prevx = (3-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10,
 			prevy = (10-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10,
-			width = 20, height = 20, speed = 250, luckTimer = 0, regularMapLoc = {x = 0, y = 0}, returnFloorIndex = 0, attributes = {flying = false, fear = false, shelled = false, tall = false, extendedRange = 0, sockStep = -1}}
+			width = 20, height = 20, speed = 250, luckTimer = 0, regularMapLoc = {x = 0, y = 0}, returnFloorIndex = 0, attributes = {fast = {fast = false, fastStep = false}, flying = false, fear = false, shelled = false, tall = false, extendedRange = 0, sockStep = -1}}
 	player.character = setChar
 
 	map.clearBlacklist()
@@ -2278,6 +2278,7 @@ function resetPlayerAttributesRoom()
 	player.attributes.fear = false
 	player.attributes.sockStep = -1
 	player.attributes.shelled = false
+	player.attributes.fast = {fast = false, fastStep = false}
 end
 
 function resetPlayerAttributesTool()
@@ -2970,9 +2971,13 @@ function postKeypressReset()
 	globalPowerBlock = false
 	globalDeathBlock = false
 	player.justTeleported = false
+	if player.attributes.fast.fast then
+		player.attributes.fast.fastStep = not player.attributes.fast.fastStep
+	end
 end
 
 function playerMoved()
+	if player.attributes.fast.fastStep then return false end
 	return player.tileX~=player.prevTileX or player.tileY~=player.prevTileY
 end
 

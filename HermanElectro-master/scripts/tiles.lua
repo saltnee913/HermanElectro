@@ -2298,6 +2298,15 @@ function P.tree:destroy()
 	end
 end
 
+P.biscuit = P.tile:new{name = "biscuit", sprite = love.graphics.newImage('Graphics/biscuit.png')}
+function P.biscuit:onEnter(player)
+	player.biscuitHeld = true
+	self.done = true
+	self.isCompleted = true
+	self.isVisible = false
+	self.gone = true
+end
+
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
 tiles[3] = P.powerSupply
@@ -2476,5 +2485,6 @@ tiles[175] = P.playerTile
 tiles[176] = P.lemonade
 tiles[177] = P.rottenMeat
 tiles[178] = P.tree
+tiles[179] = P.biscuit
 
 return tiles

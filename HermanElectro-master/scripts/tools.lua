@@ -2855,6 +2855,16 @@ function P.supertoolDoubler:useToolNothing()
 end
 P.supertoolDoubler.useToolTile = P.supertoolDoubler.useToolNothing
 
+P.coffee = P.superTool:new{name = "Coffee", description = "Caffeine rush", image = love.graphics.newImage('Graphics/coffee.png'), quality = 2, baseRange = 0}
+function P.coffee:usableOnNothing()
+	return true
+end
+P.coffee.usableOnTile = P.coffee.usableOnNothing
+function P.coffee:useToolNothing()
+	self.numHeld = self.numHeld-1
+	player.attributes.fast = {fast = true, fastStep = false}
+end
+P.coffee.useToolTile = P.coffee.useToolNothing
 
 P.numNormalTools = 7
 
@@ -2863,7 +2873,7 @@ P.numNormalTools = 7
 ]]
 
 function P.resetTools()
-	P[1] = P.saw
+	P[1] = P.coffee
 	P[2] = P.ladder
 	P[3] = P.wireCutters
 	P[4] = P.waterBottle
@@ -2874,7 +2884,7 @@ function P.resetTools()
 		tools[i].range = tools[i].baseRange
 	end
 end
-toolNum = 0
+
 function P:addTool(tool)
 	self[#self+1] = tool
 	tool.toolid = #self
@@ -2886,7 +2896,7 @@ P:addTool(P.bomb)
 P:addTool(P.electrifier)
 P:addTool(P.delectrifier)
 --P:addTool(P.unsticker)
---P:addTool(P.doorstop)
+P:addTool(P.doorstop)
 P:addTool(P.charger)
 P:addTool(P.missile)
 P:addTool(P.shovel)
@@ -2985,6 +2995,7 @@ P:addTool(P.stealthBomber)
 P:addTool(P.icegun)
 P:addTool(P.seeds)
 P:addTool(P.supertoolDoubler)
+P:addTool(P.coffee)
 
 P.resetTools()
 
