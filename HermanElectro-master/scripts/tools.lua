@@ -3035,6 +3035,73 @@ function P.spinningSword:useToolNothing()
 end
 P.spinningSword.useToolTile = P.spinningSword.useToolNothing
 
+P.ironMan = P.superTool:new{name = "Daily Supplements", description = "Do you even lift?", image = love.graphics.newImage('Graphics/ironman.png'),
+baseRange = 1, quality = 4}
+function P.ironMan:usableOnTile(tile)
+	local tileY
+	local tileX
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]==tile then
+				tileY = i
+				tileX = j
+			end
+		end
+	end
+	if player.tileX==tileX and player.tileY==tileY then return false end
+	if player.tileY==tileY then
+		if player.tileX<tileX then
+			if room[tileY][roomLength]~=nil then return false end
+		elseif player.tileX>tileX then
+			if room[tileY][1]~=nil then return false end
+		end
+	elseif player.tileX==tileX then
+		if player.tileY<tileY then
+			if room[roomHeight][tileX]~=nil then return false end
+		elseif player.tileY>tileY then
+			if room[1][tileX]~=nil then return false end
+		end
+	end
+	return true
+end
+function P.ironMan:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
+
+	if player.tileY==tileY then
+		if player.tileX<tileX then
+			for i = roomLength, tileX+1, -1 do
+				if room[tileY][i-1]~=nil then
+					room[tileY][i] = room[tileY][i-1]
+					room[tileY][i-1] = nil
+				end
+			end
+		elseif player.tileX>tileX then
+			for i = 1, tileX-1 do
+				if room[tileY][i+1]~=nil then
+					room[tileY][i] = room[tileY][i+1]
+					room[tileY][i+1] = nil
+				end
+			end
+		end
+	elseif player.tileX==tileX then
+		if player.tileY<tileY then
+			for i = roomHeight, tileY+1, -1 do
+				if room[i-1][tileX]~=nil then
+					room[i][tileX] = room[i-1][tileX]
+					room[i-1][tileX] = nil
+				end
+			end
+		elseif player.tileY>tileY then
+			for i = 1, tileY-1 do
+				if room[i+1][tileX]~=nil then
+					room[i][tileX] = room[i+1][tileX]
+					room[i+1][tileX] = nil
+				end
+			end
+		end
+	end
+end
+
 P.numNormalTools = 7
 
 --[[ideas:
@@ -3161,6 +3228,7 @@ P:addTool(P.luckyPenny)
 P:addTool(P.bouncer)
 P:addTool(P.block)
 P:addTool(P.stealthBomber)
+
 P:addTool(P.icegun)
 P:addTool(P.seeds)
 P:addTool(P.supertoolDoubler)
@@ -3170,6 +3238,7 @@ P:addTool(P.boxCloner)
 P:addTool(P.tilePusher)
 P:addTool(P.portalPlacerDouble)
 P:addTool(P.spinningSword)
+P:addTool(P.ironMan)
 
 P.resetTools()
 
