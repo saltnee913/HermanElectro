@@ -3102,6 +3102,26 @@ function P.ironMan:useToolTile(tile, tileY, tileX)
 	end
 end
 
+P.supertoolReroller = P.superTool:new{name = "Supertool Reroller", description = "You're rolling with the big boys now", 
+image = love.graphics.newImage('Graphics/supertoolreroller.png'), baseRange = 0, quality = 3}
+function P.supertoolReroller:usableOnNothing()
+	return true
+end
+P.supertoolReroller.usableOnTile = P.supertoolReroller.usableOnNothing
+function P.supertoolReroller:useToolNothing()
+	self.numHeld = self.numHeld-1
+
+	local toolCount = 0
+	for i = tools.numNormalTools+1, #tools do
+		toolCount = toolCount+tools[i].numHeld
+		tools[i].numHeld = 0
+	end
+	tools.giveRandomTools(0, toolCount+1)
+end
+P.supertoolReroller.useToolTile = P.supertoolReroller.useToolNothing
+
+P.tunneler = P.superTool:new{name = "Tunneler", description = ""}
+
 P.numNormalTools = 7
 
 --[[ideas:
@@ -3239,6 +3259,7 @@ P:addTool(P.tilePusher)
 P:addTool(P.portalPlacerDouble)
 P:addTool(P.spinningSword)
 P:addTool(P.ironMan)
+P:addTool(P.supertoolReroller)
 
 P.resetTools()
 
