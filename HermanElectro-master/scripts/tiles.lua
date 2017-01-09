@@ -161,7 +161,11 @@ function P.tile:obstructsVision()
 	else return self:getHeight()-3>player.elevation end
 end
 function P.tile:obstructsMovement()
-	return math.abs(player.elevation-self:getHeight())>3 and self.blocksMovement
+	if math.abs(player.elevation-self:getHeight())<=3 then
+		return false
+	else
+		return true
+	end
 end
 function P.tile:getHeight()
 	if self.destroyed then
@@ -780,6 +784,13 @@ function P.hDoor:lightTest(x,y)
 			lightTest(x, y+1)
 		end
 	end
+end
+function P.hDoor:obstructsMovement()
+	if math.abs(player.elevation)<3 then return false
+	else return true end
+end
+function P.hDoor:obstructsMovementAnimal()
+	return true
 end
 
 P.vDoor= P.tile:new{name = "hDoor", blocksVision = true, canBePowered = false, dirSend = {0,0,0,0}, dirAccept = {0,0,0,0}, sprite = love.graphics.newImage('Graphics/door.png'), closedSprite = love.graphics.newImage('Graphics/door.png'), openSprite = love.graphics.newImage('Graphics/doorsopen.png')}
@@ -1727,6 +1738,20 @@ P.reinforcedConductiveGlass = P.reinforcedGlass:new{name = "reinforcedConductive
 P.fog = P.tile:new{name = "fog", sprite = love.graphics.newImage('Graphics/fog.png'), blocksVision = true}
 function P.fog:obstructsVision()
 	return player.elevation==0
+end
+function P.fog:obstructsMovementAnimal(animal)
+	if math.abs(animal.elevation)<3 then
+		return false
+	else
+		return true
+	end
+end
+function P.fog:obstructsMovement()
+	if math.abs(player.elevation)<3 then
+		return false
+	else
+		return true
+	end
 end
 
 P.accelerator = P.conductiveTile:new{name = "accelerator", sprite = love.graphics.newImage('Graphics/accelerator.png'), poweredSprite = love.graphics.newImage('Graphics/accelerator.png')}

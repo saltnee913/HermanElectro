@@ -2758,6 +2758,13 @@ function love.keypressed(key, unicode)
 					enterRoom(1)
 				end
 			end
+			if room[player.tileY][player.tileX]==nil and math.abs(player.elevation)>3 then
+				player.tileX = player.prevTileX
+				player.tileY = player.prevTileY
+			elseif room[player.tileY][player.tileX]~=nil and room[player.tileY][player.tileX]:obstructsMovement() then
+				player.tileX = player.prevTileX
+				player.tileY = player.prevTileY
+			end
 		end
 	end
 	if (key == "w" or key == "a" or key == "s" or key == "d") and player.waitCounter>0 then
@@ -2812,14 +2819,6 @@ function love.keypressed(key, unicode)
 	end
 	noPowerUpdate = not player.character.forcePowerUpdate
     if (key=="w" or key=="a" or key=="s" or key=="d") then
-    	for i = 1, roomHeight do
-    		for j = 1, roomLength do
-    			--what is the point of this?
-    			if room[i][j]~=nil and room[i][j].name == "button" then
-    				room[i][j].justPressed = false
-    			end
-    		end
-    	end
     	enterMove()
     	if forcePowerUpdateNext and playerMoved() then
     		noPowerUpdate = false
