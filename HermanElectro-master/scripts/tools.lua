@@ -3129,6 +3129,39 @@ function P.tunneler:useToolNothing(tileY, tileX)
 	room[tileY][tileX] = tiles.tunnel:new()
 end
 
+P.superLadder = P.superTool:new{name = "Super Ladder", description = "", image = love.graphics.newImage('Graphics/ladder.png'),
+baseRange = 1, quality = 3}
+P.superLadder.usableOnNothing = P.ladder.usableOnNothing
+P.superLadder.useToolNothing = P.ladder.useToolNothing
+P.superLadder.usableOnTile = P.ladder.usableOnTile
+function P.superLadder:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld - 1
+	self:spreadLadders(tileY, tileX)
+end
+function P.superLadder:spreadLadders(tileY, tileX)
+	room[tileY][tileX]:ladder()
+	if tileY>1 then
+		if room[tileY-1][tileX]~=nil and self:usableOnTile(room[tileY-1][tileX]) then
+			self:spreadLadders(tileY-1, tileX)
+		end
+	end
+	if tileY<roomHeight then
+		if room[tileY+1][tileX]~=nil and self:usableOnTile(room[tileY+1][tileX]) then
+			self:spreadLadders(tileY+1, tileX)
+		end
+	end
+	if tileX>1 then
+		if room[tileY][tileX-1]~=nil and self:usableOnTile(room[tileY][tileX-1]) then
+			self:spreadLadders(tileY, tileX-1)
+		end
+	end
+	if tileX<roomLength then
+		if room[tileY][tileX+1]~=nil and self:usableOnTile(room[tileY][tileX+1]) then
+			self:spreadLadders(tileY, tileX+1)
+		end
+	end
+end
+
 P.numNormalTools = 7
 
 --[[ideas:
@@ -3267,6 +3300,7 @@ P:addTool(P.portalPlacerDouble)
 P:addTool(P.spinningSword)
 P:addTool(P.ironMan)
 P:addTool(P.supertoolReroller)
+P:addTool(P.superLadder)
 
 
 
