@@ -514,27 +514,6 @@ function P.wall:destroy()
 	self.dirSend = {0,0,0,0}
 	self.overlay = nil
 	self.yOffset = 0
-	if not self.hidesDungeon then
-		local bonusDungeonChance = util.random(100, 'misc')
-		if bonusDungeonChance<getLuckBonus() then
-			self.hidesDungeon = true
-		end
-	end
-	if self.hidesDungeon then
-		for i = 1, roomHeight do
-			for j = 1, roomLength do
-				if room[i][j]==self then
-					room[i][j] = tiles.dungeonEnter:new()
-				end
-			end
-		end
-	end
-end
-function P.wall:onLoad()
-	local dungeonChance = util.random(100, 'misc')
-	if dungeonChance==1 then
-		self.hidesDungeon = true
-	end
 end
 function P.wall:onLeave()
 	updateElevation()
@@ -1001,6 +980,29 @@ P.rotater.onLeaveAnimal = P.rotater.onLeave
 P.cornerRotater = P.rotater:new{name = "cornerRotater", dirSend = {1,1,0,0}, dirAccept = {1,1,0,0}, poweredSprite = love.graphics.newImage('Graphics/cornerrotater.png'), sprite = love.graphics.newImage('Graphics/cornerrotater.png')}
 
 P.concreteWall = P.wall:new{sawable = false, name = "concreteWall", sprite = love.graphics.newImage('GraphicsColor/concretewall3.png'), poweredSprite = love.graphics.newImage('GraphicsColor/concretewall3.png'), electrifiedPoweredSprite = love.graphics.newImage('Graphics/concretewallpowered.png'), electrifiedSprite = love.graphics.newImage('Graphics/concretewallelectrified.png'), destroyedSprite = love.graphics.newImage('Graphics/concretewallbroken.png'), sawable = false}
+function P.wall:onLoad()
+	local dungeonChance = util.random(100, 'misc')
+	if dungeonChance==1 then
+		self.hidesDungeon = true
+	end
+end
+function P.concreteWall:destroy()
+	if not self.hidesDungeon then
+		local bonusDungeonChance = util.random(100, 'misc')
+		if bonusDungeonChance<getLuckBonus() then
+			self.hidesDungeon = true
+		end
+	end
+	if self.hidesDungeon then
+		for i = 1, roomHeight do
+			for j = 1, roomLength do
+				if room[i][j]==self then
+					room[i][j] = tiles.dungeonEnter:new()
+				end
+			end
+		end
+	end
+end
 
 P.concreteWallConductive = P.concreteWall:new{name = "concreteWallConductive", sprite = love.graphics.newImage('Graphics3D/concretewallconductive.png'), poweredSprite = love.graphics.newImage('Graphics3D/concretewallconductive.png'), canBePowered = true, dirAccept = {1,1,1,1}, dirSend = {1,1,1,1}}
 

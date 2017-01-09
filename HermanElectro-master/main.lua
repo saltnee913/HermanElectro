@@ -1813,7 +1813,7 @@ function love.draw()
 		for i = 1, #pushables do
 			if pushables[i]~=nil and not pushables[i].destroyed and litTiles[pushables[i].tileY][pushables[i].tileX]==1 and pushables[i].tileY==j and pushables[i].visible then
 		    	pushablex = (pushables[i].tileX-1)*floor.sprite:getHeight()*scale+wallSprite.width
-		    	pushabley = (pushables[i].tileY-1)*floor.sprite:getWidth()*scale+wallSprite.height
+		    	pushabley = (pushables[i].tileY-1)*floor.sprite:getWidth()*scale+wallSprite.height-pushables[i].elevation*scale
 		    	if pushables[i].conductive and pushables[i].powered then toDraw = pushables[i].poweredSprite
 		    	else toDraw = pushables[i].sprite end
 				love.graphics.draw(toDraw, pushablex, pushabley, 0, scale, scale)
@@ -3005,11 +3005,20 @@ function updateElevation()
 	else
 		player.elevation = room[player.tileY][player.tileX]:getHeight()
 	end
+
 	for i = 1, #animals do
 		if room[animals[i].tileY][animals[i].tileX]==nil then
 			animals[i].elevation = 0
 		else
 			animals[i].elevation = room[animals[i].tileY][animals[i].tileX]:getHeight()
+		end	
+	end
+
+	for i = 1, #pushables do
+		if room[pushables[i].tileY][pushables[i].tileX]==nil then
+			pushables[i].elevation = 0
+		else
+			pushables[i].elevation = room[pushables[i].tileY][pushables[i].tileX]:getHeight()
 		end	
 	end
 end

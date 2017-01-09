@@ -2934,6 +2934,66 @@ function P.boxCloner:useToolTile(tile, tileY, tileX)
 	self.image = self.baseImage
 end
 
+P.tilePusher = P.superTool:new{name = "tilePusher", description = "Pushy, pushy", image = love.graphics.newImage('Graphics/shovel.png'), baseRange = 3, quality = 3}
+function P.tilePusher:usableOnTile(tile, dist)
+	local tileX = 0
+	local tileY = 0
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]==tile then
+				tileX = j
+				tileY = i
+			end
+		end
+	end
+	local useLoc = {x = 0, y = 0}
+	if player.tileX==tileX then
+		if player.tileY>tileY then
+			useLoc = {x = tileX, y = tileY-1}
+		else
+			useLoc = {x = tileX, y = tileY+1}
+		end
+	else
+		if player.tileX>tileX then
+			useLoc = {x = tileX-1, y = tileY}
+		else
+			useLoc = {x = tileX+1, y = tileY}
+		end
+	end
+	if room[useLoc.y]==nil then return false
+	elseif useLoc.x>roomLength or useLoc.x<1 then return false
+	elseif room[useLoc.y][useLoc.x]~=nil and room[useLoc.y][useLoc.x].blocksMovement then return false end
+	for i = 1, #animals do
+		if animals[i].tileX == useLoc.x and animals[i].tileY == useLoc.y then
+			return false
+		end
+	end
+	for i = 1, #pushables do
+		if pushables[i].tileX == useLoc.x and pushables[i].tileY == useLoc.y then
+			return false
+		end
+	end
+	return true
+end
+function P.tilePusher:useToolTile(tile, tileY, tileX)
+	local useLoc = {x = 0, y = 0}
+	if player.tileX==tileX then
+		if player.tileY>tileY then
+			useLoc = {x = tileX, y = tileY-1}
+		else
+			useLoc = {x = tileX, y = tileY+1}
+		end
+	else
+		if player.tileX>tileX then
+			useLoc = {x = tileX-1, y = tileY}
+		else
+			useLoc = {x = tileX+1, y = tileY}
+		end
+	end
+	room[useLoc.y][useLoc.x] = tile
+	room[tileY][tileX] = nil
+end
+
 P.numNormalTools = 7
 
 --[[ideas:
@@ -3066,6 +3126,7 @@ P:addTool(P.supertoolDoubler)
 P:addTool(P.coffee)
 P:addTool(P.boxDisplacer)
 P:addTool(P.boxCloner)
+P:addTool(P.tilePusher)
 
 P.resetTools()
 
