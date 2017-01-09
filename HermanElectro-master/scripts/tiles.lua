@@ -480,10 +480,10 @@ function P.wall:onEnter(player)
 end
 P.wall.onStay = P.wall.onEnter
 function P.wall:onEnterPushable(pushable)
-	if not self.destroyed then
+	--[[if not self.destroyed then
 		pushable.tileX = pushable.prevTileX
 		pushable.tileY = pushable.prevTileY
-	end
+	end]]
 end
 P.wall.onStayPushable = P.wall.onEnterPushable
 
@@ -875,6 +875,9 @@ function P.vPoweredDoor:lightTest(x,y)
 			lightTest(x, y+1)
 		end
 	end
+end
+function P.vPoweredDoor:willDestroyPushable()
+	return self.powered
 end
 
 P.hPoweredDoor = P.vPoweredDoor:new{name = "hPoweredDoor", dirSend = {0,1,0,1}, dirAccept = {0,1,0,1}}

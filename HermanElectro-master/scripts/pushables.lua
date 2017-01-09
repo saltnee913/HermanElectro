@@ -26,6 +26,10 @@ function P.pushable:move(mover)
 		self.tileX = self.prevTileX
 		self.tileY = self.prevTileY
 		return false
+	elseif room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX]:getHeight()>self.elevation then
+		self.tileX = self.prevTileX
+		self.tileY = self.prevTileY
+		return false
 	end
 	local sameSpotCounter = 0
 	for i = 1, #pushables do
@@ -53,7 +57,7 @@ function P.pushable:move(mover)
 		end
 	end
 	if room[self.tileY][self.tileX]~=nil and not room[self.tileY][self.tileX]:instanceof(tiles.endTile) and 
-		(self.prevTileX~=self.tileX or self.prevTileY~=self.tileY) then
+	(self.prevTileX~=self.tileX or self.prevTileY~=self.tileY) then
 		room[self.tileY][self.tileX]:onEnterPushable(self)
 	end
 
@@ -134,7 +138,7 @@ end
 function P.pushable:checkDestruction()
 	if room[self.tileY][self.tileX]~=nil then
 		t = room[self.tileY][self.tileX]
-		if self.destroyed == false and t.blocksMovement then
+		if self.destroyed == false and t:willDestroyPushable() then
 			self.destroyed = true
 			room[self.tileY][self.tileX]:destroyPushable()
 		end
@@ -188,7 +192,15 @@ function P.batteringRam:move(mover)
 
 	if room[self.tileY][self.tileX]~=nil and not room[self.tileY][self.tileX]:instanceof(tiles.endTile) then
 		local tile = room[self.tileY][self.tileX]
-		if tile.sawable or tile:instanceof(tiles.glassWall) then tile:destroy() end
+		if tile.sawable or tile:instanceof(tiles.glassWall) then
+			if self.elevation<tile:getHeight() then
+				tile:destroy()
+			end
+		elseif room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX]:getHeight()>self.elevation then
+			self.tileX = self.prevTileX
+			self.tileY = self.prevTileY
+			return false
+		end
 		room[self.tileY][self.tileX]:onEnterPushable(self)
 	end
 
