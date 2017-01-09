@@ -2934,7 +2934,7 @@ function P.boxCloner:useToolTile(tile, tileY, tileX)
 	self.image = self.baseImage
 end
 
-P.tilePusher = P.superTool:new{name = "tilePusher", description = "Pushy, pushy", image = love.graphics.newImage('Graphics/shovel.png'), baseRange = 3, quality = 3}
+P.tilePusher = P.superTool:new{name = "tilePusher", description = "Pushy, pushy", --[[or "Truly repulsive"]]image = love.graphics.newImage('Graphics/shovel.png'), baseRange = 3, quality = 3}
 function P.tilePusher:usableOnTile(tile, dist)
 	local tileX = 0
 	local tileY = 0
@@ -2976,6 +2976,8 @@ function P.tilePusher:usableOnTile(tile, dist)
 	return true
 end
 function P.tilePusher:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
+
 	local useLoc = {x = 0, y = 0}
 	if player.tileX==tileX then
 		if player.tileY>tileY then
@@ -2992,6 +2994,24 @@ function P.tilePusher:useToolTile(tile, tileY, tileX)
 	end
 	room[useLoc.y][useLoc.x] = tile
 	room[tileY][tileX] = nil
+end
+
+P.portalPlacerDouble = P.superTool:new{name = "Portal Placer 2", stage = 1, description = "Now with new colors!", image = love.graphics.newImage('Graphics/entranceportal2.png'),
+baseImage = love.graphics.newImage('Graphics/entranceportal2.png'), secondImage = love.graphics.newImage('Graphics/exitportal2.png'), baseRange = 1, quality = 2}
+function P.portalPlacerDouble:usableOnNothing()
+	return true
+end
+function P.portalPlacerDouble:useToolNothing(tileY, tileX)
+	if self.stage == 1 then
+		room[tileY][tileX] = tiles.entrancePortal2:new()
+		self.image = self.secondImage
+		self.stage = 2
+	else
+		self.numHeld = self.numHeld-1
+		room[tileY][tileX] = tiles.exitPortal2:new()
+		self.image = self.baseImage
+		self.stage = 1
+	end
 end
 
 P.numNormalTools = 7
@@ -3127,6 +3147,7 @@ P:addTool(P.coffee)
 P:addTool(P.boxDisplacer)
 P:addTool(P.boxCloner)
 P:addTool(P.tilePusher)
+P:addTool(P.portalPlacerDouble)
 
 P.resetTools()
 

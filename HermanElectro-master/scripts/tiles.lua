@@ -1538,6 +1538,61 @@ P.entrancePortal.onStayAnimal = P.entrancePortal.onEnterAnimal
 
 P.exitPortal = P.tile:new{name = "exitPortal", sprite = love.graphics.newImage('Graphics/exitPortal.png')}
 
+P.entrancePortal2 = P.entrancePortal:new{name = "entrancePortal2", sprite = love.graphics.newImage('Graphics/entranceportal2.png')}
+function P.entrancePortal2:onEnter(player)
+	for i = 1, roomHeight do
+		shouldBreak = false
+		for j = 1, roomLength do
+			if room[i][j]~=nil and room[i][j]:instanceof(tiles.exitPortal2) then
+				local movePlayer = true
+				for k = 1, #pushables do
+					if pushables[k].tileX == j and pushables[k].tileY == i then
+						movePlayer = false
+					end
+				end
+				if movePlayer then
+					player.tileX = j
+					player.tileY = i
+				end
+				shouldBreak = true
+				break
+			end
+		end
+		if shouldBreak then break end
+	end
+end
+function P.entrancePortal2:onEnterAnimal(animal)
+	for i = 1, roomHeight do
+		shouldBreak = false
+		for j = 1, roomLength do
+			if room[i][j]~=nil and room[i][j]:instanceof(tiles.exitPortal2) then
+				local moveAnimal = true
+				for k = 1, #pushables do
+					if pushables[k].tileX == j and pushables[k].tileY == i then
+						moveAnimal = false
+					end
+				end
+				for k = 1, #animals do
+					if animals[k].tileX == j and animals[k].tileY == i and not animals[k].dead then
+						moveAnimal = false
+					end
+				end
+				if moveAnimal then
+					animal.tileX = j
+					animal.tileY = i
+				end
+				shouldBreak = true
+				break
+			end
+		end
+		if shouldBreak then break end
+	end
+end
+P.entrancePortal2.onStay = P.entrancePortal2.onEnter
+P.entrancePortal2.onStayAnimal = P.entrancePortal2.onEnterAnimal
+
+P.exitPortal2 = P.tile:new{name = "exitPortal2", sprite = love.graphics.newImage('Graphics/exitportal2.png')}
+
 P.treasureTile2 = P.treasureTile:new{name = "treasureTile2", sprite = love.graphics.newImage('GraphicsBrush/tt2.png')}
 
 function P.treasureTile2:onEnter()
@@ -2547,5 +2602,7 @@ tiles[176] = P.lemonade
 tiles[177] = P.rottenMeat
 tiles[178] = P.tree
 tiles[179] = P.biscuit
+tiles[180] = P.entrancePortal2
+tiles[181] = P.exitPortal2
 
 return tiles
