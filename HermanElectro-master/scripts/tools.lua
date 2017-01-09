@@ -3014,6 +3014,27 @@ function P.portalPlacerDouble:useToolNothing(tileY, tileX)
 	end
 end
 
+P.spinningSword = P.superTool:new{name = "Spinning Sword", description = "Do the helicopter sword", image = love.graphics.newImage('Graphics/spinningsword.png'), quality = 4, baseRange = 1}
+P.spinningSword.getToolableTiles = P.tool.getToolableTilesBox
+function P.spinningSword:usableOnNothing()
+	return true
+end
+P.spinningSword.usableOnTile = P.spinningSword.usableOnNothing
+function P.spinningSword:useToolNothing()
+	local xdiff = {-1, 0, 1}
+	local ydiff = {-1, 0, 1}
+	for i = 1, 3 do
+		for j = 1, 3 do
+			local xloc = player.tileX+xdiff[i]
+			local yloc = player.tileY+ydiff[j]
+			if room[yloc]~=nil and room[yloc][xloc]~=nil then
+				room[yloc][xloc]:destroy()
+			end
+		end
+	end
+end
+P.spinningSword.useToolTile = P.spinningSword.useToolNothing
+
 P.numNormalTools = 7
 
 --[[ideas:
@@ -3148,6 +3169,7 @@ P:addTool(P.boxDisplacer)
 P:addTool(P.boxCloner)
 P:addTool(P.tilePusher)
 P:addTool(P.portalPlacerDouble)
+P:addTool(P.spinningSword)
 
 P.resetTools()
 

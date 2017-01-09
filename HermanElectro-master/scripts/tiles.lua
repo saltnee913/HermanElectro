@@ -987,6 +987,16 @@ function P.wall:onLoad()
 	end
 end
 function P.concreteWall:destroy()
+	self.blocksProjectiles = false
+	self.blocksVision = false
+	self.sprite = self.destroyedSprite
+	self.destroyed = true
+	self.blocksMovement = false
+	self.canBePowered = false
+	self.dirAccept = {0,0,0,0}
+	self.dirSend = {0,0,0,0}
+	self.overlay = nil
+	self.yOffset = 0
 	if not self.hidesDungeon then
 		local bonusDungeonChance = util.random(100, 'misc')
 		if bonusDungeonChance<getLuckBonus() then
