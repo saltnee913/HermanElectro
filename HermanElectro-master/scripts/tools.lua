@@ -3120,7 +3120,14 @@ function P.supertoolReroller:useToolNothing()
 end
 P.supertoolReroller.useToolTile = P.supertoolReroller.useToolNothing
 
-P.tunneler = P.superTool:new{name = "Tunneler", description = ""}
+P.tunneler = P.superTool:new{name = "Tunneler", description = "Someone get me out of here!", image = love.graphics.newImage('KenGraphics/stairs.png'),
+baseRange = 1, quality = 2}
+function P.tunneler:usableOnNothing()
+	return true
+end
+function P.tunneler:useToolNothing(tileY, tileX)
+	room[tileY][tileX] = tiles.tunnel:new()
+end
 
 P.numNormalTools = 7
 
@@ -3129,7 +3136,7 @@ P.numNormalTools = 7
 ]]
 
 function P.resetTools()
-	P[1] = P.saw
+	P[1] = P.tunneler
 	P[2] = P.ladder
 	P[3] = P.wireCutters
 	P[4] = P.waterBottle
@@ -3260,6 +3267,10 @@ P:addTool(P.portalPlacerDouble)
 P:addTool(P.spinningSword)
 P:addTool(P.ironMan)
 P:addTool(P.supertoolReroller)
+
+
+
+:addTool(P.tunneler)
 
 P.resetTools()
 
