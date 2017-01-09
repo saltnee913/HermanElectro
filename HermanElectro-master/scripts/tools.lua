@@ -255,7 +255,7 @@ function P.tool:getToolableTilesBox()
 				local dist = offset.y+offset.x
 				if (room[tileToCheck.y][tileToCheck.x] == nil and self:usableOnNothing(tileToCheck.y, tileToCheck.x))
 				or (room[tileToCheck.y][tileToCheck.x] ~= nil and self:usableOnTile(room[tileToCheck.y][tileToCheck.x], dist) and
-				player.elevation<=math.abs(room[tileToCheck.y][tileToCheck.x]:getHeight())) then
+				player.elevation<=room[tileToCheck.y][tileToCheck.x]:getHeight()) then
 					if math.abs(tileToCheck.y-player.tileY)+math.abs(tileToCheck.x-player.tileX)<=self.range then
 						if litTiles[tileToCheck.y][tileToCheck.x]~=0 then
 							usableTiles[dir][#(usableTiles[dir])+1] = tileToCheck
@@ -270,7 +270,6 @@ end
 
 --returns a table of tables of the animals themselves by direction
 function P.tool:getToolableAnimals()
-	if player.elevation~=0 then return {{},{},{},{},{}} end
 	local usableAnimals = {}
 	local closestAnimals = {{dist = 1000}, {dist = 1000}, {dist = 1000}, {dist = 1000}, {dist = 1000}}
 	for animalIndex = 1, #animals do
@@ -280,7 +279,7 @@ function P.tool:getToolableAnimals()
 			for i = 2, 4 do usableAnimals[i] = usableAnimals[1] end
 			return usableAnimals
 		end]]
-		if self:usableOnAnimal(animal) then
+		if self:usableOnAnimal(animal) and player.elevation==animal.elevation then
 			if animal.tileX == player.tileX and animal.tileY == player.tileY then
 				closestAnimals[5] = {dist = 0, ani = animal}
 			else
@@ -321,7 +320,7 @@ function P.tool:getToolableAnimals()
 			for dist = 1, closestAnimals[dir].dist do
 				if room[player.tileY + offset.y*dist] ~= nil then
 					local tile = room[player.tileY + offset.y*dist][player.tileX + offset.x*dist]
-					if tile~=nil and tile.blocksProjectiles  and not player.attributes.tall then
+					if tile~=nil and tile:getHeight()>player.elevation and tile.blocksProjectiles  and not player.attributes.tall then
 						isBlocked = true
 						break
 					end
@@ -337,10 +336,9 @@ end
 
 --for tools that can be used in more than four basic directions
 function P.tool:getToolableAnimalsBox()
-	if player.elevation~=0 then return {{},{},{},{},{}} end
 	local usableAnimals = {{},{},{},{},{}}
 	for animalIndex = 1, #animals do
-		if not animals[animalIndex].dead and math.abs(animals[animalIndex].tileY - player.tileY)+math.abs(animals[animalIndex].tileX - player.tileX)<=self.range+player.attributes.extendedRange then
+		if player.elevation == animals[animalIndex].elevation and not animals[animalIndex].dead and math.abs(animals[animalIndex].tileY - player.tileY)+math.abs(animals[animalIndex].tileX - player.tileX)<=self.range+player.attributes.extendedRange then
 			if litTiles[animals[animalIndex].tileY][animals[animalIndex].tileX]~=0 then
 				usableAnimals[1][#usableAnimals[1]+1] = animals[animalIndex]
 			end

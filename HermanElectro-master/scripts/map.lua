@@ -254,8 +254,16 @@ end
 function P.blocksMovement(tileY, tileX)
 	return room[tileY] ~= nil and room[tileY][tileX] ~= nil and room[tileY][tileX]:obstructsMovement()
 end
-function P.blocksMovementAnimal(tileY, tileX)
-	return room[tileY] ~= nil and room[tileY][tileX] ~= nil and room[tileY][tileX]:obstructsMovementAnimal()
+function P.blocksMovementAnimal(animal)
+	local tileY = animal.tileY
+	local tileX = animal.tileX
+	if room[tileY] ~= nil and room[tileY][tileX] ~= nil and room[tileY][tileX]:obstructsMovementAnimal(animal) then
+		return true
+	elseif room[tileY]~=nil and room[tileY][tileX]==nil and math.abs(animal.elevation)>3 then
+		return true
+	else
+		return false
+	end
 end
 
 local function tilesWhitelistHelper(arr, tiles)

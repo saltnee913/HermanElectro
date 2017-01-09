@@ -1805,7 +1805,7 @@ function love.draw()
 		for i = 1, #animals do
 			if animals[i]~=nil and litTiles[animals[i].tileY][animals[i].tileX]==1 and not animals[i].pickedUp and animals[i].tileY==j then
 				animals[i].x = (animals[i].tileX-1)*floor.sprite:getHeight()*scale+wallSprite.width
-		    	animals[i].y = (animals[i].tileY-1)*floor.sprite:getWidth()*scale+wallSprite.height
+		    	animals[i].y = (animals[i].tileY-1)*floor.sprite:getWidth()*scale+wallSprite.height-animals[i].elevation*scale
 				love.graphics.draw(animals[i].sprite, animals[i].x, animals[i].y, 0, scale, scale)
 			end
 		end
@@ -1828,7 +1828,7 @@ function love.draw()
 						local ty = tools.toolableAnimals[dir][i].tileY
 						if ty==j then
 							if dir == 1 or tools.toolableAnimals[1][1] == nil or not (tx == tools.toolableAnimals[1][1].tileX and ty == tools.toolableAnimals[1][1].tileY) then
-								love.graphics.draw(green, (tx-1)*floor.sprite:getWidth()*scale+wallSprite.width, (ty-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
+								love.graphics.draw(green, (tx-1)*floor.sprite:getWidth()*scale+wallSprite.width, (ty-1)*floor.sprite:getHeight()*scale+wallSprite.height-tools.toolableAnimals[dir][i].elevation*scale, 0, scale, scale)
 							end
 						end
 					end
@@ -2856,7 +2856,7 @@ function love.keypressed(key, unicode)
 	    	stepTrigger()
 	    	for k = 1, #animals do
 				local ani = animals[k]
-				if not map.blocksMovementAnimal(ani.tileY, ani.tileX) then
+				if not map.blocksMovementAnimal(ani) then
 					local movex = ani.tileX
 					local movey = ani.tileY
 					if player.active then
@@ -2900,7 +2900,7 @@ function love.keypressed(key, unicode)
 					and (ani.tileX~=ani.prevTileX or ani.tileY~=ani.prevTileY) then
 					noPowerUpdate = false
 				end
-			end   	
+			end
 	    	postAnimalMovement()
 			for i = 1, #pushables do
 		    	if room[pushables[i].tileY][pushables[i].tileX]~=nil then
@@ -3005,6 +3005,13 @@ function updateElevation()
 		player.elevation = 0
 	else
 		player.elevation = room[player.tileY][player.tileX]:getHeight()
+	end
+	for i = 1, #animals do
+		if room[animals[i].tileY][animals[i].tileX]==nil then
+			animals[i].elevation = 0
+		else
+			animals[i].elevation = room[animals[i].tileY][animals[i].tileX]:getHeight()
+		end	
 	end
 end
 

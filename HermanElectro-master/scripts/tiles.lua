@@ -70,8 +70,23 @@ function P.tile:updateSprite()
 end
 function P.tile:postPowerUpdate(i,j)
 end
-function P.tile:blocksMovementAnimal(animal)
-	return not animal.flying and (self.blocksMovement or self.blocksAnimalMovement)
+--guide to elevation:
+--if can block movement, make blocksMovement true
+--if can only block animal movement, make blocksAnimalMovement true
+--obstructsMovement() is for ACTUALLY blocking player movement (in new elevation system)
+--obstructsMovementAnimal() is for ACTUALLY blocking animal movement
+--map has blocksMovementAnimal() function as well
+--pretty confusing, even I am a bit confused
+function P.tile:obstructsMovementAnimal(animal)
+	if animal.flying then
+		return false
+	else
+		if math.abs(animal.elevation-self:getHeight())<=3 then
+			return false
+		else
+			return true
+		end
+	end
 end
 function P.tile:getCorrectedOffset(dir)
 	dir = dir + self.rotation
@@ -147,9 +162,6 @@ function P.tile:obstructsVision()
 end
 function P.tile:obstructsMovement()
 	return math.abs(player.elevation-self:getHeight())>3 and self.blocksMovement
-end
-function P.tile:obstructsMovementAnimal()
-	return self:getHeight()~=0 and (self.blocksMovement or self.blocksMovementAnimal)
 end
 function P.tile:getHeight()
 	if self.destroyed then
@@ -472,7 +484,7 @@ end
 P.wall.onStayPushable = P.wall.onEnterPushable
 
 function P.wall:onEnterAnimal(animal)
-	if not self.destroyed and not animal.flying then
+	--[[if not self.destroyed and not animal.flying then
 		animal.x = animal.prevx
 		animal.y = animal.prevy
 		animal.tileX = animal.prevTileX
@@ -481,7 +493,10 @@ function P.wall:onEnterAnimal(animal)
 		animal.prevy = animal.y
 		animal.prevTileX = animal.tileX
 		animal.prevTileY = animal.tileY
-	end
+	else
+		animal.elevation = self:getHeight()
+	end]]
+	animal.elevation = self:getHeight()
 end
 P.wall.onStayAnimal = P.wall.onEnterAnimal
 function P.wall:destroy()
@@ -531,6 +546,22 @@ function P.wall:onLeave()
 	else
 		updateElevation()
 	end
+end
+--this function should never actually run...it's here just in case
+function P.wall:onLeaveAnimal(animal)
+	--[[updateElevation()
+	if math.abs(animal.elevation-self:getHeight())>3 then
+		--player.x = player.prevx
+		--player.y = player.prevy
+		animal.tileX = animal.prevTileX
+		animal.tileY = animal.prevTileY
+		--player.prevx = player.x
+		--player.prevy = player.y
+		animal.prevTileX = animal.tileX
+		animal.prevTileY = animal.tileY
+	else
+		updateElevation()
+	end]]
 end
 function P.wall:rotate(times)
 end
@@ -1408,6 +1439,9 @@ function P.blueBeggar:providePayment()
 end
 
 P.ladder = P.tile:new{name = "ladder", sprite = love.graphics.newImage('Graphics/laddertile.png'), blocksAnimalMovement = true}
+function P.ladder:obstructsMovementAnimal(animal)
+	return true
+end
 
 P.mousetrapOff = P.mousetrap:new{name = "mousetrapOff", safe = true, sprite = love.graphics.newImage('Graphics/mousetrapsafe.png')}
 
