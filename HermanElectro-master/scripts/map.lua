@@ -317,15 +317,13 @@ local function requirementsHelper(roomData, key, value)
 			return tilesWhitelistHelper(roomData.layout, value)
 		end
 	elseif key == 'toolRange' then
-		local sum = 0
 		for i = 1, #roomData.itemsNeeded do
+			local sum = 0
 			for j = 1, #roomData.itemsNeeded[i] do
 				sum = sum+roomData.itemsNeeded[i][j]
 			end
+			if sum<value[1] or sum>value[2] then return false end
 		end
-		local avg = sum/#roomData.itemsNeeded
-		if avg<value[1] or avg>value[2] then return false end
-		return true
 	elseif key == 'hasKey' then
 		return roomData[value] ~= nil
 	elseif key == 'solvableWithTools' then
