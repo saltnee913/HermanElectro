@@ -2652,7 +2652,7 @@ end
 
 P.tileMagnet = P.superTool:new{name = "Super Magnet", description = "It pulls its weight", image = love.graphics.newImage('Graphics/tilemagnet.png'), quality = 3, baseRange = 4}
 function P.tileMagnet:usableOnTile(tile, dist)
-	local tileX = 0
+	--[[local tileX = 0
 	local tileY = 0
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
@@ -2689,7 +2689,8 @@ function P.tileMagnet:usableOnTile(tile, dist)
 				return false
 			end
 		end
-	end
+	end]]
+	if dist==1 and room[player.tileY][player.tileX]~=nil then return false end
 	return true
 end
 function P.tileMagnet:useToolTile(tile, tileY, tileX)
@@ -3442,6 +3443,47 @@ function P.christmasSurprise:useToolNothing(tileY, tileX)
 	end
 end
 
+P.ironWoman = P.superTool:new{name = "Iron Woman", description = "Closer....", image = love.graphics.newImage('Graphics/ironman.png'),
+baseRange = 3, quality = 4}
+P.ironWoman.usableOnTile = P.tileMagnet.usableOnTile
+function P.ironWoman:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
+
+	if player.tileY==tileY then
+		if player.tileX<tileX then
+			for i = tileX, roomLength do
+				if room[tileY][i]~=nil then
+					room[tileY][i-1] = room[tileY][i]
+					room[tileY][i] = nil
+				end
+			end
+		elseif player.tileX>tileX then
+			for i = tileX, 1, -1 do
+				if room[tileY][i]~=nil then
+					room[tileY][i+1] = room[tileY][i]
+					room[tileY][i] = nil
+				end
+			end
+		end
+	elseif player.tileX==tileX then
+		if player.tileY<tileY then
+			for i = tileY, roomHeight do
+				if room[i][tileX]~=nil then
+					room[i-1][tileX] = room[i][tileX]
+					room[i][tileX] = nil
+				end
+			end
+		elseif player.tileY>tileY then
+			for i = tileY, 1, -1 do
+				if room[i][tileX]~=nil then
+					room[i+1][tileX] = room[i][tileX]
+					room[i][tileX] = nil
+				end
+			end
+		end
+	end
+end
+
 P.numNormalTools = 7
 
 --[[ideas:
@@ -3590,6 +3632,7 @@ P:addTool(P.woodenRain)
 --P:addTool(P.tempUpgrade)
 --P:addTool(P.permaUpgrade)
 P:addTool(P.christmasSurprise)
+P:addTool(P.ironWoman)
 
 P.resetTools()
 
