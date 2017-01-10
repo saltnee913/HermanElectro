@@ -3187,6 +3187,34 @@ function P.superSponge:usableOnTile(tile)
 end
 P.superSponge.useToolTile = P.sponge.useToolTile
 
+P.woodenRain = P.superTool:new{name = "woodenRain", description = "", image = love.graphics.newImage('Graphics/ladder.png'),
+baseRange = 0, quality = 2}
+function P.woodenRain:usableOnNothing()
+	return true
+end
+P.woodenRain.usableOnTile = P.woodenRain.usableOnNothing
+function P.woodenRain:useToolNothing()
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			local isValid = true
+			if room[i][j]~=nil then isValid = false
+			else
+				if player.tileY==i and player.tileX==j then isValid = false end
+				for k = 1, #animals do
+					if animals[k].tileY==i and animals[k].tileX ==j then isValid = false end
+				end
+				for k = 1, #pushables do
+					if pushables[k].tileY==i and pushables[k].tileX ==j then isValid = false end
+				end
+			end
+			if isValid then
+				room[i][j] = tiles.ladder:new()
+			end
+		end
+	end
+end
+P.woodenRain.useToolTile = P.woodenRain.useToolNothing
+
 P.numNormalTools = 7
 
 --[[ideas:
@@ -3329,6 +3357,7 @@ P:addTool(P.tunneler)
 P:addTool(P.superLadder)
 P:addTool(P.superSaw)
 P:addTool(P.superSponge)
+P:addTool(P.woodenRain)
 
 P.resetTools()
 
