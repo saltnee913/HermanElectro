@@ -1920,7 +1920,7 @@ function P.superBrick:usableOnTile(tile)
 	if not tile.bricked and tile:instanceof(tiles.button) then
 		return true
 	end
-	if not tile.destroyed and tile:instanceof(tiles.glassWall) then
+	if not tile.destroyed and (tile:instanceof(tiles.glassWall) or tile:instanceof(tiles.reinforcedGlass)) then
 		return true
 	end
 	if tile:instanceof(tiles.mousetrap) and not tile.bricked then
@@ -1930,7 +1930,7 @@ function P.superBrick:usableOnTile(tile)
 end
 function P.superBrick:useToolTile(tile)
 	self.numHeld = self.numHeld - 1
-	if tile:instanceof(tiles.glassWall) then
+	if tile:instanceof(tiles.glassWall) or tile:instanceof(tiles.reinforcedGlass) then
 		tile:destroy()
 	else
 		tile:lockInState(true)
@@ -3162,6 +3162,31 @@ function P.superLadder:spreadLadders(tileY, tileX)
 	end
 end
 
+P.superSaw = P.superTool:new{name = "Super Saw", description = "", image = love.graphics.newImage('Graphics/saw.png'),
+baseRange = 1, quality = 3}
+function P.superSaw:usableOnPushable()
+	return true
+end
+function P.superSaw:usableOnTile(tile)
+	return tile:instanceof(tiles.wall) and not tile:instanceof(tiles.reinforcedGlass) and not tile:instanceof(tiles.glassWall)
+end
+function P.superSaw:useToolPushable(pushable)
+	pushable:destroy()
+end
+
+P.superSponge = P.superTool:new{name = "Super Sponge", description = "", image = love.graphics.newImage('NewGraphics/sponge copy.png'),
+baseRange = 1, quality = 2}
+function P.superSponge:usableOnTile(tile)
+	if tile:instanceof(tiles.dustyGlassWall) and tile.blocksVision then
+		return true
+	elseif tile:instanceof(tiles.puddle) then return true
+	elseif tile:instanceof(tiles.stickyButton) or (tile:instanceof(tiles.button) and tile.bricked) then return true
+	elseif tile:instanceof(tiles.glue) then return true
+	elseif tile:instanceof(tiles.slime) or tile:instanceof(tiles.conductiveSlime) then return true end
+	return false
+end
+P.superSponge.useToolTile = P.sponge.useToolTile
+
 P.numNormalTools = 7
 
 --[[ideas:
@@ -3300,11 +3325,10 @@ P:addTool(P.portalPlacerDouble)
 P:addTool(P.spinningSword)
 P:addTool(P.ironMan)
 P:addTool(P.supertoolReroller)
-P:addTool(P.superLadder)
-
-
-
 P:addTool(P.tunneler)
+P:addTool(P.superLadder)
+P:addTool(P.superSaw)
+P:addTool(P.superSponge)
 
 P.resetTools()
 
