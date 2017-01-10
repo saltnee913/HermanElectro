@@ -2102,6 +2102,7 @@ function P.toolTaxTile:updateSprite()
 	end
 end
 function P.toolTaxTile:onEnter()
+	if player.elevation>=self:getHeight()-3 then return end
 	if not self.destroyed and self.tool.numHeld>0 then
 		self.tool.numHeld = self.tool.numHeld-1
 		self:destroy()
@@ -2119,6 +2120,14 @@ function P.toolTaxTile:destroy()
 	self.dirSend = {0,0,0,0}
 	self.overlay = nil
 	self.tool = nil
+end
+function P.toolTaxTile:obstructsMovement()
+	if math.abs(player.elevation-self:getHeight())<=3 then
+		return false
+	elseif not self.destroyed and self.tool.numHeld>0 then
+		return false
+	end
+	return true
 end
 
 P.dungeonEnter = P.tile:new{name = "dungeonEnter"}
