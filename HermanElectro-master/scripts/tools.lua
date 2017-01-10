@@ -628,7 +628,7 @@ P.felixGun = P.gun:new{name = 'felix gun', numHeld = 0, range = 5, isGun = true}
 function P.felixGun:switchEffects()
 	local switchEffects = self.switchEffects
 	if self.isGun then
-		P.felixGun = P.superGun:new{name = self.name, numHeld = self.numHeld, isGun = false, switchEffects = switchEffects}
+		P.felixGun = P.explosiveGun:new{name = self.name, numHeld = self.numHeld, isGun = false, switchEffects = switchEffects}
 	else
 		P.felixGun = P.gun:new{name = self.name, numHeld = self.numHeld, range = 5, isGun = true, switchEffects = switchEffects}
 	end
@@ -1715,8 +1715,8 @@ function P.revive:checkDeath()
 	return true
 end
 
-P.superGun = P.gun:new{name = "superGun", description = "Boom Boom", baseRange = 5, image = love.graphics.newImage('Graphics/supergun.png'), quality = 2}
-function P.superGun:useToolTile(tile, tileY, tileX)
+P.explosiveGun = P.gun:new{name = "explosiveGun", description = "Boom Boom", baseRange = 5, image = love.graphics.newImage('Graphics/superGun.png'), quality = 2}
+function P.explosiveGun:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld-1
 	if tile:instanceof(tiles.beggar) then
 		unlocks.unlockUnlockableRef(unlocks.beggarPartyUnlock)
@@ -1729,7 +1729,7 @@ function P.superGun:useToolTile(tile, tileY, tileX)
 	room[tileY][tileX]:explode(tileY, tileX)
 	room[tileY][tileX] = nil
 end
-function P.superGun:useToolAnimal(animal)
+function P.explosiveGun:useToolAnimal(animal)
 	self.numHeld = self.numHeld - 1
 	animal:kill()
 	local pY = animal.tileY
@@ -3129,16 +3129,16 @@ function P.tunneler:useToolNothing(tileY, tileX)
 	room[tileY][tileX] = tiles.tunnel:new()
 end
 
-P.superLadder = P.superTool:new{name = "Super Ladder", description = "", image = love.graphics.newImage('Graphics/ladder.png'),
+P.longLadder = P.superTool:new{name = "longLadder", description = "", image = love.graphics.newImage('Graphics/ladder.png'),
 baseRange = 1, quality = 3}
-P.superLadder.usableOnNothing = P.ladder.usableOnNothing
-P.superLadder.useToolNothing = P.ladder.useToolNothing
-P.superLadder.usableOnTile = P.ladder.usableOnTile
-function P.superLadder:useToolTile(tile, tileY, tileX)
+P.longLadder.usableOnNothing = P.ladder.usableOnNothing
+P.longLadder.useToolNothing = P.ladder.useToolNothing
+P.longLadder.usableOnTile = P.ladder.usableOnTile
+function P.longLadder:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld - 1
 	self:spreadLadders(tileY, tileX)
 end
-function P.superLadder:spreadLadders(tileY, tileX)
+function P.longLadder:spreadLadders(tileY, tileX)
 	room[tileY][tileX]:ladder()
 	if tileY>1 then
 		if room[tileY-1][tileX]~=nil and self:usableOnTile(room[tileY-1][tileX]) then
@@ -3187,6 +3187,60 @@ function P.superSponge:usableOnTile(tile)
 end
 P.superSponge.useToolTile = P.sponge.useToolTile
 
+--gun, but radial and works on concrete
+P.superGun = P.superTool:new{name = "superGun", description = "", baseRange = 5, image = love.graphics.newImage('Graphics/superGun.png'), quality = 2}
+P.superGun.getToolableTiles = P.tool.getToolableTilesBox
+P.superGun.getToolableAnimals = P.tool.getToolableAnimalsBox
+function P.superGun:usableOnTile(tile)
+	if tile:instanceof(tiles.wall) and not tile:instanceof(tiles.glassWall) and not tile.destroyed then
+		if tile.blocksVision then
+			return true
+		end
+	elseif tile:instanceof(tiles.beggar) and tile.alive then
+		return true
+	end
+	return false
+end
+P.superGun.usableOnAnimal = P.gun.usableOnAnimal
+function P.superGun:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
+	if tile:instanceof(tiles.beggar) then
+		unlocks.unlockUnlockableRef(unlocks.beggarPartyUnlock)
+		tile:destroy()
+	else
+		tile:allowVision()
+	end
+end
+function P.superGun:useToolAnimal(animal)
+	self.numHeld = self.numHeld - 1
+	animal:kill()
+end
+
+--same as ladder but more range; used primarily for tool upgrades
+P.superLadder = P.superTool:new{name = "superLadder", description = "", image = love.graphics.newImage('Graphics/ladder.png'),
+baseRange = 6, quality = 1}
+function P.superLadder:usableOnTile(tile)
+	if not tile.laddered then
+		if tile:instanceof(tiles.breakablePit) and tile.strength == 0 then
+			return true
+		elseif tile:instanceof(tiles.poweredFloor) or tile:instanceof(tiles.pit) then
+			return true
+		end
+	end
+	return false
+end
+function P.superLadder:useToolTile(tile)
+	self.numHeld = self.numHeld - 1
+	tile:ladder()
+end
+function P.superLadder:usableOnNothing()
+	return true
+end
+function P.superLadder:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld - 1
+	room[tileY][tileX] = tiles.ladder:new()
+end
+
 P.woodenRain = P.superTool:new{name = "woodenRain", description = "", image = love.graphics.newImage('Graphics/ladder.png'),
 baseRange = 0, quality = 2}
 function P.woodenRain:usableOnNothing()
@@ -3214,6 +3268,142 @@ function P.woodenRain:useToolNothing()
 	end
 end
 P.woodenRain.useToolTile = P.woodenRain.useToolNothing
+
+--[[
+UPGRADES:
+saw --> superSaw (can cut concrete)
+ladder --> superLadder (need to make)
+wireCutters --> superWireCutters (can cut blue)
+waterBottle --> superWaterBottle (can wet blue)
+sponge --> superSponge (can sponge blue)
+brick --> superBrick (can break unbreakable glass and brick blue)
+gun --> superGun (radial range, need to make)
+]]
+P.tempUpgrade = P.superTool:new{name = "Temp Upgrade", description = "", image = love.graphics.newImage('Graphics/tempupgrade.png'),
+baseRange = 0, quality = 3}
+function P.tempUpgrade:usableOnNothing()
+	return true
+end
+P.tempUpgrade.usableOnTile = P.tempUpgrade.usableOnNothing
+function P.tempUpgrade:useToolNothing()
+	self.numHeld = self.numHeld-1
+
+	player.attributes.upgradedToolUse = true
+	tools.toolDisplayTimer.timeLeft = 0
+
+	tools[1] = tools.superSaw
+	tools.superSaw.numHeld = tools.saw.numHeld+tools.superSaw.numHeld
+	tools[2] = tools.superLadder
+	tools.superLadder.numHeld = tools.ladder.numHeld+tools.superLadder.numHeld
+	tools[3] = tools.superWireCutters
+	tools.superWireCutters.numHeld = tools.wireCutters.numHeld+tools.superWireCutters.numHeld
+	tools[4] = tools.superWaterBottle
+	tools.superWaterBottle.numHeld = tools.waterBottle.numHeld+tools.superWaterBottle.numHeld
+	tools[5] = tools.superSponge
+	tools.superSponge.numHeld = tools.sponge.numHeld+tools.superSponge.numHeld
+	tools[6] = tools.superBrick
+	tools.superBrick.numHeld = tools.brick.numHeld+tools.superBrick.numHeld
+	tools[7] = tools.superGun
+	tools.superGun.numHeld = tools.gun.numHeld+tools.superGun.numHeld
+
+	local counter = tools.numNormalTools+1
+	while counter<=#tools do
+		for k = 1, 7 do
+			if tools[counter]==tools[k] then
+				table.remove(tools, counter)
+				counter = counter-1
+				break
+			end
+		end
+		counter = counter+1
+	end
+
+	if tools.tempUpgrade.numHeld>0 then
+		for i = 1, #tools do
+			if tools[i]==tools.tempUpgrade then tool = i end
+		end
+	else tool = 0
+	end
+
+	specialTools = {0,0,0}
+	updateTools()
+end
+P.tempUpgrade.useToolTile = P.tempUpgrade.useToolNothing
+function P.tempUpgrade:resetTools()
+	P[1] = P.saw
+	P[2] = P.ladder
+	P[3] = P.wireCutters
+	P[4] = P.waterBottle
+	P[5] = P.sponge
+	P[6] = P.brick
+	P[7] = P.gun
+
+	P:addTool(P.superSaw)
+	tools.superSaw.numHeld = 0
+	P:addTool(P.superLadder)
+	tools.superLadder.numHeld = 0
+	P:addTool(P.superWireCutters)
+	tools.superWireCutters.numHeld = 0
+	P:addTool(P.superWaterBottle)
+	tools.superWaterBottle.numHeld = 0
+	P:addTool(P.superSponge)
+	tools.superSponge.numHeld = 0
+	P:addTool(P.superBrick)
+	tools.superBrick.numHeld = 0
+	P:addTool(P.superGun)
+	tools.superGun.numHeld = 0
+
+end
+
+P.permaUpgrade = P.superTool:new{name = "permaUpgrade", description = "", image = love.graphics.newImage('Graphics/permaupgrade.png'),
+baseRange = 0, quality = 5}
+function P.permaUpgrade:usableOnNothing()
+	return true
+end
+P.permaUpgrade.usableOnTile = P.permaUpgrade.usableOnNothing
+function P.permaUpgrade:useToolNothing()
+	self.numHeld = self.numHeld-1
+
+	tools.toolDisplayTimer.timeLeft = 0
+
+	tools[1] = tools.superSaw
+	tools.superSaw.numHeld = tools.saw.numHeld+tools.superSaw.numHeld
+	tools[2] = tools.superLadder
+	tools.superLadder.numHeld = tools.ladder.numHeld+tools.superLadder.numHeld
+	tools[3] = tools.superWireCutters
+	tools.superWireCutters.numHeld = tools.wireCutters.numHeld+tools.superWireCutters.numHeld
+	tools[4] = tools.superWaterBottle
+	tools.superWaterBottle.numHeld = tools.waterBottle.numHeld+tools.superWaterBottle.numHeld
+	tools[5] = tools.superSponge
+	tools.superSponge.numHeld = tools.sponge.numHeld+tools.superSponge.numHeld
+	tools[6] = tools.superBrick
+	tools.superBrick.numHeld = tools.brick.numHeld+tools.superBrick.numHeld
+	tools[7] = tools.superGun
+	tools.superGun.numHeld = tools.gun.numHeld+tools.superGun.numHeld
+
+	local counter = tools.numNormalTools+1
+	while counter<=#tools do
+		for k = 1, 7 do
+			if tools[counter]==tools[k] then
+				table.remove(tools, counter)
+				counter = counter-1
+				break
+			end
+		end
+		counter = counter+1
+	end
+
+	if tools.permaUpgrade.numHeld>0 then
+		for i = 1, #tools do
+			if tools[i]==tools.permaUpgrade then tool = i end
+		end
+	else tool = 0
+	end
+
+	specialTools = {0,0,0}
+	updateTools()
+end
+P.permaUpgrade.useToolTile = P.permaUpgrade.useToolNothing
 
 P.numNormalTools = 7
 
@@ -3281,7 +3471,7 @@ P:addTool(P.bucketOfWater)
 P:addTool(P.flame)
 P:addTool(P.toolReroller)
 P:addTool(P.revive)
-P:addTool(P.superGun)
+P:addTool(P.explosiveGun)
 P:addTool(P.buttonFlipper)
 P:addTool(P.wireBreaker)
 P:addTool(P.powerBreaker)
@@ -3354,10 +3544,14 @@ P:addTool(P.spinningSword)
 P:addTool(P.ironMan)
 P:addTool(P.supertoolReroller)
 P:addTool(P.tunneler)
-P:addTool(P.superLadder)
+P:addTool(P.longLadder)
 P:addTool(P.superSaw)
 P:addTool(P.superSponge)
+P:addTool(P.superLadder)
+P:addTool(P.superGun)
 P:addTool(P.woodenRain)
+P:addTool(P.tempUpgrade)
+P:addTool(P.permaUpgrade)
 
 P.resetTools()
 
