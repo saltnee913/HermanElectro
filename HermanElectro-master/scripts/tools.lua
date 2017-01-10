@@ -3405,6 +3405,43 @@ function P.permaUpgrade:useToolNothing()
 end
 P.permaUpgrade.useToolTile = P.permaUpgrade.useToolNothing
 
+P.christmasSurprise = P.boxSpawner:new{name = "Christmas Surprise", description = "", image = love.graphics.newImage('Graphics/giftBox.png'),
+baseRange = 1, quality = 3}
+function P.christmasSurprise:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
+	local toSpawn = pushableList.giftBox:new()
+	toSpawn.tileY = tileY
+	toSpawn.tileX = tileX
+	pushables[#pushables+1] = toSpawn
+	tools.saw.numHeld = tools.saw.numHeld+1
+	for i = 1, #pushables do
+		if pushables[i].name == "box" then
+			local giftY = pushables[i].tileY
+			local giftX = pushables[i].tileX
+			pushables[i] = pushableList.giftBox:new()
+			pushables[i].tileY = giftY
+			pushables[i].tileX = giftX	
+		end
+	end
+end
+function P.christmasSurprise:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
+	local toSpawn = pushableList.giftBox:new()
+	toSpawn.tileY = tileY
+	toSpawn.tileX = tileX
+	pushables[#pushables+1] = toSpawn
+	tools.saw.numHeld = tools.saw.numHeld+1
+	for i = 1, #pushables do
+		if pushables[i].name == "box" then
+			local giftY = pushables[i].tileY
+			local giftX = pushables[i].tileX
+			pushables[i] = pushableList.giftBox:new()
+			pushables[i].tileY = giftY
+			pushables[i].tileX = giftX	
+		end
+	end
+end
+
 P.numNormalTools = 7
 
 --[[ideas:
@@ -3552,6 +3589,7 @@ P:addTool(P.superGun)
 P:addTool(P.woodenRain)
 P:addTool(P.tempUpgrade)
 P:addTool(P.permaUpgrade)
+P:addTool(P.christmasSurprise)
 
 P.resetTools()
 
