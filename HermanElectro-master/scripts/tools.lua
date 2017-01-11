@@ -1752,7 +1752,8 @@ function P.map:useToolNothing(tileY, tileX)
 			if mainMap[i][j]==nil then
 				visibleMap[i][j]=1
 			else
-				if map.getFieldForRoom(mainMap[i][j].roomid, 'hidden')~=nil and map.getFieldForRoom(mainMap[i][j].roomid, 'hidden') then
+				if map.getFieldForRoom(mainMap[i][j].roomid, 'hidden')~=nil and map.getFieldForRoom(mainMap[i][j].roomid, 'hidden') and
+				not (visibleMap[i][j]>=0.5) then
 					visibleMap[i][j]=0.5
 				else
 					visibleMap[i][j]=1
@@ -3565,6 +3566,28 @@ function P.beggarReroller:useToolNothing()
 end
 P.beggarReroller.useToolTile = P.beggarReroller.useToolNothing
 
+P.xrayVision = P.superTool:new{name = "X-Ray Vision", description = "The bright side of Chernoybl", image = love.graphics.newImage('Graphics/xrayvision.png'),
+baseRange = 0, quality = 3}
+function P.xrayVision:usableOnNothing()
+	return true
+end
+P.xrayVision.usableOnTile = P.xrayVision.usableOnNothing
+function P.xrayVision:useToolNothing()
+	self.numHeld = self.numHeld-1
+	player.attributes.xrayVision = true
+	for i = 1, mapHeight do
+		for j = 1, mapHeight do
+			if mainMap[i][j]~=nil then
+				local xrayId = mainMap[i][j].roomid
+				if map.getFieldForRoom(xrayId, 'hidden')~=nil and map.getFieldForRoom(xrayId, 'hidden') then
+					visibleMap[i][j] = 1
+				end
+			end
+		end
+	end
+end
+P.xrayVision.useToolTile = P.xrayVision.useToolNothing
+
 
 P.numNormalTools = 7
 
@@ -3717,6 +3740,7 @@ P:addTool(P.christmasSurprise)
 P:addTool(P.ironWoman)
 P:addTool(P.wallReroller)
 P:addTool(P.beggarReroller)
+P:addTool(P.xrayVision)
 
 P.resetTools()
 

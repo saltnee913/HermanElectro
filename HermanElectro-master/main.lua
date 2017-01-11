@@ -443,7 +443,7 @@ function love.load()
 			y = (6-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10, prevTileX = 3, prevTileY 	= 10,
 			prevx = (3-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10,
 			prevy = (10-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10,
-			width = 20, height = 20, speed = 250, luckTimer = 0, regularMapLoc = {x = 0, y = 0}, returnFloorIndex = 0, attributes = {upgradedToolUse = false, fast = {fast = false, fastStep = false}, flying = false, fear = false, shelled = false, tall = false, extendedRange = 0, sockStep = -1}}
+			width = 20, height = 20, speed = 250, luckTimer = 0, regularMapLoc = {x = 0, y = 0}, returnFloorIndex = 0, attributes = {xrayVision = false, upgradedToolUse = false, fast = {fast = false, fastStep = false}, flying = false, fear = false, shelled = false, tall = false, extendedRange = 0, sockStep = -1}}
 	player.character = setChar
 
 	map.clearBlacklist()
@@ -545,6 +545,7 @@ function goDownFloor()
 			litTiles[i] = {}
 		end
 	end
+	postFloorChange()
 end
 
 function goUpFloor()
@@ -586,6 +587,7 @@ function goUpFloor()
 		end
 		playMusic(floorIndex)
 	end
+	postFloorChange()
 end
 function goToFloor(floorNum)
 	floorIndex = floorNum
@@ -604,6 +606,23 @@ function goToFloor(floorNum)
 		completedRooms[mapy][mapx] = 1
 		unlockDoors()
 	end
+	postFloorChange()
+end
+
+function postFloorChange()
+	if player.attributes.xrayVision then
+		for i = 1, mapHeight do
+			for j = 1, mapHeight do
+				if mainMap[i][j]~=nil then
+					local xrayId = mainMap[i][j].roomid
+					if map.getFieldForRoom(xrayId, 'hidden')~=nil and map.getFieldForRoom(xrayId, 'hidden') then
+						visibleMap[i][j] = 1
+					end
+				end
+			end
+		end
+	end
+	completedRooms[mapy][mapx] = 1
 end
 
 function loadNextLevel(dontChangeTime)
@@ -3426,7 +3445,13 @@ function stepTrigger()
     resetPushables()
 end
 
+--unlocks all rooms besides hidden rooms (secret rooms and special dungeons)
 function unlockDoors()
+	if player.attributes.xrayVision then
+		unlockDoorsPlus()
+		return
+	end
+
 	completedRooms[mapy][mapx] = 1
 	local testRooms = {{-1,0}, {1,0}, {0,-1}, {0,1}}
 	for k = 1, #testRooms do
