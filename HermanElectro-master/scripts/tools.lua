@@ -3493,6 +3493,45 @@ function P.ironWoman:useToolTile(tile, tileY, tileX)
 	end
 end
 
+--selects walls from: glass, reinforcedGlass, concrete, metal, wood, tallWall, halfWall, toolTaxTile, dustyGlassWall
+P.wallReroller = P.superTool:new{name = "Wall Reroller", description = "", image = love.graphics.newImage('Graphics/wallreroller.png'),
+baseRange = 0, quality = 3}
+function P.wallReroller:usableOnNothing()
+	return true
+end
+P.wallReroller.usableOnTile = P.wallReroller.usableOnNothing
+function P.wallReroller:useToolNothing()
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]~=nil and room[i][j]:instanceof(tiles.wall) and not room[i][j]:instanceof(tiles.tree) then
+				local newWall = util.random(9,'mapGen')
+				if newWall==1 then
+					room[i][j] = tiles.wall:new()
+				elseif newWall==2 then
+					room[i][j] = tiles.metalWall:new()
+				elseif newWall==3 then
+					room[i][j] = tiles.glassWall:new()
+				elseif newWall==4 then
+					room[i][j] = tiles.reinforcedGlass:new()
+				elseif newWall==5 then
+					room[i][j] = tiles.concreteWall:new()
+				elseif newWall==6 then
+					room[i][j] = tiles.tallWall:new()
+				elseif newWall==7 then
+					room[i][j] = tiles.halfWall:new()
+				elseif newWall==8 then
+					room[i][j] = tiles.toolTaxTile:new()
+				elseif newWall==9 then
+					room[i][j] = tiles.dustyGlassWall:new()
+				end
+			end
+		end
+	end
+end
+P.wallReroller.useToolTile = P.wallReroller.useToolNothing
+
+
+
 P.numNormalTools = 7
 
 --[[ideas:
@@ -3642,6 +3681,7 @@ P:addTool(P.woodenRain)
 --P:addTool(P.permaUpgrade)
 P:addTool(P.christmasSurprise)
 P:addTool(P.ironWoman)
+P:addTool(P.wallReroller)
 
 P.resetTools()
 
