@@ -43,6 +43,8 @@ function P.character:setStartingTools()
 		tools[i].numHeld = self.startingTools[i]
 	end
 end
+function P.character:onStartGame()
+end
 function P.character:onCharLoad()
 end
 function P.character:onRoomEnter()
@@ -445,6 +447,9 @@ function P.lenny:onTileLeave()
 			updateGameState(false)
 		end
 	end
+end
+function P.lenny:onStartGame()
+	self.slime = false
 end
 
 P.fish = P.character:new{name = "Fish", description = "Fish", 

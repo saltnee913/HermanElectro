@@ -723,7 +723,6 @@ function startDebug()
 	love.load()
 	loadFirstLevel()
 	tools.resetTools()
-	player.character:onBegin()
 end
 
 function loadFirstLevel()
@@ -736,6 +735,7 @@ function loadFirstLevel()
 	createAnimals()
 	createPushables()
 	updateGameState()
+	player.character:onStartGame()
 end
 
 function prepareFloor()
@@ -1679,14 +1679,12 @@ function love.draw()
 				else
 					toDrawFloor = floortiles[floorIndex-1][3]
 				end
-				if (room[j][i]==nil) then
-					if (i*i+j*j*j-1)%27==0 then
-						toDrawFloor = secondaryTiles[floorIndex-1][1]
-					elseif (i*i+j*j*j-1)%29==1 then
-						toDrawFloor = secondaryTiles[floorIndex-1][2]
-					elseif (i*i+j*j*j-1)%31==2 then
-						toDrawFloor = secondaryTiles[floorIndex-1][3]
-					end
+				if (i*i+j*j*j-1)%27==0 then
+					toDrawFloor = secondaryTiles[floorIndex-1][1]
+				elseif (i*i+j*j*j-1)%29==1 then
+					toDrawFloor = secondaryTiles[floorIndex-1][2]
+				elseif (i*i+j*j*j-1)%31==2 then
+					toDrawFloor = secondaryTiles[floorIndex-1][3]
 				end
 			end
 			fto = map.getFieldForRoom(mainMap[mapy][mapx].roomid, "floorTileOverride")
