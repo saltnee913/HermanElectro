@@ -769,7 +769,7 @@ end
 function P.hDoor:onEnter(player)
 	self.sprite = self.openSprite
 	self.blocksVision = false
-	self.blocksMovement = false	
+	self.blocksMovement = false
 end
 function P.hDoor:getHeight()
 	return 6

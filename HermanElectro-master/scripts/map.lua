@@ -938,10 +938,11 @@ function P.generateMapWeighted()
 		end
 		numNilAdjacent = numNilAdjacent+1
 	end
-	local whichLoc = util.random(#secLocs, 'misc')
-	roomid = util.chooseRandomKey(arr, 'mapGen')
-	newmap[secLocs[whichLoc].y][secLocs[whichLoc].x] = {roomid = roomid, room = P.createRoom(roomid, arr), tint = {0,0,0}, dirEnter = arr[roomid].dirEnter, isFinal = false, isInitial = false}
-
+	if not #secLocs==0 then
+		local whichLoc = util.random(#secLocs, 'misc')
+		roomid = util.chooseRandomKey(arr, 'mapGen')
+		newmap[secLocs[whichLoc].y][secLocs[whichLoc].x] = {roomid = roomid, room = P.createRoom(roomid, arr), tint = {0,0,0}, dirEnter = arr[roomid].dirEnter, isFinal = false, isInitial = false}
+	end
 	--add special dungeon room to floor
 	--each floor has one special dungeon, which is located at [height+1][1]
 	arr = P.floorInfo.rooms.dungeons
