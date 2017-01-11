@@ -1512,31 +1512,29 @@ function P.roomReroller:usableOnNothing()
 	return true
 end
 function P.roomReroller:getTilesWhitelist()
-	return {3,4,5,6,7,8,9,10,11,12,13,15,16,18,20,24,25,31,33,34,38,43,50,56,57,71,72}
+	return {tiles.wire, tiles.cornerWire, tiles.horizontalWire, tiles.metalWall, tiles.concreteWall, tiles.wall, tiles.glassWall,
+	tiles.electricFloor, tiles.poweredFloor, tiles.pit, tiles.notGate, tiles.andGate, tiles.ladder, tiles.puddle, tiles.button, tiles.stayButton,
+	tiles.stickyButton}
 end
 function P.roomReroller:getTreasureTiles()
-	return {34,58,59,60}
+	return {tiles.treasureTile, tiles.treasureTile2, tiles.treasureTile3, tiles.treasureTile4}
 end
 P.roomReroller.usableOnTile = P.roomReroller.usableOnNothing
 
 function P.roomReroller:useToolNothing()
+	self.numHeld = self.numHeld-1
+
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
 			if room[i][j]~=nil and not room[i][j]:instanceof(tiles.endTile) then
 				local whitelist = self:getTilesWhitelist()
-				local slot = util.random(#whitelist, 'misc')
-				local tilesNum = whitelist[slot]
-				local treasureTiles = self:getTreasureTiles()
-				if whitelist[slot]==treasureTiles[1] or whitelist[slot]==treasureTiles[2] then
-					local treasureTileChooser = util.random(#treasureTiles, 'misc')
-					for i = 1, 4 do
-						if treasureTileChooser<=i then
-							tilesNum = treasureTiles[i]
-							break
-						end
-					end
+				local treasureOrRegular = util.random(40, 'misc')
+				local tileArr = self:getTilesWhitelist()
+				if treasureOrRegular==1 then
+					tileArr = self:getTreasureTiles()
 				end
-				room[i][j] = tiles[tilesNum]:new()
+				local whichTile = util.random(#tileArr, 'misc')
+				room[i][j] = tileArr[whichTile]:new()
 			end
 		end
 	end
@@ -1547,7 +1545,6 @@ function P.roomReroller:useToolNothing()
 		pushables[i].destroyed = true
 	end
 	room[player.tileY][player.tileX]=nil
-	self.numHeld = self.numHeld-1
 end
 P.roomReroller.useToolTile = P.roomReroller.useToolNothing
 
@@ -3659,6 +3656,29 @@ function P.secretTeleporter:useToolNothing()
 end
 P.secretTeleporter.useToolTile = P.secretTeleporter.useToolNothing
 
+P.buttonReroller = P.superTool:new{name = "Button Reroller", description = "", image = love.graphics.newImage('Graphics/button.png'),
+baseRange = 0, quality = 2}
+function P.buttonReroller:usableOnNothing()
+	return true
+end
+P.buttonReroller.usableOnTile = P.buttonReroller.usableOnNothing
+function P.buttonReroller:getButtonsList()
+	return {tiles.button, tiles.stayButton, tiles.stickyButton}
+end
+function P.buttonReroller:useToolNothing()
+	self.numHeld = self.numHeld-1
+
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]~=nil and room[i][j]:instanceof(tiles.button) then
+				local tilesArr = self:getButtonsList()
+				local whichTile = util.random(#tilesArr,'mapGen')
+				room[i][j] = tilesArr[whichTile]:new()
+			end
+		end
+	end
+end
+P.buttonReroller.useToolTile = P.buttonReroller.useToolNothing
 
 P.numNormalTools = 7
 

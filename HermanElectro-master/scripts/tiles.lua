@@ -2173,7 +2173,7 @@ P.spongeTile = P.toolTile:new{name = "spongeTile", tool = tools.sponge, sprite =
 P.waterBottleTile = P.toolTile:new{name = "waterBottleTile", tool = tools.waterBottle, sprite = tools.waterBottle.image}
 
 
-P.toolTaxTile = P.concreteWall:new{name = "toolTaxTile", dirSend = {0,0,0,0}, sprite = love.graphics.newImage('Graphics/tooltaxtile.png'), tool = nil}
+P.toolTaxTile = P.reinforcedGlass:new{name = "toolTaxTile", dirSend = {0,0,0,0}, sprite = love.graphics.newImage('Graphics/tooltaxtile.png'), tool = nil}
 P.toolTaxTile.absoluteFinalUpdate = P.toolTile.absoluteFinalUpdate
 function P.toolTaxTile:updateSprite()
 	if self.tool == tools.wireCutters then
