@@ -503,6 +503,7 @@ function P.waterBottle:useToolTile(tile)
 	self.numHeld = self.numHeld-1
 	if tile:instanceof(tiles.tree) then
 		tile.level = tile.level+1
+		tile.sawable = true
 		tile:updateSprite()
 		return
 	end
@@ -3169,7 +3170,7 @@ function P.superSaw:usableOnPushable()
 	return true
 end
 function P.superSaw:usableOnTile(tile)
-	return tile:instanceof(tiles.wall) and not tile:instanceof(tiles.reinforcedGlass) and not tile:instanceof(tiles.glassWall)
+	return tile:instanceof(tiles.wall) and tile:getHeight()>0 and not tile:instanceof(tiles.reinforcedGlass) and not tile:instanceof(tiles.glassWall)
 end
 function P.superSaw:useToolPushable(pushable)
 	pushable:destroy()

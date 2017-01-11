@@ -68,6 +68,14 @@
 			{
 				
 			}
+		},
+		"secretRooms":
+		{
+			"filePath": "RoomData/secretrooms.json",
+			"requirements":
+			{
+				
+			}
 		}
 	},
 	"data":

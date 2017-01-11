@@ -2392,7 +2392,7 @@ function P.playerTile:onEnter()
 	end
 end
 
-P.tree = P.wall:new{name = "tree", level = 0, sprite = love.graphics.newImage('Graphics/tree0.png'),
+P.tree = P.wall:new{name = "tree", sawable = false, level = 0, sprite = love.graphics.newImage('Graphics/tree0.png'),
 spriteList = {love.graphics.newImage('Graphics/tree1.png'), love.graphics.newImage('Graphics/tree2.png'), love.graphics.newImage('Graphics/tree3.png')}}
 function P.tree:updateSprite()
 	if self.level==1 then
