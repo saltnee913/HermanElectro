@@ -443,7 +443,7 @@ function love.load()
 			y = (6-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10, prevTileX = 3, prevTileY 	= 10,
 			prevx = (3-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10,
 			prevy = (10-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10,
-			width = 20, height = 20, speed = 250, luckTimer = 0, regularMapLoc = {x = 0, y = 0}, returnFloorIndex = 0, attributes = {xrayVision = false, upgradedToolUse = false, fast = {fast = false, fastStep = false}, flying = false, fear = false, shelled = false, tall = false, extendedRange = 0, sockStep = -1}}
+			width = 20, height = 20, speed = 250, luckTimer = 0, regularMapLoc = {x = 0, y = 0}, returnFloorIndex = 0, attributes = {permaMap = false, xrayVision = false, upgradedToolUse = false, fast = {fast = false, fastStep = false}, flying = false, fear = false, shelled = false, tall = false, extendedRange = 0, sockStep = -1}}
 	player.character = setChar
 
 	map.clearBlacklist()
@@ -622,6 +622,11 @@ function postFloorChange()
 			end
 		end
 	end
+
+	if player.attributes.permaMap then
+		tools.map:useToolNothing()
+	end
+
 	completedRooms[mapy][mapx] = 1
 end
 
@@ -1992,6 +1997,8 @@ function love.draw()
 	if not loadTutorial then
 		love.graphics.print(math.floor(gameTime.timeLeft), width/2-10, 20);
 	end
+
+	--draw minimap
 	for i = 0, mapHeight do
 		for j = 0, mapHeight do
 			if visibleMap[i][j]>0 then
@@ -2006,10 +2013,8 @@ function love.draw()
 						if map.getFieldForRoom(currentid, 'minimapColor') ~= nil then
 							love.graphics.setColor(map.getFieldForRoom(currentid, 'minimapColor'))
 						end
-					elseif not (map.getFieldForRoom(mainMap[i][j].roomid, "hidden")~=nil and map.getFieldForRoom(mainMap[i][j].roomid, "hidden")) then
-						love.graphics.setColor(100,100,100)
 					else
-						love.graphics.setColor(0,0,0)
+						love.graphics.setColor(100,100,100)
 					end
 				end
 				local minimapScale = 8/mapHeight
@@ -2025,6 +2030,7 @@ function love.draw()
 			end
 		end
 	end
+
 	if not editorMode then
 		for i = 0, 6 do
 			love.graphics.setColor(255,255,255)

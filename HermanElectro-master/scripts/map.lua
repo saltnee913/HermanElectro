@@ -909,7 +909,8 @@ function P.generateMapWeighted()
 	arr = P.floorInfo.rooms.secretRooms
 	local secLocs = {}
 	local numNilAdjacent = 1
-	while #secLocs == 0 do
+	local triesCounter = 0
+	while #secLocs == 0 and numNilAdjacent<4 do
 		for i = 1, height do
 			for j = 1, height do
 				if room[i][j]==nil then
@@ -938,7 +939,7 @@ function P.generateMapWeighted()
 		end
 		numNilAdjacent = numNilAdjacent+1
 	end
-	if not #secLocs==0 then
+	if not (#secLocs==0) then
 		local whichLoc = util.random(#secLocs, 'misc')
 		roomid = util.chooseRandomKey(arr, 'mapGen')
 		newmap[secLocs[whichLoc].y][secLocs[whichLoc].x] = {roomid = roomid, room = P.createRoom(roomid, arr), tint = {0,0,0}, dirEnter = arr[roomid].dirEnter, isFinal = false, isInitial = false}

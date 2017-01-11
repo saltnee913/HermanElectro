@@ -3680,6 +3680,20 @@ function P.buttonReroller:useToolNothing()
 end
 P.buttonReroller.useToolTile = P.buttonReroller.useToolNothing
 
+P.compass = P.superTool:new{name = "The Compass", description = "May you forever find your path", image = love.graphics.newImage('Graphics/compass.png'),
+baseRange = 0, quality = 3}
+function P.compass:usableOnNothing()
+	return true
+end
+P.compass.usableOnTile = P.compass.usableOnNothing
+function P.compass:useToolNothing()
+	self.numHeld = self.numHeld-1
+	player.attributes.permaMap = true
+	tools.map:useToolNothing()
+end
+P.compass.useToolTile = P.compass.useToolNothing
+
+
 P.numNormalTools = 7
 
 --[[ideas:
@@ -3833,6 +3847,8 @@ P:addTool(P.wallReroller)
 P:addTool(P.beggarReroller)
 P:addTool(P.xrayVision)
 P:addTool(P.secretTeleporter)
+P:addTool(P.buttonReroller)
+P:addTool(P.compass)
 
 P.resetTools()
 
