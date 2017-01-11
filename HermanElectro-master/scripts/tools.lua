@@ -1749,9 +1749,17 @@ P.map.usableOnTile = P.map.usableOnNothing
 function P.map:useToolNothing(tileY, tileX)
 	for i = 1, mapHeight do
 		for j = 1, mapHeight do
-			visibleMap[i][j]=1
-			if mainMap[i][j]~=nil and map.getFieldForRoom(mainMap[i][j].roomid, 'autowin') then
-				completedRooms[i][j]=0.5
+			if mainMap[i][j]==nil then
+				visibleMap[i][j]=1
+			else
+				if map.getFieldForRoom(mainMap[i][j].roomid, 'hidden')~=nil and map.getFieldForRoom(mainMap[i][j].roomid, 'hidden') then
+					visibleMap[i][j]=0.5
+				else
+					visibleMap[i][j]=1
+				end
+				if map.getFieldForRoom(mainMap[i][j].roomid, 'autowin') and completedRooms[i][j]<1 then
+					completedRooms[i][j]=0.5
+				end
 			end
 		end
 	end
@@ -1839,7 +1847,7 @@ end
 P.roomUnlocker.usableOnTile = P.roomUnlocker.usableOnNothing
 function P.roomUnlocker:useToolNothing()
 	self.numHeld = self.numHeld-1
-	unlockDoors()
+	unlockDoorsPlus()
 end
 P.roomUnlocker.useToolTile = P.roomUnlocker.useToolNothing
 

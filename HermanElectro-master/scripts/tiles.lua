@@ -1517,6 +1517,42 @@ function P.blueBeggar:providePayment()
 	tools.giveSupertools(1, {quality})
 end
 
+P.whiteBeggar = P.beggar:new{name = "whiteBeggar", sprite = love.graphics.newImage('Graphics/whitebeggar.png')}
+function P.whiteBeggar:providePayment()
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]==self then
+				room[i][j] = tiles.tunnel:new()
+				return
+			end
+		end
+	end
+end
+
+P.blackBeggar = P.beggar:new{name = "blackBeggar", sprite = love.graphics.newImage('Graphics/blackbeggar.png')}
+function P.blackBeggar:providePayment()
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]==self then
+				room[i][j] = tiles.dungeonEnter:new()
+				return
+			end
+		end
+	end
+end
+
+P.goldBeggar = P.beggar:new{name = "goldBeggar", sprite = love.graphics.newImage('Graphics/goldbeggar.png')}
+function P.goldBeggar:providePayment()
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]==self then
+				room[i][j] = tiles.endTile:new()
+				return
+			end
+		end
+	end
+end
+
 P.ladder = P.tile:new{name = "ladder", sprite = love.graphics.newImage('Graphics/laddertile.png'), blocksAnimalMovement = true}
 function P.ladder:obstructsMovementAnimal(animal)
 	return true
@@ -2690,5 +2726,8 @@ tiles[178] = P.tree
 tiles[179] = P.biscuit
 tiles[180] = P.entrancePortal2
 tiles[181] = P.exitPortal2
+tiles[182] = P.whiteBeggar
+tiles[183] = P.blackBeggar
+tiles[184] = P.goldBeggar
 
 return tiles

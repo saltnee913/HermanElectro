@@ -1603,30 +1603,39 @@ function love.draw()
 		end
 	end
 
-	if validSpace() and mapx<#completedRooms[mapy] and ((completedRooms[mapy][mapx]==1 and mainMap[mapy][mapx+1]~=nil) or
-	completedRooms[mapy][mapx+1]==1) and
-	not (map.getFieldForRoom(mainMap[mapy][mapx+1].roomid, 'hidden')~=nil and  map.getFieldForRoom(mainMap[mapy][mapx+1].roomid, 'hidden')) then
-		love.graphics.draw(toDrawFloor, (roomLength+1)*floor.sprite:getWidth()*scale+wallSprite.width, (math.floor(roomHeight/2))*floor.sprite:getHeight()*scale+wallSprite.height, math.pi/2, scale, scale)
-		love.graphics.draw(toDrawFloor, (roomLength+1)*floor.sprite:getWidth()*scale+wallSprite.width, (math.floor(roomHeight/2)-1)*floor.sprite:getHeight()*scale+wallSprite.height, math.pi/2, scale, scale)	
+	if validSpace() then
+		local testRooms = {{-1,0}, {1,0}, {0,-1}, {0,1}}
+		for k = 1, #testRooms do
+			local drawFloorPath = true
+			local xdiff = testRooms[k][1]
+			local ydiff = testRooms[k][2]
+			if not (mapx+xdiff<=#completedRooms[mapy] and mapx+xdiff>0 and mapy+ydiff<=#completedRooms and mapy+ydiff>0) then
+				drawFloorPath = false
+			elseif mainMap[mapy+ydiff][mapx+xdiff]==nil then
+				drawFloorPath = false
+			elseif completedRooms[mapy][mapx]<1 and completedRooms[mapy+ydiff][mapx+xdiff]<1 then
+				drawFloorPath = false
+			elseif visibleMap[mapy+ydiff][mapx+xdiff]<1 then
+				drawFloorPath = false
+			end
+
+			if drawFloorPath then
+				if xdiff==1 and ydiff==0 then
+					love.graphics.draw(toDrawFloor, (roomLength+1)*floor.sprite:getWidth()*scale+wallSprite.width, (math.floor(roomHeight/2))*floor.sprite:getHeight()*scale+wallSprite.height, math.pi/2, scale, scale)
+					love.graphics.draw(toDrawFloor, (roomLength+1)*floor.sprite:getWidth()*scale+wallSprite.width, (math.floor(roomHeight/2)-1)*floor.sprite:getHeight()*scale+wallSprite.height, math.pi/2, scale, scale)
+				elseif xdiff==-1 and ydiff==0 then
+					love.graphics.draw(toDrawFloor, (0)*floor.sprite:getWidth()*scale+wallSprite.width, (math.floor(roomHeight/2))*floor.sprite:getHeight()*scale+wallSprite.height, math.pi/2, scale, scale)
+					love.graphics.draw(toDrawFloor, (0)*floor.sprite:getWidth()*scale+wallSprite.width, (math.floor(roomHeight/2)-1)*floor.sprite:getHeight()*scale+wallSprite.height, math.pi/2, scale, scale)
+				elseif xdiff==0 and ydiff==1 then
+					love.graphics.draw(toDrawFloor, (math.floor(roomLength/2)-1)*floor.sprite:getWidth()*scale+wallSprite.width, (roomHeight)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale*16/topwall:getWidth(), scale*16/topwall:getWidth())
+					love.graphics.draw(toDrawFloor, (math.floor(roomLength/2))*floor.sprite:getWidth()*scale+wallSprite.width, (roomHeight)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale*16/topwall:getWidth(), scale*16/topwall:getWidth())
+				elseif xdiff==0 and ydiff==-1 then
+					love.graphics.draw(toDrawFloor, (math.floor(roomLength/2)-1)*floor.sprite:getWidth()*scale+wallSprite.width, (-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale*16/topwall:getWidth(), scale*16/topwall:getWidth())
+					love.graphics.draw(toDrawFloor, (math.floor(roomLength/2))*floor.sprite:getWidth()*scale+wallSprite.width, (-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale*16/topwall:getWidth(), scale*16/topwall:getWidth())
+				end
+			end
+		end
 	end
-	if validSpace() and mapx>1 and ((completedRooms[mapy][mapx]==1 and mainMap[mapy][mapx-1]~=nil) or
-	completedRooms[mapy][mapx-1]==1) and
-	not (map.getFieldForRoom(mainMap[mapy][mapx-1].roomid, 'hidden')~=nil and  map.getFieldForRoom(mainMap[mapy][mapx-1].roomid, 'hidden')) then
-		love.graphics.draw(toDrawFloor, (0)*floor.sprite:getWidth()*scale+wallSprite.width, (math.floor(roomHeight/2))*floor.sprite:getHeight()*scale+wallSprite.height, math.pi/2, scale, scale)
-		love.graphics.draw(toDrawFloor, (0)*floor.sprite:getWidth()*scale+wallSprite.width, (math.floor(roomHeight/2)-1)*floor.sprite:getHeight()*scale+wallSprite.height, math.pi/2, scale, scale)	
-	end
-	if validSpace() and mapy>1 and ((completedRooms[mapy][mapx]==1 and mainMap[mapy-1][mapx]~=nil) or
-	completedRooms[mapy-1][mapx]==1) and
-	not (map.getFieldForRoom(mainMap[mapy-1][mapx].roomid, 'hidden')~=nil and  map.getFieldForRoom(mainMap[mapy-1][mapx].roomid, 'hidden')) then
-		love.graphics.draw(toDrawFloor, (math.floor(roomLength/2)-1)*floor.sprite:getWidth()*scale+wallSprite.width, (-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale*16/topwall:getWidth(), scale*16/topwall:getWidth())
-		love.graphics.draw(toDrawFloor, (math.floor(roomLength/2))*floor.sprite:getWidth()*scale+wallSprite.width, (-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale*16/topwall:getWidth(), scale*16/topwall:getWidth())		
-	end
-	if validSpace() and mapy<#completedRooms and ((completedRooms[mapy][mapx]==1 and mainMap[mapy+1][mapx]~=nil) or
-	completedRooms[mapy+1][mapx]==1) and
-	not (map.getFieldForRoom(mainMap[mapy+1][mapx].roomid, 'hidden')~=nil and  map.getFieldForRoom(mainMap[mapy+1][mapx].roomid, 'hidden')) then
-		love.graphics.draw(toDrawFloor, (math.floor(roomLength/2)-1)*floor.sprite:getWidth()*scale+wallSprite.width, (roomHeight)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale*16/topwall:getWidth(), scale*16/topwall:getWidth())
-		love.graphics.draw(toDrawFloor, (math.floor(roomLength/2))*floor.sprite:getWidth()*scale+wallSprite.width, (roomHeight)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale*16/topwall:getWidth(), scale*16/topwall:getWidth())		
-	end	
 	love.graphics.setShader()
 	--[[for i = 1, roomLength do
 		if not (i==math.floor(roomLength/2) or i==math.floor(roomLength/2)+1) then
@@ -1968,7 +1977,7 @@ function love.draw()
 	end
 	for i = 0, mapHeight do
 		for j = 0, mapHeight do
-			if visibleMap[i][j] == 1 then
+			if visibleMap[i][j]>0 then
 				if mainMap[i][j]==nil then
 					love.graphics.setColor(0, 0, 0)
 				else
@@ -2335,64 +2344,56 @@ function enterRoom(dir)
 	prevMapX = mapx
 	prevMapY = mapy
 	prevRoom = room
-	if dir == 0 then
-		if mapy>0 and not (completedRooms[mapy][mapx]<1 and completedRooms[mapy-1][mapx]<1) then
-			if mainMap[mapy-1][mapx]~=nil and visibleMap[mapy-1][mapx] then
-				mapy = mapy-1
-				room = mainMap[mapy][mapx].room
-				roomHeight = room.height
-				roomLength = room.length
-				--player.y = height-wallSprite.heightBottom-5
-				player.tileY = roomHeight
-				if plusOne then player.tileX = math.floor(roomLength/2)+1
-				else player.tileX = math.floor(roomLength/2) end
-			end
-		end
-	elseif dir == 1 then
-		if mapx<mapHeight and not (completedRooms[mapy][mapx]<1 and completedRooms[mapy][mapx+1]<1)then
-			if mainMap[mapy][mapx+1]~=nil and visibleMap[mapy][mapx+1] then
-				mapx = mapx+1
-				room = mainMap[mapy][mapx].room
-				roomHeight = room.height
-				roomLength = room.length
-				--player.x = wallSprite.width+5
-				player.tileX = 1
-				if plusOne then player.tileY = math.floor(roomHeight/2)+1
-				else player.tileY = math.floor(roomHeight/2) end
-			end
-		end
-	elseif dir == 2 then
-		if mapy<mapHeight and not (completedRooms[mapy][mapx]<1 and completedRooms[mapy+1][mapx]<1) then
-			if mainMap[mapy+1][mapx]~=nil and visibleMap[mapy+1][mapx] then
-				mapy = mapy+1
-				room = mainMap[mapy][mapx].room
-				roomHeight = room.height
-				roomLength = room.length
-				--player.y = wallSprite.height+player.height+5
-				if plusOne then player.tileX = math.floor(roomLength/2)+1
-				else player.tileX = math.floor(roomLength/2) end
-				player.tileY = 1
-			end
-		end
-	elseif dir == 3 then
-		if mapx>0 and not (completedRooms[mapy][mapx]<1 and completedRooms[mapy][mapx-1]<1) then
-			if mainMap[mapy][mapx-1]~=nil and visibleMap[mapy][mapx-1] then
-				mapx = mapx-1
-				room = mainMap[mapy][mapx].room
-				roomHeight = room.height
-				roomLength = room.length
-				--player.x = width-wallSprite.width-player.width-5
-				player.tileX = roomLength
-				if plusOne then player.tileY = math.floor(roomHeight/2)+1
-				else player.tileY = math.floor(roomHeight/2) end
-			end
-		end
+
+	local mapChange = {x = 0, y = 0}
+	if dir==0 then mapChange.y = -1
+	elseif dir==1 then mapChange.x = 1
+	elseif dir==2 then mapChange.y = 1
+	elseif dir==3 then mapChange.x = -1
 	end
+
+	--checks conditions that prevent room entry
+	if mapy+mapChange.y<0 or mapy+mapChange.y>mapHeight+1 or mapx+mapChange.x<0 or mapx+mapChange.x>mapHeight+1 then
+		return
+	elseif completedRooms[mapy][mapx]<1 and completedRooms[mapy+mapChange.y][mapx+mapChange.x]<1 then
+		return
+	elseif mainMap[mapy+mapChange.y][mapx+mapChange.x]==nil then
+		return
+	elseif visibleMap[mapy+mapChange.y][mapx+mapChange.x]<1 then
+		return
+	end
+
+	mapy = mapy+mapChange.y
+	mapx = mapx+mapChange.x
+	room = mainMap[mapy][mapx].room
+	roomHeight = room.height
+	roomLength = room.length
+	--player.y = height-wallSprite.heightBottom-5
+	player.tileY = roomHeight
+	if plusOne then player.tileX = math.floor(roomLength/2)+1
+	else player.tileX = math.floor(roomLength/2) end
+
+	if dir==0 then
+		player.tileY = roomHeight
+		if plusOne then player.tileX = math.floor(roomLength/2)+1
+		else player.tileX = math.floor(roomLength/2) end
+	elseif dir==1 then
+		player.tileX = 1
+		if plusOne then player.tileY = math.floor(roomHeight/2)+1
+		else player.tileY = math.floor(roomHeight/2) end
+	elseif dir==2 then
+		player.tileY = 1
+		if plusOne then player.tileX = math.floor(roomLength/2)+1
+		else player.tileX = math.floor(roomLength/2) end
+	elseif dir==3 then
+		player.tileX = roomLength
+		if plusOne then player.tileY = math.floor(roomHeight/2)+1
+		else player.tileY = math.floor(roomHeight/2) end
+	end
+	
 	currentid = tostring(mainMap[mapy][mapx].roomid)
 	if map.getFieldForRoom(currentid, 'autowin') then
-		if not (map.getFieldForRoom(currentid, 'hidden')~=nil and map.getFieldForRoom(currentid, 'hidden')) then
-			completedRooms[mapy][mapx] = 1
-		end
+		completedRooms[mapy][mapx] = 1
 	end
 	if loadTutorial or easyMode then
 		player.enterX = player.tileX
@@ -2412,8 +2413,6 @@ function enterRoom(dir)
 			player.tileY = player.prevTileY
 			mapx = prevMapX
 			mapy = prevMapY
-			createAnimals()
-			createPushables()
 			break
 		end
 	end
@@ -3429,17 +3428,36 @@ end
 
 function unlockDoors()
 	completedRooms[mapy][mapx] = 1
-	if mapy>0 then
-		visibleMap[mapy-1][mapx] = 1
+	local testRooms = {{-1,0}, {1,0}, {0,-1}, {0,1}}
+	for k = 1, #testRooms do
+		local i = testRooms[k][1]
+		local j = testRooms[k][2]
+		local canUnlock = false
+		if mapy+i>=0 and mapy+i<mapHeight+1 and mapx+j>=0 and mapx+j<mapHeight+1 then
+			canUnlock = true
+			if mainMap[mapy+i][mapx+j]~=nil then
+				local potentialId = mainMap[mapy+i][mapx+j].roomid
+				if map.getFieldForRoom(potentialId, "hidden")~=nil and map.getFieldForRoom(potentialId, "hidden") then
+					canUnlock = false
+				end
+			end
+			if canUnlock then
+				visibleMap[mapy+i][mapx+j] = 1
+			end
+		end
 	end
-	if mapy<mapHeight then
-		visibleMap[mapy+1][mapx] = 1
-	end
-	if mapx>0 then
-		visibleMap[mapy][mapx-1] = 1
-	end
-	if mapx<mapHeight then
-		visibleMap[mapy][mapx+1] = 1
+end
+
+--unlocks secret rooms as well
+function unlockDoorsPlus()
+	completedRooms[mapy][mapx] = 1
+	local testRooms = {{-1,0}, {1,0}, {0,-1}, {0,1}}
+	for k = 1, #testRooms do
+		local i = testRooms[k][1]
+		local j = testRooms[k][2]
+		if mapy+i>=0 and mapy+i<mapHeight+1 and mapx+j>=0 and mapx+j<mapHeight+1 then
+			visibleMap[mapy+i][mapx+j] = 1
+		end
 	end
 end
 
