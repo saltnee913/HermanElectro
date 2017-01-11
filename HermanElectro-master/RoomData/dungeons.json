@@ -76,6 +76,7 @@
     "minimapColor": [139,69,19],
     "hasEndTile": false,
     "autowin": true,
-    "floorTileOverride": "dungeon"
+    "floorTileOverride": "dungeon",
+    "hidden": true
   }
 }

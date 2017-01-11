@@ -18,7 +18,7 @@ scale = (width - 2*wallSprite.width)/(20.3 * 16)*5/6
 --floor = tiles.tile
 
 --speed same as player (250)
-P.animal = Object:new{frozen = false, conductive = false, pickedUp = false, canDropTool = false, willDropTool = false, flying = false, triggered = false, waitCounter = 1, dead = false, name = "animal", tileX, tileY, prevx, prevy, prevTileX, prevTileY, x, y, speed = 250, width = 16*scale, height = 16*scale, sprite = love.graphics.newImage('Graphics/pitbull.png'), deadSprite = love.graphics.newImage('Graphics/pitbulldead.png'), tilesOn = {}, oldTilesOn = {}}
+P.animal = Object:new{elevation = 0, frozen = false, conductive = false, pickedUp = false, canDropTool = false, willDropTool = false, flying = false, triggered = false, waitCounter = 1, dead = false, name = "animal", tileX, tileY, prevx, prevy, prevTileX, prevTileY, x, y, speed = 250, width = 16*scale, height = 16*scale, sprite = love.graphics.newImage('Graphics/pitbull.png'), deadSprite = love.graphics.newImage('Graphics/pitbulldead.png'), tilesOn = {}, oldTilesOn = {}}
 function P.animal:move(playerx, playery, room, isLit)
 	if player.attributes.shelled then
 		return
@@ -64,10 +64,14 @@ function P.animal:primaryMove(playerx, playery)
 			self.tileY = self.tileY-1
 		end
 	end
-	if room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX]:blocksMovementAnimal(self) then
+	if room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX]:obstructsMovementAnimal(self) then
 		self.tileY = self.prevTileY
 		self.tileX = self.prevTileX
 		return false
+	elseif room[self.tileY][self.tileX]==nil and math.abs(self.elevation)>3 then
+		self.tileY = self.prevTileY
+		self.tileX = self.prevTileX
+		return false		
 	end
 	if not self:pushableCheck() then
 		self.tileX = self.prevTileX
@@ -111,10 +115,14 @@ function P.animal:secondaryMove(playerx, playery)
 		end
 	end
 
-	if room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX]:blocksMovementAnimal(self) then
+	if room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX]:obstructsMovementAnimal(self) then
 		self.tileY = self.prevTileY
 		self.tileX = self.prevTileX
 		return false
+	elseif room[self.tileY][self.tileX]==nil and math.abs(self.elevation)>3 then
+		self.tileY = self.prevTileY
+		self.tileX = self.prevTileX
+		return false		
 	end
 
 	if not self:pushableCheck() then
@@ -225,7 +233,7 @@ function P.animal:afraidPrimaryMove(playerx, playery, room, isLit)
 	for i = 1, 4 do
 		if setOfMoves[i].dist>currDist then
 			self:tryMove(setOfMoves[i].diffx, setOfMoves[i].diffy)
-			if self.tileX~=self.prevTileX or self.tileY~=self.prevTileY then
+			if self:hasMoved() then
 				return
 			end
 		end
@@ -236,9 +244,11 @@ function P.animal:tryMove(diffx, diffy)
 	self.tileY = self.tileY+diffy
 
 	if room[self.tileY]==nil or self.tileX>roomLength or self.tileX<=0 or
-	(room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX]:blocksMovementAnimal(self)) then
+	(room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX]:obstructsMovementAnimal(self)) or
+	(room[self.tileY][self.tileX]==nil and math.abs(self.elevation)>3) then
 		self.tileY = self.prevTileY
 		self.tileX = self.prevTileX
+		return
 	end
 
 	if not self:pushableCheck() then
@@ -277,7 +287,8 @@ function P.animal:afraidSecondaryMove(playerx, playery)
 	end
 
 	if room[self.tileY]==nil or self.tileX<1 or self.tileX>roomLength or
-	(room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX]:blocksMovementAnimal(self)) then
+	(room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX]:obstructsMovementAnimal(self)) or
+	(room[self.tileY][self.tileX]==nil and math.abs(self.elevation)>3) then
 		self.tileY = self.prevTileY
 		self.tileX = self.prevTileX
 		return false

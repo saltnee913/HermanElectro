@@ -640,7 +640,7 @@ function P.olivia:updateSprite()
 	end
 end
 
-P.albert = P.character:new{name = "Albert", description = "The Convict", spotlightRange =100, updateTimeFull = 3, updateTimeCurrent = 5, sprite = love.graphics.newImage('Graphics/albert.png'), disabled = true}
+P.albert = P.character:new{name = "Albert", description = "The Convict", spotlightRange =100, updateTimeFull = 3, updateTimeCurrent = 5, sprite = love.graphics.newImage('Graphics/albert.png')}
 function P.albert:onCharLoad()
 	self:setSpotlights()
 end
@@ -655,6 +655,7 @@ function P.albert:setSpotlights()
 	end
 end
 function P.albert:update(dt)
+	if spotlights==nil then return end
 	for i = 1, 3 do
 		spotlights[i].x = spotlights[i].x+spotlights[i].velX
 		spotlights[i].y = spotlights[i].y+spotlights[i].velY

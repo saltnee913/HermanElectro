@@ -365,8 +365,16 @@ end
 function P.blocksMovement(tileY, tileX)
 	return room[tileY] ~= nil and room[tileY][tileX] ~= nil and room[tileY][tileX]:obstructsMovement()
 end
-function P.blocksMovementAnimal(tileY, tileX)
-	return room[tileY] ~= nil and room[tileY][tileX] ~= nil and room[tileY][tileX]:obstructsMovementAnimal()
+function P.blocksMovementAnimal(animal)
+	local tileY = animal.tileY
+	local tileX = animal.tileX
+	if room[tileY] ~= nil and room[tileY][tileX] ~= nil and room[tileY][tileX]:obstructsMovementAnimal(animal) then
+		return true
+	elseif room[tileY]~=nil and room[tileY][tileX]==nil and math.abs(animal.elevation)>3 then
+		return true
+	else
+		return false
+	end
 end
 
 local function tilesWhitelistHelper(arr, tiles)
@@ -420,15 +428,13 @@ local function requirementsHelper(roomData, key, value)
 			return tilesWhitelistHelper(roomData.layout, value)
 		end
 	elseif key == 'toolRange' then
-		local sum = 0
 		for i = 1, #roomData.itemsNeeded do
+			local sum = 0
 			for j = 1, #roomData.itemsNeeded[i] do
 				sum = sum+roomData.itemsNeeded[i][j]
 			end
+			if sum<value[1] or sum>value[2] then return false end
 		end
-		local avg = sum/#roomData.itemsNeeded
-		if avg<value[1] or avg>value[2] then return false end
-		return true
 	elseif key == 'hasKey' then
 		return roomData[value] ~= nil
 	elseif key == 'solvableWithTools' then
@@ -784,6 +790,8 @@ function P.generateMapWeighted()
 					local c = newmap[j][k+1]
 					local d = newmap[j][k-1]
 					numNil = 0;
+					--elseif parts check to see if room exists but is special (e.g., treasure room)
+					--special rooms are not in roomsArray, but in the special rooms files
 					if (e==nil) then
 						numNil=numNil+1
 					elseif (roomsArray[e.roomid]==nil) then
@@ -897,14 +905,53 @@ function P.generateMapWeighted()
 		newmap[choice.y][choice.x] = {roomid = roomid, room = P.createRoom(roomid), tint = {0,0,0}, isFinal = false, isInitial = false}
 	end
 	
-	--add dungeon room to floor
+	--add secret room to floor
+	arr = P.floorInfo.rooms.secretRooms
+	local secLocs = {}
+	local numNilAdjacent = 1
+	while #secLocs == 0 do
+		for i = 1, height do
+			for j = 1, height do
+				if room[i][j]==nil then
+					local e = newmap[i+1][j]
+					local b = newmap[i-1][j]
+					local c = newmap[i][j+1]
+					local d = newmap[i][j-1]
+					numNil = 0;
+					if (e==nil) then
+						numNil=numNil+1
+					end
+					if (b==nil) then
+						numNil=numNil+1
+					end
+					if (c==nil) then
+						numNil=numNil+1
+					end
+					if (d==nil) then
+						numNil=numNil+1
+					end
+					if numNil<=numNilAdjacent and newmap[i][j]==nil then
+						secLocs[#secLocs+1] = {x = j, y = i}
+					end
+				end
+			end
+		end
+		numNilAdjacent = numNilAdjacent+1
+	end
+	local whichLoc = util.random(#secLocs, 'misc')
+	roomid = util.chooseRandomKey(arr, 'mapGen')
+	newmap[secLocs[whichLoc].y][secLocs[whichLoc].x] = {roomid = roomid, room = P.createRoom(roomid, arr), tint = {0,0,0}, dirEnter = arr[roomid].dirEnter, isFinal = false, isInitial = false}
+
+	--add special dungeon room to floor
+	--each floor has one special dungeon, which is located at [height+1][1]
 	arr = P.floorInfo.rooms.dungeons
 	roomid = util.chooseRandomKey(arr, 'mapGen')
-	newmap[height+1][1] = {roomid = roomid, room = P.createRoom(roomid, arr), tint = {0,0,0}, dirEnter = arr[roomid].dirEnter, isFinal = false, isInitial = false, floorTileOverride = "dungeon"}
+	newmap[height+1][1] = {roomid = roomid, room = P.createRoom(roomid, arr), tint = {0,0,0}, dirEnter = arr[roomid].dirEnter, isFinal = false, isInitial = false}
 
 	return newmap
 end
 
+--generates end dungeon accessible in starting room of each floor
 function P.generateEndDungeon()
 	local randomStartRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.startRooms, 'mapGen')
 	local puzzleRooms = util.createRandomKeyArray(P.floorInfo.rooms.puzzleRooms, 'mapGen')

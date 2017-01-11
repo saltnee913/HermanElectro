@@ -70,8 +70,23 @@ function P.tile:updateSprite()
 end
 function P.tile:postPowerUpdate(i,j)
 end
-function P.tile:blocksMovementAnimal(animal)
-	return not animal.flying and (self.blocksMovement or self.blocksAnimalMovement)
+--guide to elevation:
+--if can block movement, make blocksMovement true
+--if can only block animal movement, make blocksAnimalMovement true
+--obstructsMovement() is for ACTUALLY blocking player movement (in new elevation system)
+--obstructsMovementAnimal() is for ACTUALLY blocking animal movement
+--map has blocksMovementAnimal() function as well
+--pretty confusing, even I am a bit confused
+function P.tile:obstructsMovementAnimal(animal)
+	if animal.flying then
+		return false
+	else
+		if math.abs(animal.elevation-self:getHeight())<=3 then
+			return false
+		else
+			return true
+		end
+	end
 end
 function P.tile:getCorrectedOffset(dir)
 	dir = dir + self.rotation
@@ -146,10 +161,11 @@ function P.tile:obstructsVision()
 	else return self:getHeight()-3>player.elevation end
 end
 function P.tile:obstructsMovement()
-	return math.abs(player.elevation-self:getHeight())>3 and self.blocksMovement
-end
-function P.tile:obstructsMovementAnimal()
-	return self:getHeight()~=0 and (self.blocksMovement or self.blocksMovementAnimal)
+	if math.abs(player.elevation-self:getHeight())<=3 then
+		return false
+	else
+		return true
+	end
 end
 function P.tile:getHeight()
 	if self.destroyed then
@@ -494,15 +510,15 @@ function P.wall:onEnter(player)
 end
 P.wall.onStay = P.wall.onEnter
 function P.wall:onEnterPushable(pushable)
-	if not self.destroyed then
+	--[[if not self.destroyed then
 		pushable.tileX = pushable.prevTileX
 		pushable.tileY = pushable.prevTileY
-	end
+	end]]
 end
 P.wall.onStayPushable = P.wall.onEnterPushable
 
 function P.wall:onEnterAnimal(animal)
-	if not self.destroyed and not animal.flying then
+	--[[if not self.destroyed and not animal.flying then
 		animal.x = animal.prevx
 		animal.y = animal.prevy
 		animal.tileX = animal.prevTileX
@@ -511,7 +527,10 @@ function P.wall:onEnterAnimal(animal)
 		animal.prevy = animal.y
 		animal.prevTileX = animal.tileX
 		animal.prevTileY = animal.tileY
-	end
+	else
+		animal.elevation = self:getHeight()
+	end]]
+	animal.elevation = self:getHeight()
 end
 P.wall.onStayAnimal = P.wall.onEnterAnimal
 function P.wall:destroy()
@@ -525,27 +544,6 @@ function P.wall:destroy()
 	self.dirSend = {0,0,0,0}
 	self.overlay = nil
 	self.yOffset = 0
-	if not self.hidesDungeon then
-		local bonusDungeonChance = util.random(100, 'misc')
-		if bonusDungeonChance<getLuckBonus() then
-			self.hidesDungeon = true
-		end
-	end
-	if self.hidesDungeon then
-		for i = 1, roomHeight do
-			for j = 1, roomLength do
-				if room[i][j]==self then
-					room[i][j] = tiles.dungeonEnter:new()
-				end
-			end
-		end
-	end
-end
-function P.wall:onLoad()
-	local dungeonChance = util.random(100, 'misc')
-	if dungeonChance==1 then
-		self.hidesDungeon = true
-	end
 end
 function P.wall:onLeave()
 	updateElevation()
@@ -561,6 +559,22 @@ function P.wall:onLeave()
 	else
 		updateElevation()
 	end
+end
+--this function should never actually run...it's here just in case
+function P.wall:onLeaveAnimal(animal)
+	--[[updateElevation()
+	if math.abs(animal.elevation-self:getHeight())>3 then
+		--player.x = player.prevx
+		--player.y = player.prevy
+		animal.tileX = animal.prevTileX
+		animal.tileY = animal.prevTileY
+		--player.prevx = player.x
+		--player.prevy = player.y
+		animal.prevTileX = animal.tileX
+		animal.prevTileY = animal.tileY
+	else
+		updateElevation()
+	end]]
 end
 function P.wall:rotate(times)
 end
@@ -784,6 +798,13 @@ function P.hDoor:lightTest(x,y)
 		end
 	end
 end
+function P.hDoor:obstructsMovement()
+	if math.abs(player.elevation)<3 then return false
+	else return true end
+end
+function P.hDoor:obstructsMovementAnimal()
+	return true
+end
 
 P.vDoor= P.tile:new{name = "hDoor", blocksVision = true, canBePowered = false, dirSend = {0,0,0,0}, dirAccept = {0,0,0,0}, sprite = love.graphics.newImage('Graphics/door.png'), closedSprite = love.graphics.newImage('Graphics/door.png'), openSprite = love.graphics.newImage('Graphics/doorsopen.png')}
 function P.vDoor:onEnter(player)
@@ -889,6 +910,9 @@ function P.vPoweredDoor:lightTest(x,y)
 		end
 	end
 end
+function P.vPoweredDoor:willDestroyPushable()
+	return self.powered
+end
 
 P.hPoweredDoor = P.vPoweredDoor:new{name = "hPoweredDoor", dirSend = {0,1,0,1}, dirAccept = {0,1,0,1}}
 function P.hPoweredDoor:updateTile(player)
@@ -963,7 +987,7 @@ function P.sign:onLeave(player)
 	messageInfo.text = nil
 end
 
-P.rotater = P.button:new{canBePowered = true, dirAccept = {1,0,1,0}, dirSend = {1,0,1,0}, sprite = love.graphics.newImage('Graphics/rotater.png'), poweredSprite = love.graphics.newImage('Graphics/rotater.png')}
+P.rotater = P.button:new{name = "rotater", canBePowered = true, dirAccept = {1,0,1,0}, dirSend = {1,0,1,0}, sprite = love.graphics.newImage('Graphics/rotater.png'), poweredSprite = love.graphics.newImage('Graphics/rotater.png')}
 function P.rotater:updateSprite()
 end
 function P.rotater:onEnter(player)
@@ -1002,6 +1026,39 @@ function P.cornerRotater.flipDirection(dir, isVertical)
 end
 
 P.concreteWall = P.wall:new{sawable = false, name = "concreteWall", sprite = love.graphics.newImage('GraphicsColor/concretewall3.png'), poweredSprite = love.graphics.newImage('GraphicsColor/concretewall3.png'), electrifiedPoweredSprite = love.graphics.newImage('Graphics/concretewallpowered.png'), electrifiedSprite = love.graphics.newImage('Graphics/concretewallelectrified.png'), destroyedSprite = love.graphics.newImage('Graphics/concretewallbroken.png'), sawable = false}
+function P.wall:onLoad()
+	local dungeonChance = util.random(100, 'misc')
+	if dungeonChance==1 then
+		self.hidesDungeon = true
+	end
+end
+function P.concreteWall:destroy()
+	self.blocksProjectiles = false
+	self.blocksVision = false
+	self.sprite = self.destroyedSprite
+	self.destroyed = true
+	self.blocksMovement = false
+	self.canBePowered = false
+	self.dirAccept = {0,0,0,0}
+	self.dirSend = {0,0,0,0}
+	self.overlay = nil
+	self.yOffset = 0
+	if not self.hidesDungeon then
+		local bonusDungeonChance = util.random(100, 'misc')
+		if bonusDungeonChance<getLuckBonus() then
+			self.hidesDungeon = true
+		end
+	end
+	if self.hidesDungeon then
+		for i = 1, roomHeight do
+			for j = 1, roomLength do
+				if room[i][j]==self then
+					room[i][j] = tiles.dungeonEnter:new()
+				end
+			end
+		end
+	end
+end
 
 P.concreteWallConductive = P.concreteWall:new{name = "concreteWallConductive", sprite = love.graphics.newImage('Graphics3D/concretewallconductive.png'), poweredSprite = love.graphics.newImage('Graphics3D/concretewallconductive.png'), canBePowered = true, dirAccept = {1,1,1,1}, dirSend = {1,1,1,1}}
 
@@ -1453,6 +1510,9 @@ function P.blueBeggar:providePayment()
 end
 
 P.ladder = P.tile:new{name = "ladder", sprite = love.graphics.newImage('Graphics/laddertile.png'), blocksAnimalMovement = true}
+function P.ladder:obstructsMovementAnimal(animal)
+	return true
+end
 
 P.mousetrapOff = P.mousetrap:new{name = "mousetrapOff", safe = true, sprite = love.graphics.newImage('Graphics/mousetrapsafe.png')}
 
@@ -1535,6 +1595,61 @@ P.entrancePortal.onStay = P.entrancePortal.onEnter
 P.entrancePortal.onStayAnimal = P.entrancePortal.onEnterAnimal
 
 P.exitPortal = P.tile:new{name = "exitPortal", sprite = love.graphics.newImage('Graphics/exitPortal.png')}
+
+P.entrancePortal2 = P.entrancePortal:new{name = "entrancePortal2", sprite = love.graphics.newImage('Graphics/entranceportal2.png')}
+function P.entrancePortal2:onEnter(player)
+	for i = 1, roomHeight do
+		shouldBreak = false
+		for j = 1, roomLength do
+			if room[i][j]~=nil and room[i][j]:instanceof(tiles.exitPortal2) then
+				local movePlayer = true
+				for k = 1, #pushables do
+					if pushables[k].tileX == j and pushables[k].tileY == i then
+						movePlayer = false
+					end
+				end
+				if movePlayer then
+					player.tileX = j
+					player.tileY = i
+				end
+				shouldBreak = true
+				break
+			end
+		end
+		if shouldBreak then break end
+	end
+end
+function P.entrancePortal2:onEnterAnimal(animal)
+	for i = 1, roomHeight do
+		shouldBreak = false
+		for j = 1, roomLength do
+			if room[i][j]~=nil and room[i][j]:instanceof(tiles.exitPortal2) then
+				local moveAnimal = true
+				for k = 1, #pushables do
+					if pushables[k].tileX == j and pushables[k].tileY == i then
+						moveAnimal = false
+					end
+				end
+				for k = 1, #animals do
+					if animals[k].tileX == j and animals[k].tileY == i and not animals[k].dead then
+						moveAnimal = false
+					end
+				end
+				if moveAnimal then
+					animal.tileX = j
+					animal.tileY = i
+				end
+				shouldBreak = true
+				break
+			end
+		end
+		if shouldBreak then break end
+	end
+end
+P.entrancePortal2.onStay = P.entrancePortal2.onEnter
+P.entrancePortal2.onStayAnimal = P.entrancePortal2.onEnterAnimal
+
+P.exitPortal2 = P.tile:new{name = "exitPortal2", sprite = love.graphics.newImage('Graphics/exitportal2.png')}
 
 P.treasureTile2 = P.treasureTile:new{name = "treasureTile2", sprite = love.graphics.newImage('GraphicsBrush/tt2.png')}
 
@@ -1739,6 +1854,20 @@ P.reinforcedConductiveGlass = P.reinforcedGlass:new{name = "reinforcedConductive
 P.fog = P.tile:new{name = "fog", sprite = love.graphics.newImage('Graphics/fog.png'), blocksVision = true}
 function P.fog:obstructsVision()
 	return player.elevation==0
+end
+function P.fog:obstructsMovementAnimal(animal)
+	if math.abs(animal.elevation)<3 then
+		return false
+	else
+		return true
+	end
+end
+function P.fog:obstructsMovement()
+	if math.abs(player.elevation)<3 then
+		return false
+	else
+		return true
+	end
 end
 
 P.accelerator = P.conductiveTile:new{name = "accelerator", sprite = love.graphics.newImage('Graphics/accelerator.png'), poweredSprite = love.graphics.newImage('Graphics/accelerator.png')}
@@ -2020,6 +2149,7 @@ function P.toolTaxTile:updateSprite()
 	end
 end
 function P.toolTaxTile:onEnter()
+	if player.elevation>=self:getHeight()-3 then return end
 	if not self.destroyed and self.tool.numHeld>0 then
 		self.tool.numHeld = self.tool.numHeld-1
 		self:destroy()
@@ -2037,6 +2167,14 @@ function P.toolTaxTile:destroy()
 	self.dirSend = {0,0,0,0}
 	self.overlay = nil
 	self.tool = nil
+end
+function P.toolTaxTile:obstructsMovement()
+	if math.abs(player.elevation-self:getHeight())<=3 then
+		return false
+	elseif not self.destroyed and self.tool.numHeld>0 then
+		return false
+	end
+	return true
 end
 
 P.dungeonEnter = P.tile:new{name = "dungeonEnter"}
@@ -2211,7 +2349,7 @@ end
 
 P.halfWall = P.concreteWall:new{name = "halfWall", sprite = love.graphics.newImage('GraphicsColor/halfwall.png'), yOffset = -3}
 
-P.elevator = P.conductiveTile:new{name = "elevator", blocksAnimalMovement = true, yOffset = -3, sprite = love.graphics.newImage('GraphicsColor/elevatordown2.png'), poweredSprite = love.graphics.newImage('GraphicsColor/elevatorup.png')}
+P.elevator = P.conductiveTile:new{name = "elevator", blocksVision = true, blocksAnimalMovement = true, yOffset = -3, sprite = love.graphics.newImage('GraphicsColor/elevatordown2.png'), poweredSprite = love.graphics.newImage('GraphicsColor/elevatorup.png')}
 function P.elevator:postPowerUpdate()
 	if self.powered then
 		self.yOffset = -6
@@ -2301,7 +2439,7 @@ function P.playerTile:onEnter()
 	end
 end
 
-P.tree = P.wall:new{name = "tree", level = 0, sprite = love.graphics.newImage('Graphics/tree0.png'),
+P.tree = P.wall:new{name = "tree", sawable = false, level = 0, sprite = love.graphics.newImage('Graphics/tree0.png'),
 spriteList = {love.graphics.newImage('Graphics/tree1.png'), love.graphics.newImage('Graphics/tree2.png'), love.graphics.newImage('Graphics/tree3.png')}}
 function P.tree:updateSprite()
 	if self.level==1 then
@@ -2343,6 +2481,15 @@ function P.tree:destroy()
 			end
 		end
 	end
+end
+
+P.biscuit = P.tile:new{name = "biscuit", sprite = love.graphics.newImage('Graphics/biscuit.png')}
+function P.biscuit:onEnter(player)
+	player.biscuitHeld = true
+	self.done = true
+	self.isCompleted = true
+	self.isVisible = false
+	self.gone = true
 end
 
 tiles[1] = P.invisibleTile
@@ -2523,5 +2670,8 @@ tiles[175] = P.playerTile
 tiles[176] = P.lemonade
 tiles[177] = P.rottenMeat
 tiles[178] = P.tree
+tiles[179] = P.biscuit
+tiles[180] = P.entrancePortal2
+tiles[181] = P.exitPortal2
 
 return tiles
