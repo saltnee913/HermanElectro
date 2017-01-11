@@ -515,6 +515,14 @@ function P.wall:onEnterPushable(pushable)
 		pushable.tileY = pushable.prevTileY
 	end]]
 end
+function P.wall:obstructsMovement()
+	if math.abs(player.elevation-self:getHeight())<=3 then
+		return false
+	elseif player.character.name==characters.rammy.name and self.name == tiles.wall.name then
+		return false
+	end
+	return true
+end
 P.wall.onStayPushable = P.wall.onEnterPushable
 
 function P.wall:onEnterAnimal(animal)
@@ -2307,7 +2315,16 @@ function P.keyGate:onEnter()
 		P.reinforcedGlass:onEnter(player)
 	end
 end
---nothing can destroy the keyTile (including missiles) because of below code
+function P.keyGate:obstructsMovement()
+	if math.abs(player.elevation-self:getHeight())<=3 then
+		return false
+	elseif player.keysHeld>=3 then
+		return false
+	else
+		return true
+	end
+end
+--nothing can destroy the keyGate (including missiles) because of below code
 function P.keyGate:destroy()
 end
 function P.keyGate:open()
