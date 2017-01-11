@@ -3197,7 +3197,35 @@ function P.superSponge:usableOnTile(tile)
 	elseif tile:instanceof(tiles.slime) or tile:instanceof(tiles.conductiveSlime) then return true end
 	return false
 end
-P.superSponge.useToolTile = P.sponge.useToolTile
+function P.superSponge:useToolTile(tile, tileY, tileX)
+	tools.sponge:useToolTile(tile, tileY, tileX)
+	if tile:instanceof(tiles.puddle) then
+		self:spreadSponge(tileY, tileX)
+	end
+end
+function P.superSponge:spreadSponge(tileY, tileX)
+	room[tileY][tileX] = nil
+	if tileY>1 then
+		if room[tileY-1][tileX]~=nil and room[tileY-1][tileX]:instanceof(tiles.puddle) then
+			self:spreadSponge(tileY-1, tileX)
+		end
+	end
+	if tileY<roomHeight then
+		if room[tileY+1][tileX]~=nil and room[tile+-1][tileX]:instanceof(tiles.puddle) then
+			self:spreadSponge(tileY+1, tileX)
+		end
+	end
+	if tileX>1 then
+		if room[tileY][tileX-1]~=nil and room[tileY][tileX-1]:instanceof(tiles.puddle) then
+			self:spreadSponge(tileY, tileX-1)
+		end
+	end
+	if tileX<roomLength then
+		if room[tileY][tileX+1]~=nil and room[tileY][tileX+1]:instanceof(tiles.puddle) then
+			self:spreadSponge(tileY, tileX+1)
+		end
+	end
+end
 
 --gun, but radial and works on concrete
 P.superGun = P.superTool:new{name = "superGun", description = "", baseRange = 5, image = love.graphics.newImage('Graphics/superGun.png'), quality = 2}
