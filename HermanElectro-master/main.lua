@@ -491,6 +491,7 @@ end
 function emptyTools()
 	for i = 1, #tools do
 		tools[i].numHeld = 0
+		tools[i]:resetTool()
 	end
 end
 
@@ -2044,7 +2045,7 @@ function love.draw()
 			love.graphics.rectangle("line", i*width/18, 0, width/18, width/18)
 			love.graphics.setColor(255,255,255)
 			local image = tools[i+1].image
-			love.graphics.draw(image, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
+			love.graphics.draw(image, i*width/18, 0, 0, (width/18)/image:getWidth(), (width/18)/image:getHeight())
 			if tools[i+1].numHeld==0 then
 				love.graphics.draw(gray, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
 			end
@@ -2065,7 +2066,10 @@ function love.draw()
 			love.graphics.rectangle("line", (i+13)*width/18, 0, width/18, width/18)
 			love.graphics.setColor(255,255,255)
 			if specialTools~=nil and specialTools[i+1]~=0 then
-				love.graphics.draw(tools[specialTools[i+1]].image, (i+13)*width/18, 0, 0, (width/18)/32, (width/18)/32)
+				local toolImage = tools[specialTools[i+1]].image
+				local tiWidth = toolImage:getWidth()
+				local tiHeight = toolImage:getHeight()
+				love.graphics.draw(toolImage, (i+13)*width/18, 0, 0, (width/18)/tiWidth, (width/18)/tiHeight)
 			end
 			if specialTools[i+1]==0 then
 				love.graphics.draw(gray, (i+13)*width/18, 0, 0, (width/18)/32, (width/18)/32)
@@ -2452,10 +2456,19 @@ function enterRoom(dir)
 	updateGameState(false)
 	tutorial.enterRoom()
 
+	postRoomEnter()
+
 	player.x = (player.tileX-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
 	player.y = (player.tileY-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
     myShader:send("player_x", player.x+getTranslation().x*floor.sprite:getWidth()*scale+(width2-width)/2)
     myShader:send("player_y", player.y+getTranslation().y*floor.sprite:getWidth()*scale+(height2-height)/2)
+end
+
+function postRoomEnter()
+	if tools.tileSwapper.numHeld>0 then
+		tools.tileSwapper.toSwapCoords = nil
+		tools.tileSwapper.image = tools.tileSwapper.baseImage
+	end
 end
 
 oldTilesOn = {}

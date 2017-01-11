@@ -197,6 +197,8 @@ end
 function P.tool:nothingIsSomething()
 	return false
 end
+function P.tool:resetTool()
+end
 
 --returns a table of tables of coordinates by direction
 function P.tool:getToolableTiles()
@@ -2281,6 +2283,10 @@ function P.tileSwapper:useToolTile(tile, tileY, tileX)
 end
 function P.tileSwapper:nothingIsSomething()
 	return true
+end
+function P.tileSwapper:resetTool()
+	self.image = self.baseImage
+	self.toSwapCoords = nil
 end
 
 P.tileCloner = P.superTool:new{name = "tileCloner", description = "Gain a copy.", heldTile = nil, image = love.graphics.newImage('Graphics/tilecloner.png'), baseImage = love.graphics.newImage('Graphics/tilecloner.png'), baseRange = 3, quality = 4}

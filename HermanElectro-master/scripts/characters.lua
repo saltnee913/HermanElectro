@@ -207,7 +207,7 @@ P.rammy = P.character:new{name = "Rammy", description = "The Ram", winUnlocks = 
 	sprite = love.graphics.newImage('Graphics/ram.png')}
 
 function P.rammy:preTileEnter(tile)
-	if tile.name == tiles.wall.name and not tile.destroyed then
+	if tile.name == tiles.wall.name and not tile.destroyed and player.elevation<tile:getHeight()-3 then
 		tile:destroy()
 	end
 end
@@ -441,8 +441,10 @@ function P.lenny:onKeyPressedChar(key)
 end
 function P.lenny:onTileLeave()
 	if self.slime then
-		if room[player.prevTileY][player.prevTileX]==nil or
-			(room[player.prevTileY][player.prevTileX]:instanceof(tiles.wire) and room[player.prevTileY][player.prevTileX].destroyed) then
+		if room[player.prevTileY][player.prevTileX]==nil
+		or (room[player.prevTileY][player.prevTileX]:instanceof(tiles.wire) and room[player.prevTileY][player.prevTileX].destroyed)
+		or (room[player.prevTileY][player.prevTileX]:instanceof(tiles.electricFloor) and room[player.prevTileY][player.prevTileX].destroyed)
+		or (room[player.prevTileY][player.prevTileX]:instanceof(tiles.wall) and room[player.prevTileY][player.prevTileX].destroyed) then
 			room[player.prevTileY][player.prevTileX]=tiles.conductiveSlime:new()
 			updateGameState(false)
 		end
