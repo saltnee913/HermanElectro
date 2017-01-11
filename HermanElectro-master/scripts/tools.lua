@@ -2856,7 +2856,7 @@ function P.supertoolDoubler:useToolNothing()
 	self.numHeld = self.numHeld-1
 
 	for i = tools.numNormalTools+1, #tools do
-		if tools[i].numHeld>0 then
+		if tools[i]~=self and tools[i].numHeld>0 then
 			tools[i].numHeld = tools[i].numHeld*2
 		end
 	end
@@ -3501,6 +3501,8 @@ function P.wallReroller:usableOnNothing()
 end
 P.wallReroller.usableOnTile = P.wallReroller.usableOnNothing
 function P.wallReroller:useToolNothing()
+	self.numHeld = self.numHeld-1
+
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
 			if room[i][j]~=nil and room[i][j]:instanceof(tiles.wall) and not room[i][j]:instanceof(tiles.tree) then
@@ -3530,6 +3532,38 @@ function P.wallReroller:useToolNothing()
 end
 P.wallReroller.useToolTile = P.wallReroller.useToolNothing
 
+--selects beggars from: red, green, blue, black, white, gold
+P.beggarReroller = P.superTool:new{name = "Beggar Reroller", description = "Basically just changing hats", image = love.graphics.newImage('Graphics/beggar.png'),
+baseRange = 0, quality = 3}
+function P.beggarReroller:usableOnNothing()
+	return true
+end
+P.beggarReroller.usableOnTile = P.beggarReroller.usableOnNothing
+function P.beggarReroller:useToolNothing()
+	self.numHeld = self.numHeld-1
+
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]~=nil and room[i][j]:instanceof(tiles.beggar) then
+				local newBeggar = util.random(6,'mapGen')
+				if newBeggar==1 then
+					room[i][j] = tiles.redBeggar:new()
+				elseif newBeggar==2 then
+					room[i][j] = tiles.greenBeggar:new()
+				elseif newBeggar==3 then
+					room[i][j] = tiles.blueBeggar:new()
+				elseif newBeggar==4 then
+					room[i][j] = tiles.goldBeggar:new()
+				elseif newBeggar==5 then
+					room[i][j] = tiles.whiteBeggar:new()
+				elseif newBeggar==6 then
+					room[i][j] = tiles.blackBeggar:new()
+				end
+			end
+		end
+	end
+end
+P.beggarReroller.useToolTile = P.beggarReroller.useToolNothing
 
 
 P.numNormalTools = 7
@@ -3682,6 +3716,7 @@ P:addTool(P.woodenRain)
 P:addTool(P.christmasSurprise)
 P:addTool(P.ironWoman)
 P:addTool(P.wallReroller)
+P:addTool(P.beggarReroller)
 
 P.resetTools()
 
