@@ -158,6 +158,9 @@ function P.tile:getHeight()
 		return -1*self.yOffset
 	end
 end
+function P.tile.flipDirection(dir,isVertical)
+	return 0
+end
 
 P.invisibleTile = P.tile:new{isVisible = false, name = "invisibleTile"}
 local bounds = {}
@@ -228,11 +231,38 @@ end
 P.horizontalWire = P.wire:new{powered = false, dirSend = {0,1,0,1}, dirAccept = {0,1,0,1}, canBePowered = true, name = "horizontalWire", sprite = love.graphics.newImage('Graphics/horizontalWireUnpowered.png'), destroyedSprite = love.graphics.newImage('Graphics/horizontalWireCut.png'), poweredSprite = love.graphics.newImage('Graphics/horizontalWirePowered.png')}
 P.verticalWire = P.wire:new{powered = false, dirSend = {1,0,1,0}, dirAccept = {1,0,1,0}, canBePowered = true, name = "verticalWire", sprite = love.graphics.newImage('Graphics/verticalWireUnpowered.png'), destroyedSprite = love.graphics.newImage('Graphics/verticalWireCut.png'), poweredSprite = love.graphics.newImage('Graphics/verticalWirePowered.png')}
 P.cornerWire = P.wire:new{dirSend = {0,1,1,0}, dirAccept = {0,1,1,0}, name = "cornerWire", sprite = love.graphics.newImage('Graphics/cornerWireUnpowered.png'), poweredSprite = love.graphics.newImage('Graphics/cornerWirePowered.png')}
+function P.cornerWire.flipDirection(dir,isVertical)
+	if dir == 1 or dir == 3 then
+		if isVertical then return 1 else return -1 end
+	else
+		if isVertical then return (dir == 0 and 3 or -1) else return 1 end
+	end
+end
+
 P.tWire = P.wire:new{dirSend = {0,1,1,1}, dirAccept = {0,1,1,1}, name = "tWire", sprite = love.graphics.newImage('Graphics/tWireUnpowered.png'), poweredSprite = love.graphics.newImage('Graphics/tWirePowered.png')}
+function P.tWire.flipDirection(dir, isVertical)
+	if isVertical then
+		if dir == 0 then 
+			return 2
+		elseif dir == 2 then
+			return -2 
+		end
+	else
+		if dir == 1 then
+			return 2
+		elseif dir == 3 then
+			return -2
+		end
+	end
+	return 0
+end
+
 
 P.unbreakableWire = P.wire:new{name = "unbreakableWire", litWhenPowered = false, sprite = love.graphics.newImage('Graphics/unbreakablewire.png'), poweredSprite = love.graphics.newImage('Graphics/unbreakablewire.png'), wireHackOff = love.graphics.newImage('Graphics3D/unbreakablewirehack.png'), wireHackOn = love.graphics.newImage('Graphics3D/unbreakablewirehack.png')}
 P.unbreakableHorizontalWire = P.unbreakableWire:new{name = "unbreakableHorizontalWire", dirSend = {0,1,0,1}, dirAccept = {0,1,0,1}, sprite = love.graphics.newImage('Graphics/unbreakablehorizontalwire.png'), poweredSprite = love.graphics.newImage('Graphics/unbreakablehorizontalwire.png')}
 P.unbreakableCornerWire = P.unbreakableWire:new{name = "unbreakableCornerWire", dirSend = {0,1,1,0}, dirAccept = {0,1,1,0}, sprite = love.graphics.newImage('Graphics/unbreakablecornerwire.png'), poweredSprite = love.graphics.newImage('Graphics/unbreakablecornerwire.png')}
+P.unbreakableCornerWire.flipDirection = P.cornerWire.flipDirection
+
 P.unbreakableTWire = P.unbreakableWire:new{name = "unbreakableTWire", dirSend = {0,1,1,1}, dirAccept = {0,1,1,1}, sprite = love.graphics.newImage('Graphics/unbreakabletwire.png'), poweredSprite = love.graphics.newImage('Graphics/unbreakabletwire.png')}
 P.unbreakableCrossWire = P.unbreakableWire:new{dirSend = {0,0,0,0}, dirAccept = {1,1,1,1}, name = "unbreakableCrossWire", sprite = love.graphics.newImage('Graphics/unbreakablecrosswires.png'), poweredSprite = love.graphics.newImage('Graphics/unbreakablecrosswires.png')}
 P.unbreakableCrossWire.updateTile = P.crossWire.updateTile
@@ -608,6 +638,7 @@ function P.notGate:destroy()
 	self.destroyed = true
 	self.powered = false
 end
+P.notGate.flipDirection = P.tWire.flipDirection
 
 P.ambiguousNotGate = P.notGate:new{name = "ambiguousNotGate", litWhenPowered = false, sprite = love.graphics.newImage('Graphics/notgateambiguous.png'), poweredSprite = love.graphics.newImage('Graphics/notgateambiguous.png')}
 
@@ -636,6 +667,7 @@ function P.andGate:updateTile(dir)
 		self.dirSend = {0,0,0,0}
 	end
 end
+P.andGate.flipDirection = P.tWire.flipDirection
 
 P.ambiguousAndGate = P.andGate:new{name = "ambiguousAndGate", litWhenPowered = false, sprite = love.graphics.newImage('Graphics/andgateambiguous.png')}
 P.ambiguousAndGate.poweredSprite = P.ambiguousAndGate.sprite
@@ -668,6 +700,7 @@ function P.orGate:updateTile(dir)
 		self.dirSend = {0,0,0,0}
 	end
 end
+P.orGate.flipDirection = P.tWire.flipDirection
 
 P.xorGate = P.gate:new{name = "xorGate", dirSend = {1,0,0,0}, dirAccept = {0,1,0,1}, dirWireHack = {1,0,0,0}, sprite = love.graphics.newImage('Graphics/xorgate.png'), poweredSprite = love.graphics.newImage('Graphics/xorgate.png')}
 function P.xorGate:updateTile(dir)
@@ -693,6 +726,7 @@ function P.xorGate:updateTile(dir)
 		self.dirSend = {0,0,0,0}
 	end
 end
+P.xorGate.flipDirection = P.tWire.flipDirection
 
 local function getTileX(posX)
 	return (posX-1)*floor.sprite:getWidth()*scale+wallSprite.width
@@ -955,8 +989,17 @@ function P.rotater:lockInState(state)
 end
 P.rotater.onEnterAnimal = P.rotater.onEnter
 P.rotater.onLeaveAnimal = P.rotater.onLeave
+P.rotater.flipDirection = P.tWire.flipDirection
 
 P.cornerRotater = P.rotater:new{name = "cornerRotater", dirSend = {1,1,0,0}, dirAccept = {1,1,0,0}, poweredSprite = love.graphics.newImage('Graphics/cornerrotater.png'), sprite = love.graphics.newImage('Graphics/cornerrotater.png')}
+function P.cornerRotater.flipDirection(dir, isVertical)
+	if dir == 0 or dir == 2 then
+		return isVertical and 1 or (dir == 2 and -1 or 3)
+	else
+		return isVertical and -1 or 1
+	end
+	return 0
+end
 
 P.concreteWall = P.wall:new{sawable = false, name = "concreteWall", sprite = love.graphics.newImage('GraphicsColor/concretewall3.png'), poweredSprite = love.graphics.newImage('GraphicsColor/concretewall3.png'), electrifiedPoweredSprite = love.graphics.newImage('Graphics/concretewallpowered.png'), electrifiedSprite = love.graphics.newImage('Graphics/concretewallelectrified.png'), destroyedSprite = love.graphics.newImage('Graphics/concretewallbroken.png'), sawable = false}
 
@@ -1251,6 +1294,7 @@ end
 function P.capacitor:getInfoText()
 	return self.counter
 end
+P.capacitor.flipDirection = P.tWire.flipDirection
 
 P.inductor = P.conductiveTile:new{name = "inductor", counter = 3, maxCounter = 3, dirAccept = {1,0,1,0}, sprite = love.graphics.newImage('Graphics/inductor.png'), poweredSprite = love.graphics.newImage('Graphics/inductor.png')}
 function P.inductor:updateTile(dir)	if self.charged then
@@ -1268,6 +1312,7 @@ function P.inductor:updateTile(dir)	if self.charged then
 end
 P.inductor.onStep = P.capacitor.onStep
 P.inductor.getInfoText = P.capacitor.getInfoText
+P.inductor.flipDirection = P.tWire.flipDirection
 
 P.slime = P.tile:new{name = "slime", sprite = love.graphics.newImage('Graphics/slime.png')}
 function P.slime:onEnter(player)
@@ -1604,6 +1649,7 @@ function P.motionGate:onLeave(player)
 	end
 end
 P.motionGate.onEnterAnimal = P.gate.onEnter
+P.motionGate.flipDirection = P.tWire.flipDirection
 
 P.motionGate2 = P.motionGate:new{name = "gate2", dirSend = {1,1,1,1}}
 
@@ -1708,6 +1754,7 @@ function P.accelerator:xAccel()
 	elseif self.rotation==3 then return -1
 	else return 0 end
 end
+P.accelerator.flipDirection = P.tWire.flipDirection
 
 P.unpoweredAccelerator = P.accelerator:new{name = "unpoweredaccelerator", canBePowered = false, sprite = love.graphics.newImage('Graphics/unpoweredaccelerator.png')}
 function P.unpoweredAccelerator:yAccel()

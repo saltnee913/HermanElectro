@@ -188,6 +188,117 @@ function P.loadFloor(inFloorFile)
     myShader:send("floorTint_g", map.floorInfo.tint[2])
     myShader:send("floorTint_b", map.floorInfo.tint[3])
     myShader:send("player_range", map.floorInfo.playerRange)
+    map.flipRooms('rooms')
+end
+
+local function flipRoomVertical(roomLayout)
+	local toRet = {}
+	for i = 1, #roomLayout do
+		toRet[i] = {}
+		for j = 1, #roomLayout[#roomLayout-i+1] do
+			toRet[i][j] = roomLayout[#roomLayout-i+1][j]
+			if toRet[i][j] ~= 0 then
+				if type(toRet[i][j]) == 'number' then
+					local tileInd = math.floor(toRet[i][j])
+					local tile = tiles[tileInd]
+					local rot = math.floor(10*(toRet[i][j]-tileInd+0.01))
+					if tile == nil then toRet[i][j] = 0 else
+						toRet[i][j] = toRet[i][j] + tile.flipDirection(rot,true)/10
+					end
+				else
+					local tileInd = math.floor(toRet[i][j][1])
+					local tile = tiles[tileInd]
+					local rot = math.floor(10*(toRet[i][j][1]-tileInd+0.01))
+					toRet[i][j][1] = toRet[i][j][1] + tile.flipDirection(rot,true)/10
+					if type(toRet[i][j][2]) == 'number' then
+						local overInd = math.floor(toRet[i][j][2])
+						local overRot = math.floor(10*(toRet[i][j][2]-overInd+0.01))
+						local overTile = tiles[math.floor(overInd)]
+						toRet[i][j][2] = toRet[i][j][2] + overTile.flipDirection(overRot,true)/10
+					end
+				end
+			else
+				toRet[i][j] = 0
+			end
+		end
+	end
+	return toRet
+end
+local function flipRoomHorizontal(roomLayout)
+	local toRet = {}
+	for i = 1, #roomLayout do
+		toRet[i] = {}
+		for j = 1, #roomLayout[i] do
+			toRet[i][j] = roomLayout[i][#roomLayout[i]-j+1]
+			if toRet[i][j] ~= 0 then
+				if type(toRet[i][j]) == 'number' then
+					local tileInd = math.floor(toRet[i][j])
+					local tile = tiles[tileInd]
+					local rot = math.floor(10*(toRet[i][j]-tileInd+0.01))
+					if tile == nil then toRet[i][j] = 0 else
+						toRet[i][j] = toRet[i][j] + tile.flipDirection(rot,false)/10
+					end
+				else
+					local tileInd = math.floor(toRet[i][j][1])
+					local tile = tiles[tileInd]
+					local rot = math.floor(10*(toRet[i][j][1]-tileInd+0.01))
+					toRet[i][j][1] = toRet[i][j][1] + tile.flipDirection(rot,false)/10
+					if type(toRet[i][j][2]) == 'number' then
+						local overInd = math.floor(toRet[i][j][2])
+						local overRot = math.floor(10*(toRet[i][j][2]-overInd+0.01))
+						local overTile = tiles[overInd]
+						toRet[i][j][2] = toRet[i][j][2] + overTile.flipDirection(overRot,false)/10
+					end
+				end
+			else
+				toRet[i][j] = 0
+			end
+		end
+	end
+	return toRet
+end
+
+function P.flipRooms()
+	for k1, rooms in pairs(P.floorInfo.rooms) do
+		if rooms == nil then
+			return
+		end
+		for k2, v in pairs(rooms) do
+			if v.flippable then
+				local flipVertical = util.random(2,'mapGen') == 1
+				local flipHorizontal = util.random(2,'mapGen') == 1
+				if v.layout ~= nil then
+					if flipVertical then
+						v.layout = flipRoomVertical(v.layout)
+					end
+					if flipHorizontal then
+						v.layout = flipRoomHorizontal(v.layout)
+					end
+				else
+					for i = 1, #v.layouts do
+						if flipVertical then
+							v.layouts[i] = flipRoomVertical(v.layouts[i])
+						end
+						if flipHorizontal then
+							v.layouts[i] = flipRoomHorizontal(v.layouts[i])
+						end
+					end
+				end
+				if dirEnter ~= nil then
+					if flipVertical then
+						local dirTemp = v.dirEnter[1]
+						v.dirEnter[1] = v.dirEnter[3]
+						v.dirEnter[3] = dirTemp
+					end
+					if flipHorizontal then
+						local dirTemp = v.dirEnter[2]
+						v.dirEnter[2] = v.dirEnter[3]
+						v.dirEnter[4] = dirTemp
+					end
+				end
+			end
+		end
+	end
 end
 
 function P.getNextRoom(roomid)
