@@ -533,7 +533,7 @@ function P.getFieldForRoom(inRoom, inField)
 end
 
 function P.isRoomType(inRoom, roomType)
-	return P.floorInfo.rooms[roomType][inRoom] ~= nil
+	return P.floorInfo.rooms[roomType]~=nil and P.floorInfo.rooms[roomType][inRoom] ~= nil
 end
 
 function P.getItemsNeeded(inRoom)

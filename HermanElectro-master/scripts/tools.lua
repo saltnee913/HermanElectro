@@ -1652,16 +1652,11 @@ function P.teleporter:useToolNothing()
 			teleported = true
 
 			resetTranslation()
-			player.flying = false
+			resetPlayerAttributesRoom()
 			player.character:onRoomEnter()
 			--set pushables of prev. room to pushables array, saving for next entry
 			room.pushables = pushables
 			room.animals = animals
-
-			local plusOne = true
-
-			if player.tileY == math.floor(roomHeight/2) then plusOne = false
-			elseif player.tileX == math.floor(roomLength/2) then plusOne = false end
 
 			prevMapX = mapx
 			prevMapY = mapy
@@ -1690,7 +1685,10 @@ function P.teleporter:useToolNothing()
 			end
 
 			currentid = tostring(mainMap[mapy][mapx].roomid)
-			if map.getFieldForRoom(currentid, 'autowin') then completedRooms[mapy][mapx] = 1 end
+			if map.getFieldForRoom(currentid, 'autowin') then
+				completedRooms[mapy][mapx] = 1
+				unlockDoors()
+			end
 			if loadTutorial then
 				player.enterX = player.tileX
 				player.enterY = player.tileY
@@ -3416,7 +3414,7 @@ function P.permaUpgrade:useToolNothing()
 end
 P.permaUpgrade.useToolTile = P.permaUpgrade.useToolNothing
 
-P.christmasSurprise = P.boxSpawner:new{name = "Christmas Surprise", description = "", image = love.graphics.newImage('Graphics/giftBox.png'),
+P.christmasSurprise = P.boxSpawner:new{name = "Christmas Surprise", description = "What's in the box?", image = love.graphics.newImage('Graphics/giftBox.png'),
 baseRange = 1, quality = 3}
 function P.christmasSurprise:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld-1
@@ -3588,6 +3586,79 @@ function P.xrayVision:useToolNothing()
 end
 P.xrayVision.useToolTile = P.xrayVision.useToolNothing
 
+P.secretTeleporter = P.superTool:new{name = "Secret Teleporter", description = "Find the hole in the wall", image = love.graphics.newImage('Graphics/secretteleporter.png'),
+baseRange = 0, quality = 2}
+function P.secretTeleporter:usableOnNothing()
+	return true
+end
+P.secretTeleporter.usableOnTile = P.secretTeleporter.usableOnNothing
+function P.secretTeleporter:useToolNothing()
+	self.numHeld = self.numHeld-1
+	local xval = -1
+	local yval = -1
+	for i = 1, mapHeight do
+		for j = 1, mapHeight do
+			if mainMap[i][j]~=nil and map.isRoomType(mainMap[i][j].roomid, 'secretRooms') then
+				xval = j
+				yval = i
+			end
+		end
+	end
+	if xval>=0 and yval>=0 then
+		resetTranslation()
+		resetPlayerAttributesRoom()
+		player.character:onRoomEnter()
+		--set pushables of prev. room to pushables array, saving for next entry
+		room.pushables = pushables
+		room.animals = animals
+		
+		prevMapX = mapx
+		prevMapY = mapy
+		prevRoom = room
+
+		room = mainMap[yval][xval].room
+		mapx = xval
+		mapy = yval
+
+		if mainMap[yval][xval].dirEnter==nil then
+			mainMap[yval][xval].dirEnter = {1,1,1,1}
+		end
+
+		if mainMap[yval][xval].dirEnter[1]==1 then
+			player.tileX = math.floor(roomLength/2)
+			player.tileY = 1
+		elseif mainMap[yval][xval].dirEnter[2]==1 then
+			player.tileY = math.floor(roomHeight/2)
+			room.tileX = roomLength
+		elseif mainMap[yval][xval].dirEnter[3]==1 then
+			player.tileX = math.floor(roomLength/2)
+			player.tileY = roomHeight
+		else
+			player.tileY = math.floor(roomHeight/2)
+			room.tileX = 1
+		end
+
+		currentid = tostring(mainMap[mapy][mapx].roomid)
+		if map.getFieldForRoom(currentid, 'autowin') then
+			completedRooms[mapy][mapx] = 1
+			unlockDoors()
+		end
+		if loadTutorial then
+			player.enterX = player.tileX
+			player.enterY = player.tileY
+		end
+
+		if (prevMapX~=mapx or prevMapY~=mapy) or dir == -1 then
+			createAnimals()
+			createPushables()
+		end
+		visibleMap[mapy][mapx] = 1
+		keyTimer.timeLeft = keyTimer.suicideDelay
+		updateGameState()
+	end
+end
+P.secretTeleporter.useToolTile = P.secretTeleporter.useToolNothing
+
 
 P.numNormalTools = 7
 
@@ -3741,6 +3812,7 @@ P:addTool(P.ironWoman)
 P:addTool(P.wallReroller)
 P:addTool(P.beggarReroller)
 P:addTool(P.xrayVision)
+P:addTool(P.secretTeleporter)
 
 P.resetTools()
 
