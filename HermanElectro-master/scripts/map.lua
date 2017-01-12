@@ -128,10 +128,31 @@ function P.loadFloor(inFloorFile)
 	for k, v in pairs(loadRooms) do
 		local numToolsArray = {0,0,0,0,0,0,0,0,0,0,0,0,0}
 		local toolAppearanceArray = {0,0,0,0,0,0,0}
+		local tilesArr = {}
+		for i = 1, #tiles  do
+			tilesArr[i] = {name = tiles[i].name, rooms = 0, nonDumbRooms = 0, total = 0, sets = 0}
+		end
+		local tilesCheckedArr = {}
+		for i = 1, #tiles do
+			tilesCheckedArr[i] = 0
+		end
+		local lastRoomSet = ""
+		local seenInSet = {}
+		for i = 1, #tiles do
+			seenInSet[i] = 0
+		end
 		local roomsData, roomsArray = util.readJSON(v.filePath, true)
 		P.floorInfo.rooms[k] = roomsData.rooms
 		local amt = 0
 		for k1, v1 in pairs(P.floorInfo.rooms[k]) do
+			for i = 1, #tiles do
+				tilesCheckedArr[i] = 0
+			end
+			if not (v1.set~=nil and v1.set==lastRoomSet) then
+				for i = 1, #tiles do
+					seenInSet[i] = 0
+				end
+			end
 			v1.roomid=k1
 			if roomsData.superFields ~= nil then
 				for k2, v2 in pairs(roomsData.superFields) do
@@ -139,6 +160,71 @@ function P.loadFloor(inFloorFile)
 				end
 			end
 			local numTools = 0
+			if v1.layout~=nil then
+				for i = 1, #v1.layout do
+					for j = 1, #v1.layout[1] do
+						local tileIndex = v1.layout[i][j]
+						if tileIndex==nil then
+							print(v1.roomid.."   "..i.."   "..j)
+						end
+						if type(tileIndex) ~= 'number' then
+							if type(tileIndex[2])=='number' then
+								tileIndex = tileIndex[1]
+							elseif type(tileIndex[2])=='string' then
+								tileIndex = tileIndex[1]
+							end
+						end
+						tileIndex = math.floor(tileIndex)
+						if tileIndex>0 then
+							if tilesCheckedArr[tileIndex]==0 then
+								tilesCheckedArr[tileIndex]=1
+								tilesArr[tileIndex].rooms = tilesArr[tileIndex].rooms+1
+								if v1.dumb==nil then
+									tilesArr[tileIndex].nonDumbRooms = tilesArr[tileIndex].nonDumbRooms+1
+								end
+							end
+							tilesArr[tileIndex].total = tilesArr[tileIndex].total+1
+							if seenInSet[tileIndex]==0 then
+								tilesArr[tileIndex].sets = tilesArr[tileIndex].sets+1
+								seenInSet[tileIndex]=1
+							end
+						end
+					end
+				end
+			elseif v1.layouts[1]~=nil then
+				for i = 1, #v1.layouts[1] do
+					for j = 1, #v1.layouts[1][1] do
+						local tileIndex = v1.layouts[1][i][j]
+						if type(tileIndex) ~= 'number' then
+							if type(tileIndex[2])=='number' then
+								tileIndex = tileIndex[1]
+							elseif type(tileIndex[2])=='string' then
+								tileIndex = tileIndex[1]
+							end
+						end
+						tileIndex = math.floor(tileIndex)
+						if tileIndex>0 then
+							if tilesCheckedArr[tileIndex]==0 then
+								tilesCheckedArr[tileIndex]=1
+								tilesArr[tileIndex].rooms = tilesArr[tileIndex].rooms+1
+								if v1.dumb==nil then
+									tilesArr[tileIndex].nonDumbRooms = tilesArr[tileIndex].nonDumbRooms+1
+								end
+							end
+							tilesArr[tileIndex].total = tilesArr[tileIndex].total+1
+							if seenInSet[tileIndex]==0 then
+								tilesArr[tileIndex].sets = tilesArr[tileIndex].sets+1
+								seenInSet[tileIndex]=1
+							end
+						end
+					end
+				end
+			end
+			if v1.set~=nil then
+				lastRoomSet = v1.set
+			else
+				lastRoomSet = ""
+			end
 			for i = 1, 7 do
 				if #v1.itemsNeeded[1]>1 then
 					numTools = numTools + v1.itemsNeeded[1][i]
@@ -169,14 +255,22 @@ function P.loadFloor(inFloorFile)
 		for i = 0, 10 do
 			toPrint = toPrint..i..": "..numToolsArray[i+1]..", "
 		end
-		--printtoPrint)
-		--print"Tools:")
+		--print(toPrint)
+		--print("Tools:")
 		toolWords = {"saws", "ladders", "wireCutters", "waterBottles", "sponges", "bricks", "guns"}
 		toPrint = ""
 		for i = 1, 7 do
 			toPrint = toPrint..toolWords[i]..": "..toolAppearanceArray[i]..", "
 		end
-		--printtoPrint)
+		--print(toPrint)
+		--[[for i = 1, #tilesArr do
+			print(tilesArr[i].name..":")
+			print("Total appearances: "..tilesArr[i].total)
+			print("Rooms appearing in: "..tilesArr[i].rooms)
+			print("Non-dumb rooms: "..tilesArr[i].nonDumbRooms)
+			print("Sets appearing in: "..tilesArr[i].sets)
+			print()
+		end]]
 	end
 	if map.floorInfo.tint == nil then
 		map.floorInfo.tint = {0,0,0}
@@ -769,7 +863,6 @@ function P.generateMapWeighted()
 	local randomFinalRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.finalRooms, 'mapGen')
 	local randomDonationRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.donationRooms, 'mapGen')
 	local randomShopsArray = util.createRandomKeyArray(P.floorInfo.rooms.shops, 'mapGen')
-
 	--create first room
 	local startRoomID = P.floorInfo.startRoomID
 	newmap[math.floor(height/2)][math.floor(height/2)] = {roomid = startRoomID, room = P.createRoom(startRoomID, roomsArray), isFinal = false, isInitial = true, isCompleted = false}
@@ -949,8 +1042,19 @@ function P.generateMapWeighted()
 	arr = P.floorInfo.rooms.dungeons
 	roomid = util.chooseRandomKey(arr, 'mapGen')
 	newmap[height+1][1] = {roomid = roomid, room = P.createRoom(roomid, arr), tint = {0,0,0}, dirEnter = arr[roomid].dirEnter, isFinal = false, isInitial = false}
-
+	P.printTileInfo()
 	return newmap
+end
+
+function P.printTileInfo()
+	local tileInfo = {}
+	for i = 1, #tiles do
+		tileInfo[i] = {name = tiles[i].name, numUsed = 0, roomsUsed = 0}
+	end
+	local alreadyChecked = {}
+	for i = 1, #tiles do
+		alreadyChecked[i] = 0
+	end
 end
 
 --generates end dungeon accessible in starting room of each floor

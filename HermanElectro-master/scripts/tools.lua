@@ -1738,7 +1738,7 @@ function P.explosiveGun:useToolAnimal(animal)
 	room[pY][pX] = nil
 end
 
-P.map = P.superTool:new{name = "map", description = "You'll find a way", baseRange = 0, image = love.graphics.newImage('Graphics/map.png'), quality = 1}
+P.map = P.superTool:new{name = "map", description = "You'll find a way", baseRange = 0, image = love.graphics.newImage('Graphics/Tools/map.png'), quality = 1}
 function P.map:usableOnNothing()
 	return true
 end

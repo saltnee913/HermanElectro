@@ -1585,7 +1585,7 @@ function P.donationMachine:destroy()
 	end
 end
 
-P.entrancePortal = P.tile:new{name = "entrancePortal", sprite = love.graphics.newImage('Graphics/entrancePortal.png')}
+P.entrancePortal = P.tile:new{name = "entrancePortal", sprite = love.graphics.newImage('Graphics/Tiles/entrancePortal.png')}
 function P.entrancePortal:onEnter(player)
 	for i = 1, roomHeight do
 		shouldBreak = false
