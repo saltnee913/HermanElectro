@@ -893,7 +893,7 @@ P.missile.getToolableTiles = P.tool.getToolableTilesBox
 P.missile.getToolableAnimals = P.tool.getToolableAnimalsBox
 P.missile.useToolAnimal = P.gun.useToolAnimal
 
-P.meat = P.superTool:new{name = "meat", baseRange = 1, image = love.graphics.newImage('Graphics/meat.png'), quality = 2}
+P.meat = P.superTool:new{name = "meat", baseRange = 1, image = love.graphics.newImage('Graphics/Tools/meat.png'), quality = 2}
 function P.meat:usableOnNothing()
 	return true
 end
@@ -914,17 +914,17 @@ end
 
 P.rottenMeat = P.superTool:new{image = love.graphics.newImage('Graphics/rottenmeat.png'), quality = 3}
 P.rottenMeat.usableOnNothing = P.meat.usableOnNothing
-function P.meat:useToolNothing(tileY, tileX)
+function P.rottenMeat:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld-1
 	room[tileY][tileX] = tiles.rottenMeat:new()
 end
-function P.meat:usableOnTile(tile)
+function P.rottenMeat:usableOnTile(tile)
 	if tile:instanceof(tiles.button) and not tile.scaresAnimals then
 		return true
 	end
 	return false
 end
-function P.meat:useToolTile(tile)
+function P.rottenMeat:useToolTile(tile)
 	self.numHeld = self.numHeld - 1
 	tile.scaresAnimals = true
 end
@@ -2151,7 +2151,7 @@ function P.robotArm:useToolTile(tile)
 end
 P.robotArm.useToolNothing = P.robotArm.useToolTile
 
-P.sock = P.superTool:new{name = "Sneak", description = "Update blocker", image = love.graphics.newImage('Graphics/sock.png'), quality = 1, baseRange = 0}
+P.sock = P.superTool:new{name = "Sneak", description = "Update blocker", image = love.graphics.newImage('Graphics/Tools/sock.png'), quality = 1, baseRange = 0}
 function P.sock:usableOnTile(tile)
 	return true
 end
