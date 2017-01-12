@@ -1098,14 +1098,14 @@ function P.endFinder:useToolTile()
 end
 P.endFinder.useToolNothing = P.endFinder.useToolTile
 
-P.lamp = P.superTool:new{name = "lamp", description = "The light of power.", baseRange = 3, image = love.graphics.newImage('Graphics/lamp.png'), quality = 3}
+--[[P.lamp = P.superTool:new{name = "lamp", description = "The light of power.", baseRange = 3, image = love.graphics.newImage('Graphics/lamp.png'), quality = 3}
 function P.lamp:usableOnNothing()
 	return true
 end
 function P.lamp:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld-1
 	room[tileY][tileX] = tiles.lamp:new()
-end
+end]]
 
 P.boxSpawner = P.superTool:new{name = "boxSpawner", description = "Pushable #0", baseRange = 1, image = love.graphics.newImage('Graphics/box.png'), quality = 2}
 function P.boxSpawner:usableOnNothing(tileY, tileX)

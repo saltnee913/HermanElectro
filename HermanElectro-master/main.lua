@@ -1715,7 +1715,7 @@ function love.draw()
 					if litTiles[j][i] == 0 then
 						toDraw = black
 						isBlack = true
-					elseif room[j][i]~=nil and (room[j][i].powered == false or not room[j][i].canBePowered) then
+					elseif room[j][i]~=nil and (room[j][i].poweredSprite==nil or room[j][i].powered == false or not room[j][i].canBePowered) then
 						toDraw = room[j][i].sprite
 						rot = room[j][i].rotation
 					elseif room[j][i]~=nil then
