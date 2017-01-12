@@ -1775,10 +1775,17 @@ P.sonTile = P.pitbullTile:new{name = "sonTile", animal = animalList[12], listInd
 
 P.daughterTile = P.pitbullTile:new{name = "daughterTile", animal = animalList[13], listIndex = 13}
 
-P.untriggeredPowerSupply = P.conductiveTile:new{name = "untriggeredPowerSupply", sprite = love.graphics.newImage('Graphics/untriggeredpowersupply.png'), poweredSprite = love.graphics.newImage('Graphics/powersupply.png')}
+P.untriggeredPowerSupply = P.conductiveTile:new{name = "untriggeredPowerSupply",
+sprite = love.graphics.newImage('Graphics/Tiles/untriggeredPowerSupply.png')}
 function P.untriggeredPowerSupply:postPowerUpdate(dir)
 	if self.poweredNeighbors[1]==1 or self.poweredNeighbors[2]==1 or self.poweredNeighbors[3]==1 or self.poweredNeighbors[4]==1 then
-		self.charged = true
+		for i = 1, roomHeight do
+			for j = 1, roomLength do
+				if room[i][j]==self then
+					room[i][j] = tiles.powerSupply:new()
+				end
+			end
+		end
 	end
 end
 function P.untriggeredPowerSupply:destroy()
