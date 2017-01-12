@@ -466,8 +466,10 @@ P.stayButton.onEnterAnimal = P.stayButton.onEnter
 P.stayButton.onLeaveAnimal = P.stayButton.onLeave
 --P.stayButton.onLeave = P.stayButton.onEnter
 
-P.electricFloor = P.conductiveTile:new{name = "electricfloor", sprite = love.graphics.newImage('GraphicsBrush/electricfloor.png'),--[[sprite = love.graphics.newImage('Graphics/electricfloor.png'),]] destroyedSprite = love.graphics.newImage('Graphics/electricfloorcut.png'), --[[poweredSprite = love.graphics.newImage('Graphics/electricfloorpowered.png')]]
-poweredSprite = love.graphics.newImage('GraphicsBrush/electricfloorpowered.png')}
+P.electricFloor = P.conductiveTile:new{name = "electricfloor",
+sprite = love.graphics.newImage('Graphics/Tiles/electricFloor.png'),
+destroyedSprite = love.graphics.newImage('Graphics/Tiles/electricFloorCut.png'),
+poweredSprite = love.graphics.newImage('Graphics/Tiles/electricFloorPowered.png')}
 function P.electricFloor:destroy()
 	self.sprite = self.destroyedSprite
 	self.canBePowered = false
@@ -1285,7 +1287,7 @@ function P.mousetrap:lockInState(state)
 	self:updateSprite()
 end
 
-P.bomb = P.tile:new{name = "bomb", triggered = true, counter = 3, sprite = love.graphics.newImage('Graphics/bomb3.png'), sprite2 = love.graphics.newImage('Graphics/bomb2.png'), sprite1 = love.graphics.newImage('Graphics/bomb1.png')}
+P.bomb = P.tile:new{name = "bomb", triggered = true, counter = 3, sprite = love.graphics.newImage('Graphics/Tiles/bomb3.png'), sprite2 = love.graphics.newImage('Graphics/Tiles/bomb2.png'), sprite1 = love.graphics.newImage('Graphics/Tiles/bomb1.png')}
 function P.bomb:onStep(x, y)
 	if not self.triggered then return end
 	self.counter = self.counter-1
@@ -1399,11 +1401,17 @@ function P.slime:onEnterAnimal(animal)
 	end
 end
 
-P.unactivatedBomb = P.bomb:new{name = "unactivatedBomb", counter = 4, triggered = false, sprite = love.graphics.newImage('Graphics/bomb3.png'), sprite2 = love.graphics.newImage('Graphics/bomb2.png'), sprite1 = love.graphics.newImage('Graphics/bomb1.png')}
+P.unactivatedBomb = P.bomb:new{name = "unactivatedBomb", counter = 4, triggered = false,
+sprite = love.graphics.newImage('Graphics/Tiles/bombUntriggered.png'),
+sprite3 = love.graphics.newImage('Graphics/Tiles/bomb3.png'),
+sprite2 = love.graphics.newImage('Graphics/Tiles/bomb2.png'),
+sprite1 = love.graphics.newImage('Graphics/Tiles/bomb1.png')}
 function P.unactivatedBomb:onStep(x, y)
 	if self.triggered then
 		self.counter = self.counter-1
-		if self.counter == 2 then
+		if self.counter == 3 then
+			self.sprite = self.sprite3
+		elseif self.counter == 2 then
 			self.sprite = self.sprite2
 		elseif self.counter == 1 then
 			self.sprite = self.sprite1
@@ -1790,7 +1798,7 @@ P.powerTriggeredBomb = P.unactivatedBomb:new{name = "powerTriggeredBomb", canBeP
 function P.powerTriggeredBomb:postPowerUpdate()
 	if self.poweredNeighbors[1]==1 or self.poweredNeighbors[2]==1 or self.poweredNeighbors[3]==1 or self.poweredNeighbors[4]==1 then
 		if not self.triggered then
-			self.counter = 3
+			self.counter = 4
 			self.triggered = true
 		end
 	end
