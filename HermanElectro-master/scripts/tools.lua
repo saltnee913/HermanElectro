@@ -3735,13 +3735,13 @@ P.numNormalTools = 7
 ]]
 
 function P.resetTools()
-	P[1] = P.saw
-	P[2] = P.ladder
-	P[3] = P.wireCutters
-	P[4] = P.waterBottle
-	P[5] = P.sponge
-	P[6] = P.brick
-	P[7] = P.gun
+	P:insertTool(P.saw, 1)
+	P:insertTool(P.ladder, 2)
+	P:insertTool(P.wireCutters, 3)
+	P:insertTool(P.waterBottle, 4)
+	P:insertTool(P.sponge, 5)
+	P:insertTool(P.brick, 6)
+	P:insertTool(P.gun, 7)
 	for i = 1, #tools do
 		tools[i].range = tools[i].baseRange
 	end
@@ -3750,6 +3750,13 @@ end
 function P:addTool(tool)
 	self[#self+1] = tool
 	tool.toolid = #self
+end
+function P:insertTool(tool, index)
+	if index==nil then index = 1 end
+	for i = #tools, index, -1 do
+		tools[i+1] = tools[i]
+	end
+	tools[index] = tool
 end
 
 P:addTool(P.crowbar)
