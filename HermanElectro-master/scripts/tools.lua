@@ -3753,6 +3753,7 @@ function P:addTool(tool)
 end
 function P:insertTool(tool, index)
 	if index==nil then index = 1 end
+	if tools[index]==tool then return end
 	for i = #tools, index, -1 do
 		tools[i+1] = tools[i]
 	end

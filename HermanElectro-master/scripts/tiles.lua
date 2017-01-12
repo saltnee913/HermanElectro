@@ -252,7 +252,10 @@ sprite = love.graphics.newImage('Graphics/Tiles/horizontalWireUnpowered.png'),
 destroyedSprite = love.graphics.newImage('Graphics/Tiles/horizontalWireCut.png'),
 poweredSprite = love.graphics.newImage('Graphics/Tiles/horizontalWirePowered.png')}
 P.verticalWire = P.wire:new{powered = false, dirSend = {1,0,1,0}, dirAccept = {1,0,1,0}, canBePowered = true, name = "verticalWire", sprite = love.graphics.newImage('Graphics/verticalWireUnpowered.png'), destroyedSprite = love.graphics.newImage('Graphics/verticalWireCut.png'), poweredSprite = love.graphics.newImage('Graphics/verticalWirePowered.png')}
-P.cornerWire = P.wire:new{dirSend = {0,1,1,0}, dirAccept = {0,1,1,0}, name = "cornerWire", sprite = love.graphics.newImage('Graphics/cornerWireUnpowered.png'), poweredSprite = love.graphics.newImage('Graphics/cornerWirePowered.png')}
+P.cornerWire = P.wire:new{dirSend = {0,1,1,0}, dirAccept = {0,1,1,0}, name = "cornerWire",
+sprite = love.graphics.newImage('Graphics/Tiles/cornerWireUnpowered.png'),
+poweredSprite = love.graphics.newImage('Graphics/Tiles/cornerWirePowered.png'),
+destroyedSprite = love.graphics.newImage('Graphics/Tiles/cornerWireCut.png')}
 function P.cornerWire.flipDirection(dir,isVertical)
 	if dir == 1 or dir == 3 then
 		if isVertical then return 1 else return -1 end
@@ -261,7 +264,10 @@ function P.cornerWire.flipDirection(dir,isVertical)
 	end
 end
 
-P.tWire = P.wire:new{dirSend = {0,1,1,1}, dirAccept = {0,1,1,1}, name = "tWire", sprite = love.graphics.newImage('Graphics/tWireUnpowered.png'), poweredSprite = love.graphics.newImage('Graphics/tWirePowered.png')}
+P.tWire = P.wire:new{dirSend = {0,1,1,1}, dirAccept = {0,1,1,1}, name = "tWire",
+sprite = love.graphics.newImage('Graphics/Tiles/tWireUnpowered.png'),
+poweredSprite = love.graphics.newImage('Graphics/Tiles/tWirePowered.png'),
+destroyedSprite = love.graphics.newImage('Graphics/Tiles/tWireCut.png')}
 function P.tWire.flipDirection(dir, isVertical)
 	if isVertical then
 		if dir == 0 then 
