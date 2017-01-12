@@ -651,7 +651,10 @@ function P.splitGate:updateTile(dir)
 	end
 end
 
-P.notGate = P.powerSupply:new{overlaying = false, name = "notGate", dirSend = {1,0,0,0}, dirAccept = {1,1,1,1}, sprite = love.graphics.newImage('GraphicsColor/notgatedead2.png'), poweredSprite = love.graphics.newImage('GraphicsColor/notgate2.png') }
+P.notGate = P.powerSupply:new{overlaying = false, name = "notGate", dirSend = {1,0,0,0}, dirAccept = {1,1,1,1},
+sprite = love.graphics.newImage('Graphics/Tiles/notGateDead.png'),
+poweredSprite = love.graphics.newImage('Graphics/Tiles/notGate.png'),
+destroyedSprite = love.graphics.newImage('Graphics/Tiles/notGateDestroyed.png')}
 function P.notGate:updateTile(dir)
 	if self.destroyed then
 		self.powered = false
@@ -669,6 +672,7 @@ end
 function P.notGate:destroy()
 	self.destroyed = true
 	self.powered = false
+	self.sprite = self.destroyedSprite
 end
 P.notGate.flipDirection = P.tWire.flipDirection
 
