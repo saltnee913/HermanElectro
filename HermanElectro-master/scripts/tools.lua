@@ -794,7 +794,7 @@ function P.visionChanger:useToolTile(tile)
 end
 P.visionChanger.useToolNothing = P.visionChanger.useToolTile
 
-P.bomb = P.superTool:new{name = "bomb", description = "3-2-1 BOOM!", baseRange = 1, image = love.graphics.newImage('Graphics/bomb.png'), quality = 4}
+P.bomb = P.superTool:new{name = "bomb", description = "3-2-1 BOOM!", baseRange = 1, image = love.graphics.newImage('Graphics/Tools/bomb.png'), quality = 4}
 function P.bomb:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld - 1
 	t = tiles.bomb:new()
@@ -805,7 +805,8 @@ function P.bomb:usableOnNothing()
 	return true
 end
 
-P.flame = P.superTool:new{name = "flame", description = "Share the warmth.",baseRange = 1, image = love.graphics.newImage('Graphics/flame.png'), quality = 2}
+P.flame = P.superTool:new{name = "flame", description = "Share the warmth.", baseRange = 1,
+image = love.graphics.newImage('Graphics/Tools/flame.png'), quality = 2}
 function P.flame:usableOnTile(tile)
 	--flame cannot burn metal walls
 	if tile:instanceof(tiles.wall) and tile.sawable and not tile:instanceof(tiles.metalWall) and not tile.destroyed then
@@ -1884,7 +1885,8 @@ function P.lube:useToolTile(tile, tileY, tileX)
 	end
 end
 
-P.knife = P.superTool:new{name = "knife", description = "Take the plunge and cut your ties.", baseRange = 5, image = love.graphics.newImage('Graphics/knife.png'), quality = 2}
+P.knife = P.superTool:new{name = "knife", description = "Take the plunge and cut your ties.", baseRange = 5,
+image = love.graphics.newImage('Graphics/Tools/knife.png'), quality = 2}
 P.knife.usableOnAnimal = P.gun.usableOnAnimal
 P.knife.usableOnTile = P.wireCutters.usableOnTile
 P.knife.useToolAnimal = P.gun.useToolAnimal

@@ -18,7 +18,7 @@ scale = (width - 2*wallSprite.width)/(20.3 * 16)*5/6
 --floor = tiles.tile
 
 --speed same as player (250)
-P.animal = Object:new{elevation = 0, frozen = false, conductive = false, pickedUp = false, canDropTool = false, willDropTool = false, flying = false, triggered = false, waitCounter = 1, dead = false, name = "animal", tileX, tileY, prevx, prevy, prevTileX, prevTileY, x, y, speed = 250, width = 16*scale, height = 16*scale, sprite = love.graphics.newImage('Graphics/pitbull.png'), deadSprite = love.graphics.newImage('Graphics/pitbulldead.png'), tilesOn = {}, oldTilesOn = {}}
+P.animal = Object:new{elevation = 0, scale = scale, yOffset = 0, frozen = false, conductive = false, pickedUp = false, canDropTool = false, willDropTool = false, flying = false, triggered = false, waitCounter = 1, dead = false, name = "animal", tileX, tileY, prevx, prevy, prevTileX, prevTileY, x, y, speed = 250, width = 16*scale, height = 16*scale, sprite = love.graphics.newImage('Graphics/pitbull.png'), deadSprite = love.graphics.newImage('Graphics/pitbulldead.png'), tilesOn = {}, oldTilesOn = {}}
 function P.animal:move(playerx, playery, room, isLit)
 	if player.attributes.shelled then
 		return
@@ -407,7 +407,8 @@ P.cat = P.animal:new{name = "cat", sprite = love.graphics.newImage('NewGraphics/
 P.cat.move = P.animal.afraidPrimaryMove
 P.cat.secondaryMove = P.animal.afraidSecondaryMove
 
-P.bombBuddy = P.animal:new{name = "bombBuddy", sprite = love.graphics.newImage('Graphics/bombbuddy.png'), deadSprite = love.graphics.newImage('Graphics/catdead.png')}
+P.bombBuddy = P.animal:new{name = "bombBuddy", scale = 0.6*scale,
+sprite = love.graphics.newImage('Graphics/bombBuddyFront.png'), deadSprite = love.graphics.newImage('Graphics/catdead.png')}
 function P.bombBuddy:explode()
 	room[self.tileY][self.tileX] = tiles.bomb:new()
 	room[self.tileY][self.tileX]:onEnd(self.tileY, self.tileX)

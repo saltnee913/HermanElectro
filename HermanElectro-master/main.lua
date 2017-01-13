@@ -1841,8 +1841,10 @@ function love.draw()
 		for i = 1, #animals do
 			if animals[i]~=nil and litTiles[animals[i].tileY][animals[i].tileX]==1 and not animals[i].pickedUp and animals[i].tileY==j then
 				animals[i].x = (animals[i].tileX-1)*floor.sprite:getHeight()*scale+wallSprite.width
-		    	animals[i].y = (animals[i].tileY-1)*floor.sprite:getWidth()*scale+wallSprite.height-animals[i].elevation*scale
-				love.graphics.draw(animals[i].sprite, animals[i].x, animals[i].y, 0, scale, scale)
+		    	--animals[i].y = (animals[i].tileY-1)*floor.sprite:getWidth()*scale+wallSprite.height-animals[i].elevation*scale
+		    	animals[i].y = (animals[i].tileY)*floor.sprite:getWidth()*scale+wallSprite.height-animals[i].elevation*scale
+		    	animals[i].y = animals[i].y-animals[i].scale*animals[i].sprite:getHeight()
+				love.graphics.draw(animals[i].sprite, animals[i].x, animals[i].y, 0, animals[i].scale, animals[i].scale)
 			end
 		end
 
