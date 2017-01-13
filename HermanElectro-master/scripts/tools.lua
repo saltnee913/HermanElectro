@@ -3600,7 +3600,7 @@ end
 P.beggarReroller.useToolTile = P.beggarReroller.useToolNothing
 
 P.xrayVision = P.superTool:new{name = "X-Ray Vision", description = "The bright side of Chernoybl",
-image = love.graphics.newImage('Graphics/xrayvision.png'),
+image = love.graphics.newImage('Graphics/Tools/xrayVision.png'),
 baseRange = 0, quality = 3}
 function P.xrayVision:usableOnNothing()
 	return true
@@ -3615,6 +3615,7 @@ function P.xrayVision:useToolNothing()
 				local xrayId = mainMap[i][j].roomid
 				if map.getFieldForRoom(xrayId, 'hidden')~=nil and map.getFieldForRoom(xrayId, 'hidden') then
 					visibleMap[i][j] = 1
+					completedRooms[i][j] = 1
 				end
 			end
 		end
