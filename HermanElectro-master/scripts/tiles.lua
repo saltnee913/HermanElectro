@@ -566,6 +566,16 @@ function P.wall:destroy()
 	self.dirSend = {0,0,0,0}
 	self.overlay = nil
 	self.yOffset = 0
+	if player.attributes.lucky then
+		for i = 1, roomHeight do
+			for j = 1, roomLength do
+				if room[i][j]==self then
+					room[i][j] = tiles.toolTile:new()
+					room[i][j]:absoluteFinalUpdate
+				end
+			end
+		end
+	end
 end
 function P.wall:onLeave()
 	updateElevation()
@@ -1084,6 +1094,16 @@ function P.concreteWall:destroy()
 			for j = 1, roomLength do
 				if room[i][j]==self then
 					room[i][j] = tiles.dungeonEnter:new()
+				end
+			end
+		end
+	end
+	if not self.hidesDungeon and player.attributes.lucky then
+		for i = 1, roomHeight do
+			for j = 1, roomLength do
+				if room[i][j]==self then
+					room[i][j] = tiles.toolTile:new()
+					room[i][j]:absoluteFinalUpdate()
 				end
 			end
 		end

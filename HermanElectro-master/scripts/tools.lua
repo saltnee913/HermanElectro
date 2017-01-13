@@ -3733,6 +3733,64 @@ function P.compass:useToolNothing()
 end
 P.compass.useToolTile = P.compass.useToolNothing
 
+P.santasHat = P.superTool:new{name = "Santa's Hat", description = "Gifts lay in store",
+image = love.graphics.newImage('Graphics/giftBox.png'),
+baseRange = 0, quality = 3}
+function P.santasHat:usableOnNothing()
+	return true
+end
+P.santasHat.usableOnTile = P.santasHat.usableOnNothing
+function P.santasHat:useToolNothing()
+	self.numHeld = self.numHeld-1
+	player.attributes.gifted = true
+	for i = 1, #pushables do
+		if pushables[i].name == "box" then
+			local tileX = pushables[i].tileX
+			local tileY = pushables[i].tileY
+			pushables[i] = pushableList.giftBox:new()
+			pushables[i].tileX = tileX
+			pushables[i].tileY = tileY
+		end
+	end
+end
+P.santasHat.useToolTile = P.santasHat.useToolNothing
+
+P.luckySaw = P.superTool:new{name = "Lucky Saw", description = "Knock on wood",
+image = love.graphics.newImage('Graphics/saw.png'),
+baseRange = 1, quality = 2}
+function P.luckySaw:usableOnTile(tile)
+	return tile:instanceof(tiles.wall) and not tile.destroyed and tile.sawable
+end
+function P.luckySaw:useToolTile(tile, tileY, tileX)
+	tile:destroy()
+	room[tileY][tileX] = tiles.toolTile:new()
+	room[tileY][tileX]:absoluteFinalUpdate()
+end
+
+P.luckyBrick = P.superTool:new{name = "Lucky Brick", description = "Knock on...glass?",
+image = love.graphics.newImage('Graphics/brick.png'),
+baseRange = 1, quality = 2}
+function P.luckyBrick:usableOnTile(tile)
+	return tile:instanceof(tiles.glassWall) and not tile:instanceof(tiles.reinforcedGlass) and not tile.destroyed
+end
+function P.luckyBrick:useToolTile(tile, tileY, tileX)
+	tile:destroy()
+	room[tileY][tileX] = tiles.toolTile:new()
+	room[tileY][tileX]:absoluteFinalUpdate()
+end
+
+P.luckyCharm = P.superTool:new{name = "Medallion of Destruction", description = "With destruction comes fortune",
+image = love.graphics.newImage('Graphics/luckyCharm.png'),
+baseRange = 0, quality = 4}
+function P.luckyCharm:usableOnNothing()
+	return true
+end
+P.luckyCharm.usableOnTile = P.luckyCharm.usableOnNothing
+function P.luckyCharm:useToolNothing()
+	self.numHeld = self.numHeld-1
+	player.attributes.lucky = true
+end
+P.luckyCharm.useToolTile = P.luckyCharm.useToolNothing
 
 P.numNormalTools = 7
 
@@ -3897,6 +3955,10 @@ P:addTool(P.xrayVision)
 P:addTool(P.secretTeleporter)
 P:addTool(P.buttonReroller)
 P:addTool(P.compass)
+--P:addTool(P.santasHat)
+P:addTool(P.luckySaw)
+P:addTool(P.luckyBrick)
+P:addTool(P.luckyCharm)
 
 P.resetTools()
 

@@ -443,7 +443,7 @@ function love.load()
 			y = (6-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10, prevTileX = 3, prevTileY 	= 10,
 			prevx = (3-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10,
 			prevy = (10-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10,
-			width = 20, height = 20, speed = 250, luckTimer = 0, regularMapLoc = {x = 0, y = 0}, returnFloorIndex = 0, attributes = {permaMap = false, xrayVision = false, upgradedToolUse = false, fast = {fast = false, fastStep = false}, flying = false, fear = false, shelled = false, tall = false, extendedRange = 0, sockStep = -1}}
+			width = 20, height = 20, speed = 250, luckTimer = 0, regularMapLoc = {x = 0, y = 0}, returnFloorIndex = 0, attributes = {lucky = false, gifted = false, permaMap = false, xrayVision = false, upgradedToolUse = false, fast = {fast = false, fastStep = false}, flying = false, fear = false, shelled = false, tall = false, extendedRange = 0, sockStep = -1}}
 	player.character = setChar
 
 	map.clearBlacklist()
@@ -2345,6 +2345,7 @@ end
 function getLuckBonus()
 	local luckBonus = player.baseLuckBonus
 	luckBonus = luckBonus+3.5*tools.luckyPenny.numHeld
+	luckBonus = luckBonus+5*tools.luckyCharm.numHeld
 	return luckBonus
 end
 
@@ -2470,6 +2471,17 @@ function postRoomEnter()
 	if tools.tileSwapper.numHeld>0 then
 		tools.tileSwapper.toSwapCoords = nil
 		tools.tileSwapper.image = tools.tileSwapper.baseImage
+	end
+	if player.attributes.gifted then
+		for i = 1, #pushables do
+			if pushables[i].name == "box" then
+				local tileX = pushables[i].tileX
+				local tileY = pushables[i].tileY
+				pushables[i] = pushableList.giftBox:new()
+				pushables[i].tileX = tileX
+				pushables[i].tileY = tileY
+			end
+		end
 	end
 end
 
