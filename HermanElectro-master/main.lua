@@ -1020,7 +1020,7 @@ function updatePower()
 			if room[i]~=nil and room[i][j]~=nil then
 				room[i][j].powered = false
 				room[i][j].poweredNeighbors = {0,0,0,0}
-				if room[i][j].overlay ~= nil then
+				if room[i][j].overlay ~= nil and room[i][j].overlay.canBePowered then
 					room[i][j].powered = true
 					room[i][j].poweredNeighbors = {0,0,0,0}
 				end
@@ -1747,7 +1747,7 @@ function love.draw()
 					end
 					if litTiles[j][i]~=0 and room[j][i].overlay ~= nil then
 						local overlay = room[j][i].overlay
-						local toDraw2 = overlay.powered and overlay.poweredSprite or overlay.sprite
+						local toDraw2 = (overlay.powered and overlay.poweredSprite) or overlay.sprite
 						local rot2 = overlay.rotation
 						local tempi2 = i
 						local tempj2 = j
@@ -1761,7 +1761,7 @@ function love.draw()
 						end
 						love.graphics.draw(toDraw2, (tempi2-1)*floor.sprite:getWidth()*scale+wallSprite.width, (addY2+(tempj2-1)*floor.sprite:getWidth())*scale+wallSprite.height,
 						  rot2 * math.pi / 2, scale*16/toDraw2:getWidth(), scale*16/toDraw2:getWidth())
-						if room[j][i].dirSend[3] == 1 or room[j][i].dirAccept[3] == 1 or (overlay.dirWireHack ~= nil and overlay.dirWireHack[3] == 1) then
+						if overlay:instanceof(tiles.wire) and (room[j][i].dirSend[3] == 1 or room[j][i].dirAccept[3] == 1 or (overlay.dirWireHack ~= nil and overlay.dirWireHack[3] == 1)) then
 							local toDraw3
 							if room[j][i].powered and (room[j][i].dirSend[3] == 1 or room[j][i].dirAccept[3] == 1) then
 								toDraw3 = room[j][i].overlay.wireHackOn

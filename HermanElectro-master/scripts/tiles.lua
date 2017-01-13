@@ -12,7 +12,6 @@ P.tile = Object:new{yOffset = 0, blueHighlighted = false, attractsAnimals = fals
   blocksAnimalMovement = false, poweredNeighbors = {0,0,0,0}, blocksVision = false, dirSend = {1,1,1,1}, 
   dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile", emitsLight = false, litWhenPowered = false, intensity = 0.5, range = 25,
   sprite = love.graphics.newImage('Graphics/cavesfloor.png'), 
-  poweredSprite = love.graphics.newImage('Graphics/cavesfloor.png'),
   wireHackOn = love.graphics.newImage('Graphics3D/wirehackon.png'),
   wireHackOff = love.graphics.newImage('Graphics3D/wirehackoff.png')}
 function P.tile:lightTest(x,y)
@@ -131,7 +130,7 @@ function P.tile:usableOnNothing()
 	return self.destroyed and not (tool~=nil and tools[tool]:nothingIsSomething())
 end
 function P.tile:updateToOverlay(dir)
-	if self.overlay == nil then
+	if self.overlay == nil or not (self.overlay.canBePowered) then
 		return
 	end
 	self.overlay.powered = self.powered
@@ -1461,7 +1460,7 @@ P.batTile = P.pitbullTile:new{name = "bat", animal = animalList[6], listIndex = 
 
 P.meat = P.tile:new{name = "meat", sprite = love.graphics.newImage('Graphics/Tiles/meat.png'), attractsAnimals = true}
 
-P.rottenMeat = P.tile:new{name = "rottenMeat", sprite = love.graphics.newImage('Graphics/rottenmeat.png'), scaresAnimals = true}
+P.rottenMeat = P.tile:new{name = "rottenMeat", sprite = love.graphics.newImage('Graphics/Tiles/rottenMeat.png'), scaresAnimals = true}
 
 P.beggar = P.tile:new{name = "beggar", alive = true, counter = 0, sprite = love.graphics.newImage('Graphics/beggar.png'), deadSprite = love.graphics.newImage('Graphics/beggardead.png')}
 function P.beggar:onEnter(player)

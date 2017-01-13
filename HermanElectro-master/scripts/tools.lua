@@ -902,7 +902,7 @@ function P.meat:useToolNothing(tileY, tileX)
 	room[tileY][tileX] = tiles.meat:new()
 end
 function P.meat:usableOnTile(tile)
-	if tile:instanceof(tiles.button) and not tile.attractsAnimals then
+	if tile.overlay==nil then
 		return true
 	end
 	return false
@@ -910,16 +910,17 @@ end
 function P.meat:useToolTile(tile)
 	self.numHeld = self.numHeld - 1
 	tile.attractsAnimals = true
+	tile.overlay = tiles.meat
 end
 
-P.rottenMeat = P.superTool:new{image = love.graphics.newImage('Graphics/rottenmeat.png'), quality = 3}
+P.rottenMeat = P.superTool:new{image = love.graphics.newImage('Graphics/Tools/rottenMeat.png'), quality = 3, baseRange = 1}
 P.rottenMeat.usableOnNothing = P.meat.usableOnNothing
 function P.rottenMeat:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld-1
 	room[tileY][tileX] = tiles.rottenMeat:new()
 end
 function P.rottenMeat:usableOnTile(tile)
-	if tile:instanceof(tiles.button) and not tile.scaresAnimals then
+	if tile.overlay==nil then
 		return true
 	end
 	return false
@@ -927,6 +928,7 @@ end
 function P.rottenMeat:useToolTile(tile)
 	self.numHeld = self.numHeld - 1
 	tile.scaresAnimals = true
+	tile.overlay = tiles.rottenMeat
 end
 
 P.corpseGrabber = P.superTool:new{name = "corpseGrabber", description = "Removed.", baseRange = 1, image = love.graphics.newImage('Graphics/corpseGrabber.png'), quality = 3}
@@ -3595,7 +3597,8 @@ function P.beggarReroller:useToolNothing()
 end
 P.beggarReroller.useToolTile = P.beggarReroller.useToolNothing
 
-P.xrayVision = P.superTool:new{name = "X-Ray Vision", description = "The bright side of Chernoybl", image = love.graphics.newImage('Graphics/xrayvision.png'),
+P.xrayVision = P.superTool:new{name = "X-Ray Vision", description = "The bright side of Chernoybl",
+image = love.graphics.newImage('Graphics/xrayvision.png'),
 baseRange = 0, quality = 3}
 function P.xrayVision:usableOnNothing()
 	return true
