@@ -571,7 +571,7 @@ function P.wall:destroy()
 			for j = 1, roomLength do
 				if room[i][j]==self then
 					room[i][j] = tiles.toolTile:new()
-					room[i][j]:absoluteFinalUpdate
+					room[i][j]:absoluteFinalUpdate()
 				end
 			end
 		end

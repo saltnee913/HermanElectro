@@ -729,6 +729,7 @@ function startDebug()
 	love.load()
 	loadFirstLevel()
 	tools.resetTools()
+	player.character:onBegin()
 end
 
 function loadFirstLevel()

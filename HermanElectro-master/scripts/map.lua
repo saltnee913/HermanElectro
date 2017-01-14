@@ -788,6 +788,17 @@ function P.generateMapStandard()
 	roomid = util.chooseRandomKey(arr, 'mapGen')
 	newmap[height+1][1] = {roomid = roomid, room = P.createRoom(roomid, arr), tint = {0,0,0}, dirEnter = arr[roomid].dirEnter, isFinal = false, isInitial = false}
 
+	if map.floorInfo.tint == nil then
+		map.floorInfo.tint = {0,0,0}
+	end
+	if map.floorInfo.playerRange == nil then
+		map.floorInfo.playerRange = 200
+	end
+    myShader:send("floorTint_r", map.floorInfo.tint[1])
+    myShader:send("floorTint_g", map.floorInfo.tint[2])
+    myShader:send("floorTint_b", map.floorInfo.tint[3])
+    myShader:send("player_range", map.floorInfo.playerRange)
+
 	--printMap(newmap)
 	return newmap
 end
