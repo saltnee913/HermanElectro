@@ -428,7 +428,7 @@ function P.tool:getToolablePushablesBox()
 	return usablePushables
 end
 
-P.saw = P.tool:new{name = 'saw', image = love.graphics.newImage('Graphics/saw.png')}
+P.saw = P.tool:new{name = 'saw', image = love.graphics.newImage('Graphics/Tools/saw.png')}
 function P.saw:usableOnTile(tile)
 	return tile:instanceof(tiles.wall) and not tile.destroyed and tile.sawable
 end
@@ -440,7 +440,7 @@ function P.saw:useToolPushable(pushable)
 	pushable:destroy()
 end
 
-P.ladder = P.tool:new{name = 'ladder', image = love.graphics.newImage('Graphics/ladder.png')}
+P.ladder = P.tool:new{name = 'ladder', image = love.graphics.newImage('Graphics/Tools/ladder.png')}
 function P.ladder:usableOnTile(tile)
 	if not tile.laddered then
 		if tile:instanceof(tiles.breakablePit) and tile.strength == 0 then
@@ -463,7 +463,7 @@ function P.ladder:useToolNothing(tileY, tileX)
 	room[tileY][tileX] = tiles.ladder:new()
 end
 
-P.wireCutters = P.tool:new{name = 'wire-cutters', image = love.graphics.newImage('Graphics/wirecutters.png')}
+P.wireCutters = P.tool:new{name = 'wire-cutters', image = love.graphics.newImage('Graphics/Tools/wirecutters.png')}
 function P.wireCutters:usableOnNonOverlay(tile)
 	return not tile.destroyed and ((tile:instanceof(tiles.wire) and not tile:instanceof(tiles.unbreakableWire))
 	or tile:instanceof(tiles.conductiveGlass) or tile:instanceof(tiles.reinforcedConductiveGlass) or (tile:instanceof(tiles.electricFloor) and not tile:instanceof(tiles.unbreakableElectricFloor)))
@@ -564,7 +564,7 @@ function P.brick:useToolAnimal(animal)
 	end
 end
 
-P.gun = P.tool:new{name = 'gun', baseRange = 3, image = love.graphics.newImage('NewGraphics/gun copy.png')}
+P.gun = P.tool:new{name = 'gun', baseRange = 3, image = love.graphics.newImage('Graphics/Tools/gun.png')}
 function P.gun:usableOnAnimal(animal)
 	return not animal.dead
 end
@@ -874,7 +874,9 @@ function P.doorstop:useToolTile(tile)
 	tile.stopped = true
 end
 
-P.missile = P.superTool:new{name = "missile", description = "Airstrike supreme", useWithArrowKeys = false, baseRange = 10, image = love.graphics.newImage('Graphics/missile.png'), quality = 4}
+P.missile = P.superTool:new{name = "missile", description = "Airstrike supreme",
+useWithArrowKeys = false, baseRange = 10,
+image = love.graphics.newImage('Graphics/Tools/missile.png'), quality = 4}
 function P.missile:usableOnTile(tile)
 	return not tile.destroyed and (tile:instanceof(tiles.wire) or tile:instanceof(tiles.electricFloor) or tile:instanceof(tiles.wall)) or tile:instanceof(tiles.powerSupply) and not tile.destroyed
 end
