@@ -166,6 +166,7 @@ function P.keypressed(key, unicode)
     	end
     	animals = {}
     	pushables = {}
+    	spotlights = {}
     end
 	if key == "z" and prevRoom~=nil then
     	room = prevRoom

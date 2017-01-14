@@ -9,6 +9,8 @@ loadTutorial = false
 easyMode = false
 gamePaused = false
 
+spotlightList = require('scripts.spotlights')
+
 util = require('scripts.util')
 tiles = require('scripts.tiles')
 map = require('scripts.map')
@@ -216,7 +218,8 @@ function love.load()
 	end
 	specialTools = {0,0,0}
 	animals = {}
-	animalCounter = 1
+	animalCounter = 1 --is this still relevant?
+	spotlights = {}
 	pushables = {}
 	messageInfo = {x = 0, y = 0, text = nil}
 	gabeUnlock = true
@@ -326,6 +329,7 @@ function love.load()
 		green = love.graphics.newImage('Graphics/green.png')
 		blue = love.graphics.newImage('Graphics/blue.png')
 		gray = love.graphics.newImage('Graphics/gray.png')
+		white = love.graphics.newImage('Graphics/white.png')
 		toolWrapper = love.graphics.newImage('GraphicsEli/marble1.png')
 		titlescreenCounter = 0
 		--floortile = love.graphics.newImage('Graphics/floortile.png')
@@ -579,8 +583,7 @@ function goUpFloor()
 				end
 			end
 		end
-		animals = {}
-		pushables = {}
+		createElements()
 		prevRoom = room
 		litTiles = {}
 		for i = 1, roomHeight do
@@ -741,8 +744,7 @@ function loadFirstLevel()
 	loadLevel(map.floorOrder[#map.floorOrder])
 	endMap = mainMap
 	loadNextLevel(true)
-	createAnimals()
-	createPushables()
+	createElements()
 	updateGameState()
 	player.character:onStartGame()
 end
@@ -1738,7 +1740,7 @@ function love.draw()
 				if litTiles[j][i]==1 and room[j][i]~=nil and (not room[j][i].isVisible) and (not room[j][i]:instanceof(tiles.invisibleTile)) then
 					toDraw = invisibleTile
 				end
-				if (room[j][i]~=nil and toDraw ~= invisibleTile --[[and room[j][i].name~="pitbull" and room[j][i].nddddddddddwwame~="cat" and room[j][i].name~="pup"]]) or litTiles[j][i]==0 then
+				if (room[j][i]~=nil and toDraw ~= invisibleTile --[[and room[j][i].name~="pitbull" and room[j][i].name~="cat" and room[j][i].name~="pup"]]) or litTiles[j][i]==0 then
 					local addY = 0
 					if room[j][i]~=nil and litTiles[j][i]~=0 then
 						addY = room[j][i]:getYOffset()
@@ -1791,6 +1793,18 @@ function love.draw()
 						love.graphics.setShader(myShader)			
 						love.graphics.setColor(255,255,255)
 					end
+				end
+			end
+			for k = 1, #spotlights do
+				local sl = spotlights[k]
+				if sl.tileY==j and sl.tileX==i then
+					local addY = 0
+					local yScale = scale
+					if room[j][i]~=nil and litTiles[j][i]~=0 then
+						addY = room[j][i]:getYOffset()
+						yScale = scale*(16-addY)/16
+					else addY=0 end
+					love.graphics.draw(white, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (addY+(j-1)*floor.sprite:getHeight())*scale+wallSprite.height, 0, scale, yScale)							
 				end
 			end
 		end
@@ -2261,10 +2275,30 @@ function hackEnterRoom(roomid, y, x)
 	roomLength = room.length
 	if player.tileX>roomLength then player.tileX = roomLength end
 	if player.tileY>roomHeight then player.tileY = roomHeight end
-	createAnimals()
-	createPushables()
+	createElements()
 	updateGameState(false)
 	return true
+end
+
+function createElements()
+	createAnimals()
+	createPushables()
+	createSpotlights()
+end
+
+function createSpotlights()
+	spotlights = {}
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]~=nil and room[i][j]:instanceof(tiles.spotlightTile) then
+				local spotlightToAdd = room[i][j].spotlight:new()
+				spotlightToAdd.tileY = i
+				spotlightToAdd.tileX = j
+				spotlightToAdd.dir = room[i][j].rotation
+				spotlights[#spotlights+1] = spotlightToAdd
+			end
+		end
+	end
 end
 
 function createAnimals()
@@ -2434,8 +2468,7 @@ function enterRoom(dir)
 	end
 
 	if (prevMapX~=mapx or prevMapY~=mapy) or dir == -1 then
-		createAnimals()
-		createPushables()
+		createElements()
 	end
 
 	--check if box blocking doorway
@@ -2471,7 +2504,6 @@ function enterRoom(dir)
 end
 
 function postRoomEnter()
-	spotlights = {}
 	if tools.tileSwapper.numHeld>0 then
 		tools.tileSwapper.toSwapCoords = nil
 		tools.tileSwapper.image = tools.tileSwapper.baseImage
@@ -2537,6 +2569,12 @@ function love.update(dt)
 	if loadTutorial then
 		tutorial.update(dt)
 	end
+
+	for i = 1, #spotlights do
+		spotlights[i]:update(dt)
+	end
+	if #spotlights>0 then checkDeathSpotlights() end
+
 	--key press
 	keyTimer.timeLeft = keyTimer.timeLeft - dt
 	tools.updateTimer(dt)
@@ -3219,8 +3257,17 @@ function checkDeath()
 			kill()
 		end
 	end
+	checkDeathSpotlights()
 	for i = 1, #animals do
 		if animals[i]:willKillPlayer(player) and not player.safeFromAnimals then
+			kill()
+		end
+	end
+end
+
+function checkDeathSpotlights()
+	for i = 1, #spotlights do
+		if spotlights[i].tileX==player.tileX and spotlights[i].tileY==player.tileY then
 			kill()
 		end
 	end
