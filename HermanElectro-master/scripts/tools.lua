@@ -722,7 +722,8 @@ function P.giveSupertools(numTools,qualities)
 	P.giveRandomTools(0,numTools,qualities)
 end
 
-P.shovel = P.superTool:new{name = "shovel", description = "Hole making apparatus.", baseRange = 1, image = love.graphics.newImage('Graphics/shovel.png'), quality = 2}
+P.shovel = P.superTool:new{name = "shovel", description = "Hole making apparatus.", baseRange = 1,
+image = love.graphics.newImage('Graphics/Tools/shovel.png'), quality = 2}
 function P.shovel:usableOnNothing()
 	return true
 end
@@ -2045,7 +2046,7 @@ function P.wireExtender:useToolTile(tile, tileY, tileX)
 	room[tileY][tileX] = tiles.wire:new()
 end
 
-P.coin = P.superTool:new{name = "coin", description = "All costs must be payed", image = love.graphics.newImage('Graphics/coin.png'), range = 1, quality = 2}
+P.coin = P.superTool:new{name = "coin", description = "All costs must be payed", image = love.graphics.newImage('Graphics/Tools/coin.png'), range = 1, quality = 2}
 function P.coin:usableOnTile(tile)
 	if tile:instanceof(tiles.toolTaxTile) and not tile.destroyed then
 		return true
@@ -2755,7 +2756,7 @@ function P.pickaxe:useToolPushable(pushable)
 	pushable:destroy()
 end
 
-P.luckyPenny = P.coin:new{name = "Lucky Penny", description = "May all your wishes come true", quality = 3, image = love.graphics.newImage('Graphics/luckypenny.png')}
+P.luckyPenny = P.coin:new{name = "Lucky Penny", description = "May all your wishes come true", quality = 3, image = love.graphics.newImage('Graphics/Tools/luckyPenny.png')}
 
 P.helmet = P.superTool:new{name = "Knight's Helmet", description = "You're feeling slanted", quality = 3, image = love.graphics.newImage('Graphics/helmet.png'), baseRange = 2}
 P.helmet.getToolableTiles = P.tool.getToolableTilesBox
