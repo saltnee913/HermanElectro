@@ -3,7 +3,7 @@
 	{
 		"rooms": 
 		{
-			"filePath": "RoomData/accessrooms.json",
+			"filePath": "RoomData/endpuzzles.json",
 			"requirements":
 			{
 				"not":
@@ -22,7 +22,7 @@
 		},
 		"shops":
 		{
-			"filePath": "RoomData/shops.json",
+			"filePath": "RoomData/endpuzzles.json",
 			"requirements":
 			{
 
@@ -30,7 +30,7 @@
 		},
 		"treasureRooms": 
 		{
-			"filePath": "RoomData/accessrooms.json",
+			"filePath": "RoomData/endpuzzles.json",
 			"requirements":
 			{
 				
@@ -38,7 +38,7 @@
 		},
 		"finalRooms": 
 		{
-			"filePath": "RoomData/endgamerooms.json",
+			"filePath": "RoomData/endpuzzles.json",
 			"requirements":
 			{
 				
@@ -46,7 +46,7 @@
 		},
 		"donationRooms":
 		{
-			"filePath": "RoomData/donationrooms.json",
+			"filePath": "RoomData/endpuzzles.json",
 			"requirements":
 			{
 				
@@ -73,8 +73,8 @@
 	{
 		"requireUnlocks": true,
 		"height": 10,
-		"numRooms": 3,
-		"generateFunction": "generateMapFinal",
+		"numRooms": 10,
+		"generateFunction": "generateMapWeighted",
 		"startRoomID": "1",
 		//numRoomsToCheck is the amount of rooms to try when deciding a room's roomid, decreasing this increases rng
 		"numRoomsToCheck": 3,

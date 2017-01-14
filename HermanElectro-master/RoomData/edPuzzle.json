@@ -743,7 +743,7 @@
   "superFields":
   {
     "dirEnter": [1,1,1,1],
-    "minimapColor": [139,69,19],
+    "minimapColor": [255,255,102],
     "hasEndTile": false,
     "autowin": true,
     "floorTileOverride": "dungeon"

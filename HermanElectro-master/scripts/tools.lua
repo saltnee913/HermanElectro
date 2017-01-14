@@ -2249,7 +2249,7 @@ P.foresight.useToolNothing = P.foresight.useToolTile
 
 P.tileDisplacer = P.superTool:new{name = "tileDisplacer", description = "", heldTile = nil, image = love.graphics.newImage('Graphics/tiledisplacer.png'), baseImage = love.graphics.newImage('Graphics/tiledisplacer.png'), baseRange = 3, quality = 4}
 function P.tileDisplacer:usableOnTile(tile)
-	return self.heldTile==nil
+	return self.heldTile==nil and not tile.untoolable
 end
 function P.tileDisplacer:usableOnNothing()
 	return self.heldTile~=nil
@@ -2271,7 +2271,7 @@ end
 
 P.tileSwapper = P.superTool:new{name = "tileSwapper", description = "", toSwapCoords = nil, image = love.graphics.newImage('Graphics/tileswapper.png'), baseImage = love.graphics.newImage('Graphics/tileswapper.png'), baseRange = 3, quality = 5}
 function P.tileSwapper:usableOnTile(tile)
-	return true
+	return not tile.untoolable
 end
 function P.tileSwapper:useToolTile(tile, tileY, tileX)
 	if self.toSwapCoords==nil then
@@ -2706,7 +2706,8 @@ function P.tileMagnet:usableOnTile(tile, dist)
 			end
 		end
 	end]]
-	if dist==1 and room[player.tileY][player.tileX]~=nil then return false end
+	if dist==1 and room[player.tileY][player.tileX]~=nil then return false
+	elseif tile.untoolable then return false end
 	return true
 end
 function P.tileMagnet:useToolTile(tile, tileY, tileX)

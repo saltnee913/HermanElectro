@@ -611,6 +611,8 @@ function goToFloor(floorNum)
 end
 
 function postFloorChange()
+	spotlights = {}
+
 	if player.attributes.xrayVision then
 		for i = 1, mapHeight do
 			for j = 1, mapHeight do
@@ -2469,6 +2471,7 @@ function enterRoom(dir)
 end
 
 function postRoomEnter()
+	spotlights = {}
 	if tools.tileSwapper.numHeld>0 then
 		tools.tileSwapper.toSwapCoords = nil
 		tools.tileSwapper.image = tools.tileSwapper.baseImage

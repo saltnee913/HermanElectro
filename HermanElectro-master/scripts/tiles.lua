@@ -7,7 +7,7 @@ tools = require('scripts.tools')
 local P = {}
 tiles = P
 
-P.tile = Object:new{yOffset = 0, blueHighlighted = false, attractsAnimals = false, scaresAnimals = false, formerPowered = nil, updatePowerOnEnter = false, text = "", updatePowerOnLeave = false, overlayable = false, overlaying = false, gone = false, lit = false, destroyed = false,
+P.tile = Object:new{yOffset = 0, untoolable = false, blueHighlighted = false, attractsAnimals = false, scaresAnimals = false, formerPowered = nil, updatePowerOnEnter = false, text = "", updatePowerOnLeave = false, overlayable = false, overlaying = false, gone = false, lit = false, destroyed = false,
   blocksProjectiles = false, isVisible = true, rotation = 0, powered = false, blocksMovement = false, 
   blocksAnimalMovement = false, poweredNeighbors = {0,0,0,0}, blocksVision = false, dirSend = {1,1,1,1}, 
   dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile", emitsLight = false, litWhenPowered = false, intensity = 0.5, range = 25,
@@ -130,7 +130,7 @@ function P.tile:usableOnNothing()
 	return self.destroyed and not (tool~=nil and tools[tool]:nothingIsSomething())
 end
 function P.tile:updateToOverlay(dir)
-	if self.overlay == nil or not (self.overlay.canBePowered) then
+	if self.overlay == nil then
 		return
 	end
 	self.overlay.powered = self.powered
@@ -138,10 +138,12 @@ function P.tile:updateToOverlay(dir)
 	if dir ~= -1 then
 		self.overlay:updateTile(dir)
 	end
-	self.canBePowered = self.overlay.canBePowered
-	self.dirSend = self.overlay.dirSend
-	self.dirAccept = self.overlay.dirAccept
-	self.powered = self.overlay.powered
+	if self.overlay:instanceof(P.wire) then
+		self.canBePowered = self.overlay.canBePowered
+		self.dirSend = self.overlay.dirSend
+		self.dirAccept = self.overlay.dirAccept
+		self.powered = self.overlay.powered
+	end
 end
 function P.tile:setOverlay(overlay)
 	self.overlay = overlay
@@ -2398,7 +2400,12 @@ function P.key:onEnter()
 	self.gone = true
 end
 
-P.keyGate = P.reinforcedGlass:new{name = "keyTile", sprite = love.graphics.newImage('Graphics/keytile.png')}
+P.gameWin = P.tile:new{name = "gameWin"}
+function P.gameWin:onEnter()
+	win()
+end
+
+P.keyGate = P.reinforcedGlass:new{name = "keyTile", sprite = love.graphics.newImage('Graphics/keytile.png'), untoolable = true}
 function P.keyGate:onEnter()
 	if player.keysHeld==3 then
 		self:open()
@@ -2784,5 +2791,6 @@ tiles[181] = P.exitPortal2
 tiles[182] = P.whiteBeggar
 tiles[183] = P.blackBeggar
 tiles[184] = P.goldBeggar
+tiles[185] = P.gameWin
 
 return tiles
