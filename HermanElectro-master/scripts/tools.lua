@@ -888,10 +888,8 @@ function P.missile:usableOnAnimal(animal)
 	return not animal.dead
 end
 function P.missile:useToolNothing(tileY, tileX)
-	local dungeonSpawn = util.random(2, 'misc')
-	if dungeonSpawn==1 then
-		room[tileY][tileX] = tiles.dungeonEnter:new()
-	end
+	self.numHeld = self.numHeld-1
+	room[tileY][tileX] = tiles.dungeonEnter:new()
 end
 P.missile.getToolableTiles = P.tool.getToolableTilesBox
 P.missile.getToolableAnimals = P.tool.getToolableAnimalsBox
@@ -1076,7 +1074,7 @@ function P.spring:useToolNothing(tileY, tileX)
 end
 P.spring.getToolableTiles = P.tool.getToolableTilesBox
 
-P.glue = P.superTool:new{name = "glue", description = "Trap an animal.", image = love.graphics.newImage('Graphics/glue.png'), quality = 2}
+P.glue = P.superTool:new{name = "Glue", description = "Trap an animal.", image = love.graphics.newImage('Graphics/Tools/glue.png'), quality = 2}
 function P.glue:usableOnNothing()
 	return true
 end
