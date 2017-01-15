@@ -330,6 +330,7 @@ function love.load()
 		blue = love.graphics.newImage('Graphics/blue.png')
 		gray = love.graphics.newImage('Graphics/gray.png')
 		white = love.graphics.newImage('Graphics/white.png')
+		linuxTest = love.graphics.newImage('Graphics/lINuXtEsT.png')
 		toolWrapper = love.graphics.newImage('GraphicsEli/marble1.png')
 		titlescreenCounter = 0
 		--floortile = love.graphics.newImage('Graphics/floortile.png')
@@ -848,6 +849,7 @@ function kill()
 			for j = 1, #pushables do
 				pushables[j]:destroy()
 			end
+			spotlights = {}
 			updateGameState(false)
 			log("Revived!")
 			stats.losses[player.character.name] = stats.losses[player.character.name]-1
@@ -1804,7 +1806,7 @@ function love.draw()
 						addY = room[j][i]:getYOffset()
 						yScale = scale*(16-addY)/16
 					else addY=0 end
-					love.graphics.draw(white, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (addY+(j-1)*floor.sprite:getHeight())*scale+wallSprite.height, 0, scale, yScale)							
+					love.graphics.draw(spotlights[k].sprite, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (addY+(j-1)*floor.sprite:getHeight())*scale+wallSprite.height, 0, scale, yScale)							
 				end
 			end
 		end
@@ -2288,6 +2290,7 @@ end
 
 function createSpotlights()
 	spotlights = {}
+	if completedRooms[mapy][mapx]>=1 then return end
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
 			if room[i][j]~=nil and room[i][j]:instanceof(tiles.spotlightTile) then
@@ -3269,6 +3272,7 @@ function checkDeathSpotlights()
 	for i = 1, #spotlights do
 		if spotlights[i].tileX==player.tileX and spotlights[i].tileY==player.tileY then
 			kill()
+			return
 		end
 	end
 end
@@ -3651,6 +3655,7 @@ function dropTools()
 end
 
 function beatRoom(noDrops)
+	spotlights = {}
 	if noDrops == nil then noDrops = false end
 	gameTime.timeLeft = gameTime.timeLeft+gameTime.roomTime
 	unlockDoors()

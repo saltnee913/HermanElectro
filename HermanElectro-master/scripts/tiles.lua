@@ -1017,7 +1017,12 @@ end
 P.pupTile = P.pitbullTile:new{name = "pup", animal = animalList[3], listIndex = 3}
 P.catTile = P.pitbullTile:new{name = "cat", animal = animalList[4], listIndex = 4}
 
-P.spotlightTile = P.tile:new{name = "spotlight", spotlight = spotlightList[1], sprite = love.graphics.newImage('Graphics/spotlightTile.png')}
+P.spotlightTile = P.tile:new{name = "spotlight", spotlight = spotlightList.spotlight,
+sprite = love.graphics.newImage('Graphics/spotlightTile.png')}
+P.fastSpotlightTile = P.spotlightTile:new{name = "fastSpotlight", spotlight = spotlightList.fastSpotlight,
+sprite = love.graphics.newImage('Graphics/fastSpotlightTile.png')}
+P.slowSpotlightTile = P.spotlightTile:new{name = "slowSpotlight", spotlight = spotlightList.slowSpotlight,
+sprite = love.graphics.newImage('Graphics/slowSpotlightTile.png')}
 
 P.vDoor= P.hDoor:new{name = "vDoor", sprite = love.graphics.newImage('Graphics3D/door.png'), closedSprite = love.graphics.newImage('Graphics/door.png'), openSprite = love.graphics.newImage('Graphics/doorsopen.png')}
 P.vDoor.onEnter = P.hDoor.onEnter
@@ -2795,5 +2800,7 @@ tiles[183] = P.blackBeggar
 tiles[184] = P.goldBeggar
 tiles[185] = P.gameWin
 tiles[186] = P.spotlightTile
+tiles[187] = P.fastSpotlightTile
+tiles[188] = P.slowSpotlightTile
 
 return tiles

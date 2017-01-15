@@ -6,7 +6,12 @@ local P = {}
 spotlightsList = P
 
 
-P.spotlight  = Object:new{name = "spotlight", tileX = 0, tileY = 0, dir = 1, baseUpdateTime = 300, updateTime = 300}
+P.spotlight  = Object:new{name = "spotlight", tileX = 0, tileY = 0, dir = 1, baseUpdateTime = 300, updateTime = 300,
+sprite = love.graphics.newImage('Graphics/white.png')}
+P.fastSpotlight = P.spotlight:new{name = "fastSpotlight", baseUpdateTime = 150, updateTime = 150,
+sprite = love.graphics.newImage('Graphics/purple.png')}
+P.slowSpotlight = P.spotlight:new{name = "slowSpotlight", baseUpdateTime = 450, updateTime = 450,
+sprite = love.graphics.newImage('Graphics/yellow.png')}
 function P.spotlight:update(dt)
 	--directions same as for dirEnter: 0 up, 1 right, 2 down, 3 left
 	self.updateTime = self.updateTime-dt*1000
@@ -44,5 +49,7 @@ function P.spotlight:update(dt)
 end
 
 spotlightsList[1] = P.spotlight
+spotlightsList[2] = P.fastSpotlight
+spotlightsList[3] = P.slowSpotlight
 
 return spotlightsList
