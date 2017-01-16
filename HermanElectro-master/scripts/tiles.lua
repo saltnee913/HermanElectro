@@ -1462,6 +1462,15 @@ function P.unactivatedBomb:onStep(x, y)
 		self.poweredSprite = self.sprite
 	end
 end
+function P.unactivatedBomb:updateSprite()
+	if self.counter == 3 then
+		self.sprite = self.sprite3
+	elseif self.counter == 2 then
+		self.sprite = self.sprite2
+	elseif self.counter == 1 then
+		self.sprite = self.sprite1
+	end
+end
 function P.unactivatedBomb:onEnter(player)
 	self.triggered = true
 end
@@ -1843,11 +1852,12 @@ end
 P.reinforcedGlass = P.concreteWall:new{name = "reinforcedGlass", blocksVision = false, sprite = love.graphics.newImage('Graphics3D/reinforcedglass.png'), poweredSprite = love.graphics.newImage('Graphics3D/reinforcedglass.png')}
 
 P.powerTriggeredBomb = P.unactivatedBomb:new{name = "powerTriggeredBomb", canBePowered = true, powered = false, dirAccept = {1,1,1,1}, dirSend = {0,0,0,0}}
-function P.powerTriggeredBomb:postPowerUpdate()
+function P.powerTriggeredBomb:absoluteFinalUpdate()
 	if self.poweredNeighbors[1]==1 or self.poweredNeighbors[2]==1 or self.poweredNeighbors[3]==1 or self.poweredNeighbors[4]==1 then
 		if not self.triggered then
-			self.counter = 4
+			self.counter = 3
 			self.triggered = true
+			self:updateSprite()
 		end
 	end
 	self.poweredSprite = self.sprite
