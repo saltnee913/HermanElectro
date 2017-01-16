@@ -3109,14 +3109,14 @@ end
 function updateElevation()
 	if room[player.tileY][player.tileX]==nil then
 		player.elevation = 0
-	else
+	elseif room[player.tileY][player.tileX].canElevate then
 		player.elevation = room[player.tileY][player.tileX]:getHeight()
 	end
 
 	for i = 1, #animals do
 		if room[animals[i].tileY][animals[i].tileX]==nil then
 			animals[i].elevation = 0
-		else
+		elseif room[animals[i].tileY][animals[i].tileX].canElevate then
 			animals[i].elevation = room[animals[i].tileY][animals[i].tileX]:getHeight()
 		end	
 	end
