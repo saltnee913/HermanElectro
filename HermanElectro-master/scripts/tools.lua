@@ -2091,12 +2091,16 @@ function P.emptyBucket:useToolNothing(tileY, tileX)
 end
 P.emptyBucket.spreadWater = P.bucketOfWater.spreadWater
 
-P.emptyCup = P.emptyBucket:new{name = "emptyCup"}
+P.emptyCup = P.emptyBucket:new{name = "emptyCup", image = love.graphics.newImage('Graphics/Tools/emptyCup.png'),
+imageFull = love.graphics.newImage('Graphics/Tools/emptyCupWater.png'),
+imageEmpty = love.graphics.newImage('Graphics/Tools/emptyCup.png'),
+quality = 2}
 function P.emptyCup:usableOnNothing()
 	return self.full
 end
 function P.emptyCup:useToolNothing(tileY, tileX)
-	P.waterBottle:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
+	room[tileY][tileX] = tiles.puddle:new()
 	self.image = self.imageEmpty
 	self.full = false
 end
@@ -2357,7 +2361,8 @@ function P.stoolPlacer:useToolNothing(tileY, tileX)
 	room[tileY][tileX] = tiles.halfWall:new()
 end
 
-P.lemonadeCup = P.superTool:new{name = "lemonadeCup", description = "Dainty cup", image = love.graphics.newImage('Graphics/lemonadecup.png'), baseRange = 1, quality = 1}
+P.lemonadeCup = P.superTool:new{name = "lemonadeCup", description = "Dainty cup",
+image = love.graphics.newImage('Graphics/Tools/lemonadeCup.png'), baseRange = 1, quality = 1}
 function P.lemonadeCup:usableOnNothing()
 	return true
 end
