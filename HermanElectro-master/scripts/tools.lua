@@ -2415,7 +2415,8 @@ function P.lemonadeCup:useToolNothing(tileY, tileX)
 	room[tileY][tileX] = tiles.lemonade:new()
 end
 
-P.lemonParty = P.superTool:new{name = "lemonParty", description = "Ben Most is a stupid piece of toast.",image = love.graphics.newImage('Graphics/lemonparty.png'), baseRange = 1, quality = 2}
+P.lemonParty = P.superTool:new{name = "lemonParty", description = "Ben Most is a stupid piece of toast.",
+image = love.graphics.newImage('Graphics/Tools/lemonadePitcher.png'), baseRange = 1, quality = 2}
 function P.lemonParty:usableOnNothing()
 	return true
 end
