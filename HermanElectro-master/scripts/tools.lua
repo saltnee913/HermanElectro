@@ -3499,7 +3499,8 @@ function P.permaUpgrade:useToolNothing()
 end
 P.permaUpgrade.useToolTile = P.permaUpgrade.useToolNothing
 
-P.christmasSurprise = P.boxSpawner:new{name = "Christmas Surprise", description = "What's in the box?", image = love.graphics.newImage('Graphics/giftBox.png'),
+P.christmasSurprise = P.boxSpawner:new{name = "Christmas Surprise", description = "What's in the box?",
+image = love.graphics.newImage('Graphics/Tools/santaHat.png'),
 baseRange = 1, quality = 3}
 function P.christmasSurprise:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld-1
