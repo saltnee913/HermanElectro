@@ -1608,7 +1608,8 @@ end
 P.swapper.getToolableAnimals = P.swapper.getToolableAnimalsBox
 
 
-P.bucketOfWater = P.superTool:new{name = "bucketOfWater", description = "Bottomless bucket", baseRange = 1, image = love.graphics.newImage('Graphics/bucketofwater.png'), quality = 1}
+P.bucketOfWater = P.superTool:new{name = "bucketOfWater", description = "Bottomless bucket", baseRange = 1,
+image = love.graphics.newImage('Graphics/Tools/bucketOfWater.png'), quality = 1}
 function P.bucketOfWater:usableOnNothing()
 	return true
 end
@@ -2062,13 +2063,29 @@ function P.coin:useToolTile(tile)
 	end
 end
 
-P.emptyBucket = P.superTool:new{name = "emptyBucket", description = "Fill her up!", image = love.graphics.newImage('Graphics/bucket.png'), imageEmpty = love.graphics.newImage('Graphics/bucket.png'),
-  imageFull = love.graphics.newImage('Graphics/bucketofwater.png'), full = false, baseRange = 1, quality = 2}
+P.emptyBucket = P.superTool:new{name = "emptyBucket", description = "Fill her up!", puddleTile = nil,
+image = love.graphics.newImage('Graphics/Tools/emptyBucket.png'),
+imageEmpty = love.graphics.newImage('Graphics/Tools/emptyBucket.png'),
+waterImage = love.graphics.newImage('Graphics/Tools/bucketOfWater.png'),
+gasImage = love.graphics.newImage('Graphics/Tools/bucketOfGas.png'),
+lemonadeImage = love.graphics.newImage('Graphics/Tools/bucketOfLemonade.png'),
+full = false, baseRange = 1, quality = 2}
 function P.emptyBucket:usableOnTile(tile)
 	if self.full then return P.bucketOfWater:usableOnTile(tile) end
 	if not self.full then return tile:instanceof(tiles.puddle) end
 end
 
+function P.emptyBucket:updateSprite()
+	if not self.full then
+		self.sprite = self.imageEmpty
+	elseif self.puddleTile:instanceof(tiles.gasPuddle) then
+		self.image = self.gasImage
+	elseif self.puddleTile:instanceof(tiles.lemonade) then
+		self.image = self.lemonadeImage
+	else
+		self.image = self.waterImage
+	end
+end
 function P.emptyBucket:usableOnNothing()
 	return self.full
 end
@@ -2076,20 +2093,46 @@ function P.emptyBucket:useToolTile(tile, tileY, tileX)
 	if not self.full then
 		self.image = self.imageFull
 		self.full = true
+		self.puddleTile = room[tileY][tileX]
 		room[tileY][tileX] = nil
 	else
-		P.bucketOfWater:useToolTile(tile, tileY, tileX)
-		self.image = self.imageEmpty
+		--P.bucketOfWater:useToolTile(tile, tileY, tileX)
+		--above may cause problem by impacting wrong numHeld
+		--probably doesn't matter because, unless changed, buckets only work on nothing
 		self.full = false
 	end
+	self:updateSprite()
 end
 function P.emptyBucket:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld-1
 	self.full = false
 	self.image = self.imageEmpty
-	self:spreadWater(tileY, tileX)
+	self:spreadSubstance(self.puddleTile, tileY, tileX)
+	self:updateSprite()
 end
-P.emptyBucket.spreadWater = P.bucketOfWater.spreadWater
+function P.emptyBucket:spreadSubstance(tile, tileY, tileX)
+	room[tileY][tileX] = tile:new()
+	if tileY>1 then
+		if room[tileY-1][tileX]==nil then
+			self:spreadSubstance(tile, tileY-1, tileX)
+		end
+	end
+	if tileY<roomHeight then
+		if room[tileY+1][tileX]==nil then
+			self:spreadSubstance(tile, tileY+1, tileX)
+		end
+	end
+	if tileX>1 then
+		if room[tileY][tileX-1]==nil then
+			self:spreadSubstance(tile, tileY, tileX-1)
+		end
+	end
+	if tileX<roomLength then
+		if room[tileY][tileX+1]==nil then
+			self:spreadSubstance(tile, tileY, tileX+1)
+		end
+	end
+end
 
 P.emptyCup = P.emptyBucket:new{name = "emptyCup", image = love.graphics.newImage('Graphics/Tools/emptyCup.png'),
 imageFull = love.graphics.newImage('Graphics/Tools/emptyCupWater.png'),
