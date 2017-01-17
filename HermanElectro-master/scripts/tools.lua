@@ -1854,7 +1854,8 @@ function P.roomUnlocker:useToolNothing()
 end
 P.roomUnlocker.useToolTile = P.roomUnlocker.useToolNothing
 
-P.axe = P.superTool:new{name = "Axe", description = "Throw it or swing it.", baseRange = 5, image = love.graphics.newImage('Graphics/axe.png'), quality = 2}
+P.axe = P.superTool:new{name = "Axe", description = "Throw it or swing it.", baseRange = 5,
+image = love.graphics.newImage('Graphics/Tools/axe.png'), quality = 2}
 P.axe.usableOnTile = P.saw.usableOnTile
 P.axe.usableOnAnimal = P.gun.usableOnAnimal
 P.axe.useToolAnimal = P.gun.useToolAnimal
