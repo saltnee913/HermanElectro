@@ -2897,7 +2897,8 @@ function P.stealthBomber:useToolTile(tile, tileY, tileX)
 	end
 end
 
-P.seeds = P.superTool:new{name = "Seeds", description = "Go forth and sow your wild oats", baseRange = 1, quality = 2, image = love.graphics.newImage('Graphics/seeds.png')}
+P.seeds = P.superTool:new{name = "Seeds", description = "Go forth and sow your wild oats", baseRange = 1, quality = 2,
+image = love.graphics.newImage('Graphics/Tools/seeds.png')}
 function P.seeds:usableOnNothing()
 	return true
 end
