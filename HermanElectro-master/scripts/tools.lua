@@ -2925,7 +2925,8 @@ function P.supertoolDoubler:useToolNothing()
 end
 P.supertoolDoubler.useToolTile = P.supertoolDoubler.useToolNothing
 
-P.coffee = P.superTool:new{name = "Coffee", description = "Caffeine rush", image = love.graphics.newImage('Graphics/coffee.png'), quality = 2, baseRange = 0}
+P.coffee = P.superTool:new{name = "Coffee", description = "Caffeine rush",
+image = love.graphics.newImage('Graphics/Tools/coffee.png'), quality = 2, baseRange = 0}
 function P.coffee:usableOnNothing()
 	return true
 end
