@@ -3850,6 +3850,19 @@ function P.luckyCharm:useToolNothing()
 end
 P.luckyCharm.useToolTile = P.luckyCharm.useToolNothing
 
+P.trader = P.superTool:new{name = "Trader", description = "",
+image = love.graphics.newImage('Graphics/trader.png'), quality = 4, baseRange = 0}
+function P.trader:usableOnNothing()
+	return true
+end
+P.trader.usableOnTile = P.trader.usableOnNothing
+function P.trader:useToolNothing()
+	self.numHeld = self.numHeld-1
+	tools.giveRandomTools(tools.coin.numHeld*2)
+	tools.coin.numHeld = 0
+end
+P.trader.useToolTile = P.trader.useToolNothing
+
 P.numNormalTools = 7
 
 --[[ideas:
@@ -4017,6 +4030,7 @@ P:addTool(P.compass)
 P:addTool(P.luckySaw)
 P:addTool(P.luckyBrick)
 P:addTool(P.luckyCharm)
+P:addTool(P.trader)
 
 P.resetTools()
 

@@ -3641,7 +3641,10 @@ function dropTools()
 		end
 		if not done then
 			if floorIndex>=1 then
-				tools.giveRandomTools(math.floor((toolMax+toolMin)/2))
+				--bonusTool decides whether or not one more tool will drop from floor
+				local bonusTool = util.random(2, 'toolDrop')
+				bonusTool = bonusTool-1
+				tools.giveRandomTools(math.floor((toolMax+toolMin)/2)+bonusTool)
 			end
 			--[[for i = 1, toolMin+1 do
 				local slot = util.random(tools.numNormalTools, 'toolDrop')
