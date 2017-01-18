@@ -2564,7 +2564,8 @@ function P.playerCloner:useToolNothing()
 end
 P.playerCloner.useToolTile = P.playerCloner.useToolNothing
 
-P.salt = P.superTool:new{name = "Salt", description = "The deadliest weapon...don't spill!", image = love.graphics.newImage('Graphics/salt.png'), baseRange = 2, quality = 1}
+P.salt = P.superTool:new{name = "Salt", description = "The deadliest weapon...don't spill!",
+image = love.graphics.newImage('Graphics/Tools/salt.png'), baseRange = 2, quality = 1}
 function P.salt:usableOnAnimal(animal)
 	return animal:instanceof(animalList.snail)
 end
