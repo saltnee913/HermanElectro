@@ -3863,6 +3863,31 @@ function P.trader:useToolNothing()
 end
 P.trader.useToolTile = P.trader.useToolNothing
 
+P.tileFlipper = P.superTool:new{name = "Tile Flipper", description = "", quality = 3, baseRange = 2,
+image = love.graphics.newImage('Graphics/tileFlipper.png')}
+function P.tileFlipper:usableOnTile()
+	return true
+end
+function P.tileFlipper:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
+
+	local isVert = false
+	if player.tileX==tileX then
+		isVert = true
+	end
+
+	local tileRot = tile.rotation
+	tileRot = tile.flipDirection(tileRot,isVert)
+	while tileRot<0 do tileRot = tileRot+4 end
+	tile:rotate(tileRot)
+	if tile.overlay~=nil then
+		local overRot = tile.overlay.rotation
+		overRot = room[tileY][tileX].overlay.flipDirection(overRot, isVert)
+		while overRot<0 do overRot = overRot+4 end
+		tile.overlay:rotate(overRot)
+	end
+end
+
 P.numNormalTools = 7
 
 --[[ideas:
@@ -4031,6 +4056,7 @@ P:addTool(P.luckySaw)
 P:addTool(P.luckyBrick)
 P:addTool(P.luckyCharm)
 P:addTool(P.trader)
+P:addTool(P.tileFlipper)
 
 P.resetTools()
 
