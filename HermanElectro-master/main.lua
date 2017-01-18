@@ -437,16 +437,18 @@ function love.load()
 	--print(love.graphics.getWidth(f1))
 	scale = (width - 2*wallSprite.width)/(20.3 * 16)*5/6
 	floor = tiles.tile
+	tileHeight = util.getImage(floor.sprite):getHeight()
+	tileWidth = util.getImage(floor.sprite):getWidth()
 
 	local setChar = characters[1]
 	if player~=nil and player.character~=nil then
 		setChar = player.character
 	end
 
-	player = { 	baseLuckBonus = 0, keysHeld = 0, biscuitHeld = false, clonePos = {x = 0, y = 0, z = 0}, dead = false, elevation = 0, safeFromAnimals = false, bonusRange = 0, active = true, waitCounter = 0, tileX = 10, tileY = 6, x = (1-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10, 
-			y = (6-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10, prevTileX = 3, prevTileY 	= 10,
-			prevx = (3-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10,
-			prevy = (10-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10,
+	player = { 	baseLuckBonus = 0, keysHeld = 0, biscuitHeld = false, clonePos = {x = 0, y = 0, z = 0}, dead = false, elevation = 0, safeFromAnimals = false, bonusRange = 0, active = true, waitCounter = 0, tileX = 10, tileY = 6, x = (1-1)*scale*tileWidth+wallSprite.width+tileWidth/2*scale-10, 
+			y = (6-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10, prevTileX = 3, prevTileY 	= 10,
+			prevx = (3-1)*scale*tileWidth+wallSprite.width+tileWidth/2*scale-10,
+			prevy = (10-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10,
 			width = 20, height = 20, speed = 250, luckTimer = 0, regularMapLoc = {x = 0, y = 0}, returnFloorIndex = 0, attributes = {lucky = false, gifted = false, permaMap = false, xrayVision = false, upgradedToolUse = false, fast = {fast = false, fastStep = false}, flying = false, fear = false, shelled = false, tall = false, extendedRange = 0, sockStep = -1}}
 	player.character = setChar
 
@@ -459,7 +461,7 @@ function love.load()
 		player.totalItemsNeeded = {0,0,0,0,0,0,0}
 	end
 	function player:getTileLoc()
-		return {x = self.x/(floor.sprite:getWidth()*scale), y = self.y/(floor.sprite:getWidth()*scale)}
+		return {x = self.x/(tileWidth*scale), y = self.y/(tileWidth*scale)}
 	end
 	if not loadedOnce then
 		loadOpeningWorld()
@@ -935,10 +937,10 @@ function updateLamps(tileY, tileX)
 	--fix coordinates (tile locs --> coordinates)
 	for i = 1, #lampHolder do
 		if lampHolder[i][1]>=0 then
-			lampHolder[i][1] = (lampHolder[i][1]-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
-			lampHolder[i][2] = (lampHolder[i][2]-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
-			lampHolder[i][1] = lampHolder[i][1]+(width2-width)/2+getTranslation().x*floor.sprite:getWidth()*scale
-			lampHolder[i][2] = lampHolder[i][2]+(height2-height)/2+getTranslation().y*floor.sprite:getHeight()*scale
+			lampHolder[i][1] = (lampHolder[i][1]-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
+			lampHolder[i][2] = (lampHolder[i][2]-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
+			lampHolder[i][1] = lampHolder[i][1]+(width2-width)/2+getTranslation().x*tileWidth*scale
+			lampHolder[i][2] = lampHolder[i][2]+(height2-height)/2+getTranslation().y*tileHeight*scale
 		end
 	end
 
@@ -1615,7 +1617,7 @@ function love.draw()
 	--love.graphics.translate(width2/2-16*screenScale/2, height2/2-9*screenScale/2)
 	love.graphics.translate((width2-width)/2, (height2-height)/2)
 	local bigRoomTranslation = getTranslation()
-	love.graphics.translate(bigRoomTranslation.x*floor.sprite:getWidth()*scale, bigRoomTranslation.y*floor.sprite:getHeight()*scale)
+	love.graphics.translate(bigRoomTranslation.x*tileWidth*scale, bigRoomTranslation.y*tileHeight*scale)
 	--love.graphics.draw(rocks, rocksQuad, 0, 0)
 	--love.graphics.draw(rocks, -mapx * width, -mapy * height, 0, 1, 1)
 	local toDrawFloor = nil
@@ -1651,17 +1653,17 @@ function love.draw()
 
 			if drawFloorPath then
 				if xdiff==1 and ydiff==0 then
-					love.graphics.draw(toDrawFloor, (roomLength+1)*floor.sprite:getWidth()*scale+wallSprite.width, (math.floor(roomHeight/2))*floor.sprite:getHeight()*scale+wallSprite.height, math.pi/2, scale, scale)
-					love.graphics.draw(toDrawFloor, (roomLength+1)*floor.sprite:getWidth()*scale+wallSprite.width, (math.floor(roomHeight/2)-1)*floor.sprite:getHeight()*scale+wallSprite.height, math.pi/2, scale, scale)
+					love.graphics.draw(toDrawFloor, (roomLength+1)*tileWidth*scale+wallSprite.width, (math.floor(roomHeight/2))*tileHeight*scale+wallSprite.height, math.pi/2, scale, scale)
+					love.graphics.draw(toDrawFloor, (roomLength+1)*tileWidth*scale+wallSprite.width, (math.floor(roomHeight/2)-1)*tileHeight*scale+wallSprite.height, math.pi/2, scale, scale)
 				elseif xdiff==-1 and ydiff==0 then
-					love.graphics.draw(toDrawFloor, (0)*floor.sprite:getWidth()*scale+wallSprite.width, (math.floor(roomHeight/2))*floor.sprite:getHeight()*scale+wallSprite.height, math.pi/2, scale, scale)
-					love.graphics.draw(toDrawFloor, (0)*floor.sprite:getWidth()*scale+wallSprite.width, (math.floor(roomHeight/2)-1)*floor.sprite:getHeight()*scale+wallSprite.height, math.pi/2, scale, scale)
+					love.graphics.draw(toDrawFloor, (0)*tileWidth*scale+wallSprite.width, (math.floor(roomHeight/2))*tileHeight*scale+wallSprite.height, math.pi/2, scale, scale)
+					love.graphics.draw(toDrawFloor, (0)*tileWidth*scale+wallSprite.width, (math.floor(roomHeight/2)-1)*tileHeight*scale+wallSprite.height, math.pi/2, scale, scale)
 				elseif xdiff==0 and ydiff==1 then
-					love.graphics.draw(toDrawFloor, (math.floor(roomLength/2)-1)*floor.sprite:getWidth()*scale+wallSprite.width, (roomHeight)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale*16/topwall:getWidth(), scale*16/topwall:getWidth())
-					love.graphics.draw(toDrawFloor, (math.floor(roomLength/2))*floor.sprite:getWidth()*scale+wallSprite.width, (roomHeight)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale*16/topwall:getWidth(), scale*16/topwall:getWidth())
+					love.graphics.draw(toDrawFloor, (math.floor(roomLength/2)-1)*tileWidth*scale+wallSprite.width, (roomHeight)*tileHeight*scale+wallSprite.height, 0, scale*16/topwall:getWidth(), scale*16/topwall:getWidth())
+					love.graphics.draw(toDrawFloor, (math.floor(roomLength/2))*tileWidth*scale+wallSprite.width, (roomHeight)*tileHeight*scale+wallSprite.height, 0, scale*16/topwall:getWidth(), scale*16/topwall:getWidth())
 				elseif xdiff==0 and ydiff==-1 then
-					love.graphics.draw(toDrawFloor, (math.floor(roomLength/2)-1)*floor.sprite:getWidth()*scale+wallSprite.width, (-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale*16/topwall:getWidth(), scale*16/topwall:getWidth())
-					love.graphics.draw(toDrawFloor, (math.floor(roomLength/2))*floor.sprite:getWidth()*scale+wallSprite.width, (-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale*16/topwall:getWidth(), scale*16/topwall:getWidth())
+					love.graphics.draw(toDrawFloor, (math.floor(roomLength/2)-1)*tileWidth*scale+wallSprite.width, (-1)*tileHeight*scale+wallSprite.height, 0, scale*16/topwall:getWidth(), scale*16/topwall:getWidth())
+					love.graphics.draw(toDrawFloor, (math.floor(roomLength/2))*tileWidth*scale+wallSprite.width, (-1)*tileHeight*scale+wallSprite.height, 0, scale*16/topwall:getWidth(), scale*16/topwall:getWidth())
 				end
 			end
 		end
@@ -1669,10 +1671,10 @@ function love.draw()
 	love.graphics.setShader()
 	--[[for i = 1, roomLength do
 		if not (i==math.floor(roomLength/2) or i==math.floor(roomLength/2)+1) then
-			love.graphics.draw(topwall, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (yOffset+(-1)*floor.sprite:getHeight())*scale+wallSprite.height, 0, scale*16/topwall:getWidth(), scale*16/topwall:getWidth())
+			love.graphics.draw(topwall, (i-1)*tileWidth*scale+wallSprite.width, (yOffset+(-1)*tileHeight)*scale+wallSprite.height, 0, scale*16/topwall:getWidth(), scale*16/topwall:getWidth())
 		else
 			if mapy<=0 or mainMap[mapy-1][mapx]==nil or (completedRooms[mapy][mapx]==0 and completedRooms[mapy-1][mapx]==0) then
-				love.graphics.draw(topwall, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (yOffset+(-1)*floor.sprite:getHeight())*scale+wallSprite.height, 0, scale*16/topwall:getWidth(), scale*16/topwall:getWidth())
+				love.graphics.draw(topwall, (i-1)*tileWidth*scale+wallSprite.width, (yOffset+(-1)*tileHeight)*scale+wallSprite.height, 0, scale*16/topwall:getWidth(), scale*16/topwall:getWidth())
 			end	
 		end
 	end]]
@@ -1706,7 +1708,7 @@ function love.draw()
 			end
 
 
-			love.graphics.draw(toDrawFloor, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (j-1)*floor.sprite:getHeight()*scale+wallSprite.height,
+			love.graphics.draw(toDrawFloor, (i-1)*tileWidth*scale+wallSprite.width, (j-1)*tileHeight*scale+wallSprite.height,
 			0, scale*16/toDrawFloor:getWidth(), scale*16/toDrawFloor:getWidth())
 
 			local isBlack=false
@@ -1721,10 +1723,10 @@ function love.draw()
 						toDraw = black
 						isBlack = true
 					elseif room[j][i]~=nil and (room[j][i].poweredSprite==nil or room[j][i].powered == false or not room[j][i].canBePowered) then
-						toDraw = room[j][i].sprite
+						toDraw = util.getImage(room[j][i].sprite)
 						rot = room[j][i].rotation
 					elseif room[j][i]~=nil then
-						toDraw = room[j][i].poweredSprite
+						toDraw = util.getImage(room[j][i].poweredSprite)
 						rot = room[j][i].rotation
 					--else
 						--toDraw = floortile
@@ -1747,12 +1749,12 @@ function love.draw()
 					end
 					if litTiles[j][i]==0 then addY = tiles.halfWall:getYOffset() end
 					if not isBlack then
-						love.graphics.draw(toDraw, (tempi-1)*floor.sprite:getWidth()*scale+wallSprite.width, (addY+(tempj-1)*floor.sprite:getWidth())*scale+wallSprite.height,
+						love.graphics.draw(toDraw, (tempi-1)*tileWidth*scale+wallSprite.width, (addY+(tempj-1)*tileWidth)*scale+wallSprite.height,
 					  	rot * math.pi / 2, scale*16/toDraw:getWidth(), scale*16/toDraw:getWidth())
 					end
 					if litTiles[j][i]~=0 and room[j][i].overlay ~= nil then
 						local overlay = room[j][i].overlay
-						local toDraw2 = (overlay.powered and overlay.poweredSprite) or overlay.sprite
+						local toDraw2 = (overlay.powered and util.getImage(overlay.poweredSprite)) or util.getImage(overlay.sprite)
 						local rot2 = overlay.rotation
 						local tempi2 = i
 						local tempj2 = j
@@ -1764,16 +1766,16 @@ function love.draw()
 						if rot2 == 2 or rot2 == 3 then
 							tempj2 = tempj2 + 1
 						end
-						love.graphics.draw(toDraw2, (tempi2-1)*floor.sprite:getWidth()*scale+wallSprite.width, (addY2+(tempj2-1)*floor.sprite:getWidth())*scale+wallSprite.height,
+						love.graphics.draw(toDraw2, (tempi2-1)*tileWidth*scale+wallSprite.width, (addY2+(tempj2-1)*tileWidth)*scale+wallSprite.height,
 						  rot2 * math.pi / 2, scale*16/toDraw2:getWidth(), scale*16/toDraw2:getWidth())
 						if overlay:instanceof(tiles.wire) and (room[j][i].dirSend[3] == 1 or room[j][i].dirAccept[3] == 1 or (overlay.dirWireHack ~= nil and overlay.dirWireHack[3] == 1)) then
 							local toDraw3
 							if room[j][i].powered and (room[j][i].dirSend[3] == 1 or room[j][i].dirAccept[3] == 1) then
-								toDraw3 = room[j][i].overlay.wireHackOn
+								toDraw3 = util.getImage(room[j][i].overlay.wireHackOn)
 							else
-								toDraw3 = room[j][i].overlay.wireHackOff
+								toDraw3 = util.getImage(room[j][i].overlay.wireHackOff)
 							end
-							love.graphics.draw(toDraw3, (tempi-1)*floor.sprite:getWidth()*scale+wallSprite.width, (addY+(tempj)*floor.sprite:getWidth())*scale+wallSprite.height,
+							love.graphics.draw(toDraw3, (tempi-1)*tileWidth*scale+wallSprite.width, (addY+(tempj)*tileWidth)*scale+wallSprite.height,
 							  0, scale*16/toDraw3:getWidth(), -1*addY/toDraw3:getHeight()*(scale*16/toDraw3:getWidth()))
 						end
 					end
@@ -1784,12 +1786,12 @@ function love.draw()
 							addY = room[j][i]:getYOffset()
 							yScale = scale*(16-addY)/16
 						else addY=0 end
-						love.graphics.draw(blue, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (addY+(j-1)*floor.sprite:getHeight())*scale+wallSprite.height, 0, scale, yScale)
+						love.graphics.draw(blue, (i-1)*tileWidth*scale+wallSprite.width, (addY+(j-1)*tileHeight)*scale+wallSprite.height, 0, scale, yScale)
 					end
 					if room[j][i]~=nil and litTiles[j][i]==1 and room[j][i]:getInfoText()~=nil then
 						love.graphics.setColor(0,0,0)
 						love.graphics.setShader()
-						love.graphics.print(room[j][i]:getInfoText(), (tempi-1)*floor.sprite:getWidth()*scale+wallSprite.width, (tempj-1)*floor.sprite:getHeight()*scale+wallSprite.height);
+						love.graphics.print(room[j][i]:getInfoText(), (tempi-1)*tileWidth*scale+wallSprite.width, (tempj-1)*tileHeight*scale+wallSprite.height);
 						love.graphics.setShader(myShader)			
 						love.graphics.setColor(255,255,255)
 					end
@@ -1804,7 +1806,7 @@ function love.draw()
 						addY = room[j][i]:getYOffset()
 						yScale = scale*(16-addY)/16
 					else addY=0 end
-					love.graphics.draw(white, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (addY+(j-1)*floor.sprite:getHeight())*scale+wallSprite.height, 0, scale, yScale)							
+					love.graphics.draw(white, (i-1)*tileWidth*scale+wallSprite.width, (addY+(j-1)*tileHeight)*scale+wallSprite.height, 0, scale, yScale)							
 				end
 			end
 		end
@@ -1848,7 +1850,7 @@ function love.draw()
 					end
 					if litTiles[j][i]==0 then addY = tiles.halfWall:getYOffset() end
 					if isBlack then
-						love.graphics.draw(toDraw, (tempi-1)*floor.sprite:getWidth()*scale+wallSprite.width-20, (addY+(tempj-1)*floor.sprite:getWidth())*scale+wallSprite.height-30,
+						love.graphics.draw(toDraw, (tempi-1)*tileWidth*scale+wallSprite.width-20, (addY+(tempj-1)*tileWidth)*scale+wallSprite.height-30,
 					  	rot * math.pi / 2, scale*24/toDraw:getWidth(), scale*24/toDraw:getWidth())
 					end
 				end
@@ -1857,9 +1859,9 @@ function love.draw()
 		end
 		for i = 1, #animals do
 			if animals[i]~=nil and litTiles[animals[i].tileY][animals[i].tileX]==1 and not animals[i].pickedUp and animals[i].tileY==j then
-				animals[i].x = (animals[i].tileX-1)*floor.sprite:getHeight()*scale+wallSprite.width
-		    	--animals[i].y = (animals[i].tileY-1)*floor.sprite:getWidth()*scale+wallSprite.height-animals[i].elevation*scale
-		    	animals[i].y = (animals[i].tileY)*floor.sprite:getWidth()*scale+wallSprite.height-animals[i].elevation*scale
+				animals[i].x = (animals[i].tileX-1)*tileHeight*scale+wallSprite.width
+		    	--animals[i].y = (animals[i].tileY-1)*tileWidth*scale+wallSprite.height-animals[i].elevation*scale
+		    	animals[i].y = (animals[i].tileY)*tileWidth*scale+wallSprite.height-animals[i].elevation*scale
 		    	animals[i].y = animals[i].y-animals[i].scale*animals[i].sprite:getHeight()
 				love.graphics.draw(animals[i].sprite, animals[i].x, animals[i].y, 0, animals[i].scale, animals[i].scale)
 			end
@@ -1867,8 +1869,8 @@ function love.draw()
 
 		for i = 1, #pushables do
 			if pushables[i]~=nil and not pushables[i].destroyed and litTiles[pushables[i].tileY][pushables[i].tileX]==1 and pushables[i].tileY==j and pushables[i].visible then
-		    	pushablex = (pushables[i].tileX-1)*floor.sprite:getHeight()*scale+wallSprite.width
-		    	pushabley = (pushables[i].tileY-1)*floor.sprite:getWidth()*scale+wallSprite.height-pushables[i].elevation*scale
+		    	pushablex = (pushables[i].tileX-1)*tileHeight*scale+wallSprite.width
+		    	pushabley = (pushables[i].tileY-1)*tileWidth*scale+wallSprite.height-pushables[i].elevation*scale
 		    	if pushables[i].conductive and pushables[i].powered then toDraw = pushables[i].poweredSprite
 		    	else toDraw = pushables[i].sprite end
 				love.graphics.draw(toDraw, pushablex, pushabley, 0, scale, scale)
@@ -1883,7 +1885,7 @@ function love.draw()
 						local ty = tools.toolableAnimals[dir][i].tileY
 						if ty==j then
 							if dir == 1 or tools.toolableAnimals[1][1] == nil or not (tx == tools.toolableAnimals[1][1].tileX and ty == tools.toolableAnimals[1][1].tileY) then
-								love.graphics.draw(green, (tx-1)*floor.sprite:getWidth()*scale+wallSprite.width, (ty-1)*floor.sprite:getHeight()*scale+wallSprite.height-tools.toolableAnimals[dir][i].elevation*scale, 0, scale, scale)
+								love.graphics.draw(green, (tx-1)*tileWidth*scale+wallSprite.width, (ty-1)*tileHeight*scale+wallSprite.height-tools.toolableAnimals[dir][i].elevation*scale, 0, scale, scale)
 							end
 						end
 					end
@@ -1898,7 +1900,7 @@ function love.draw()
 						local ty = tools.toolablePushables[dir][i].tileY
 						if ty==j then
 							if dir == 1 or tools.toolablePushables[1][1] == nil or not (tx == tools.toolablePushables[1][1].tileX and ty == tools.toolablePushables[1][1].tileY) then
-								love.graphics.draw(green, (tx-1)*floor.sprite:getWidth()*scale+wallSprite.width, (ty-1)*floor.sprite:getHeight()*scale+wallSprite.height, 0, scale, scale)
+								love.graphics.draw(green, (tx-1)*tileWidth*scale+wallSprite.width, (ty-1)*tileHeight*scale+wallSprite.height, 0, scale, scale)
 							end
 						end
 					end
@@ -1918,7 +1920,7 @@ function love.draw()
 							yScale = scale*(16-addY)/16
 						else addY=0 end
 						if dir == 1 or tools.toolableTiles[1][1] == nil or not (tx == tools.toolableTiles[1][1].x and ty == tools.toolableTiles[1][1].y) then
-							love.graphics.draw(green, (tx-1)*floor.sprite:getWidth()*scale+wallSprite.width, (addY+(ty-1)*floor.sprite:getHeight())*scale+wallSprite.height, 0, scale, yScale)
+							love.graphics.draw(green, (tx-1)*tileWidth*scale+wallSprite.width, (addY+(ty-1)*tileHeight)*scale+wallSprite.height, 0, scale, yScale)
 						end
 					end
 				end
@@ -1926,11 +1928,12 @@ function love.draw()
 		end
 
 		if player.tileY == j then
-			player.x = (player.tileX-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
-			player.y = (player.tileY-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
-			love.graphics.draw(player.character.sprite, math.floor(player.x-player.character.sprite:getWidth()*player.character.scale/2), math.floor(player.y-player.character.sprite:getHeight()*player.character.scale-player.elevation*scale), 0, player.character.scale, player.character.scale)
+			player.x = (player.tileX-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
+			player.y = (player.tileY-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
+			local charSprite = util.getImage(player.character.sprite)
+			love.graphics.draw(charSprite, math.floor(player.x-charSprite:getWidth()*player.character.scale/2), math.floor(player.y-charSprite:getHeight()*player.character.scale-player.elevation*scale), 0, player.character.scale, player.character.scale)
 			love.graphics.setShader()
-			love.graphics.print(player.character:getInfoText(), math.floor(player.x-player.character.sprite:getWidth()*player.character.scale/2), math.floor(player.y-player.character.sprite:getHeight()*player.character.scale));
+			love.graphics.print(player.character:getInfoText(), math.floor(player.x-charSprite:getWidth()*player.character.scale/2), math.floor(player.y-charSprite:getHeight()*player.character.scale));
 			love.graphics.setShader(myShader)
 		end
 
@@ -1938,14 +1941,16 @@ function love.draw()
 		or player.clonePos.x>0 then
 			if player.clonePos.x>0 then
 				if player.clonePos.y == j then
-					local playerx = (player.clonePos.x-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
-					local playery = (player.clonePos.y-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
-					love.graphics.draw(player.character.sprite, playerx-player.character.sprite:getWidth()*player.character.scale/2, playery-player.character.sprite:getHeight()*player.character.scale-player.elevation*scale, 0, player.character.scale, player.character.scale)
+					local charSprite = util.getImage(player.character.sprite)
+					local playerx = (player.clonePos.x-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
+					local playery = (player.clonePos.y-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
+					love.graphics.draw(charSprite, playerx-charSprite:getWidth()*player.character.scale/2, playery-charSprite:getHeight()*player.character.scale-player.elevation*scale, 0, player.character.scale, player.character.scale)
 				end
 			elseif player.character.shiftPos.y == j then
-				local playerx = (player.character.shiftPos.x-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
-				local playery = (player.character.shiftPos.y-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
-				love.graphics.draw(player.character.sprite2, playerx-player.character.sprite:getWidth()*player.character.scale/2, playery-player.character.sprite:getHeight()*player.character.scale-player.elevation*scale, 0, player.character.scale, player.character.scale)
+				local charSprite2 = util.getImage(player.character.sprite2)
+				local playerx = (player.character.shiftPos.x-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
+				local playery = (player.character.shiftPos.y-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
+				love.graphics.draw(charSprite2, playerx-charSprite2:getWidth()*player.character.scale/2, playery-charSprite2:getHeight()*player.character.scale-player.elevation*scale, 0, player.character.scale, player.character.scale)
 			end
 		end
 		--love.graphics.draw(walls, 0, 0, 0, width/walls:getWidth(), height/walls:getHeight())
@@ -1954,23 +1959,23 @@ function love.draw()
 
 	--[[for i = 1, roomLength do
 		if not (i==math.floor(roomLength/2) or i==math.floor(roomLength/2)+1) then
-			love.graphics.draw(bottomwall, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (yOffset+(roomHeight)*floor.sprite:getHeight())*scale+wallSprite.height, 0, scale, scale)
+			love.graphics.draw(bottomwall, (i-1)*tileWidth*scale+wallSprite.width, (yOffset+(roomHeight)*tileHeight)*scale+wallSprite.height, 0, scale, scale)
 		else
 			if mapy>=mapHeight or mainMap[mapy+1][mapx]==nil or (completedRooms[mapy][mapx]==0 and completedRooms[mapy+1][mapx]==0) then
-				love.graphics.draw(bottomwall, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (yOffset+(roomHeight)*floor.sprite:getHeight())*scale+wallSprite.height, 0, scale, scale)
+				love.graphics.draw(bottomwall, (i-1)*tileWidth*scale+wallSprite.width, (yOffset+(roomHeight)*tileHeight)*scale+wallSprite.height, 0, scale, scale)
 			end		
 		end
 	end]]
 	--[[for i = 1, roomHeight do
 		if not (i==math.floor(roomHeight/2) or i==math.floor(roomHeight/2)+1) then		
-			love.graphics.draw(bottomwall, (0)*floor.sprite:getWidth()*scale+wallSprite.width, (yOffset+(i-1)*floor.sprite:getHeight())*scale+wallSprite.height, math.pi/2, scale, scale)
-			love.graphics.draw(bottomwall, (roomLength)*floor.sprite:getWidth()*scale+wallSprite.width, (yOffset+(i)*floor.sprite:getHeight())*scale+wallSprite.height, -1*math.pi/2, scale, scale)
+			love.graphics.draw(bottomwall, (0)*tileWidth*scale+wallSprite.width, (yOffset+(i-1)*tileHeight)*scale+wallSprite.height, math.pi/2, scale, scale)
+			love.graphics.draw(bottomwall, (roomLength)*tileWidth*scale+wallSprite.width, (yOffset+(i)*tileHeight)*scale+wallSprite.height, -1*math.pi/2, scale, scale)
 		else
 			if mapx>=mapHeight or mainMap[mapy][mapx+1]==nil or (completedRooms[mapy][mapx]==0 and completedRooms[mapy][mapx+1]==0) then
-				love.graphics.draw(bottomwall, (roomLength)*floor.sprite:getWidth()*scale+wallSprite.width, (yOffset+(i)*floor.sprite:getHeight())*scale+wallSprite.height, -1*math.pi/2, scale, scale)
+				love.graphics.draw(bottomwall, (roomLength)*tileWidth*scale+wallSprite.width, (yOffset+(i)*tileHeight)*scale+wallSprite.height, -1*math.pi/2, scale, scale)
 			end
 			if mapx<=0 or mainMap[mapy][mapx-1]==nil or (completedRooms[mapy][mapx]==0 and completedRooms[mapy][mapx-1]==0) then
-				love.graphics.draw(bottomwall, (0)*floor.sprite:getWidth()*scale+wallSprite.width, (yOffset+(i-1)*floor.sprite:getHeight())*scale+wallSprite.height, math.pi/2, scale, scale)
+				love.graphics.draw(bottomwall, (0)*tileWidth*scale+wallSprite.width, (yOffset+(i-1)*tileHeight)*scale+wallSprite.height, math.pi/2, scale, scale)
 			end
 		end
 	end]]
@@ -1989,16 +1994,17 @@ function love.draw()
 			cornerX = 1
 			cornerY = roomHeight+2
 		end
-		love.graphics.draw(cornerwall, (cornerX-1)*floor.sprite:getWidth()*scale+wallSprite.width, (yOffset+(cornerY-1)*floor.sprite:getHeight())*scale+wallSprite.height, (i-2)*math.pi/2, scale, scale)
+		love.graphics.draw(cornerwall, (cornerX-1)*tileWidth*scale+wallSprite.width, (yOffset+(cornerY-1)*tileHeight)*scale+wallSprite.height, (i-2)*math.pi/2, scale, scale)
 	end]]
 
 	if tools.toolDisplayTimer.timeLeft > 0 or player.luckTimer>0 then
 		if player.luckTimer<tools.toolDisplayTimer.timeLeft then
-			local toolWidth = tools[1].image:getWidth()
-			local toolScale = player.character.sprite:getWidth() * player.character.scale/toolWidth
+			local toolWidth = util.getImage(tools[1].image):getWidth()
+			local charSprite = util.getImage(player.character.sprite)
+			local toolScale = charSprite:getWidth() * player.character.scale/toolWidth
 			for i = 1, #tools.toolsShown do
 				local supertool = tools[tools.toolsShown[i]]
-				love.graphics.draw(supertool.image, (i-math.ceil(#tools.toolsShown)/2-1)*toolScale*toolWidth+player.x, player.y - player.character.sprite:getHeight()*player.character.scale - tools[1].image:getHeight()*toolScale, 0, toolScale, toolScale)
+				love.graphics.draw(util.getImage(supertool.image), (i-math.ceil(#tools.toolsShown)/2-1)*toolScale*toolWidth+player.x, player.y - charSprite:getHeight()*player.character.scale - util.getImage(tools[1].image):getHeight()*toolScale, 0, toolScale, toolScale)
 				if tools.toolsShown[i] > tools.numNormalTools then --if tool is a supertool
 					love.graphics.print(supertool.name, width/2-180, 110)
 					love.graphics.print(supertool.description, width/2-180, 120)
@@ -2006,13 +2012,13 @@ function love.draw()
 			end
 		else
 			luckWidth = luckImage:getWidth()
-			luckScale = player.character.sprite:getWidth() * player.character.scale/luckWidth
-			love.graphics.draw(luckImage, -0.5*luckScale*luckWidth+player.x, player.y - player.character.sprite:getHeight()*player.character.scale - luckImage:getHeight()*luckScale, 0, luckScale, luckScale)
+			luckScale = charSprite:getWidth() * player.character.scale/luckWidth
+			love.graphics.draw(luckImage, -0.5*luckScale*luckWidth+player.x, player.y - charSprite:getHeight()*player.character.scale - luckImage:getHeight()*luckScale, 0, luckScale, luckScale)
 		end
 	end
 
 	--everything after this will be drawn regardless of bigRoomTranslation (i.e., translation is undone in following line)
-	love.graphics.translate(-1*bigRoomTranslation.x*floor.sprite:getWidth()*scale, -1*bigRoomTranslation.y*floor.sprite:getHeight()*scale)
+	love.graphics.translate(-1*bigRoomTranslation.x*tileWidth*scale, -1*bigRoomTranslation.y*tileHeight*scale)
 
 	if not loadTutorial then
 		love.graphics.print(math.floor(gameTime.timeLeft), width/2-10, 20);
@@ -2063,7 +2069,7 @@ function love.draw()
 			love.graphics.setColor(0,0,0)
 			love.graphics.rectangle("line", i*width/18, 0, width/18, width/18)
 			love.graphics.setColor(255,255,255)
-			local image = tools[i+1].image
+			local image = util.getImage(tools[i+1].image)
 			love.graphics.draw(image, i*width/18, 0, 0, (width/18)/image:getWidth(), (width/18)/image:getHeight())
 			if tools[i+1].numHeld==0 then
 				love.graphics.draw(gray, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
@@ -2085,7 +2091,7 @@ function love.draw()
 			love.graphics.rectangle("line", (i+13)*width/18, 0, width/18, width/18)
 			love.graphics.setColor(255,255,255)
 			if specialTools~=nil and specialTools[i+1]~=0 then
-				local toolImage = tools[specialTools[i+1]].image
+				local toolImage = util.getImage(tools[specialTools[i+1]].image)
 				local tiWidth = toolImage:getWidth()
 				local tiHeight = toolImage:getHeight()
 				love.graphics.draw(toolImage, (i+13)*width/18, 0, 0, (width/18)/tiWidth, (width/18)/tiHeight)
@@ -2224,16 +2230,16 @@ end
 function adjacent(xloc, yloc)
 	xCorner = player.x
 	yCorner = player.y
-	tileLoc1 = math.ceil((xCorner-wallSprite.width)/(scale*floor.sprite:getWidth()))
-	tileLoc2 = math.ceil((yCorner-wallSprite.height)/(scale*floor.sprite:getHeight()))
+	tileLoc1 = math.ceil((xCorner-wallSprite.width)/(scale*tileWidth))
+	tileLoc2 = math.ceil((yCorner-wallSprite.height)/(scale*tileHeight))
 	if math.abs(tileLoc1-xloc)+math.abs(tileLoc2-yloc)<=1 then
 		return true
 	end
 
 	xCorner = player.x+player.width
 	yCorner = player.y-player.height
-	tileLoc1 = math.ceil((xCorner-wallSprite.width)/(scale*floor.sprite:getWidth()))
-	tileLoc2 = math.ceil((yCorner-wallSprite.height)/(scale*floor.sprite:getHeight()))
+	tileLoc1 = math.ceil((xCorner-wallSprite.width)/(scale*tileWidth))
+	tileLoc2 = math.ceil((yCorner-wallSprite.height)/(scale*tileHeight))
 	if math.abs(tileLoc1-xloc)+math.abs(tileLoc2-yloc)<=1 then
 		return true
 	end
@@ -2241,16 +2247,16 @@ function adjacent(xloc, yloc)
 
 	xCorner = player.x
 	yCorner = player.y-player.height
-	tileLoc1 = math.ceil((xCorner-wallSprite.width)/(scale*floor.sprite:getWidth()))
-	tileLoc2 = math.ceil((yCorner-wallSprite.height)/(scale*floor.sprite:getHeight()))
+	tileLoc1 = math.ceil((xCorner-wallSprite.width)/(scale*tileWidth))
+	tileLoc2 = math.ceil((yCorner-wallSprite.height)/(scale*tileHeight))
 	if math.abs(tileLoc1-xloc)+math.abs(tileLoc2-yloc)<=1 then
 		return true
 	end
 
 	xCorner = player.x+player.width
 	yCorner = player.y
-	tileLoc1 = math.ceil((xCorner-wallSprite.width)/(scale*floor.sprite:getWidth()))
-	tileLoc2 = math.ceil((yCorner-wallSprite.height)/(scale*floor.sprite:getHeight()))
+	tileLoc1 = math.ceil((xCorner-wallSprite.width)/(scale*tileWidth))
+	tileLoc2 = math.ceil((yCorner-wallSprite.height)/(scale*tileHeight))
 	if math.abs(tileLoc1-xloc)+math.abs(tileLoc2-yloc)<=1 then
 		return true
 	end
@@ -2313,8 +2319,8 @@ function createAnimals()
 					animals[animalCounter] = animalToSpawn
 					if not animalToSpawn.loaded then
 						animalToSpawn.triggered = false
-						animalToSpawn.y = (i-1)*floor.sprite:getWidth()*scale+wallSprite.height
-						animalToSpawn.x = (j-1)*floor.sprite:getHeight()*scale+wallSprite.width
+						animalToSpawn.y = (i-1)*tileWidth*scale+wallSprite.height
+						animalToSpawn.x = (j-1)*tileHeight*scale+wallSprite.width
 						animalToSpawn.tileX = j
 						animalToSpawn.tileY = i
 						animalToSpawn.prevTileX = j
@@ -2497,10 +2503,10 @@ function enterRoom(dir)
 
 	postRoomEnter()
 
-	player.x = (player.tileX-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
-	player.y = (player.tileY-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
-    myShader:send("player_x", player.x+getTranslation().x*floor.sprite:getWidth()*scale+(width2-width)/2)
-    myShader:send("player_y", player.y+getTranslation().y*floor.sprite:getWidth()*scale+(height2-height)/2)
+	player.x = (player.tileX-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
+	player.y = (player.tileY-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
+    myShader:send("player_x", player.x+getTranslation().x*tileWidth*scale+(width2-width)/2)
+    myShader:send("player_y", player.y+getTranslation().y*tileWidth*scale+(height2-height)/2)
 end
 
 function postRoomEnter()
@@ -2780,9 +2786,9 @@ function love.keypressed(key, unicode)
 		if key == 'r' then
 			if loadTutorial or easyMode then
 				player.dead = false
-				player.y = (player.enterY-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
+				player.y = (player.enterY-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
 				player.tileY = player.enterY
-				player.x = (player.enterX-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10
+				player.x = (player.enterX-1)*scale*tileWidth+wallSprite.width+tileWidth/2*scale-10
 				player.tileX = player.enterX
 				player.prevy = player.y
 				player.prevTileY = player.enterY
@@ -2836,28 +2842,28 @@ function love.keypressed(key, unicode)
 	    	if key == "w" then
 	    		if player.tileY>1 then
 	    			player.tileY = player.tileY-1
-	    			player.y = player.y-floor.sprite:getHeight()*scale
+	    			player.y = player.y-tileHeight*scale
 				elseif player.tileY==1 and (player.tileX==math.floor(roomLength/2) or player.tileX==math.floor(roomLength/2)+1) then
 					enterRoom(0)
 				end
 	    	elseif key == "s" then
 	    		if player.tileY<roomHeight then
 	    			player.tileY = player.tileY+1
-	    			player.y = player.y+floor.sprite:getHeight()*scale
+	    			player.y = player.y+tileHeight*scale
 				elseif player.tileY == roomHeight and (player.tileX==math.floor(roomLength/2) or player.tileX==math.floor(roomLength/2)+1) then
 					enterRoom(2)
 	    		end
 	    	elseif key == "a" then
 	    		if player.tileX>1 then
 	    			player.tileX = player.tileX-1
-	    			player.x = player.x-floor.sprite:getHeight()*scale
+	    			player.x = player.x-tileHeight*scale
 				elseif player.tileX == 1 and (player.tileY==math.floor(roomHeight/2) or player.tileY==math.floor(roomHeight/2)+1) then
 					enterRoom(3)
 	    		end
 	    	elseif key == "d" then
 	    		if player.tileX<roomLength then
 	    			player.tileX = player.tileX+1
-	    			player.x = player.x+floor.sprite:getHeight()*scale
+	    			player.x = player.x+tileHeight*scale
 	    		elseif player.tileX == roomLength and (player.tileY==math.floor(roomHeight/2) or player.tileY==math.floor(roomHeight/2)+1) then
 					enterRoom(1)
 				end
@@ -3054,10 +3060,10 @@ function love.keypressed(key, unicode)
     resetTileStates()
     checkAllDeath()
 
-	player.x = (player.tileX-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
-	player.y = (player.tileY-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
-    myShader:send("player_x", player.x+getTranslation().x*floor.sprite:getWidth()*scale+(width2-width)/2)
-    myShader:send("player_y", player.y+getTranslation().y*floor.sprite:getWidth()*scale+(height2-height)/2)
+	player.x = (player.tileX-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
+	player.y = (player.tileY-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
+    myShader:send("player_x", player.x+getTranslation().x*tileWidth*scale+(width2-width)/2)
+    myShader:send("player_y", player.y+getTranslation().y*tileWidth*scale+(height2-height)/2)
 
     for i = 1, roomHeight do
     	for j = 1, roomLength do
@@ -3130,8 +3136,8 @@ end
 function postAnimalMovement()
 	resolveConflicts()
 	for i = 1, #animals do
-		animals[i].x = (animals[i].tileX-1)*floor.sprite:getHeight()*scale+wallSprite.width
-		animals[i].y = (animals[i].tileY-1)*floor.sprite:getWidth()*scale+wallSprite.height
+		animals[i].x = (animals[i].tileX-1)*tileHeight*scale+wallSprite.width
+		animals[i].y = (animals[i].tileY-1)*tileWidth*scale+wallSprite.height
 		if animals[i]:hasMoved() and not animals[i].dead then
 			if room[animals[i].prevTileY]~=nil and room[animals[i].prevTileY][animals[i].prevTileX]~=nil then
 				room[animals[i].prevTileY][animals[i].prevTileX]:onLeaveAnimal(animals[i])
@@ -3291,10 +3297,10 @@ function love.mousepressed(x, y, button, istouch)
 	end
 
 	local bigRoomTranslation = getTranslation()
-	tileLocX = math.ceil((mouseX-wallSprite.width)/(scale*floor.sprite:getWidth()))-bigRoomTranslation.x
-	tileLocY = math.ceil((mouseY-wallSprite.height)/(scale*floor.sprite:getHeight()))-bigRoomTranslation.y
+	tileLocX = math.ceil((mouseX-wallSprite.width)/(scale*tileWidth))-bigRoomTranslation.x
+	tileLocY = math.ceil((mouseY-wallSprite.height)/(scale*tileHeight))-bigRoomTranslation.y
 	if room[tileLocY+1] ~= nil and room[tileLocY+1][tileLocX] ~= nil then
-		tileLocY = math.ceil((mouseY-wallSprite.height-room[tileLocY+1][tileLocX]:getYOffset()*scale)/(scale*floor.sprite:getHeight()))-bigRoomTranslation.y
+		tileLocY = math.ceil((mouseY-wallSprite.height-room[tileLocY+1][tileLocX]:getYOffset()*scale)/(scale*tileHeight))-bigRoomTranslation.y
 	end
 
 	if editorMode then
@@ -3357,10 +3363,10 @@ function love.mousemoved(x, y, dx, dy)
 	mouseX = x-(width2-width)/2
 	mouseY = y-(height2-height)/2
 	local bigRoomTranslation = getTranslation()
-	tileLocX = math.ceil((mouseX-wallSprite.width)/(scale*floor.sprite:getWidth()))-bigRoomTranslation.x
-	tileLocY = math.ceil((mouseY-wallSprite.height)/(scale*floor.sprite:getHeight()))-bigRoomTranslation.y
+	tileLocX = math.ceil((mouseX-wallSprite.width)/(scale*tileWidth))-bigRoomTranslation.x
+	tileLocY = math.ceil((mouseY-wallSprite.height)/(scale*tileHeight))-bigRoomTranslation.y
 	if room ~= nil and room[tileLocY+1] ~= nil and room[tileLocY+1][tileLocX] ~= nil then
-		tileLocY = math.ceil((mouseY-wallSprite.height-room[tileLocY+1][tileLocX]:getYOffset()*scale)/(scale*floor.sprite:getHeight()))-bigRoomTranslation.y
+		tileLocY = math.ceil((mouseY-wallSprite.height-room[tileLocY+1][tileLocX]:getYOffset()*scale)/(scale*tileHeight))-bigRoomTranslation.y
 	end
 	if editorMode then
 		editor.mousemoved(x, y, dx, dy)

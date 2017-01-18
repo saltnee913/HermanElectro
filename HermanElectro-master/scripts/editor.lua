@@ -13,7 +13,7 @@ function P.draw()
 	love.graphics.setColor(255,255,255)
 	for i = 1, 200 do
 		if tiles[i]~=nil then
-			toDraw = tiles[i].sprite
+			toDraw = util.getImage(tiles[i].sprite)
 			addx = 0
 			addy = -width/25
 			if i>50 and i<=100 then
@@ -28,9 +28,9 @@ function P.draw()
 			end
 			--love.graphics.rectangle("fill", (i-1)*width/25, height-width/25, width/25, width/25)
 			--sprite width: floor.sprite:getWidth()
-			love.graphics.draw(toDraw, (i-1)*width/50+addx, height-2*width/50+addy, 0, (width/50)/(floor.sprite:getWidth())*16/toDraw:getWidth(), (width/50)/(floor.sprite:getWidth())*16/toDraw:getWidth())
+			love.graphics.draw(toDraw, (i-1)*width/50+addx, height-2*width/50+addy, 0, (width/50)/(tileWidth)*16/toDraw:getWidth(), (width/50)/(tileWidth)*16/toDraw:getWidth())
 			if editorAdd == i then
-				love.graphics.draw(green, (i-1)*width/50+addx, height-2*width/50+addy, 0, (width/50)/(floor.sprite:getWidth()), (width/50)/(floor.sprite:getWidth()))
+				love.graphics.draw(green, (i-1)*width/50+addx, height-2*width/50+addy, 0, (width/50)/(tileWidth), (width/50)/(tileWidth))
 			end
 		end
 	end
@@ -256,8 +256,8 @@ local function postTileAddCleanup(tempAdd, tileLocY, tileLocX)
 		local animalToSpawn = animalList[room[tileLocY][tileLocX].listIndex]:new()
 		if not animalToSpawn.dead then
 			animals[#animals+1] = animalToSpawn
-			animalToSpawn.y = (tileLocY-1)*floor.sprite:getWidth()*scale+wallSprite.height
-			animalToSpawn.x = (tileLocX-1)*floor.sprite:getHeight()*scale+wallSprite.width
+			animalToSpawn.y = (tileLocY-1)*tileWidth*scale+wallSprite.height
+			animalToSpawn.x = (tileLocX-1)*tileHeight*scale+wallSprite.width
 			animalToSpawn.tileX = tileLocX
 			animalToSpawn.tileY = tileLocY
 			animalToSpawn.prevTileX = animals[#animals].tileX

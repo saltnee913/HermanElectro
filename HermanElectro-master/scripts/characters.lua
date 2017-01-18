@@ -28,7 +28,7 @@ function P.getUnlockedCharacters()
 	return toRet
 end
 
-P.character = Object:new{name = "Name", dirFacing = "down", scale = 0, sprite = love.graphics.newImage('hermans/newherman_r.png'),
+P.character = Object:new{name = "Name", dirFacing = "down", scale = 0, sprite = 'hermans/newherman_r.png',
   description = "description", startingTools = {0,0,0,0,0,0,0}, scale = 0.25 * width/1200, forcePowerUpdate = false, winUnlocks = {}, tint = {1,1,1},
   speedUnlockTime = 1000, speedUnlock = nil}
 function P.character:onBegin()
@@ -106,14 +106,14 @@ end
 function P.character:absoluteFinalUpdate()
 end
 
-P.herman = P.character:new{name = "Herman", description = "The Electrician", winUnlocks = {unlocks.reviveUnlock}, scale = 0.8, sprites = {love.graphics.newImage('hermans/newherman_r.png'),love.graphics.newImage('hermans/newherman_r.png'),love.graphics.newImage('hermans/newherman_r.png'),love.graphics.newImage('hermans/newherman_l.png')}}
+P.herman = P.character:new{name = "Herman", description = "The Electrician", winUnlocks = {unlocks.reviveUnlock}, scale = 0.8, sprites = {'hermans/newherman_r.png','hermans/newherman_r.png','hermans/newherman_r.png','hermans/newherman_l.png'}}
 function P.herman:onCharLoad()
 	if loadTutorial then return end
 	tools.giveToolsByReference({tools.revive})
 	myShader:send("player_range", 600)
 end
 
-P.felix = P.character:new{name = "Felix", description = "The Sharpshooter", winUnlocks = {unlocks.missileUnlock}, speedUnlocks = {unlocks.superGunUnlock}, sprite = love.graphics.newImage('Graphics/felix.png'), startingTools = {0,0,0,0,0,0,1}}
+P.felix = P.character:new{name = "Felix", description = "The Sharpshooter", winUnlocks = {unlocks.missileUnlock}, speedUnlocks = {unlocks.superGunUnlock}, sprite = 'Graphics/felix.png', startingTools = {0,0,0,0,0,0,1}}
 function P.felix:onCharLoad()
 	tools[7] = tools.felixGun
 	if not tools.felixGun.isGun then
@@ -135,16 +135,16 @@ function P.felix:onFloorEnter()
 end
 
 P.most = P.character:new{name = "Ben", description = "The Explorer",
-  sprite = love.graphics.newImage('GraphicsTony/Ben.png'), scale = 0.7 * width/1200, disabled = true}
+  sprite = 'GraphicsTony/Ben.png', scale = 0.7 * width/1200, disabled = true}
 function P.most:onCharLoad()
 	if map.floorOrder == map.defaultFloorOrder then
 		map.floorOrder = {'RoomData/bigfloor.json', 'RoomData/floor6.json'}
 	end
 end
 
-local erikSprite = love.graphics.newImage('Graphics/beggar.png')
+local erikSprite = 'Graphics/beggar.png'
 P.erik = P.character:new{name = "Erik", description = "The Quick",
-  sprite = erikSprite, scale = scale*16/erikSprite:getWidth()}
+  sprite = erikSprite, scale = scale*16/util.getImage(erikSprite):getWidth()}
 function P.erik:onCharLoad()
 	gameTime.timeLeft = 120
 	gameTime.roomTime = 15
@@ -187,7 +187,7 @@ function P.erik:specialLightTest(tileY,tileX)
 end
 
 P.gabe = P.character:new{name = "Gabe", description = "The Angel",
-	sprite = love.graphics.newImage('Graphics/gabe.png'), realChar = nil, reset = false, disabled = true}
+	sprite = 'Graphics/gabe.png', realChar = nil, reset = false, disabled = true}
 function P.gabe:onCharLoad()
 	if not self.reset then
 		player.attributes.flying = true
@@ -204,7 +204,7 @@ function P.gabe:onRoomEnter()
 end
 
 P.rammy = P.character:new{name = "Rammy", description = "The Ram", winUnlocks = {unlocks.ramUnlock},
-	sprite = love.graphics.newImage('Graphics/ram.png')}
+	sprite = 'Graphics/ram.png'}
 
 function P.rammy:preTileEnter(tile)
 	if tile.name == tiles.wall.name and not tile.destroyed and player.elevation<tile:getHeight()-3 then
@@ -212,7 +212,7 @@ function P.rammy:preTileEnter(tile)
 	end
 end
 
-P.rick = P.character:new{name = "Rick", description = "The Gambler", sprite = love.graphics.newImage('Graphics/rick.png'), disabled = true}
+P.rick = P.character:new{name = "Rick", description = "The Gambler", sprite = 'Graphics/rick.png', disabled = true}
 function P.rick:onCharLoad()
 	tools.giveToolsByReference({tools.toolReroller,tools.toolReroller,tools.toolReroller,tools.roomReroller})
 end
@@ -225,7 +225,7 @@ function P.rick:onFloorEnter()
 end
 
 --alternative name: "Froggy, the Fresh"
-P.frederick = P.character:new{name = "Frederick", description = "The Frog", sprite = love.graphics.newImage('Graphics/frederick.png'), disabled = false}
+P.frederick = P.character:new{name = "Frederick", description = "The Frog", sprite = 'Graphics/frederick.png', disabled = false}
 function P.frederick:onCharLoad()
 	tools.giveToolsByReference({tools.spring,tools.spring,tools.spring,tools.spring,tools.visionChanger,tools.visionChanger})
 end
@@ -233,8 +233,8 @@ function P.frederick:onFloorEnter()
 	tools.giveToolsByReference({tools.spring,tools.spring,tools.visionChanger})
 end
 
-P.battery = P.character:new{name = "Bob", description = "The Battery", sprite = love.graphics.newImage('Graphics/powersupplydead.png'),
-  onSprite = love.graphics.newImage('Graphics/powersupply.png'), offSprite = love.graphics.newImage('Graphics/powersupplydead.png'), 
+P.battery = P.character:new{name = "Bob", description = "The Battery", sprite = 'Graphics/powersupplydead.png',
+  onSprite = 'Graphics/powersupply.png', offSprite = 'Graphics/powersupplydead.png', 
   scale = scale, storedTile = nil, forcePowerUpdate = false, powered = false}
 function P.battery:onKeyPressedChar(key)
 	--log(key)
@@ -269,13 +269,13 @@ function P.battery:onPostUpdatePower()
 	end
 end
 
-P.nadia = P.character:new{name = "Nadia", description = "The Naturalist", sprite = love.graphics.newImage('Graphics/nadia.png'), disabled = true}
+P.nadia = P.character:new{name = "Nadia", description = "The Naturalist", sprite = 'Graphics/nadia.png', disabled = true}
 function P.nadia:onCharLoad()
 	tools.giveToolsByReference({tools.meat})
 	player.safeFromAnimals = true
 end
 
-P.chell = P.character:new{name = "Chell", description = "New Carla", sprite = love.graphics.newImage('Graphics/carlaperson.png'), tall = true, disabled = true}
+P.chell = P.character:new{name = "Chell", description = "New Carla", sprite = 'Graphics/carlaperson.png', tall = true, disabled = true}
 function P.chell:onFailedMove(key)
 	if key=="w" then
 		if player.tileY==1 and (room[roomHeight][player.tileX]==nil or not room[roomHeight][player.tileX].blocksMovement) then
@@ -312,8 +312,8 @@ end
 
 P.crate = P.character:new{name = "Carla", roomTrigger = false, description = "The Crate", isCrate = false, 
   winUnlocks = {unlocks.conditionalBoxes}, speedUnlock = unlocks.conductiveBoxes,
-  sprite = love.graphics.newImage('Graphics/carlaperson.png'),
-  humanSprite = love.graphics.newImage('Graphics/carlaperson.png'), crateSprite = love.graphics.newImage('Graphics/carlabox.png'), disabled = true}
+  sprite = 'Graphics/carlaperson.png',
+  humanSprite = 'Graphics/carlaperson.png', crateSprite = 'Graphics/carlabox.png', disabled = true}
 function P.crate:setCrate(isCrate)
 	self.sprite = isCrate and self.crateSprite or self.humanSprite
 	player.active = not isCrate
@@ -349,7 +349,7 @@ function P.crate:preTileEnter(tile)
 	end
 end
 
-P.giovanni = P.character:new{name = "Giovanni", description = "The Sorcerer", shiftPos = {x = -1, y = -1}, sprite = love.graphics.newImage('Graphics/giovanni.png'), sprite2 = love.graphics.newImage('Graphics/giovannighost.png')}
+P.giovanni = P.character:new{name = "Giovanni", description = "The Sorcerer", shiftPos = {x = -1, y = -1}, sprite = 'Graphics/giovanni.png', sprite2 = 'Graphics/giovannighost.png'}
 function P.giovanni:onKeyPressedChar(key)
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
 		if self.shiftPos.x==-1 then
@@ -387,12 +387,12 @@ function P.giovanni:onKeyPressedChar(key)
 	end
 end
 
-P.francisco = P.character:new{name = "Francisco", description = "The Cartographer", nextRoom = {yLoc = -1, xLoc = -1}, sprite = love.graphics.newImage('Graphics/francisco.png')}
+P.francisco = P.character:new{name = "Francisco", description = "The Cartographer", nextRoom = {yLoc = -1, xLoc = -1}, sprite = 'Graphics/francisco.png'}
 function P.francisco:onCharLoad()
 	tools.giveToolsByReference({tools.coin})
 end
 
-P.random = P.character:new{name = "Random", description = "", sprite = love.graphics.newImage('Graphics/random.png')}
+P.random = P.character:new{name = "Random", description = "", sprite = 'Graphics/random.png'}
 function P.random:onBegin()
 	local charsToSelect = characters.getUnlockedCharacters()
 	local charSlot = util.random(#charsToSelect-1, 'misc')
@@ -400,13 +400,13 @@ function P.random:onBegin()
 	player.character:onBegin()
 end
 
-P.tim = P.character:new{name = "Tim", description = "The Box Summoner", sprite = love.graphics.newImage('Graphics/tim.png'), disabled = true}
+P.tim = P.character:new{name = "Tim", description = "The Box Summoner", sprite = 'Graphics/tim.png', disabled = true}
 function P.tim:onCharLoad()
 	tools.giveToolsByReference({tools.ramSpawner,tools.boxSpawner,tools.boomboxSpawner})
 end
 
 P.orson = P.character:new{name = "Orson", shifted = false, description = "The Mastermind", 
-  winUnlocks = {unlocks.buttonFlipperUnlock}, speedUnlock = {unlocks.poweredEndUnlock}, sprite = love.graphics.newImage('Graphics/orson.png'), disabled = true}
+  winUnlocks = {unlocks.buttonFlipperUnlock}, speedUnlock = {unlocks.poweredEndUnlock}, sprite = 'Graphics/orson.png', disabled = true}
 function P.orson:onCharLoad()
 	tools.brick.range = 100
 end
@@ -431,7 +431,7 @@ function P.orson:onKeyPressedChar(key)
 	return false
 end
 
-P.lenny = P.character:new{name = "Lenny", description = "The Ghost Snail", slime = false, sprite = love.graphics.newImage('Graphics/lenny.png')}
+P.lenny = P.character:new{name = "Lenny", description = "The Ghost Snail", slime = false, sprite = 'Graphics/lenny.png'}
 function P.lenny:onKeyPressedChar(key)
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
 		self.slime = not self.slime
@@ -456,7 +456,7 @@ end
 
 P.fish = P.character:new{name = "Fish", description = "Fish", 
   winUnlocks = {unlocks.toolDoublerUnlock}, speedUnlockTime = 1600, speedUnlock = unlocks.fogUnlock,
-  life = 100, sprite = love.graphics.newImage('Graphics/fish.png'), tint = {0.9,0.9,1}}
+  life = 100, sprite = 'Graphics/fish.png', tint = {0.9,0.9,1}}
 function P.fish:postMove()
 	self.life = self.life-1
 	if room[player.tileY][player.tileX]~=nil and room[player.tileY][player.tileX]:instanceof(tiles.puddle) then
@@ -485,7 +485,7 @@ function P.fish:onToolUse()
 	end
 end
 
-P.monk = P.character:new{name = "Monte", description = "The Blind Monk", sprite = love.graphics.newImage('Graphics/monk.png'), disabled = true}
+P.monk = P.character:new{name = "Monte", description = "The Blind Monk", sprite = 'Graphics/monk.png', disabled = true}
 function P.monk:onBegin()
 	self.tint = {1,1,1}
 	self:super('onBegin')
@@ -537,7 +537,7 @@ function P.monk:onRoomCompletion()
 	end
 end
 
-P.random2 = P.character:new{name = "Random2", allowedCharacters = {1,2,6,8,9,11,12,14}, description = "**RanDOm**", sprite = love.graphics.newImage('Graphics/random.png'), disabled = true}
+P.random2 = P.character:new{name = "Random2", allowedCharacters = {1,2,6,8,9,11,12,14}, description = "**RanDOm**", sprite = 'Graphics/random.png', disabled = true}
 function P.random2:onRoomEnter()
 	local charNum = util.random(#self.allowedCharacters, 'misc')
 	if room.character==nil then
@@ -555,9 +555,9 @@ function P.random2:postMove()
 	end
 end
 
-P.harriet = P.character:new{name = "Harriet", description = "Herman in drag", sprite = love.graphics.newImage('Graphics/nadia.png'), disabled = true}
+P.harriet = P.character:new{name = "Harriet", description = "Herman in drag", sprite = 'Graphics/nadia.png', disabled = true}
 
-P.paris = P.character:new{name = "Paris", description = "The Swordsman", sword = false, swordsprite = love.graphics.newImage('Graphics/parisswordout.png'), sprite = love.graphics.newImage('Graphics/paris.png'), noswordsprite = love.graphics.newImage('Graphics/paris.png'), disabled = true}
+P.paris = P.character:new{name = "Paris", description = "The Swordsman", sword = false, swordsprite = 'Graphics/parisswordout.png', sprite = 'Graphics/paris.png', noswordsprite = 'Graphics/paris.png', disabled = true}
 function P.paris:onKeyPressedChar(key)
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
 		self.sword = not self.sword
@@ -602,7 +602,7 @@ function P.paris:checkNextTile()
 	end
 end
 
-P.ed = P.character:new{name = "Ed", description = "The Dim Bulb", sprite = love.graphics.newImage('Graphics/ed.png'), lightLevel = 100, disabled = true}
+P.ed = P.character:new{name = "Ed", description = "The Dim Bulb", sprite = 'Graphics/ed.png', lightLevel = 100, disabled = true}
 function P.ed:onCharLoad()
 	myShader:send("player_range", self.lightLevel)
 end
@@ -625,8 +625,8 @@ function P.ed:onKeyPressedChar(key)
 	return false
 end
 
-P.olivia = P.character:new{name = "Olivia", description = "The Reveler", smallSprite = love.graphics.newImage('Graphics/pup.png'),
-sprite = love.graphics.newImage('Graphics/pup.png'), bigSprite = love.graphics.newImage('Graphics/pitbull.png'), scaryMode = false, scale = 5}
+P.olivia = P.character:new{name = "Olivia", description = "The Reveler", smallSprite = 'Graphics/pup.png',
+sprite = 'Graphics/pup.png', bigSprite = 'Graphics/pitbull.png', scaryMode = false, scale = 5}
 function P.olivia:onCharLoad()
 	myShader:send("b_and_w", true)
 	myShader:send("player_range", 500)
@@ -647,7 +647,7 @@ function P.olivia:updateSprite()
 	end
 end
 
-P.albert = P.character:new{name = "Albert", description = "The Convict", spotlightRange =100, updateTimeFull = 3, updateTimeCurrent = 5, sprite = love.graphics.newImage('Graphics/albert.png')}
+P.albert = P.character:new{name = "Albert", description = "The Convict", spotlightRange =100, updateTimeFull = 3, updateTimeCurrent = 5, sprite = 'Graphics/albert.png'}
 function P.albert:onCharLoad()
 	self:setSpotlights()
 end
@@ -706,8 +706,8 @@ function P.albert:updateSpotlights()
 	end
 end
 
-P.xavier = P.character:new{name = "Xavier", description = "The Sock Ninja", sockMode = false, sprite = love.graphics.newImage('Graphics/xavier2.png'), sockSprite = love.graphics.newImage('Graphics/xavier.png'),
-noSockSprite = love.graphics.newImage('Graphics/xavier2.png')}
+P.xavier = P.character:new{name = "Xavier", description = "The Sock Ninja", sockMode = false, sprite = 'Graphics/xavier2.png', sockSprite = 'Graphics/xavier.png',
+noSockSprite = 'Graphics/xavier2.png'}
 function P.xavier:onKeyPressedChar(key)
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
 		self.sockMode = not self.sockMode
@@ -739,7 +739,7 @@ function P.xavier:onRoomEnter()
 	self.sockMode = false
 end
 
-P.aurelius = P.character:new{name = "Aurelius", description = "The Golden", sprite = love.graphics.newImage('Graphics/aurelius.png')}
+P.aurelius = P.character:new{name = "Aurelius", description = "The Golden", sprite = 'Graphics/aurelius.png'}
 function P.aurelius:onFloorEnter()
 	for i = 1, tools.numNormalTools do
 		for j = 1, tools[i].numHeld do
