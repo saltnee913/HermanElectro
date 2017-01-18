@@ -2166,7 +2166,8 @@ function P.emptyCup:useToolTile(tile, tileY, tileX)
 	end
 end
 
-P.mask = P.superTool:new{name = "mask", description = "The demon in the mask", image = love.graphics.newImage('Graphics/mask.png'), baseRange = 0, quality = 1}
+P.mask = P.superTool:new{name = "mask", description = "The demon in the mask",
+image = love.graphics.newImage('Graphics/Tools/mask.png'), baseRange = 0, quality = 1}
 function P.mask:usableOnTile(tile)
 	return true
 end
