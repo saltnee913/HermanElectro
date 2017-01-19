@@ -3888,10 +3888,63 @@ function P.tileFlipper:useToolTile(tile, tileY, tileX)
 	end
 end
 
+P.animalReroller = P.superTool:new{name = "Animal Reroller", description = "", image = love.graphics.newImage('Graphics/toolreroller.png'),
+baseRange = 0, quality = 2}
+function P.animalReroller:usableOnNothing()
+	return true
+end
+P.animalReroller.usableOnTile = P.animalReroller.usableOnNothing
+function P.animalReroller:useToolNothing()
+	self.numHeld = self.numHeld-1
+
+	arList = self:getAnimalList()
+	for i = 1, #animals do
+		local aniChoice = util.random(#arList, 'misc')
+		local newAni = arList[aniChoice]:new()
+		newAni.tileX = animals[i].tileX
+		newAni.tileY = animals[i].tileY
+		animals[i] = newAni
+	end
+end
+P.animalReroller.useToolTile = P.animalReroller.useToolNothing
+function P.animalReroller:getAnimalList()
+	return {animalList.pitbull, animalList.pup, animalList.cat, animalList.bombBuddy,
+			animalList.snail, animalList.glueSnail, animalList.conductiveSnail, animalList.conductiveDog}
+end
+
+P.boxReroller = P.superTool:new{name = "Box Reroller", description = "",
+image = love.graphics.newImage('Graphics/roomreroller.png'),
+baseRange = 0, quality = 2}
+function P.boxReroller:usableOnNothing()
+	return true
+end
+P.boxReroller.usableOnTile = P.boxReroller.usableOnNothing
+function P.boxReroller:useToolNothing()
+	self.numHeld = self.numHeld-1
+
+	brList = self:getBoxList()
+	for i = 1, #pushables do
+		local pushChoice = util.random(#brList, 'misc')
+		local newPush = brList[pushChoice]:new()
+		newPush.tileX = pushables[i].tileX
+		newPush.tileY = pushables[i].tileY
+		pushables[i] = newPush
+	end
+end
+P.boxReroller.useToolTile = P.boxReroller.useToolNothing
+function P.boxReroller:getBoxList()
+	return {pushableList.box, pushableList.conductiveBox, pushableList.lamp,
+			pushableList.batteringRam, pushableList.giftBox, pushableList.boombox,
+			pushableList.jackInTheBox, pushableList.playerBox, pushableList.animalBox,
+			pushableList.bombBox}
+end
+
 P.numNormalTools = 7
 
 --[[ideas:
---hop over tile and destroy
+--animal reroller
+-box reroller
+--animal trainer: grab animal/sprites, then release as scared beast that can destroy all tiles it enters
 ]]
 
 function P.resetTools()
@@ -4057,6 +4110,8 @@ P:addTool(P.luckyBrick)
 P:addTool(P.luckyCharm)
 P:addTool(P.trader)
 P:addTool(P.tileFlipper)
+P:addTool(P.animalReroller)
+P:addTool(P.boxReroller)
 
 P.resetTools()
 
