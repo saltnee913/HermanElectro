@@ -18,7 +18,7 @@ scale = (width - 2*wallSprite.width)/(20.3 * 16)*5/6
 --floor = tiles.tile
 
 --speed same as player (250)
-P.animal = Object:new{elevation = 0, scale = scale, yOffset = 0, frozen = false, conductive = false, pickedUp = false, canDropTool = false, willDropTool = false, flying = false, triggered = false, waitCounter = 1, dead = false, name = "animal", tileX, tileY, prevx, prevy, prevTileX, prevTileY, x, y, speed = 250, width = 16*scale, height = 16*scale, sprite = love.graphics.newImage('Graphics/pitbull.png'), deadSprite = love.graphics.newImage('Graphics/pitbulldead.png'), tilesOn = {}, oldTilesOn = {}}
+P.animal = Object:new{elevation = 0, scale = scale, yOffset = 0, frozen = false, trained = false, conductive = false, pickedUp = false, canDropTool = false, willDropTool = false, flying = false, triggered = false, waitCounter = 1, dead = false, name = "animal", tileX, tileY, prevx, prevy, prevTileX, prevTileY, x, y, speed = 250, width = 16*scale, height = 16*scale, sprite = love.graphics.newImage('Graphics/pitbull.png'), deadSprite = love.graphics.newImage('Graphics/pitbulldead.png'), tilesOn = {}, oldTilesOn = {}}
 function P.animal:move(playerx, playery, room, isLit)
 	if player.attributes.shelled then
 		return
@@ -153,6 +153,12 @@ function P.animal:checkDeath()
 					unlocks.unlockUnlockableRef(unlocks.breakablePitUnlock)
 				end
 			end
+		end
+	end
+	for i = 1, #animals do
+		if animals[i].trained and not animals[i].dead and animals[i]~=self and
+		animals[i].tileX==self.tileX and animals[i].tileY==self.tileY then
+			self:kill()
 		end
 	end
 end
@@ -421,6 +427,78 @@ P.wife = P.cat:new{name = "wife", sprite = love.graphics.newImage('Graphics/wife
 P.son = P.cat:new{name = "son", sprite = love.graphics.newImage('Graphics/son.png')}
 P.daughter = P.cat:new{name = "daughter", sprite = love.graphics.newImage('Graphics/daughter.png')}
 
+P.ram = P.animal:new{name = "Ram", sprite = love.graphics.newImage('Graphics/ram.png'), scale = 0.1*scale}
+P.ram.move = P.animal.afraidPrimaryMove
+function P.ram:tryMove(diffx, diffy)
+	self.tileX = self.tileX+diffx
+	self.tileY = self.tileY+diffy
+
+	if room[self.tileY]==nil or self.tileX>roomLength or self.tileX<=0 or
+	(room[self.tileY][self.tileX]==nil and math.abs(self.elevation)>3) then
+		self.tileY = self.prevTileY
+		self.tileX = self.prevTileX
+		return
+	elseif room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX]:obstructsMovementAnimal(self) then
+		if room[self.tileY][self.tileX]:getHeight()<=self.elevation then
+			self.tileY = self.prevTileY
+			self.tileX = self.prevTileX
+			return
+		else
+			room[self.tileY][self.tileX]:destroy()
+		end
+	end
+
+	if not self:pushableCheck() then
+		self.tileX = self.prevTileX
+		self.tileY = self.prevTileY
+	end
+
+	local sameSpotCounter = 0
+	for i = 1, #animals do
+		if animals[i].tileX == self.tileX and animals[i].tileY == self.tileY then
+			sameSpotCounter = sameSpotCounter+1
+		end
+	end
+	if sameSpotCounter>1 then
+		self.tileX = self.prevTileX
+		self.tileY = self.prevTileY
+	end
+end
+
+function P.ram:afraidSecondaryMove(playerx, playery)
+	local diffx = math.abs(playerx - self.tileX)
+	local diffy = math.abs(playery - self.tileY)
+
+	if diffy>diffx then
+		if playerx>self.tileX then
+			self.tileX = self.tileX-1
+		else
+			self.tileX = self.tileX+1
+		end
+	else
+		if playery>self.tileY then
+			self.tileY = self.tileY-1
+		else
+			self.tileY = self.tileY+1
+		end
+	end
+
+	if room[self.tileY]==nil or self.tileX<1 or self.tileX>roomLength or
+	(room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX]:obstructsMovementAnimal(self)) or
+	(room[self.tileY][self.tileX]==nil and math.abs(self.elevation)>3) then
+		self.tileY = self.prevTileY
+		self.tileX = self.prevTileX
+		return false
+	end
+
+	if not self:pushableCheck() then
+		self.tileX = self.prevTileX
+		self.tileY = self.prevTileY
+		return false
+	end
+
+	return true
+end
 animalList[1] = P.animal
 animalList[2] = P.pitbull
 animalList[3] = P.pup
@@ -434,5 +512,6 @@ animalList[10] = P.conductiveDog
 animalList[11] = P.wife
 animalList[12] = P.son
 animalList[13] = P.daughter
+animalList[14] = P.ram
 
 return animalList

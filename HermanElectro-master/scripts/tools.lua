@@ -3939,6 +3939,68 @@ function P.boxReroller:getBoxList()
 			pushableList.bombBox}
 end
 
+P.animalTrainer = P.superTool:new{name = "Animal Trainer", image = love.graphics.newImage('Graphics/whip.png'),
+quality = 1, baseRange = 3}
+function P.animalTrainer:usableOnAnimal()
+	return true
+end
+function P.animalTrainer:useToolAnimal(animal)
+	self.numHeld = self.numHeld-1
+	animal.trained = true
+end
+
+P.animalEnslaver = P.superTool:new{name = "Animal Enslaver", heldAnimal = nil, image = love.graphics.newImage('Graphics/whip.png'),
+baseImage = love.graphics.newImage('Graphics/whip.png'),
+quality = 2, baseRange = 3}
+function P.animalEnslaver:usableOnAnimal()
+	return self.heldAnimal == nil
+end
+function P.animalEnslaver:useToolAnimal(animal)
+	animal.trained = true
+	self.heldAnimal = animal
+	for i = 1, #animals do
+		if animals[i]==animal then
+			table.remove(animals, i)
+		end
+	end
+	self:updateSprite()
+end
+function P.animalEnslaver:usableOnNothing()
+	if self.heldAnimal==nil then return false end
+	return self.heldAnimal~=nil
+end
+function P.animalEnslaver:usableOnTile(tile)
+	if self.heldAnimal==nil then return false end
+	self.heldAnimal.elevation = player.elevation
+	if tile:obstructsMovementAnimal(animal) then return false end
+	return true
+end
+function P.animalEnslaver:updateSprite()
+	if self.heldAnimal==nil then
+		self.image = self.baseImage
+	else
+		self.image = self.heldAnimal.sprite
+	end
+end
+function P.animalEnslaver:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
+
+	self.heldAnimal.tileX = tileX
+	self.heldAnimal.tileY = tileY
+	animals[#animals+1] = self.heldAnimal
+	self.heldAnimal = nil
+	self:updateSprite()
+end
+function P.animalEnslaver:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
+
+	self.heldAnimal.tileX = tileX
+	self.heldAnimal.tileY = tileY
+	animals[#animals+1] = self.heldAnimal
+	self.heldAnimal = nil
+	self:updateSprite()
+end
+
 P.numNormalTools = 7
 
 --[[ideas:
@@ -4112,6 +4174,8 @@ P:addTool(P.trader)
 P:addTool(P.tileFlipper)
 P:addTool(P.animalReroller)
 P:addTool(P.boxReroller)
+P:addTool(P.animalTrainer)
+P:addTool(P.animalEnslaver)
 
 P.resetTools()
 

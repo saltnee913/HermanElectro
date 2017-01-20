@@ -1016,6 +1016,7 @@ function P.pitbullTile:usableOnNothing()
 end
 P.pupTile = P.pitbullTile:new{name = "pup", animal = animalList[3], listIndex = 3}
 P.catTile = P.pitbullTile:new{name = "cat", animal = animalList[4], listIndex = 4}
+P.ramTile = P.pitbullTile:new{name = "ram", animal = animalList[14], listIndex = 14}
 
 P.spotlightTile = P.tile:new{name = "spotlight", spotlight = spotlightList.spotlight,
 sprite = love.graphics.newImage('Graphics/spotlightTile.png')}
@@ -2812,5 +2813,6 @@ tiles[185] = P.gameWin
 tiles[186] = P.spotlightTile
 tiles[187] = P.fastSpotlightTile
 tiles[188] = P.slowSpotlightTile
+tiles[189] = P.ramTile
 
 return tiles

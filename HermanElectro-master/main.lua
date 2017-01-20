@@ -2990,6 +2990,27 @@ function love.keypressed(key, unicode)
 							end
 						end
 					end
+					if ani.trained then
+						movex = ani.tileX
+						movey = ani.tileY
+						for l = 1, #animals do
+							if not animals[l].dead then
+								if movex==ani.tileX and movey==ani.tileY then
+									if animals[l]~=ani then
+											movex = animals[l].tileX
+											movey = animals[l].tileY
+									else
+										local currDist = math.abs(movex-ani.tileX)+math.abs(movey-ani.tileY)
+										local testDist = math.abs(movex-animals[l].tileX)+math.abs(movey-animals[l].tileY)
+										if testDist<currDist then
+											movex = animals[l].tileX
+											movey = animals[l].tileY
+										end								
+									end
+								end
+							end
+						end
+					end
 					ani:move(movex, movey, room, litTiles[ani.tileY][ani.tileX]==1)
 				end
 				if room[ani.tileY][ani.tileX]~=nil then
@@ -3177,14 +3198,20 @@ function resolveConflicts()
 		for i = 1, #animals do
 			for j = 1, i-1 do
 				if (not animals[i].dead) and (not animals[j].dead) and animals[i].tileX == animals[j].tileX and animals[i].tileY == animals[j].tileY then
-					if animals[i].tileX~=animals[i].prevTileX then
-						animals[i].tileX = animals[i].prevTileX
-					elseif animals[i].tileY~=animals[i].prevTileY then
-						animals[i].tileY = animals[i].prevTileY
-					elseif animals[j].tileX~=animals[j].prevTileX then
-						animals[j].tileX = animals[j].prevTileX
-					elseif animals[j].tileY~=animals[j].prevTileY then
-						animals[j].tileY = animals[j].prevTileY
+					if animals[i].trained then
+						animals[j]:kill()
+					elseif animals[j].trained then
+						animals[i]:kill()
+					else
+						if animals[i].tileX~=animals[i].prevTileX then
+							animals[i].tileX = animals[i].prevTileX
+						elseif animals[i].tileY~=animals[i].prevTileY then
+							animals[i].tileY = animals[i].prevTileY
+						elseif animals[j].tileX~=animals[j].prevTileX then
+							animals[j].tileX = animals[j].prevTileX
+						elseif animals[j].tileY~=animals[j].prevTileY then
+							animals[j].tileY = animals[j].prevTileY
+						end
 					end
 				end
 			end
@@ -3232,6 +3259,27 @@ function resolveConflicts()
 								end
 			    			end
 			    		end
+				    	if animals[i].trained then
+							movex = animals[i].tileX
+							movey = animals[i].tileY
+							for l = 1, #animals do
+								if not animals[l].dead then
+									if movex==animals[i].tileX and movey==animals[i].tileY then
+										if animals[l]~=animals[i] then
+											movex = animals[l].tileX
+											movey = animals[l].tileY
+										end
+									else
+										local currDist = math.abs(movex-animals[i].tileX)+math.abs(movey-animals[i].tileY)
+										local testDist = math.abs(movex-animals[l].tileX)+math.abs(movey-animals[l].tileY)
+										if testDist<currDist then
+											movex = animals[l].tileX
+											movey = animals[l].tileY									
+										end
+									end
+								end
+							end
+						end
 						animals[i]:secondaryMove(movex, movey)
 					end
 				end
@@ -3242,8 +3290,14 @@ function resolveConflicts()
 		for i = 1, #animals do
 			for j = 1, i-1 do
 				if (not animals[i].dead) and (not animals[j].dead) and animals[i].tileX == animals[j].tileX and animals[i].tileY == animals[j].tileY then
-					conflicts = true
-					firstRun = false
+					if animals[i].trained then
+						animals[j]:kill()
+					elseif animals[j].trained then
+						animals[i]:kill()
+					else
+						conflicts = true
+						firstRun = false
+					end
 				end
 			end
 		end
