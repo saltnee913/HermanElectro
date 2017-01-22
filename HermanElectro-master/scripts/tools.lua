@@ -11,8 +11,13 @@ end
 
 --displays tools above player, takes input as [1,1,6,6,5,5] = 2 saw, 2 brick, 2 sponge
 function P.displayTools(toolArray)
+	if P.toolDisplayTimer.timeLeft<=0 then
+		P.toolsShown = {}
+	end
 	P.toolDisplayTimer.timeLeft = P.toolDisplayTimer.base
-	P.toolsShown = toolArray
+	for i = 1, #toolArray do
+		P.toolsShown[#P.toolsShown+1] = toolArray[i]
+	end
 end
 
 --same as displayTools but takes input as [0,0,1,0,0,1,2] = 1 wire-cutters, 1 brick, 2 gun (same format as itemsNeeded)
@@ -3832,6 +3837,8 @@ function P.luckyBrick:usableOnTile(tile)
 	return tile:instanceof(tiles.glassWall) and not tile:instanceof(tiles.reinforcedGlass) and not tile.destroyed
 end
 function P.luckyBrick:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
+	
 	tile:destroy()
 	room[tileY][tileX] = tiles.toolTile:new()
 	room[tileY][tileX]:absoluteFinalUpdate()
@@ -4000,6 +4007,39 @@ function P.animalEnslaver:useToolTile(tile, tileY, tileX)
 	self.heldAnimal = nil
 	self:updateSprite()
 end
+
+P.investmentBonus = P.superTool:new{name = "Investment Bonus", description = "",
+image = love.graphics.newImage('Graphics/shovel.png'), baseRange = 0, quality = 2}
+function P.investmentBonus:usableOnNothing()
+	return true
+end
+function P.investmentBonus:useToolNothing()
+	self.numHeld = self.numHeld-1
+end
+P.investmentBonus.usableOnTile = P.investmentBonus.usableOnNothing
+P.investmentBonus.useToolTile = P.investmentBonus.useToolNothing
+
+P.completionBonus = P.superTool:new{name = "Completion Bonus", description = "",
+image = love.graphics.newImage('Graphics/shovel.png'), baseRange = 0, quality = 3}
+function P.completionBonus:usableOnNothing()
+	return true
+end
+function P.completionBonus:useToolNothing()
+	self.numHeld = self.numHeld-1
+end
+P.completionBonus.usableOnTile = P.completionBonus.usableOnNothing
+P.completionBonus.useToolTile = P.completionBonus.useToolNothing
+
+P.roomCompletionBonus = P.superTool:new{name = "Room Completion Bonus", description = "",
+image = love.graphics.newImage('Graphics/shovel.png'), baseRange = 0, quality = 5}
+function P.roomCompletionBonus:usableOnNothing()
+	return true
+end
+function P.roomCompletionBonus:useToolNothing()
+	self.numHeld = self.numHeld-1
+end
+P.roomCompletionBonus.usableOnTile = P.roomCompletionBonus.usableOnNothing
+P.roomCompletionBonus.useToolTile = P.roomCompletionBonus.useToolNothing
 
 P.numNormalTools = 7
 
@@ -4176,6 +4216,9 @@ P:addTool(P.animalReroller)
 P:addTool(P.boxReroller)
 P:addTool(P.animalTrainer)
 P:addTool(P.animalEnslaver)
+P:addTool(P.investmentBonus)
+P:addTool(P.completionBonus)
+P:addTool(P.roomCompletionBonus)
 
 P.resetTools()
 

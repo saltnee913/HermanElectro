@@ -3627,6 +3627,16 @@ function unlockDoorsPlus()
 end
 
 function dropTools()
+	--supertool-based drops
+	local basicsHeld = 0
+	for i = 1, tools.numNormalTools do
+		basicsHeld = basicsHeld+tools[i].numHeld
+	end
+	if basicsHeld<=1 then
+		tools.giveRandomTools(tools.investmentBonus.numHeld*2)
+	end
+	tools.giveRandomTools(tools.roomCompletionBonus.numHeld)
+
 	local dropOverride = map.getFieldForRoom(mainMap[mapy][mapx].roomid, 'itemsGivenOverride')
 	if loadTutorial then
 		local toolsToDisplay = {0,0,0,0,0,0,0}
@@ -3698,13 +3708,14 @@ function dropTools()
 				--bonusTool decides whether or not one more tool will drop from floor
 				local bonusTool = util.random(2, 'toolDrop')
 				bonusTool = bonusTool-1
+				bonusTool = bonusTool+tools.completionBonus.numHeld*2
 				tools.giveRandomTools(math.floor((toolMax+toolMin)/2)+bonusTool)
 			end
 			--[[for i = 1, toolMin+1 do
 				local slot = util.random(tools.numNormalTools, 'toolDrop')
 				tools[slot].numHeld = tools[slot].numHeld+1
 			end]]
-			--tools.giveSupertools(1)
+			--tools.giveSupertools(1)w
 		end
 	else
 		tools.giveToolsByArray(dropOverride)
