@@ -38,7 +38,7 @@
 		},
 		"finalRooms": 
 		{
-			"filePath": "RoomData/endpuzzles.json",
+			"filePath": "RoomData/endgamerooms.json",
 			"requirements":
 			{
 				
@@ -73,8 +73,8 @@
 	{
 		"requireUnlocks": true,
 		"height": 10,
-		"numRooms": 10,
-		"generateFunction": "generateMapWeighted",
+		"numRooms": 20,
+		"generateFunction": "generateSixthFloor",
 		"startRoomID": "1",
 		//numRoomsToCheck is the amount of rooms to try when deciding a room's roomid, decreasing this increases rng
 		"numRoomsToCheck": 3,

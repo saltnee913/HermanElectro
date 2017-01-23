@@ -1057,6 +1057,241 @@ function P.generateMapWeighted()
 	return newmap
 end
 
+function P.generateSixthFloor()
+	--set up variables
+	local height = P.floorInfo.height
+	local numRooms = P.floorInfo.numRooms
+	local newmap = MapInfo:new{height = height, numRooms = numRooms}
+	for i = 0, height+1 do
+		newmap[i] = {}
+	end
+	local roomsArray = P.floorInfo.rooms.rooms
+	blacklist[#blacklist+1] = startRoomID
+	local randomRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.rooms, 'mapGen', blacklist)
+	local randomRoomsArray = removeSets(randomRoomsArray)
+	local randomTreasureRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.treasureRooms, 'mapGen')
+	local randomFinalRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.finalRooms, 'mapGen')
+	local randomDonationRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.donationRooms, 'mapGen')
+	local randomShopsArray = util.createRandomKeyArray(P.floorInfo.rooms.shops, 'mapGen')
+	--create first room
+	local startRoomID = P.floorInfo.startRoomID
+	newmap[math.floor(height/2)][math.floor(height/2)] = {roomid = startRoomID, room = P.createRoom(startRoomID, roomsArray), isFinal = false, isInitial = true, isCompleted = false}
+	newmap.initialY = math.floor(height/2)
+	newmap.initialX = math.floor(height/2)
+	local basicsHeld = {}
+	local totalToolsHeld = 0
+	for i = 1, tools.numNormalTools do
+		basicsHeld[i] = tools[i].numHeld
+		totalToolsHeld = totalToolsHeld+tools[i].numHeld
+	end
+	local usedRooms = {startRoomID}
+	while #usedRooms ~= numRooms do
+		--create list of available slots for room
+		local available = {}
+
+		for j = 1, height do
+			for k = 1, height do
+				if newmap[j][k]==nil then
+					--numNil = newmap[j+1][k] ~= nil and 1 or 0 + newmap[j-1][k] ~= nil and 1 or 0 + newmap[j][k+1] ~= nil and 1 or 0 + newmap[j][k-1] ~= nil and 1 or 0
+					local e = newmap[j+1][k]
+					local b = newmap[j-1][k]
+					local c = newmap[j][k+1]
+					local d = newmap[j][k-1]
+					numNil = 0;
+					--elseif parts check to see if room exists but is special (e.g., treasure room)
+					--special rooms are not in roomsArray, but in the special rooms files
+					if (e==nil) then
+						numNil=numNil+1
+					elseif (roomsArray[e.roomid]==nil) then
+						numNil=numNil-1
+					end
+
+					if (b==nil) then
+						numNil=numNil+1
+					elseif (roomsArray[b.roomid]==nil) then
+						numNil=numNil-1
+					end
+
+					if (c==nil) then
+						numNil=numNil+1
+					elseif (roomsArray[c.roomid]==nil) then
+						numNil=numNil-1
+					end
+
+					if (d==nil) then
+						numNil=numNil+1
+					elseif (roomsArray[d.roomid]==nil) then
+						numNil=numNil-1
+					end
+
+					if (numNil == 3) then
+						available[#available+1] = {y=j,x=k}
+					end
+				end
+			end
+		end
+		--choose a room slot
+		local choice = util.chooseRandomElement(available, 'mapGen')
+		if numRooms-#usedRooms == 4 then
+			local max = {x = choice.x, y = choice.y}
+			for i = 1, #available do
+				if math.abs(available[i].x-max.x)+math.abs(available[i].y-max.y)>
+				math.abs(max.x-math.floor(height/2))+math.abs(max.y-math.floor(height/2)) then
+					max.x = available[i].x
+					max.y = available[i].y
+				end
+			end
+			choice = {x = max.x, y = max.y}
+		end
+		local roomid
+
+		if numRooms - #usedRooms == 4 then
+			roomid = util.chooseRandomElement(randomFinalRoomsArray, 'mapGen')
+		elseif numRooms - #usedRooms == 3 then
+			roomid = util.chooseRandomElement(randomTreasureRoomsArray, 'mapGen')
+		elseif numRooms - #usedRooms == 2 then
+			roomid = util.chooseRandomElement(randomDonationRoomsArray, 'mapGen')
+		elseif numRooms - #usedRooms == 1 then
+			roomid = util.chooseRandomElement(randomShopsArray, 'mapGen')
+		else
+			--creates an array of 5 possible choices with weights
+			local roomChoices = {}
+			local roomWeights = {}
+			local whichINList = {}
+			for i = 1, P.floorInfo.numRoomsToCheck do
+				local whichIN = 1
+				local roomChoiceid = util.chooseRandomElement(randomRoomsArray, 'mapGen')
+				local roomChoice = roomsArray[roomChoiceid]
+				local infiniteLoopCheck = 0
+
+				local fitsToolsHeld = true
+				if totalToolsHeld>0 then
+					local inChoices = P.getItemsNeeded(roomChoiceid)
+					whichIN = util.random(#inChoices, 'mapGen')
+					local currentItemsNeeded = inChoices[whichIN]
+					for i = 1, tools.numNormalTools do
+						if currentItemsNeeded[i]>basicsHeld[i] then fitsToolsHeld = false end
+					end
+				end
+
+				while not isRoomAllowed(roomChoice, usedRooms, newmap, choice) or notfitsToolsHeld do
+					infiniteLoopCheck = infiniteLoopCheck + 1
+					roomChoiceid = util.chooseRandomElement(randomRoomsArray, 'mapGen')
+					roomChoice = roomsArray[roomChoiceid]
+					fitsToolsHeld = true
+					if totalToolsHeld>0 then
+						local inChoices = P.getItemsNeeded(roomChoiceid)
+						whichIN = util.random(#inChoices, 'mapGen')
+						local currentItemsNeeded = inChoices[whichIN]
+						for i = 1, tools.numNormalTools do
+							if currentItemsNeeded[i]>basicsHeld[i] then fitsToolsHeld = false end
+						end
+					end
+					if infiniteLoopCheck > 1000 then
+						printMap()
+						roomChoiceid = randomRoomsArray[1]
+						roomChoice = roomsArray[roomChoiceid]
+						break
+					end
+				end
+				roomChoices[i] = roomChoiceid
+				whichINList[i] = whichIN
+				local state = {indent = true, keyorder = keyOrder}
+	
+				local roomWeight = 0
+				local totalRoomsCompared = 0
+				for i = 1, height do
+					for j = 1, height do
+						if newmap[i][j]~=nil then
+							totalRoomsCompared = totalRoomsCompared + 1
+							local roomToCompare = newmap[i][j]
+							roomWeight = roomWeight + compareItemsNeeded(roomChoice.itemsNeeded, P.getItemsNeeded(roomToCompare.roomid))
+						end
+					end
+				end
+				--[[for dir = 1, 4 do
+					local offset = util.getOffsetByDir(dir)
+					if newmap[choice.y+offset.y]~=nil and newmap[choice.y+offset.y][choice.x+offset.x] then
+						totalRoomsCompared = totalRoomsCompared + 1
+						local roomToCompare = newmap[choice.y+offset.y][choice.x+offset.x]
+						roomWeight = roomWeight + compareItemsNeeded(roomChoice.itemsNeeded, roomToCompare.itemsNeeded)
+						for dir2 = 1, 4 do
+							local offset2 = util.getOffsetByDir(dir2)
+							if newmap[roomToCompare.y+offset2.y]~=nil and newmap[roomToCompare.y+offset2.y][roomToCompare.x+offset2.x] then
+								totalRoomsCompared = totalRoomsCompared + 1
+								local roomToCompare2 = newmap[roomToCompare.y+offset2.y][roomToCompare.x+offset2.x]
+								roomWeight = roomWeight + compareItemsNeeded(roomChoice.itemsNeeded, roomToCompare2.itemsNeeded)
+							end
+						end
+					end
+				end]]
+				roomWeight = roomWeight/totalRoomsCompared + P.getRoomWeight(roomChoice)
+				roomWeights[i] = roomWeight
+			end
+			local ultimateChoice = util.chooseWeightedRandom(roomWeights, 'mapGen')
+			roomid = roomChoices[ultimateChoice]
+			whichIN = whichINList[ultimateChoice]
+			local usingItemsNeeded = P.getItemsNeeded(roomid)[whichIN]
+			for i = 1, tools.numNormalTools do
+				basicsHeld[i] = basicsHeld[i]-usingItemsNeeded[i]
+				totalToolsHeld = totalToolsHeld-usingItemsNeeded[i]
+			end
+		end
+		--disabling blacklisting rooms until we have enough rooms
+		--blacklist[#blacklist+1] = roomid
+		setBlacklist[#setBlacklist+1] = P.getFieldForRoom(roomid, 'set')
+		usedRooms[#usedRooms+1] = roomid
+		newmap[choice.y][choice.x] = {roomid = roomid, room = P.createRoom(roomid), tint = {0,0,0}, isFinal = false, isInitial = false}
+	end
+	
+	--add secret room to floor
+	arr = P.floorInfo.rooms.secretRooms
+	local secLocs = {}
+	local numNilAdjacent = 1
+	local triesCounter = 0
+	while #secLocs == 0 and numNilAdjacent<4 do
+		for i = 1, height do
+			for j = 1, height do
+				if room[i][j]==nil then
+					local e = newmap[i+1][j]
+					local b = newmap[i-1][j]
+					local c = newmap[i][j+1]
+					local d = newmap[i][j-1]
+					numNil = 0;
+					if (e==nil) then
+						numNil=numNil+1
+					end
+					if (b==nil) then
+						numNil=numNil+1
+					end
+					if (c==nil) then
+						numNil=numNil+1
+					end
+					if (d==nil) then
+						numNil=numNil+1
+					end
+					if numNil<=numNilAdjacent and newmap[i][j]==nil then
+						secLocs[#secLocs+1] = {x = j, y = i}
+					end
+				end
+			end
+		end
+		numNilAdjacent = numNilAdjacent+1
+	end
+	if not (#secLocs==0) then
+		local whichLoc = util.random(#secLocs, 'misc')
+		roomid = util.chooseRandomKey(arr, 'mapGen')
+		newmap[secLocs[whichLoc].y][secLocs[whichLoc].x] = {roomid = roomid, room = P.createRoom(roomid, arr), tint = {0,0,0}, dirEnter = arr[roomid].dirEnter, isFinal = false, isInitial = false}
+	end
+	--add special dungeon room to floor
+	--each floor has one special dungeon, which is located at [height+1][1]
+	arr = P.floorInfo.rooms.dungeons
+	roomid = util.chooseRandomKey(arr, 'mapGen')
+	newmap[height+1][1] = {roomid = roomid, room = P.createRoom(roomid, arr), tint = {0,0,0}, dirEnter = arr[roomid].dirEnter, isFinal = false, isInitial = false}
+	P.printTileInfo()
+	return newmap
+end
+
 function P.printTileInfo()
 	local tileInfo = {}
 	for i = 1, #tiles do
