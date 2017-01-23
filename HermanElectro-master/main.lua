@@ -312,6 +312,12 @@ function love.load()
 	if not loadedOnce then
 		love.graphics.setBackgroundColor(0,0,0)
 		floorIndex = -1
+		stairsLocs = {}
+		--1 is opening world, 2-7 are floors 1-6, 8 is dungeon
+		for i = 1, 8 do
+			stairsLocs[i] = {map = {x = 0, y = 0}, coords = {x = 0, y = 0}}
+		end
+
 		--started = false
 		shaderTriggered = true
 		mushroomMode = falsed
@@ -514,6 +520,7 @@ function loadRandoms()
 end
 
 function goDownFloor()
+	stairsLocs[floorIndex] = {map = {x = mapx, y = mapy}, coords = {x = player.tileX, y = player.tileY}}
 	if map.loadedMaps[floorIndex+1] == nil then
 		loadNextLevel()
 	else
@@ -522,27 +529,18 @@ function goDownFloor()
 		map.floorInfo = mapToLoad.floorInfo
 		mainMap = mapToLoad.map
 		mapHeight = mapToLoad.mapHeight
-		for i = 1, mapHeight do
-			for j = 1, mapHeight do
-				if mainMap[i][j]~=nil and mainMap[i][j].isInitial then
-					mapy = i
-					mapx = j
-					room = mainMap[i][j].room
-				end
-			end
-		end
+
+		mapx = stairsLocs[floorIndex].map.x
+		mapy = stairsLocs[floorIndex].map.y
+		room = mainMap[mapx][mapy].room
+		player.tileX = stairsLocs[floorIndex].coords.x
+		player.tileY = stairsLocs[floorIndex].coords.y
+
 		roomHeight = mapToLoad.roomHeight
 		roomLength = mapToLoad.roomLength
 		completedRooms = mapToLoad.completedRooms
 		visibleMap = mapToLoad.visibleMap
-		for i = 1, roomHeight do
-			for j = 1, roomLength do
-				if room[i][j]~=nil and room[i][j]:instanceof(tiles.upTunnel) then
-					player.tileY = i
-					player.tileX = j
-				end
-			end
-		end
+
 		animals = {}
 		pushables = {}
 		prevRoom = room
@@ -555,6 +553,7 @@ function goDownFloor()
 end
 
 function goUpFloor()
+	stairsLocs[floorIndex] = {map = {x = mapx, y = mapy}, coords = {x = player.tileX, y = player.tileY}}
 	if floorIndex == 2 then
 		goToMainMenu()
 	else
@@ -562,28 +561,17 @@ function goUpFloor()
 		floorIndex = floorIndex - 1
 		map.floorInfo = mapToLoad.floorInfo
 		mainMap = mapToLoad.map
-		mapHeight = mapToLoad.mapHeight
-		for i = 1, mapHeight do
-			for j = 1, mapHeight do
-				if mainMap[i][j]~=nil and map.isRoomType(mainMap[i][j].roomid, 'finalRooms') then
-					mapy = i
-					mapx = j
-					room = mainMap[i][j].room
-				end
-			end
-		end
+
+		mapx = stairsLocs[floorIndex].map.x
+		mapy = stairsLocs[floorIndex].map.y
+		room = mainMap[mapx][mapy].room
+		player.tileX = stairsLocs[floorIndex].coords.x
+		player.tileY = stairsLocs[floorIndex].coords.y
+
 		roomHeight = mapToLoad.roomHeight
 		roomLength = mapToLoad.roomLength
 		completedRooms = mapToLoad.completedRooms
 		visibleMap = mapToLoad.visibleMap
-		for i = 1, roomHeight do
-			for j = 1, roomLength do
-				if room[i][j]~=nil and room[i][j]:instanceof(tiles.tunnel) then
-					player.tileY = i
-					player.tileX = j
-				end
-			end
-		end
 		createElements()
 		prevRoom = room
 		litTiles = {}
@@ -595,6 +583,11 @@ function goUpFloor()
 	postFloorChange()
 end
 function goToFloor(floorNum)
+	local stairsLocsIndex = floorIndex
+	if floorIndex==1 then
+		stairsLocsIndex = 8
+	end
+	stairsLocs[stairsLocsIndex] = {map = {x = mapx, y = mapy}, coords = {x = player.tileX, y = player.tileY}}
 	floorIndex = floorNum
 	local mapToLoad = map.loadedMaps[floorIndex]
 	mainMap = mapToLoad.map
@@ -697,12 +690,24 @@ function loadOpeningWorld()
 	floorIndex = -1
 	loadRandoms()
 	loadLevel('RoomData/openingworld.json')
-	roomHeight = room.height
-	roomLength = room.length
-	player.tileX = math.floor(roomLength/2)
-	player.tileY = roomHeight-3
+
+	if stairsLocs[1].map.x~=0 then
+		mapx = stairsLocs[1].map.x
+		mapy = stairsLocs[1].map.y
+		room = mainMap[mapy][mapx].room
+		player.tileX = stairsLocs[1].coords.x
+		player.tileY = stairsLocs[1].coords.y
+	else
+		--default coordinates
+		player.tileX = math.floor(roomLength/2)
+		player.tileY = roomHeight-3
+	end
+
 	player.prevTileX = player.tileX
 	player.prevTileY = player.tileY
+
+	roomHeight = room.height
+	roomLength = room.length
 	updateLight()
 	started = true
 	player.character:onBegin()
@@ -2734,6 +2739,7 @@ function love.keypressed(key, unicode)
 		if key=="escape" then
 			gamePaused = false
 		elseif key=="m" then
+			stairsLocs[1] = {map = {x = 0, y = 0}, coords = {x = 0, y = 0}}
 			goToMainMenu()
 		elseif key=="t" then
 			toolManuel.open()
@@ -2742,6 +2748,7 @@ function love.keypressed(key, unicode)
 	end
 	if won then
 		if key=="m" then
+			stairsLocs[1] = {map = {x = 0, y = 0}, coords = {x = 0, y = 0}}
 			goToMainMenu()
 		end
 	end

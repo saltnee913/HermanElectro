@@ -1176,6 +1176,13 @@ function P.tunnel:onEnter(player)
 	self.toolsEntered = self.toolsEntered+1
 	--donations = donations+math.ceil((7-(floorIndex))/2)
 	floorDonations = floorDonations+1]]
+	if floorIndex>=7 then
+		return
+		--should do something cool, can add later
+	end
+	if floorIndex<2 then
+		return
+	end
 	goDownFloor()
 end
 
@@ -2385,12 +2392,22 @@ function P.endDungeonEnter:onEnter()
 	end
 	player.returnFloorIndex = floorIndex
 	goToFloor(1)
-	for i = 1, roomHeight do
-		for j = 1, roomLength do
-			if room[i][j]~=nil and room[i][j]:instanceof(tiles.endDungeonExit) then
-				player.tileY = i
-				player.tileX = j
-				break
+	if stairsLocs[8].coords.x~=0 then
+		mapx = stairsLocs[8].map.x
+		mapy = stairsLocs[8].map.y
+		room = mainMap[mapy][mapx].room
+		roomHeight = room.height
+		roomLength = room.length
+		player.tileX = stairsLocs[8].coords.x
+		player.tileY = stairsLocs[8].coords.y
+	else
+		for i = 1, roomHeight do
+			for j = 1, roomLength do
+				if room[i][j]~=nil and room[i][j]:instanceof(tiles.endDungeonExit) then
+					player.tileY = i
+					player.tileX = j
+					break
+				end
 			end
 		end
 	end
@@ -2523,16 +2540,19 @@ end
 
 P.gameStairs = P.tile:new{name = "gameStairs", sprite = love.graphics.newImage('KenGraphics/gamestairs.png')}
 function P.gameStairs:onEnter()
+	stairsLocs[1] = {map ={x = mapx, y = mapy}, coords = {x = player.tileX, y = player.tileY}}
 	startGame()
 end
 
 P.tutStairs = P.tile:new{name = "tutStairs", sprite = love.graphics.newImage('KenGraphics/tutstairs.png')}
 function P.tutStairs:onEnter()
+	stairsLocs[1] = {map ={x = mapx, y = mapy}, coords = {x = player.tileX, y = player.tileY}}
 	startTutorial()
 end
 
 P.debugStairs = P.tile:new{name = "debugStairs", sprite = love.graphics.newImage('KenGraphics/tutstairs.png')}
 function P.debugStairs:onEnter()
+	stairsLocs[1] = {map ={x = mapx, y = mapy}, coords = {x = player.tileX, y = player.tileY}}
 	startDebug()
 end
 
