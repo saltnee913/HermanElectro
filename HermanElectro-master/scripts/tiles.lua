@@ -1190,6 +1190,14 @@ P.upTunnel = P.tunnel:new{name = "upTunnel", sprite = love.graphics.newImage('Ke
 function P.upTunnel:onEnter(player)
 	goUpFloor()
 end
+function P.upTunnel:onLeave(player)
+	if floorIndex==7 then
+		self.done = true
+		self.isCompleted = true
+		self.isVisible = false
+		self.gone = true	
+	end
+end
 --[[function P.tunnel:getInfoText()
 	return self.toolsNeeded
 end
@@ -2437,7 +2445,7 @@ function P.dungeonKey:onEnter()
 end
 
 P.finalKey = P.tile:new{name = "finalKey", sprite = love.graphics.newImage('Graphics/finalkey.png'), enterCheckWin = true}
-function P.finalKey:onEnter()
+function P.finalKey:onEnter(player)
 	player.finalKeysHeld = player.finalKeysHeld+1
 	spotlights = {}
 	self.done = true
