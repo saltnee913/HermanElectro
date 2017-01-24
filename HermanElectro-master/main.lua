@@ -715,6 +715,12 @@ function loadOpeningWorld()
 	roomLength = room.length
 	updateLight()
 	started = true
+
+	player.x = (player.tileX-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
+	player.y = (player.tileY-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
+    myShader:send("player_x", player.x+getTranslation().x*floor.sprite:getWidth()*scale+(width2-width)/2)
+    myShader:send("player_y", player.y+getTranslation().y*floor.sprite:getWidth()*scale+(height2-height)/2)
+	
 	player.character:onBegin()
 	unlockDoors()
 	updateGameState()
@@ -763,6 +769,7 @@ end
 function prepareFloor()
 	animals = {}
 	pushables = {}
+	spotlights = {}
 	mapx = mainMap.initialX
 	mapy = mainMap.initialY
 	room = mainMap[mapy][mapx].room
