@@ -2303,7 +2303,7 @@ function createSpotlights()
 	if room.spotlights~=nil then spotlights = room.spotlights return end
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
-			if room[i][j]~=nil and room[i][j]:instanceof(tiles.spotlightTile) then
+			if room[i][j]~=nil and room[i][j].spotlight ~= nil then
 				local spotlightToAdd = room[i][j].spotlight:new()
 				spotlightToAdd.tileY = i
 				spotlightToAdd.tileX = j

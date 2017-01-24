@@ -198,7 +198,9 @@ function P.keypressed(key, unicode)
     			unlocks.lockUnlockable(i)
     		end
     	end  		
-    end 
+    elseif key == "o" then
+    	createElements()
+    end
 end
 
 function P.inputSteal(key, unicode)
