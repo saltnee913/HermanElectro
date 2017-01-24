@@ -2687,6 +2687,64 @@ function P.biscuit:onEnter(player)
 	self.gone = true
 end
 
+P.atm = P.concreteWall:new{name = "atm", sprite = love.graphics.newImage('Graphics/tooltaxtile.png'), untoolable = true,
+map = {}}
+function P.atm:onLoad()
+	for i = 1, mapHeight do
+		self.map[i] = {}
+		for j = 1, mapHeight do
+			self.map[i][j] = 0
+		end
+	end
+end
+function P.atm:obstructsMovement()
+	if math.abs(player.elevation-self:getHeight())<=3 then
+		return false
+	elseif tools.coin.numHeld>0 then
+		return false
+	end
+	return true
+end
+function P.atm:onEnter()
+	if math.abs(player.elevation-self:getHeight())<=3 then
+		return
+	elseif tools.coin.numHeld>0 then
+		tools.coin.numHeld = tools.coin.numHeld-1
+		
+		local gaveTools = false
+		for i = 1, #self.map do
+			for j = 1, #self.map[1] do
+				if self.map[i][j]==0 and mainMap[i][j]~=nil then
+					self.map[i][j]=1
+					local itemsNeededList = map.getItemsNeeded(mainMap[i][j].roomid)
+					local inlLen = #itemsNeededList
+					local whichIN = util.random(inlLen, 'misc')
+					local toolsToGive = {}
+					for i = 1, tools.numNormalTools do
+						print(itemsNeededList[whichIN][i])
+						for j = 1, itemsNeededList[whichIN][i] do
+							toolsToGive[#toolsToGive+1] = tools[i]
+						end
+					end
+					if #toolsToGive>0 then
+						gaveTools = true
+						tools.giveToolsByReference(toolsToGive)
+						break
+					end
+				end
+				if gaveTools then break end
+			end
+			if gaveTools then break end
+		end
+		if not gaveTools then
+			tools.giveRandomTools(1)
+		end
+
+		player.tileX = player.prevTileX
+		player.tileY = player.prevTileY
+	end
+end
+
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
 tiles[3] = P.powerSupply
@@ -2879,6 +2937,7 @@ tiles[189] = P.ramTile
 tiles[190] = P.finalKey
 tiles[191] = P.finalKeyGate
 tiles[192] = P.finalKeyPowered
+tiles[193] = P.atm
 
 
 
