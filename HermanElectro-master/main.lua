@@ -450,7 +450,7 @@ function love.load()
 		setChar = player.character
 	end
 
-	player = { 	baseLuckBonus = 0, keysHeld = 0, biscuitHeld = false, clonePos = {x = 0, y = 0, z = 0}, dead = false, elevation = 0, safeFromAnimals = false, bonusRange = 0, active = true, waitCounter = 0, tileX = 10, tileY = 6, x = (1-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10, 
+	player = { 	baseLuckBonus = 0, dungeonKeysHeld = 0, finalKeysHeld = 0, biscuitHeld = false, clonePos = {x = 0, y = 0, z = 0}, dead = false, elevation = 0, safeFromAnimals = false, bonusRange = 0, active = true, waitCounter = 0, tileX = 10, tileY = 6, x = (1-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10, 
 			y = (6-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10, prevTileX = 3, prevTileY 	= 10,
 			prevx = (3-1)*scale*floor.sprite:getWidth()+wallSprite.width+floor.sprite:getWidth()/2*scale-10,
 			prevy = (10-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10,
@@ -628,6 +628,11 @@ function postFloorChange()
 	end
 
 	completedRooms[mapy][mapx] = 1
+	currentid = tostring(mainMap[mapy][mapx].roomid)
+	if map.getFieldForRoom(currentid, 'autowin') then
+		completedRooms[mapy][mapx] = 1
+		unlockDoors()
+	end
 end
 
 function loadNextLevel(dontChangeTime)
@@ -2295,7 +2300,7 @@ end
 
 function createSpotlights()
 	spotlights = {}
-	if completedRooms[mapy][mapx]>=1 then return end
+	if room.spotlights~=nil then spotlights = room.spotlights return end
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
 			if room[i][j]~=nil and room[i][j]:instanceof(tiles.spotlightTile) then
@@ -2408,6 +2413,7 @@ function enterRoom(dir)
 	--set pushables of prev. room to pushables array, saving for next entry
 	room.pushables = pushables
 	room.animals = animals
+	room.spotlights = spotlights
 
 	local plusOne = true
 
@@ -2469,6 +2475,7 @@ function enterRoom(dir)
 	currentid = tostring(mainMap[mapy][mapx].roomid)
 	if map.getFieldForRoom(currentid, 'autowin') then
 		completedRooms[mapy][mapx] = 1
+		unlockDoors()
 	end
 	if loadTutorial or easyMode then
 		player.enterX = player.tileX
@@ -2966,7 +2973,9 @@ function love.keypressed(key, unicode)
 	    end
     	updateGameState(noPowerUpdate, false)
 	    if playerMoved() or waitTurn then
-	    	stepTrigger()
+	    	if stepTrigger() then
+	    		noPowerUpdate = false
+	    	end
 	    	for k = 1, #animals do
 				local ani = animals[k]
 				if not map.blocksMovementAnimal(ani) then
@@ -3508,7 +3517,6 @@ function resetPushables()
 end
 
 function checkCurrentTile()
-	checkWin()
 	checkPickups()
 end
 
@@ -3520,7 +3528,9 @@ function checkPickups()
 end
 
 function checkWin()
-	if room[player.tileY][player.tileX]~=nil and room[player.tileY][player.tileX]:instanceof(tiles.endTile) then room[player.tileY][player.tileX]:onEnter() end
+	if room[player.tileY][player.tileX]~=nil and room[player.tileY][player.tileX].enterCheckWin then
+		room[player.tileY][player.tileX]:onEnter()
+	end
 end
 
 function checkAllDeath()
@@ -3559,11 +3569,13 @@ end
 
 function stepTrigger()
 	player.character:immediatePostMove()
+	local updatePowerAfter = false
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
 			if room[i][j]~=nil then
 				room[i][j]:onStep(i, j)
 				if room[i][j].gone then
+					if room[i][j].canBePowered then updatePowerAfter = true end
 					room[i][j]:onEnd(i, j)
 					room[i][j] = nil
 				end
@@ -3575,6 +3587,7 @@ function stepTrigger()
 			for j = 1, roomLength do
 				if room[i][j]~=nil then
 					if room[i][j].gone then
+						if room[i][j].canBePowered then updatePowerAfter = true end
 						room[i][j]:onEnd(i, j)
 						room[i][j] = nil
 					end
@@ -3582,6 +3595,7 @@ function stepTrigger()
 			end
 		end
 	end
+
 	for i = 1, #pushables do
 		pushables[i]:onStep()
 	end
@@ -3589,7 +3603,14 @@ function stepTrigger()
     for i = 1, 4 do
     	accelerate()
     end
+
     resetPushables()
+
+    if updatePowerAfter then
+		return true
+	else
+		return false
+	end
 end
 
 --unlocks all rooms besides hidden rooms (secret rooms and special dungeons)

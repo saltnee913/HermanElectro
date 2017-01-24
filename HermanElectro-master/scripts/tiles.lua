@@ -7,7 +7,7 @@ tools = require('scripts.tools')
 local P = {}
 tiles = P
 
-P.tile = Object:new{yOffset = 0, canElevate = true, untoolable = false, blueHighlighted = false, attractsAnimals = false, scaresAnimals = false, formerPowered = nil, updatePowerOnEnter = false, text = "", updatePowerOnLeave = false, overlayable = false, overlaying = false, gone = false, lit = false, destroyed = false,
+P.tile = Object:new{yOffset = 0, canElevate = true, enterCheckWin = false, untoolable = false, blueHighlighted = false, attractsAnimals = false, scaresAnimals = false, formerPowered = nil, updatePowerOnEnter = false, text = "", updatePowerOnLeave = false, overlayable = false, overlaying = false, gone = false, lit = false, destroyed = false,
   blocksProjectiles = false, isVisible = true, rotation = 0, powered = false, blocksMovement = false, 
   blocksAnimalMovement = false, poweredNeighbors = {0,0,0,0}, blocksVision = false, dirSend = {1,1,1,1}, 
   dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile", emitsLight = false, litWhenPowered = false, intensity = 0.5, range = 25,
@@ -973,7 +973,7 @@ function P.hDoor:onLeave(player)
 end
 
 P.endTile = P.tile:new{name = "endTile", canBePowered = false, dirAccept = {0,0,0,0},
-sprite = love.graphics.newImage('Graphics/Tiles/endTile.png'), done = false}
+sprite = love.graphics.newImage('Graphics/Tiles/endTile.png'), done = false, enterCheckWin = true}
 function P.endTile:onEnter(player)
 	if map.floorInfo.finalFloor == true then
 		if roomHeight>12 and not editorMode then
@@ -2427,9 +2427,32 @@ function P.endDungeonExit:onEnter()
 	end
 end
 
-P.key = P.tile:new{name = "key", sprite = love.graphics.newImage('Graphics/key.png')}
-function P.key:onEnter()
-	player.keysHeld = player.keysHeld+1
+P.dungeonKey = P.tile:new{name = "dungeonKey", sprite = love.graphics.newImage('Graphics/key.png'), enterCheckWin = true}
+function P.dungeonKey:onEnter()
+	player.dungeonKeysHeld = player.dungeonKeysHeld+1
+	self.done = true
+	self.isCompleted = true
+	self.isVisible = false
+	self.gone = true
+end
+
+P.finalKey = P.tile:new{name = "finalKey", sprite = love.graphics.newImage('Graphics/finalkey.png'), enterCheckWin = true}
+function P.finalKey:onEnter()
+	player.finalKeysHeld = player.finalKeysHeld+1
+	spotlights = {}
+	self.done = true
+	self.isCompleted = true
+	self.isVisible = false
+	self.gone = true
+end
+
+P.finalKeyPowered = P.finalKey:new{name = "finalKeyPowered", poweredSprite = love.graphics.newImage('Graphics/finalkey.png'),
+sprite = love.graphics.newImage('Graphics/keyunpowered.png'),
+canBePowered = true, dirSend = {1,1,1,1}, dirAccept = {1,1,1,1}}
+function P.finalKeyPowered:onEnter()
+	if not self.powered then return end
+	player.finalKeysHeld = player.finalKeysHeld+1
+	spotlights = {}
 	self.done = true
 	self.isCompleted = true
 	self.isVisible = false
@@ -2441,27 +2464,27 @@ function P.gameWin:onEnter()
 	win()
 end
 
-P.keyGate = P.reinforcedGlass:new{name = "keyTile", sprite = love.graphics.newImage('Graphics/keytile.png'), untoolable = true}
-function P.keyGate:onEnter()
-	if player.keysHeld==3 then
+P.dungeonKeyGate = P.reinforcedGlass:new{name = "keyTile", sprite = love.graphics.newImage('Graphics/keytile.png'), untoolable = true}
+function P.dungeonKeyGate:onEnter()
+	if player.dungeonKeysHeld>=3 then
 		self:open()
 	elseif not self.destroyed then
 		P.reinforcedGlass:onEnter(player)
 	end
 end
-function P.keyGate:obstructsMovement()
+function P.dungeonKeyGate:obstructsMovement()
 	if math.abs(player.elevation-self:getHeight())<=3 then
 		return false
-	elseif player.keysHeld>=3 then
+	elseif player.dungeonKeysHeld>=3 then
 		return false
 	else
 		return true
 	end
 end
 --nothing can destroy the keyGate (including missiles) because of below code
-function P.keyGate:destroy()
+function P.dungeonKeyGate:destroy()
 end
-function P.keyGate:open()
+function P.dungeonKeyGate:open()
 	self.blocksProjectiles = false
 	self.blocksVision = false
 	self.sprite = self.destroyedSprite
@@ -2470,6 +2493,24 @@ function P.keyGate:open()
 	self.dirAccept = {0,0,0,0}
 	self.dirSend = {0,0,0,0}
 	self.overlay = nil
+end
+
+P.finalKeyGate = P.dungeonKeyGate:new{name = "finalKeyGate"}
+function P.finalKeyGate:onEnter()
+	if player.finalKeysHeld>=20 then
+		self:open()
+	elseif not self.destroyed then
+		P.reinforcedGlass:onEnter(player)
+	end
+end
+function P.finalKeyGate:obstructsMovement()
+	if math.abs(player.elevation-self:getHeight())<=3 then
+		return false
+	elseif player.finalKeysHeld>=3 then
+		return false
+	else
+		return true
+	end
 end
 
 P.gasPuddle = P.puddle:new{name = "gasPuddle", sprite = love.graphics.newImage('Graphics/gaspuddle.png')}
@@ -2806,8 +2847,8 @@ tiles[157] = P.supertoolQ4
 tiles[158] = P.supertoolQ5
 tiles[159] = P.endDungeonEnter
 tiles[160] = P.endDungeonExit
-tiles[161] = P.key
-tiles[162] = P.keyGate
+tiles[161] = P.dungeonKey
+tiles[162] = P.dungeonKeyGate
 tiles[163] = P.gasPuddle
 tiles[164] = P.halfWall
 tiles[165] = P.elevator
@@ -2835,5 +2876,10 @@ tiles[186] = P.spotlightTile
 tiles[187] = P.fastSpotlightTile
 tiles[188] = P.slowSpotlightTile
 tiles[189] = P.ramTile
+tiles[190] = P.finalKey
+tiles[191] = P.finalKeyGate
+tiles[192] = P.finalKeyPowered
+
+
 
 return tiles
