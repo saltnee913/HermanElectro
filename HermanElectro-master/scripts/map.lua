@@ -962,7 +962,7 @@ function P.generateMapWeighted()
 					roomChoiceid = util.chooseRandomElement(randomRoomsArray, 'mapGen')
 					roomChoice = roomsArray[roomChoiceid]
 					if infiniteLoopCheck > 1000 then
-						printMap()
+						printMap(newmap)
 						roomChoiceid = randomRoomsArray[1]
 						roomChoice = roomsArray[roomChoiceid]
 						break
@@ -1145,14 +1145,8 @@ function P.generateSixthFloor()
 		end
 		local roomid
 
-		if numRooms - #usedRooms == 4 then
+		if numRooms - #usedRooms == 1 then
 			roomid = util.chooseRandomElement(randomFinalRoomsArray, 'mapGen')
-		elseif numRooms - #usedRooms == 3 then
-			roomid = util.chooseRandomElement(randomTreasureRoomsArray, 'mapGen')
-		elseif numRooms - #usedRooms == 2 then
-			roomid = util.chooseRandomElement(randomDonationRoomsArray, 'mapGen')
-		elseif numRooms - #usedRooms == 1 then
-			roomid = util.chooseRandomElement(randomShopsArray, 'mapGen')
 		else
 			--creates an array of 5 possible choices with weights
 			local roomChoices = {}
@@ -1174,7 +1168,7 @@ function P.generateSixthFloor()
 					end
 				end
 
-				while not isRoomAllowed(roomChoice, usedRooms, newmap, choice) or notfitsToolsHeld do
+				while not isRoomAllowed(roomChoice, usedRooms, newmap, choice) or not fitsToolsHeld do
 					infiniteLoopCheck = infiniteLoopCheck + 1
 					roomChoiceid = util.chooseRandomElement(randomRoomsArray, 'mapGen')
 					roomChoice = roomsArray[roomChoiceid]
@@ -1188,9 +1182,10 @@ function P.generateSixthFloor()
 						end
 					end
 					if infiniteLoopCheck > 1000 then
-						printMap()
+						printMap(newmap)
 						roomChoiceid = randomRoomsArray[1]
 						roomChoice = roomsArray[roomChoiceid]
+						whichIN = 1
 						break
 					end
 				end
@@ -1240,7 +1235,7 @@ function P.generateSixthFloor()
 		--disabling blacklisting rooms until we have enough rooms
 		--blacklist[#blacklist+1] = roomid
 		setBlacklist[#setBlacklist+1] = P.getFieldForRoom(roomid, 'set')
-		usedRooms[#usedRooms+1] = roomid
+		usedRooms[#usedRooms+1] = '1'
 		newmap[choice.y][choice.x] = {roomid = roomid, room = P.createRoom(roomid), tint = {0,0,0}, isFinal = false, isInitial = false}
 	end
 	
