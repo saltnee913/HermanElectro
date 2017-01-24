@@ -2240,7 +2240,7 @@ P.supertoolQ3 = P.supertoolTile:new{name = "supertoolTileQ3", superQuality = 3}
 P.supertoolQ4 = P.supertoolTile:new{name = "supertoolTileQ4", superQuality = 4}
 P.supertoolQ5 = P.supertoolTile:new{name = "supertoolTileQ5", superQuality = 5}
 
-P.toolTile = P.tile:new{name = "toolTile", tool = nil, dirSend = {0,0,0,0}}
+P.toolTile = P.tile:new{name = "toolTile", tool = nil, toolId = 1, dirSend = {0,0,0,0}}
 function P.toolTile:onEnter()
 	tools.giveToolsByReference({self.tool})
 	self.isVisible = false
@@ -2253,15 +2253,20 @@ function P.toolTile:absoluteFinalUpdate()
 		self:updateSprite()
 	end
 end
+function P.toolTile:onLoad()
+	if self.tool == nil then
+		self.tool = tools[self.toolId]
+	end
+end
 P.toolTile.updateSprite = P.supertoolTile.updateSprite
 
-P.sawTile = P.toolTile:new{name = "sawTile", tool = tools.saw, sprite = tools.saw.image}
-P.wireCuttersTile = P.toolTile:new{name = "wirecuttersTile", tool = tools.wireCutters, sprite = tools.wireCutters.image}
-P.ladderTile = P.toolTile:new{name = "ladderTile", tool = tools.ladder, sprite = tools.ladder.image}
-P.brickTile = P.toolTile:new{name = "brickTile", tool = tools.brick, sprite = tools.brick.image}
-P.gunTile = P.toolTile:new{name = "gunTile", tool = tools.gun, sprite = tools.gun.image}
-P.spongeTile = P.toolTile:new{name = "spongeTile", tool = tools.sponge, sprite = tools.sponge.image}
-P.waterBottleTile = P.toolTile:new{name = "waterBottleTile", tool = tools.waterBottle, sprite = tools.waterBottle.image}
+P.sawTile = P.toolTile:new{name = "sawTile", toolId = 1, sprite = tools.saw.image}
+P.wireCuttersTile = P.toolTile:new{name = "wirecuttersTile", toolId = 3, sprite = tools.wireCutters.image}
+P.ladderTile = P.toolTile:new{name = "ladderTile", toolId = 2, sprite = tools.ladder.image}
+P.brickTile = P.toolTile:new{name = "brickTile", toolId = 6, sprite = tools.brick.image}
+P.gunTile = P.toolTile:new{name = "gunTile", toolId = 7, sprite = tools.gun.image}
+P.spongeTile = P.toolTile:new{name = "spongeTile", toolId = 5, sprite = tools.sponge.image}
+P.waterBottleTile = P.toolTile:new{name = "waterBottleTile", toolId = 4, sprite = tools.waterBottle.image}
 
 
 P.toolTaxTile = P.reinforcedGlass:new{name = "toolTaxTile", dirSend = {0,0,0,0}, sprite = love.graphics.newImage('Graphics/tooltaxtile.png'), tool = nil}
