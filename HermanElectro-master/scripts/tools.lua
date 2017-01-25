@@ -727,7 +727,7 @@ function P.giveSupertools(numTools,qualities)
 	P.giveRandomTools(0,numTools,qualities)
 end
 
-P.shovel = P.superTool:new{name = "shovel", description = "Let's get to the bottom of this.", baseRange = 1,
+P.shovel = P.superTool:new{name = "Shovel", description = "Dig deep", baseRange = 1,
 image = love.graphics.newImage('Graphics/Tools/shovel.png'), quality = 2}
 function P.shovel:usableOnNothing()
 	return true
@@ -737,7 +737,7 @@ function P.shovel:useToolNothing(tileY, tileX)
 	room[tileY][tileX] = tiles.pit:new()
 end
 
-P.electrifier = P.superTool:new{name = 'electrifier', description = "Let the love flow.", baseRange = 1, image = love.graphics.newImage('Graphics/electrifier.png'), quality = 3}
+P.electrifier = P.superTool:new{name = 'Moisten', description = "Let the love flow.", baseRange = 1, image = love.graphics.newImage('Graphics/electrifier.png'), quality = 3}
 function P.electrifier:usableOnTile(tile)
 	if not tile.destroyed and tile:instanceof(tiles.wall) and not tile:instanceof(tiles.metalWall) and not tile.electrified then
 		return true
@@ -749,7 +749,7 @@ function P.electrifier:useToolTile(tile)
 	tile:electrify()
 end
 
-P.delectrifier = P.superTool:new{name = 'delectrifier', description = "Low energy precedent", baseRange = 1, image = love.graphics.newImage('Graphics/electrifier2.png'), quality = 3}
+P.delectrifier = P.superTool:new{name = 'Delectrifier', description = "Low energy precedent", baseRange = 1, image = love.graphics.newImage('Graphics/electrifier2.png'), quality = 3}
 --You didn't have to cut me off?
 function P.delectrifier:usableOnTile(tile)
 	if tile.canBePowered then return true end
@@ -881,7 +881,7 @@ function P.doorstop:useToolTile(tile)
 	tile.stopped = true
 end
 
-P.missile = P.superTool:new{name = "Missile", description = "",
+P.missile = P.superTool:new{name = "Missile", description = "The hand of doom.",
 useWithArrowKeys = false, baseRange = 10,
 image = love.graphics.newImage('Graphics/Tools/missile.png'), quality = 4}
 function P.missile:usableOnTile(tile)
@@ -3785,7 +3785,7 @@ function P.buttonReroller:useToolNothing()
 end
 P.buttonReroller.useToolTile = P.buttonReroller.useToolNothing
 
-P.compass = P.superTool:new{name = "The Compass", description = "May you forever find your path", image = love.graphics.newImage('Graphics/compass.png'),
+P.compass = P.superTool:new{name = "The Compass", description = "Follow your heart.", image = love.graphics.newImage('Graphics/compass.png'),
 baseRange = 0, quality = 3}
 function P.compass:usableOnNothing()
 	return true
