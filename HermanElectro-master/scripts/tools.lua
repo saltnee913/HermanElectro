@@ -921,7 +921,7 @@ function P.meat:useToolTile(tile)
 	tile.overlay = tiles.meat
 end
 
-P.rottenMeat = P.superTool:new{name = "Worm's Meat", description = "All that remains" image = love.graphics.newImage('Graphics/Tools/rottenMeat.png'), quality = 3, baseRange = 1}
+P.rottenMeat = P.superTool:new{name = "Worm's Meat", description = "All that remains", image = love.graphics.newImage('Graphics/Tools/rottenMeat.png'), quality = 3, baseRange = 1}
 P.rottenMeat.usableOnNothing = P.meat.usableOnNothing
 function P.rottenMeat:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld-1
@@ -2468,7 +2468,7 @@ function P.inflation:useToolNothing()
 end
 P.inflation.useToolTile = P.inflation.useToolNothing
 
-P.wallDungeonDetector = P.superTool:new{name = "Wall-to-English Translator", description="" image = love.graphics.newImage('Graphics/wtetranslator.png'), description = "If these walls could talk....", baseRange = 0, quality = 2}
+P.wallDungeonDetector = P.superTool:new{name = "Wall-to-English Translator", description="", image = love.graphics.newImage('Graphics/wtetranslator.png'), description = "If these walls could talk....", baseRange = 0, quality = 2}
 function P.wallDungeonDetector:usableOnNothing()
 	return true
 end
