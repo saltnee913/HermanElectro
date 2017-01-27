@@ -842,7 +842,7 @@ function P.hDoor:obstructsMovement()
 	else return true end
 end
 function P.hDoor:obstructsMovementAnimal()
-	return true
+	return self.blocksMovement
 end
 
 P.vDoor= P.tile:new{name = "hDoor", blocksVision = true, canBePowered = false, dirSend = {0,0,0,0}, dirAccept = {0,0,0,0}, sprite = love.graphics.newImage('Graphics/door.png'), closedSprite = love.graphics.newImage('Graphics/door.png'), openSprite = love.graphics.newImage('Graphics/doorsopen.png')}

@@ -349,12 +349,13 @@ function P.crate:preTileEnter(tile)
 	end
 end
 
-P.giovanni = P.character:new{name = "Giovanni", description = "The Sorcerer", shiftPos = {x = -1, y = -1}, sprite = love.graphics.newImage('Graphics/giovanni.png'), sprite2 = love.graphics.newImage('Graphics/giovannighost.png')}
+P.giovanni = P.character:new{name = "Giovanni", description = "The Sorcerer", shiftPos = {x = -1, y = -1, z = -1}, sprite = love.graphics.newImage('Graphics/giovanni.png'), sprite2 = love.graphics.newImage('Graphics/giovannighost.png')}
 function P.giovanni:onKeyPressedChar(key)
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
 		if self.shiftPos.x==-1 then
 			self.shiftPos.x = player.tileX
 			self.shiftPos.y = player.tileY
+			self.shiftPos.z = player.elevation
 			log("Clone spawned!")
 		else
 			player.tileX = self.shiftPos.x
