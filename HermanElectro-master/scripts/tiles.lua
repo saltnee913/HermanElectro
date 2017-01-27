@@ -1019,10 +1019,27 @@ P.catTile = P.pitbullTile:new{name = "cat", animal = animalList[4], listIndex = 
 P.ramTile = P.pitbullTile:new{name = "ram", animal = animalList[14], listIndex = 14}
 
 P.spotlightTile = P.tile:new{name = "spotlight", spotlight = spotlightList.spotlight,
+baseTime = 3600, currTime = 0,
 sprite = love.graphics.newImage('Graphics/spotlightTile.png')}
+function P.spotlightTile:realtimeUpdate(dt, y, x)
+	if self.destroyed then return end
+	self.currTime = self.currTime+dt*1000
+	if self.currTime>self.baseTime then
+		self.currTime = 0
+
+		local thisTile = room[y][x]
+		local spotlightToAdd = thisTile.spotlight:new()
+		spotlightToAdd.x = tileToCoords(y,x).x
+		spotlightToAdd.y = tileToCoords(y,x).y
+		spotlightToAdd.dir = thisTile.rotation
+		spotlights[#spotlights+1] = spotlightToAdd
+	end
+end
+
 P.fastSpotlightTile = P.spotlightTile:new{name = "fastSpotlight", spotlight = spotlightList.fastSpotlight,
+baseTime = 1800,
 sprite = love.graphics.newImage('Graphics/fastSpotlightTile.png')}
-P.slowSpotlightTile = P.spotlightTile:new{name = "slowSpotlight", spotlight = spotlightList.slowSpotlight,
+P.slowSpotlightTile = P.spotlightTile:new{name = "slowSpotlight", spotlight = spotlightList.slowSpotlight, baseTime = 7200,
 sprite = love.graphics.newImage('Graphics/slowSpotlightTile.png')}
 
 P.vDoor= P.hDoor:new{name = "vDoor", sprite = love.graphics.newImage('Graphics3D/door.png'), closedSprite = love.graphics.newImage('Graphics/door.png'), openSprite = love.graphics.newImage('Graphics/doorsopen.png')}
