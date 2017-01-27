@@ -310,6 +310,7 @@ function love.load()
 		}
   	]]
 	if not loadedOnce then
+		tileUnit = 16
 		love.graphics.setBackgroundColor(0,0,0)
 		floorIndex = -1
 		stairsLocs = {}
@@ -715,6 +716,12 @@ function loadOpeningWorld()
 	roomLength = room.length
 	updateLight()
 	started = true
+
+	player.x = (player.tileX-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
+	player.y = (player.tileY-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10
+    myShader:send("player_x", player.x+getTranslation().x*floor.sprite:getWidth()*scale+(width2-width)/2)
+    myShader:send("player_y", player.y+getTranslation().y*floor.sprite:getWidth()*scale+(height2-height)/2)
+	
 	player.character:onBegin()
 	unlockDoors()
 	updateGameState()
@@ -763,6 +770,7 @@ end
 function prepareFloor()
 	animals = {}
 	pushables = {}
+	spotlights = {}
 	mapx = mainMap.initialX
 	mapy = mainMap.initialY
 	room = mainMap[mapy][mapx].room
@@ -1807,65 +1815,53 @@ function love.draw()
 					end
 				end
 			end
-			for k = 1, #spotlights do
-				local sl = spotlights[k]
-				if sl.tileY==j and sl.tileX==i then
-					local addY = 0
-					local yScale = scale
-					if room[j][i]~=nil and litTiles[j][i]~=0 then
-						addY = room[j][i]:getYOffset()
-						yScale = scale*(16-addY)/16
-					else addY=0 end
-					love.graphics.draw(spotlights[k].sprite, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (addY+(j-1)*floor.sprite:getHeight())*scale+wallSprite.height, 0, scale, yScale)							
-				end
-			end
 		end
 		for j = 1, roomHeight do
 			for i = 1, roomLength do
 				local isBlack=false
 			
 				if (room[j][i]~=nil or litTiles[j][i]==0) and not (litTiles[j][i]==1 and room[j][i]:instanceof(tiles.invisibleTile)) then
-				if room[j][i]~=nil then room[j][i]:updateSprite() end
-				local rot = 0
-				local tempi = i
-				local tempj = j
-				if j <= table.getn(room) or i <= table.getn(room[0]) then
-					if litTiles[j][i] == 0 then
-						toDraw = black
-						isBlack = true
-					elseif room[j][i]~=nil and (room[j][i].powered == false or not room[j][i].canBePowered) then
-						toDraw = room[j][i].sprite
-						rot = room[j][i].rotation
-					elseif room[j][i]~=nil then
-						toDraw = room[j][i].poweredSprite
-						rot = room[j][i].rotation
-					--else
-						--toDraw = floortile
+					if room[j][i]~=nil then room[j][i]:updateSprite() end
+					local rot = 0
+					local tempi = i
+					local tempj = j
+					if j <= table.getn(room) or i <= table.getn(room[0]) then
+						if litTiles[j][i] == 0 then
+							toDraw = black
+							isBlack = true
+						elseif room[j][i]~=nil and (room[j][i].powered == false or not room[j][i].canBePowered) then
+							toDraw = room[j][i].sprite
+							rot = room[j][i].rotation
+						elseif room[j][i]~=nil then
+							toDraw = room[j][i].poweredSprite
+							rot = room[j][i].rotation
+						--else
+							--toDraw = floortile
+						end
+						if room[j][i]~=nil and room[j][i]:getYOffset()~=0 then rot = 0 end
+						if rot == 1 or rot == 2 then
+							tempi = tempi + 1
+						end
+						if rot == 2 or rot == 3 then
+							tempj = tempj + 1
+						end
 					end
-					if room[j][i]~=nil and room[j][i]:getYOffset()~=0 then rot = 0 end
-					if rot == 1 or rot == 2 then
-						tempi = tempi + 1
+					if litTiles[j][i]==1 and room[j][i]~=nil and (not room[j][i].isVisible) and (not room[j][i]:instanceof(tiles.invisibleTile)) then
+						toDraw = invisibleTile
 					end
-					if rot == 2 or rot == 3 then
-						tempj = tempj + 1
-					end
-				end
-				if litTiles[j][i]==1 and room[j][i]~=nil and (not room[j][i].isVisible) and (not room[j][i]:instanceof(tiles.invisibleTile)) then
-					toDraw = invisibleTile
-				end
-				if (room[j][i]~=nil --[[and room[j][i].name~="pitbull" and room[j][i].nddddddddddwwame~="cat" and room[j][i].name~="pup"]]) or litTiles[j][i]==0 then
-					local addY = 0
-					if room[j][i]~=nil and litTiles[j][i]~=0 then
-						addY = room[j][i]:getYOffset()
-					end
-					if litTiles[j][i]==0 then addY = tiles.halfWall:getYOffset() end
-					if isBlack then
-						love.graphics.draw(toDraw, (tempi-1)*floor.sprite:getWidth()*scale+wallSprite.width-20, (addY+(tempj-1)*floor.sprite:getWidth())*scale+wallSprite.height-30,
-					  	rot * math.pi / 2, scale*24/toDraw:getWidth(), scale*24/toDraw:getWidth())
+					if (room[j][i]~=nil --[[and room[j][i].name~="pitbull" and room[j][i].nddddddddddwwame~="cat" and room[j][i].name~="pup"]]) or litTiles[j][i]==0 then
+						local addY = 0
+						if room[j][i]~=nil and litTiles[j][i]~=0 then
+							addY = room[j][i]:getYOffset()
+						end
+						if litTiles[j][i]==0 then addY = tiles.halfWall:getYOffset() end
+						if isBlack then
+							love.graphics.draw(toDraw, (tempi-1)*floor.sprite:getWidth()*scale+wallSprite.width-20, (addY+(tempj-1)*floor.sprite:getWidth())*scale+wallSprite.height-30,
+						  	rot * math.pi / 2, scale*24/toDraw:getWidth(), scale*24/toDraw:getWidth())
+						end
 					end
 				end
 			end
-		end
 		end
 		for i = 1, #animals do
 			if animals[i]~=nil and litTiles[animals[i].tileY][animals[i].tileX]==1 and not animals[i].pickedUp and animals[i].tileY==j then
@@ -1885,6 +1881,11 @@ function love.draw()
 		    	else toDraw = pushables[i].sprite end
 				love.graphics.draw(toDraw, pushablex, pushabley, 0, scale, scale)
 			end
+		end
+
+		for k = 1, #spotlights do
+			local sl = spotlights[k]
+			love.graphics.draw(sl.sprite, sl.x, sl.y, 0, scale, yScale)							
 		end
 
 		if tools.toolableAnimals~=nil then
@@ -2298,6 +2299,13 @@ function createElements()
 	createSpotlights()
 end
 
+function tileToCoords(tileY, tileX)
+	local ret = {x = 0, y = 0}
+	ret.x = (tileX-1)*scale*floor.sprite:getHeight()+wallSprite.width
+	ret.y = (tileY-1)*scale*floor.sprite:getHeight()+wallSprite.height
+	return ret
+end
+
 function createSpotlights()
 	spotlights = {}
 	if room.spotlights~=nil then spotlights = room.spotlights return end
@@ -2305,8 +2313,8 @@ function createSpotlights()
 		for j = 1, roomLength do
 			if room[i][j]~=nil and room[i][j].spotlight ~= nil then
 				local spotlightToAdd = room[i][j].spotlight:new()
-				spotlightToAdd.tileY = i
-				spotlightToAdd.tileX = j
+				spotlightToAdd.y = tileToCoords(i,j).y
+				spotlightToAdd.x = tileToCoords(i,j).x
 				spotlightToAdd.dir = room[i][j].rotation
 				spotlights[#spotlights+1] = spotlightToAdd
 			end
@@ -2585,8 +2593,14 @@ function love.update(dt)
 		tutorial.update(dt)
 	end
 
-	for i = 1, #spotlights do
-		spotlights[i]:update(dt)
+	--to check for removed spotlights
+	local slLen = #spotlights
+	for i = 1, slLen do
+		if spotlights[i]~=nil and not spotlights[i]:update(dt) then
+			table.remove(spotlights, i)
+			i = i-1
+			slLen = slLen-1
+		end
 	end
 	if #spotlights>0 then checkDeathSpotlights() end
 
@@ -2639,7 +2653,7 @@ function love.update(dt)
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
 			if room~=nil and room[i][j]~=nil then
-				room[i][j]:realtimeUpdate()
+				room[i][j]:realtimeUpdate(dt, i, j)
 			end
 		end
 	end
@@ -3340,7 +3354,11 @@ end
 
 function checkDeathSpotlights()
 	for i = 1, #spotlights do
-		if spotlights[i].tileX==player.tileX and spotlights[i].tileY==player.tileY then
+		local sx = spotlights[i].x
+		local sy = spotlights[i].y
+		local radius = tileUnit/2*scale
+		local spotDist = math.sqrt((sx-player.x)*(sx-player.x)+(sy-player.y)*(sy-player.y))
+		if spotDist<radius then
 			kill()
 			return
 		end

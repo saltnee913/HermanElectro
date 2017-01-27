@@ -219,7 +219,7 @@ function P.tool:getToolableTiles()
 		if dir==5 and self.range==0 then
 			local tileToCheck = {y = player.tileY, x = player.tileX}
 			if room[tileToCheck.y]~=nil then
-				if ((room[tileToCheck.y][tileToCheck.x] == nil or room[tileToCheck.y][tileToCheck.x]:usableOnNothing(tileToCheck.y, tileToCheck.x)) and (tileToCheck.x>0 and tileToCheck.x<=roomLength) and self:usableOnNothing(tileToCheck.y, tileToCheck.x))
+				if ((room[tileToCheck.y][tileToCheck.x] == nil or room[tileToCheck.y][tileToCheck.x]:usableOnNothing(tileToCheck.y, tileToCheck.x)) and player.elevation<=0 and (tileToCheck.x>0 and tileToCheck.x<=roomLength) and self:usableOnNothing(tileToCheck.y, tileToCheck.x))
 				or (room[tileToCheck.y][tileToCheck.x] ~= nil and self:usableOnTile(room[tileToCheck.y][tileToCheck.x], dist) and
 				player.elevation<=math.abs(room[tileToCheck.y][tileToCheck.x]:getHeight())) then
 					if litTiles[tileToCheck.y][tileToCheck.x]~=0 then
@@ -232,7 +232,7 @@ function P.tool:getToolableTiles()
 				local tileToCheck = {y = player.tileY + offset.y*dist, x = player.tileX + offset.x*dist}
 				if room[tileToCheck.y]~=nil then
 					if dir==5 and dist>1 then break end
-					if ((room[tileToCheck.y][tileToCheck.x] == nil or room[tileToCheck.y][tileToCheck.x]:usableOnNothing(tileToCheck.y, tileToCheck.x)) and (tileToCheck.x>0 and tileToCheck.x<=roomLength) and self:usableOnNothing(tileToCheck.y, tileToCheck.x))
+					if ((room[tileToCheck.y][tileToCheck.x] == nil or room[tileToCheck.y][tileToCheck.x]:usableOnNothing(tileToCheck.y, tileToCheck.x)) and player.elevation<=0 and (tileToCheck.x>0 and tileToCheck.x<=roomLength) and self:usableOnNothing(tileToCheck.y, tileToCheck.x))
 					or (room[tileToCheck.y][tileToCheck.x] ~= nil and self:usableOnTile(room[tileToCheck.y][tileToCheck.x], dist) and
 					player.elevation<=math.abs(room[tileToCheck.y][tileToCheck.x]:getHeight())) then
 						if litTiles[tileToCheck.y][tileToCheck.x]~=0 then
@@ -921,7 +921,11 @@ function P.meat:useToolTile(tile)
 	tile.overlay = tiles.meat
 end
 
+<<<<<<< HEAD
 P.rottenMeat = P.superTool:new{name = "Rotten Meat", description = "", image = love.graphics.newImage('Graphics/Tools/rottenMeat.png'), quality = 3, baseRange = 1}
+=======
+P.rottenMeat = P.superTool:new{name = "Worm's Meat", description = "All that remains", image = love.graphics.newImage('Graphics/Tools/rottenMeat.png'), quality = 3, baseRange = 1}
+>>>>>>> origin/master
 P.rottenMeat.usableOnNothing = P.meat.usableOnNothing
 function P.rottenMeat:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld-1
