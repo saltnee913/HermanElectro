@@ -2593,7 +2593,7 @@ function love.update(dt)
 		tutorial.update(dt)
 	end
 
-	--to check for removed spotlights
+	--[[to check for removed spotlights
 	local slLen = #spotlights
 	for i = 1, slLen do
 		if spotlights[i]~=nil and not spotlights[i]:update(dt) then
@@ -2601,6 +2601,9 @@ function love.update(dt)
 			i = i-1
 			slLen = slLen-1
 		end
+	end]]
+	for i = 1, #spotlights do
+		spotlights[i]:update(dt)
 	end
 	if #spotlights>0 then checkDeathSpotlights() end
 
@@ -3354,10 +3357,12 @@ end
 
 function checkDeathSpotlights()
 	for i = 1, #spotlights do
-		local sx = spotlights[i].x
-		local sy = spotlights[i].y
+		local sx = spotlights[i].x+tileUnit/2*scale
+		local sy = spotlights[i].y+tileUnit/2*scale
+		local playerx = tileToCoords(player.tileY, player.tileX).x+tileUnit/2*scale
+		local playery = tileToCoords(player.tileY, player.tileX).y+tileUnit/2*scale
 		local radius = tileUnit/2*scale
-		local spotDist = math.sqrt((sx-player.x)*(sx-player.x)+(sy-player.y)*(sy-player.y))
+		local spotDist = math.sqrt((sx-playerx)*(sx-playerx)+(sy-playery)*(sy-playery))
 		if spotDist<radius then
 			kill()
 			return

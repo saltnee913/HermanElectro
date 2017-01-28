@@ -1022,7 +1022,7 @@ P.spotlightTile = P.tile:new{name = "spotlight", spotlight = spotlightList.spotl
 baseTime = 3600, currTime = 0,
 sprite = love.graphics.newImage('Graphics/spotlightTile.png')}
 function P.spotlightTile:realtimeUpdate(dt, y, x)
-	if self.destroyed then return end
+	--[[if self.destroyed then return end
 	self.currTime = self.currTime+dt*1000
 	if self.currTime>self.baseTime then
 		self.currTime = 0
@@ -1033,7 +1033,7 @@ function P.spotlightTile:realtimeUpdate(dt, y, x)
 		spotlightToAdd.y = tileToCoords(y,x).y
 		spotlightToAdd.dir = thisTile.rotation
 		spotlights[#spotlights+1] = spotlightToAdd
-	end
+	end]]
 end
 
 P.fastSpotlightTile = P.spotlightTile:new{name = "fastSpotlight", spotlight = spotlightList.fastSpotlight,

@@ -27,10 +27,10 @@ function P.spotlight:update(dt)
 end
 
 function P.spotlight:checkBounds()
-	if self.y<tileToCoords(0,1).y then return false
-	elseif self.y>tileToCoords(roomHeight+1, 1).y then return false
-	elseif self.x<tileToCoords(1,0).x then return false
-	elseif self.x>tileToCoords(1, roomLength+1).x then return false end
+	if self.y<tileToCoords(1,1).y then self.dir=2
+	elseif self.y>tileToCoords(roomHeight, 1).y then self.dir=0
+	elseif self.x<tileToCoords(1,1).x then self.dir=1
+	elseif self.x>tileToCoords(1, roomLength).x then self.dir=3 end
 	return true
 end
 
