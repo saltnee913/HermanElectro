@@ -533,7 +533,7 @@ function goDownFloor()
 
 		mapx = stairsLocs[floorIndex].map.x
 		mapy = stairsLocs[floorIndex].map.y
-		room = mainMap[mapx][mapy].room
+		room = mainMap[mapy][mapx].room
 		player.tileX = stairsLocs[floorIndex].coords.x
 		player.tileY = stairsLocs[floorIndex].coords.y
 
@@ -565,7 +565,7 @@ function goUpFloor()
 
 		mapx = stairsLocs[floorIndex].map.x
 		mapy = stairsLocs[floorIndex].map.y
-		room = mainMap[mapx][mapy].room
+		room = mainMap[mapy][mapx].room
 		player.tileX = stairsLocs[floorIndex].coords.x
 		player.tileY = stairsLocs[floorIndex].coords.y
 
