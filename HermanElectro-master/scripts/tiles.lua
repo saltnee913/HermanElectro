@@ -2730,7 +2730,7 @@ end
 function P.atm:obstructsMovement()
 	if math.abs(player.elevation-self:getHeight())<=3 then
 		return false
-	elseif tools.coin.numHeld>0 then
+	elseif tools.coin.numHeld>0 or tools.luckyPenny.numHeld>0 then
 		return false
 	end
 	return true
@@ -2738,8 +2738,12 @@ end
 function P.atm:onEnter()
 	if math.abs(player.elevation-self:getHeight())<=3 then
 		return
-	elseif tools.coin.numHeld>0 then
-		tools.coin.numHeld = tools.coin.numHeld-1
+	elseif tools.coin.numHeld>0 or tools.luckyPenny.numHeld>0 then
+		if tools.coin.numHeld>0 then
+			tools.coin.numHeld = tools.coin.numHeld-1
+		elseif tools.luckyPenny.numHeld>0 then
+			tools.luckyPenny.numHeld = tools.luckyPenny.numHeld01
+		end
 		
 		local gaveTools = false
 		for i = 1, #self.map do

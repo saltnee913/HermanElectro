@@ -2794,6 +2794,7 @@ end
 
 P.pickaxe = P.superTool:new{name = "Pickaxe", description = "Get cracking!", baseRange = 1, image = love.graphics.newImage('Graphics/pickaxe.png'), quality = 3}
 function P.pickaxe:usableOnTile(tile)
+	if tile.untoolable then return false end
 	if tile:instanceof(tiles.wall) then return true end
 	return false
 end
