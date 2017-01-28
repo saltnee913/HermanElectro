@@ -310,7 +310,6 @@ function love.load()
 		}
   	]]
 	if not loadedOnce then
-		tileUnit = 16
 		love.graphics.setBackgroundColor(0,0,0)
 		floorIndex = -1
 		stairsLocs = {}
@@ -1815,6 +1814,18 @@ function love.draw()
 					end
 				end
 			end
+			for k = 1, #spotlights do
+				local sl = spotlights[k]
+				if sl.tileY==j and sl.tileX==i then
+					local addY = 0
+					local yScale = scale
+					if room[j][i]~=nil and litTiles[j][i]~=0 then
+						addY = room[j][i]:getYOffset()
+						yScale = scale*(16-addY)/16
+					else addY=0 end
+					love.graphics.draw(spotlights[k].sprite, (i-1)*floor.sprite:getWidth()*scale+wallSprite.width, (addY+(j-1)*floor.sprite:getHeight())*scale+wallSprite.height, 0, scale, yScale)							
+				end
+			end
 		end
 		for j = 1, roomHeight do
 			for i = 1, roomLength do
@@ -1881,11 +1892,6 @@ function love.draw()
 		    	else toDraw = pushables[i].sprite end
 				love.graphics.draw(toDraw, pushablex, pushabley, 0, scale, scale)
 			end
-		end
-
-		for k = 1, #spotlights do
-			local sl = spotlights[k]
-			love.graphics.draw(sl.sprite, sl.x, sl.y, 0, scale, yScale)							
 		end
 
 		if tools.toolableAnimals~=nil then
@@ -2299,13 +2305,6 @@ function createElements()
 	createSpotlights()
 end
 
-function tileToCoords(tileY, tileX)
-	local ret = {x = 0, y = 0}
-	ret.x = (tileX-1)*scale*floor.sprite:getHeight()+wallSprite.width
-	ret.y = (tileY-1)*scale*floor.sprite:getHeight()+wallSprite.height
-	return ret
-end
-
 function createSpotlights()
 	spotlights = {}
 	if room.spotlights~=nil then spotlights = room.spotlights return end
@@ -2313,8 +2312,8 @@ function createSpotlights()
 		for j = 1, roomLength do
 			if room[i][j]~=nil and room[i][j].spotlight ~= nil then
 				local spotlightToAdd = room[i][j].spotlight:new()
-				spotlightToAdd.y = tileToCoords(i,j).y
-				spotlightToAdd.x = tileToCoords(i,j).x
+				spotlightToAdd.tileY = i
+				spotlightToAdd.tileX = j
 				spotlightToAdd.dir = room[i][j].rotation
 				spotlights[#spotlights+1] = spotlightToAdd
 			end
@@ -2593,14 +2592,8 @@ function love.update(dt)
 		tutorial.update(dt)
 	end
 
-	--to check for removed spotlights
-	local slLen = #spotlights
-	for i = 1, slLen do
-		if spotlights[i]~=nil and not spotlights[i]:update(dt) then
-			table.remove(spotlights, i)
-			i = i-1
-			slLen = slLen-1
-		end
+	for i = 1, #spotlights do
+		spotlights[i]:update(dt)
 	end
 	if #spotlights>0 then checkDeathSpotlights() end
 
@@ -2653,7 +2646,7 @@ function love.update(dt)
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
 			if room~=nil and room[i][j]~=nil then
-				room[i][j]:realtimeUpdate(dt, i, j)
+				room[i][j]:realtimeUpdate()
 			end
 		end
 	end
@@ -3354,11 +3347,7 @@ end
 
 function checkDeathSpotlights()
 	for i = 1, #spotlights do
-		local sx = spotlights[i].x
-		local sy = spotlights[i].y
-		local radius = tileUnit/2*scale
-		local spotDist = math.sqrt((sx-player.x)*(sx-player.x)+(sy-player.y)*(sy-player.y))
-		if spotDist<radius then
+		if spotlights[i].tileX==player.tileX and spotlights[i].tileY==player.tileY then
 			kill()
 			return
 		end
