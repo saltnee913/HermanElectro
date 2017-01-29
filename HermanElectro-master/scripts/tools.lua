@@ -748,7 +748,8 @@ function P.electrifier:useToolTile(tile)
 	self.numHeld = self.numHeld - 1
 	tile:electrify()
 end
-
+--Low enerrgy precedent?
+--Insulate or Isolate? Insulin?
 P.delectrifier = P.superTool:new{name = 'Insulate', description = "Low energy precedent", baseRange = 1, image = love.graphics.newImage('Graphics/electrifier2.png'), quality = 3}
 --You didn't have to cut me off?
 function P.delectrifier:usableOnTile(tile)
@@ -2058,6 +2059,7 @@ function P.wireExtender:useToolTile(tile, tileY, tileX)
 end
 
 P.coin = P.superTool:new{name = "Coin", description = "All costs must be payed", image = love.graphics.newImage('Graphics/Tools/coin.png'), range = 1, quality = 2}
+--Don't pretend things are free --
 function P.coin:usableOnTile(tile)
 	if tile:instanceof(tiles.toolTaxTile) and not tile.destroyed then
 		return true
@@ -2460,7 +2462,7 @@ function P.lemonParty:spreadLemonade(tileY, tileX)
 	end
 end
 
-P.inflation = P.superTool:new{name = "inflation", description = "Double Your Dough", image = love.graphics.newImage('Graphics/inflation.png'), baseRange = 0, quality = 2}
+P.inflation = P.superTool:new{name = "Deflation", description = "The more you have, the more you get", image = love.graphics.newImage('Graphics/inflation.png'), baseRange = 0, quality = 2}
 function P.inflation:usableOnNothing()
 	return true
 end
@@ -2606,6 +2608,7 @@ function P.salt:useToolAnimal(animal)
 	end
 end
 
+--
 P.shell = P.superTool:new{name = "Shell", description = "Curl up and hide", image = love.graphics.newImage('Graphics/shell.png'), baseRange = 0, quality = 2}
 function P.shell:usableOnNothing()
 	return true
@@ -3098,7 +3101,7 @@ function P.portalPlacerDouble:useToolNothing(tileY, tileX)
 	end
 end
 
-P.spinningSword = P.superTool:new{name = "Spinning Sword", description = "", image = love.graphics.newImage('Graphics/spinningsword.png'), quality = 4, baseRange = 1}
+P.spinningSword = P.superTool:new{name = "Spinning Sword", description = "Turnt", image = love.graphics.newImage('Graphics/spinningsword.png'), quality = 4, baseRange = 1}
 P.spinningSword.getToolableTiles = P.tool.getToolableTilesBox
 function P.spinningSword:usableOnNothing()
 	return true
