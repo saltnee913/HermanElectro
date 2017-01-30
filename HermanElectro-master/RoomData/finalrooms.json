@@ -248,7 +248,8 @@
 "itemsNeeded":
         [
           [0,0,0,0,0,0,0]],
-      "itemsGivenOverride": [0,0,0,0,0,0,0]
+      "itemsGivenOverride": [0,0,0,0,0,0,0],
+  "dumb": true
 },
 
 "f12":
@@ -271,7 +272,8 @@
 "itemsNeeded":
         [
           [0,0,0,0,0,0,0]],
-      "itemsGivenOverride": [0,0,0,0,0,0,0]
+      "itemsGivenOverride": [0,0,0,0,0,0,0],
+"dumb": true
 },
 
 "f13":
@@ -409,7 +411,8 @@
 "itemsNeeded":
         [
           [0,0,0,0,0,0,0]],
-      "itemsGivenOverride": [0,0,0,0,0,0,0]
+      "itemsGivenOverride": [0,0,0,0,0,0,0],
+    "dumb": true
 }}, 
   "superFields":
   {
