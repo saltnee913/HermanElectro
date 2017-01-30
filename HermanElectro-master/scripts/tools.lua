@@ -18,6 +18,10 @@ function P.displayTools(toolArray)
 	for i = 1, #toolArray do
 		P.toolsShown[#P.toolsShown+1] = toolArray[i]
 	end
+
+	if P.toolsShown[1]~=nil and P.toolsShown[1]>tools.numNormalTools then
+		text.setToolDisplay(tools[P.toolsShown[1]])
+	end
 end
 
 --same as displayTools but takes input as [0,0,1,0,0,1,2] = 1 wire-cutters, 1 brick, 2 gun (same format as itemsNeeded)

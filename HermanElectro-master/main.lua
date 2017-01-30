@@ -26,6 +26,7 @@ tutorial = require('scripts.tutorial')
 toolManuel = require('scripts.toolManuel')
 unlocksScreen = require('scripts.unlocksScreen')
 stats = require('scripts.stats')
+text = require('scripts.text')
 loadedOnce = false
 
 saveDir = 'SaveData'
@@ -310,6 +311,9 @@ function love.load()
 		}
   	]]
 	if not loadedOnce then
+		fontFile = 'Resources/upheavtt.ttf'
+		textBackground = love.graphics.newImage('Graphics/textBackground.png')
+
 		tileUnit = 16
 		love.graphics.setBackgroundColor(0,0,0)
 		floorIndex = -1
@@ -2013,8 +2017,9 @@ function love.draw()
 				local supertool = tools[tools.toolsShown[i]]
 				love.graphics.draw(supertool.image, (i-math.ceil(#tools.toolsShown)/2-1)*toolScale*toolWidth+player.x, player.y - player.character.sprite:getHeight()*player.character.scale - tools[1].image:getHeight()*toolScale, 0, toolScale, toolScale)
 				if tools.toolsShown[i] > tools.numNormalTools then --if tool is a supertool
-					love.graphics.print(supertool.name, width/2-180, 110)
-					love.graphics.print(supertool.description, width/2-180, 120)
+					--love.graphics.setFont(fontFile)
+					--love.graphics.print(supertool.name, width/2-180, 110)
+					--love.graphics.print(supertool.description, width/2-180, 120)
 				end
 			end
 		else
@@ -2026,6 +2031,29 @@ function love.draw()
 
 	--everything after this will be drawn regardless of bigRoomTranslation (i.e., translation is undone in following line)
 	love.graphics.translate(-1*bigRoomTranslation.x*floor.sprite:getWidth()*scale, -1*bigRoomTranslation.y*floor.sprite:getHeight()*scale)
+
+
+	local textToDisplay = text.generateTextDisplay()
+	for i = 1, #textToDisplay do
+		--text object = to
+		local to = textToDisplay[i]
+		local text = to.text
+		love.graphics.setNewFont(fontFile, to.size)
+		local orientation = to.orientation
+		if orientation==nil then oriention = 'center' end
+
+		--draw background thing
+		--minus 5 to have space of 10 pixels around
+		local bLen = text:len()*to.size+10
+		local bHeight = to.size+10
+		local bX = width/2-bLen/2-5
+		local bY = to.y-5
+
+		love.graphics.draw(textBackground, bX, bY, 0, bLen/textBackground:getWidth(), bHeight/textBackground:getHeight())
+		
+		--print actual text
+		love.graphics.printf(text, to.x, to.y, to.width, orientation)
+	end
 
 	if not loadTutorial then
 		love.graphics.print(math.floor(gameTime.timeLeft), width/2-10, 20);
@@ -2065,6 +2093,7 @@ function love.draw()
 	end
 
 	if not editorMode then
+		love.graphics.setNewFont(12)
 		for i = 0, 6 do
 			love.graphics.setColor(255,255,255)
 			love.graphics.draw(toolWrapper, i*width/18, 0, 0, (width/18)/16, (width/18)/16)
@@ -2592,6 +2621,8 @@ function love.update(dt)
 	if loadTutorial then
 		tutorial.update(dt)
 	end
+
+	text.updateTextTimers(dt)
 
 	--[[to check for removed spotlights
 	local slLen = #spotlights
