@@ -4055,6 +4055,16 @@ end
 P.roomCompletionBonus.usableOnTile = P.roomCompletionBonus.usableOnNothing
 P.roomCompletionBonus.useToolTile = P.roomCompletionBonus.useToolNothing
 
+P.fishingPole = P.superTool:new{name = "Fishing Pole", description = "", quality = 2, baseRange = 5,
+image = love.graphics.newImage('Graphics/Tools/boxMagnet.png')}
+function P.fishingPole:usableOnTile(tile)
+	return tile:instanceof(tiles.puddle)
+end
+function P.fishingPole:useToolTile(tile, tileY, tileX)
+	room[tileY][tileX] = nil
+	tools.giveRandomTools(1)
+end
+
 P.numNormalTools = 7
 
 --[[ideas:
@@ -4235,6 +4245,7 @@ P:addTool(P.animalEnslaver)
 P:addTool(P.investmentBonus)
 P:addTool(P.completionBonus)
 P:addTool(P.roomCompletionBonus)
+P:addTool(P.fishingPole)
 
 P.resetTools()
 
