@@ -10,7 +10,7 @@ unlocks = P
 P.unlocksFile = 'unlocks.json'
 
 P.unlocksDisplay = {base = 3, timeLeft = 0, unlockToShow = 1}
-P.frame = love.graphics.newImage('Graphics/unlocksframe.png')
+P.frame = 'Graphics/unlocksframe.png'
 
 function P.updateTimer(dt)
 	P.unlocksDisplay.timeLeft = P.unlocksDisplay.timeLeft - dt
@@ -114,16 +114,16 @@ P.unlock = Object:new{name = 'generic', unlocked = false, sprite = tiles.fog.spr
 
 
 P.charUnlock = P.unlock:new{name = 'character', charIds = {1}}
---P.felixUnlock = P.charUnlock:new{name = 'felix the sharpshooter', charIds = {2}, sprite = love.graphics.newImage('Graphics/felix.png')}
+--P.felixUnlock = P.charUnlock:new{name = 'felix the sharpshooter', charIds = {2}, sprite = 'Graphics/felix.png'}
 P.erikUnlock = P.charUnlock:new{name = 'erik knighton', charIds = {4}, sprite = tiles.beggar.sprite}
-P.rammyUnlock = P.charUnlock:new{name = 'rammy the ram', charIds = {6}, sprite = love.graphics.newImage('Graphics/ram.png')}
-P.frederickUnlock = P.charUnlock:new{name = 'frederick the frog', charIds = {8}, sprite = love.graphics.newImage('Graphics/frederick.png')}
-P.batteryUnlock = P.charUnlock:new{name = 'bob the battery', charIds = {9}, sprite = love.graphics.newImage('Graphics/powersupply.png')}
+P.rammyUnlock = P.charUnlock:new{name = 'rammy the ram', charIds = {6}, sprite = 'Graphics/ram.png'}
+P.frederickUnlock = P.charUnlock:new{name = 'frederick the frog', charIds = {8}, sprite = 'Graphics/frederick.png'}
+P.batteryUnlock = P.charUnlock:new{name = 'bob the battery', charIds = {9}, sprite = 'Graphics/powersupply.png'}
 --P.carlaUnlock
-P.wizardUnlock = P.charUnlock:new{name = 'giovanni the sorceror', charIds = {11}, sprite = love.graphics.newImage('Graphics/giovannighost.png')}
---P.gabeUnlock = P.charUnlock:new{name = 'gabe the angel', charIds = {5}, sprite = love.graphics.newImage('Graphics/gabe.png')}
-P.lennyUnlock = P.charUnlock:new{name = 'lenny the ghost snail', charIds = {15}, sprite = love.graphics.newImage('Graphics/lenny.png')}
-P.fishUnlock = P.charUnlock:new{name = 'fish fish', charIds = {16}, sprite = love.graphics.newImage('Graphics/fish.png')}
+P.wizardUnlock = P.charUnlock:new{name = 'giovanni the sorceror', charIds = {11}, sprite = 'Graphics/giovannighost.png'}
+--P.gabeUnlock = P.charUnlock:new{name = 'gabe the angel', charIds = {5}, sprite = 'Graphics/gabe.png'}
+P.lennyUnlock = P.charUnlock:new{name = 'lenny the ghost snail', charIds = {15}, sprite = 'Graphics/lenny.png'}
+P.fishUnlock = P.charUnlock:new{name = 'fish fish', charIds = {16}, sprite = 'Graphics/fish.png'}
 
 
 P.tileUnlock = P.unlock:new{name = 'tile', tileIds = {1}, sprite = tiles.tile.sprite}
@@ -163,7 +163,7 @@ P.toolUnlock = P.unlock:new{name = 'tool', toolIds = {}, sprite = tools.saw.imag
 P.missileUnlock = P.unlock:new{name = 'missile', toolIds = {tools.missile}, sprite = tools.missile.image}
 P.toolDoublerUnlock = P.unlock:new{name = 'tool doubler', toolIds = {tools.toolDoubler}, sprite = tools.toolDoubler.image}
 P.reviveUnlock = P.unlock:new{name = 'revived!', toolIds = {tools.revive}, sprite = tools.revive.image}
-P.gabeUnlock = P.unlock:new{name = 'gabe the angel', toolIds = {tools.gabeMaker}, sprite = love.graphics.newImage('Graphics/gabe.png')}
+P.gabeUnlock = P.unlock:new{name = 'gabe the angel', toolIds = {tools.gabeMaker}, sprite = 'Graphics/gabe.png'}
 P.buttonFlipperUnlock = P.unlock:new{name = 'button flipper', toolIds = {tools.buttonFlipper}, sprite = tools.buttonFlipper.image}
 P.superGunUnlock = P.unlock:new{name = "super gun!", toolIds = {tools.superGun}, sprite = tools.superGun.image}
 P.suicideKingUnlock = P.unlock:new{name = "use with caution", toolIds = {tools.suicideKing}, sprite = tools.suicideKing.image}

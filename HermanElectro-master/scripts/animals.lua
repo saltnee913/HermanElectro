@@ -18,7 +18,7 @@ scale = (width - 2*wallSprite.width)/(20.3 * 16)*5/6
 --floor = tiles.tile
 
 --speed same as player (250)
-P.animal = Object:new{elevation = 0, scale = scale, yOffset = 0, frozen = false, trained = false, conductive = false, pickedUp = false, canDropTool = false, willDropTool = false, flying = false, triggered = false, waitCounter = 1, dead = false, name = "animal", tileX, tileY, prevx, prevy, prevTileX, prevTileY, x, y, speed = 250, width = 16*scale, height = 16*scale, sprite = love.graphics.newImage('Graphics/pitbull.png'), deadSprite = love.graphics.newImage('Graphics/pitbulldead.png'), tilesOn = {}, oldTilesOn = {}}
+P.animal = Object:new{elevation = 0, scale = scale, yOffset = 0, frozen = false, trained = false, conductive = false, pickedUp = false, canDropTool = false, willDropTool = false, flying = false, triggered = false, waitCounter = 1, dead = false, name = "animal", tileX, tileY, prevx, prevy, prevTileX, prevTileY, x, y, speed = 250, width = 16*scale, height = 16*scale, sprite = 'Graphics/pitbull.png', deadSprite = 'Graphics/pitbulldead.png', tilesOn = {}, oldTilesOn = {}}
 function P.animal:move(playerx, playery, room, isLit)
 	if player.attributes.shelled then
 		return
@@ -330,10 +330,10 @@ function P.pitbull:dropTool()
 	end
 end
 
-P.pup = P.animal:new{name = "pup", sprite = love.graphics.newImage('NewGraphics/pupDesign.png'), deadSprite = love.graphics.newImage('Graphics/pupdead.png'), canDropTool = true}
+P.pup = P.animal:new{name = "pup", sprite = 'NewGraphics/pupDesign.png', deadSprite = 'Graphics/pupdead.png', canDropTool = true}
 P.pup.dropTool = P.pitbull.dropTool
 
-P.snail = P.animal:new{name = "snail", sprite = love.graphics.newImage('NewGraphics/snailDesign.png'), deadSprite = love.graphics.newImage('Graphics/pupdead.png'), canDropTool = true}
+P.snail = P.animal:new{name = "snail", sprite = 'NewGraphics/snailDesign.png', deadSprite = 'Graphics/pupdead.png', canDropTool = true}
 function P.snail:onNullLeave()
 	return tiles.slime:new()
 end
@@ -364,7 +364,7 @@ function P.snail:dropTool()
 	end
 end
 
-P.conductiveSnail = P.snail:new{name = "conductiveSnail", sprite = love.graphics.newImage('NewGraphics/snailCDesign.png')}
+P.conductiveSnail = P.snail:new{name = "conductiveSnail", sprite = 'NewGraphics/snailCDesign.png'}
 function P.conductiveSnail:onNullLeave()
 	return tiles.conductiveSlime:new()
 end
@@ -385,7 +385,7 @@ function P.conductiveSnail:kill()
 	unlocks.unlockUnlockableRef(unlocks.lennyUnlock)
 end
 
-P.glueSnail = P.snail:new{name = "glueSnail", sprite = love.graphics.newImage('Graphics/gluesnail.png')}
+P.glueSnail = P.snail:new{name = "glueSnail", sprite = 'Graphics/gluesnail.png'}
 function P.glueSnail:onNullLeave()
 	return tiles.glue:new()
 end
@@ -404,30 +404,30 @@ function P.glueSnail:kill()
 	end
 end
 
-P.bat = P.animal:new{flying = true, name = "bat", sprite = love.graphics.newImage('Graphics/bat.png'), deadSprite = love.graphics.newImage('Graphics/pupdead.png')}
+P.bat = P.animal:new{flying = true, name = "bat", sprite = 'Graphics/bat.png', deadSprite = 'Graphics/pupdead.png'}
 function P.bat:checkDeath()
 end
 P.bat.willKillPlayer = P.pitbull.willKillPlayer
 
-P.cat = P.animal:new{name = "cat", sprite = love.graphics.newImage('NewGraphics/catDesign.png'), deadSprite = love.graphics.newImage('Graphics/catdead.png')}
+P.cat = P.animal:new{name = "cat", sprite = 'NewGraphics/catDesign.png', deadSprite = 'Graphics/catdead.png'}
 P.cat.move = P.animal.afraidPrimaryMove
 P.cat.secondaryMove = P.animal.afraidSecondaryMove
 
 P.bombBuddy = P.animal:new{name = "bombBuddy", scale = 0.6*scale,
-sprite = love.graphics.newImage('Graphics/bombBuddyFront.png'), deadSprite = love.graphics.newImage('Graphics/catdead.png')}
+sprite = 'Graphics/bombBuddyFront.png', deadSprite = 'Graphics/catdead.png'}
 function P.bombBuddy:explode()
 	room[self.tileY][self.tileX] = tiles.bomb:new()
 	room[self.tileY][self.tileX]:onEnd(self.tileY, self.tileX)
 	room[self.tileY][self.tileX] = nil
 end
 
-P.conductiveDog = P.pup:new{name = "conductiveDog", powered = false, conductive = true, sprite = love.graphics.newImage('Graphics/conductivedog.png')}
+P.conductiveDog = P.pup:new{name = "conductiveDog", powered = false, conductive = true, sprite = 'Graphics/conductivedog.png'}
 
-P.wife = P.cat:new{name = "wife", sprite = love.graphics.newImage('Graphics/wife.png')}
-P.son = P.cat:new{name = "son", sprite = love.graphics.newImage('Graphics/son.png')}
-P.daughter = P.cat:new{name = "daughter", sprite = love.graphics.newImage('Graphics/daughter.png')}
+P.wife = P.cat:new{name = "wife", sprite = 'Graphics/wife.png'}
+P.son = P.cat:new{name = "son", sprite = 'Graphics/son.png'}
+P.daughter = P.cat:new{name = "daughter", sprite = 'Graphics/daughter.png'}
 
-P.ram = P.animal:new{name = "Ram", sprite = love.graphics.newImage('Graphics/ram.png'), scale = 0.1*scale}
+P.ram = P.animal:new{name = "Ram", sprite = 'Graphics/ram.png', scale = 0.1*scale}
 P.ram.move = P.animal.afraidPrimaryMove
 function P.ram:tryMove(diffx, diffy)
 	self.tileX = self.tileX+diffx

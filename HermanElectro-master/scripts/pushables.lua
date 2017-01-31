@@ -5,7 +5,7 @@ require('scripts.object')
 local P = {}
 pushableList = P
 
-P.pushable = Object:new{name = "pushable", elevation = 0, charged = false, aitCounter=0, visible = true, sawable = true, canBeAccelerated = true, conductive = false, prevTileX = 0, prevTileY = 0, tileX = 0, tileY = 0, destroyed = false, sprite = love.graphics.newImage('Graphics/box.png')}
+P.pushable = Object:new{name = "pushable", elevation = 0, charged = false, aitCounter=0, visible = true, sawable = true, canBeAccelerated = true, conductive = false, prevTileX = 0, prevTileY = 0, tileX = 0, tileY = 0, destroyed = false, sprite = 'Graphics/box.png'}
 function P.pushable:onStep()
 end
 function P.pushable:destroy()
@@ -145,23 +145,23 @@ function P.pushable:checkDestruction()
 	end
 end
 
-P.box = P.pushable:new{name = "box", sprite = love.graphics.newImage('Graphics/box.png')}
+P.box = P.pushable:new{name = "box", sprite = 'Graphics/box.png'}
 
-P.playerBox = P.box:new{name = "playerBox", sprite = love.graphics.newImage('Graphics/playerBox.png'), sawable = true}
+P.playerBox = P.box:new{name = "playerBox", sprite = 'Graphics/playerBox.png', sawable = true}
 function P.playerBox:animalCanMove()
 	return self.destroyed
 end
 
-P.animalBox = P.box:new{name = "animalBox", sprite = love.graphics.newImage('Graphics/animalBox.png'), sawable = false}
+P.animalBox = P.box:new{name = "animalBox", sprite = 'Graphics/animalBox.png', sawable = false}
 function P.animalBox:playerCanMove()
 	return self.destroyed
 end
 
-P.conductiveBox = P.box:new{name = "conductiveBox", powered = false, poweredLastUpdate = false, sprite = love.graphics.newImage('Graphics/conductiveBox.png'), poweredSprite = love.graphics.newImage('Graphics/conductiveboxpowered.png'), conductive = true}
+P.conductiveBox = P.box:new{name = "conductiveBox", powered = false, poweredLastUpdate = false, sprite = 'Graphics/conductiveBox.png', poweredSprite = 'Graphics/conductiveboxpowered.png', conductive = true}
 
-P.boombox = P.box:new{name = "boombox", sprite = love.graphics.newImage('Graphics/boombox.png'), sawable = false}
+P.boombox = P.box:new{name = "boombox", sprite = 'Graphics/boombox.png', sawable = false}
 
-P.batteringRam = P.box:new{name = "batteringRam", sprite = love.graphics.newImage('Graphics/batteringram.png')}
+P.batteringRam = P.box:new{name = "batteringRam", sprite = 'Graphics/batteringram.png'}
 function P.batteringRam:move(mover)
 	if self.destroyed then
 		return true
@@ -284,7 +284,7 @@ function P.batteringRam:moveNoMover()
 	return false
 end
 
-P.bombBox = P.conductiveBox:new{name = "bombBox", sprite = love.graphics.newImage('Graphics/bombBox.png')}
+P.bombBox = P.conductiveBox:new{name = "bombBox", sprite = 'Graphics/bombBox.png'}
 function P.bombBox:destroy()
 	self.destroyed = true
 	y = self.tileX
@@ -305,14 +305,14 @@ function P.bombBox:destroy()
 	end
 end
 
-P.giftBox = P.box:new{name = "giftBox", sprite = love.graphics.newImage('Graphics/giftbox.png')}
+P.giftBox = P.box:new{name = "giftBox", sprite = 'Graphics/giftbox.png'}
 function P.giftBox:destroy()
 	tools.giveSupertools(1)
 	self.destroyed = true
 end
 
-P.jackInTheBox = P.conductiveBox:new{name = "jackInTheBox", sprite = love.graphics.newImage('Graphics/jackinthebox.png'),
-  poweredSprite = love.graphics.newImage('Graphics/jackintheboxpowered.png'), sawable = false}
+P.jackInTheBox = P.conductiveBox:new{name = "jackInTheBox", sprite = 'Graphics/jackinthebox.png',
+  poweredSprite = 'Graphics/jackintheboxpowered.png', sawable = false}
 function P.jackInTheBox:onStep()
 	if self.poweredLastUpdate then
 		for i = 1, #animals do
@@ -323,7 +323,7 @@ end
 
 P.invisibleBox = P.box:new{name = "invisibleBox", visible = false}
 
-P.lamp = P.conductiveBox:new{name = "lamp", sprite = love.graphics.newImage('Graphics/lamp.png'), poweredSprite = love.graphics.newImage('Graphics/lamp.png'), intensity = 1, charged = true, range = 200}
+P.lamp = P.conductiveBox:new{name = "lamp", sprite = 'Graphics/lamp.png', poweredSprite = 'Graphics/lamp.png', intensity = 1, charged = true, range = 200}
 
 pushableList[1] = P.pushable
 pushableList[2] = P.box

@@ -1871,11 +1871,12 @@ function love.draw()
 		end
 		for i = 1, #animals do
 			if animals[i]~=nil and litTiles[animals[i].tileY][animals[i].tileX]==1 and not animals[i].pickedUp and animals[i].tileY==j then
+				local animalSprite = util.getImage(animals[i].sprite)
 				animals[i].x = (animals[i].tileX-1)*tileHeight*scale+wallSprite.width
 		    	--animals[i].y = (animals[i].tileY-1)*tileWidth*scale+wallSprite.height-animals[i].elevation*scale
 		    	animals[i].y = (animals[i].tileY)*tileWidth*scale+wallSprite.height-animals[i].elevation*scale
-		    	animals[i].y = animals[i].y-animals[i].scale*animals[i].sprite:getHeight()
-				love.graphics.draw(animals[i].sprite, animals[i].x, animals[i].y, 0, animals[i].scale, animals[i].scale)
+		    	animals[i].y = animals[i].y-animals[i].scale*animalSprite:getHeight()
+				love.graphics.draw(animalSprite, animals[i].x, animals[i].y, 0, animals[i].scale, animals[i].scale)
 			end
 		end
 
@@ -1884,7 +1885,7 @@ function love.draw()
 		    	pushablex = (pushables[i].tileX-1)*tileHeight*scale+wallSprite.width
 		    	pushabley = (pushables[i].tileY-1)*tileWidth*scale+wallSprite.height-pushables[i].elevation*scale
 		    	if pushables[i].conductive and pushables[i].powered then toDraw = pushables[i].poweredSprite
-		    	else toDraw = pushables[i].sprite end
+		    	else toDraw = util.getImage(pushables[i].sprite) end
 				love.graphics.draw(toDraw, pushablex, pushabley, 0, scale, scale)
 			end
 		end
