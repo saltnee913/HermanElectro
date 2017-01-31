@@ -1020,7 +1020,7 @@ P.ramTile = P.pitbullTile:new{name = "ram", animal = animalList[14], listIndex =
 
 P.spotlightTile = P.tile:new{name = "spotlight", spotlight = spotlightList.spotlight,
 baseTime = 3600, currTime = 0,
-sprite = love.graphics.newImage('Graphics/spotlightTile.png')}
+sprite = 'Graphics/spotlightTile.png'}
 function P.spotlightTile:realtimeUpdate(dt, y, x)
 	--[[if self.destroyed then return end
 	self.currTime = self.currTime+dt*1000
@@ -2717,7 +2717,7 @@ function P.biscuit:onEnter(player)
 	self.gone = true
 end
 
-P.atm = P.concreteWall:new{name = "atm", sprite = love.graphics.newImage('Graphics/tooltaxtile.png'), untoolable = true,
+P.atm = P.concreteWall:new{name = "atm", sprite = 'Graphics/tooltaxtile.png', untoolable = true,
 map = {}}
 function P.atm:onLoad()
 	for i = 1, mapHeight do
