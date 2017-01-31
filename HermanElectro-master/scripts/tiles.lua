@@ -293,6 +293,7 @@ P.unbreakableCornerWire = P.unbreakableWire:new{name = "unbreakableCornerWire", 
 P.unbreakableCornerWire.flipDirection = P.cornerWire.flipDirection
 
 P.unbreakableTWire = P.unbreakableWire:new{name = "unbreakableTWire", dirSend = {0,1,1,1}, dirAccept = {0,1,1,1}, sprite = 'Graphics/unbreakabletwire.png', poweredSprite = 'Graphics/unbreakabletwire.png'}
+P.unbreakableTWire.flipDirection = P.tWire.flipDirection
 P.unbreakableCrossWire = P.unbreakableWire:new{dirSend = {0,0,0,0}, dirAccept = {1,1,1,1}, name = "unbreakableCrossWire", sprite = 'Graphics/unbreakablecrosswires.png', poweredSprite = 'Graphics/unbreakablecrosswires.png'}
 P.unbreakableCrossWire.updateTile = P.crossWire.updateTile
 P.unbreakablePowerSupply = P.powerSupply:new{name = "unbreakablePowerSupply", sprite = 'Graphics/unbreakablepowersupply.png', poweredSprite = 'Graphics/unbreakablepowersupply.png'}
