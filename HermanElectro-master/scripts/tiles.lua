@@ -2632,7 +2632,7 @@ function P.unlockTile:postPowerUpdate(i, j)
 	local unlockNum = (i-1)*roomLength+j
 	if unlocks[unlockNum]~=nil then
 		self.sprite = unlocks[unlockNum].sprite
-		if unlocks[unlockNum].unlocked then
+		if not unlocks[unlockNum].unlocked then
 			self.overlay = P.darkOverlay
 		else
 			self.overlay = nil
