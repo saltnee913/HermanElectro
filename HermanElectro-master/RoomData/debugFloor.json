@@ -63,6 +63,13 @@
 			"requirements": {
 
 			}
+		},
+		"finalPuzzles":
+		{
+			"filePath": "RoomData/endpuzzles.json",
+			"requirements": {
+
+			}
 		}
 	},
 	"data":

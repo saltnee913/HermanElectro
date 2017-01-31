@@ -26,6 +26,7 @@ tutorial = require('scripts.tutorial')
 toolManuel = require('scripts.toolManuel')
 unlocksScreen = require('scripts.unlocksScreen')
 stats = require('scripts.stats')
+text = require('scripts.text')
 loadedOnce = false
 
 saveDir = 'SaveData'
@@ -310,8 +311,18 @@ function love.load()
 		}
   	]]
 	if not loadedOnce then
+		fontFile = 'Resources/upheavtt.ttf'
+		textBackground = love.graphics.newImage('Graphics/textBackground.png')
+
+		tileUnit = 16
 		love.graphics.setBackgroundColor(0,0,0)
 		floorIndex = -1
+		stairsLocs = {}
+		--1 is opening world, 2-7 are floors 1-6, 8 is dungeon
+		for i = 1, 8 do
+			stairsLocs[i] = {map = {x = 0, y = 0}, coords = {x = 0, y = 0}}
+		end
+
 		--started = false
 		shaderTriggered = true
 		mushroomMode = falsed
@@ -330,6 +341,7 @@ function love.load()
 		blue = love.graphics.newImage('Graphics/blue.png')
 		gray = love.graphics.newImage('Graphics/gray.png')
 		white = love.graphics.newImage('Graphics/white.png')
+		linuxTest = love.graphics.newImage('Graphics/lINuXtEsT.png')
 		toolWrapper = love.graphics.newImage('GraphicsEli/marble1.png')
 		titlescreenCounter = 0
 		--floortile = love.graphics.newImage('Graphics/floortile.png')
@@ -445,7 +457,7 @@ function love.load()
 		setChar = player.character
 	end
 
-	player = { 	baseLuckBonus = 0, keysHeld = 0, biscuitHeld = false, clonePos = {x = 0, y = 0, z = 0}, dead = false, elevation = 0, safeFromAnimals = false, bonusRange = 0, active = true, waitCounter = 0, tileX = 10, tileY = 6, x = (1-1)*scale*tileWidth+wallSprite.width+tileWidth/2*scale-10, 
+	player = { 	baseLuckBonus = 0, dungeonKeysHeld = 0, finalKeysHeld = 0, biscuitHeld = false, clonePos = {x = 0, y = 0, z = 0}, dead = false, elevation = 0, safeFromAnimals = false, bonusRange = 0, active = true, waitCounter = 0, tileX = 10, tileY = 6, x = (1-1)*scale*tileWidth+wallSprite.width+tileWidth/2*scale-10, 
 			y = (6-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10, prevTileX = 3, prevTileY 	= 10,
 			prevx = (3-1)*scale*tileWidth+wallSprite.width+tileWidth/2*scale-10,
 			prevy = (10-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10,
@@ -515,6 +527,7 @@ function loadRandoms()
 end
 
 function goDownFloor()
+	stairsLocs[floorIndex] = {map = {x = mapx, y = mapy}, coords = {x = player.tileX, y = player.tileY}}
 	if map.loadedMaps[floorIndex+1] == nil then
 		loadNextLevel()
 	else
@@ -523,27 +536,18 @@ function goDownFloor()
 		map.floorInfo = mapToLoad.floorInfo
 		mainMap = mapToLoad.map
 		mapHeight = mapToLoad.mapHeight
-		for i = 1, mapHeight do
-			for j = 1, mapHeight do
-				if mainMap[i][j]~=nil and mainMap[i][j].isInitial then
-					mapy = i
-					mapx = j
-					room = mainMap[i][j].room
-				end
-			end
-		end
+
+		mapx = stairsLocs[floorIndex].map.x
+		mapy = stairsLocs[floorIndex].map.y
+		room = mainMap[mapy][mapx].room
+		player.tileX = stairsLocs[floorIndex].coords.x
+		player.tileY = stairsLocs[floorIndex].coords.y
+
 		roomHeight = mapToLoad.roomHeight
 		roomLength = mapToLoad.roomLength
 		completedRooms = mapToLoad.completedRooms
 		visibleMap = mapToLoad.visibleMap
-		for i = 1, roomHeight do
-			for j = 1, roomLength do
-				if room[i][j]~=nil and room[i][j]:instanceof(tiles.upTunnel) then
-					player.tileY = i
-					player.tileX = j
-				end
-			end
-		end
+
 		animals = {}
 		pushables = {}
 		prevRoom = room
@@ -556,6 +560,7 @@ function goDownFloor()
 end
 
 function goUpFloor()
+	stairsLocs[floorIndex] = {map = {x = mapx, y = mapy}, coords = {x = player.tileX, y = player.tileY}}
 	if floorIndex == 2 then
 		goToMainMenu()
 	else
@@ -563,28 +568,17 @@ function goUpFloor()
 		floorIndex = floorIndex - 1
 		map.floorInfo = mapToLoad.floorInfo
 		mainMap = mapToLoad.map
-		mapHeight = mapToLoad.mapHeight
-		for i = 1, mapHeight do
-			for j = 1, mapHeight do
-				if mainMap[i][j]~=nil and map.isRoomType(mainMap[i][j].roomid, 'finalRooms') then
-					mapy = i
-					mapx = j
-					room = mainMap[i][j].room
-				end
-			end
-		end
+
+		mapx = stairsLocs[floorIndex].map.x
+		mapy = stairsLocs[floorIndex].map.y
+		room = mainMap[mapy][mapx].room
+		player.tileX = stairsLocs[floorIndex].coords.x
+		player.tileY = stairsLocs[floorIndex].coords.y
+
 		roomHeight = mapToLoad.roomHeight
 		roomLength = mapToLoad.roomLength
 		completedRooms = mapToLoad.completedRooms
 		visibleMap = mapToLoad.visibleMap
-		for i = 1, roomHeight do
-			for j = 1, roomLength do
-				if room[i][j]~=nil and room[i][j]:instanceof(tiles.tunnel) then
-					player.tileY = i
-					player.tileX = j
-				end
-			end
-		end
 		createElements()
 		prevRoom = room
 		litTiles = {}
@@ -596,6 +590,11 @@ function goUpFloor()
 	postFloorChange()
 end
 function goToFloor(floorNum)
+	local stairsLocsIndex = floorIndex
+	if floorIndex==1 then
+		stairsLocsIndex = 8
+	end
+	stairsLocs[stairsLocsIndex] = {map = {x = mapx, y = mapy}, coords = {x = player.tileX, y = player.tileY}}
 	floorIndex = floorNum
 	local mapToLoad = map.loadedMaps[floorIndex]
 	mainMap = mapToLoad.map
@@ -636,6 +635,11 @@ function postFloorChange()
 	end
 
 	completedRooms[mapy][mapx] = 1
+	currentid = tostring(mainMap[mapy][mapx].roomid)
+	if map.getFieldForRoom(currentid, 'autowin') then
+		completedRooms[mapy][mapx] = 1
+		unlockDoors()
+	end
 end
 
 function loadNextLevel(dontChangeTime)
@@ -698,14 +702,32 @@ function loadOpeningWorld()
 	floorIndex = -1
 	loadRandoms()
 	loadLevel('RoomData/openingworld.json')
-	roomHeight = room.height
-	roomLength = room.length
-	player.tileX = math.floor(roomLength/2)
-	player.tileY = roomHeight-3
+
+	if stairsLocs[1].map.x~=0 then
+		mapx = stairsLocs[1].map.x
+		mapy = stairsLocs[1].map.y
+		room = mainMap[mapy][mapx].room
+		player.tileX = stairsLocs[1].coords.x
+		player.tileY = stairsLocs[1].coords.y
+	else
+		--default coordinates
+		player.tileX = math.floor(roomLength/2)
+		player.tileY = roomHeight-3
+	end
+
 	player.prevTileX = player.tileX
 	player.prevTileY = player.tileY
+
+	roomHeight = room.height
+	roomLength = room.length
 	updateLight()
 	started = true
+
+	player.x = (player.tileX-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
+	player.y = (player.tileY-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
+    myShader:send("player_x", player.x+getTranslation().x*tileWidth*scale+(width2-width)/2)
+    myShader:send("player_y", player.y+getTranslation().y*tileWidth*scale+(height2-height)/2)
+	
 	player.character:onBegin()
 	unlockDoors()
 	updateGameState()
@@ -754,6 +776,7 @@ end
 function prepareFloor()
 	animals = {}
 	pushables = {}
+	spotlights = {}
 	mapx = mainMap.initialX
 	mapy = mainMap.initialY
 	room = mainMap[mapy][mapx].room
@@ -850,6 +873,7 @@ function kill()
 			for j = 1, #pushables do
 				pushables[j]:destroy()
 			end
+			spotlights = {}
 			updateGameState(false)
 			log("Revived!")
 			stats.losses[player.character.name] = stats.losses[player.character.name]-1
@@ -1797,65 +1821,53 @@ function love.draw()
 					end
 				end
 			end
-			for k = 1, #spotlights do
-				local sl = spotlights[k]
-				if sl.tileY==j and sl.tileX==i then
-					local addY = 0
-					local yScale = scale
-					if room[j][i]~=nil and litTiles[j][i]~=0 then
-						addY = room[j][i]:getYOffset()
-						yScale = scale*(16-addY)/16
-					else addY=0 end
-					love.graphics.draw(white, (i-1)*tileWidth*scale+wallSprite.width, (addY+(j-1)*tileHeight)*scale+wallSprite.height, 0, scale, yScale)							
-				end
-			end
 		end
 		for j = 1, roomHeight do
 			for i = 1, roomLength do
 				local isBlack=false
 			
 				if (room[j][i]~=nil or litTiles[j][i]==0) and not (litTiles[j][i]==1 and room[j][i]:instanceof(tiles.invisibleTile)) then
-				if room[j][i]~=nil then room[j][i]:updateSprite() end
-				local rot = 0
-				local tempi = i
-				local tempj = j
-				if j <= table.getn(room) or i <= table.getn(room[0]) then
-					if litTiles[j][i] == 0 then
-						toDraw = black
-						isBlack = true
-					elseif room[j][i]~=nil and (room[j][i].powered == false or not room[j][i].canBePowered) then
-						toDraw = room[j][i].sprite
-						rot = room[j][i].rotation
-					elseif room[j][i]~=nil then
-						toDraw = room[j][i].poweredSprite
-						rot = room[j][i].rotation
-					--else
-						--toDraw = floortile
+					if room[j][i]~=nil then room[j][i]:updateSprite() end
+					local rot = 0
+					local tempi = i
+					local tempj = j
+					if j <= table.getn(room) or i <= table.getn(room[0]) then
+						if litTiles[j][i] == 0 then
+							toDraw = black
+							isBlack = true
+						elseif room[j][i]~=nil and (room[j][i].powered == false or not room[j][i].canBePowered) then
+							toDraw = room[j][i].sprite
+							rot = room[j][i].rotation
+						elseif room[j][i]~=nil then
+							toDraw = room[j][i].poweredSprite
+							rot = room[j][i].rotation
+						--else
+							--toDraw = floortile
+						end
+						if room[j][i]~=nil and room[j][i]:getYOffset()~=0 then rot = 0 end
+						if rot == 1 or rot == 2 then
+							tempi = tempi + 1
+						end
+						if rot == 2 or rot == 3 then
+							tempj = tempj + 1
+						end
 					end
-					if room[j][i]~=nil and room[j][i]:getYOffset()~=0 then rot = 0 end
-					if rot == 1 or rot == 2 then
-						tempi = tempi + 1
+					if litTiles[j][i]==1 and room[j][i]~=nil and (not room[j][i].isVisible) and (not room[j][i]:instanceof(tiles.invisibleTile)) then
+						toDraw = invisibleTile
 					end
-					if rot == 2 or rot == 3 then
-						tempj = tempj + 1
-					end
-				end
-				if litTiles[j][i]==1 and room[j][i]~=nil and (not room[j][i].isVisible) and (not room[j][i]:instanceof(tiles.invisibleTile)) then
-					toDraw = invisibleTile
-				end
-				if (room[j][i]~=nil --[[and room[j][i].name~="pitbull" and room[j][i].nddddddddddwwame~="cat" and room[j][i].name~="pup"]]) or litTiles[j][i]==0 then
-					local addY = 0
-					if room[j][i]~=nil and litTiles[j][i]~=0 then
-						addY = room[j][i]:getYOffset()
-					end
-					if litTiles[j][i]==0 then addY = tiles.halfWall:getYOffset() end
-					if isBlack then
-						love.graphics.draw(toDraw, (tempi-1)*tileWidth*scale+wallSprite.width-20, (addY+(tempj-1)*tileWidth)*scale+wallSprite.height-30,
-					  	rot * math.pi / 2, scale*24/toDraw:getWidth(), scale*24/toDraw:getWidth())
+					if (room[j][i]~=nil --[[and room[j][i].name~="pitbull" and room[j][i].nddddddddddwwame~="cat" and room[j][i].name~="pup"]]) or litTiles[j][i]==0 then
+						local addY = 0
+						if room[j][i]~=nil and litTiles[j][i]~=0 then
+							addY = room[j][i]:getYOffset()
+						end
+						if litTiles[j][i]==0 then addY = tiles.halfWall:getYOffset() end
+						if isBlack then
+							love.graphics.draw(toDraw, (tempi-1)*tileWidth*scale+wallSprite.width-20, (addY+(tempj-1)*tileWidth)*scale+wallSprite.height-30,
+						  	rot * math.pi / 2, scale*24/toDraw:getWidth(), scale*24/toDraw:getWidth())
+						end
 					end
 				end
 			end
-		end
 		end
 		for i = 1, #animals do
 			if animals[i]~=nil and litTiles[animals[i].tileY][animals[i].tileX]==1 and not animals[i].pickedUp and animals[i].tileY==j then
@@ -1875,6 +1887,11 @@ function love.draw()
 		    	else toDraw = pushables[i].sprite end
 				love.graphics.draw(toDraw, pushablex, pushabley, 0, scale, scale)
 			end
+		end
+
+		for k = 1, #spotlights do
+			local sl = spotlights[k]
+			love.graphics.draw(sl.sprite, sl.x, sl.y, 0, scale, yScale)							
 		end
 
 		if tools.toolableAnimals~=nil then
@@ -2006,8 +2023,9 @@ function love.draw()
 				local supertool = tools[tools.toolsShown[i]]
 				love.graphics.draw(util.getImage(supertool.image), (i-math.ceil(#tools.toolsShown)/2-1)*toolScale*toolWidth+player.x, player.y - charSprite:getHeight()*player.character.scale - util.getImage(tools[1].image):getHeight()*toolScale, 0, toolScale, toolScale)
 				if tools.toolsShown[i] > tools.numNormalTools then --if tool is a supertool
-					love.graphics.print(supertool.name, width/2-180, 110)
-					love.graphics.print(supertool.description, width/2-180, 120)
+					--love.graphics.setFont(fontFile)
+					--love.graphics.print(supertool.name, width/2-180, 110)
+					--love.graphics.print(supertool.description, width/2-180, 120)
 				end
 			end
 		else
@@ -2019,6 +2037,29 @@ function love.draw()
 
 	--everything after this will be drawn regardless of bigRoomTranslation (i.e., translation is undone in following line)
 	love.graphics.translate(-1*bigRoomTranslation.x*tileWidth*scale, -1*bigRoomTranslation.y*tileHeight*scale)
+
+
+	local textToDisplay = text.generateTextDisplay()
+	for i = 1, #textToDisplay do
+		--text object = to
+		local to = textToDisplay[i]
+		local text = to.text
+		love.graphics.setNewFont(fontFile, to.size)
+		local orientation = to.orientation
+		if orientation==nil then oriention = 'center' end
+
+		--draw background thing
+		--minus 5 to have space of 10 pixels around
+		local bLen = text:len()*to.size+10
+		local bHeight = to.size+10
+		local bX = width/2-bLen/2-5
+		local bY = to.y-5
+
+		love.graphics.draw(textBackground, bX, bY, 0, bLen/textBackground:getWidth(), bHeight/textBackground:getHeight())
+		
+		--print actual text
+		love.graphics.printf(text, to.x, to.y, to.width, orientation)
+	end
 
 	if not loadTutorial then
 		love.graphics.print(math.floor(gameTime.timeLeft), width/2-10, 20);
@@ -2058,6 +2099,7 @@ function love.draw()
 	end
 
 	if not editorMode then
+		love.graphics.setNewFont(12)
 		for i = 0, 6 do
 			love.graphics.setColor(255,255,255)
 			love.graphics.draw(toolWrapper, i*width/18, 0, 0, (width/18)/16, (width/18)/16)
@@ -2292,14 +2334,22 @@ function createElements()
 	createSpotlights()
 end
 
+function tileToCoords(tileY, tileX)
+	local ret = {x = 0, y = 0}
+	ret.x = (tileX-1)*scale*tileHeight+wallSprite.width
+	ret.y = (tileY-1)*scale*tileHeight+wallSprite.height
+	return ret
+end
+
 function createSpotlights()
 	spotlights = {}
+	if room.spotlights~=nil then spotlights = room.spotlights return end
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
-			if room[i][j]~=nil and room[i][j]:instanceof(tiles.spotlightTile) then
+			if room[i][j]~=nil and room[i][j].spotlight ~= nil then
 				local spotlightToAdd = room[i][j].spotlight:new()
-				spotlightToAdd.tileY = i
-				spotlightToAdd.tileX = j
+				spotlightToAdd.y = tileToCoords(i,j).y
+				spotlightToAdd.x = tileToCoords(i,j).x
 				spotlightToAdd.dir = room[i][j].rotation
 				spotlights[#spotlights+1] = spotlightToAdd
 			end
@@ -2406,6 +2456,7 @@ function enterRoom(dir)
 	--set pushables of prev. room to pushables array, saving for next entry
 	room.pushables = pushables
 	room.animals = animals
+	room.spotlights = spotlights
 
 	local plusOne = true
 
@@ -2467,6 +2518,7 @@ function enterRoom(dir)
 	currentid = tostring(mainMap[mapy][mapx].roomid)
 	if map.getFieldForRoom(currentid, 'autowin') then
 		completedRooms[mapy][mapx] = 1
+		unlockDoors()
 	end
 	if loadTutorial or easyMode then
 		player.enterX = player.tileX
@@ -2576,6 +2628,17 @@ function love.update(dt)
 		tutorial.update(dt)
 	end
 
+	text.updateTextTimers(dt)
+
+	--[[to check for removed spotlights
+	local slLen = #spotlights
+	for i = 1, slLen do
+		if spotlights[i]~=nil and not spotlights[i]:update(dt) then
+			table.remove(spotlights, i)
+			i = i-1
+			slLen = slLen-1
+		end
+	end]]
 	for i = 1, #spotlights do
 		spotlights[i]:update(dt)
 	end
@@ -2630,7 +2693,7 @@ function love.update(dt)
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
 			if room~=nil and room[i][j]~=nil then
-				room[i][j]:realtimeUpdate()
+				room[i][j]:realtimeUpdate(dt, i, j)
 			end
 		end
 	end
@@ -2737,6 +2800,7 @@ function love.keypressed(key, unicode)
 		if key=="escape" then
 			gamePaused = false
 		elseif key=="m" then
+			stairsLocs[1] = {map = {x = 0, y = 0}, coords = {x = 0, y = 0}}
 			goToMainMenu()
 		elseif key=="t" then
 			toolManuel.open()
@@ -2745,6 +2809,7 @@ function love.keypressed(key, unicode)
 	end
 	if won then
 		if key=="m" then
+			stairsLocs[1] = {map = {x = 0, y = 0}, coords = {x = 0, y = 0}}
 			goToMainMenu()
 		end
 	end
@@ -2962,7 +3027,9 @@ function love.keypressed(key, unicode)
 	    end
     	updateGameState(noPowerUpdate, false)
 	    if playerMoved() or waitTurn then
-	    	stepTrigger()
+	    	if stepTrigger() then
+	    		noPowerUpdate = false
+	    	end
 	    	for k = 1, #animals do
 				local ani = animals[k]
 				if not map.blocksMovementAnimal(ani) then
@@ -2990,6 +3057,27 @@ function love.keypressed(key, unicode)
 								animalDist = math.abs(pushables[i].tileY-ani.tileY)+math.abs(pushables[i].tileX-ani.tileX)
 								movex = pushables[i].tileX
 								movey = pushables[i].tileY
+							end
+						end
+					end
+					if ani.trained then
+						movex = ani.tileX
+						movey = ani.tileY
+						for l = 1, #animals do
+							if not animals[l].dead then
+								if movex==ani.tileX and movey==ani.tileY then
+									if animals[l]~=ani then
+											movex = animals[l].tileX
+											movey = animals[l].tileY
+									else
+										local currDist = math.abs(movex-ani.tileX)+math.abs(movey-ani.tileY)
+										local testDist = math.abs(movex-animals[l].tileX)+math.abs(movey-animals[l].tileY)
+										if testDist<currDist then
+											movex = animals[l].tileX
+											movey = animals[l].tileY
+										end								
+									end
+								end
 							end
 						end
 					end
@@ -3112,14 +3200,14 @@ end
 function updateElevation()
 	if room[player.tileY][player.tileX]==nil then
 		player.elevation = 0
-	else
+	elseif room[player.tileY][player.tileX].canElevate then
 		player.elevation = room[player.tileY][player.tileX]:getHeight()
 	end
 
 	for i = 1, #animals do
 		if room[animals[i].tileY][animals[i].tileX]==nil then
 			animals[i].elevation = 0
-		else
+		elseif room[animals[i].tileY][animals[i].tileX].canElevate then
 			animals[i].elevation = room[animals[i].tileY][animals[i].tileX]:getHeight()
 		end	
 	end
@@ -3180,14 +3268,20 @@ function resolveConflicts()
 		for i = 1, #animals do
 			for j = 1, i-1 do
 				if (not animals[i].dead) and (not animals[j].dead) and animals[i].tileX == animals[j].tileX and animals[i].tileY == animals[j].tileY then
-					if animals[i].tileX~=animals[i].prevTileX then
-						animals[i].tileX = animals[i].prevTileX
-					elseif animals[i].tileY~=animals[i].prevTileY then
-						animals[i].tileY = animals[i].prevTileY
-					elseif animals[j].tileX~=animals[j].prevTileX then
-						animals[j].tileX = animals[j].prevTileX
-					elseif animals[j].tileY~=animals[j].prevTileY then
-						animals[j].tileY = animals[j].prevTileY
+					if animals[i].trained then
+						animals[j]:kill()
+					elseif animals[j].trained then
+						animals[i]:kill()
+					else
+						if animals[i].tileX~=animals[i].prevTileX then
+							animals[i].tileX = animals[i].prevTileX
+						elseif animals[i].tileY~=animals[i].prevTileY then
+							animals[i].tileY = animals[i].prevTileY
+						elseif animals[j].tileX~=animals[j].prevTileX then
+							animals[j].tileX = animals[j].prevTileX
+						elseif animals[j].tileY~=animals[j].prevTileY then
+							animals[j].tileY = animals[j].prevTileY
+						end
 					end
 				end
 			end
@@ -3235,6 +3329,27 @@ function resolveConflicts()
 								end
 			    			end
 			    		end
+				    	if animals[i].trained then
+							movex = animals[i].tileX
+							movey = animals[i].tileY
+							for l = 1, #animals do
+								if not animals[l].dead then
+									if movex==animals[i].tileX and movey==animals[i].tileY then
+										if animals[l]~=animals[i] then
+											movex = animals[l].tileX
+											movey = animals[l].tileY
+										end
+									else
+										local currDist = math.abs(movex-animals[i].tileX)+math.abs(movey-animals[i].tileY)
+										local testDist = math.abs(movex-animals[l].tileX)+math.abs(movey-animals[l].tileY)
+										if testDist<currDist then
+											movex = animals[l].tileX
+											movey = animals[l].tileY									
+										end
+									end
+								end
+							end
+						end
 						animals[i]:secondaryMove(movex, movey)
 					end
 				end
@@ -3245,8 +3360,14 @@ function resolveConflicts()
 		for i = 1, #animals do
 			for j = 1, i-1 do
 				if (not animals[i].dead) and (not animals[j].dead) and animals[i].tileX == animals[j].tileX and animals[i].tileY == animals[j].tileY then
-					conflicts = true
-					firstRun = false
+					if animals[i].trained then
+						animals[j]:kill()
+					elseif animals[j].trained then
+						animals[i]:kill()
+					else
+						conflicts = true
+						firstRun = false
+					end
 				end
 			end
 		end
@@ -3273,8 +3394,15 @@ end
 
 function checkDeathSpotlights()
 	for i = 1, #spotlights do
-		if spotlights[i].tileX==player.tileX and spotlights[i].tileY==player.tileY then
+		local sx = spotlights[i].x+tileUnit/2*scale
+		local sy = spotlights[i].y+tileUnit/2*scale
+		local playerx = tileToCoords(player.tileY, player.tileX).x+tileUnit/2*scale
+		local playery = tileToCoords(player.tileY, player.tileX).y+tileUnit/2*scale
+		local radius = tileUnit/2*scale
+		local spotDist = math.sqrt((sx-playerx)*(sx-playerx)+(sy-playery)*(sy-playery))
+		if spotDist<radius then
 			kill()
+			return
 		end
 	end
 end
@@ -3449,7 +3577,6 @@ function resetPushables()
 end
 
 function checkCurrentTile()
-	checkWin()
 	checkPickups()
 end
 
@@ -3461,7 +3588,9 @@ function checkPickups()
 end
 
 function checkWin()
-	if room[player.tileY][player.tileX]~=nil and room[player.tileY][player.tileX]:instanceof(tiles.endTile) then room[player.tileY][player.tileX]:onEnter() end
+	if room[player.tileY][player.tileX]~=nil and room[player.tileY][player.tileX].enterCheckWin then
+		room[player.tileY][player.tileX]:onEnter()
+	end
 end
 
 function checkAllDeath()
@@ -3500,11 +3629,13 @@ end
 
 function stepTrigger()
 	player.character:immediatePostMove()
+	local updatePowerAfter = false
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
 			if room[i][j]~=nil then
 				room[i][j]:onStep(i, j)
 				if room[i][j].gone then
+					if room[i][j].canBePowered then updatePowerAfter = true end
 					room[i][j]:onEnd(i, j)
 					room[i][j] = nil
 				end
@@ -3516,6 +3647,7 @@ function stepTrigger()
 			for j = 1, roomLength do
 				if room[i][j]~=nil then
 					if room[i][j].gone then
+						if room[i][j].canBePowered then updatePowerAfter = true end
 						room[i][j]:onEnd(i, j)
 						room[i][j] = nil
 					end
@@ -3523,6 +3655,7 @@ function stepTrigger()
 			end
 		end
 	end
+
 	for i = 1, #pushables do
 		pushables[i]:onStep()
 	end
@@ -3530,7 +3663,14 @@ function stepTrigger()
     for i = 1, 4 do
     	accelerate()
     end
+
     resetPushables()
+
+    if updatePowerAfter then
+		return true
+	else
+		return false
+	end
 end
 
 --unlocks all rooms besides hidden rooms (secret rooms and special dungeons)
@@ -3575,6 +3715,16 @@ function unlockDoorsPlus()
 end
 
 function dropTools()
+	--supertool-based drops
+	local basicsHeld = 0
+	for i = 1, tools.numNormalTools do
+		basicsHeld = basicsHeld+tools[i].numHeld
+	end
+	if basicsHeld<=1 then
+		tools.giveRandomTools(tools.investmentBonus.numHeld*2)
+	end
+	tools.giveRandomTools(tools.roomCompletionBonus.numHeld)
+
 	local dropOverride = map.getFieldForRoom(mainMap[mapy][mapx].roomid, 'itemsGivenOverride')
 	if loadTutorial then
 		local toolsToDisplay = {0,0,0,0,0,0,0}
@@ -3643,13 +3793,17 @@ function dropTools()
 		end
 		if not done then
 			if floorIndex>=1 then
-				tools.giveRandomTools(math.floor((toolMax+toolMin)/2))
+				--bonusTool decides whether or not one more tool will drop from floor
+				local bonusTool = util.random(2, 'toolDrop')
+				bonusTool = bonusTool-1
+				bonusTool = bonusTool+tools.completionBonus.numHeld*2
+				tools.giveRandomTools(math.floor((toolMax+toolMin)/2)+bonusTool)
 			end
 			--[[for i = 1, toolMin+1 do
 				local slot = util.random(tools.numNormalTools, 'toolDrop')
 				tools[slot].numHeld = tools[slot].numHeld+1
 			end]]
-			--tools.giveSupertools(1)
+			--tools.giveSupertools(1)w
 		end
 	else
 		tools.giveToolsByArray(dropOverride)
@@ -3657,7 +3811,9 @@ function dropTools()
 end
 
 function beatRoom(noDrops)
+	spotlights = {}
 	if noDrops == nil then noDrops = false end
+	if floorIndex>6 then noDrops = true end
 	gameTime.timeLeft = gameTime.timeLeft+gameTime.roomTime
 	unlockDoors()
 	if not noDrops then

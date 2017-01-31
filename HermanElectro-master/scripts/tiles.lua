@@ -7,7 +7,7 @@ tools = require('scripts.tools')
 local P = {}
 tiles = P
 
-P.tile = Object:new{yOffset = 0, untoolable = false, blueHighlighted = false, attractsAnimals = false, scaresAnimals = false, formerPowered = nil, updatePowerOnEnter = false, text = "", updatePowerOnLeave = false, overlayable = false, overlaying = false, gone = false, lit = false, destroyed = false,
+P.tile = Object:new{yOffset = 0, canElevate = true, enterCheckWin = false, untoolable = false, blueHighlighted = false, attractsAnimals = false, scaresAnimals = false, formerPowered = nil, updatePowerOnEnter = false, text = "", updatePowerOnLeave = false, overlayable = false, overlaying = false, gone = false, lit = false, destroyed = false,
   blocksProjectiles = false, isVisible = true, rotation = 0, powered = false, blocksMovement = false, 
   blocksAnimalMovement = false, poweredNeighbors = {0,0,0,0}, blocksVision = false, dirSend = {1,1,1,1}, 
   dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile", emitsLight = false, litWhenPowered = false, intensity = 0.5, range = 25,
@@ -789,7 +789,7 @@ local function getTileY(posY)
 	return (posY-1)*floor.sprite:getHeight()*scale+wallSprite.height
 end
 
-P.hDoor = P.tile:new{name = "hDoor", stopped = false, blocksVision = true, blocksMovement = true, blocksProjectiles = true, canBePowered = false, dirSend = {0,0,0,0}, dirAccept = {0,0,0,0}, sprite = 'Graphics/door.png', closedSprite = 'Graphics/door.png', openSprite = 'Graphics/doorsopen.png'}
+P.hDoor = P.tile:new{name = "hDoor", canElevate = false, stopped = false, blocksVision = true, blocksMovement = true, blocksProjectiles = true, canBePowered = false, dirSend = {0,0,0,0}, dirAccept = {0,0,0,0}, sprite = 'Graphics/door.png', closedSprite = 'Graphics/door.png', openSprite = 'Graphics/doorsopen.png'}
 function P.hDoor:updateTile(player)
 	if self.stopped then
 		self.sprite = self.openSprite
@@ -842,7 +842,7 @@ function P.hDoor:obstructsMovement()
 	else return true end
 end
 function P.hDoor:obstructsMovementAnimal()
-	return true
+	return self.blocksMovement
 end
 
 P.vDoor= P.tile:new{name = "hDoor", blocksVision = true, canBePowered = false, dirSend = {0,0,0,0}, dirAccept = {0,0,0,0}, sprite = 'Graphics/door.png', closedSprite = 'Graphics/door.png', openSprite = 'Graphics/doorsopen.png'}
@@ -852,7 +852,7 @@ function P.vDoor:onEnter(player)
 	
 end
 
-P.vPoweredDoor = P.tile:new{name = "vPoweredDoor", stopped = false, yOffset = -6, blocksMovement = false, blocksVision = false, canBePowered = true, dirSend = {1,0,1,0}, dirAccept = {1,0,1,0}, sprite = 'Graphics3D/powereddooropen.png', closedSprite = 'GraphicsColor/powereddoor.png', openSprite = 'GraphicsColor/powereddooropen.png', poweredSprite = 'Graphics3D/powereddoor.png',
+P.vPoweredDoor = P.tile:new{name = "vPoweredDoor", canElevate = false, stopped = false, yOffset = -6, blocksMovement = false, blocksVision = false, canBePowered = true, dirSend = {1,0,1,0}, dirAccept = {1,0,1,0}, sprite = 'Graphics3D/powereddooropen.png', closedSprite = 'GraphicsColor/powereddoor.png', openSprite = 'GraphicsColor/powereddooropen.png', poweredSprite = 'Graphics3D/powereddoor.png',
 closedSprite2 = 'GraphicsColor/powereddoor2.png', openSprite2 = 'GraphicsColor/powereddooropen2.png'}
 function P.vPoweredDoor:updateTile(player)
 	if self.stopped then
@@ -973,7 +973,7 @@ function P.hDoor:onLeave(player)
 end
 
 P.endTile = P.tile:new{name = "endTile", canBePowered = false, dirAccept = {0,0,0,0},
-sprite = 'Graphics/Tiles/endTile.png', done = false}
+  sprite = 'Graphics/Tiles/endTile.png', done = false, enterCheckWin = true}
 function P.endTile:onEnter(player)
 	if map.floorInfo.finalFloor == true then
 		if roomHeight>12 and not editorMode then
@@ -1016,8 +1016,30 @@ function P.pitbullTile:usableOnNothing()
 end
 P.pupTile = P.pitbullTile:new{name = "pup", animal = animalList[3], listIndex = 3}
 P.catTile = P.pitbullTile:new{name = "cat", animal = animalList[4], listIndex = 4}
+P.ramTile = P.pitbullTile:new{name = "ram", animal = animalList[14], listIndex = 14}
 
-P.spotlightTile = P.tile:new{name = "spotlight", spotlight = spotlightList[1], sprite = 'Graphics/spotlightTile.png'}
+P.spotlightTile = P.tile:new{name = "spotlight", spotlight = spotlightList.spotlight,
+baseTime = 3600, currTime = 0,
+sprite = love.graphics.newImage('Graphics/spotlightTile.png')}
+function P.spotlightTile:realtimeUpdate(dt, y, x)
+	--[[if self.destroyed then return end
+	self.currTime = self.currTime+dt*1000
+	if self.currTime>self.baseTime then
+		self.currTime = 0
+
+		local thisTile = room[y][x]
+		local spotlightToAdd = thisTile.spotlight:new()
+		spotlightToAdd.x = tileToCoords(y,x).x
+		spotlightToAdd.y = tileToCoords(y,x).y
+		spotlightToAdd.dir = thisTile.rotation
+		spotlights[#spotlights+1] = spotlightToAdd
+	end]]
+end
+
+P.fastSpotlightTile = P.spotlightTile:new{name = "fastSpotlight", spotlight = spotlightList.fastSpotlight,
+  baseTime = 1800, sprite = 'Graphics/fastSpotlightTile.png'}
+P.slowSpotlightTile = P.spotlightTile:new{name = "slowSpotlight", spotlight = spotlightList.slowSpotlight, baseTime = 7200,
+  sprite = 'Graphics/slowSpotlightTile.png'}
 
 P.vDoor= P.hDoor:new{name = "vDoor", sprite = 'Graphics3D/door.png', closedSprite = 'Graphics/door.png', openSprite = 'Graphics/doorsopen.png'}
 P.vDoor.onEnter = P.hDoor.onEnter
@@ -1170,12 +1192,27 @@ function P.tunnel:onEnter(player)
 	self.toolsEntered = self.toolsEntered+1
 	--donations = donations+math.ceil((7-(floorIndex))/2)
 	floorDonations = floorDonations+1]]
+	if floorIndex>=7 then
+		return
+		--should do something cool, can add later
+	end
+	if floorIndex<2 then
+		return
+	end
 	goDownFloor()
 end
 
 P.upTunnel = P.tunnel:new{name = "upTunnel", sprite = 'KenGraphics/stairsUp.png'}
 function P.upTunnel:onEnter(player)
 	goUpFloor()
+end
+function P.upTunnel:onLeave(player)
+	if floorIndex==7 then
+		self.done = true
+		self.isCompleted = true
+		self.isVisible = false
+		self.gone = true	
+	end
 end
 --[[function P.tunnel:getInfoText()
 	return self.toolsNeeded
@@ -1455,6 +1492,15 @@ function P.unactivatedBomb:onStep(x, y)
 			self.gone = true
 		end
 		self.poweredSprite = self.sprite
+	end
+end
+function P.unactivatedBomb:updateSprite()
+	if self.counter == 3 then
+		self.sprite = self.sprite3
+	elseif self.counter == 2 then
+		self.sprite = self.sprite2
+	elseif self.counter == 1 then
+		self.sprite = self.sprite1
 	end
 end
 function P.unactivatedBomb:onEnter(player)
@@ -1838,11 +1884,12 @@ end
 P.reinforcedGlass = P.concreteWall:new{name = "reinforcedGlass", blocksVision = false, sprite = 'Graphics3D/reinforcedglass.png', poweredSprite = 'Graphics3D/reinforcedglass.png'}
 
 P.powerTriggeredBomb = P.unactivatedBomb:new{name = "powerTriggeredBomb", canBePowered = true, powered = false, dirAccept = {1,1,1,1}, dirSend = {0,0,0,0}}
-function P.powerTriggeredBomb:postPowerUpdate()
+function P.powerTriggeredBomb:absoluteFinalUpdate()
 	if self.poweredNeighbors[1]==1 or self.poweredNeighbors[2]==1 or self.poweredNeighbors[3]==1 or self.poweredNeighbors[4]==1 then
 		if not self.triggered then
-			self.counter = 4
+			self.counter = 3
 			self.triggered = true
+			self:updateSprite()
 		end
 	end
 	self.poweredSprite = self.sprite
@@ -1956,7 +2003,8 @@ P.reinforcedConductiveGlass = P.reinforcedGlass:new{name = "reinforcedConductive
 
 P.fog = P.tile:new{name = "fog", sprite = 'Graphics/fog.png', blocksVision = true}
 function P.fog:obstructsVision()
-	return player.elevation==0
+	if not self.blocksVision then return false end
+	return player.elevation<=0
 end
 function P.fog:obstructsMovementAnimal(animal)
 	if math.abs(animal.elevation)<3 then
@@ -2208,7 +2256,7 @@ P.supertoolQ3 = P.supertoolTile:new{name = "supertoolTileQ3", superQuality = 3}
 P.supertoolQ4 = P.supertoolTile:new{name = "supertoolTileQ4", superQuality = 4}
 P.supertoolQ5 = P.supertoolTile:new{name = "supertoolTileQ5", superQuality = 5}
 
-P.toolTile = P.tile:new{name = "toolTile", tool = nil, dirSend = {0,0,0,0}}
+P.toolTile = P.tile:new{name = "toolTile", tool = nil, toolId = 1, dirSend = {0,0,0,0}}
 function P.toolTile:onEnter()
 	tools.giveToolsByReference({self.tool})
 	self.isVisible = false
@@ -2221,15 +2269,20 @@ function P.toolTile:absoluteFinalUpdate()
 		self:updateSprite()
 	end
 end
+function P.toolTile:onLoad()
+	if self.tool == nil then
+		self.tool = tools[self.toolId]
+	end
+end
 P.toolTile.updateSprite = P.supertoolTile.updateSprite
 
-P.sawTile = P.toolTile:new{name = "sawTile", tool = tools.saw, sprite = tools.saw.image}
-P.wireCuttersTile = P.toolTile:new{name = "wirecuttersTile", tool = tools.wireCutters, sprite = tools.wireCutters.image}
-P.ladderTile = P.toolTile:new{name = "ladderTile", tool = tools.ladder, sprite = tools.ladder.image}
-P.brickTile = P.toolTile:new{name = "brickTile", tool = tools.brick, sprite = tools.brick.image}
-P.gunTile = P.toolTile:new{name = "gunTile", tool = tools.gun, sprite = tools.gun.image}
-P.spongeTile = P.toolTile:new{name = "spongeTile", tool = tools.sponge, sprite = tools.sponge.image}
-P.waterBottleTile = P.toolTile:new{name = "waterBottleTile", tool = tools.waterBottle, sprite = tools.waterBottle.image}
+P.sawTile = P.toolTile:new{name = "sawTile", toolId = 1, sprite = tools.saw.image}
+P.wireCuttersTile = P.toolTile:new{name = "wirecuttersTile", toolId = 3, sprite = tools.wireCutters.image}
+P.ladderTile = P.toolTile:new{name = "ladderTile", toolId = 2, sprite = tools.ladder.image}
+P.brickTile = P.toolTile:new{name = "brickTile", toolId = 6, sprite = tools.brick.image}
+P.gunTile = P.toolTile:new{name = "gunTile", toolId = 7, sprite = tools.gun.image}
+P.spongeTile = P.toolTile:new{name = "spongeTile", toolId = 5, sprite = tools.sponge.image}
+P.waterBottleTile = P.toolTile:new{name = "waterBottleTile", toolId = 4, sprite = tools.waterBottle.image}
 
 
 P.toolTaxTile = P.reinforcedGlass:new{name = "toolTaxTile", dirSend = {0,0,0,0}, sprite = 'Graphics/tooltaxtile.png', tool = nil}
@@ -2368,12 +2421,22 @@ function P.endDungeonEnter:onEnter()
 	end
 	player.returnFloorIndex = floorIndex
 	goToFloor(1)
-	for i = 1, roomHeight do
-		for j = 1, roomLength do
-			if room[i][j]~=nil and room[i][j]:instanceof(tiles.endDungeonExit) then
-				player.tileY = i
-				player.tileX = j
-				break
+	if stairsLocs[8].coords.x~=0 then
+		mapx = stairsLocs[8].map.x
+		mapy = stairsLocs[8].map.y
+		room = mainMap[mapy][mapx].room
+		roomHeight = room.height
+		roomLength = room.length
+		player.tileX = stairsLocs[8].coords.x
+		player.tileY = stairsLocs[8].coords.y
+	else
+		for i = 1, roomHeight do
+			for j = 1, roomLength do
+				if room[i][j]~=nil and room[i][j]:instanceof(tiles.endDungeonExit) then
+					player.tileY = i
+					player.tileX = j
+					break
+				end
 			end
 		end
 	end
@@ -2393,9 +2456,33 @@ function P.endDungeonExit:onEnter()
 	end
 end
 
-P.key = P.tile:new{name = "key", sprite = 'Graphics/key.png'}
-function P.key:onEnter()
-	player.keysHeld = player.keysHeld+1
+
+P.dungeonKey = P.tile:new{name = "dungeonKey", sprite = 'Graphics/key.png', enterCheckWin = true}
+function P.dungeonKey:onEnter()
+	player.dungeonKeysHeld = player.dungeonKeysHeld+1
+	self.done = true
+	self.isCompleted = true
+	self.isVisible = false
+	self.gone = true
+end
+
+P.finalKey = P.tile:new{name = "finalKey", sprite = 'Graphics/finalkey.png', enterCheckWin = true}
+function P.finalKey:onEnter(player)
+	player.finalKeysHeld = player.finalKeysHeld+1
+	spotlights = {}
+	self.done = true
+	self.isCompleted = true
+	self.isVisible = false
+	self.gone = true
+end
+
+P.finalKeyPowered = P.finalKey:new{name = "finalKeyPowered", poweredSprite = 'Graphics/finalkey.png',
+sprite = 'Graphics/keyunpowered.png',
+canBePowered = true, dirSend = {1,1,1,1}, dirAccept = {1,1,1,1}}
+function P.finalKeyPowered:onEnter()
+	if not self.powered then return end
+	player.finalKeysHeld = player.finalKeysHeld+1
+	spotlights = {}
 	self.done = true
 	self.isCompleted = true
 	self.isVisible = false
@@ -2407,27 +2494,27 @@ function P.gameWin:onEnter()
 	win()
 end
 
-P.keyGate = P.reinforcedGlass:new{name = "keyTile", sprite = 'Graphics/keytile.png', untoolable = true}
-function P.keyGate:onEnter()
-	if player.keysHeld==3 then
+P.dungeonKeyGate = P.reinforcedGlass:new{name = "keyTile", sprite = 'Graphics/keytile.png', untoolable = true}
+function P.dungeonKeyGate:onEnter()
+	if player.dungeonKeysHeld>=3 then
 		self:open()
 	elseif not self.destroyed then
 		P.reinforcedGlass:onEnter(player)
 	end
 end
-function P.keyGate:obstructsMovement()
+function P.dungeonKeyGate:obstructsMovement()
 	if math.abs(player.elevation-self:getHeight())<=3 then
 		return false
-	elseif player.keysHeld>=3 then
+	elseif player.dungeonKeysHeld>=3 then
 		return false
 	else
 		return true
 	end
 end
 --nothing can destroy the keyGate (including missiles) because of below code
-function P.keyGate:destroy()
+function P.dungeonKeyGate:destroy()
 end
-function P.keyGate:open()
+function P.dungeonKeyGate:open()
 	self.blocksProjectiles = false
 	self.blocksVision = false
 	self.sprite = self.destroyedSprite
@@ -2436,6 +2523,24 @@ function P.keyGate:open()
 	self.dirAccept = {0,0,0,0}
 	self.dirSend = {0,0,0,0}
 	self.overlay = nil
+end
+
+P.finalKeyGate = P.dungeonKeyGate:new{name = "finalKeyGate"}
+function P.finalKeyGate:onEnter()
+	if player.finalKeysHeld>=20 then
+		self:open()
+	elseif not self.destroyed then
+		P.reinforcedGlass:onEnter(player)
+	end
+end
+function P.finalKeyGate:obstructsMovement()
+	if math.abs(player.elevation-self:getHeight())<=3 then
+		return false
+	elseif player.finalKeysHeld>=3 then
+		return false
+	else
+		return true
+	end
 end
 
 P.gasPuddle = P.puddle:new{name = "gasPuddle", sprite = 'Graphics/gaspuddle.png'}
@@ -2506,16 +2611,19 @@ end
 
 P.gameStairs = P.tile:new{name = "gameStairs", sprite = 'KenGraphics/gamestairs.png'}
 function P.gameStairs:onEnter()
+	stairsLocs[1] = {map ={x = mapx, y = mapy}, coords = {x = player.tileX, y = player.tileY}}
 	startGame()
 end
 
 P.tutStairs = P.tile:new{name = "tutStairs", sprite = 'KenGraphics/tutstairs.png'}
 function P.tutStairs:onEnter()
+	stairsLocs[1] = {map ={x = mapx, y = mapy}, coords = {x = player.tileX, y = player.tileY}}
 	startTutorial()
 end
 
 P.debugStairs = P.tile:new{name = "debugStairs", sprite = 'KenGraphics/tutstairs.png'}
 function P.debugStairs:onEnter()
+	stairsLocs[1] = {map ={x = mapx, y = mapy}, coords = {x = player.tileX, y = player.tileY}}
 	startDebug()
 end
 
@@ -2607,6 +2715,68 @@ function P.biscuit:onEnter(player)
 	self.isCompleted = true
 	self.isVisible = false
 	self.gone = true
+end
+
+P.atm = P.concreteWall:new{name = "atm", sprite = love.graphics.newImage('Graphics/tooltaxtile.png'), untoolable = true,
+map = {}}
+function P.atm:onLoad()
+	for i = 1, mapHeight do
+		self.map[i] = {}
+		for j = 1, mapHeight do
+			self.map[i][j] = 0
+		end
+	end
+end
+function P.atm:obstructsMovement()
+	if math.abs(player.elevation-self:getHeight())<=3 then
+		return false
+	elseif tools.coin.numHeld>0 or tools.luckyPenny.numHeld>0 then
+		return false
+	end
+	return true
+end
+function P.atm:onEnter()
+	if math.abs(player.elevation-self:getHeight())<=3 then
+		return
+	elseif tools.coin.numHeld>0 or tools.luckyPenny.numHeld>0 then
+		if tools.coin.numHeld>0 then
+			tools.coin.numHeld = tools.coin.numHeld-1
+		elseif tools.luckyPenny.numHeld>0 then
+			tools.luckyPenny.numHeld = tools.luckyPenny.numHeld01
+		end
+		
+		local gaveTools = false
+		for i = 1, #self.map do
+			for j = 1, #self.map[1] do
+				if self.map[i][j]==0 and mainMap[i][j]~=nil then
+					self.map[i][j]=1
+					local itemsNeededList = map.getItemsNeeded(mainMap[i][j].roomid)
+					local inlLen = #itemsNeededList
+					local whichIN = util.random(inlLen, 'misc')
+					local toolsToGive = {}
+					for i = 1, tools.numNormalTools do
+						print(itemsNeededList[whichIN][i])
+						for j = 1, itemsNeededList[whichIN][i] do
+							toolsToGive[#toolsToGive+1] = tools[i]
+						end
+					end
+					if #toolsToGive>0 then
+						gaveTools = true
+						tools.giveToolsByReference(toolsToGive)
+						break
+					end
+				end
+				if gaveTools then break end
+			end
+			if gaveTools then break end
+		end
+		if not gaveTools then
+			tools.giveRandomTools(1)
+		end
+
+		player.tileX = player.prevTileX
+		player.tileY = player.prevTileY
+	end
 end
 
 tiles[1] = P.invisibleTile
@@ -2769,8 +2939,8 @@ tiles[157] = P.supertoolQ4
 tiles[158] = P.supertoolQ5
 tiles[159] = P.endDungeonEnter
 tiles[160] = P.endDungeonExit
-tiles[161] = P.key
-tiles[162] = P.keyGate
+tiles[161] = P.dungeonKey
+tiles[162] = P.dungeonKeyGate
 tiles[163] = P.gasPuddle
 tiles[164] = P.halfWall
 tiles[165] = P.elevator
@@ -2795,5 +2965,14 @@ tiles[183] = P.blackBeggar
 tiles[184] = P.goldBeggar
 tiles[185] = P.gameWin
 tiles[186] = P.spotlightTile
+tiles[187] = P.fastSpotlightTile
+tiles[188] = P.slowSpotlightTile
+tiles[189] = P.ramTile
+tiles[190] = P.finalKey
+tiles[191] = P.finalKeyGate
+tiles[192] = P.finalKeyPowered
+tiles[193] = P.atm
+
+
 
 return tiles

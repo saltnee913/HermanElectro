@@ -248,7 +248,8 @@
 "itemsNeeded":
         [
           [0,0,0,0,0,0,0]],
-      "itemsGivenOverride": [0,0,0,0,0,0,0]
+      "itemsGivenOverride": [0,0,0,0,0,0,0],
+  "dumb": true
 },
 
 "f12":
@@ -271,7 +272,8 @@
 "itemsNeeded":
         [
           [0,0,0,0,0,0,0]],
-      "itemsGivenOverride": [0,0,0,0,0,0,0]
+      "itemsGivenOverride": [0,0,0,0,0,0,0],
+"dumb": true
 },
 
 "f13":
@@ -297,7 +299,7 @@
       "itemsGivenOverride": [0,0,0,0,0,0,0]
 },
 
-"f14":
+/*"f14":
 {
 "layout":
 [
@@ -318,9 +320,9 @@
         [
           [0,0,0,0,0,0,0]],
       "itemsGivenOverride": [0,0,0,0,0,0,0]
-},
+},*/
 
-"f15":
+/*"f15":
 {
 "layout":
 [
@@ -341,9 +343,9 @@
         [
           [0,0,0,0,0,0,0]],
       "itemsGivenOverride": [0,0,0,0,0,0,0]
-},
+},*/
 
-"f16":
+/*"f16":
 {
 "layout":
 [
@@ -364,9 +366,9 @@
         [
           [0,0,0,0,0,0,0]],
       "itemsGivenOverride": [0,0,0,0,0,0,0]
-},
+},*/
 
-"f17":
+/*"f17":
 {
 "layout":
 [
@@ -387,7 +389,7 @@
         [
           [0,0,0,0,0,0,0]],
       "itemsGivenOverride": [0,0,0,0,0,0,0]
-},
+},*/
 
 "f18":
 {
@@ -409,7 +411,8 @@
 "itemsNeeded":
         [
           [0,0,0,0,0,0,0]],
-      "itemsGivenOverride": [0,0,0,0,0,0,0]
+      "itemsGivenOverride": [0,0,0,0,0,0,0],
+    "dumb": true
 }}, 
   "superFields":
   {

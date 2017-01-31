@@ -6,43 +6,36 @@ local P = {}
 spotlightsList = P
 
 
-P.spotlight  = Object:new{name = "spotlight", tileX = 0, tileY = 0, dir = 1, baseUpdateTime = 300, updateTime = 300}
+P.spotlight  = Object:new{name = "spotlight", x = 0.0, y = 0.0, dir = 1, speed = 0.1,
+sprite = love.graphics.newImage('Graphics/white.png')}
+P.fastSpotlight = P.spotlight:new{name = "fastSpotlight", speed = 0.2,
+sprite = love.graphics.newImage('Graphics/purple.png')}
+P.slowSpotlight = P.spotlight:new{name = "slowSpotlight", speed = 0.05,
+sprite = love.graphics.newImage('Graphics/yellow.png')}
+
 function P.spotlight:update(dt)
 	--directions same as for dirEnter: 0 up, 1 right, 2 down, 3 left
-	self.updateTime = self.updateTime-dt*1000
-	if self.updateTime>0 then return
-	else self.updateTime = self.baseUpdateTime end
-	if self.dir==0 then
-		if self.tileY>1 then
-			self.tileY = self.tileY-1
-		else
-			self.dir=2
-			self.tileY = self.tileY+1
-		end
-	elseif self.dir==1 then
-		if self.tileX<roomLength then
-			self.tileX = self.tileX+1
-		else
-			self.dir=3
-			self.tileX = self.tileX-1
-		end
-	elseif self.dir==2 then
-		if self.tileY<roomHeight then
-			self.tileY = self.tileY+1
-		else
-			self.dir=0
-			self.tileY = self.tileY-1
-		end
-	elseif self.dir==3 then
-		if self.tileX>1 then
-			self.tileX = self.tileX-1
-		else
-			self.dir=1
-			self.tileX = self.tileX+1
-		end
-	end
+	local dirToGo = {x = 0, y = 0}
+	if self.dir==0 then dirToGo.y = -1
+	elseif self.dir==1 then dirToGo.x = 1
+	elseif self.dir==2 then dirToGo.y = 1
+	elseif self.dir==3 then dirToGo.x = -1 end
+	self.x = self.x+dirToGo.x*self.speed*dt*1000
+	self.y = self.y+dirToGo.y*self.speed*dt*1000
+
+	return self:checkBounds()
+end
+
+function P.spotlight:checkBounds()
+	if self.y<tileToCoords(1,1).y then self.dir=2
+	elseif self.y>tileToCoords(roomHeight, 1).y then self.dir=0
+	elseif self.x<tileToCoords(1,1).x then self.dir=1
+	elseif self.x>tileToCoords(1, roomLength).x then self.dir=3 end
+	return true
 end
 
 spotlightsList[1] = P.spotlight
+spotlightsList[2] = P.fastSpotlight
+spotlightsList[3] = P.slowSpotlight
 
 return spotlightsList

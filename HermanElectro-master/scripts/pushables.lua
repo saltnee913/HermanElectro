@@ -56,7 +56,7 @@ function P.pushable:move(mover)
 			return false
 		end
 	end
-	if room[self.tileY][self.tileX]~=nil and not room[self.tileY][self.tileX]:instanceof(tiles.endTile) and 
+	if room[self.tileY][self.tileX]~=nil and not room[self.tileY][self.tileX].enterCheckWin and 
 	(self.prevTileX~=self.tileX or self.prevTileY~=self.tileY) then
 		room[self.tileY][self.tileX]:onEnterPushable(self)
 	end
@@ -109,7 +109,7 @@ function P.pushable:moveNoMover()
 		end
 	end
 
-	if room[self.tileY][self.tileX]~=nil and not room[self.tileY][self.tileX]:instanceof(tiles.endTile) and 
+	if room[self.tileY][self.tileX]~=nil and not room[self.tileY][self.tileX].enterCheckWin and 
 		(self.prevTileX~=self.tileX or self.prevTileY~=self.tileY) then
 		room[self.tileY][self.tileX]:onEnterPushable(self)
 	end
@@ -190,7 +190,7 @@ function P.batteringRam:move(mover)
 		return false
 	end
 
-	if room[self.tileY][self.tileX]~=nil and not room[self.tileY][self.tileX]:instanceof(tiles.endTile) then
+	if room[self.tileY][self.tileX]~=nil and not room[self.tileY][self.tileX].enterCheckWin then
 		local tile = room[self.tileY][self.tileX]
 		if tile.sawable or tile:instanceof(tiles.glassWall) then
 			if self.elevation<tile:getHeight() then
@@ -250,7 +250,7 @@ function P.batteringRam:moveNoMover()
 		return false
 	end
 
-	if room[self.tileY][self.tileX]~=nil and not room[self.tileY][self.tileX]:instanceof(tiles.endTile) then
+	if room[self.tileY][self.tileX]~=nil and not room[self.tileY][self.tileX].enterCheckWin then
 		local tile = room[self.tileY][self.tileX]
 		if tile.sawable or tile:instanceof(tiles.glassWall) then tile:destroy() end
 		room[self.tileY][self.tileX]:onEnterPushable(self)
