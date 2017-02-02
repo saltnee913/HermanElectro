@@ -341,7 +341,7 @@ function love.load()
 		blue = love.graphics.newImage('Graphics/blue.png')
 		gray = love.graphics.newImage('Graphics/gray.png')
 		white = love.graphics.newImage('Graphics/white.png')
-		linuxTest = love.graphics.newImage('Graphics/lINuXtEsT.png')
+		linuxTest = love.graphics.newImage('Graphics/linuxTest.png')
 		toolWrapper = love.graphics.newImage('GraphicsEli/marble1.png')
 		titlescreenCounter = 0
 		--floortile = love.graphics.newImage('Graphics/floortile.png')
