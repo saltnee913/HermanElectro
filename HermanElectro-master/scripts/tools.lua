@@ -1733,7 +1733,7 @@ function P.revive:checkDeath()
 	return true
 end
 
-P.explosiveGun = P.gun:new{name = "explosiveGun", description = "Boom Boom", baseRange = 5, image = 'Graphics/superGun.png', quality = 2}
+P.explosiveGun = P.gun:new{name = "explosiveGun", description = "Boom Boom", baseRange = 5, image = 'Graphics/supergun.png', quality = 2}
 function P.explosiveGun:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld-1
 	if tile:instanceof(tiles.beggar) then
@@ -3307,7 +3307,7 @@ function P.superSponge:spreadSponge(tileY, tileX)
 end
 
 --gun, but radial and works on concrete
-P.superGun = P.superTool:new{name = "superGun", description = "", baseRange = 5, image = 'Graphics/superGun.png', quality = 2}
+P.superGun = P.superTool:new{name = "superGun", description = "", baseRange = 5, image = 'Graphics/supergun.png', quality = 2}
 P.superGun.getToolableTiles = P.tool.getToolableTilesBox
 P.superGun.getToolableAnimals = P.tool.getToolableAnimalsBox
 function P.superGun:usableOnTile(tile)
