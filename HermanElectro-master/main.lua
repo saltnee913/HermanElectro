@@ -4,6 +4,8 @@ roomHeight = 12
 roomLength = 24
 screenScale = 70
 
+fontSize = 12
+
 debug = true
 loadTutorial = false
 easyMode = false
@@ -229,7 +231,7 @@ function love.load()
 	--wallSprite = {width = 78*screenScale/50, height = 72*screenScale/50, heightForHitbox = 62*screenScale/50}
 	wallSprite = {width = 187*width/1920, height = 170*height/1080, heightBottom = 150*height/1080}
 	--image = love.graphics.newImage("cake.jpg")
-	love.graphics.setNewFont(12)
+	love.graphics.setNewFont(fontSize)
 	love.graphics.setColor(255,255,255)
 	love.graphics.setBackgroundColor(255,255,255)
 	forcePowerUpdateNext = false
@@ -2066,6 +2068,7 @@ function love.draw()
 		--print actual text
 		love.graphics.printf(text, to.x, to.y, to.width, orientation)
 	end
+	love.graphics.setNewFont(fontSize)
 
 	if not loadTutorial then
 		love.graphics.print(math.floor(gameTime.timeLeft), width/2-10, 20);
@@ -2105,7 +2108,7 @@ function love.draw()
 	end
 
 	if not editorMode then
-		love.graphics.setNewFont(12)
+		love.graphics.setNewFont(fontSize)
 		for i = 0, 6 do
 			love.graphics.setColor(255,255,255)
 			love.graphics.draw(toolWrapper, i*width/18, 0, 0, (width/18)/16, (width/18)/16)
@@ -2200,9 +2203,7 @@ function love.draw()
 		tutorial.draw()
 	end
 	if debugText ~= nil then
-		love.graphics.setColor(0,255,0,255)
-		love.graphics.print(debugText, 0, 100)
-		love.graphics.setColor(255,255,255,255)
+		text.print(debugText, 0, 100, {0,255,0,255}, fontFile, 22)
 	end
 end
 

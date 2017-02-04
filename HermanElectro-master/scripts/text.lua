@@ -32,4 +32,21 @@ function P.updateTextTimers(dt)
 	end
 end
 
+local function setFont(font,fontSize)
+	if font ~= nil then
+		love.graphics.setNewFont(font, fontSize)
+	elseif fontSize ~= nil then
+		love.graphics.setNewFont(fontSize)
+	end
+end
+
+function P.print(message,x,y,color,font,fontSize)
+	if color == nil then color = {0,0,0} end
+	setFont(font,fontSize)
+	love.graphics.setColor(color[1],color[2],color[3],color[4])
+	love.graphics.print(message,x,y)
+	love.graphics.setColor(255,255,255,255)
+	setFont(nil,fontSize)
+end
+
 return text
