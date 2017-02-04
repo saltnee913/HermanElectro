@@ -28,7 +28,7 @@ function P.getUnlockedCharacters()
 	return toRet
 end
 
-P.character = Object:new{name = "Name", dirFacing = "down", scale = 0, sprite = 'hermans/newherman_r.png',
+P.character = Object:new{name = "Name", tallSprite = true, dirFacing = "down", scale = 0, sprite = 'hermans/newherman_r.png',
   description = "description", startingTools = {0,0,0,0,0,0,0}, scale = 0.25 * width/1200, forcePowerUpdate = false, winUnlocks = {}, tint = {1,1,1},
   speedUnlockTime = 1000, speedUnlock = nil}
 function P.character:onBegin()
@@ -143,7 +143,7 @@ function P.most:onCharLoad()
 end
 
 local erikSprite = 'Graphics/beggar.png'
-P.erik = P.character:new{name = "Erik", description = "The Quick",
+P.erik = P.character:new{name = "Erik", tallSprite = false, description = "The Quick",
   sprite = erikSprite, scale = scale*16/util.getImage(erikSprite):getWidth()}
 function P.erik:onCharLoad()
 	gameTime.timeLeft = 120
@@ -186,7 +186,7 @@ function P.erik:specialLightTest(tileY,tileX)
 	end
 end
 
-P.gabe = P.character:new{name = "Gabe", description = "The Angel",
+P.gabe = P.character:new{name = "Gabe", tallSprite = false, description = "The Angel",
 	sprite = 'Graphics/gabe.png', realChar = nil, reset = false, disabled = true}
 function P.gabe:onCharLoad()
 	if not self.reset then
@@ -203,7 +203,7 @@ function P.gabe:onRoomEnter()
 	player.attributes.flying = true
 end
 
-P.rammy = P.character:new{name = "Rammy", description = "The Ram", winUnlocks = {unlocks.ramUnlock},
+P.rammy = P.character:new{name = "Rammy", tallSprite = false, description = "The Ram", winUnlocks = {unlocks.ramUnlock},
 	sprite = 'Graphics/ram.png'}
 
 function P.rammy:preTileEnter(tile)
@@ -225,7 +225,7 @@ function P.rick:onFloorEnter()
 end
 
 --alternative name: "Froggy, the Fresh"
-P.frederick = P.character:new{name = "Frederick", description = "The Frog", sprite = 'Graphics/frederick.png', disabled = false}
+P.frederick = P.character:new{name = "Frederick", tallSprite = false, description = "The Frog", sprite = 'Graphics/frederick.png', disabled = false}
 function P.frederick:onCharLoad()
 	tools.giveToolsByReference({tools.spring,tools.spring,tools.spring,tools.spring,tools.visionChanger,tools.visionChanger})
 end
@@ -233,7 +233,7 @@ function P.frederick:onFloorEnter()
 	tools.giveToolsByReference({tools.spring,tools.spring,tools.visionChanger})
 end
 
-P.battery = P.character:new{name = "Bob", description = "The Battery", sprite = 'Graphics/powersupplydead.png',
+P.battery = P.character:new{name = "Bob", tallSprite = false, description = "The Battery", sprite = 'Graphics/powersupplydead.png',
   onSprite = 'Graphics/powersupply.png', offSprite = 'Graphics/powersupplydead.png', 
   scale = scale, storedTile = nil, forcePowerUpdate = false, powered = false}
 function P.battery:onKeyPressedChar(key)
@@ -432,7 +432,7 @@ function P.orson:onKeyPressedChar(key)
 	return false
 end
 
-P.lenny = P.character:new{name = "Lenny", description = "The Ghost Snail", slime = false, sprite = 'Graphics/lenny.png'}
+P.lenny = P.character:new{name = "Lenny", tallSprite = false, description = "The Ghost Snail", slime = false, sprite = 'Graphics/lenny.png'}
 function P.lenny:onKeyPressedChar(key)
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
 		self.slime = not self.slime
@@ -455,7 +455,7 @@ function P.lenny:onStartGame()
 	self.slime = false
 end
 
-P.fish = P.character:new{name = "Fish", description = "Fish", 
+P.fish = P.character:new{name = "Fish", tallSprite = false, description = "Fish", 
   winUnlocks = {unlocks.toolDoublerUnlock}, speedUnlockTime = 1600, speedUnlock = unlocks.fogUnlock,
   life = 100, sprite = 'Graphics/fish.png', tint = {0.9,0.9,1}}
 function P.fish:postMove()
