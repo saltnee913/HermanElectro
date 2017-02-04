@@ -3408,7 +3408,7 @@ function checkDeathSpotlights()
 		local radius = tileUnit/2*scale
 		local spotDist = math.sqrt((sx-playerx)*(sx-playerx)+(sy-playery)*(sy-playery))
 		local spotDist2 = math.sqrt((sx-playerx)*(sx-playerx)+(sy-playery2)*(sy-playery2))
-		if spotDist<radius or (player.character.tallSprite and spotDist2 < radius) then
+		if spotDist<radius --[[or (player.character.tallSprite and spotDist2 < radius)]] then
 			kill()
 			return
 		end
