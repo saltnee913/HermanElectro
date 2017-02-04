@@ -1704,8 +1704,10 @@ function love.draw()
 	end]]
 
 	love.graphics.setShader(myShader)
+
 	for j = 1, roomHeight do
 		for i = 1, roomLength do
+
 			if floorIndex<=1 then
 				toDrawFloor = dungeonFloor
 			else
@@ -1734,6 +1736,7 @@ function love.draw()
 
 			love.graphics.draw(toDrawFloor, (i-1)*tileWidth*scale+wallSprite.width, (j-1)*tileHeight*scale+wallSprite.height,
 			0, scale*16/toDrawFloor:getWidth(), scale*16/toDrawFloor:getWidth())
+
 
 			local isBlack=false
 			
@@ -1890,10 +1893,6 @@ function love.draw()
 			end
 		end
 
-		for k = 1, #spotlights do
-			local sl = spotlights[k]
-			love.graphics.draw(sl.sprite, sl.x, sl.y, 0, scale, yScale)							
-		end
 
 		if tools.toolableAnimals~=nil then
 			for dir = 1, 5 do
@@ -1973,6 +1972,12 @@ function love.draw()
 		end
 		--love.graphics.draw(walls, 0, 0, 0, width/walls:getWidth(), height/walls:getHeight())
 	end
+
+	for k = 1, #spotlights do
+		local sl = spotlights[k]
+		love.graphics.draw(sl.sprite, sl.x, sl.y, 0, scale, yScale)				
+	end
+
 	love.graphics.setShader()
 
 	--[[for i = 1, roomLength do
