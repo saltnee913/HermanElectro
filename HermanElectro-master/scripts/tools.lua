@@ -19,8 +19,10 @@ function P.displayTools(toolArray)
 		P.toolsShown[#P.toolsShown+1] = toolArray[i]
 	end
 
-	if P.toolsShown[1]~=nil and P.toolsShown[1]>tools.numNormalTools then
-		text.setToolDisplay(tools[P.toolsShown[1]])
+	for i = 1, #P.toolsShown do
+		if P.toolsShown[i] ~= nil and P.toolsShown[i]>tools.numNormalTools then
+			text.setToolDisplay(tools[P.toolsShown[i]])
+		end
 	end
 end
 
