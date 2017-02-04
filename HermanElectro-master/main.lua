@@ -1889,7 +1889,7 @@ function love.draw()
 			if pushables[i]~=nil and not pushables[i].destroyed and litTiles[pushables[i].tileY][pushables[i].tileX]==1 and pushables[i].tileY==j and pushables[i].visible then
 		    	pushablex = (pushables[i].tileX-1)*tileHeight*scale+wallSprite.width
 		    	pushabley = (pushables[i].tileY-1)*tileWidth*scale+wallSprite.height-pushables[i].elevation*scale
-		    	if pushables[i].conductive and pushables[i].powered then toDraw = pushables[i].poweredSprite
+		    	if pushables[i].conductive and pushables[i].powered then toDraw = util.getImage(pushables[i].poweredSprite)
 		    	else toDraw = util.getImage(pushables[i].sprite) end
 				love.graphics.draw(toDraw, pushablex, pushabley, 0, scale, scale)
 			end
