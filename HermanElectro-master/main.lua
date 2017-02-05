@@ -505,6 +505,7 @@ function goToMainMenu()
 	loadOpeningWorld()
 	emptyTools()
 	gamePaused = false
+	won = false
 	playMusic(1)
 end
 
