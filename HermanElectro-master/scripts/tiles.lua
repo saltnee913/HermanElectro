@@ -1568,8 +1568,7 @@ function P.beggar:getInfoText()
 	--return self.counter
 end
 function P.beggar:destroy()
-	self.sprite = self.deadSprite
-	self.animation = nil
+	self.animation = {self.sprite}
 	self.alive = false
 	local paysOut = util.random('toolDrop')
 	if paysOut<0.5 and not player.character.name==characters.felix.name then return end
@@ -1634,7 +1633,7 @@ function P.blueBeggar:providePayment()
 	tools.giveSupertools(1, {quality})
 end
 
-P.whiteBeggar = P.beggar:new{name = "whiteBeggar", sprite = 'Graphics/whitebeggar.png'}
+P.whiteBeggar = P.beggar:new{name = "whiteBeggar"}
 function P.whiteBeggar:providePayment()
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
@@ -1646,7 +1645,7 @@ function P.whiteBeggar:providePayment()
 	end
 end
 
-P.blackBeggar = P.beggar:new{name = "blackBeggar", sprite = 'Graphics/blackbeggar.png'}
+P.blackBeggar = P.beggar:new{name = "blackBeggar"}
 function P.blackBeggar:providePayment()
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
@@ -1658,7 +1657,7 @@ function P.blackBeggar:providePayment()
 	end
 end
 
-P.goldBeggar = P.beggar:new{name = "goldBeggar", sprite = 'Graphics/goldbeggar.png'}
+P.goldBeggar = P.beggar:new{name = "goldBeggar"}
 function P.goldBeggar:providePayment()
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
