@@ -1547,7 +1547,7 @@ P.meat = P.tile:new{name = "meat", sprite = 'Graphics/Tiles/meat.png', attractsA
 P.rottenMeat = P.tile:new{name = "rottenMeat", sprite = 'Graphics/Tiles/rottenMeat.png', scaresAnimals = true}
 
 P.beggar = P.tile:new{name = "beggar", alive = true, counter = 0, sprite = 'GraphicsEli/whiteOrb1.png', deadSprite = 'Graphics/beggardead.png', 
-  animation = {'GraphicsEli/whiteOrb1.png', 'GraphicsEli/whiteOrb2.png', 'GraphicsEli/whiteOrb3.png', 'GraphicsEli/whiteOrb4.png', 'GraphicsEli/whiteOrb3.png', 'GraphicsEli/whiteOrb2.png'}, animationLength = 2}
+  animation = {'GraphicsEli/whiteOrb1.png', 'GraphicsEli/whiteOrb2.png', 'GraphicsEli/whiteOrb3.png', 'GraphicsEli/whiteOrb4.png', 'GraphicsEli/whiteOrb3.png', 'GraphicsEli/whiteOrb2.png'}, animationLength = 1}
 function P.beggar:onEnter(player)
 	--[[if tool==0 or tool>7 then return end
 	if not self.alive then return end
@@ -1582,7 +1582,8 @@ function P.beggar:providePayment()
 	else P.greenBeggar:providePayment() end
 end
 
-P.redBeggar = P.beggar:new{name = "redBeggar", sprite = 'Graphics/redbeggar.png', deadSprite = 'Graphics/redbeggardead.png'}
+P.redBeggar = P.beggar:new{name = "redBeggar", sprite = 'GraphicsEli/redOrb1.png', deadSprite = 'Graphics/redbeggardead.png', 
+  animation = {'GraphicsEli/redOrb1.png', 'GraphicsEli/redOrb2.png', 'GraphicsEli/redOrb3.png', 'GraphicsEli/redOrb4.png', 'GraphicsEli/redOrb3.png', 'GraphicsEli/redOrb2.png'}, animationLength = 1}
 function P.redBeggar:providePayment()
 	local greenTools = util.random('toolDrop')
 	local ttg = 0
@@ -1592,7 +1593,8 @@ function P.redBeggar:providePayment()
 	tools.giveRandomTools(ttg)
 end
 
-P.greenBeggar = P.beggar:new{name = "greenBeggar", sprite = 'Graphics/greenbeggar.png', deadSprite = 'Graphics/greenbeggardead.png'}
+P.greenBeggar = P.beggar:new{name = "greenBeggar", sprite = 'GraphicsEli/greenOrb1.png', deadSprite = 'Graphics/greenbeggardead.png', 
+  animation = {'GraphicsEli/greenOrb1.png', 'GraphicsEli/greenOrb2.png', 'GraphicsEli/greenOrb3.png', 'GraphicsEli/greenOrb4.png', 'GraphicsEli/greenOrb3.png', 'GraphicsEli/greenOrb2.png'}, animationLength = 1}
 function P.greenBeggar:providePayment()
 	local luckyCoin = util.random(100, 'toolDrop')
 	local ttg = tools.coin
@@ -1614,7 +1616,8 @@ function P.greenBeggar:providePayment()
 	end
 end
 
-P.blueBeggar = P.beggar:new{name = "blueBeggar", sprite = 'Graphics/bluebeggar.png', deadSprite = 'Graphics/bluebeggardead.png'}
+P.blueBeggar = P.beggar:new{name = "blueBeggar", sprite = 'GraphicsEli/blueOrb1.png', deadSprite = 'Graphics/bluebeggardead.png', 
+  animation = {'GraphicsEli/blueOrb1.png', 'GraphicsEli/blueOrb2.png', 'GraphicsEli/blueOrb3.png', 'GraphicsEli/blueOrb4.png', 'GraphicsEli/blueOrb3.png', 'GraphicsEli/blueOrb2.png'}, animationLength = 1}
 function P.blueBeggar:providePayment()
 	local quality = util.random('toolDrop')
 	if quality < 0.075 then
