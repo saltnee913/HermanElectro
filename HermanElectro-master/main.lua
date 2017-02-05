@@ -2886,6 +2886,7 @@ function love.keypressed(key, unicode)
 					for j = 0, mainMap.height do
 						if completedRooms[i][j] == 0 then
 							hackEnterRoom(mainMap[i][j].roomid, i, j)
+							return
 						end
 					end
 				end
