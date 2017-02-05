@@ -1004,6 +1004,12 @@ function P.poweredEnd:onEnter(player)
 	self.gone = true
 end
 
+function P.poweredEnd:postPowerUpdate()
+	if room[player.tileY][player.tileX] == self then
+		self:onEnter(player)
+	end
+end
+
 P.pitbullTile = P.tile:new{name = "pitbull", animal = animalList[2], sprite = 'Graphics/animalstartingtile.png', listIndex = 2}
 function P.pitbullTile:new(o)
 	o = o or {}
