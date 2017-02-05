@@ -2703,6 +2703,7 @@ function love.update(dt)
 		for j = 1, roomLength do
 			if room~=nil and room[i][j]~=nil then
 				room[i][j]:realtimeUpdate(dt, i, j)
+				room[i][j]:updateAnimation(dt)
 			end
 		end
 	end

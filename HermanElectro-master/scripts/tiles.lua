@@ -8,12 +8,19 @@ local P = {}
 tiles = P
 
 P.tile = Object:new{yOffset = 0, canElevate = true, enterCheckWin = false, untoolable = false, blueHighlighted = false, attractsAnimals = false, scaresAnimals = false, formerPowered = nil, updatePowerOnEnter = false, text = "", updatePowerOnLeave = false, overlayable = false, overlaying = false, gone = false, lit = false, destroyed = false,
-  blocksProjectiles = false, isVisible = true, rotation = 0, powered = false, blocksMovement = false, 
+  blocksProjectiles = false, isVisible = true, rotation = 0, powered = false, blocksMovement = false, animationTimer = 0,
   blocksAnimalMovement = false, poweredNeighbors = {0,0,0,0}, blocksVision = false, dirSend = {1,1,1,1}, 
   dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile", emitsLight = false, litWhenPowered = false, intensity = 0.5, range = 25,
   sprite = 'Graphics/cavesfloor.png', 
   wireHackOn = 'Graphics3D/wirehackon.png',
   wireHackOff = 'Graphics3D/wirehackoff.png'}
+function P.tile:updateAnimation(dt)
+	if self.animation ~= nil then
+		self.animationTimer = self.animationTimer + dt
+		if self.animationTimer > self.animationLength then self.animationTimer = self.animationTimer - self.animationLength end
+		self.sprite = self.animation[math.ceil(#self.animation*self.animationTimer/self.animationLength)]
+	end
+end
 function P.tile:lightTest(x,y)
 	return false
 end
@@ -1539,7 +1546,8 @@ P.meat = P.tile:new{name = "meat", sprite = 'Graphics/Tiles/meat.png', attractsA
 
 P.rottenMeat = P.tile:new{name = "rottenMeat", sprite = 'Graphics/Tiles/rottenMeat.png', scaresAnimals = true}
 
-P.beggar = P.tile:new{name = "beggar", alive = true, counter = 0, sprite = 'Graphics/beggar.png', deadSprite = 'Graphics/beggardead.png'}
+P.beggar = P.tile:new{name = "beggar", alive = true, counter = 0, sprite = 'GraphicsEli/whiteOrb1.png', deadSprite = 'Graphics/beggardead.png', 
+  animation = {'GraphicsEli/whiteOrb1.png', 'GraphicsEli/whiteOrb2.png', 'GraphicsEli/whiteOrb3.png', 'GraphicsEli/whiteOrb4.png', 'GraphicsEli/whiteOrb3.png', 'GraphicsEli/whiteOrb2.png'}, animationLength = 2}
 function P.beggar:onEnter(player)
 	--[[if tool==0 or tool>7 then return end
 	if not self.alive then return end
@@ -1561,6 +1569,7 @@ function P.beggar:getInfoText()
 end
 function P.beggar:destroy()
 	self.sprite = self.deadSprite
+	self.animation = nil
 	self.alive = false
 	local paysOut = util.random('toolDrop')
 	if paysOut<0.5 and not player.character.name==characters.felix.name then return end
