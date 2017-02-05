@@ -33,7 +33,7 @@
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,[26,"This floor is meant to represent a floor in the actual game.\n\nEach floor is randomly generated from a pool of rooms."],0,0,0,[26,"The map often forms a labyrinth shape."],0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,[26,"This floor is meant to represent a floor in the actual game.\n\nEach floor is randomly generated from a pool of rooms."],0,0,0,[26,"The map often forms a labyrinth shape.\nThere is minimap in the top right of the screen."],0,0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,153,0,0,0,0,19,0,0,0,0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
