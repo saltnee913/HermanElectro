@@ -2213,14 +2213,14 @@ function P.growthHormones:useToolTile(tile)
 end
 P.growthHormones.useToolNothing = P.growthHormones.useToolTile
 
-P.robotArm = P.superTool:new{name = "robotArm", description = "Reach for the stars", image = 'Graphics/robotArm.png', quality = 1, baseRange = 0}
+P.robotArm = P.superTool:new{name = "robotArm", description = "Reach for the stars", image = 'Graphics/robotArm.png', quality = 2, baseRange = 0}
 function P.robotArm:usableOnTile(tile)
 	return true
 end
 P.robotArm.usableOnNothing = P.robotArm.usableOnTile
 function P.robotArm:useToolTile(tile)
 	self.numHeld = self.numHeld-1
-	player.attributes.extendedRange = player.attributes.extendedRange+3
+	player.attributes.extendedRange = player.attributes.extendedRange+1
 end
 P.robotArm.useToolNothing = P.robotArm.useToolTile
 
@@ -2236,7 +2236,7 @@ function P.sock:useToolTile(tile)
 end
 P.sock.useToolNothing = P.sock.useToolTile
 
-P.gasPourer = P.superTool:new{name = "gasPourer", description = "Sentient cloud", image = 'Graphics/gaspourer.png', quality = 4, baseRange = 1}
+P.gasPourer = P.superTool:new{name = "gasPourer", description = "Sentient cloud", image = 'Graphics/gaspourer.png', quality = 3, baseRange = 1}
 function P.gasPourer:usableOnNothing()
 	return true
 end
@@ -2283,6 +2283,7 @@ function P.buttonPlacer:usableOnNothing()
 	return true
 end
 function P.buttonPlacer:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
 	room[tileY][tileX] = tiles.button:new()
 end
 
@@ -2291,10 +2292,11 @@ function P.wireToButton:usableOnTile(tile)
 	return tile:instanceof(tiles.wire)
 end
 function P.wireToButton:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
 	room[tileY][tileX] = tiles.button:new()
 end
 
-P.foresight = P.superTool:new{name = "foresight", description = "", image = 'Graphics/foresight.png', baseRange = 0, quality = 1}
+P.foresight = P.superTool:new{name = "foresight", description = "Open the chest", image = 'Graphics/foresight.png', baseRange = 0, quality = 1}
 function P.foresight:usableOnTile(tile)
 	return true
 end
@@ -2312,10 +2314,11 @@ function P.foresight:useToolTile(tile)
 			end
 		end
 	end
+	self.numHeld = self.numHeld-1
 end
 P.foresight.useToolNothing = P.foresight.useToolTile
 
-P.tileDisplacer = P.superTool:new{name = "tileDisplacer", description = "", heldTile = nil, image = 'Graphics/tiledisplacer.png', baseImage = 'Graphics/tiledisplacer.png', baseRange = 3, quality = 4}
+P.tileDisplacer = P.superTool:new{name = "tileDisplacer", description = "Pick it up", heldTile = nil, image = 'Graphics/tiledisplacer.png', baseImage = 'Graphics/tiledisplacer.png', baseRange = 3, quality = 4}
 function P.tileDisplacer:usableOnTile(tile)
 	return self.heldTile==nil and not tile.untoolable
 end
@@ -2337,7 +2340,7 @@ function P.tileDisplacer:nothingIsSomething()
 	return true
 end
 
-P.tileSwapper = P.superTool:new{name = "tileSwapper", description = "", toSwapCoords = nil, image = 'Graphics/tileswapper.png', baseImage = 'Graphics/tileswapper.png', baseRange = 3, quality = 5}
+P.tileSwapper = P.superTool:new{name = "tileSwapper", description = "Find and replace", toSwapCoords = nil, image = 'Graphics/tileswapper.png', baseImage = 'Graphics/tileswapper.png', baseRange = 3, quality = 5}
 function P.tileSwapper:usableOnTile(tile)
 	return not tile.untoolable
 end
@@ -2423,6 +2426,7 @@ function P.stoolPlacer:usableOnNothing()
 end
 function P.stoolPlacer:useToolNothing(tileY, tileX)
 	room[tileY][tileX] = tiles.halfWall:new()
+	self.numHeld = self.numHeld-1
 end
 
 P.lemonadeCup = P.superTool:new{name = "lemonadeCup", description = "Dainty cup",
@@ -3646,7 +3650,7 @@ P.wallReroller.useToolTile = P.wallReroller.useToolNothing
 
 --selects beggars from: red, green, blue, black, white, gold
 P.beggarReroller = P.superTool:new{name = "Beggar Reroller", description = "Basically just changing hats", image = 'Graphics/beggar.png',
-baseRange = 0, quality = 3}
+baseRange = 0, quality = 1}
 function P.beggarReroller:usableOnNothing()
 	return true
 end
@@ -3775,7 +3779,7 @@ function P.secretTeleporter:useToolNothing()
 end
 P.secretTeleporter.useToolTile = P.secretTeleporter.useToolNothing
 
-P.buttonReroller = P.superTool:new{name = "Button Reroller", description = "", image = 'Graphics/button.png',
+P.buttonReroller = P.superTool:new{name = "Button Reroller", description = "Rolled", image = 'Graphics/button.png',
 baseRange = 0, quality = 2}
 function P.buttonReroller:usableOnNothing()
 	return true
@@ -4063,6 +4067,7 @@ function P.fishingPole:usableOnTile(tile)
 	return tile:instanceof(tiles.puddle)
 end
 function P.fishingPole:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
 	room[tileY][tileX] = nil
 	tools.giveRandomTools(1)
 end
