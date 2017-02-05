@@ -1017,7 +1017,7 @@ function P.poweredEnd:postPowerUpdate()
 	end
 end
 
-P.pitbullTile = P.tile:new{name = "pitbull", animal = animalList[2], sprite = 'Graphics/animalstartingtile.png', listIndex = 2}
+P.pitbullTile = P.tile:new{name = "pitbull", animal = animalList[2], sprite = 'Graphics/animalstartingtile.png', listIndex = 2, isVisible = false}
 function P.pitbullTile:new(o)
 	o = o or {}
 	setmetatable(o, self)
