@@ -587,7 +587,9 @@ function goUpFloor()
 		for i = 1, roomHeight do
 			litTiles[i] = {}
 		end
-		playMusic(floorIndex)
+		if not loadTutorial then
+			playMusic(floorIndex)
+		end
 	end
 	postFloorChange()
 end
@@ -607,7 +609,9 @@ function goToFloor(floorNum)
 	visibleMap = mapToLoad.visibleMap
 	map.floorInfo = mapToLoad.floorInfo
 	prepareFloor()
-	playMusic(floorIndex)
+	if not loadTutorial then
+		playMusic(floorIndex)
+	end
 	currentid = tostring(mainMap[mapy][mapx].roomid)
 	if map.getFieldForRoom(currentid, 'autowin') then
 		completedRooms[mapy][mapx] = 1
