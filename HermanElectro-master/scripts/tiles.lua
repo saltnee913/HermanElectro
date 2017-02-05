@@ -8,12 +8,19 @@ local P = {}
 tiles = P
 
 P.tile = Object:new{yOffset = 0, canElevate = true, enterCheckWin = false, untoolable = false, blueHighlighted = false, attractsAnimals = false, scaresAnimals = false, formerPowered = nil, updatePowerOnEnter = false, text = "", updatePowerOnLeave = false, overlayable = false, overlaying = false, gone = false, lit = false, destroyed = false,
-  blocksProjectiles = false, isVisible = true, rotation = 0, powered = false, blocksMovement = false, 
+  blocksProjectiles = false, isVisible = true, rotation = 0, powered = false, blocksMovement = false, animationTimer = 0,
   blocksAnimalMovement = false, poweredNeighbors = {0,0,0,0}, blocksVision = false, dirSend = {1,1,1,1}, 
   dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile", emitsLight = false, litWhenPowered = false, intensity = 0.5, range = 25,
   sprite = 'Graphics/cavesfloor.png', 
   wireHackOn = 'Graphics3D/wirehackon.png',
   wireHackOff = 'Graphics3D/wirehackoff.png'}
+function P.tile:updateAnimation(dt)
+	if self.animation ~= nil then
+		self.animationTimer = self.animationTimer + dt
+		if self.animationTimer > self.animationLength then self.animationTimer = self.animationTimer - self.animationLength end
+		self.sprite = self.animation[math.ceil(#self.animation*self.animationTimer/self.animationLength)]
+	end
+end
 function P.tile:lightTest(x,y)
 	return false
 end
@@ -1004,6 +1011,12 @@ function P.poweredEnd:onEnter(player)
 	self.gone = true
 end
 
+function P.poweredEnd:postPowerUpdate()
+	if room[player.tileY][player.tileX] == self then
+		self:onEnter(player)
+	end
+end
+
 P.pitbullTile = P.tile:new{name = "pitbull", animal = animalList[2], sprite = 'Graphics/animalstartingtile.png', listIndex = 2}
 function P.pitbullTile:new(o)
 	o = o or {}
@@ -1533,7 +1546,8 @@ P.meat = P.tile:new{name = "meat", sprite = 'Graphics/Tiles/meat.png', attractsA
 
 P.rottenMeat = P.tile:new{name = "rottenMeat", sprite = 'Graphics/Tiles/rottenMeat.png', scaresAnimals = true}
 
-P.beggar = P.tile:new{name = "beggar", alive = true, counter = 0, sprite = 'Graphics/beggar.png', deadSprite = 'Graphics/beggardead.png'}
+P.beggar = P.tile:new{name = "beggar", alive = true, counter = 0, sprite = 'GraphicsEli/whiteOrb1.png', deadSprite = 'Graphics/beggardead.png', 
+  animation = {'GraphicsEli/whiteOrb1.png', 'GraphicsEli/whiteOrb2.png', 'GraphicsEli/whiteOrb3.png', 'GraphicsEli/whiteOrb4.png', 'GraphicsEli/whiteOrb3.png', 'GraphicsEli/whiteOrb2.png'}, animationLength = 1}
 function P.beggar:onEnter(player)
 	--[[if tool==0 or tool>7 then return end
 	if not self.alive then return end
@@ -1555,6 +1569,7 @@ function P.beggar:getInfoText()
 end
 function P.beggar:destroy()
 	self.sprite = self.deadSprite
+	self.animation = nil
 	self.alive = false
 	local paysOut = util.random('toolDrop')
 	if paysOut<0.5 and not player.character.name==characters.felix.name then return end
@@ -1567,7 +1582,8 @@ function P.beggar:providePayment()
 	else P.greenBeggar:providePayment() end
 end
 
-P.redBeggar = P.beggar:new{name = "redBeggar", sprite = 'Graphics/redbeggar.png', deadSprite = 'Graphics/redbeggardead.png'}
+P.redBeggar = P.beggar:new{name = "redBeggar", sprite = 'GraphicsEli/redOrb1.png', deadSprite = 'Graphics/redbeggardead.png', 
+  animation = {'GraphicsEli/redOrb1.png', 'GraphicsEli/redOrb2.png', 'GraphicsEli/redOrb3.png', 'GraphicsEli/redOrb4.png', 'GraphicsEli/redOrb3.png', 'GraphicsEli/redOrb2.png'}, animationLength = 1}
 function P.redBeggar:providePayment()
 	local greenTools = util.random('toolDrop')
 	local ttg = 0
@@ -1577,7 +1593,8 @@ function P.redBeggar:providePayment()
 	tools.giveRandomTools(ttg)
 end
 
-P.greenBeggar = P.beggar:new{name = "greenBeggar", sprite = 'Graphics/greenbeggar.png', deadSprite = 'Graphics/greenbeggardead.png'}
+P.greenBeggar = P.beggar:new{name = "greenBeggar", sprite = 'GraphicsEli/greenOrb1.png', deadSprite = 'Graphics/greenbeggardead.png', 
+  animation = {'GraphicsEli/greenOrb1.png', 'GraphicsEli/greenOrb2.png', 'GraphicsEli/greenOrb3.png', 'GraphicsEli/greenOrb4.png', 'GraphicsEli/greenOrb3.png', 'GraphicsEli/greenOrb2.png'}, animationLength = 1}
 function P.greenBeggar:providePayment()
 	local luckyCoin = util.random(100, 'toolDrop')
 	local ttg = tools.coin
@@ -1599,7 +1616,8 @@ function P.greenBeggar:providePayment()
 	end
 end
 
-P.blueBeggar = P.beggar:new{name = "blueBeggar", sprite = 'Graphics/bluebeggar.png', deadSprite = 'Graphics/bluebeggardead.png'}
+P.blueBeggar = P.beggar:new{name = "blueBeggar", sprite = 'GraphicsEli/blueOrb1.png', deadSprite = 'Graphics/bluebeggardead.png', 
+  animation = {'GraphicsEli/blueOrb1.png', 'GraphicsEli/blueOrb2.png', 'GraphicsEli/blueOrb3.png', 'GraphicsEli/blueOrb4.png', 'GraphicsEli/blueOrb3.png', 'GraphicsEli/blueOrb2.png'}, animationLength = 1}
 function P.blueBeggar:providePayment()
 	local quality = util.random('toolDrop')
 	if quality < 0.075 then
