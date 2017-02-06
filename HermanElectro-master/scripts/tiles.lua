@@ -2022,7 +2022,7 @@ P.reinforcedConductiveGlass = P.reinforcedGlass:new{name = "reinforcedConductive
 P.fog = P.tile:new{name = "fog", sprite = 'Graphics/fog.png', blocksVision = true}
 function P.fog:obstructsVision()
 	if not self.blocksVision then return false end
-	return player.elevation<=0
+	return true
 end
 function P.fog:obstructsMovementAnimal(animal)
 	if math.abs(animal.elevation)<3 then
