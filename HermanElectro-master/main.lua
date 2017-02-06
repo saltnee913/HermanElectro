@@ -3171,7 +3171,6 @@ function love.keypressed(key, unicode)
     		end
     	end
     end
-
     player.character:absoluteFinalUpdate()
     postKeypressReset()
 end
