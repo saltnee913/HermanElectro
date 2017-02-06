@@ -846,7 +846,7 @@ function P.hDoor:lightTest(x,y)
 	end
 end
 function P.hDoor:obstructsMovement()
-	if math.abs(player.elevation)<3 then return false
+	if math.abs(player.elevation)<=3 then return false
 	else return true end
 end
 function P.hDoor:obstructsMovementAnimal()
