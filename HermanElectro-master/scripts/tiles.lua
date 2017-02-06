@@ -2025,14 +2025,14 @@ function P.fog:obstructsVision()
 	return true
 end
 function P.fog:obstructsMovementAnimal(animal)
-	if math.abs(animal.elevation)<3 then
+	if math.abs(animal.elevation)<=3 then
 		return false
 	else
 		return true
 	end
 end
 function P.fog:obstructsMovement()
-	if math.abs(player.elevation)<3 then
+	if math.abs(player.elevation)<=3 then
 		return false
 	else
 		return true
