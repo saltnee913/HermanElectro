@@ -505,6 +505,7 @@ function goToMainMenu()
 	loadOpeningWorld()
 	emptyTools()
 	gamePaused = false
+	won = false
 	playMusic(1)
 end
 
@@ -587,7 +588,9 @@ function goUpFloor()
 		for i = 1, roomHeight do
 			litTiles[i] = {}
 		end
-		playMusic(floorIndex)
+		if not loadTutorial then
+			playMusic(floorIndex)
+		end
 	end
 	postFloorChange()
 end
@@ -607,7 +610,9 @@ function goToFloor(floorNum)
 	visibleMap = mapToLoad.visibleMap
 	map.floorInfo = mapToLoad.floorInfo
 	prepareFloor()
-	playMusic(floorIndex)
+	if not loadTutorial then
+		playMusic(floorIndex)
+	end
 	currentid = tostring(mainMap[mapy][mapx].roomid)
 	if map.getFieldForRoom(currentid, 'autowin') then
 		completedRooms[mapy][mapx] = 1
@@ -2391,7 +2396,6 @@ function createAnimals()
 						animalToSpawn.loaded = true
 					end
 					animalCounter=animalCounter+1
-					room[i][j] = nil
 				end
 			end
 		end
@@ -2886,7 +2890,6 @@ function love.keypressed(key, unicode)
 					for j = 0, mainMap.height do
 						if completedRooms[i][j] == 0 then
 							hackEnterRoom(mainMap[i][j].roomid, i, j)
-							return
 						end
 					end
 				end
