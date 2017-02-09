@@ -474,7 +474,7 @@ function P.ladder:useToolNothing(tileY, tileX)
 	room[tileY][tileX] = tiles.ladder:new()
 end
 
-P.wireCutters = P.tool:new{name = 'wire-cutters', image = 'Graphics/Tools/wirecutters.png'}
+P.wireCutters = P.tool:new{name = 'wire-cutters', image = 'Graphics/Tools/wireCutters.png'}
 function P.wireCutters:usableOnNonOverlay(tile)
 	return not tile.destroyed and ((tile:instanceof(tiles.wire) and not tile:instanceof(tiles.unbreakableWire))
 	or tile:instanceof(tiles.conductiveGlass) or tile:instanceof(tiles.reinforcedConductiveGlass) or (tile:instanceof(tiles.electricFloor) and not tile:instanceof(tiles.unbreakableElectricFloor)))
