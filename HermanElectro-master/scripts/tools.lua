@@ -3111,7 +3111,7 @@ function P.portalPlacerDouble:useToolNothing(tileY, tileX)
 	end
 end
 
-P.spinningSword = P.superTool:new{name = "Spinning Sword", description = "Turnt", image = 'Graphics/spinningsword.png', quality = 4, baseRange = 1}
+P.spinningSword = P.superTool:new{name = "Spinning Sword", description = "Turnt", image = 'Graphics/spinningsword.png', quality = 1, baseRange = 1}
 P.spinningSword.getToolableTiles = P.tool.getToolableTilesBox
 function P.spinningSword:usableOnNothing()
 	return true
@@ -3129,8 +3129,10 @@ function P.spinningSword:useToolNothing()
 			end
 		end
 	end
+	self.numHeld = self.numHeld-1
 end
 P.spinningSword.useToolTile = P.spinningSword.useToolNothing
+
 
 P.ironMan = P.superTool:new{name = "Daily Supplements", description = "Do you even lift?", image = 'Graphics/ironman.png',
 baseRange = 1, quality = 4}
