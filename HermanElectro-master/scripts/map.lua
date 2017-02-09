@@ -378,7 +378,7 @@ function P.flipRooms()
 						end
 					end
 				end
-				if dirEnter ~= nil then
+				if v.dirEnter ~= nil then
 					if flipVertical then
 						local dirTemp = v.dirEnter[1]
 						v.dirEnter[1] = v.dirEnter[3]

@@ -729,6 +729,6 @@
     "hasEndTile": false,
     "autowin": true,
     "floorTileOverride": "dungeon",
-    "flippable": false
+    "flippable": true
   }
 }
