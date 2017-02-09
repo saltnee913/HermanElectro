@@ -656,7 +656,15 @@ end
 
 P.numQualities = 5
 P.superTool = P.tool:new{name = 'superTool', baseRange = 10, quality = P.numQualities, description = 'qwerty'}
-
+function P.superTool:getOtherSupers()
+	local toRet = {}
+	for i = tools.numNormalTools+1, #tools do
+		if tools[i].numHeld > 0 and tools[i].name ~= self.name then
+			toRet[#toRet+1] = tools[i]
+		end
+	end
+	return toRet
+end
 
 
 P.cuttingTorch = P.superTool:new{name = 'cutting-torch', image = 'Graphics/cuttingtorch.png'}
@@ -4074,6 +4082,50 @@ end
 
 P.numNormalTools = 7
 
+P.blankTool = P.superTool:new{name = "Blank Tool", description = "Just as good as another tool.", quality = 3, 
+  image = 'Graphics/Tools/blankTool.png'}
+for k, v in pairs(P.tool) do
+	if string.find(k, 'getToolable') then
+		P.blankTool[k] = function(self)
+			local otherTools = self:getOtherSupers()
+			if #otherTools == 0 then
+				return {}
+			elseif #otherTools == 1 then
+				return otherTools[1][k](otherTools[1])
+			else
+				local toRet = {{},{},{},{},{}}
+				local tilesA = otherTools[1][k](otherTools[1])
+				local tilesB = otherTools[2][k](otherTools[2])
+				for dir = 1, 5 do
+					for i = 1, #tilesA[dir] do
+						toRet[dir][i] = tilesA[dir][i]
+					end
+					for i = 1, #tilesB[dir] do
+						local shouldSkip = false
+						for j = 1, #tilesA[dir] do
+							if tilesB[dir][i] == tilesA[dir][j] then
+								shouldSkip = true
+							end
+						end
+						if not shouldSkip then
+							toRet[dir][#toRet[dir]+1] = tilesB[dir][i]
+						end
+					end
+				end
+				return toRet
+			end
+		end
+	elseif string.match(k, 'useTool') then
+		P.blankTool[k] = function(self,a,b,c,d,e,f,g) --the a,b,c,d,e is a hack because for some reason ... doesn't work
+			self.numHeld = self.numHeld - 1
+			local otherTools = self:getOtherSupers()
+			for i = 1, #otherTools do
+				otherTools[i][k](otherTools[i],a,b,c,d,e,f,g)
+				otherTools[i].numHeld = otherTools[i].numHeld+1
+			end
+		end
+	end
+end
 --[[ideas:
 --animal reroller
 -box reroller
@@ -4253,6 +4305,7 @@ P:addTool(P.investmentBonus)
 P:addTool(P.completionBonus)
 P:addTool(P.roomCompletionBonus)
 P:addTool(P.fishingPole)
+P:addTool(P.blankTool)
 
 P.resetTools()
 
