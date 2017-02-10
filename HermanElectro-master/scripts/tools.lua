@@ -2316,6 +2316,7 @@ function P.foresight:useToolTile(tile)
 				local supOrBas = util.random(5, 'toolDrop')
 				if (supOrBas<5) then
 					room[i][j] = tiles.toolTile:new()
+					room[i][j]:randomize()
 				else
 					room[i][j] = tiles.supertoolTile:new()
 				end

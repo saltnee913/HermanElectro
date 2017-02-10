@@ -2292,6 +2292,11 @@ function P.toolTile:onLoad()
 		self.tool = tools[self.toolId]
 	end
 end
+function P.toolTile:randomize()
+	local whichBasic = util.random(tools.numNormalTools, 'toolDrop')
+	self.toolId = whichBasic
+	self.tool = tools[self.toolId]
+end
 P.toolTile.updateSprite = P.supertoolTile.updateSprite
 
 P.sawTile = P.toolTile:new{name = "sawTile", toolId = 1, sprite = tools.saw.image}
