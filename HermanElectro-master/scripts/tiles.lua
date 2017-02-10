@@ -145,7 +145,7 @@ function P.tile:updateToOverlay(dir)
 	if dir ~= -1 then
 		self.overlay:updateTile(dir)
 	end
-	if self.overlay:instanceof(P.wire) then
+	if self.overlay:instanceof(P.wire) or self.overlay:instanceof(P.andGate) then
 		self.canBePowered = self.overlay.canBePowered
 		self.dirSend = self.overlay.dirSend
 		self.dirAccept = self.overlay.dirAccept
