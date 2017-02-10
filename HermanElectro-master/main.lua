@@ -3156,6 +3156,7 @@ function love.keypressed(key, unicode)
     		end
     	end
     	log(toPrint)
+    	editor.keypressed(key, unicode)
     elseif key == 'c' then
     	log(nil)
     end

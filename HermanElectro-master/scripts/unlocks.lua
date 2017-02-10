@@ -127,7 +127,7 @@ P.fishUnlock = P.charUnlock:new{name = 'fish fish', charIds = {16}, sprite = 'Gr
 
 
 P.tileUnlock = P.unlock:new{name = 'tile', tileIds = {1}, sprite = tiles.tile.sprite}
-P.lockedTiles = P.tileUnlock:new{name = 'permanentlyLockedTiles', tileIds = {103,104,105,106,107,108,109,110,111,112,113}}
+P.lockedTiles = P.tileUnlock:new{name = 'permanentlyLockedTiles', tileIds = {50,103,104,105,106,107,108,109,110,111,112,113}}
 P.boxesUnlock = P.tileUnlock:new{name = 'box', tileIds = {66,69,70,74,75,76,87,89,90}, sprite = pushables.box.sprite}
 P.acceleratorUnlock = P.tileUnlock:new{name = 'accelerator', tileIds = {86,88}, sprite = tiles.unpoweredAccelerator.sprite}
 P.unbreakableWires = P.tileUnlock:new{name = 'unbreakable wires', tileIds = {40,82,83,84,85}, sprite = tiles.unbreakableWire.sprite}
