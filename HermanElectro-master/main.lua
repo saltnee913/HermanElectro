@@ -506,6 +506,7 @@ function goToMainMenu()
 	emptyTools()
 	gamePaused = false
 	won = false
+	updateGameState()
 	playMusic(1)
 end
 
