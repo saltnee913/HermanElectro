@@ -151,7 +151,11 @@ function P.keypressed(key, unicode)
 		local state = {indent = true}
 		util.writeJSON('/tempRooms.json', tempRooms, state)
 		local json = require('scripts.dkjson')
-		print(json.encode({name = newRoom}, state))
+		local toPrint = json.encode({name = newRoom}, state)
+		toPrint = toPrint:sub(3)
+		toPrint = toPrint:sub(1,-3)
+		toPrint = toPrint..","
+		print(toPrint)
 	end
 	if key=='tab' then
 		roomHack = mainMap[mapy][mapx].roomid .. ''
