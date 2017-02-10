@@ -3127,6 +3127,8 @@ function P.spinningSword:usableOnNothing()
 end
 P.spinningSword.usableOnTile = P.spinningSword.usableOnNothing
 function P.spinningSword:useToolNothing()
+	self.numHeld = self.numHeld-1
+
 	local xdiff = {-1, 0, 1}
 	local ydiff = {-1, 0, 1}
 	for i = 1, 3 do
