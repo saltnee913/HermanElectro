@@ -982,7 +982,7 @@ function P.woodGrabber:useToolTile(tile, tileY, tileX)
 	room[tileY][tileX] = nil
 end
 
-P.pitbullChanger = P.superTool:new{name = "pitbullChanger", description = "Tabloid transformation",baseRange = 3, image = 'Graphics/pitbullChanger.png', quality = 2}
+P.pitbullChanger = P.superTool:new{name = "pitbullChanger", description = "Tabloid transformation",baseRange = 3, image = 'Graphics/pitbullChanger.png', quality = 1}
 function P.pitbullChanger:usableOnAnimal(animal)
 	return not animal.dead and animal:instanceof(animalList.pitbull)
 end
@@ -1012,7 +1012,7 @@ function P.rotater:useToolTile(tile, tileY, tileX)
 	tile:rotate(1)
 end
 
-P.trap = P.superTool:new{name = "trap", description = "Removed?", baseRange = 1, image = 'Graphics/trap.png', quality = 2}
+P.trap = P.superTool:new{name = "trap", description = "Removed?", baseRange = 1, image = 'Graphics/trap.png', quality = 1}
 function P.trap:usableOnNothing()
 	return true
 end
@@ -2543,6 +2543,7 @@ function P.towel:usableOnTile(tile)
 	else return false end
 end
 function P.towel:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
 	if tile:instanceof(tiles.superStickyButton) then
 		local isDown = room[tileY][tileX].down
 		room[tileY][tileX] = tiles.stickyButton:new()
@@ -4194,7 +4195,7 @@ P:addTool(P.conductiveBoxSpawner)
 P:addTool(P.superWireCutters)
 P:addTool(P.boxSpawner)
 P:addTool(P.boomboxSpawner)
-P:addTool(P.laser)
+--P:addTool(P.laser)
 P:addTool(P.gas)
 P:addTool(P.superLaser)
 P:addTool(P.armageddon)
@@ -4232,8 +4233,7 @@ P:addTool(P.mask)
 P:addTool(P.growthHormones)
 P:addTool(P.robotArm)
 P:addTool(P.sock)
-P:addTool(P.trap)
-P:addTool(P.emptyCup)
+--P:addTool(P.emptyCup)
 P:addTool(P.gasPourer)
 P:addTool(P.gasPourerXtreme)
 P:addTool(P.buttonPlacer)
