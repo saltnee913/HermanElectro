@@ -2921,7 +2921,7 @@ function P.stealthBomber:useToolTile(tile, tileY, tileX)
 	player.tileY = tileY
 
 	if room[(player.tileY+player.prevTileY)/2][(player.tileX+player.prevTileX)/2]~= nil then
-		room[(player.tileY+player.prevTileY)/2][(player.tileX+player.prevTileYX)/2]:destroy()
+		room[(player.tileY+player.prevTileY)/2][(player.tileX+player.prevTileX)/2]:destroy()
 	end
 
 	updateElevation()
