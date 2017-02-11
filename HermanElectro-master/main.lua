@@ -2438,6 +2438,7 @@ function resetPlayerAttributesTool()
 		player.attributes.upgradedToolUse = false
 		tools.tempUpgrade:resetTools()
 	end
+	tools.mindfulTool.lastUsedId = tool
 end
 
 function resetPlayerAttributesStep()
@@ -3245,10 +3246,10 @@ function postAnimalMovement()
 			if room[animals[i].prevTileY]~=nil and room[animals[i].prevTileY][animals[i].prevTileX]~=nil then
 				room[animals[i].prevTileY][animals[i].prevTileX]:onLeaveAnimal(animals[i])
 				if room[animals[i].prevTileY][animals[i].prevTileX]:usableOnNothing() then
-					room[animals[i].prevTileY][animals[i].prevTileX] = animals[i]:onNullLeave()
+					room[animals[i].prevTileY][animals[i].prevTileX] = animals[i]:onNullLeave(animals[i].prevTileY, animals[i].prevTileX)
 				end
 			else
-				room[animals[i].prevTileY][animals[i].prevTileX] = animals[i]:onNullLeave()
+				room[animals[i].prevTileY][animals[i].prevTileX] = animals[i]:onNullLeave(animals[i].prevTileY, animals[i].prevTileX)
 			end
 		end
 	end

@@ -4129,6 +4129,10 @@ for k, v in pairs(P.tool) do
 		end
 	end
 end
+
+P.mindfulTool = P.superTool:new{name = "Mindful Tool", description = "Never forget where you came from.", quality = 3, 
+  image = 'Graphics/Tools/blankTool.png', lastUsedId = 1}
+
 --[[ideas:
 --animal reroller
 -box reroller
