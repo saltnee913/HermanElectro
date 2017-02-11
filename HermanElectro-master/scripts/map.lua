@@ -250,12 +250,12 @@ function P.loadFloor(inFloorFile)
 				P.floorInfo.roomsArray[#(P.floorInfo.roomsArray)+1] = roomsArray[i]
 			end
 		end
-		--printk..': '..amt)
+		print(k..': '..amt)
 		local toPrint = ""
 		for i = 0, 10 do
 			toPrint = toPrint..i..": "..numToolsArray[i+1]..", "
 		end
-		--print(toPrint)
+		print(toPrint)
 		--print("Tools:")
 		toolWords = {"saws", "ladders", "wireCutters", "waterBottles", "sponges", "bricks", "guns"}
 		toPrint = ""

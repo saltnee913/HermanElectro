@@ -506,6 +506,7 @@ function goToMainMenu()
 	emptyTools()
 	gamePaused = false
 	won = false
+	updateGameState()
 	playMusic(1)
 end
 
@@ -3155,6 +3156,7 @@ function love.keypressed(key, unicode)
     		end
     	end
     	log(toPrint)
+    	if not editorMode then editor.keypressed(key, unicode) end
     elseif key == 'c' then
     	log(nil)
     end

@@ -145,7 +145,7 @@ function P.tile:updateToOverlay(dir)
 	if dir ~= -1 then
 		self.overlay:updateTile(dir)
 	end
-	if self.overlay:instanceof(P.wire) then
+	if self.overlay:instanceof(P.wire) or self.overlay:instanceof(P.andGate) then
 		self.canBePowered = self.overlay.canBePowered
 		self.dirSend = self.overlay.dirSend
 		self.dirAccept = self.overlay.dirAccept
@@ -2291,6 +2291,11 @@ function P.toolTile:onLoad()
 	if self.tool == nil then
 		self.tool = tools[self.toolId]
 	end
+end
+function P.toolTile:randomize()
+	local whichBasic = util.random(tools.numNormalTools, 'toolDrop')
+	self.toolId = whichBasic
+	self.tool = tools[self.toolId]
 end
 P.toolTile.updateSprite = P.supertoolTile.updateSprite
 

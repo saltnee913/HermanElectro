@@ -474,7 +474,7 @@ function P.ladder:useToolNothing(tileY, tileX)
 	room[tileY][tileX] = tiles.ladder:new()
 end
 
-P.wireCutters = P.tool:new{name = 'wire-cutters', image = 'Graphics/Tools/wirecutters.png'}
+P.wireCutters = P.tool:new{name = 'wire-cutters', image = 'Graphics/Tools/wireCutters.png'}
 function P.wireCutters:usableOnNonOverlay(tile)
 	return not tile.destroyed and ((tile:instanceof(tiles.wire) and not tile:instanceof(tiles.unbreakableWire))
 	or tile:instanceof(tiles.conductiveGlass) or tile:instanceof(tiles.reinforcedConductiveGlass) or (tile:instanceof(tiles.electricFloor) and not tile:instanceof(tiles.unbreakableElectricFloor)))
@@ -656,7 +656,15 @@ end
 
 P.numQualities = 5
 P.superTool = P.tool:new{name = 'superTool', baseRange = 10, quality = P.numQualities, description = 'qwerty'}
-
+function P.superTool:getOtherSupers()
+	local toRet = {}
+	for i = tools.numNormalTools+1, #tools do
+		if tools[i].numHeld > 0 and tools[i].name ~= self.name then
+			toRet[#toRet+1] = tools[i]
+		end
+	end
+	return toRet
+end
 
 
 P.cuttingTorch = P.superTool:new{name = 'cutting-torch', image = 'Graphics/cuttingtorch.png'}
@@ -2308,6 +2316,7 @@ function P.foresight:useToolTile(tile)
 				local supOrBas = util.random(5, 'toolDrop')
 				if (supOrBas<5) then
 					room[i][j] = tiles.toolTile:new()
+					room[i][j]:randomize()
 				else
 					room[i][j] = tiles.supertoolTile:new()
 				end
@@ -3118,6 +3127,8 @@ function P.spinningSword:usableOnNothing()
 end
 P.spinningSword.usableOnTile = P.spinningSword.usableOnNothing
 function P.spinningSword:useToolNothing()
+	self.numHeld = self.numHeld-1
+
 	local xdiff = {-1, 0, 1}
 	local ydiff = {-1, 0, 1}
 	for i = 1, 3 do
@@ -4076,6 +4087,50 @@ end
 
 P.numNormalTools = 7
 
+P.blankTool = P.superTool:new{name = "Blank Tool", description = "Just as good as another tool.", quality = 3, 
+  image = 'Graphics/Tools/blankTool.png'}
+for k, v in pairs(P.tool) do
+	if string.find(k, 'getToolable') then
+		P.blankTool[k] = function(self)
+			local otherTools = self:getOtherSupers()
+			if #otherTools == 0 then
+				return {}
+			elseif #otherTools == 1 then
+				return otherTools[1][k](otherTools[1])
+			else
+				local toRet = {{},{},{},{},{}}
+				local tilesA = otherTools[1][k](otherTools[1])
+				local tilesB = otherTools[2][k](otherTools[2])
+				for dir = 1, 5 do
+					for i = 1, #tilesA[dir] do
+						toRet[dir][i] = tilesA[dir][i]
+					end
+					for i = 1, #tilesB[dir] do
+						local shouldSkip = false
+						for j = 1, #tilesA[dir] do
+							if tilesB[dir][i] == tilesA[dir][j] then
+								shouldSkip = true
+							end
+						end
+						if not shouldSkip then
+							toRet[dir][#toRet[dir]+1] = tilesB[dir][i]
+						end
+					end
+				end
+				return toRet
+			end
+		end
+	elseif string.match(k, 'useTool') then
+		P.blankTool[k] = function(self,a,b,c,d,e,f,g) --the a,b,c,d,e is a hack because for some reason ... doesn't work
+			self.numHeld = self.numHeld - 1
+			local otherTools = self:getOtherSupers()
+			for i = 1, #otherTools do
+				otherTools[i][k](otherTools[i],a,b,c,d,e,f,g)
+				otherTools[i].numHeld = otherTools[i].numHeld+1
+			end
+		end
+	end
+end
 --[[ideas:
 --animal reroller
 -box reroller
@@ -4251,10 +4306,11 @@ P:addTool(P.animalReroller)
 P:addTool(P.boxReroller)
 P:addTool(P.animalTrainer)
 P:addTool(P.animalEnslaver)
-P:addTool(P.investmentBonus)
-P:addTool(P.completionBonus)
+--P:addTool(P.investmentBonus)
+--P:addTool(P.completionBonus)
 P:addTool(P.roomCompletionBonus)
 P:addTool(P.fishingPole)
+P:addTool(P.blankTool)
 
 P.resetTools()
 
