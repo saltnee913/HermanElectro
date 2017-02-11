@@ -210,6 +210,9 @@ function P.tool:nothingIsSomething()
 end
 function P.tool:resetTool()
 end
+function P.tool:getLastTool()
+	return {tools[P.lastToolUsed]}
+end
 
 --returns a table of tables of coordinates by direction
 function P.tool:getToolableTiles()
@@ -2797,6 +2800,8 @@ function P.tileMagnet:usableOnTile(tile, dist)
 	return true
 end
 function P.tileMagnet:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
+
 	local useLoc = {x = 0, y = 0}
 	if player.tileX==tileX then
 		if player.tileY>tileY then
@@ -4086,8 +4091,6 @@ function P.fishingPole:useToolTile(tile, tileY, tileX)
 	tools.giveRandomTools(1)
 end
 
-P.numNormalTools = 7
-
 P.blankTool = P.superTool:new{name = "Blank Tool", description = "Just as good as another tool.", quality = 3, 
   image = 'Graphics/Tools/blankTool.png'}
 for k, v in pairs(P.tool) do
@@ -4134,7 +4137,38 @@ for k, v in pairs(P.tool) do
 end
 
 P.mindfulTool = P.superTool:new{name = "Mindful Tool", description = "Never forget where you came from.", quality = 3, 
-  image = 'Graphics/Tools/blankTool.png', lastUsedId = 1}
+  image = 'Graphics/Tools/mindfulTool.png'}
+for k, v in pairs(P.tool) do
+	if string.find(k, 'getToolable') then
+		P.mindfulTool[k] = function(self)
+			local otherTools = self:getLastTool()
+			if #otherTools == 0 then
+				return {}
+			elseif #otherTools == 1 then
+				return otherTools[1][k](otherTools[1])
+			end
+		end
+	elseif string.match(k, 'useTool') then
+		P.mindfulTool[k] = function(self,a,b,c,d,e,f,g) --the a,b,c,d,e is a hack because for some reason ... doesn't work
+			self.numHeld = self.numHeld - 1
+			local otherTools = self:getLastTool()
+			for i = 1, #otherTools do
+				otherTools[i][k](otherTools[i],a,b,c,d,e,f,g)
+				otherTools[i].numHeld = otherTools[i].numHeld+1
+			end
+		end
+	end
+end
+function P.mindfulTool:getLastTool()
+	local lastToolList = P.tool:getLastTool()
+	if #lastToolList==1 then
+		if lastToolList[1]:instanceof(tools.mindfulTool) or
+		lastToolList[1]:instanceof(tools.blankTool) then
+			lastToolList[1] = tools.armageddon
+		end
+	end
+	return lastToolList
+end
 
 --[[ideas:
 --animal reroller
@@ -4143,6 +4177,9 @@ P.mindfulTool = P.superTool:new{name = "Mindful Tool", description = "Never forg
 --More coin based tools
 
 ]]
+
+P.numNormalTools = 7
+P.lastToolUsed = 1
 
 function P.resetTools()
 	P:insertTool(P.saw, 1)
@@ -4315,6 +4352,7 @@ P:addTool(P.animalEnslaver)
 P:addTool(P.roomCompletionBonus)
 P:addTool(P.fishingPole)
 P:addTool(P.blankTool)
+P:addTool(P.mindfulTool)
 
 P.resetTools()
 
