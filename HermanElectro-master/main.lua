@@ -507,6 +507,9 @@ function setMusicVolume(volume)
 end
 
 function goToMainMenu()
+	if saving.isPlayingBack() then
+		return
+	end
 	--started = false
 	saving.endRecording()
 	loadOpeningWorld()
