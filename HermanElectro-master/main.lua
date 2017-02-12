@@ -319,6 +319,9 @@ function love.load()
 		fontFile = 'Resources/upheavtt.ttf'
 		textBackground = love.graphics.newImage('Graphics/textBackground.png')
 
+		cursor = love.mouse.newCursor('Graphics/herman_small.png', 0, 0)
+		love.mouse.setCursor(cursor)
+
 		tileUnit = 16
 		love.graphics.setBackgroundColor(0,0,0)
 		floorIndex = -1
@@ -2444,6 +2447,7 @@ function resetPlayerAttributesTool()
 		player.attributes.upgradedToolUse = false
 		tools.tempUpgrade:resetTools()
 	end
+	tools.lastToolUsed = tool
 end
 
 function resetPlayerAttributesStep()
@@ -3257,15 +3261,11 @@ function postAnimalMovement()
 		if animals[i]:hasMoved() and not animals[i].dead then
 			if room[animals[i].prevTileY]~=nil and room[animals[i].prevTileY][animals[i].prevTileX]~=nil then
 				room[animals[i].prevTileY][animals[i].prevTileX]:onLeaveAnimal(animals[i])
-				if room[animals[i].prevTileY][animals[i].prevTileX]:instanceof(tiles.wire) and
-				room[animals[i].prevTileY][animals[i].prevTileX].destroyed then
-					room[animals[i].prevTileY][animals[i].prevTileX] = animals[i]:onNullLeave()
-				elseif room[animals[i].prevTileY][animals[i].prevTileX]:instanceof(tiles.wall) and
-				room[animals[i].prevTileY][animals[i].prevTileX].destroyed then
-					room[animals[i].prevTileY][animals[i].prevTileX] = animals[i]:onNullLeave()
+				if room[animals[i].prevTileY][animals[i].prevTileX]:usableOnNothing() then
+					room[animals[i].prevTileY][animals[i].prevTileX] = animals[i]:onNullLeave(animals[i].prevTileY, animals[i].prevTileX)
 				end
 			else
-				room[animals[i].prevTileY][animals[i].prevTileX] = animals[i]:onNullLeave()
+				room[animals[i].prevTileY][animals[i].prevTileX] = animals[i]:onNullLeave(animals[i].prevTileY, animals[i].prevTileX)
 			end
 		end
 	end

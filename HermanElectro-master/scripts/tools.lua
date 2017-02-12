@@ -210,6 +210,9 @@ function P.tool:nothingIsSomething()
 end
 function P.tool:resetTool()
 end
+function P.tool:getLastTool()
+	return {tools[P.lastToolUsed]}
+end
 
 --returns a table of tables of coordinates by direction
 function P.tool:getToolableTiles()
@@ -982,7 +985,7 @@ function P.woodGrabber:useToolTile(tile, tileY, tileX)
 	room[tileY][tileX] = nil
 end
 
-P.pitbullChanger = P.superTool:new{name = "pitbullChanger", description = "Tabloid transformation",baseRange = 3, image = 'Graphics/pitbullChanger.png', quality = 2}
+P.pitbullChanger = P.superTool:new{name = "pitbullChanger", description = "Tabloid transformation",baseRange = 3, image = 'Graphics/pitbullChanger.png', quality = 1}
 function P.pitbullChanger:usableOnAnimal(animal)
 	return not animal.dead and animal:instanceof(animalList.pitbull)
 end
@@ -1012,7 +1015,7 @@ function P.rotater:useToolTile(tile, tileY, tileX)
 	tile:rotate(1)
 end
 
-P.trap = P.superTool:new{name = "trap", description = "Removed?", baseRange = 1, image = 'Graphics/trap.png', quality = 2}
+P.trap = P.superTool:new{name = "trap", description = "Removed?", baseRange = 1, image = 'Graphics/trap.png', quality = 1}
 function P.trap:usableOnNothing()
 	return true
 end
@@ -2543,6 +2546,7 @@ function P.towel:usableOnTile(tile)
 	else return false end
 end
 function P.towel:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
 	if tile:instanceof(tiles.superStickyButton) then
 		local isDown = room[tileY][tileX].down
 		room[tileY][tileX] = tiles.stickyButton:new()
@@ -2796,6 +2800,8 @@ function P.tileMagnet:usableOnTile(tile, dist)
 	return true
 end
 function P.tileMagnet:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
+
 	local useLoc = {x = 0, y = 0}
 	if player.tileX==tileX then
 		if player.tileY>tileY then
@@ -2920,7 +2926,7 @@ function P.stealthBomber:useToolTile(tile, tileY, tileX)
 	player.tileY = tileY
 
 	if room[(player.tileY+player.prevTileY)/2][(player.tileX+player.prevTileX)/2]~= nil then
-		room[(player.tileY+player.prevTileY)/2][(player.tileX+player.prevTileYX)/2]:destroy()
+		room[(player.tileY+player.prevTileY)/2][(player.tileX+player.prevTileX)/2]:destroy()
 	end
 
 	updateElevation()
@@ -3120,7 +3126,7 @@ function P.portalPlacerDouble:useToolNothing(tileY, tileX)
 	end
 end
 
-P.spinningSword = P.superTool:new{name = "Spinning Sword", description = "Turnt", image = 'Graphics/spinningsword.png', quality = 4, baseRange = 1}
+P.spinningSword = P.superTool:new{name = "Spinning Sword", description = "Turnt", image = 'Graphics/spinningsword.png', quality = 1, baseRange = 1}
 P.spinningSword.getToolableTiles = P.tool.getToolableTilesBox
 function P.spinningSword:usableOnNothing()
 	return true
@@ -3140,8 +3146,10 @@ function P.spinningSword:useToolNothing()
 			end
 		end
 	end
+	self.numHeld = self.numHeld-1
 end
 P.spinningSword.useToolTile = P.spinningSword.useToolNothing
+
 
 P.ironMan = P.superTool:new{name = "Daily Supplements", description = "Do you even lift?", image = 'Graphics/ironman.png',
 baseRange = 1, quality = 4}
@@ -4083,8 +4091,6 @@ function P.fishingPole:useToolTile(tile, tileY, tileX)
 	tools.giveRandomTools(1)
 end
 
-P.numNormalTools = 7
-
 P.blankTool = P.superTool:new{name = "Blank Tool", description = "Just as good as another tool.", quality = 3, 
   image = 'Graphics/Tools/blankTool.png'}
 for k, v in pairs(P.tool) do
@@ -4129,6 +4135,41 @@ for k, v in pairs(P.tool) do
 		end
 	end
 end
+
+P.mindfulTool = P.superTool:new{name = "Mindful Tool", description = "Never forget where you came from.", quality = 3, 
+  image = 'Graphics/Tools/mindfulTool.png'}
+for k, v in pairs(P.tool) do
+	if string.find(k, 'getToolable') then
+		P.mindfulTool[k] = function(self)
+			local otherTools = self:getLastTool()
+			if #otherTools == 0 then
+				return {}
+			elseif #otherTools == 1 then
+				return otherTools[1][k](otherTools[1])
+			end
+		end
+	elseif string.match(k, 'useTool') then
+		P.mindfulTool[k] = function(self,a,b,c,d,e,f,g) --the a,b,c,d,e is a hack because for some reason ... doesn't work
+			self.numHeld = self.numHeld - 1
+			local otherTools = self:getLastTool()
+			for i = 1, #otherTools do
+				otherTools[i][k](otherTools[i],a,b,c,d,e,f,g)
+				otherTools[i].numHeld = otherTools[i].numHeld+1
+			end
+		end
+	end
+end
+function P.mindfulTool:getLastTool()
+	local lastToolList = P.tool:getLastTool()
+	if #lastToolList==1 then
+		if lastToolList[1]:instanceof(tools.mindfulTool) or
+		lastToolList[1]:instanceof(tools.blankTool) then
+			lastToolList[1] = tools.armageddon
+		end
+	end
+	return lastToolList
+end
+
 --[[ideas:
 --animal reroller
 -box reroller
@@ -4136,6 +4177,9 @@ end
 --More coin based tools
 
 ]]
+
+P.numNormalTools = 7
+P.lastToolUsed = 1
 
 function P.resetTools()
 	P:insertTool(P.saw, 1)
@@ -4192,7 +4236,7 @@ P:addTool(P.conductiveBoxSpawner)
 P:addTool(P.superWireCutters)
 P:addTool(P.boxSpawner)
 P:addTool(P.boomboxSpawner)
-P:addTool(P.laser)
+--P:addTool(P.laser)
 P:addTool(P.gas)
 P:addTool(P.superLaser)
 P:addTool(P.armageddon)
@@ -4230,8 +4274,7 @@ P:addTool(P.mask)
 P:addTool(P.growthHormones)
 P:addTool(P.robotArm)
 P:addTool(P.sock)
-P:addTool(P.trap)
-P:addTool(P.emptyCup)
+--P:addTool(P.emptyCup)
 P:addTool(P.gasPourer)
 P:addTool(P.gasPourerXtreme)
 P:addTool(P.buttonPlacer)
@@ -4309,6 +4352,7 @@ P:addTool(P.animalEnslaver)
 P:addTool(P.roomCompletionBonus)
 P:addTool(P.fishingPole)
 P:addTool(P.blankTool)
+P:addTool(P.mindfulTool)
 
 P.resetTools()
 
