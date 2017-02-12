@@ -38,6 +38,16 @@ function P.recordKeyPressed(key, unicode)
 	input[#input+1] = {time = time, input = {key = key, unicode = unicode}}
 end
 
+function P.recordMouseInput(x, y, button, isTouch, isRelease)
+	local time = gameTime.totalTime
+	input[#input+1] = {time = time, input = {x = x, y = y, button = button, isTouch = isTouch, isRelease = isRelease}}
+end
+
+function P.recordMouseMoved(x, y, dx, dy)
+	local time = gameTime.totalTime
+	input[#input+1] = {time = time, input = {x = x, y = y, dx = dx, dy = dy}}
+end
+
 function P.endRecording()
 	isRecording = false
 	local recordingToSave = {inputs = input, seed = recordingSeed, character = player.character.name}
@@ -66,8 +76,12 @@ local function sendInputFromRecording(input)
 	if input.key ~= nil then
 		keyTimer.timeLeft = -1 --hack to skip the key timer, which could be slightly off
 		love.keypressed(input.key, input.unicode)
+	elseif input.isRelease == nil then
+		love.mousemoved(input.x, input.y, input.dx, input.dy)
+	elseif input.isRelease then
+		love.mousereleased(input.x, input.y, input.button, input.isTouch)
 	else
-
+		love.mousepressed(input.x, input.y, input.button, input.isTouch)
 	end
 end
 

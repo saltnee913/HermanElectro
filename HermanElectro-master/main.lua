@@ -3451,6 +3451,7 @@ function love.mousepressed(x, y, button, istouch)
 	if not started then
 		return
 	end
+	saving.recordMouseInput(x, y, button, istouch, false)
 
 	local bigRoomTranslation = getTranslation()
 	tileLocX = math.ceil((mouseX-wallSprite.width)/(scale*tileWidth))-bigRoomTranslation.x
@@ -3504,6 +3505,7 @@ function love.mousepressed(x, y, button, istouch)
 end
 
 function love.mousereleased(x, y, button, istouch)
+	saving.recordMouseInput(x, y, button, istouch, true)
 	mouseDown = false
 	if gamePaused then
 		return
@@ -3511,6 +3513,7 @@ function love.mousereleased(x, y, button, istouch)
 end
 
 function love.mousemoved(x, y, dx, dy)
+	saving.recordMouseMoved(x, y, dx, dy)
 	if gamePaused then
 		return
 	end
