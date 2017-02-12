@@ -11,6 +11,8 @@ loadTutorial = false
 easyMode = false
 gamePaused = false
 
+gameSpeed = 1
+
 spotlightList = require('scripts.spotlights')
 
 util = require('scripts.util')
@@ -29,6 +31,7 @@ toolManuel = require('scripts.toolManuel')
 unlocksScreen = require('scripts.unlocksScreen')
 stats = require('scripts.stats')
 text = require('scripts.text')
+saving = require('scripts.saving')
 loadedOnce = false
 
 saveDir = 'SaveData'
@@ -146,7 +149,7 @@ function love.load()
 
 
 	gamePaused = false
-	gameTime = {timeLeft = 260, toolTime = 0, roomTime = 15, levelTime = 200, donateTime = 20, goesDownInCompleted = false}
+	gameTime = {timeLeft = 260, toolTime = 0, roomTime = 15, levelTime = 200, donateTime = 20, goesDownInCompleted = false, totalTime = 0}
 
 	enteringSeed = false
 	seedOverride = nil
@@ -505,6 +508,7 @@ end
 
 function goToMainMenu()
 	--started = false
+	saving.endRecording()
 	loadOpeningWorld()
 	emptyTools()
 	gamePaused = false
@@ -531,6 +535,7 @@ function loadRandoms()
 	util.newRandom('mapGen', seed)
 	util.newRandom('toolDrop', seed*3)
 	util.newRandom('misc', seed*5)
+	return seed
 end
 
 function goDownFloor()
@@ -700,13 +705,14 @@ function loadNextLevel(dontChangeTime)
 end
 
 function startGame()
-	loadRandoms()
+	local seed = loadRandoms()
 	loadTutorial = false
 	map.floorOrder = map.defaultFloorOrder
 	love.load()
 	loadFirstLevel()
 	tools.resetTools()
 	player.character:onBegin()
+	saving.createNewRecording(seed)
 end
 
 function loadOpeningWorld()
@@ -2633,6 +2639,8 @@ end
 
 keyTimer = {base = .05, timeLeft = .05, suicideDelay = .5}
 function love.update(dt)
+	dt = gameSpeed*dt
+	saving.sendNextInputFromRecording()
 	if player~=nil and player.character~=nil then
 		player.character:update(dt)
 	end
@@ -2680,6 +2688,7 @@ function love.update(dt)
 	if gameTime.timeLeft<=0 and not loadTutorial then
 		kill()
 	end
+	gameTime.totalTime = gameTime.totalTime+dt
 
 	updateLamps()
 
@@ -2839,6 +2848,7 @@ function love.keypressed(key, unicode)
 	end
 	if key=="escape" then
 		gamePaused = true
+		return
 	end
 	if key=="e" then
 		editorMode = not editorMode
@@ -2913,6 +2923,9 @@ function love.keypressed(key, unicode)
 		return
 	end
 	keyTimer.timeLeft = keyTimer.base
+
+	saving.recordKeyPressed(key, unicode)
+
 	waitTurn = false
 	if player.character:onKeyPressed(key) then
 		updateGameState(false)
@@ -3440,6 +3453,7 @@ function love.mousepressed(x, y, button, istouch)
 	if not started then
 		return
 	end
+	saving.recordMouseInput(x, y, button, istouch, false)
 
 	local bigRoomTranslation = getTranslation()
 	tileLocX = math.ceil((mouseX-wallSprite.width)/(scale*tileWidth))-bigRoomTranslation.x
@@ -3493,6 +3507,7 @@ function love.mousepressed(x, y, button, istouch)
 end
 
 function love.mousereleased(x, y, button, istouch)
+	saving.recordMouseInput(x, y, button, istouch, true)
 	mouseDown = false
 	if gamePaused then
 		return
@@ -3500,6 +3515,7 @@ function love.mousereleased(x, y, button, istouch)
 end
 
 function love.mousemoved(x, y, dx, dy)
+	saving.recordMouseMoved(x, y, dx, dy)
 	if gamePaused then
 		return
 	end
@@ -3828,6 +3844,7 @@ function dropTools()
 end
 
 function beatRoom(noDrops)
+	saving.saveRecording()
 	spotlights = {}
 	if noDrops == nil then noDrops = false end
 	if floorIndex>6 then noDrops = true end
