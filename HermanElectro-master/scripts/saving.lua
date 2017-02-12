@@ -1,6 +1,8 @@
 local P = {}
 saving = P
 
+P.saveFile = 'save.json'
+
 local isRecording = false
 local input = {}
 local startTime = 0
@@ -21,19 +23,10 @@ function P.createNewRecording(seed)
 end
 
 function P.recordKeyPressed(key, unicode)
-	if key == 'z' then
-		local recording = util.readJSON(saveDir..'/save.json')
-		P.playRecording(recording)
-		return
-	end
 	if not isRecording then
 		return
 	end
 	if key == 'r' then return end
-	if key == 'x' then
-		P.endRecording()
-		return
-	end
 	local time = gameTime.totalTime
 	input[#input+1] = {time = time, input = {key = key, unicode = unicode}}
 end
@@ -48,11 +41,24 @@ function P.recordMouseMoved(x, y, dx, dy)
 	input[#input+1] = {time = time, input = {x = x, y = y, dx = dx, dy = dy}}
 end
 
+function P.saveRecording()
+	local recordingToSave = {inputs = input, seed = recordingSeed, character = player.character.name, isDead = player.dead}
+	util.writeJSON(P.saveFile, recordingToSave)
+end
+
 function P.endRecording()
 	isRecording = false
-	local recordingToSave = {inputs = input, seed = recordingSeed, character = player.character.name}
-	util.writeJSON('save.json', recordingToSave)
+	P.saveRecording()
 end
+
+
+function P.getSave()
+	if not love.filesystem.exists(saveDir..'/'..P.saveFile) then 
+		return nil
+	end
+	return util.readJSON(saveDir..'/'..P.saveFile, false)
+end
+
 
 function P.playRecording(recording)
 	for i = 1, #characters do
@@ -68,8 +74,20 @@ function P.playRecording(recording)
 	seedOverride = recording.seed
 	startGame()
 	seedOverride = oldSeedOverride
+end
+
+function P.playBackRecording(recording)
+	P.playRecording(recording)
 	isPlayingBack = true
 	gameSpeed = 2
+end
+
+function P.playRecordingFast(recording)
+	P.playRecording(recording)
+	while(currentRecordingIndex <= #recording.inputs) do
+		love.update(0.01)
+		P.sendNextInputFromRecording(true)
+	end
 end
 
 local function sendInputFromRecording(input)
@@ -85,8 +103,8 @@ local function sendInputFromRecording(input)
 	end
 end
 
-function P.sendNextInputFromRecording()
-	if not isPlayingBack then
+function P.sendNextInputFromRecording(bypassCheck)
+	if not isPlayingBack and not bypassCheck then
 		return
 	end
 	local nextInput = currentRecording[currentRecordingIndex]
@@ -106,6 +124,7 @@ end
 function P.endPlayback()
 	isPlayingBack = false
 	gameSpeed = 1
+	gamePaused = false
 end
 
 return saving

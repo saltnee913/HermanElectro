@@ -505,6 +505,7 @@ end
 
 function goToMainMenu()
 	--started = false
+	saving.endRecording()
 	loadOpeningWorld()
 	emptyTools()
 	gamePaused = false
@@ -3842,6 +3843,7 @@ function dropTools()
 end
 
 function beatRoom(noDrops)
+	saving.saveRecording()
 	spotlights = {}
 	if noDrops == nil then noDrops = false end
 	if floorIndex>6 then noDrops = true end

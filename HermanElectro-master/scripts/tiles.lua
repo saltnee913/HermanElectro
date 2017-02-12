@@ -2650,6 +2650,32 @@ function P.debugStairs:onEnter()
 	startDebug()
 end
 
+P.saveStairs = P.tile:new{name = "saveStairs", sprite = 'KenGraphics/gamestairs.png', recording = nil}
+function P.saveStairs:onLoad()
+	self.recording = saving.getSave()
+	if self.recording == nil or self.recording.isDead then
+		self.isVisible = false
+	end
+end
+function P.saveStairs:onEnter()
+	if self.isVisible then
+		saving.playRecordingFast(self.recording)
+	end
+end
+
+P.playbackStairs = P.tile:new{name = "playbackStairs", sprite = 'KenGraphics/gamestairs.png', recording = nil}
+function P.playbackStairs:onLoad()
+	self.recording = saving.getSave()
+	if self.recording == nil then
+		self.isVisible = false
+	end
+end
+function P.playbackStairs:onEnter()
+	if self.isVisible then
+		saving.playBackRecording(self.recording)
+	end
+end
+
 P.unlockTile = P.tile:new{name = "unlockTile"}
 function P.unlockTile:postPowerUpdate(i, j)
 	local unlockNum = (i-1)*roomLength+j
@@ -2995,6 +3021,8 @@ tiles[190] = P.finalKey
 tiles[191] = P.finalKeyGate
 tiles[192] = P.finalKeyPowered
 tiles[193] = P.atm
+tiles[194] = P.saveStairs
+tiles[195] = P.playbackStairs
 
 
 
