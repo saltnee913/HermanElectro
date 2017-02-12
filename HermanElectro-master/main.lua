@@ -904,6 +904,7 @@ function kill()
 	if not loadTutorial then --hacky hack fix
 		completedRooms[mapy][mapx] = 0 --to stop itemsNeeded tracking, it's a hack!
 	end
+	saving.endRecording()
 end
 
 function win()
@@ -2744,7 +2745,10 @@ function seedEnter(text)
 	end
 end
 
-function love.keypressed(key, unicode)
+function love.keypressed(key, unicode, isPlayback)
+	if saving.isPlayingBack() and not isPlayback then
+		return
+	end
 	if enteringSeed then
 		if key == 'backspace' and seedOverride ~= nil then
 			seedOverride = seedOverride:sub(1, -2)
@@ -3437,8 +3441,11 @@ function checkDeathSpotlights()
 	end
 end
 
-function love.mousepressed(x, y, button, istouch)
+function love.mousepressed(x, y, button, istouch, isPlayback)
 	mouseDown = true
+	if saving.isPlayingBack() and not isPlayback then
+		return
+	end
 
 	if charSelect then
 		selectedBox.y = math.floor(y/(height/3))
@@ -3506,16 +3513,22 @@ function love.mousepressed(x, y, button, istouch)
 	checkAllDeath()
 end
 
-function love.mousereleased(x, y, button, istouch)
+function love.mousereleased(x, y, button, istouch, isPlayback)
 	saving.recordMouseInput(x, y, button, istouch, true)
 	mouseDown = false
+	if saving.isPlayingBack() and not isPlayback then
+		return
+	end
 	if gamePaused then
 		return
 	end
 end
 
-function love.mousemoved(x, y, dx, dy)
+function love.mousemoved(x, y, dx, dy, isPlayback)
 	saving.recordMouseMoved(x, y, dx, dy)
+	if saving.isPlayingBack() and not isPlayback then
+		return
+	end
 	if gamePaused then
 		return
 	end

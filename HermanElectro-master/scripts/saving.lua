@@ -66,6 +66,10 @@ function P.getSave()
 end
 
 
+function P.isPlayingBack()
+	return isPlayingBack
+end
+
 function P.playRecording(recording)
 	for i = 1, #characters do
 		if characters[i].name == recording.character then
@@ -79,11 +83,11 @@ function P.playRecording(recording)
 	seedOverride = recording.seed
 	startGame()
 	seedOverride = oldSeedOverride
+	isPlayingBack = true
 end
 
 function P.playBackRecording(recording)
 	P.playRecording(recording)
-	isPlayingBack = true
 	gameSpeed = 10
 end
 
@@ -91,7 +95,6 @@ function P.playRecordingFast(recording)
 	P.playRecording(recording)
 	while(currentRecordingIndex <= #recording.inputs) do
 		love.update(0.01)
-		P.sendNextInputFromRecording(true)
 	end
 	isRecording = true
 	input = recording.inputs
@@ -102,18 +105,18 @@ end
 local function sendInputFromRecording(input)
 	if input.key ~= nil then
 		keyTimer.timeLeft = -1 --hack to skip the key timer, which could be slightly off
-		love.keypressed(input.key, input.unicode)
+		love.keypressed(input.key, input.unicode, true)
 	elseif input.isRelease == nil then
-		love.mousemoved(input.x, input.y, input.dx, input.dy)
+		love.mousemoved(input.x, input.y, input.dx, input.dy, true)
 	elseif input.isRelease then
-		love.mousereleased(input.x, input.y, input.button, input.isTouch)
+		love.mousereleased(input.x, input.y, input.button, input.isTouch, true)
 	else
-		love.mousepressed(input.x, input.y, input.button, input.isTouch)
+		love.mousepressed(input.x, input.y, input.button, input.isTouch, true)
 	end
 end
 
-function P.sendNextInputFromRecording(bypassCheck)
-	if not isPlayingBack and not bypassCheck then
+function P.sendNextInputFromRecording()
+	if not isPlayingBack then
 		return
 	end
 	local nextInput = currentRecording[currentRecordingIndex]
