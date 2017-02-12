@@ -135,6 +135,7 @@ function P.endPlayback()
 	isPlayingBack = false
 	gameSpeed = 1
 	gamePaused = false
+	P.saveRecording()
 end
 
 return saving
