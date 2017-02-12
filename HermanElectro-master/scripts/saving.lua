@@ -37,11 +37,16 @@ end
 
 function P.endRecording()
 	isRecording = false
-	local recordingToSave = {inputs = input, seed = recordingSeed}
+	local recordingToSave = {inputs = input, seed = recordingSeed, character = player.character.name}
 	util.writeJSON('save.json', recordingToSave)
 end
 
 function P.playRecording(recording)
+	for i = 1, #characters do
+		if characters[i].name == recording.character then
+			player.character = characters[i]
+		end
+	end
 	currentRecording = recording.inputs
 	recordingStartTime = love.timer.getTime()
 	currentRecordingIndex = 1
