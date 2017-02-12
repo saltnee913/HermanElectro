@@ -2844,6 +2844,7 @@ function love.keypressed(key, unicode)
 	end
 	if key=="escape" then
 		gamePaused = true
+		return
 	end
 	if key=="e" then
 		editorMode = not editorMode

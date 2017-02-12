@@ -5,19 +5,16 @@ P.saveFile = 'save.json'
 
 local isRecording = false
 local input = {}
-local startTime = 0
 local recordingSeed = 0
 
 local isPlayingBack = false
 local currentRecording = {}
-local recordingStartTime = 0
 local currentRecordingIndex = 1
 local playbackSeed = 0
 
 function P.createNewRecording(seed)
 	P.endRecording()
 	isRecording = true
-	startTime = love.timer.getTime()
 	input = {}
 	recordingSeed = seed
 end
@@ -32,11 +29,17 @@ function P.recordKeyPressed(key, unicode)
 end
 
 function P.recordMouseInput(x, y, button, isTouch, isRelease)
+	if not isRecording then
+		return
+	end
 	local time = gameTime.totalTime
 	input[#input+1] = {time = time, input = {x = x, y = y, button = button, isTouch = isTouch, isRelease = isRelease}}
 end
 
 function P.recordMouseMoved(x, y, dx, dy)
+	if not isRecording then
+		return
+	end
 	local time = gameTime.totalTime
 	input[#input+1] = {time = time, input = {x = x, y = y, dx = dx, dy = dy}}
 end
@@ -47,6 +50,9 @@ function P.saveRecording()
 end
 
 function P.endRecording()
+	if not isRecording then
+		return
+	end
 	isRecording = false
 	P.saveRecording()
 end
@@ -67,7 +73,6 @@ function P.playRecording(recording)
 		end
 	end
 	currentRecording = recording.inputs
-	recordingStartTime = love.timer.getTime()
 	currentRecordingIndex = 1
 	recordingGameTime = recording.time
 	local oldSeedOverride = seedOverride
@@ -79,7 +84,7 @@ end
 function P.playBackRecording(recording)
 	P.playRecording(recording)
 	isPlayingBack = true
-	gameSpeed = 2
+	gameSpeed = 10
 end
 
 function P.playRecordingFast(recording)
@@ -88,6 +93,10 @@ function P.playRecordingFast(recording)
 		love.update(0.01)
 		P.sendNextInputFromRecording(true)
 	end
+	isRecording = true
+	input = recording.inputs
+	recordingSeed = recording.seed
+	P.endPlayback()
 end
 
 local function sendInputFromRecording(input)
@@ -108,17 +117,15 @@ function P.sendNextInputFromRecording(bypassCheck)
 		return
 	end
 	local nextInput = currentRecording[currentRecordingIndex]
-	while(nextInput.time <= gameTime.totalTime) do
-		if nextInput.time <= gameTime.totalTime then
-			sendInputFromRecording(nextInput.input)
-			currentRecordingIndex = currentRecordingIndex + 1
-		end
-		nextInput = currentRecording[currentRecordingIndex]
-		if nextInput == nil then
-			P.endPlayback()
-			return
-		end
+	if nextInput == nil then
+		P.endPlayback()
+		return
 	end
+	if nextInput.time <= gameTime.totalTime then
+		sendInputFromRecording(nextInput.input)
+		currentRecordingIndex = currentRecordingIndex + 1
+	end
+	nextInput = currentRecording[currentRecordingIndex]
 end
 
 function P.endPlayback()
