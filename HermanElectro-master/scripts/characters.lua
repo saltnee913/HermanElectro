@@ -106,7 +106,7 @@ end
 function P.character:absoluteFinalUpdate()
 end
 
-P.herman = P.character:new{name = "Herman", description = "The Electrician", winUnlocks = {unlocks.reviveUnlock}, scale = 0.8, sprites = {'hermans/newherman_r.png','hermans/newherman_r.png','hermans/newherman_r.png','hermans/newherman_l.png'}}
+P.herman = P.character:new{name = "Herman", description = "The Electrician", winUnlocks = {unlocks.reviveUnlock}, scale = 1.1*scale, sprites = {'Graphics/Characters/Herman.png', 'Graphics/Characters/Herman.png', 'Graphics/Characters/Herman.png', 'Graphics/Characters/Herman.png'}}
 function P.herman:onCharLoad()
 	if loadTutorial then return end
 	tools.giveToolsByReference({tools.revive})
@@ -225,7 +225,8 @@ function P.rick:onFloorEnter()
 end
 
 --alternative name: "Froggy, the Fresh"
-P.frederick = P.character:new{name = "Frederick", tallSprite = false, description = "The Frog", sprite = 'Graphics/frederick.png', disabled = false}
+P.frederick = P.character:new{name = "Frederick", tallSprite = false, description = "The Frog",
+sprite = 'Graphics/Characters/Frederick.png', scale = 1.1*scale, disabled = false}
 function P.frederick:onCharLoad()
 	tools.giveToolsByReference({tools.spring,tools.spring,tools.spring,tools.spring,tools.visionChanger,tools.visionChanger})
 end
@@ -349,7 +350,8 @@ function P.crate:preTileEnter(tile)
 	end
 end
 
-P.giovanni = P.character:new{name = "Giovanni", description = "The Sorcerer", shiftPos = {x = -1, y = -1, z = -1}, sprite = 'Graphics/giovanni.png', sprite2 = 'Graphics/giovannighost.png'}
+P.giovanni = P.character:new{name = "Giovanni", description = "The Sorcerer", shiftPos = {x = -1, y = -1, z = -1},
+sprite = 'Graphics/giovanni.png', sprite2 = 'Graphics/giovannighost.png'}
 function P.giovanni:onKeyPressedChar(key)
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
 		if self.shiftPos.x==-1 then
@@ -388,7 +390,8 @@ function P.giovanni:onKeyPressedChar(key)
 	end
 end
 
-P.francisco = P.character:new{name = "Francisco", description = "The Cartographer", nextRoom = {yLoc = -1, xLoc = -1}, sprite = 'Graphics/francisco.png'}
+P.francisco = P.character:new{name = "Francisco", description = "The Cartographer", nextRoom = {yLoc = -1, xLoc = -1},
+sprite = 'Graphics/Characters/Francisco.png'}
 function P.francisco:onCharLoad()
 	tools.giveToolsByReference({tools.coin})
 end
@@ -740,7 +743,8 @@ function P.xavier:onRoomEnter()
 	self.sockMode = false
 end
 
-P.aurelius = P.character:new{name = "Aurelius", description = "The Golden", sprite = 'Graphics/aurelius.png'}
+P.aurelius = P.character:new{name = "Aurelius", description = "The Golden",
+sprite = 'Graphics/Characters/Aurelius.png', scale = 1.1*scale}
 function P.aurelius:onFloorEnter()
 	for i = 1, tools.numNormalTools do
 		for j = 1, tools[i].numHeld do
