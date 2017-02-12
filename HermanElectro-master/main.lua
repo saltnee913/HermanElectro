@@ -3442,10 +3442,10 @@ function checkDeathSpotlights()
 end
 
 function love.mousepressed(x, y, button, istouch, isPlayback)
-	mouseDown = true
 	if saving.isPlayingBack() and not isPlayback then
 		return
 	end
+	mouseDown = true
 
 	if charSelect then
 		selectedBox.y = math.floor(y/(height/3))
@@ -3514,21 +3514,21 @@ function love.mousepressed(x, y, button, istouch, isPlayback)
 end
 
 function love.mousereleased(x, y, button, istouch, isPlayback)
-	saving.recordMouseInput(x, y, button, istouch, true)
-	mouseDown = false
 	if saving.isPlayingBack() and not isPlayback then
 		return
 	end
+	mouseDown = false
+	saving.recordMouseInput(x, y, button, istouch, true)
 	if gamePaused then
 		return
 	end
 end
 
 function love.mousemoved(x, y, dx, dy, isPlayback)
-	saving.recordMouseMoved(x, y, dx, dy)
 	if saving.isPlayingBack() and not isPlayback then
 		return
 	end
+	saving.recordMouseMoved(x, y, dx, dy)
 	if gamePaused then
 		return
 	end
