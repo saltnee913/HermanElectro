@@ -13,6 +13,7 @@ local currentRecordingIndex = 1
 local playbackSeed = 0
 
 function P.createNewRecording(seed)
+	P.endRecording()
 	isRecording = true
 	startTime = love.timer.getTime()
 	input = {}
@@ -23,11 +24,13 @@ function P.recordKeyPressed(key, unicode)
 	if key == 'z' then
 		local recording = util.readJSON(saveDir..'/save.json')
 		P.playRecording(recording)
+		return
 	end
 	if not isRecording then
 		return
 	end
-	if key == 'x' or key == 'r' then
+	if key == 'r' then return end
+	if key == 'x' then
 		P.endRecording()
 		return
 	end
