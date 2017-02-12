@@ -45,6 +45,9 @@ function P.recordMouseMoved(x, y, dx, dy)
 end
 
 function P.saveRecording()
+	if isPlayingBack then
+		return
+	end
 	local recordingToSave = {inputs = input, seed = recordingSeed, character = player.character.name, isDead = player.dead}
 	util.writeJSON(P.saveFile, recordingToSave)
 end
