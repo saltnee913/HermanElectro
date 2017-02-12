@@ -165,7 +165,8 @@ end
 function P.animal:hasMoved()
 	return self.prevTileX ~= self.tileX or self.prevTileY ~= self.tileY
 end
-function P.animal:onNullLeave()
+function P.animal:onNullLeave(tileY, tileX)
+	return room[tileY][tileX]
 end
 function P.animal:kill()
 	self.dead = true
