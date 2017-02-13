@@ -1949,16 +1949,24 @@ P.puddle.willKillAnimal = P.puddle.willKillPlayer
 
 P.dustyGlassWall = P.glassWall:new{name = "dustyGlassWall", blocksVision = true, sprite = 'Graphics3D/dustyglass.png', cleanSprite = 'Graphics/glass.png'}
 
-P.trap = P.tile:new{name = "trap", triggered = false, sprite = 'Graphics/trap.png'}
-function P.trap:onEnter(player)
-	if self.triggered then return end
-	self.triggered = true
-	kill()
+P.web = P.tile:new{name = "web", triggered = false, sprite = 'Graphics/trap.png', triggered = false}
+function P.web:onEnter(player)
+	if self.triggered and not self.destroyed then
+		tools.giveRandomTools(1)
+		self:destroy()
+		self.isVisible = false
+		for i = 1, #animals do
+			if animals[i].tileY == player.tileY and animals[i].tileX == player.tileX then
+				animals[i].pickedUp = true
+			end
+		end
+	end
 end
-function P.trap:onEnterAnimal(animal)
-	if self.triggered or animal.flying then return end
-	self.triggered = true
-	animal:kill()
+function P.web:onEnterAnimal(animal)
+	if not self.triggered then
+		animal:kill()
+		self.triggered = true
+	end
 end
 
 P.glue = P.tile:new{name = "glue", sprite = 'Graphics/glue.png'}
@@ -2900,7 +2908,7 @@ tiles[69] = P.playerBoxTile
 tiles[70] = P.animalBoxTile
 tiles[71] = P.puddle
 tiles[72] = P.dustyGlassWall
-tiles[73] = P.trap
+tiles[73] = P.web
 tiles[74] = P.conductiveBoxTile
 tiles[75] = P.boomboxTile
 tiles[76] = P.batteringRamTile

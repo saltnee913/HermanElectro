@@ -754,6 +754,26 @@ function P.aurelius:onFloorEnter()
 	end
 end
 
+P.arachne = P.character:new{name = "Arachne", description = "The Spidy",
+  sprite = 'Graphics/Characters/Arachne.png', scale = 1.1*scale}
+function P.arachne:onKeyPressedChar(key)
+	--log(key)
+	if key == 'rshift' or key == 'lshift' or key == 'shift' then
+		if room[player.tileY][player.tileX] == nil or room[player.tileY][player.tileX]:usableOnNothing() then
+			for i = 1, roomHeight do
+				for j = 1, roomLength do
+					if room[i][j] ~= nil and room[i][j].name == tiles.web.name then
+						return false
+					end
+				end
+			end
+			room[player.tileY][player.tileX] = tiles.web:new()
+			return true
+		end
+	end
+	return false
+end
+
 P[#P+1] = P.herman
 P[#P+1] = P.francisco
 P[#P+1] = P.aurelius
@@ -794,6 +814,8 @@ P[#P+1] = P.orson
 P[#P+1] = P.monk
 P[#P+1] = P.harriet
 P[#P+1] = P.crate
+
+P[#P+1] = P.arachne
 
 
 P[#P+1] = P.random
