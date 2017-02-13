@@ -112,11 +112,17 @@ function P.pushable:moveNoMover()
 	if room[self.tileY][self.tileX]~=nil and not room[self.tileY][self.tileX].enterCheckWin and 
 		(self.prevTileX~=self.tileX or self.prevTileY~=self.tileY) then
 		room[self.tileY][self.tileX]:onEnterPushable(self)
+		if room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX].overlay~=nil then
+			room[self.tileY][self.tileX].overlay:onEnterPushable(self)
+		end
 	end
 
 	if not (self.prevTileY == self.tileY and self.prevTileX == self.tileX) then
 		if room[self.prevTileY][self.prevTileX]~=nil then
 			room[self.prevTileY][self.prevTileX]:onLeavePushable(self)
+			if room[self.prevTileY][self.prevTileX]~=nil and room[self.prevTileY][self.prevTileX].overlay~=nil then
+				room[self.prevTileY][self.prevTileX].overlay:onLeavePushable(self)
+			end
 		end
 		if room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX]:willDestroyPushable() then
 			self.destroyed = true
@@ -125,6 +131,9 @@ function P.pushable:moveNoMover()
 		return true
 	elseif room[self.tileY][self.tileX]~=nil then
 		room[self.tileY][self.tileX]:onStayPushable(self)
+		if room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX].overlay~=nil then
+			room[self.tileY][self.tileX].overlay:onStayPushable(self)
+		end
 	end
 	
 	return false

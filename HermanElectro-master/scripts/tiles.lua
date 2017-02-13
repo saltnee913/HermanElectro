@@ -1543,8 +1543,20 @@ end
 P.batTile = P.pitbullTile:new{name = "bat", animal = animalList[6], listIndex = 6}
 
 P.meat = P.tile:new{name = "meat", sprite = 'Graphics/Tiles/meat.png', attractsAnimals = true}
-
 P.rottenMeat = P.tile:new{name = "rottenMeat", sprite = 'Graphics/Tiles/rottenMeat.png', scaresAnimals = true}
+
+P.explosiveMeat = P.tile:new{name = "explosiveMeat", sprite = 'Graphics/Tiles/explosiveMeat.png'}
+function P.explosiveMeat:onEnterAnimal()
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]==self or (room[i][j]~=nil and room[i][j].overlay~=nil and room[i][j].overlay==self) then
+				self:explode(i,j)
+				room[i][j] = nil
+			end
+		end
+	end
+end
+P.explosiveMeat.explode = P.bomb.explode
 
 P.beggar = P.tile:new{name = "beggar", alive = true, counter = 0, sprite = 'GraphicsEli/whiteOrb1.png', deadSprite = 'Graphics/beggardead.png', 
   animation = {'GraphicsEli/whiteOrb1.png', 'GraphicsEli/whiteOrb2.png', 'GraphicsEli/whiteOrb3.png', 'GraphicsEli/whiteOrb4.png', 'GraphicsEli/whiteOrb3.png', 'GraphicsEli/whiteOrb2.png'}, animationLength = 1}
@@ -2236,6 +2248,7 @@ P.lampTile = P.tile:new{name = "lampTile", pushable = pushableList[12], listInde
 P.hermanTransform = P.tile:new{name = "hermanTransform", characterIndex = 1}
 function P.hermanTransform:onEnter()
 	player.character = characters[self.characterIndex]
+	player.character:onSelect()
 	myShader:send("player_range", 500)
 end
 function P.hermanTransform:postPowerUpdate()
@@ -2717,6 +2730,7 @@ end
 function P.playerTile:onEnter()
 	if self.character ~= nil then
 		player.character = self.character
+		player.character:onSelect()
 		myShader:send("player_range", 500)
 	end
 end

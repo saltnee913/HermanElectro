@@ -47,6 +47,8 @@ function P.character:onStartGame()
 end
 function P.character:onCharLoad()
 end
+function P.character:onSelect()
+end
 function P.character:onRoomEnter()
 end
 function P.character:onFloorEnter()
@@ -234,9 +236,10 @@ function P.frederick:onFloorEnter()
 	tools.giveToolsByReference({tools.spring,tools.spring,tools.visionChanger})
 end
 
-P.battery = P.character:new{name = "Bob", tallSprite = false, description = "The Battery", sprite = 'Graphics/powersupplydead.png',
-  onSprite = 'Graphics/powersupply.png', offSprite = 'Graphics/powersupplydead.png', 
-  scale = scale, storedTile = nil, forcePowerUpdate = false, powered = false}
+P.battery = P.character:new{name = "Bob", tallSprite = false, description = "The Battery",
+sprite = 'Graphics/Characters/Bob.png',
+  onSprite = 'Graphics/Characters/BobPowered.png', offSprite = 'Graphics/Characters/Bob.png', 
+  scale = scale*1.2, storedTile = nil, forcePowerUpdate = false, powered = false}
 function P.battery:onKeyPressedChar(key)
 	--log(key)
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
@@ -774,6 +777,47 @@ function P.arachne:onKeyPressedChar(key)
 	return false
 end
 
+P.witch = P.character:new{name = "Nellie", description = "The Witch", humanLoc = {x = 0, y = 0}, catLoc = {x = 0, y = 0},
+humanMode = true, sprite = 'Graphics/Characters/Arachne.png',
+humanSprite = 'Graphics/Characters/Arachne.png', catSprite = 'Graphics/cat.png', scale = 1.1*scale}
+function P.witch:onSelect()
+	self.humanLoc = {x = player.tileX, y = player.tileY}
+	self.catLoc = {x = player.tileX, y = player.tileY}	
+end
+function P.witch:onRoomEnter()
+	self.humanLoc = {x = player.tileX, y = player.tileY}
+	self.catLoc = {x = player.tileX, y = player.tileY}		
+end
+P.witch.onFloorEnter = P.witch.onRoomEnter
+P.witch.onCharLoad = P.witch.onFloorEnter
+function P.witch:onKeyPressedChar(key)
+	if self.humanMode then
+			self.humanLoc = {x = player.tileX, y = player.tileY}
+	else
+		self.catLoc = {x = player.tileX, y = player.tileY}
+	end
+	if key == 'rshift' or key == 'lshift' or key == 'shift' then
+		self.humanMode = not self.humanMode
+		if self.humanMode then
+			player.tileX = self.humanLoc.x
+			player.tileY = self.humanLoc.y
+		else
+			player.tileX = self.catLoc.x
+			player.tileY = self.catLoc.y
+		end
+		self:updateSprite()
+	end
+	return true
+end
+function P.witch:updateSprite()
+	if self.humanMode then
+		self.sprite = self.humanSprite
+	else
+		self.sprite = self.catSprite
+	end
+end
+
+
 P[#P+1] = P.herman
 P[#P+1] = P.francisco
 P[#P+1] = P.aurelius
@@ -816,6 +860,7 @@ P[#P+1] = P.harriet
 P[#P+1] = P.crate
 
 P[#P+1] = P.arachne
+P[#P+1] = P.witch
 
 
 P[#P+1] = P.random

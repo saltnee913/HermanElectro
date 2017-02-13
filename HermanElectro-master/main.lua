@@ -1976,7 +1976,9 @@ function love.draw()
 			love.graphics.setShader(myShader)
 		end
 
-		if (player.character.name == "Giovanni" and player.character.shiftPos.x>0)
+		--draw clone stuff
+		if player.character.name == "Nellie"
+		or (player.character.name == "Giovanni" and player.character.shiftPos.x>0)
 		or player.clonePos.x>0 then
 			if player.clonePos.x>0 then
 				if player.clonePos.y == j then
@@ -1985,11 +1987,26 @@ function love.draw()
 					local playery = (player.clonePos.y-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
 					love.graphics.draw(charSprite, playerx-charSprite:getWidth()*player.character.scale/2, playery-charSprite:getHeight()*player.character.scale-player.elevation*scale, 0, player.character.scale, player.character.scale)
 				end
-			elseif player.character.shiftPos.y == j then
+			elseif player.character.shiftPos~=nil and player.character.shiftPos.y == j then
 				local charSprite2 = util.getImage(player.character.sprite2)
 				local playerx = (player.character.shiftPos.x-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
 				local playery = (player.character.shiftPos.y-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
 				love.graphics.draw(charSprite2, playerx-charSprite2:getWidth()*player.character.scale/2, playery-charSprite2:getHeight()*player.character.scale-player.elevation*scale, 0, player.character.scale, player.character.scale)
+			elseif player.character.catLoc~=nil then
+				local nonActiveSprite
+				local playerx
+				local playery
+				if player.character.humanMode then
+					nonActiveSprite = util.getImage(player.character.catSprite)
+					playerx = (player.character.catLoc.x-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
+					playery = (player.character.catLoc.y-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
+				else
+					nonActiveSprite = util.getImage(player.character.humanSprite)
+					playerx = (player.character.humanLoc.x-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
+					playery = (player.character.humanLoc.y-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
+				end
+
+				love.graphics.draw(nonActiveSprite, playerx-nonActiveSprite:getWidth()*player.character.scale/2, playery-nonActiveSprite:getHeight()*player.character.scale-player.elevation*scale, 0, player.character.scale, player.character.scale)
 			end
 		end
 		--love.graphics.draw(walls, 0, 0, 0, width/walls:getWidth(), height/walls:getHeight())
@@ -2625,14 +2642,23 @@ function enterMove()
 	if room[player.tileY][player.tileX]~=nil then
 		if player.prevTileY == player.tileY and player.prevTileX == player.tileX then
 			room[player.tileY][player.tileX]:onStay(player)
+			if room[player.tileY][player.tileX]~=nil and room[player.tileY][player.tileX].overlay~=nil then
+				room[player.tileY][player.tileX].overlay:onStay(player)
+			end
 		else
 			player.character:preTileEnter(room[player.tileY][player.tileX])
 			room[player.tileY][player.tileX]:onEnter(player)
+			if room[player.tileY][player.tileX]~=nil and room[player.tileY][player.tileX].overlay~=nil then
+				room[player.tileY][player.tileX].overlay:onEnter(player)
+			end
 		end
 	end
 	if not (player.prevTileY == player.tileY and player.prevTileX == player.tileX) then
 		if room~=nil and not player.justTeleported and room[player.prevTileY][player.prevTileX]~=nil then
 			room[player.prevTileY][player.prevTileX]:onLeave(player)
+			if room[player.prevTileY][player.prevTileX]~=nil and room[player.prevTileY][player.prevTileX].overlay~=nil then
+				room[player.prevTileY][player.prevTileX].overlay:onLeave(player)
+			end
 		end
 		player.character:onTileLeave()
 	end
@@ -3269,6 +3295,10 @@ function postAnimalMovement()
 		if animals[i]:hasMoved() and not animals[i].dead then
 			if room[animals[i].prevTileY]~=nil and room[animals[i].prevTileY][animals[i].prevTileX]~=nil then
 				room[animals[i].prevTileY][animals[i].prevTileX]:onLeaveAnimal(animals[i])
+				if (not animals[i].dead) and room[animals[i].prevTileY][animals[i].prevTileX]~=nil
+				and room[animals[i].prevTileY][animals[i].prevTileX].overlay~=nil then
+					room[animals[i].prevTileY][animals[i].prevTileX].overlay:onLeaveAnimal(animals[i])
+				end
 				if room[animals[i].prevTileY][animals[i].prevTileX]:usableOnNothing() then
 					room[animals[i].prevTileY][animals[i].prevTileX] = animals[i]:onNullLeave(animals[i].prevTileY, animals[i].prevTileX)
 				end
@@ -3282,9 +3312,17 @@ function postAnimalMovement()
 		if animals[i]:hasMoved() and not animals[i].dead then
 			if room[animals[i].tileY][animals[i].tileX]~=nil then
 				room[animals[i].tileY][animals[i].tileX]:onEnterAnimal(animals[i])
+				if (not animals[i].dead) and room[animals[i].tileY][animals[i].tileX]~=nil
+				and room[animals[i].tileY][animals[i].tileX].overlay~=nil then
+					room[animals[i].tileY][animals[i].tileX].overlay:onEnterAnimal(animals[i])
+				end
 			end
 		elseif room[animals[i].tileY][animals[i].tileX]~=nil then
 			room[animals[i].tileY][animals[i].tileX]:onStayAnimal(animals[i])
+			if (not animals[i].dead) and room[animals[i].tileY][animals[i].tileX]~=nil
+			and room[animals[i].tileY][animals[i].tileX].overlay~=nil then
+				room[animals[i].tileY][animals[i].tileX].overlay:onStayAnimal(animals[i])
+			end
 		end
 	end
 end
