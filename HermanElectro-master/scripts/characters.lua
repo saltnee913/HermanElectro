@@ -28,7 +28,7 @@ function P.getUnlockedCharacters()
 	return toRet
 end
 
-P.character = Object:new{name = "Name", tallSprite = true, dirFacing = "down", scale = 0, sprite = 'hermans/newherman_r.png',
+P.character = Object:new{name = "Name", tallSprite = true, dirFacing = "down", scale = 0, sprite = 'Graphics/Characters/Herman.png',
   description = "description", startingTools = {0,0,0,0,0,0,0}, scale = 0.25 * width/1200, forcePowerUpdate = false, winUnlocks = {}, tint = {1,1,1},
   speedUnlockTime = 1000, speedUnlock = nil}
 function P.character:onBegin()
@@ -135,16 +135,16 @@ function P.felix:onFloorEnter()
 end
 
 P.most = P.character:new{name = "Ben", description = "The Explorer",
-  sprite = 'GraphicsTony/Ben.png', scale = 0.7 * width/1200, disabled = true}
+  sprite = 'Graphics/Characters/Ben.png', scale = 0.7 * width/1200, disabled = true}
 function P.most:onCharLoad()
 	if map.floorOrder == map.defaultFloorOrder then
 		map.floorOrder = {'RoomData/bigfloor.json', 'RoomData/floor6.json'}
 	end
 end
 
-local erikSprite = 'Graphics/beggar.png'
+local erikSprite = 'Graphics/Characters/Erik.png'
 P.erik = P.character:new{name = "Erik", tallSprite = false, description = "The Quick",
-  sprite = erikSprite, scale = scale*16/util.getImage(erikSprite):getWidth()}
+  sprite = erikSprite, scale = scale*1.1}
 function P.erik:onCharLoad()
 	gameTime.timeLeft = 120
 	gameTime.roomTime = 15
@@ -351,7 +351,7 @@ function P.crate:preTileEnter(tile)
 end
 
 P.giovanni = P.character:new{name = "Giovanni", description = "The Sorcerer", shiftPos = {x = -1, y = -1, z = -1},
-sprite = 'Graphics/giovanni.png', sprite2 = 'Graphics/giovannighost.png'}
+sprite = 'Graphics/Characters/Giovanni.png', sprite2 = 'Graphics/Characters/GiovanniGhost.png', scale = 1.1*scale}
 function P.giovanni:onKeyPressedChar(key)
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
 		if self.shiftPos.x==-1 then
@@ -391,7 +391,7 @@ function P.giovanni:onKeyPressedChar(key)
 end
 
 P.francisco = P.character:new{name = "Francisco", description = "The Cartographer", nextRoom = {yLoc = -1, xLoc = -1},
-sprite = 'Graphics/Characters/Francisco.png'}
+sprite = 'Graphics/Characters/Francisco.png', scale = 1.1*scale}
 function P.francisco:onCharLoad()
 	tools.giveToolsByReference({tools.coin})
 end
@@ -435,7 +435,7 @@ function P.orson:onKeyPressedChar(key)
 	return false
 end
 
-P.lenny = P.character:new{name = "Lenny", tallSprite = false, description = "The Ghost Snail", slime = false, sprite = 'Graphics/lenny.png'}
+P.lenny = P.character:new{name = "Lenny", tallSprite = false, description = "The Ghost Snail", slime = false, sprite = 'Graphics/Characters/Lenny.png', scale = 1.1*scale}
 function P.lenny:onKeyPressedChar(key)
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
 		self.slime = not self.slime
@@ -460,7 +460,7 @@ end
 
 P.fish = P.character:new{name = "Fish", tallSprite = false, description = "Fish", 
   winUnlocks = {unlocks.toolDoublerUnlock}, speedUnlockTime = 1600, speedUnlock = unlocks.fogUnlock,
-  life = 100, sprite = 'Graphics/fish.png', tint = {0.9,0.9,1}}
+  life = 100, sprite = 'Graphics/Characters/Fish.png', tint = {0.9,0.9,1}, scale = 1.1*scale}
 function P.fish:postMove()
 	self.life = self.life-1
 	if room[player.tileY][player.tileX]~=nil and room[player.tileY][player.tileX]:instanceof(tiles.puddle) then

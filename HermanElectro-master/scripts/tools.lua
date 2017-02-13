@@ -670,10 +670,6 @@ function P.superTool:getOtherSupers()
 end
 
 
-P.cuttingTorch = P.superTool:new{name = 'cutting-torch', image = 'Graphics/cuttingtorch.png'}
-function P.cuttingTorch:usableOnTile(tile)
-	return false
-end
 function P.chooseSupertool(quality)
 	unlocks = require('scripts.unlocks')
 	unlockedSupertools = unlocks.getUnlockedSupertools()
