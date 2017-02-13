@@ -173,7 +173,7 @@ function P.animal:kill()
 	self.sprite = self.deadSprite
 	if self.canDropTool and not self.willDropTool then
 		local bonusDropChance = util.random(100, 'toolDrop')
-		if bonusDropChance<getLuckBonus() then
+		if bonusDropChance<1000+getLuckBonus() then
 			self.willDropTool = true
 		end
 	end
@@ -316,14 +316,16 @@ function P.pitbull:willKillPlayer()
 	return player.tileX == self.tileX and player.tileY == self.tileY and not self.dead
 end
 function P.pitbull:dropTool()
-	room[self.tileY][self.tileX] = tiles.supertoolTile:new()
 	local whichTool = util.random(2, 'toolDrop')
 	if whichTool==1 then
-		room[self.tileY][self.tileX].tool = tools.meat
+		if not tools.dropTool(tools.meat, self.tileY, self.tileX) then
+			return
+		end
 	else
-		room[self.tileY][self.tileX].tool = tools.rottenMeat
+		if not tools.dropTool(tools.rottenMeat, self.tileY, self.tileX) then
+			return
+		end
 	end
-	room[self.tileY][self.tileX]:updateSprite()
 	for i = 1, #animals do
 		if animals[i]==self then
 			table.remove(animals, i)
@@ -355,12 +357,11 @@ function P.snail:kill()
 	unlocks.unlockUnlockableRef(unlocks.conductiveSnailsUnlock)
 end
 function P.snail:dropTool()
-	room[self.tileY][self.tileX] = tiles.supertoolTile:new()
-	room[self.tileY][self.tileX].tool = tools.shell
-	room[self.tileY][self.tileX]:updateSprite()
-	for i = 1, #animals do
-		if animals[i]==self then
-			table.remove(animals, i)
+	if tools.dropTool(tools.shell, self.tileY, self.tileX) then
+		for i = 1, #animals do
+			if animals[i]==self then
+				table.remove(animals, i)
+			end
 		end
 	end
 end

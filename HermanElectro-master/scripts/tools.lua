@@ -82,6 +82,18 @@ function P.giveToolsByReference(toolArray)
 	P.giveTools(toolsToGive)
 end
 
+function P.dropTool(toolReference, tileY, tileX)
+	unlocks = require('scripts.unlocks')
+	unlockedSupertools = unlocks.getUnlockedSupertools()
+	if not unlockedSupertools[toolReference.toolid] or toolReference.isDisabled then
+		return false
+	end
+	room[tileY][tileX] = tiles.supertoolTile:new()
+	room[tileY][tileX].tool = toolReference
+	room[tileY][tileX]:updateSprite()
+	return true
+end
+
 function P.giveRandomTools(numTools,numSupers,qualities)
 	if numSupers == nil then numSupers = 0 end
 	local toolsToGive = {}
@@ -4198,6 +4210,8 @@ end
 function P.bombPotion:useToolNothing(tileY, tileX)
 	self:useToolTile(nil, tileY, tileX)
 end
+
+
 
 P.numNormalTools = 7
 P.lastToolUsed = 1
