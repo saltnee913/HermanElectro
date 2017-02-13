@@ -658,7 +658,8 @@ end
 
 
 P.numQualities = 5
-P.superTool = P.tool:new{name = 'superTool', baseRange = 10, quality = P.numQualities, description = 'qwerty'}
+P.superTool = P.tool:new{name = 'superTool', baseRange = 10, quality = P.numQualities, description = 'qwerty',
+infiniteUses = false}
 function P.superTool:getOtherSupers()
 	local toRet = {}
 	for i = tools.numNormalTools+1, #tools do

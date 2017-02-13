@@ -1976,7 +1976,9 @@ function love.draw()
 			love.graphics.setShader(myShader)
 		end
 
-		if (player.character.name == "Giovanni" and player.character.shiftPos.x>0)
+		--draw clone stuff
+		if player.character.name == "Nellie"
+		or (player.character.name == "Giovanni" and player.character.shiftPos.x>0)
 		or player.clonePos.x>0 then
 			if player.clonePos.x>0 then
 				if player.clonePos.y == j then
@@ -1985,11 +1987,26 @@ function love.draw()
 					local playery = (player.clonePos.y-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
 					love.graphics.draw(charSprite, playerx-charSprite:getWidth()*player.character.scale/2, playery-charSprite:getHeight()*player.character.scale-player.elevation*scale, 0, player.character.scale, player.character.scale)
 				end
-			elseif player.character.shiftPos.y == j then
+			elseif player.character.shiftPos~=nil and player.character.shiftPos.y == j then
 				local charSprite2 = util.getImage(player.character.sprite2)
 				local playerx = (player.character.shiftPos.x-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
 				local playery = (player.character.shiftPos.y-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
 				love.graphics.draw(charSprite2, playerx-charSprite2:getWidth()*player.character.scale/2, playery-charSprite2:getHeight()*player.character.scale-player.elevation*scale, 0, player.character.scale, player.character.scale)
+			elseif player.character.catLoc~=nil then
+				local nonActiveSprite
+				local playerx
+				local playery
+				if player.character.humanMode then
+					nonActiveSprite = util.getImage(player.character.catSprite)
+					playerx = (player.character.catLoc.x-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
+					playery = (player.character.catLoc.y-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
+				else
+					nonActiveSprite = util.getImage(player.character.humanSprite)
+					playerx = (player.character.humanLoc.x-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
+					playery = (player.character.humanLoc.y-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
+				end
+
+				love.graphics.draw(nonActiveSprite, playerx-nonActiveSprite:getWidth()*player.character.scale/2, playery-nonActiveSprite:getHeight()*player.character.scale-player.elevation*scale, 0, player.character.scale, player.character.scale)
 			end
 		end
 		--love.graphics.draw(walls, 0, 0, 0, width/walls:getWidth(), height/walls:getHeight())

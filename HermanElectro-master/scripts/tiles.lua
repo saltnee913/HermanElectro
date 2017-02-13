@@ -2236,6 +2236,7 @@ P.lampTile = P.tile:new{name = "lampTile", pushable = pushableList[12], listInde
 P.hermanTransform = P.tile:new{name = "hermanTransform", characterIndex = 1}
 function P.hermanTransform:onEnter()
 	player.character = characters[self.characterIndex]
+	player.character:onSelect()
 	myShader:send("player_range", 500)
 end
 function P.hermanTransform:postPowerUpdate()
@@ -2717,6 +2718,7 @@ end
 function P.playerTile:onEnter()
 	if self.character ~= nil then
 		player.character = self.character
+		player.character:onSelect()
 		myShader:send("player_range", 500)
 	end
 end
