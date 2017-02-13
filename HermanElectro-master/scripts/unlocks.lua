@@ -17,6 +17,7 @@ function P.updateTimer(dt)
 end 
 
 local function readUnlocks()
+	if saving.isPlayingBack() then return end
 	if not love.filesystem.exists(saveDir..'/'..P.unlocksFile) then return end
 	local unlocksArray = util.readJSON(saveDir..'/'..P.unlocksFile, false)
 	if unlocksArray == nil then return end

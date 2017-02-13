@@ -7,6 +7,7 @@ P.replaySpeed = 1
 local isRecording = false
 local input = {}
 local recordingSeed = 0
+local unlocksSave = {}
 
 local isPlayingBack = false
 local currentRecording = {}
@@ -18,6 +19,9 @@ function P.createNewRecording(seed)
 	isRecording = true
 	input = {}
 	recordingSeed = seed
+	for i = 1, #unlocks do
+		unlocksSave[i] = unlocks[i].unlocked
+	end
 end
 
 function P.recordKeyPressed(key, unicode, isRepeat)
@@ -49,7 +53,7 @@ function P.saveRecording()
 	if isPlayingBack then
 		return
 	end
-	local recordingToSave = {inputs = input, seed = recordingSeed, character = player.character.name, isDead = player.dead}
+	local recordingToSave = {inputs = input, seed = recordingSeed, character = player.character.name, isDead = player.dead, unlocksSave = unlocksSave}
 	util.writeJSON(P.saveFile, recordingToSave)
 end
 
@@ -80,6 +84,9 @@ function P.playRecording(recording)
 		if characters[i].name == recording.character then
 			player.character = characters[i]
 		end
+	end
+	for i = 1, #unlocks do
+		unlocks[i].unlocked = unlocksSave[i]
 	end
 	currentRecording = recording.inputs
 	currentRecordingIndex = 1
