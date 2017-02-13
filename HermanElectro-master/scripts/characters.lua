@@ -396,7 +396,7 @@ function P.francisco:onCharLoad()
 	tools.giveToolsByReference({tools.coin})
 end
 
-P.random = P.character:new{name = "Random", description = "", sprite = 'Graphics/random.png'}
+P.random = P.character:new{name = "Random", description = "", sprite = 'Graphics/Characters/Random.png', scale = 1.1*scale}
 function P.random:onBegin()
 	local charsToSelect = characters.getUnlockedCharacters()
 	local charSlot = util.random(#charsToSelect-1, 'misc')
