@@ -110,6 +110,7 @@ function P.playRecordingFast(recording)
 	isRecording = true
 	input = recording.inputs
 	recordingSeed = recording.seed
+	unlocksSave = recording.unlocksSave
 	P.endPlayback()
 end
 

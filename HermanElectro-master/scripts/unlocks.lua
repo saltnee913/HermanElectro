@@ -27,6 +27,7 @@ local function readUnlocks()
 end
 
 local function writeUnlocks()
+	if saving.isPlayingBack() then return end
 	local unlocksArray = {}
 	for i = 1, #P do
 		if P[i].unlocked then
@@ -56,7 +57,7 @@ end
 function P.lockUnlockable(unlockId)
 		P[unlockId].unlocked = false
 		writeUnlocks()
-		--need to check if we unlocked any supertools so that they can drop
+		--need to check if we locked any supertools so that they don't drop
 		if P[unlockId].toolIds ~= nil then
 			P.updateUnlockedSupertools()
 		end	

@@ -711,13 +711,13 @@ end
 
 function startGame()
 	local seed = loadRandoms()
+	saving.createNewRecording(seed)
 	loadTutorial = false
 	map.floorOrder = map.defaultFloorOrder
 	love.load()
 	loadFirstLevel()
 	tools.resetTools()
 	player.character:onBegin()
-	saving.createNewRecording(seed)
 end
 
 function loadOpeningWorld()
