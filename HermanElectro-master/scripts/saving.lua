@@ -19,13 +19,13 @@ function P.createNewRecording(seed)
 	recordingSeed = seed
 end
 
-function P.recordKeyPressed(key, unicode)
+function P.recordKeyPressed(key, unicode, isRepeat)
 	if not isRecording then
 		return
 	end
 	if key == 'r' then return end
 	local time = gameTime.totalTime
-	input[#input+1] = {time = time, input = {key = key, unicode = unicode}}
+	input[#input+1] = {time = time, input = {key = key, unicode = unicode, isRepeat = isRepeat}}
 end
 
 function P.recordMouseInput(x, y, button, isTouch, isRelease)
@@ -36,12 +36,12 @@ function P.recordMouseInput(x, y, button, isTouch, isRelease)
 	input[#input+1] = {time = time, input = {x = x, y = y, button = button, isTouch = isTouch, isRelease = isRelease}}
 end
 
-function P.recordMouseMoved(x, y, dx, dy)
+function P.recordMouseMoved(x, y, dx, dy, isTouch)
 	if not isRecording then
 		return
 	end
 	local time = gameTime.totalTime
-	input[#input+1] = {time = time, input = {x = x, y = y, dx = dx, dy = dy}}
+	input[#input+1] = {time = time, input = {x = x, y = y, dx = dx, dy = dy, isTouch = isTouch}}
 end
 
 function P.saveRecording()
@@ -74,6 +74,7 @@ function P.isPlayingBack()
 end
 
 function P.playRecording(recording)
+	isPlayingBack = true
 	for i = 1, #characters do
 		if characters[i].name == recording.character then
 			player.character = characters[i]
@@ -86,12 +87,11 @@ function P.playRecording(recording)
 	seedOverride = recording.seed
 	startGame()
 	seedOverride = oldSeedOverride
-	isPlayingBack = true
 end
 
 function P.playBackRecording(recording)
 	P.playRecording(recording)
-	gameSpeed = 10
+	gameSpeed = 1
 end
 
 function P.playRecordingFast(recording)
@@ -108,9 +108,9 @@ end
 local function sendInputFromRecording(input)
 	if input.key ~= nil then
 		keyTimer.timeLeft = -1 --hack to skip the key timer, which could be slightly off
-		love.keypressed(input.key, input.unicode, true)
+		love.keypressed(input.key, input.unicode, input.isRepeat, true)
 	elseif input.isRelease == nil then
-		love.mousemoved(input.x, input.y, input.dx, input.dy, true)
+		love.mousemoved(input.x, input.y, input.dx, input.dy, input.isTouch, true)
 	elseif input.isRelease then
 		love.mousereleased(input.x, input.y, input.button, input.isTouch, true)
 	else
@@ -135,10 +135,14 @@ function P.sendNextInputFromRecording()
 end
 
 function P.endPlayback()
+	P.forceEndPlayback()
+	P.saveRecording()
+end
+
+function P.forceEndPlayback()
 	isPlayingBack = false
 	gameSpeed = 1
 	gamePaused = false
-	P.saveRecording()
 end
 
 return saving

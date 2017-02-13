@@ -507,11 +507,13 @@ function setMusicVolume(volume)
 end
 
 function goToMainMenu()
-	if saving.isPlayingBack() then
+	if saving.isPlayingBack() and not gamePaused then
 		return
+	elseif not saving.isPlayingBack() then
+		saving.endRecording()
 	end
+	saving.forceEndPlayback()
 	--started = false
-	saving.endRecording()
 	loadOpeningWorld()
 	emptyTools()
 	gamePaused = false
@@ -2643,6 +2645,9 @@ end
 
 keyTimer = {base = .05, timeLeft = .05, suicideDelay = .5}
 function love.update(dt)
+	if gamePaused then
+		return
+	end
 	dt = gameSpeed*dt
 	saving.sendNextInputFromRecording()
 	if player~=nil and player.character~=nil then
@@ -2650,9 +2655,6 @@ function love.update(dt)
 	end
 	if (titlescreenCounter>0) then
 		titlescreenCounter = titlescreenCounter-dt
-	end
-	if gamePaused then
-		return
 	end
 	if loadTutorial then
 		tutorial.update(dt)
@@ -2748,7 +2750,24 @@ function seedEnter(text)
 	end
 end
 
-function love.keypressed(key, unicode, isPlayback)
+function love.keypressed(key, unicode, isRepeat, isPlayback)
+	if toolManuel.opened then
+		toolManuel.keypressed(key, unicode)
+	elseif gamePaused then
+		if key=="escape" then
+			gamePaused = false
+		elseif key=="m" then
+			stairsLocs[1] = {map = {x = 0, y = 0}, coords = {x = 0, y = 0}}
+			goToMainMenu()
+		elseif key=="t" then
+			toolManuel.open()
+		end
+		return
+	end
+	if key=="escape" then
+		gamePaused = true
+		return
+	end
 	if saving.isPlayingBack() and not isPlayback then
 		return
 	end
@@ -2829,19 +2848,6 @@ function love.keypressed(key, unicode, isPlayback)
 		return
 	end
 
-	if toolManuel.opened then
-		toolManuel.keypressed(key, unicode)
-	elseif gamePaused then
-		if key=="escape" then
-			gamePaused = false
-		elseif key=="m" then
-			stairsLocs[1] = {map = {x = 0, y = 0}, coords = {x = 0, y = 0}}
-			goToMainMenu()
-		elseif key=="t" then
-			toolManuel.open()
-		end
-		return
-	end
 	if won then
 		if key=="m" then
 			stairsLocs[1] = {map = {x = 0, y = 0}, coords = {x = 0, y = 0}}
@@ -2851,10 +2857,6 @@ function love.keypressed(key, unicode, isPlayback)
 
 	if editor.stealInput then
 		editor.inputSteal(key, unicode)
-		return
-	end
-	if key=="escape" then
-		gamePaused = true
 		return
 	end
 	if key=="e" then
@@ -2931,7 +2933,7 @@ function love.keypressed(key, unicode, isPlayback)
 	end
 	keyTimer.timeLeft = keyTimer.base
 
-	saving.recordKeyPressed(key, unicode)
+	saving.recordKeyPressed(key, unicode, isRepeat)
 
 	waitTurn = false
 	if player.character:onKeyPressed(key) then
@@ -3527,11 +3529,11 @@ function love.mousereleased(x, y, button, istouch, isPlayback)
 	end
 end
 
-function love.mousemoved(x, y, dx, dy, isPlayback)
+function love.mousemoved(x, y, dx, dy, isTouch, isPlayback)
 	if saving.isPlayingBack() and not isPlayback then
 		return
 	end
-	saving.recordMouseMoved(x, y, dx, dy)
+	saving.recordMouseMoved(x, y, dx, dy, isTouch)
 	if gamePaused then
 		return
 	end
