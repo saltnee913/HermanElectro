@@ -898,7 +898,6 @@ function kill()
 			spotlights = {}
 			updateGameState(false)
 			log("Revived!")
-			stats.losses[player.character.name] = stats.losses[player.character.name]-1
 			onToolUse(i)
 			return
 		end

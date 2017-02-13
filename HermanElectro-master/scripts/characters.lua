@@ -109,7 +109,7 @@ end
 P.herman = P.character:new{name = "Herman", description = "The Electrician", winUnlocks = {unlocks.reviveUnlock}, scale = 1.1*scale, sprites = {'Graphics/Characters/Herman.png', 'Graphics/Characters/Herman.png', 'Graphics/Characters/Herman.png', 'Graphics/Characters/Herman.png'}}
 function P.herman:onCharLoad()
 	if loadTutorial then return end
-	tools.giveToolsByReference({tools.revive})
+	tools.giveToolsByReference({tools.revive, tools.gabeMaker})
 	myShader:send("player_range", 600)
 end
 
@@ -187,7 +187,7 @@ function P.erik:specialLightTest(tileY,tileX)
 end
 
 P.gabe = P.character:new{name = "Gabe", tallSprite = false, description = "The Angel",
-	sprite = 'Graphics/gabe.png', realChar = nil, reset = false, disabled = true}
+	sprite = 'Graphics/gabe.png', realChar = nil, reset = false}
 function P.gabe:onCharLoad()
 	if not self.reset then
 		player.attributes.flying = true
