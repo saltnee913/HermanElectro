@@ -658,7 +658,7 @@ end
 
 
 P.numQualities = 5
-P.superTool = P.tool:new{name = 'superTool', baseRange = 10, quality = P.numQualities, description = 'qwerty'}
+P.superTool = P.tool:new{name = 'superTool', baseRange = 10, quality = P.numQualities, description = 'qwerty', defaultDisabled = false, isDisabled = false}
 function P.superTool:getOtherSupers()
 	local toRet = {}
 	for i = tools.numNormalTools+1, #tools do
@@ -677,13 +677,13 @@ function P.chooseSupertool(quality)
 		local toolId
 		repeat
 			toolId = util.random(#tools-tools.numNormalTools,'toolDrop')+tools.numNormalTools
-		until(unlockedSupertools[toolId])
+		until(unlockedSupertools[toolId] and not tools[toolId].isDisabled)
 		return toolId
 	else
 		local toolId
 		repeat
 			toolId = util.random(#tools-tools.numNormalTools,'toolDrop')+tools.numNormalTools
-		until(unlockedSupertools[toolId] and tools[toolId].quality == quality)
+		until(unlockedSupertools[toolId] and tools[toolId].quality == quality and not tools[toolId].isDisabled)
 		return toolId
 	end
 end
@@ -4165,7 +4165,6 @@ function P.mindfulTool:getLastTool()
 	end
 	return lastToolList
 end
-
 --[[ideas:
 --animal reroller
 -box reroller
@@ -4178,15 +4177,18 @@ P.numNormalTools = 7
 P.lastToolUsed = 1
 
 function P.resetTools()
-	P:insertTool(P.saw, 1)
-	P:insertTool(P.ladder, 2)
-	P:insertTool(P.wireCutters, 3)
-	P:insertTool(P.waterBottle, 4)
-	P:insertTool(P.sponge, 5)
-	P:insertTool(P.brick, 6)
-	P:insertTool(P.gun, 7)
+	tools[1] = P.saw
+	tools[2] = P.ladder
+	tools[3] = P.wireCutters
+	tools[4] = P.waterBottle
+	tools[5] = P.sponge
+	tools[6] = P.brick
+	tools[7] = P.gun
 	for i = 1, #tools do
 		tools[i].range = tools[i].baseRange
+		if i > tools.numNormalTools then
+			tools[i].isDisabled = tools[i].defaultDisabled
+		end
 	end
 end
 
@@ -4202,6 +4204,8 @@ function P:insertTool(tool, index)
 	end
 	tools[index] = tool
 end
+
+P.resetTools()
 
 P:addTool(P.crowbar)
 P:addTool(P.visionChanger) 
