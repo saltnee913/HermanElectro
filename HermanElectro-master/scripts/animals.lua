@@ -173,7 +173,7 @@ function P.animal:kill()
 	self.sprite = self.deadSprite
 	if self.canDropTool and not self.willDropTool then
 		local bonusDropChance = util.random(100, 'toolDrop')
-		if bonusDropChance<getLuckBonus() then
+		if bonusDropChance<=getLuckBonus() then
 			self.willDropTool = true
 		end
 	end
@@ -324,11 +324,6 @@ function P.pitbull:dropTool()
 		room[self.tileY][self.tileX].tool = tools.rottenMeat
 	end
 	room[self.tileY][self.tileX]:updateSprite()
-	for i = 1, #animals do
-		if animals[i]==self then
-			table.remove(animals, i)
-		end
-	end
 end
 
 P.pup = P.animal:new{name = "pup", sprite = 'NewGraphics/pupDesign.png', deadSprite = 'Graphics/pupdead.png', canDropTool = true}
@@ -343,7 +338,7 @@ function P.snail:kill()
 	self.sprite = self.deadSprite
 	if self.canDropTool and not self.willDropTool then
 		local bonusDropChance = util.random(100, 'toolDrop')
-		if bonusDropChance<getLuckBonus() then
+		if bonusDropChance<=getLuckBonus() then
 			self.willDropTool = true
 		end
 	end
@@ -358,11 +353,6 @@ function P.snail:dropTool()
 	room[self.tileY][self.tileX] = tiles.supertoolTile:new()
 	room[self.tileY][self.tileX].tool = tools.shell
 	room[self.tileY][self.tileX]:updateSprite()
-	for i = 1, #animals do
-		if animals[i]==self then
-			table.remove(animals, i)
-		end
-	end
 end
 
 P.conductiveSnail = P.snail:new{name = "conductiveSnail", sprite = 'NewGraphics/snailCDesign.png'}
@@ -374,7 +364,7 @@ function P.conductiveSnail:kill()
 	self.sprite = self.deadSprite
 	if self.canDropTool and not self.willDropTool then
 		local bonusDropChance = util.random(100, 'toolDrop')
-		if bonusDropChance<getLuckBonus() then
+		if bonusDropChance<=getLuckBonus() then
 			self.willDropTool = true
 		end
 	end
@@ -395,7 +385,7 @@ function P.glueSnail:kill()
 	self.sprite = self.deadSprite
 	if self.canDropTool and not self.willDropTool then
 		local bonusDropChance = util.random(100, 'toolDrop')
-		if bonusDropChance<getLuckBonus() then
+		if bonusDropChance<=getLuckBonus() then
 			self.willDropTool = true
 		end
 	end
