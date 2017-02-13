@@ -2414,7 +2414,6 @@ function createAnimals()
 				if not animalToSpawn.dead then
 					animals[animalCounter] = animalToSpawn
 					if not animalToSpawn.loaded then
-						animalToSpawn.triggered = false
 						animalToSpawn.y = (i-1)*tileWidth*scale+wallSprite.height
 						animalToSpawn.x = (j-1)*tileHeight*scale+wallSprite.width
 						animalToSpawn.tileX = j

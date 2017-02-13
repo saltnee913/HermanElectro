@@ -500,6 +500,11 @@ function P.ram:afraidSecondaryMove(playerx, playery)
 
 	return true
 end
+
+P.rat = P.animal:new{name = "rat", sprite = 'Graphics/rat.png', triggered = true}
+
+
+
 animalList[1] = P.animal
 animalList[2] = P.pitbull
 animalList[3] = P.pup
@@ -514,5 +519,6 @@ animalList[11] = P.wife
 animalList[12] = P.son
 animalList[13] = P.daughter
 animalList[14] = P.ram
+animalList[15] = P.rat
 
 return animalList

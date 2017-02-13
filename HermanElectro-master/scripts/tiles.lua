@@ -2824,6 +2824,8 @@ function P.atm:onEnter()
 	end
 end
 
+P.ratTile = P.pitbullTile:new{name = "rat", animal = animalList[15], listIndex = 15}
+
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
 tiles[3] = P.powerSupply
@@ -3019,6 +3021,7 @@ tiles[192] = P.finalKeyPowered
 tiles[193] = P.atm
 tiles[194] = P.saveStairs
 tiles[195] = P.playbackStairs
+tiles[196] = P.ratTile
 
 
 
