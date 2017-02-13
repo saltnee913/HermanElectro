@@ -86,7 +86,7 @@ function P.playRecording(recording)
 		end
 	end
 	for i = 1, #unlocks do
-		unlocks[i].unlocked = unlocksSave[i]
+		unlocks[i].unlocked = recording.unlocksSave[i]
 	end
 	currentRecording = recording.inputs
 	currentRecordingIndex = 1
