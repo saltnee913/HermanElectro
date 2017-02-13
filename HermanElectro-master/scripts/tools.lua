@@ -943,12 +943,7 @@ function P.rottenMeat:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld-1
 	room[tileY][tileX] = tiles.rottenMeat:new()
 end
-function P.rottenMeat:usableOnTile(tile)
-	if tile.overlay==nil then
-		return true
-	end
-	return false
-end
+P.rottenMeat.usableOnTile = P.meat.usableOnTile
 function P.rottenMeat:useToolTile(tile)
 	self.numHeld = self.numHeld - 1
 	tile.scaresAnimals = true
@@ -4167,6 +4162,20 @@ function P.mindfulTool:getLastTool()
 	return lastToolList
 end
 
+P.explosiveMeat = P.superTool:new{name = "Explosive Meat", description = "A little kick to it", baseRange = 1,
+image = 'Graphics/Tools/explosiveMeat.png', quality = 5}
+P.explosiveMeat.usableOnNothing = P.meat.usableOnNothing
+function P.explosiveMeat:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
+	room[tileY][tileX] = tiles.explosiveMeat:new()
+end
+P.explosiveMeat.usableOnTile = P.meat.usableOnTile
+function P.explosiveMeat:useToolTile(tile)
+	self.numHeld = self.numHeld - 1
+	tile.attractsAnimals = true
+	tile.overlay = tiles.explosiveMeat
+end
+
 --[[ideas:
 --animal reroller
 -box reroller
@@ -4350,6 +4359,7 @@ P:addTool(P.roomCompletionBonus)
 P:addTool(P.fishingPole)
 P:addTool(P.blankTool)
 P:addTool(P.mindfulTool)
+P:addTool(P.explosiveMeat)
 
 P.resetTools()
 
