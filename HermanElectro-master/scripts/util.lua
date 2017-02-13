@@ -147,4 +147,34 @@ function P.getImage(imageSource)
 	return P.images[imageSource]
 end
 
+function P.createHarmlessExplosion(y, x)
+	for i = -1, 1 do
+		for j = -1, 1 do
+			if room[y+i]~=nil and room[y+i][x+j]~=nil then
+				room[y+i][x+j]:destroy()
+				if room[y+i][x+j]:instanceof(tiles.bomb) then
+					unlocks.unlockUnlockableRef(unlocks.bombBuddyUnlock)
+				end
+			end
+		end
+	end
+	for k = 1, #animals do
+		if not animals[k].dead and math.abs(animals[k].tileY-y)<2 and math.abs(animals[k].tileX-x)<2 then
+			animals[k]:kill()
+			if animals[k]:instanceof(animalList.bombBuddy) then
+				animals[k]:explode()
+			end
+		end
+	end
+	for k = 1, #pushables do
+		if math.abs(pushables[k].tileY-y)<2 and math.abs(pushables[k].tileX-x)<2 and not pushables[k].destroyed then
+			pushables[k]:destroy()
+			if pushables[k]:instanceof(pushableList.bombBox) then
+				unlocks.unlockUnlockableRef(unlocks.bombBuddyUnlock)
+			end
+		end
+	end
+	updatePower()
+end
+
 return util

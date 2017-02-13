@@ -4182,6 +4182,22 @@ end
 --More coin based tools
 
 ]]
+--POTIONS
+P.bombPotion = P.superTool:new{name = "Bomb Potion", description = "Extremely flammable", baseRange = 3,
+  image = 'Graphics/Tools/bombPotion.png', quality = 4, defaultDisabled = true}
+function P.bombPotion:usableOnTile()
+	return true
+end
+function P.bombPotion:usableOnNothing()
+	return true
+end
+function P.bombPotion:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
+	util.createHarmlessExplosion(tileY, tileX)
+end
+function P.bombPotion:useToolNothing(tileY, tileX)
+	self:useToolTile(nil, tileY, tileX)
+end
 
 P.numNormalTools = 7
 P.lastToolUsed = 1
@@ -4364,6 +4380,8 @@ P:addTool(P.fishingPole)
 P:addTool(P.blankTool)
 P:addTool(P.mindfulTool)
 P:addTool(P.explosiveMeat)
+
+P:addTool(P.bombPotion)
 
 P.resetTools()
 

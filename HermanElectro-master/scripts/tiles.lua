@@ -1400,33 +1400,7 @@ function P.bomb:explode(x,y)
 			unlocks.unlockUnlockableRef(unlocks.frederickUnlock)
 		end
 	end
-	for i = -1, 1 do
-		for j = -1, 1 do
-			if room[x+i]~=nil and room[x+i][y+j]~=nil then
-				room[x+i][y+j]:destroy()
-				if room[x+i][y+j]:instanceof(tiles.bomb) then
-					unlocks.unlockUnlockableRef(unlocks.bombBuddyUnlock)
-				end
-			end
-		end
-	end
-	for k = 1, #animals do
-		if not animals[k].dead and math.abs(animals[k].tileY-x)<2 and math.abs(animals[k].tileX-y)<2 then
-			animals[k]:kill()
-			if animals[k]:instanceof(animalList.bombBuddy) then
-				animals[k]:explode()
-			end
-		end
-	end
-	for k = 1, #pushables do
-		if math.abs(pushables[k].tileY-x)<2 and math.abs(pushables[k].tileX-y)<2 and not pushables[k].destroyed then
-			pushables[k]:destroy()
-			if pushables[k]:instanceof(pushableList.bombBox) then
-				unlocks.unlockUnlockableRef(unlocks.bombBuddyUnlock)
-			end
-		end
-	end
-	updatePower()
+	util.createHarmlessExplosion(x,y)
 end
 
 P.capacitor = P.conductiveTile:new{name = "capacitor", counter = 3, maxCounter = 3, dirAccept = {1,0,1,0}, sprite = 'Graphics/capacitor.png', poweredSprite = 'Graphics/capacitor.png'}
