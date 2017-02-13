@@ -2,6 +2,7 @@ local P = {}
 saving = P
 
 P.saveFile = 'save.json'
+P.replaySpeed = 1
 
 local isRecording = false
 local input = {}
@@ -91,7 +92,7 @@ end
 
 function P.playBackRecording(recording)
 	P.playRecording(recording)
-	gameSpeed = 1
+	gameSpeed = P.replaySpeed
 end
 
 function P.playRecordingFast(recording)
