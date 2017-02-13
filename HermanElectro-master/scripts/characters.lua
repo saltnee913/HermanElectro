@@ -236,9 +236,10 @@ function P.frederick:onFloorEnter()
 	tools.giveToolsByReference({tools.spring,tools.spring,tools.visionChanger})
 end
 
-P.battery = P.character:new{name = "Bob", tallSprite = false, description = "The Battery", sprite = 'Graphics/powersupplydead.png',
-  onSprite = 'Graphics/powersupply.png', offSprite = 'Graphics/powersupplydead.png', 
-  scale = scale, storedTile = nil, forcePowerUpdate = false, powered = false}
+P.battery = P.character:new{name = "Bob", tallSprite = false, description = "The Battery",
+sprite = 'Graphics/Characters/Bob.png',
+  onSprite = 'Graphics/Characters/BobPowered.png', offSprite = 'Graphics/Characters/Bob.png', 
+  scale = scale*1.2, storedTile = nil, forcePowerUpdate = false, powered = false}
 function P.battery:onKeyPressedChar(key)
 	--log(key)
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
