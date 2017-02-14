@@ -817,6 +817,23 @@ function P.witch:updateSprite()
 	end
 end
 
+P.scientist = P.character:new{name = "Marie", description = "The Scientist", 
+  sprite = 'Graphics/Characters/Arachne.png', jekyllSprite = 'Graphics/Characters/Arachne.png', hydeSprite = 'Graphics/Characters/Arachne.png',
+  scale = 1.1*scale, hyde = false, pulsing = false}
+function P.scientist:onCharLoad()
+	for i = tools.numNormalTools+1, #tools do
+		tools[i].isDisabled = true
+	end
+	tools[tools.opPotion.toolid].isDisabled = false
+	tools[tools.bombPotion.toolid].isDisabled = false
+	tools[tools.electricPotion.toolid].isDisabled = false
+	tools[tools.teleportPotion.toolid].isDisabled = false
+	tools[tools.shittyPotion.toolid].isDisabled = false
+	self.pulsing = false
+	self.hyde = false
+	tools.giveToolsByReference({tools.teleportPotion, tools.electricPotion, tools.bombPotion})
+end
+
 
 P[#P+1] = P.herman
 P[#P+1] = P.francisco
@@ -861,6 +878,8 @@ P[#P+1] = P.crate
 
 P[#P+1] = P.arachne
 P[#P+1] = P.witch
+
+P[#P+1] = P.scientist
 
 
 P[#P+1] = P.random

@@ -241,7 +241,7 @@ function P.tool:getToolableTiles()
 			local tileToCheck = {y = player.tileY, x = player.tileX}
 			if room[tileToCheck.y]~=nil then
 				if ((room[tileToCheck.y][tileToCheck.x] == nil or room[tileToCheck.y][tileToCheck.x]:usableOnNothing(tileToCheck.y, tileToCheck.x)) and player.elevation<=0 and (tileToCheck.x>0 and tileToCheck.x<=roomLength) and self:usableOnNothing(tileToCheck.y, tileToCheck.x))
-				or (room[tileToCheck.y][tileToCheck.x] ~= nil and self:usableOnTile(room[tileToCheck.y][tileToCheck.x], dist) and
+				or (room[tileToCheck.y][tileToCheck.x] ~= nil and self:usableOnTile(room[tileToCheck.y][tileToCheck.x], tileToCheck.y, tileToCheck.x) and
 				player.elevation<=math.abs(room[tileToCheck.y][tileToCheck.x]:getHeight())) then
 					if litTiles[tileToCheck.y][tileToCheck.x]~=0 then
 						usableTiles[5][#(usableTiles[5])+1] = tileToCheck
@@ -254,7 +254,7 @@ function P.tool:getToolableTiles()
 				if room[tileToCheck.y]~=nil then
 					if dir==5 and dist>1 then break end
 					if ((room[tileToCheck.y][tileToCheck.x] == nil or room[tileToCheck.y][tileToCheck.x]:usableOnNothing(tileToCheck.y, tileToCheck.x)) and player.elevation<=0 and (tileToCheck.x>0 and tileToCheck.x<=roomLength) and self:usableOnNothing(tileToCheck.y, tileToCheck.x))
-					or (room[tileToCheck.y][tileToCheck.x] ~= nil and self:usableOnTile(room[tileToCheck.y][tileToCheck.x], dist) and
+					or (room[tileToCheck.y][tileToCheck.x] ~= nil and self:usableOnTile(room[tileToCheck.y][tileToCheck.x], tileToCheck.y, tileToCheck.x) and
 					player.elevation<=math.abs(room[tileToCheck.y][tileToCheck.x]:getHeight())) then
 						if litTiles[tileToCheck.y][tileToCheck.x]~=0 then
 							usableTiles[dir][#(usableTiles[dir])+1] = tileToCheck
@@ -282,7 +282,7 @@ function P.tool:getToolableTilesBox()
 			if room[tileToCheck.y]~=nil then
 				local dist = offset.y+offset.x
 				if (room[tileToCheck.y][tileToCheck.x] == nil and self:usableOnNothing(tileToCheck.y, tileToCheck.x))
-				or (room[tileToCheck.y][tileToCheck.x] ~= nil and self:usableOnTile(room[tileToCheck.y][tileToCheck.x], dist) and
+				or (room[tileToCheck.y][tileToCheck.x] ~= nil and self:usableOnTile(room[tileToCheck.y][tileToCheck.x], tileToCheck.y, tileToCheck.x) and
 				player.elevation<=room[tileToCheck.y][tileToCheck.x]:getHeight()) then
 					if math.abs(tileToCheck.y-player.tileY)+math.abs(tileToCheck.x-player.tileX)<=self.range then
 						if litTiles[tileToCheck.y][tileToCheck.x]~=0 then
@@ -554,7 +554,8 @@ function P.waterBottle:useToolNothing(tileY, tileX)
 end
 
 P.brick = P.tool:new{name = 'brick', baseRange = 3, image = 'Graphics/brick.png'}
-function P.brick:usableOnTile(tile, dist)
+function P.brick:usableOnTile(tile, tileY, tileX)
+	local dist = math.abs(player.tileY - tileY) + math.abs(player.tileX - tileX)
 	if not tile.bricked and tile:instanceof(tiles.button) and not tile:instanceof(tiles.superStickyButton)
 		and not tile:instanceof(tiles.unbrickableStayButton) and dist <= 3 then
 		return true
@@ -2760,7 +2761,7 @@ function P.block:useToolNothing(tileLocY, tileLocX)
 end
 
 P.tileMagnet = P.superTool:new{name = "Super Magnet", description = "It pulls its weight.", image = 'Graphics/tilemagnet.png', quality = 3, baseRange = 4}
-function P.tileMagnet:usableOnTile(tile, dist)
+function P.tileMagnet:usableOnTile(tile, tileY, tileX)
 	--[[local tileX = 0
 	local tileY = 0
 	for i = 1, roomHeight do
@@ -2799,6 +2800,7 @@ function P.tileMagnet:usableOnTile(tile, dist)
 			end
 		end
 	end]]
+	local dist = math.abs(player.tileY - tileY) + math.abs(player.tileX - tileX)
 	if dist==1 and room[player.tileY][player.tileX]~=nil then return false
 	elseif tile.untoolable then return false end
 	return true
@@ -2888,17 +2890,8 @@ function P.stealthBomber:usableOnNothing(tileY, tileX)
 	end
 	return math.abs(tileY-player.tileY)+math.abs(tileX-player.tileX)>1 and (tileY==player.tileY or tileX==player.tileX)
 end
-function P.stealthBomber:usableOnTile(tile, dist)
-	local tileY=0
-	local tileX=0
-	for i = 1, roomHeight do
-		for j = 1, roomLength do
-			if room[i][j]==tile then
-				tileX = j
-				tileY = i
-			end
-		end
-	end
+function P.stealthBomber:usableOnTile(tile, tileY, tileX)
+	local dist = math.abs(player.tileY - tileY) + math.abs(player.tileX - tileX)
 	for i = 1, #pushables do
 		if pushables[i].tileY==tileY and pushables[i].tileX==tileX then
 			return false
@@ -3051,17 +3044,7 @@ function P.boxCloner:useToolTile(tile, tileY, tileX)
 end
 
 P.tilePusher = P.superTool:new{name = "tilePusher", description = "Pushy, pushy", --[[or "Truly repulsive"]]image = 'Graphics/shovel.png', baseRange = 3, quality = 3}
-function P.tilePusher:usableOnTile(tile, dist)
-	local tileX = 0
-	local tileY = 0
-	for i = 1, roomHeight do
-		for j = 1, roomLength do
-			if room[i][j]==tile then
-				tileX = j
-				tileY = i
-			end
-		end
-	end
+function P.tilePusher:usableOnTile(tile, tileY, tileX)
 	local useLoc = {x = 0, y = 0}
 	if player.tileX==tileX then
 		if player.tileY>tileY then
@@ -4195,6 +4178,18 @@ end
 
 ]]
 --POTIONS
+P.opPotion = P.superTool:new{name = "OP Potion", description = "Too good.", baseRange = 0,
+  image = 'Graphics/Tools/bombPotion.png', quality = 5, defaultDisabled = true}
+function P.opPotion:usableOnNothing()
+	return true
+end
+P.opPotion.usableOnTile = P.opPotion.usableOnNothing
+function P.opPotion:useToolTile()
+	self.numHeld = self.numHeld - 1
+	player.character.hyde = true
+end
+P.opPotion.useToolNothing = P.opPotion.useToolTile
+
 P.bombPotion = P.superTool:new{name = "Bomb Potion", description = "Extremely flammable", baseRange = 3,
   image = 'Graphics/Tools/bombPotion.png', quality = 4, defaultDisabled = true}
 function P.bombPotion:usableOnTile()
@@ -4211,7 +4206,60 @@ function P.bombPotion:useToolNothing(tileY, tileX)
 	self:useToolTile(nil, tileY, tileX)
 end
 
+P.electricPotion = P.superTool:new{name = "Electric Potion", description = "Tesla would be proud",
+  image = 'Graphics/Tools/bombPotion.png', quality = 3, baseRange = 0, defaultDisabled = true}
+function P.electricPotion:usableOnNothing()
+	return true
+end
+P.electricPotion.usableOnTile = P.electricPotion.usableOnNothing
+function P.electricPotion:useToolTile()
+	self.numHeld = self.numHeld - 1
+	player.character.pulsing = true
+end
+P.electricPotion.useToolNothing = P.electricPotion.useToolTile
 
+P.teleportPotion = P.superTool:new{name = "Teleport Potion", decription = "Where did I go?", baseRange = 3,
+  image = 'Graphics/Tools/bombPotion.png', quality = 2, defaultDisabled = true}
+function P.teleportPotion:usableOnTile(tile, tileY, tileX)
+	for i = 1, #pushables do
+		if pushables[i].tileY==tileY and pushables[i].tileX==tileX then
+			return false
+		end
+	end
+	local dist = math.abs(player.tileY - tileY) + math.abs(player.tileX - tileX)
+	return math.abs(dist) == self.range
+end
+function P.teleportPotion:usableOnNothing(tileY, tileX)
+	return self:usableOnTile(nil, tileY, tileX)
+end
+function P.teleportPotion:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
+	player.prevTileX = player.tileX
+	player.prevTileY = player.tileY
+	player.tileX = tileX
+	player.tileY = tileY
+	if room[tileY][tileX] ~= nil then
+		room[tileY][tileX]:onLeave(player)
+	end
+	if tile ~= nil then
+		room[tileY][tileX]:onEnter(player)
+	end
+end
+function P.teleportPotion:useToolNothing(tileY, tileX)
+	self:useToolTile(nil, tileY, tileX)
+end
+
+P.shittyPotion = P.superTool:new{name = "Shitty Potion", description = "Well shit...",
+  image = 'Graphics/Tools/bombPotion.png', quality = 1, baseRange = 0, defaultDisabled = true}
+function P.shittyPotion:usableOnTile()
+	return true
+end
+P.shittyPotion.usableOnNothing = P.shittyPotion.usableOnTile
+function P.shittyPotion:useToolTile()
+	self.numHeld = self.numHeld - 1
+	player.baseLuckBonus = player.baseLuckBonus + 1
+end
+P.shittyPotion.useToolNothing = P.shittyPotion.useToolTile
 
 P.numNormalTools = 7
 P.lastToolUsed = 1
@@ -4395,7 +4443,11 @@ P:addTool(P.blankTool)
 P:addTool(P.mindfulTool)
 P:addTool(P.explosiveMeat)
 
+P:addTool(P.opPotion)
 P:addTool(P.bombPotion)
+P:addTool(P.electricPotion)
+P:addTool(P.teleportPotion)
+P:addTool(P.shittyPotion)
 
 P.resetTools()
 
