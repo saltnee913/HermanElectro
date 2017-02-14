@@ -173,7 +173,7 @@ function P.animal:kill()
 	self.sprite = self.deadSprite
 	if self.canDropTool and not self.willDropTool then
 		local bonusDropChance = util.random(100, 'toolDrop')
-		if bonusDropChance<getLuckBonus() then
+		if bonusDropChance<=getLuckBonus() then
 			self.willDropTool = true
 		end
 	end
@@ -326,11 +326,6 @@ function P.pitbull:dropTool()
 			return
 		end
 	end
-	for i = 1, #animals do
-		if animals[i]==self then
-			table.remove(animals, i)
-		end
-	end
 end
 
 P.pup = P.animal:new{name = "pup", sprite = 'NewGraphics/pupDesign.png', deadSprite = 'Graphics/pupdead.png', canDropTool = true}
@@ -345,7 +340,7 @@ function P.snail:kill()
 	self.sprite = self.deadSprite
 	if self.canDropTool and not self.willDropTool then
 		local bonusDropChance = util.random(100, 'toolDrop')
-		if bonusDropChance<getLuckBonus() then
+		if bonusDropChance<=getLuckBonus() then
 			self.willDropTool = true
 		end
 	end
@@ -358,11 +353,7 @@ function P.snail:kill()
 end
 function P.snail:dropTool()
 	if tools.dropTool(tools.shell, self.tileY, self.tileX) then
-		for i = 1, #animals do
-			if animals[i]==self then
-				table.remove(animals, i)
-			end
-		end
+		return
 	end
 end
 
@@ -375,7 +366,7 @@ function P.conductiveSnail:kill()
 	self.sprite = self.deadSprite
 	if self.canDropTool and not self.willDropTool then
 		local bonusDropChance = util.random(100, 'toolDrop')
-		if bonusDropChance<getLuckBonus() then
+		if bonusDropChance<=getLuckBonus() then
 			self.willDropTool = true
 		end
 	end
@@ -396,7 +387,7 @@ function P.glueSnail:kill()
 	self.sprite = self.deadSprite
 	if self.canDropTool and not self.willDropTool then
 		local bonusDropChance = util.random(100, 'toolDrop')
-		if bonusDropChance<getLuckBonus() then
+		if bonusDropChance<=getLuckBonus() then
 			self.willDropTool = true
 		end
 	end
@@ -501,6 +492,11 @@ function P.ram:afraidSecondaryMove(playerx, playery)
 
 	return true
 end
+
+P.rat = P.animal:new{name = "rat", sprite = 'Graphics/rat.png', triggered = true}
+
+
+
 animalList[1] = P.animal
 animalList[2] = P.pitbull
 animalList[3] = P.pup
@@ -515,5 +511,6 @@ animalList[11] = P.wife
 animalList[12] = P.son
 animalList[13] = P.daughter
 animalList[14] = P.ram
+animalList[15] = P.rat
 
 return animalList

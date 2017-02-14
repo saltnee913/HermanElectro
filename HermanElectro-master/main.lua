@@ -465,7 +465,7 @@ function love.load()
 		setChar = player.character
 	end
 
-	player = { 	baseLuckBonus = 0, dungeonKeysHeld = 0, finalKeysHeld = 0, biscuitHeld = false, clonePos = {x = 0, y = 0, z = 0}, dead = false, elevation = 0, safeFromAnimals = false, bonusRange = 0, active = true, waitCounter = 0, tileX = 10, tileY = 6, x = (1-1)*scale*tileWidth+wallSprite.width+tileWidth/2*scale-10, 
+	player = { 	baseLuckBonus = 1, dungeonKeysHeld = 0, finalKeysHeld = 0, biscuitHeld = false, clonePos = {x = 0, y = 0, z = 0}, dead = false, elevation = 0, safeFromAnimals = false, bonusRange = 0, active = true, waitCounter = 0, tileX = 10, tileY = 6, x = (1-1)*scale*tileWidth+wallSprite.width+tileWidth/2*scale-10, 
 			y = (6-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10, prevTileX = 3, prevTileY 	= 10,
 			prevx = (3-1)*scale*tileWidth+wallSprite.width+tileWidth/2*scale-10,
 			prevy = (10-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10,
@@ -2414,7 +2414,6 @@ function createAnimals()
 				if not animalToSpawn.dead then
 					animals[animalCounter] = animalToSpawn
 					if not animalToSpawn.loaded then
-						animalToSpawn.triggered = false
 						animalToSpawn.y = (i-1)*tileWidth*scale+wallSprite.height
 						animalToSpawn.x = (j-1)*tileHeight*scale+wallSprite.width
 						animalToSpawn.tileX = j
