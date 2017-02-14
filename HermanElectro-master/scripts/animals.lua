@@ -173,7 +173,7 @@ function P.animal:kill()
 	self.sprite = self.deadSprite
 	if self.canDropTool and not self.willDropTool then
 		local bonusDropChance = util.random(100, 'toolDrop')
-		if bonusDropChance<1000+getLuckBonus() then
+		if bonusDropChance<getLuckBonus() then
 			self.willDropTool = true
 		end
 	end
