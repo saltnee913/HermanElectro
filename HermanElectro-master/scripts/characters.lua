@@ -821,8 +821,8 @@ function P.witch:updateSprite()
 end
 
 P.scientist = P.character:new{name = "Marie", description = "The Scientist", 
-  sprite = 'Graphics/Characters/Arachne.png', jekyllSprite = 'Graphics/Characters/Arachne.png', hydeSprite = 'Graphics/Characters/Arachne.png',
-  powerSprite = 'Graphics/Characters/Arachne.png', scale = 1.1*scale, hyde = false, pulsing = false, pulsingTimer = 0, pulsingTime = 2,
+  sprite = 'Graphics/Characters/Sciencewoman.png', jekyllSprite = 'Graphics/Characters/Sciencewoman.png', hydeSprite = 'Graphics/Characters/MrHyde.png',
+  powerSprite = 'Graphics/Characters/ShockedSciencewoman.png', scale = 1.1*scale, hyde = false, pulsing = false, pulsingTimer = 0, pulsingTime = 2,
   powered = false, storedTile = nil}
 function P.scientist:onCharLoad()
 	for i = tools.numNormalTools+1, #tools do
