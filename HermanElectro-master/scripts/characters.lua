@@ -716,8 +716,9 @@ function P.albert:updateSpotlights()
 	end
 end
 
-P.xavier = P.character:new{name = "Xavier", description = "The Sock Ninja", sockMode = false, sprite = 'Graphics/xavier2.png', sockSprite = 'Graphics/xavier.png',
-noSockSprite = 'Graphics/xavier2.png'}
+P.xavier = P.character:new{name = "Xavier", description = "The Sock Ninja", sockMode = false,
+sprite = 'Graphics/Characters/Eli.png', sockSprite = 'Graphics/Characters/EliSock.png',
+noSockSprite = 'Graphics/Characters/Eli.png', scale = 1.1*scale}
 function P.xavier:onKeyPressedChar(key)
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
 		self.sockMode = not self.sockMode
