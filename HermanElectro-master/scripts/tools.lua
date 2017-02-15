@@ -4158,7 +4158,7 @@ function P.mindfulTool:getLastTool()
 end
 
 P.explosiveMeat = P.superTool:new{name = "Explosive Meat", description = "A little kick to it", baseRange = 1,
-image = 'Graphics/Tools/explosiveMeat.png', quality = 5}
+image = 'Graphics/Tools/explosiveMeat.png', quality = 3}
 P.explosiveMeat.usableOnNothing = P.meat.usableOnNothing
 function P.explosiveMeat:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld-1
