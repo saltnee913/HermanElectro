@@ -29,6 +29,9 @@ function P.tile:onEnter(player)
 end
 function P.tile:onEnterPushable(pushable)
 	self:onEnter(pushable)
+	if self.overlay~=nil then
+		self.overlay:onEnterPushable(pushable)
+	end
 end
 function P.tile:onLeave(player) 
 	--self.name = "fuckme"
@@ -2819,6 +2822,10 @@ end
 
 P.ratTile = P.pitbullTile:new{name = "rat", animal = animalList[15], listIndex = 15}
 
+P.iceBoxTile = P.tile:new{name = "iceBoxTile", pushable = pushableList[13], listIndex = 13, sprite = 'Graphics/boxstartingtile.png'}
+P.recycleBinTile = P.tile:new{name = "recycleBinTile", pushable = pushableList[14], listIndex = 14, sprite = 'Graphics/boxstartingtile.png'}
+
+
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
 tiles[3] = P.powerSupply
@@ -3015,7 +3022,8 @@ tiles[193] = P.atm
 tiles[194] = P.saveStairs
 tiles[195] = P.playbackStairs
 tiles[196] = P.ratTile
-
+tiles[197] = P.iceBoxTile
+tiles[198] = P.recycleBinTile
 
 
 return tiles

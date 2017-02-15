@@ -59,11 +59,14 @@ function P.pushable:move(mover)
 	if room[self.tileY][self.tileX]~=nil and not room[self.tileY][self.tileX].enterCheckWin and 
 	(self.prevTileX~=self.tileX or self.prevTileY~=self.tileY) then
 		room[self.tileY][self.tileX]:onEnterPushable(self)
+		self:onEnterTile()
 	end
 
 	if not (self.prevTileY == self.tileY and self.prevTileX == self.tileX) then
-		if room[self.prevTileY][self.prevTileX]~=nil then
+		if room[self.prevTileY][self.prevTileX]~=nil and not room[self.prevTileY][self.prevTileX]:usableOnNothing() then
 			room[self.prevTileY][self.prevTileX]:onLeavePushable(self)
+		else
+			self:onLeaveNothing()
 		end
 		if room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX]:willDestroyPushable() then
 			self.destroyed = true
@@ -110,19 +113,14 @@ function P.pushable:moveNoMover()
 	end
 
 	if room[self.tileY][self.tileX]~=nil and not room[self.tileY][self.tileX].enterCheckWin and 
-		(self.prevTileX~=self.tileX or self.prevTileY~=self.tileY) then
+	(self.prevTileX~=self.tileX or self.prevTileY~=self.tileY) then
 		room[self.tileY][self.tileX]:onEnterPushable(self)
-		if room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX].overlay~=nil then
-			room[self.tileY][self.tileX].overlay:onEnterPushable(self)
-		end
+		self:onEnterTile()
 	end
 
 	if not (self.prevTileY == self.tileY and self.prevTileX == self.tileX) then
 		if room[self.prevTileY][self.prevTileX]~=nil then
 			room[self.prevTileY][self.prevTileX]:onLeavePushable(self)
-			if room[self.prevTileY][self.prevTileX]~=nil and room[self.prevTileY][self.prevTileX].overlay~=nil then
-				room[self.prevTileY][self.prevTileX].overlay:onLeavePushable(self)
-			end
 		end
 		if room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX]:willDestroyPushable() then
 			self.destroyed = true
@@ -131,12 +129,13 @@ function P.pushable:moveNoMover()
 		return true
 	elseif room[self.tileY][self.tileX]~=nil then
 		room[self.tileY][self.tileX]:onStayPushable(self)
-		if room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX].overlay~=nil then
-			room[self.tileY][self.tileX].overlay:onStayPushable(self)
-		end
 	end
 	
 	return false
+end
+function P.pushable:onLeaveNothing()
+end
+function P.pushable:onEnterTile()
 end
 function P.pushable:animalCanMove()
 	return true
@@ -334,6 +333,28 @@ P.invisibleBox = P.box:new{name = "invisibleBox", visible = false}
 
 P.lamp = P.conductiveBox:new{name = "lamp", sprite = 'Graphics/lamp.png', poweredSprite = 'Graphics/lamp.png', intensity = 1, charged = true, range = 200}
 
+P.iceBox = P.box:new{name = "icebox", sprite = 'Graphics/icebox.png'}
+function P.iceBox:onLeaveNothing()
+	room[self.prevTileY][self.prevTileX] = tiles.puddle:new()
+end
+
+P.recycleBin = P.box:new{name = "recycleBin", sprite = 'Graphics/recycleBin.png'}
+function P.recycleBin:onEnterTile()
+	local tile = room[self.tileY][self.tileX]
+	if tile:usableOnNothing() then
+		if tile:instanceof(tiles.wire) then
+			tools.giveToolsByReference({tools.wireCutters})
+		elseif tile:instanceof(tiles.glassWall) then
+			tools.giveToolsByReference({tools.brick})
+		elseif tile:instanceof(tiles.wall) then
+			tools.giveToolsByReference({tools.saw})
+		elseif tile:instanceof(tiles.electricFloor) then
+			tools.giveToolsByReference({tools.waterBottle})
+		end
+	end
+	room[self.tileY][self.tileX] = nil
+end
+
 pushableList[1] = P.pushable
 pushableList[2] = P.box
 pushableList[3] = P.playerBox
@@ -346,5 +367,7 @@ pushableList[9] = P.giftBox
 pushableList[10] = P.jackInTheBox
 pushableList[11] = P.invisibleBox
 pushableList[12] = P.lamp
+pushableList[13] = P.iceBox
+pushableList[14] = P.recycleBin
 
 return pushableList

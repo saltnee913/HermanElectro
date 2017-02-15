@@ -4260,6 +4260,38 @@ function P.shittyPotion:useToolTile()
 end
 P.shittyPotion.useToolNothing = P.shittyPotion.useToolTile
 
+P.recycleBin = P.boxSpawner:new{name = "Recycle Bin", description = "Saving Earth, one tool at a time", image = 'Graphics/recyclebin.png', quality = 2}
+function P.recycleBin:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
+	local toSpawn = pushableList[14]:new()
+	toSpawn.tileY = tileY
+	toSpawn.tileX = tileX
+	pushables[#pushables+1] = toSpawn
+end
+function P.recycleBin:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
+	local toSpawn = pushableList[14]:new()
+	toSpawn.tileY = tileY
+	toSpawn.tileX = tileX
+	pushables[#pushables+1] = toSpawn
+end
+
+P.iceBox = P.boxSpawner:new{name = "Ice Box", description = "Brrrrrrrrrr", image = 'Graphics/icebox.png', quality = 2}
+function P.iceBox:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
+	local toSpawn = pushableList[13]:new()
+	toSpawn.tileY = tileY
+	toSpawn.tileX = tileX
+	pushables[#pushables+1] = toSpawn
+end
+function P.iceBox:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
+	local toSpawn = pushableList[13]:new()
+	toSpawn.tileY = tileY
+	toSpawn.tileX = tileX
+	pushables[#pushables+1] = toSpawn
+end
+
 P.numNormalTools = 7
 P.lastToolUsed = 1
 
@@ -4447,6 +4479,8 @@ P:addTool(P.bombPotion)
 P:addTool(P.electricPotion)
 P:addTool(P.teleportPotion)
 P:addTool(P.shittyPotion)
+P:addTool(P.recycleBin)
+P:addTool(P.iceBox)
 
 P.resetTools()
 
