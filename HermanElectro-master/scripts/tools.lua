@@ -4178,8 +4178,8 @@ end
 
 ]]
 --POTIONS
-P.opPotion = P.superTool:new{name = " Potion", description = "Too good.", baseRange = 0,
-  image = 'Graphics/Tools/bombPotion.png', quality = 5, defaultDisabled = true}
+P.opPotion = P.superTool:new{name = "Crazy Serum", description = "Too good.", baseRange = 0,
+  image = 'Graphics/Tools/opPotion.png', quality = 5, defaultDisabled = true}
 function P.opPotion:usableOnNothing()
 	return true
 end
@@ -4207,7 +4207,7 @@ function P.bombPotion:useToolNothing(tileY, tileX)
 end
 
 P.electricPotion = P.superTool:new{name = "Electric Potion", description = "Tesla would be proud",
-  image = 'Graphics/Tools/bombPotion.png', quality = 3, baseRange = 0, defaultDisabled = true}
+  image = 'Graphics/Tools/electricPotion.png', quality = 3, baseRange = 0, defaultDisabled = true}
 function P.electricPotion:usableOnNothing()
 	return true
 end
@@ -4219,7 +4219,7 @@ end
 P.electricPotion.useToolNothing = P.electricPotion.useToolTile
 
 P.teleportPotion = P.superTool:new{name = "Teleport Potion", decription = "Where did I go?", baseRange = 3,
-  image = 'Graphics/Tools/bombPotion.png', quality = 2, defaultDisabled = true}
+  image = 'Graphics/Tools/teleportPotion.png', quality = 2, defaultDisabled = true}
 function P.teleportPotion:usableOnTile(tile, tileY, tileX)
 	for i = 1, #pushables do
 		if pushables[i].tileY==tileY and pushables[i].tileX==tileX then
@@ -4250,7 +4250,7 @@ function P.teleportPotion:useToolNothing(tileY, tileX)
 end
 
 P.shittyPotion = P.superTool:new{name = "Shitty Potion", description = "Well shit...",
-  image = 'Graphics/Tools/bombPotion.png', quality = 1, baseRange = 0, defaultDisabled = true}
+  image = 'Graphics/Tools/shitPotion.png', quality = 1, baseRange = 0, defaultDisabled = true}
 function P.shittyPotion:usableOnTile()
 	return true
 end
