@@ -4257,7 +4257,7 @@ end
 P.shittyPotion.usableOnNothing = P.shittyPotion.usableOnTile
 function P.shittyPotion:useToolTile()
 	self.numHeld = self.numHeld - 1
-	player.baseLuckBonus = player.baseLuckBonus + 1
+	player.attributes.invisible = true
 end
 P.shittyPotion.useToolNothing = P.shittyPotion.useToolTile
 
