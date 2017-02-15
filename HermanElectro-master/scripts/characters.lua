@@ -822,7 +822,8 @@ end
 
 P.scientist = P.character:new{name = "Marie", description = "The Scientist", 
   sprite = 'Graphics/Characters/Sciencewoman.png', jekyllSprite = 'Graphics/Characters/Sciencewoman.png', hydeSprite = 'Graphics/Characters/MrHyde.png',
-  powerSprite = 'Graphics/Characters/ShockedSciencewoman.png', scale = 1.1*scale, hyde = false, pulsing = false, pulsingTimer = 0, pulsingTime = 2,
+  powerSprite = 'Graphics/Characters/ShockedSciencewoman.png', powerHydeSprite = 'Graphics/Characters/ShockedMrHyde.png',
+  scale = 1.1*scale, hyde = false, pulsing = false, pulsingTimer = 0, pulsingTime = 2,
   powered = false, storedTile = nil}
 function P.scientist:onCharLoad()
 	for i = tools.numNormalTools+1, #tools do
@@ -838,27 +839,25 @@ function P.scientist:onCharLoad()
 	tools.giveToolsByReference({tools.teleportPotion, tools.electricPotion, tools.bombPotion})
 end
 function P.scientist:electrify()
-	if self.hyde then return end
 	self.pulsing = true
 	self.forcePowerUpdate = true
 end
 function P.scientist:deelectrify()
-	if self.hyde then return end
 	self.pulsing = false
 	self.forcePowerUpdate = false
 	self.powered = false
-	self.sprite = self.jekyllSprite
+	self.sprite = self.hyde and self.hydeSprite or self.jekyllSprite
 end
 function P.scientist:update(dt)
 	if self.pulsing then
 		self.pulsingTimer = self.pulsingTimer + dt
 		if self.pulsingTimer % self.pulsingTime < self.pulsingTime/2 then
-			self.sprite = self.powerSprite
+			self.sprite = self.hyde and self.powerHydeSprite or self.powerSprite
 			self.powered = true
 			updateGameState(false, false)
 			checkAllDeath()
 		else
-			self.sprite = self.jekyllSprite
+			self.sprite = self.hyde and self.hydeSprite or self.jekyllSprite
 			self.powered = false
 			updateGameState(false, false)
 			checkAllDeath()
@@ -882,18 +881,15 @@ function P.scientist:onPostUpdatePower()
 	end
 end
 function P.scientist:transform()
-	if self.pulsing then
-		self:deelectrify()
-	end
 	self.hyde = true
-	self.sprite = self.hydeSprite
+	self.sprite = (self.pulsing and self.powered) and self.powerHydeSprite or self.hydeSprite
 	player.attributes.flying = true
 	self.forcePowerUpdate = true
 
 end
 function P.scientist:transformBack()
 	self.hyde = false
-	self.sprite = self.jekyllSprite
+	self.sprite = (self.pulsing and self.powered) and self.powerSprite or self.jekyllSprite
 	player.attributes.flying = false
 	self.forcePowerUpdate = false
 end
