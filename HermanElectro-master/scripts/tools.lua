@@ -4178,7 +4178,7 @@ end
 
 ]]
 --POTIONS
-P.opPotion = P.superTool:new{name = "OP Potion", description = "Too good.", baseRange = 0,
+P.opPotion = P.superTool:new{name = " Potion", description = "Too good.", baseRange = 0,
   image = 'Graphics/Tools/bombPotion.png', quality = 5, defaultDisabled = true}
 function P.opPotion:usableOnNothing()
 	return true
@@ -4186,7 +4186,7 @@ end
 P.opPotion.usableOnTile = P.opPotion.usableOnNothing
 function P.opPotion:useToolTile()
 	self.numHeld = self.numHeld - 1
-	player.character.hyde = true
+	player.character:transform()
 end
 P.opPotion.useToolNothing = P.opPotion.useToolTile
 
@@ -4214,7 +4214,7 @@ end
 P.electricPotion.usableOnTile = P.electricPotion.usableOnNothing
 function P.electricPotion:useToolTile()
 	self.numHeld = self.numHeld - 1
-	player.character.pulsing = true
+	player.character:electrify()
 end
 P.electricPotion.useToolNothing = P.electricPotion.useToolTile
 

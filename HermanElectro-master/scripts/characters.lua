@@ -107,6 +107,9 @@ function P.character:update()
 end
 function P.character:absoluteFinalUpdate()
 end
+function P.character:bypassObstructsMovement(tile)
+	return false
+end
 
 P.herman = P.character:new{name = "Herman", description = "The Electrician", winUnlocks = {unlocks.reviveUnlock}, scale = 1.1*scale, sprites = {'Graphics/Characters/Herman.png', 'Graphics/Characters/Herman.png', 'Graphics/Characters/Herman.png', 'Graphics/Characters/Herman.png'}}
 function P.herman:onCharLoad()
@@ -819,7 +822,8 @@ end
 
 P.scientist = P.character:new{name = "Marie", description = "The Scientist", 
   sprite = 'Graphics/Characters/Arachne.png', jekyllSprite = 'Graphics/Characters/Arachne.png', hydeSprite = 'Graphics/Characters/Arachne.png',
-  scale = 1.1*scale, hyde = false, pulsing = false}
+  powerSprite = 'Graphics/Characters/Arachne.png', scale = 1.1*scale, hyde = false, pulsing = false, pulsingTimer = 0, pulsingTime = 2,
+  powered = false, storedTile = nil}
 function P.scientist:onCharLoad()
 	for i = tools.numNormalTools+1, #tools do
 		tools[i].isDisabled = true
@@ -833,7 +837,99 @@ function P.scientist:onCharLoad()
 	self.hyde = false
 	tools.giveToolsByReference({tools.teleportPotion, tools.electricPotion, tools.bombPotion})
 end
+function P.scientist:onFloorEnter()
+	self:transformBack()
+end
+function P.scientist:electrify()
+	if self.hyde then return end
+	self.pulsing = true
+	self.forcePowerUpdate = true
+end
+function P.scientist:deelectrify()
+	if self.hyde then return end
+	self.pulsing = false
+	self.forcePowerUpdate = false
+	self.powered = false
+	self.sprite = self.jekyllSprite
+end
+function P.scientist:update(dt)
+	if self.pulsing then
+		self.pulsingTimer = self.pulsingTimer + dt
+		if self.pulsingTimer % self.pulsingTime < self.pulsingTime/2 then
+			self.sprite = self.powerSprite
+			self.powered = true
+			updateGameState(false, false)
+			checkAllDeath()
+		else
+			self.sprite = self.jekyllSprite
+			self.powered = false
+			updateGameState(false, false)
+			checkAllDeath()
+		end
+	end
+end
+function P.scientist:onPreUpdatePower()
+	if self.powered then
+		if room[player.tileY][player.tileX] ~= nil then
+			self.storedTile = room[player.tileY][player.tileX]:new()
+			self.storedTile.powered = true
+		else
+			self.storedTile = nil
+		end
+		room[player.tileY][player.tileX] = tiles.powerSupply:new()
+	end
+end
+function P.scientist:onPostUpdatePower()
+	if self.powered then
+		room[player.tileY][player.tileX] = self.storedTile
+	end
+end
+function P.scientist:transform()
+	if self.pulsing then
+		self:deelectrify()
+	end
+	self.hyde = true
+	self.sprite = self.hydeSprite
+	player.attributes.flying = true
+	self.forcePowerUpdate = true
 
+end
+function P.scientist:transformBack()
+	self.hyde = false
+	self.sprite = self.jekyllSprite
+	player.attributes.flying = false
+	self.forcePowerUpdate = false
+end
+function P.scientist:preTileEnter(tile)
+	if self.hyde then
+		tile:destroy()
+	end
+end
+function P.scientist:postMove()
+	if self.hyde then
+		for i = 1, #animals do
+			if animals[i].tileY == player.tileY and animals[i].tileX == player.tileX then
+				animals[i]:kill()
+			end
+		end
+		for i = 1, #pushables do
+			if pushables[i].tileY == player.tileY and pushables[i].tileX == player.tileX then
+				pushables[i]:destroy()
+			end
+		end
+	end
+end
+function P.scientist:onRoomEnter()
+	if self.hyde then
+		player.attributes.flying = true
+	end
+	if self.pulsing then
+		self:deelectrify()
+	end
+end
+function P.scientist:bypassObstructsMovement(tile)
+	return self.hyde
+end
 
 P[#P+1] = P.herman
 P[#P+1] = P.francisco

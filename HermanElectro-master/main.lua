@@ -3001,7 +3001,7 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 			if room[player.tileY][player.tileX]==nil and math.abs(player.elevation)>3 then
 				player.tileX = player.prevTileX
 				player.tileY = player.prevTileY
-			elseif room[player.tileY][player.tileX]~=nil and room[player.tileY][player.tileX]:obstructsMovement() then
+			elseif room[player.tileY][player.tileX]~=nil and room[player.tileY][player.tileX]:obstructsMovement() and not player.character:bypassObstructsMovement(room[player.tileY][player.tileX]) then
 				player.tileX = player.prevTileX
 				player.tileY = player.prevTileY
 			end
