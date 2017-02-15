@@ -871,33 +871,8 @@ function kill()
 	end
 	player.dead = true
 	for i = 1, #tools do
-		if not tools[i]:checkDeath() then
+		if tools[i].numHeld>0 and not tools[i]:checkDeath() then
 			player.dead = false
-			--[[for i = 1, tools.numNormalTools do
-				tools[i].numHeld = 0
-			end]]
-			for i = 1, roomHeight do
-				for j = 1, roomLength do
-					if room[i][j]~=nil then
-						if not room[i][j]:instanceof(tiles.endTile) and not room[i][j]:instanceof(tiles.tunnel) then
-							room[i][j]=tiles.invisibleTile:new()
-						end
-						if room[i][j]:instanceof(tiles.poweredEnd) then
-							room[i][j]=tiles.endTile:new()
-						end
-					end
-				end
-			end
-	
-			for i = 1, #animals do
-				animals[i]:kill()
-			end
-			for j = 1, #pushables do
-				pushables[j]:destroy()
-			end
-			spotlights = {}
-			updateGameState(false)
-			log("Revived!")
 			onToolUse(i)
 			return
 		end
@@ -3918,5 +3893,6 @@ function onToolUse(tool)
 		mainMap[mapy][mapx].toolsUsed = {}
 	end
 	mainMap[mapy][mapx].toolsUsed[#mainMap[mapy][mapx].toolsUsed+1] = tool
+	updateTools()
 	checkAllDeath()
 end
