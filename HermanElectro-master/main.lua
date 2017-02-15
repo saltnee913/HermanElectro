@@ -469,7 +469,7 @@ function love.load()
 			y = (6-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10, prevTileX = 3, prevTileY 	= 10,
 			prevx = (3-1)*scale*tileWidth+wallSprite.width+tileWidth/2*scale-10,
 			prevy = (10-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10,
-			width = 20, height = 20, speed = 250, luckTimer = 0, regularMapLoc = {x = 0, y = 0}, returnFloorIndex = 0, attributes = {lucky = false, gifted = false, permaMap = false, xrayVision = false, upgradedToolUse = false, fast = {fast = false, fastStep = false}, flying = false, fear = false, shelled = false, tall = false, extendedRange = 0, sockStep = -1}}
+			width = 20, height = 20, speed = 250, luckTimer = 0, regularMapLoc = {x = 0, y = 0}, returnFloorIndex = 0, attributes = {lucky = false, gifted = false, permaMap = false, xrayVision = false, upgradedToolUse = false, fast = {fast = false, fastStep = false}, flying = false, fear = false, shelled = false, tall = false, extendedRange = 0, sockStep = -1, invisible = false}}
 	player.character = setChar
 
 	map.clearBlacklist()
@@ -1966,7 +1966,7 @@ function love.draw()
 			end
 		end
 
-		if player.tileY == j then
+		if player.tileY == j and not player.attributes.invisible then
 			player.x = (player.tileX-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
 			player.y = (player.tileY-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
 			local charSprite = util.getImage(player.character.sprite)
@@ -2460,6 +2460,7 @@ function resetPlayerAttributesRoom()
 	player.attributes.fear = false
 	player.attributes.sockStep = -1
 	player.attributes.shelled = false
+	player.attributes.invisible = false
 	player.attributes.fast = {fast = false, fastStep = false}
 end
 
