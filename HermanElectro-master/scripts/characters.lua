@@ -837,9 +837,6 @@ function P.scientist:onCharLoad()
 	self.hyde = false
 	tools.giveToolsByReference({tools.teleportPotion, tools.electricPotion, tools.bombPotion})
 end
-function P.scientist:onFloorEnter()
-	self:transformBack()
-end
 function P.scientist:electrify()
 	if self.hyde then return end
 	self.pulsing = true
@@ -921,7 +918,7 @@ function P.scientist:postMove()
 end
 function P.scientist:onRoomEnter()
 	if self.hyde then
-		player.attributes.flying = true
+		self:transformBack()
 	end
 	if self.pulsing then
 		self:deelectrify()
