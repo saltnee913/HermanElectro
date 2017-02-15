@@ -2839,8 +2839,7 @@ function P.pickaxe:usableOnNothing()
 	return true
 end
 function P.pickaxe:useToolNothing(tileY, tileX)
-	self.numHeld = self.numHeld-1
-	P.shovel:useToolNothing(tileY, tileX)
+	P.shovel.useToolNothing(self, tileY, tileX)
 end
 function P.pickaxe:useToolTile(tile)
 	self.numHeld = self.numHeld-1
@@ -4249,7 +4248,7 @@ function P.teleportPotion:useToolNothing(tileY, tileX)
 	self:useToolTile(nil, tileY, tileX)
 end
 
-P.shittyPotion = P.superTool:new{name = "Shitty Potion", description = "Well shit...",
+P.shittyPotion = P.superTool:new{name = "Shitty Potion", description = "Wait, where'd I go?",
   image = 'Graphics/Tools/shitPotion.png', quality = 1, baseRange = 0, defaultDisabled = true}
 function P.shittyPotion:usableOnTile()
 	return true
