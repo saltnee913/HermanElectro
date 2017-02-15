@@ -1742,13 +1742,37 @@ function P.teleporter:useToolNothing()
 	end
 end
 
-P.revive = P.superTool:new{name = "Revive", description = "Not yet.", baseRange = 0, image = 'Graphics/revive.png', quality = 5}
+P.revive = P.superTool:new{name = "Revive", description = "Not yet.", baseRange = 0, image = 'Graphics/revive.png', destroyOnRevive = true, quality = 5}
 function P.revive:checkDeath()
-	if self.numHeld > 0 then
-		self.numHeld = self.numHeld-1
-		return false
+	self.numHeld = self.numHeld-1
+
+	--[[for i = 1, tools.numNormalTools do
+		tools[i].numHeld = 0
+	end]]
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]~=nil then
+				if not room[i][j]:instanceof(tiles.endTile) and not room[i][j]:instanceof(tiles.tunnel) then
+					room[i][j]=tiles.invisibleTile:new()
+				end
+				if room[i][j]:instanceof(tiles.poweredEnd) then
+					room[i][j]=tiles.endTile:new()
+				end
+			end
+		end
 	end
-	return true
+
+	for i = 1, #animals do
+		animals[i]:kill()
+	end
+	for j = 1, #pushables do
+		pushables[j]:destroy()
+	end
+	spotlights = {}
+	updateGameState(false)
+	log("Revived!")
+
+	return false
 end
 
 P.explosiveGun = P.gun:new{name = "explosiveGun", description = "Boom Boom", baseRange = 5, image = 'Graphics/supergun.png', quality = 2}
@@ -2839,8 +2863,7 @@ function P.pickaxe:usableOnNothing()
 	return true
 end
 function P.pickaxe:useToolNothing(tileY, tileX)
-	self.numHeld = self.numHeld-1
-	P.shovel:useToolNothing(tileY, tileX)
+	P.shovel.useToolNothing(self, tileY, tileX)
 end
 function P.pickaxe:useToolTile(tile)
 	self.numHeld = self.numHeld-1
@@ -4158,7 +4181,7 @@ function P.mindfulTool:getLastTool()
 end
 
 P.explosiveMeat = P.superTool:new{name = "Explosive Meat", description = "A little kick to it", baseRange = 1,
-image = 'Graphics/Tools/explosiveMeat.png', quality = 5}
+image = 'Graphics/Tools/explosiveMeat.png', quality = 3}
 P.explosiveMeat.usableOnNothing = P.meat.usableOnNothing
 function P.explosiveMeat:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld-1
@@ -4190,8 +4213,8 @@ function P.opPotion:useToolTile()
 end
 P.opPotion.useToolNothing = P.opPotion.useToolTile
 
-P.bombPotion = P.superTool:new{name = "Bomb Potion", description = "Extremely flammable", baseRange = 3,
-  image = 'Graphics/Tools/bombPotion.png', quality = 4, defaultDisabled = true}
+P.bombPotion = P.superTool:new{name = "Grenade", description = "Extremely flammable", baseRange = 3,
+  image = 'Graphics/grenade.png', quality = 4}
 function P.bombPotion:usableOnTile()
 	return true
 end
@@ -4249,7 +4272,7 @@ function P.teleportPotion:useToolNothing(tileY, tileX)
 	self:useToolTile(nil, tileY, tileX)
 end
 
-P.shittyPotion = P.superTool:new{name = "Shitty Potion", description = "Well shit...",
+P.shittyPotion = P.superTool:new{name = "Shitty Potion", description = "Wait, where'd I go?",
   image = 'Graphics/Tools/shitPotion.png', quality = 1, baseRange = 0, defaultDisabled = true}
 function P.shittyPotion:usableOnTile()
 	return true
@@ -4257,9 +4280,65 @@ end
 P.shittyPotion.usableOnNothing = P.shittyPotion.usableOnTile
 function P.shittyPotion:useToolTile()
 	self.numHeld = self.numHeld - 1
-	player.baseLuckBonus = player.baseLuckBonus + 1
+	player.attributes.invisible = true
 end
 P.shittyPotion.useToolNothing = P.shittyPotion.useToolTile
+
+P.recycleBin = P.boxSpawner:new{name = "Recycle Bin", description = "Saving Earth, one tool at a time", image = 'Graphics/recyclebin.png', quality = 2}
+function P.recycleBin:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
+	local toSpawn = pushableList[14]:new()
+	toSpawn.tileY = tileY
+	toSpawn.tileX = tileX
+	pushables[#pushables+1] = toSpawn
+end
+function P.recycleBin:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
+	local toSpawn = pushableList[14]:new()
+	toSpawn.tileY = tileY
+	toSpawn.tileX = tileX
+	pushables[#pushables+1] = toSpawn
+end
+
+P.iceBox = P.boxSpawner:new{name = "Ice Box", description = "Brrrrrrrrrr", image = 'Graphics/icebox.png', quality = 2}
+function P.iceBox:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
+	local toSpawn = pushableList[13]:new()
+	toSpawn.tileY = tileY
+	toSpawn.tileX = tileX
+	pushables[#pushables+1] = toSpawn
+end
+function P.iceBox:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
+	local toSpawn = pushableList[13]:new()
+	toSpawn.tileY = tileY
+	toSpawn.tileX = tileX
+	pushables[#pushables+1] = toSpawn
+end
+
+P.nineLives = P.superTool:new{name = "Cat's Paw", lifeCount = 9, quality = 4, image = 'Graphics/catpaw9.png',
+imageSet = {'Graphics/catpaw1.png', 'Graphics/catpaw2.png', 'Graphics/catpaw3.png', 'Graphics/catpaw4.png',
+'Graphics/catpaw5.png', 'Graphics/catpaw6.png', 'Graphics/catpaw7.png', 'Graphics/catpaw8.png', 'Graphics/catpaw9.png'}}
+function P.nineLives:checkDeath()
+	self.lifeCount = self.lifeCount-1
+	if self.lifeCount==0 then
+		self.numHeld = self.numHeld-1
+		self.lifeCount = 9
+		self:updateSprite()
+	end
+	room[player.tileY][player.tileX] = nil
+	for i = 1, #animals do
+		if animals[i].tileY==player.tileY and animals[i].tileX==player.tileX then
+			animals[i]:kill()
+		end
+	end
+	self:updateSprite()
+	return false
+end
+function P.nineLives:updateSprite()
+	self.image = self.imageSet[self.lifeCount]
+end
+
 
 P.numNormalTools = 7
 P.lastToolUsed = 1
@@ -4444,10 +4523,14 @@ P:addTool(P.mindfulTool)
 P:addTool(P.explosiveMeat)
 
 P:addTool(P.opPotion)
-P:addTool(P.bombPotion)
+P:addTool(P.bombPotion) --will replace with grenade
 P:addTool(P.electricPotion)
 P:addTool(P.teleportPotion)
 P:addTool(P.shittyPotion)
+P:addTool(P.recycleBin)
+P:addTool(P.iceBox)
+
+P:addTool(P.nineLives)
 
 P.resetTools()
 

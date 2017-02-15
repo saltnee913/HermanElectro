@@ -20,7 +20,7 @@ scale = (width - 2*wallSprite.width)/(20.3 * 16)*5/6
 --speed same as player (250)
 P.animal = Object:new{elevation = 0, scale = scale, yOffset = 0, frozen = false, trained = false, conductive = false, pickedUp = false, canDropTool = false, willDropTool = false, flying = false, triggered = false, waitCounter = 1, dead = false, name = "animal", tileX, tileY, prevx, prevy, prevTileX, prevTileY, x, y, speed = 250, width = 16*scale, height = 16*scale, sprite = 'Graphics/pitbull.png', deadSprite = 'Graphics/pitbulldead.png', tilesOn = {}, oldTilesOn = {}}
 function P.animal:move(playerx, playery, room, isLit)
-	if player.attributes.shelled then
+	if player.attributes.shelled or player.attributes.invisible then
 		return
 	elseif player.attributes.fear then
 		self:afraidPrimaryMove(playerx, playery, room, isLit)
@@ -402,9 +402,12 @@ function P.bat:checkDeath()
 end
 P.bat.willKillPlayer = P.pitbull.willKillPlayer
 
-P.cat = P.animal:new{name = "cat", sprite = 'NewGraphics/catDesign.png', deadSprite = 'Graphics/catdead.png'}
+P.cat = P.animal:new{name = "cat", canDropTool = true, sprite = 'NewGraphics/catDesign.png', deadSprite = 'Graphics/catdead.png'}
 P.cat.move = P.animal.afraidPrimaryMove
 P.cat.secondaryMove = P.animal.afraidSecondaryMove
+function P.cat:dropTool()
+	tools.dropTool(tools.nineLives, self.tileY, self.tileX)
+end
 
 P.bombBuddy = P.animal:new{name = "bombBuddy", scale = 0.6*scale,
 sprite = 'Graphics/bombBuddyFront.png', deadSprite = 'Graphics/catdead.png'}
