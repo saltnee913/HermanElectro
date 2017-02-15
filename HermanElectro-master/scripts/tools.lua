@@ -4316,7 +4316,7 @@ function P.iceBox:useToolNothing(tileY, tileX)
 	pushables[#pushables+1] = toSpawn
 end
 
-P.nineLives = P.superTool:new{name = "Cat's Paw", lifeCount = 9, quality = 3, image = 'Graphics/catpaw9.png',
+P.nineLives = P.superTool:new{name = "Cat's Paw", lifeCount = 9, quality = 4, image = 'Graphics/catpaw9.png',
 imageSet = {'Graphics/catpaw1.png', 'Graphics/catpaw2.png', 'Graphics/catpaw3.png', 'Graphics/catpaw4.png',
 'Graphics/catpaw5.png', 'Graphics/catpaw6.png', 'Graphics/catpaw7.png', 'Graphics/catpaw8.png', 'Graphics/catpaw9.png'}}
 function P.nineLives:checkDeath()

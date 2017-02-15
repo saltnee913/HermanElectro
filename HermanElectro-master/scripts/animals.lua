@@ -402,9 +402,12 @@ function P.bat:checkDeath()
 end
 P.bat.willKillPlayer = P.pitbull.willKillPlayer
 
-P.cat = P.animal:new{name = "cat", sprite = 'NewGraphics/catDesign.png', deadSprite = 'Graphics/catdead.png'}
+P.cat = P.animal:new{name = "cat", canDropTool = true, sprite = 'NewGraphics/catDesign.png', deadSprite = 'Graphics/catdead.png'}
 P.cat.move = P.animal.afraidPrimaryMove
 P.cat.secondaryMove = P.animal.afraidSecondaryMove
+function P.cat:dropTool()
+	tools.dropTool(tools.nineLives, self.tileY, self.tileX)
+end
 
 P.bombBuddy = P.animal:new{name = "bombBuddy", scale = 0.6*scale,
 sprite = 'Graphics/bombBuddyFront.png', deadSprite = 'Graphics/catdead.png'}
