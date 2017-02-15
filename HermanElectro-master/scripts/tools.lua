@@ -4189,19 +4189,19 @@ function P.opPotion:useToolTile()
 end
 P.opPotion.useToolNothing = P.opPotion.useToolTile
 
-P.grenade = P.superTool:new{name = "Grenade", description = "Extremely flammable", baseRange = 3,
+P.bombPotion = P.superTool:new{name = "Grenade", description = "Extremely flammable", baseRange = 3,
   image = 'Graphics/grenade.png', quality = 4}
-function P.grenade:usableOnTile()
+function P.bombPotion:usableOnTile()
 	return true
 end
-function P.grenade:usableOnNothing()
+function P.bombPotion:usableOnNothing()
 	return true
 end
-function P.grenade:useToolTile(tile, tileY, tileX)
+function P.bombPotion:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld-1
 	util.createHarmlessExplosion(tileY, tileX)
 end
-function P.grenade:useToolNothing(tileY, tileX)
+function P.bombPotion:useToolNothing(tileY, tileX)
 	self:useToolTile(nil, tileY, tileX)
 end
 
@@ -4475,8 +4475,7 @@ P:addTool(P.mindfulTool)
 P:addTool(P.explosiveMeat)
 
 P:addTool(P.opPotion)
---P:addTool(P.bombPotion) replaced this with grenade
-P:addTool(P.grenade)
+P:addTool(P.bombPotion) --will replace with grenade
 P:addTool(P.electricPotion)
 P:addTool(P.teleportPotion)
 P:addTool(P.shittyPotion)
