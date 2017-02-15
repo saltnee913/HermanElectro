@@ -4236,28 +4236,28 @@ P.resetTools()
 P:addTool(P.crowbar)
 P:addTool(P.visionChanger) 
 P:addTool(P.bomb)
-P:addTool(P.electrifier)
+P:addTool(P.electrifier) --Keep
 P:addTool(P.delectrifier)
 --P:addTool(P.unsticker)
 P:addTool(P.doorstop)
 P:addTool(P.charger)
 P:addTool(P.missile)
-P:addTool(P.shovel)
+P:addTool(P.shovel) --Keep
 --P:addTool(P.woodGrabber)
 --P:addTool(P.corpseGrabber)
 P:addTool(P.pitbullChanger)
 P:addTool(P.meat)
 P:addTool(P.rotater)
-P:addTool(P.teleporter)
+P:addTool(P.teleporter) --Keep
 P:addTool(P.boxCutter)
 --P:addTool(P.broom)
-P:addTool(P.magnet)
+P:addTool(P.magnet) --Keep
 P:addTool(P.spring) --Fix this shit
 P:addTool(P.glue)
 --P:addTool(P.endFinder)
 P:addTool(P.map)
-P:addTool(P.ramSpawner)
-P:addTool(P.gateBreaker)
+P:addTool(P.ramSpawner) --Keep
+P:addTool(P.gateBreaker) --Keep
 P:addTool(P.conductiveBoxSpawner)
 P:addTool(P.superWireCutters)
 P:addTool(P.boxSpawner)
@@ -4272,15 +4272,15 @@ P:addTool(P.roomReroller)
 P:addTool(P.wings)
 P:addTool(P.swapper)
 P:addTool(P.bucketOfWater)
-P:addTool(P.flame)
+P:addTool(P.flame) --Keep
 P:addTool(P.toolReroller)
-P:addTool(P.revive)
+P:addTool(P.revive) --Keep
 P:addTool(P.explosiveGun)
 P:addTool(P.buttonFlipper)
 P:addTool(P.wireBreaker)
 P:addTool(P.powerBreaker)
 P:addTool(P.gabeMaker)
-P:addTool(P.roomUnlocker)
+P:addTool(P.roomUnlocker) --Keep
 P:addTool(P.axe) 
 P:addTool(P.lube) 
 --P:addTool(P.snowball)
@@ -4290,62 +4290,62 @@ P:addTool(P.snowballGlobal)
 P:addTool(P.superBrick)
 P:addTool(P.portalPlacer)
 --P:addTool(P.suicideKing) EXPLAIN THIS SHIT
-P:addTool(P.screwdriver)
-P:addTool(P.laptop)
+P:addTool(P.screwdriver) --Keep
+P:addTool(P.laptop) --Keep
 P:addTool(P.wireExtender)
 P:addTool(P.lamp)
-P:addTool(P.coin) 
+P:addTool(P.coin) --Keep
 
 P:addTool(P.mask)
 P:addTool(P.growthHormones)
-P:addTool(P.robotArm)
+P:addTool(P.robotArm) --Keep
 P:addTool(P.sock)
 --P:addTool(P.emptyCup)
 P:addTool(P.gasPourer)
 P:addTool(P.gasPourerXtreme)
 P:addTool(P.buttonPlacer)
-P:addTool(P.wireToButton)
+P:addTool(P.wireToButton)--Nice
 P:addTool(P.foresight)
 P:addTool(P.tileDisplacer)
 P:addTool(P.tileSwapper)
-P:addTool(P.tileCloner)
+P:addTool(P.tileCloner)--Epic
 P:addTool(P.shopReroller)
-P:addTool(P.ghostStep)
+P:addTool(P.ghostStep)--Nice
 P:addTool(P.stoolPlacer)
 P:addTool(P.lemonadeCup)
 P:addTool(P.lemonParty)
-P:addTool(P.inflation)
+P:addTool(P.inflation)--Keep
 P:addTool(P.emptyBucket)
 P:addTool(P.superWaterBottle)
-P:addTool(P.wallDungeonDetector)
+P:addTool(P.wallDungeonDetector)--Keep
 P:addTool(P.towel)
 P:addTool(P.playerCloner)
 P:addTool(P.playerBoxSpawner)
 P:addTool(P.bombBoxSpawner)
 P:addTool(P.jackInTheBoxSpawner)
-P:addTool(P.salt)
+P:addTool(P.salt)--So bad it's good
 P:addTool(P.shell)
 P:addTool(P.shift) --Lets talk about this one
-P:addTool(P.glitch)
+P:addTool(P.glitch) --Epic
 P:addTool(P.tileMagnet)
 P:addTool(P.rottenMeat)
-P:addTool(P.pickaxe)
+P:addTool(P.pickaxe) --Maybe Change, but defnitely keep
 P:addTool(P.luckyPenny)
-P:addTool(P.bouncer)
-P:addTool(P.block)
+P:addTool(P.bouncer) --lol
+P:addTool(P.block) --Hmmm
 P:addTool(P.stealthBomber)
 
-P:addTool(P.icegun)
+P:addTool(P.icegun) --Cooler than laser 
 P:addTool(P.seeds)
-P:addTool(P.supertoolDoubler)
-P:addTool(P.coffee)
+P:addTool(P.supertoolDoubler) -- Ehhh lets talk
+P:addTool(P.coffee) --No idea what this does
 P:addTool(P.boxDisplacer)
 P:addTool(P.boxCloner)
 P:addTool(P.tilePusher)
 P:addTool(P.portalPlacerDouble)
 P:addTool(P.spinningSword)
 P:addTool(P.ironMan)
-P:addTool(P.supertoolReroller)
+P:addTool(P.supertoolReroller) -- MUST KEEP
 P:addTool(P.tunneler)
 P:addTool(P.longLadder)
 P:addTool(P.superSaw)
@@ -4358,7 +4358,7 @@ P:addTool(P.woodenRain)
 P:addTool(P.christmasSurprise)
 P:addTool(P.ironWoman)
 P:addTool(P.wallReroller)
-P:addTool(P.beggarReroller)
+P:addTool(P.beggarReroller) --Strong keep
 P:addTool(P.xrayVision)
 P:addTool(P.secretTeleporter)
 P:addTool(P.buttonReroller)
@@ -4377,7 +4377,7 @@ P:addTool(P.animalEnslaver)
 --P:addTool(P.completionBonus)
 P:addTool(P.roomCompletionBonus)
 P:addTool(P.fishingPole)
-P:addTool(P.blankTool)
+P:addTool(P.blankTool) -- Keep
 P:addTool(P.mindfulTool)
 P:addTool(P.explosiveMeat)
 
