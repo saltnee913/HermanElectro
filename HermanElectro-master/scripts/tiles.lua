@@ -1545,11 +1545,13 @@ function P.beggar:getInfoText()
 	--return self.counter
 end
 function P.beggar:destroy()
-	self.animation = {self.sprite}
-	self.alive = false
-	local paysOut = util.random('toolDrop')
-	if paysOut<0.5 and not player.character.name==characters.felix.name then return end
-	self:providePayment()
+	if self.alive then
+		self.animation = {self.sprite}
+		self.alive = false
+		local paysOut = util.random('toolDrop')
+		if paysOut<0.5 and not player.character.name==characters.felix.name then return end
+		self:providePayment()
+	end
 end
 function P.beggar:providePayment()
 	local paymentType = util.random('toolDrop')
