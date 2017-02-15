@@ -316,14 +316,16 @@ function P.pitbull:willKillPlayer()
 	return player.tileX == self.tileX and player.tileY == self.tileY and not self.dead
 end
 function P.pitbull:dropTool()
-	room[self.tileY][self.tileX] = tiles.supertoolTile:new()
 	local whichTool = util.random(2, 'toolDrop')
 	if whichTool==1 then
-		room[self.tileY][self.tileX].tool = tools.meat
+		if not tools.dropTool(tools.meat, self.tileY, self.tileX) then
+			return
+		end
 	else
-		room[self.tileY][self.tileX].tool = tools.rottenMeat
+		if not tools.dropTool(tools.rottenMeat, self.tileY, self.tileX) then
+			return
+		end
 	end
-	room[self.tileY][self.tileX]:updateSprite()
 end
 
 P.pup = P.animal:new{name = "pup", sprite = 'NewGraphics/pupDesign.png', deadSprite = 'Graphics/pupdead.png', canDropTool = true}
@@ -350,9 +352,9 @@ function P.snail:kill()
 	unlocks.unlockUnlockableRef(unlocks.conductiveSnailsUnlock)
 end
 function P.snail:dropTool()
-	room[self.tileY][self.tileX] = tiles.supertoolTile:new()
-	room[self.tileY][self.tileX].tool = tools.shell
-	room[self.tileY][self.tileX]:updateSprite()
+	if tools.dropTool(tools.shell, self.tileY, self.tileX) then
+		return
+	end
 end
 
 P.conductiveSnail = P.snail:new{name = "conductiveSnail", sprite = 'NewGraphics/snailCDesign.png'}

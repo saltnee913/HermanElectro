@@ -885,25 +885,16 @@ function P.vPoweredDoor:updateTile(player)
 		self.sprite = self.openSprite
 	end
 end
-function P.vPoweredDoor:onEnter(player)
-	if self.blocksMovement then
-		player.x = player.prevx
-		player.y = player.prevy
-		player.tileX = player.prevTileX
-		player.tileY = player.prevTileY
-		player.prevx = player.x
-		player.prevy = player.y
-		player.prevTileX = player.tileX
-		player.prevTileY = player.tileY
-	end
+function P.vPoweredDoor:obstructsMovement()
+	return self.blocksMovement
 end
-P.vPoweredDoor.onStay = P.vPoweredDoor.onEnter
 function P.vPoweredDoor:willKillPlayer(player)
-	return t.blocksMovement
+	return self.blocksMovement
 end
 function P.vPoweredDoor:destroy()
 	self.stopped = true
 	self.open = true
+	self:updateTile(player)
 end
 function P.vPoweredDoor:rotate(times)
 	self.rotation = self.rotation + times
