@@ -1572,15 +1572,28 @@ function P.redBeggar:providePayment()
 	if redTools<0.50 then ttg = 1
 	elseif redTools<0.95 then ttg = 2
 	elseif redTools<0.99 then ttg = 3 end
+	
 	if ttg>0 then
 		tools.giveRandomTools(ttg)
 		return
 	end
+
 	local superToGive = util.random(7, 'toolDrop')
-	for i = 1, roomHeight do
-		for j = 1, roomLength do
-			if room[i][j]==self then
-				tools.dropTool(self:getSuperDrops()[superToGive], i, j)
+	local superDrop = self:getSuperDrops()[superToGive]
+	unlockedSupertools = unlocks.getUnlockedSupertools()
+	if not unlockedSupertools[superToGive] or superDrop.isDisabled then
+		tools.giveRandomTools(2)
+		return
+	end
+
+	if util.getSupertoolTypesHeld()<3 or superDrop.numHeld>0 then
+		tools.giveToolsByReference({superDrop})
+	else
+		for i = 1, roomHeight do
+			for j = 1, roomLength do
+				if room[i][j]==self then
+					tools.dropTool(superDrop, i, j)
+				end
 			end
 		end
 	end
@@ -1599,7 +1612,12 @@ function P.greenBeggar:providePayment()
 		ttg = tools.luckyPenny
 	end
 
-	--[[if util.getSupertoolTypesHeld()<3 or ttg.numHeld>0 then
+	unlockedSupertools = unlocks.getUnlockedSupertools()
+	if not unlockedSupertools[tools.luckyPenny] or tools.luckyPenny.isDisabled then
+		ttg = tools.coin
+	end
+
+	if util.getSupertoolTypesHeld()<3 or ttg.numHeld>0 then
 		tools.giveToolsByReference({ttg})
 	else
 		for i = 1, roomHeight do
@@ -1607,17 +1625,6 @@ function P.greenBeggar:providePayment()
 				if room[i][j]==self then
 					room[i][j] = tiles.supertoolTile:new()
 					room[i][j].tool = ttg
-				end
-			end
-		end
-	end]]
-	for i = 1, roomHeight do
-		for j = 1, roomLength do
-			if room[i][j]==self then
-				if tools.dropTool(ttg, i, j) then
-					return
-				else
-					tools.dropTool(tools.coin, i, j)
 				end
 			end
 		end

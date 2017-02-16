@@ -90,8 +90,8 @@ function P.updateUnlockedSupertools()
 		if unlock.toolIds ~= nil and unlock.unlocked == false then
 			for k = 1, #unlock.toolIds do
 				if unlockedSupertools[unlock.toolIds[k].toolid] ~= nil then
-				unlockedSupertools[unlock.toolIds[k].toolid] = false
-			end
+					unlockedSupertools[unlock.toolIds[k].toolid] = false
+				end
 			end
 		end
 	end
