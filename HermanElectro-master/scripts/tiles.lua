@@ -2878,6 +2878,8 @@ function P.infestedWood:destroy()
 				local animalToAdd = animalList.termite:new()
 				animalToAdd.tileX = j
 				animalToAdd.tileY = i
+				animalToAdd.prevTileX = j
+				animalToAdd.prevTileY = i
 				animals[#animals+1] = animalToAdd
 			end
 		end
