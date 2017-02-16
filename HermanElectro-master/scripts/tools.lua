@@ -2381,7 +2381,7 @@ function P.tileDisplacer:nothingIsSomething()
 	return true
 end
 
-P.tileSwapper = P.superTool:new{name = "tileSwapper", description = "Find and replace", toSwapCoords = nil, image = 'Graphics/tileswapper.png', baseImage = 'Graphics/tileswapper.png', baseRange = 3, quality = 5}
+P.tileSwapper = P.superTool:new{name = "tileSwapper", description = "Find and replace", toSwapCoords = nil, image = 'Graphics/tileswapper.png', baseImage = 'Graphics/tileswapper.png', baseRange = 3, quality = 4}
 function P.tileSwapper:usableOnTile(tile)
 	return not tile.untoolable
 end
