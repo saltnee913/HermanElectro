@@ -2860,6 +2860,29 @@ P.ratTile = P.pitbullTile:new{name = "rat", animal = animalList[15], listIndex =
 P.iceBoxTile = P.tile:new{name = "iceBoxTile", pushable = pushableList[13], listIndex = 13, sprite = 'Graphics/boxstartingtile.png'}
 P.recycleBinTile = P.tile:new{name = "recycleBinTile", pushable = pushableList[14], listIndex = 14, sprite = 'Graphics/boxstartingtile.png'}
 
+P.infestedWood = P.wall:new{name = "infestedWood", sprite = 'Graphics/infestedwood.png'}
+function P.infestedWood:destroy()
+	self.blocksProjectiles = false
+	self.blocksVision = false
+	self.sprite = self.destroyedSprite
+	self.destroyed = true
+	self.blocksMovement = false
+	self.canBePowered = false
+	self.dirAccept = {0,0,0,0}
+	self.dirSend = {0,0,0,0}
+	self.overlay = nil
+	self.yOffset = 0
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]==self then
+				local animalToAdd = animalList.termite:new()
+				animalToAdd.tileX = j
+				animalToAdd.tileY = i
+				animals[#animals+1] = animalToAdd
+			end
+		end
+	end
+end
 
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
@@ -3059,6 +3082,7 @@ tiles[195] = P.playbackStairs
 tiles[196] = P.ratTile
 tiles[197] = P.iceBoxTile
 tiles[198] = P.recycleBinTile
+tiles[199] = P.infestedWood
 
 
 return tiles

@@ -498,6 +498,8 @@ end
 
 P.rat = P.animal:new{name = "rat", sprite = 'Graphics/rat.png', triggered = true}
 
+P.termite = P.animal:new{name = "termite", sprite = 'Graphics/termite.png', waitCounter = 0}
+
 
 
 animalList[1] = P.animal
@@ -515,5 +517,6 @@ animalList[12] = P.son
 animalList[13] = P.daughter
 animalList[14] = P.ram
 animalList[15] = P.rat
+animalList[16] = P.termite
 
 return animalList
