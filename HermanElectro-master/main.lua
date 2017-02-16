@@ -3155,7 +3155,7 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 		    			noPowerUpdate = false
 		    		end
 		    	end
-		    	if pushables[i].conductive and (pushables[i].tileX~=pushables[i].prevTileX or pushables[i].tileY~=pushables[i].prevTileY) then
+		    	if (pushables[i].conductive or pushables[i].forcePower) and (pushables[i].tileX~=pushables[i].prevTileX or pushables[i].tileY~=pushables[i].prevTileY) then
 		    		noPowerUpdate = false
 		    	end
 	    	end
