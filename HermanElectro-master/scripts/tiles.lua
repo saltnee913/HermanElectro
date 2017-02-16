@@ -1566,12 +1566,41 @@ end
 P.redBeggar = P.beggar:new{name = "redBeggar", sprite = 'GraphicsEli/redOrb1.png', deadSprite = 'Graphics/redbeggardead.png', 
   animation = {'GraphicsEli/redOrb1.png', 'GraphicsEli/redOrb2.png', 'GraphicsEli/redOrb3.png', 'GraphicsEli/redOrb4.png', 'GraphicsEli/redOrb3.png', 'GraphicsEli/redOrb2.png'}, animationLength = 1}
 function P.redBeggar:providePayment()
-	local greenTools = util.random('toolDrop')
+	local redTools = util.random('toolDrop')
+	redTools = redTools+getLuckBonus()/100
 	local ttg = 0
-	if greenTools<0.5 then ttg = 1
-	elseif greenTools<0.95 then ttg = 2
-	else ttg = 3 end
-	tools.giveRandomTools(ttg)
+	if redTools<0.50 then ttg = 1
+	elseif redTools<0.95 then ttg = 2
+	elseif redTools<0.99 then ttg = 3 end
+	
+	if ttg>0 then
+		tools.giveRandomTools(ttg)
+		return
+	end
+
+	local superToGive = util.random(7, 'toolDrop')
+	local superDrop = self:getSuperDrops()[superToGive]
+	unlockedSupertools = unlocks.getUnlockedSupertools()
+	if not unlockedSupertools[superToGive] or superDrop.isDisabled then
+		tools.giveRandomTools(2)
+		return
+	end
+
+	if util.getSupertoolTypesHeld()<3 or superDrop.numHeld>0 then
+		tools.giveToolsByReference({superDrop})
+	else
+		for i = 1, roomHeight do
+			for j = 1, roomLength do
+				if room[i][j]==self then
+					tools.dropTool(superDrop, i, j)
+				end
+			end
+		end
+	end
+end
+function P.redBeggar:getSuperDrops()
+	return {tools.superSaw, tools.longLadder, tools.superWaterBottle, tools.superWireCutters, tools.superSponge,
+	tools.superGun, tools.superBrick}
 end
 
 P.greenBeggar = P.beggar:new{name = "greenBeggar", sprite = 'GraphicsEli/greenOrb1.png', deadSprite = 'Graphics/greenbeggardead.png', 
@@ -1581,6 +1610,11 @@ function P.greenBeggar:providePayment()
 	local ttg = tools.coin
 	if luckyCoin<getLuckBonus() then
 		ttg = tools.luckyPenny
+	end
+
+	unlockedSupertools = unlocks.getUnlockedSupertools()
+	if not unlockedSupertools[tools.luckyPenny] or tools.luckyPenny.isDisabled then
+		ttg = tools.coin
 	end
 
 	if util.getSupertoolTypesHeld()<3 or ttg.numHeld>0 then
@@ -1601,6 +1635,7 @@ P.blueBeggar = P.beggar:new{name = "blueBeggar", sprite = 'GraphicsEli/blueOrb1.
   animation = {'GraphicsEli/blueOrb1.png', 'GraphicsEli/blueOrb2.png', 'GraphicsEli/blueOrb3.png', 'GraphicsEli/blueOrb4.png', 'GraphicsEli/blueOrb3.png', 'GraphicsEli/blueOrb2.png'}, animationLength = 1}
 function P.blueBeggar:providePayment()
 	local quality = util.random('toolDrop')
+	quality = quality+getLuckBonus()/100
 	if quality < 0.075 then
 		quality = 1
 	elseif quality < 0.6 then
