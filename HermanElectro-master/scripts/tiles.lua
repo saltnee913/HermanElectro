@@ -2738,12 +2738,17 @@ function P.playerTile:onEnter()
 		player.character:onSelect()
 		myShader:send("player_range", 500)
 	end
+	messageInfo.text = self:getCharInfo()
 end
-function P.playerTile:getInfoText()
+function P.playerTile:onLeave(player)
+	messageInfo.text = nil
+end
+function P.playerTile:getCharInfo()
 	local infoText = ""
-	infoText = infoText..self.character.name.."\n"
-	infoText = infoText.."Wins: "..stats.wins[self.character.name]
-	infoText = infoText.."LossesL "..stats.losses[self.character.name]
+	infoText = infoText..self.character.name..", "..self.character.description.."\n"
+	infoText = infoText.."Wins: "..stats.wins[self.character.name].."\n"
+	infoText = infoText.."Losses: "..stats.losses[self.character.name]
+	return infoText
 end
 
 P.tree = P.wall:new{name = "tree", sawable = false, level = 0, sprite = 'Graphics/tree0.png',
