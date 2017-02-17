@@ -804,7 +804,11 @@ function P.generateMapStandard()
 end
 
 function P.getRoomWeight(room)
-	return 1
+	local weight = P.getFieldForRoom(room, 'weight')
+	if weight==nil then
+		weight = 1
+	end
+	return weight
 end
 
 --a-b does not always equal -(b-a)!!!!!!
@@ -998,7 +1002,7 @@ function P.generateMapWeighted()
 						end
 					end
 				end]]
-				roomWeight = roomWeight/totalRoomsCompared + P.getRoomWeight(roomChoice)
+				roomWeight = P.getRoomWeight(roomChoiceid)
 				roomWeights[i] = roomWeight
 			end
 			roomid = roomChoices[util.chooseWeightedRandom(roomWeights, 'mapGen')]
