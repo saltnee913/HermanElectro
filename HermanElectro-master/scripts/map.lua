@@ -1002,7 +1002,7 @@ function P.generateMapWeighted()
 						end
 					end
 				end]]
-				roomWeight = P.getRoomWeight(roomChoiceid)
+				roomWeight = P.getRoomWeight(roomChoice.roomid)
 				roomWeights[i] = roomWeight
 			end
 			roomid = roomChoices[util.chooseWeightedRandom(roomWeights, 'mapGen')]

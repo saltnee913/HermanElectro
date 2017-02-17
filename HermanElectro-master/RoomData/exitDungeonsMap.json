@@ -6,7 +6,14 @@
 			"filePath": "RoomData/edStart.json",
 			"requirements":
 			{
-				
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
+				},				
 			}
 		},
 		"puzzleRooms": 
@@ -14,7 +21,14 @@
 			"filePath": "RoomData/edPuzzle.json",
 			"requirements":
 			{
-				
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
+				},				
 			}
 		},
 		"shops":
@@ -22,7 +36,14 @@
 			"filePath": "RoomData/shops.json",
 			"requirements":
 			{
-
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
+				},
 			}
 		},
 		"finalRooms": 
@@ -30,7 +51,14 @@
 			"filePath": "RoomData/edFinal.json",
 			"requirements":
 			{
-				
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
+				},				
 			}
 		},
 		"donationRooms":
@@ -38,7 +66,14 @@
 			"filePath": "RoomData/donationrooms.json",
 			"requirements":
 			{
-				
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
+				},				
 			}
 		},
 	},
