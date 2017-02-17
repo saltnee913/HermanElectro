@@ -383,14 +383,18 @@ function love.load()
 		grassrock2 = love.graphics.newImage('GraphicsBrush/grassrocks2.png')
 		grassrock3 = love.graphics.newImage('GraphicsBrush/grassrocks3.png')
 
-		floortiles = {}		
+		floortiles = {}
 		floortiles[5] = {love.graphics.newImage('GraphicsEli/blueLines1.png'),love.graphics.newImage('GraphicsEli/blueLines2.png'),love.graphics.newImage('GraphicsEli/blueLines3.png')}
 		floortiles[4] = {love.graphics.newImage('GraphicsEli/blueFloorBack.png'),love.graphics.newImage('GraphicsEli/blueFloorBack2.png'),love.graphics.newImage('GraphicsEli/blueFloorBack3.png')}
 		floortiles[3] = {love.graphics.newImage('GraphicsBrush/purplefloor1.png'),love.graphics.newImage('GraphicsBrush/purplefloor2.png'),love.graphics.newImage('GraphicsBrush/purplefloor3.png')}
 		floortiles[2] = {love.graphics.newImage('GraphicsColor/greenfloor.png'),love.graphics.newImage('GraphicsColor/greenfloor2.png'),love.graphics.newImage('GraphicsColor/greenfloor3.png')}
-		floortiles[1] = {floortile,floortile2, floortile3}
-		--floortiles[1] = {grassrock1, grassrock2, grassrock3}	
+		--floortiles[1] = {floortile,floortile2, floortile3}
+		--floortiles[1] = {grassrock1, grassrock2, grassrock3}
+		floortiles[1] = {love.graphics.newImage('Graphics/woodfloortest.png'),love.graphics.newImage('Graphics/woodfloortest.png'),love.graphics.newImage('Graphics/woodfloortest.png')}
 		floortiles[6] = floortiles[4]
+
+		floors = {}
+		floors[1] = love.graphics.newImage('Graphics/biggreenfloor.png')
 
 		secondaryTiles = {}
 		--secondaryTiles[1] = {flowerrock1, flowerrock2, flowerrock3}
@@ -1672,6 +1676,8 @@ function love.draw()
 				drawFloorPath = false
 			end
 
+			toDrawFloor = dungeonFloor
+
 			if drawFloorPath then
 				if xdiff==1 and ydiff==0 then
 					love.graphics.draw(toDrawFloor, (roomLength+1)*tileWidth*scale+wallSprite.width, (math.floor(roomHeight/2))*tileHeight*scale+wallSprite.height, math.pi/2, scale, scale)
@@ -1702,37 +1708,49 @@ function love.draw()
 
 	love.graphics.setShader(myShader)
 
+	if floors[floorIndex-1]~=nil then
+		local floorSprite = floors[floorIndex-1]
+
+		local xScale = scale*16*roomLength/floorSprite:getWidth()
+		local yScale = scale*16*roomHeight/floorSprite:getHeight()
+
+		love.graphics.draw(floorSprite, wallSprite.width, wallSprite.height,
+		0, xScale, yScale)
+	end
+
 	for j = 1, roomHeight do
 		for i = 1, roomLength do
 
-			if floorIndex<=1 then
-				toDrawFloor = dungeonFloor
-			else
-				if (i*i*i+j*j)%3==0 then
-					toDrawFloor = floortiles[floorIndex-1][1]
-				elseif (i*i*i+j*j)%3==1 then
-					toDrawFloor = floortiles[floorIndex-1][2]
-				else
-					toDrawFloor = floortiles[floorIndex-1][3]
-				end
-				if (i*i+j*j*j-1)%27==0 then
-					toDrawFloor = secondaryTiles[floorIndex-1][1]
-				elseif (i*i+j*j*j-1)%29==1 then
-					toDrawFloor = secondaryTiles[floorIndex-1][2]
-				elseif (i*i+j*j*j-1)%31==2 then
-					toDrawFloor = secondaryTiles[floorIndex-1][3]
-				end
-			end
-			fto = map.getFieldForRoom(mainMap[mapy][mapx].roomid, "floorTileOverride")
-			if (fto~=nil) then
-				if fto=="dungeon" then
+			if (floors[floorIndex-1]==nil) then
+				if floorIndex<=1 then
 					toDrawFloor = dungeonFloor
+				else
+					if (i*i*i+j*j)%3==0 then
+						toDrawFloor = floortiles[floorIndex-1][1]
+					elseif (i*i*i+j*j)%3==1 then
+						toDrawFloor = floortiles[floorIndex-1][2]
+					else
+						toDrawFloor = floortiles[floorIndex-1][3]
+					end
+					if (i*i+j*j*j-1)%27==0 then
+						--toDrawFloor = secondaryTiles[floorIndex-1][1]
+					elseif (i*i+j*j*j-1)%29==1 then
+						--toDrawFloor = secondaryTiles[floorIndex-1][2]
+					elseif (i*i+j*j*j-1)%31==2 then
+						--toDrawFloor = secondaryTiles[floorIndex-1][3]
+					end
 				end
+				fto = map.getFieldForRoom(mainMap[mapy][mapx].roomid, "floorTileOverride")
+				if (fto~=nil) then
+					if fto=="dungeon" then
+						toDrawFloor = dungeonFloor
+					end
+				end
+
+
+				love.graphics.draw(toDrawFloor, (i-1)*tileWidth*scale+wallSprite.width, (j-1)*tileHeight*scale+wallSprite.height,
+				0, scale*16/toDrawFloor:getWidth(), scale*16/toDrawFloor:getWidth())
 			end
-
-
-			love.graphics.draw(toDrawFloor, (i-1)*tileWidth*scale+wallSprite.width, (j-1)*tileHeight*scale+wallSprite.height,
-			0, scale*16/toDrawFloor:getWidth(), scale*16/toDrawFloor:getWidth())
 
 
 			local isBlack=false
