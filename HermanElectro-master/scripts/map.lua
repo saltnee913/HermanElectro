@@ -804,6 +804,7 @@ function P.generateMapStandard()
 end
 
 function P.getRoomWeight(room)
+	print(room)
 	local weight = P.getFieldForRoom(room, 'weight')
 	if weight==nil then
 		weight = 1
@@ -1002,7 +1003,7 @@ function P.generateMapWeighted()
 						end
 					end
 				end]]
-				roomWeight = P.getRoomWeight(roomChoice.roomid)
+				roomWeight = P.getRoomWeight(roomChoiceid)
 				roomWeights[i] = roomWeight
 			end
 			roomid = roomChoices[util.chooseWeightedRandom(roomWeights, 'mapGen')]
@@ -1224,7 +1225,7 @@ function P.generateSixthFloor()
 						end
 					end
 				end]]
-				roomWeight = roomWeight/totalRoomsCompared + P.getRoomWeight(roomChoice)
+				roomWeight = roomWeight/totalRoomsCompared + P.getRoomWeight(roomChoiceid)
 				roomWeights[i] = roomWeight
 			end
 			local ultimateChoice = util.chooseWeightedRandom(roomWeights, 'mapGen')

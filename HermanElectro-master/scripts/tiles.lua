@@ -2739,6 +2739,12 @@ function P.playerTile:onEnter()
 		myShader:send("player_range", 500)
 	end
 end
+function P.playerTile:getInfoText()
+	local infoText = ""
+	infoText = infoText..self.character.name.."\n"
+	infoText = infoText.."Wins: "..stats.wins[self.character.name]
+	infoText = infoText.."LossesL "..stats.losses[self.character.name]
+end
 
 P.tree = P.wall:new{name = "tree", sawable = false, level = 0, sprite = 'Graphics/tree0.png',
 spriteList = {'Graphics/tree1.png', 'Graphics/tree2.png', 'Graphics/tree3.png'}}
