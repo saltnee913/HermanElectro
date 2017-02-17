@@ -511,6 +511,10 @@ function setMusicVolume(volume)
 end
 
 function goToMainMenu()
+	if room[player.tileY][player.tileX]~=nil then
+		room[player.tileY][player.tileX]:onLeave()
+	end
+
 	if saving.isPlayingBack() and not gamePaused then
 		return
 	elseif not saving.isPlayingBack() then
