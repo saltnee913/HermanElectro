@@ -6,96 +6,156 @@ P.stealInput = false
 
 roomsDesigned = 0
 
+P.visionHack = false
+
 function P.draw()
 	barLength = 660
 	love.graphics.setColor(255,255,255)
-	for i = 1, 150 do
+	for i = 1, 200 do
 		if tiles[i]~=nil then
-			toDraw = tiles[i].sprite
+			toDraw = util.getImage(tiles[i].sprite)
 			addx = 0
-			addy = -width/50
+			addy = -width/25
 			if i>50 and i<=100 then
 				addx = -width
-				addy = 0
-			elseif i>100 then
+				addy = -width/50
+			elseif i>100 and i<=150 then
 				addx = -2*width
+				addy = 0
+			elseif i>150 and i<200 then
+				addx = -3*width
 				addy = width/50
 			end
 			--love.graphics.rectangle("fill", (i-1)*width/25, height-width/25, width/25, width/25)
 			--sprite width: floor.sprite:getWidth()
-			love.graphics.draw(toDraw, (i-1)*width/50+addx, height-2*width/50+addy, 0, (width/50)/(floor.sprite:getWidth())*16/toDraw:getWidth(), (width/50)/(floor.sprite:getWidth())*16/toDraw:getWidth())
+			love.graphics.draw(toDraw, (i-1)*width/50+addx, height-2*width/50+addy, 0, (width/50)/(tileWidth)*16/toDraw:getWidth(), (width/50)/(tileWidth)*16/toDraw:getWidth())
 			if editorAdd == i then
-				love.graphics.draw(green, (i-1)*width/50+addx, height-2*width/50+addy, 0, (width/50)/(floor.sprite:getWidth()), (width/50)/(floor.sprite:getWidth()))
+				love.graphics.draw(green, (i-1)*width/50+addx, height-2*width/50+addy, 0, (width/50)/(tileWidth), (width/50)/(tileWidth))
 			end
 		end
 	end
 end
 
+function printRoom()
+	print("\"name\":")
+	print("{")
+	print("\"layout\":")
+	print("[")
+	for i = 1, roomHeight do
+		prt = "["
+		for j =1, roomLength do
+			if room[i][j]~=nil then
+				for k = 1, #tiles do
+					if tiles[k]~=nil and room[i][j]~=nil and tiles[k].name == room[i][j].name then
+						if room[i][j].overlay ~= nil then
+							prt=prt..'['
+						end
+						addk = k
+						if k == 1 then
+							addk=0
+						end
+						prt = prt..addk
+						if(room[i][j].rotation ~= 0) then
+							prt = prt..'.'..room[i][j].rotation
+						end
+						if room[i][j].overlay ~= nil then
+							prt=prt..','
+							for k = 1, #tiles do
+								if room[i][j].overlay.name == tiles[k].name then
+									prt=prt..k
+								end
+							end
+							if(room[i][j].overlay.rotation ~= 0) then
+								prt = prt..'.'..room[i][j].overlay.rotation
+							end
+							prt=prt..']'
+						end
+						break
+					end
+				end
+			else
+				prt = prt..0
+			end
+			if j ~= roomLength then
+				prt = prt..","
+			end
+		end
+		prt = prt.."]"
+		print(prt)
+	end
+	print("],")
+	print("\"itemsNeeded\":")
+	print("[")
+	print("[0,0,0,0,0,0,0]")
+	print("]")
+	print("},\n")
+end
+
 function P.keypressed(key, unicode)
 	if key=="p" then
+		local tempRooms = {}
+		if love.filesystem.exists(saveDir..'/tempRooms.json') then
+			tempRooms = util.readJSON(saveDir .. '/tempRooms.json')
+			if tempRooms == nil then
+				tempRooms = {}
+			end
+		end
+		local newRoom = {}
+		newRoom.layout = {}
 		savedRoom = {}
 		for i = 1, roomHeight do
+			newRoom.layout[i] = {}
 			savedRoom[i] = {}
 			for j = 1, roomLength do
 				savedRoom[i][j] = room[i][j]
+				if room[i][j] == nil then
+					newRoom.layout[i][j] = 0
+				else
+					local tileWithRot = 0
+					--find the tile id
+					for k = 2, #tiles do
+						if tiles[k].name == room[i][j].name then
+							tileWithRot = k
+						end
+					end
+					--add in the rotation of the tile
+					if room[i][j].rotation ~= 0 then
+						tileWithRot = tileWithRot + room[i][j].rotation/10
+					end
+	
+					if room[i][j].overlay == nil then
+						newRoom.layout[i][j] = tileWithRot
+					else
+						local overlayWithRot = 0
+						for k = 2, #tiles do
+							if tiles[k].name == room[i][j].overlay.name then
+								overlayWithRot = k
+							end
+						end
+						if room[i][j].overlay.rotation ~= 0 then
+							overlayWithRot = overlayWithRot + room[i][j].overlay.rotation/10
+						end
+						newRoom.layout[i][j] = {tileWithRot,overlayWithRot}
+					end
+
+				end
 			end
 		end
 		savedAnimals = {}
 		for i = 1, #animals do
 			savedAnimals[i] = animals[i]
 		end
-		print("\"name\":")
-		print("{")
-		print("\"layout\":")
-		print("[")
-		for i = 1, roomHeight do
-			prt = "["
-			for j =1, roomLength do
-				if room[i][j]~=nil then
-					for k = 1, #tiles do
-						if tiles[k]~=nil and room[i][j]~=nil and tiles[k].name == room[i][j].name then
-							if room[i][j].overlay ~= nil then
-								prt=prt..'['
-							end
-							addk = k
-							if k == 1 then
-								addk=0
-							end
-							prt = prt..addk
-							if(room[i][j].rotation ~= 0) then
-								prt = prt..'.'..room[i][j].rotation
-							end
-							if room[i][j].overlay ~= nil then
-								prt=prt..','
-								for k = 1, #tiles do
-									if room[i][j].overlay.name == tiles[k].name then
-										prt=prt..k
-									end
-								end
-								if(room[i][j].overlay.rotation ~= 0) then
-									prt = prt..'.'..room[i][j].overlay.rotation
-								end
-								prt=prt..']'
-							end
-							break
-						end
-					end
-				else
-					prt = prt..0
-				end
-				if j ~= roomLength then
-					prt = prt..","
-				end
-			end
-			prt = prt.."]"
-			print(prt)
-		end
-		print("],")
-		print("\"itemsNeeded\":")
-		print("[")
-		print("[0,0,0,0,0,0,0]")
-		print("]")
-		print("},\n")
+		newRoom.itemsNeeded = {}
+		newRoom.itemsNeeded[1] = {0,0,0,0,0,0,0}
+		tempRooms[#tempRooms+1] = {name = newRoom}
+		local state = {indent = true}
+		util.writeJSON('/tempRooms.json', tempRooms, state)
+		local json = require('scripts.dkjson')
+		local toPrint = json.encode({name = newRoom}, state)
+		toPrint = toPrint:sub(3)
+		toPrint = toPrint:sub(1,-3)
+		toPrint = toPrint..","
+		print(toPrint)
 	end
 	if key=='tab' then
 		roomHack = mainMap[mapy][mapx].roomid .. ''
@@ -110,6 +170,7 @@ function P.keypressed(key, unicode)
     	end
     	animals = {}
     	pushables = {}
+    	spotlights = {}
     end
 	if key == "z" and prevRoom~=nil then
     	room = prevRoom
@@ -125,6 +186,24 @@ function P.keypressed(key, unicode)
 	elseif key == "r" and savedRoom~=nil then
 		room = savedRoom
     	animals = savedAnimals
+    elseif key == "l" then
+		P.visionHack = not P.visionHack
+    elseif key == "=" then
+    	--unlock everything
+    	for i = 1, #unlocks do
+    		if not unlocks[i].hidden then
+    			unlocks.unlockUnlockable(i)
+    		end
+    	end
+    elseif key == "-" then
+   		--lock everything
+     	for i = 1, #unlocks do
+    		if not unlocks[i].hidden then
+    			unlocks.lockUnlockable(i)
+    		end
+    	end  		
+    elseif key == "o" then
+    	createElements()
     end
 end
 
@@ -180,11 +259,11 @@ local function postTileAddCleanup(tempAdd, tileLocY, tileLocX)
 	end
 
 	if tiles[tempAdd]~=nil and tiles[tempAdd].animal~=nil then
-		local animalToSpawn = room[tileLocY][tileLocX].animal
+		local animalToSpawn = animalList[room[tileLocY][tileLocX].listIndex]:new()
 		if not animalToSpawn.dead then
 			animals[#animals+1] = animalToSpawn
-			animalToSpawn.y = (tileLocY-1)*floor.sprite:getWidth()*scale+wallSprite.height
-			animalToSpawn.x = (tileLocX-1)*floor.sprite:getHeight()*scale+wallSprite.width
+			animalToSpawn.y = (tileLocY-1)*tileWidth*scale+wallSprite.height
+			animalToSpawn.x = (tileLocX-1)*tileHeight*scale+wallSprite.width
 			animalToSpawn.tileX = tileLocX
 			animalToSpawn.tileY = tileLocY
 			animalToSpawn.prevTileX = animals[#animals].tileX
@@ -227,8 +306,11 @@ function P.mousepressed(x, y, button, istouch)
 	end
 	--tileLocX = math.ceil((x-wallSprite.width)/(scale*floor.sprite:getWidth()))-getTranslation().x
 	--tileLocY = math.ceil((y-wallSprite.height)/(scale*floor.sprite:getHeight()))-getTranslation().y
-	if mouseY>height-3*width/50 then
+	if mouseY>height-4*width/50 then
 		editorAdd = math.floor(mouseX/(width/50))+1
+		if mouseY>height-3*width/50 then
+			editorAdd = editorAdd+50
+		end
 		if mouseY>height-2*width/50 then
 			editorAdd = editorAdd+50
 		end

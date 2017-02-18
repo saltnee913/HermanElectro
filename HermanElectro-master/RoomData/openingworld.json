@@ -14,12 +14,12 @@
   	{
   		"map":
   		[
+        [0,               "unlocks_room",                0],
+        [0,               "start_room",                0],
         [0,               0,                0],
-        [0,               "title_screen",                0],
-        [0,               "portal_room",                0],
   		],
   		"generateFunction": "generateMapFromJSON",
-      "tint": [0.4, 0.4, 0.4],
-      "playerRange": 75
+      "tint": [0,0,0],
+      "playerRange": 600
   	},
 }

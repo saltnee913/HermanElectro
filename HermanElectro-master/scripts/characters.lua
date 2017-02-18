@@ -28,7 +28,7 @@ function P.getUnlockedCharacters()
 	return toRet
 end
 
-P.character = Object:new{name = "Name", scale = 0, sprite = love.graphics.newImage('Graphics/herman_sketchanother.png'),
+P.character = Object:new{name = "Name", tallSprite = true, dirFacing = "down", scale = 0, sprite = 'Graphics/Characters/Herman.png',
   description = "description", startingTools = {0,0,0,0,0,0,0}, scale = 0.25 * width/1200, forcePowerUpdate = false, winUnlocks = {}, tint = {1,1,1},
   speedUnlockTime = 1000, speedUnlock = nil}
 function P.character:onBegin()
@@ -43,7 +43,11 @@ function P.character:setStartingTools()
 		tools[i].numHeld = self.startingTools[i]
 	end
 end
+function P.character:onStartGame()
+end
 function P.character:onCharLoad()
+end
+function P.character:onSelect()
 end
 function P.character:onRoomEnter()
 end
@@ -54,7 +58,28 @@ function P.character:onPreUpdatePower()
 end
 function P.character:onPostUpdatePower()
 end
-function P.character:onKeyPressed()
+function P.character:onKeyPressed(key)
+	if self.sprites ~= nil then
+		if key == 'w' then
+			self.dirFacing = "up"
+			self.sprite = self.sprites[1]
+		end
+		if key == 'd' then
+			self.dirFacing = "right"
+			self.sprite = self.sprites[2]
+		end
+		if key == 's' then
+			self.dirFacing = "down"
+			self.sprite = self.sprites[3]
+		end
+		if key == 'a' then
+			self.dirFacing = "left"
+			self.sprite = self.sprites[4]
+		end
+	end
+	return self:onKeyPressedChar(key)
+end
+function P.character:onKeyPressedChar(key)
 	return false
 end
 function P.character:onToolUse()
@@ -65,8 +90,6 @@ function P.character:postMove()
 end
 function P.character:onTileLeave()
 end
-function P.character:onPostUpdatePower()
-end
 function P.character:onPostUpdateLight()
 end
 function P.character:getInfoText()
@@ -76,16 +99,26 @@ function P.character:onRoomCompletion()
 end
 function P.character:onFailedMove()
 end
-function P.character.specialLightTest(tileY,tileX)
+function P.character:specialLightTest(tileY,tileX)
+end
+function P.character:immediatePostMove()
+end
+function P.character:update()
+end
+function P.character:absoluteFinalUpdate()
+end
+function P.character:bypassObstructsMovement(tile)
+	return false
 end
 
-P.herman = P.character:new{name = "Herman", description = "The Electrician", winUnlocks = {unlocks.reviveUnlock}, scale = 0.3}
+P.herman = P.character:new{name = "Herman", description = "The Electrician", winUnlocks = {unlocks.reviveUnlock}, scale = 1.1*scale, sprites = {'Graphics/Characters/Herman.png', 'Graphics/Characters/Herman.png', 'Graphics/Characters/Herman.png', 'Graphics/Characters/Herman.png'}}
 function P.herman:onCharLoad()
 	if loadTutorial then return end
 	tools.giveToolsByReference({tools.revive})
+	myShader:send("player_range", 600)
 end
 
-P.felix = P.character:new{name = "Felix", description = "The Sharpshooter", winUnlocks = {unlocks.missileUnlock}, speedUnlocks = {unlocks.superGunUnlock}, sprite = love.graphics.newImage('Graphics/felix.png'), startingTools = {0,0,0,0,0,0,1}}
+P.felix = P.character:new{name = "Felix", description = "The Sharpshooter", winUnlocks = {unlocks.missileUnlock}, speedUnlocks = {unlocks.superGunUnlock}, sprite = 'Graphics/felix.png', startingTools = {0,0,0,0,0,0,1}}
 function P.felix:onCharLoad()
 	tools[7] = tools.felixGun
 	if not tools.felixGun.isGun then
@@ -93,7 +126,7 @@ function P.felix:onCharLoad()
 	end
 	tools.giveToolsByReference({tools.bomb})
 end
-function P.felix:onKeyPressed(key)
+function P.felix:onKeyPressedChar(key)
 	--log(key)
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
 		tools.felixGun:switchEffects()
@@ -107,31 +140,64 @@ function P.felix:onFloorEnter()
 end
 
 P.most = P.character:new{name = "Ben", description = "The Explorer",
-  sprite = love.graphics.newImage('GraphicsTony/Ben.png'), scale = 0.7 * width/1200, disabled = true}
+  sprite = 'Graphics/Characters/Ben.png', scale = 0.7 * width/1200, disabled = true}
 function P.most:onCharLoad()
 	if map.floorOrder == map.defaultFloorOrder then
 		map.floorOrder = {'RoomData/bigfloor.json', 'RoomData/floor6.json'}
 	end
 end
 
-local erikSprite = love.graphics.newImage('Graphics/beggar.png')
-P.erik = P.character:new{name = "Erik", description = "The Quick",
-  sprite = erikSprite, scale = scale*16/erikSprite:getWidth(), tint = {0.4,0.4,0.4}}
-
+local erikSprite = 'Graphics/Characters/Erik.png'
+P.erik = P.character:new{name = "Erik", tallSprite = false, description = "The Quick",
+  sprite = erikSprite, scale = scale*1.1}
 function P.erik:onCharLoad()
-	gameTime.timeLeft = 60
-	gameTime.roomTime = 10
+	gameTime.timeLeft = 120
+	gameTime.roomTime = 15
 	gameTime.levelTime = 0
-	map.floorOrder = {'RoomData/floor1_erik.json', 'RoomData/floor2_erik.json', 'RoomData/floor3_erik.json', 'RoomData/floor6.json'}
+	gameTime.goesDownInCompleted = true
+	--map.floorOrder = {'RoomData/floor1_erik.json', 'RoomData/floor2_erik.json', 'RoomData/floor3_erik.json', 'RoomData/floor6.json'}
+end
+function P.erik:onFailedMove(key)
+	if key=="w" then
+		if player.tileY==1 and (room[roomHeight][player.tileX]==nil or not room[roomHeight][player.tileX].blocksMovement) then
+			player.tileY = roomHeight
+		end
+	elseif key=="a" then
+		if player.tileX==1 and (room[player.tileY][roomLength]==nil or not room[player.tileY][roomLength].blocksMovement) then
+			player.tileX = roomLength
+		end
+	elseif key=="s" then
+		if player.tileY==roomHeight and (room[1][player.tileX]==nil or not room[1][player.tileX].blocksMovement) then
+			player.tileY = 1
+		end
+	elseif key=="d" then
+		if player.tileX==roomLength and (room[player.tileY][1]==nil or not room[player.tileY][1].blocksMovement) then
+			player.tileX = 1
+		end
+	end
+end
+function P.erik:specialLightTest(tileY,tileX)
+	if tileX == 1 then
+		lightTest(tileY,roomLength)
+	end
+	if tileX == roomLength then
+		lightTest(tileY,1)
+	end
+	if tileY == 1 then
+		lightTest(roomHeight,tileX)
+	end
+	if tileY == roomHeight then
+		lightTest(1,tileX)
+	end
 end
 
-P.gabe = P.character:new{name = "Gabe", description = "The Angel",
-	sprite = love.graphics.newImage('Graphics/gabe.png'), realChar = nil, reset = false, disabled = true}
+P.gabe = P.character:new{name = "Gabe", tallSprite = false, description = "The Angel",
+	sprite = 'Graphics/gabe.png', realChar = nil, reset = false}
 function P.gabe:onCharLoad()
 	if not self.reset then
-		player.flying = true
+		player.attributes.flying = true
 		self.reset = true
-	elseif self.realChar ~= nil then
+	elseif self.realChar ~= nil and not self.realChar:instanceof(P.gabe) then
 		player.character = self.realChar
 		player.character:onBegin()
 		self.realChar = nil
@@ -139,19 +205,19 @@ function P.gabe:onCharLoad()
 	end
 end
 function P.gabe:onRoomEnter()
-	player.flying = true
+	player.attributes.flying = true
 end
 
-P.rammy = P.character:new{name = "Rammy", description = "The Ram", winUnlocks = {unlocks.ramUnlock},
-	sprite = love.graphics.newImage('Graphics/ram.png')}
+P.rammy = P.character:new{name = "Rammy", tallSprite = false, description = "The Ram", winUnlocks = {unlocks.ramUnlock},
+	sprite = 'Graphics/ram.png'}
 
 function P.rammy:preTileEnter(tile)
-	if tile.name == tiles.wall.name and not tile.destroyed then
+	if tile.name == tiles.wall.name and not tile.destroyed and player.elevation<tile:getHeight()-3 then
 		tile:destroy()
 	end
 end
 
-P.rick = P.character:new{name = "Rick", description = "The Gambler", sprite = love.graphics.newImage('Graphics/rick.png'), disabled = true}
+P.rick = P.character:new{name = "Rick", description = "The Gambler", sprite = 'Graphics/rick.png', disabled = true}
 function P.rick:onCharLoad()
 	tools.giveToolsByReference({tools.toolReroller,tools.toolReroller,tools.toolReroller,tools.roomReroller})
 end
@@ -164,7 +230,8 @@ function P.rick:onFloorEnter()
 end
 
 --alternative name: "Froggy, the Fresh"
-P.frederick = P.character:new{name = "Frederick", description = "The Frog", sprite = love.graphics.newImage('Graphics/frederick.png'), disabled = false}
+P.frederick = P.character:new{name = "Frederick", tallSprite = false, description = "The Frog",
+sprite = 'Graphics/Characters/Frederick.png', scale = 1.1*scale, disabled = false}
 function P.frederick:onCharLoad()
 	tools.giveToolsByReference({tools.spring,tools.spring,tools.spring,tools.spring,tools.visionChanger,tools.visionChanger})
 end
@@ -172,10 +239,11 @@ function P.frederick:onFloorEnter()
 	tools.giveToolsByReference({tools.spring,tools.spring,tools.visionChanger})
 end
 
-P.battery = P.character:new{name = "Bob", description = "The Battery", sprite = love.graphics.newImage('Graphics/powersupplydead.png'),
-  onSprite = love.graphics.newImage('Graphics/powersupply.png'), offSprite = love.graphics.newImage('Graphics/powersupplydead.png'), 
-  scale = scale, storedTile = nil, forcePowerUpdate = false, powered = false}
-function P.battery:onKeyPressed(key)
+P.battery = P.character:new{name = "Bob", tallSprite = false, description = "The Battery",
+sprite = 'Graphics/Characters/Bob.png',
+  onSprite = 'Graphics/Characters/BobPowered.png', offSprite = 'Graphics/Characters/Bob.png', 
+  scale = scale*1.2, storedTile = nil, forcePowerUpdate = false, powered = false}
+function P.battery:onKeyPressedChar(key)
 	--log(key)
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
 		if self.powered then
@@ -208,13 +276,13 @@ function P.battery:onPostUpdatePower()
 	end
 end
 
-P.nadia = P.character:new{name = "Nadia", description = "The Naturalist", sprite = love.graphics.newImage('Graphics/nadia.png'), disabled = true}
+P.nadia = P.character:new{name = "Nadia", description = "The Naturalist", sprite = 'Graphics/nadia.png', disabled = true}
 function P.nadia:onCharLoad()
 	tools.giveToolsByReference({tools.meat})
 	player.safeFromAnimals = true
 end
 
-P.chell = P.character:new{name = "Chell", description = "New Carla", sprite = love.graphics.newImage('Graphics/carlaperson.png')}
+P.chell = P.character:new{name = "Chell", description = "New Carla", sprite = 'Graphics/carlaperson.png', tall = true, disabled = true}
 function P.chell:onFailedMove(key)
 	if key=="w" then
 		if player.tileY==1 and (room[roomHeight][player.tileX]==nil or not room[roomHeight][player.tileX].blocksMovement) then
@@ -251,14 +319,14 @@ end
 
 P.crate = P.character:new{name = "Carla", roomTrigger = false, description = "The Crate", isCrate = false, 
   winUnlocks = {unlocks.conditionalBoxes}, speedUnlock = unlocks.conductiveBoxes,
-  sprite = love.graphics.newImage('Graphics/carlaperson.png'),
-  humanSprite = love.graphics.newImage('Graphics/carlaperson.png'), crateSprite = love.graphics.newImage('Graphics/carlabox.png'), disabled = true}
+  sprite = 'Graphics/carlaperson.png',
+  humanSprite = 'Graphics/carlaperson.png', crateSprite = 'Graphics/carlabox.png', disabled = true}
 function P.crate:setCrate(isCrate)
 	self.sprite = isCrate and self.crateSprite or self.humanSprite
 	player.active = not isCrate
 	self.isCrate = isCrate
 end
-function P.crate:onKeyPressed(key)
+function P.crate:onKeyPressedChar(key)
 	--log(key)
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
 		if not self.isCrate and not self.roomTrigger then
@@ -288,54 +356,38 @@ function P.crate:preTileEnter(tile)
 	end
 end
 
-P.giovanni = P.character:new{name = "Giovanni", description = "The Sorcerer", shiftPos = {x = -1, y = -1}, sprite = love.graphics.newImage('Graphics/giovanni.png'), sprite2 = love.graphics.newImage('Graphics/giovannighost.png')}
-function P.giovanni:onKeyPressed(key)
+P.giovanni = P.character:new{name = "Giovanni", description = "The Sorcerer", shiftPos = {x = -1, y = -1, z = -1},
+sprite = 'Graphics/Characters/Giovanni.png', sprite2 = 'Graphics/Characters/GiovanniGhost.png', scale = 1.1*scale}
+function P.giovanni:onKeyPressedChar(key)
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
 		if self.shiftPos.x==-1 then
 			self.shiftPos.x = player.tileX
 			self.shiftPos.y = player.tileY
+			self.shiftPos.z = player.elevation
 			log("Clone spawned!")
 		else
 			player.tileX = self.shiftPos.x
 			player.tileY = self.shiftPos.y
-			self.shiftPos = {x = -1, y = -1}
+			self.shiftPos = {x = -1, y = -1, z = -1}
 			log("Returned to clone!")
 		end
 	end
 end
 function P.giovanni:onCharLoad()
-	tools.giveToolsByReference({tools.pitbullChanger,tools.pitbullChanger})
-	self.shiftPos = {x = -1, y = -1}
+	self.shiftPos = {x = -1, y = -1, z = -1}
 end
 function P.giovanni:onRoomEnter()
-	self.shiftPos = {x = -1, y = -1}
+	self.shiftPos = {x = -1, y = -1, z = -1}
 end
 P.giovanni.onFloorEnter = P.giovanni.onRoomEnter
-function P.giovanni:onKeyPressed(key)
-	if key == 'rshift' or key == 'lshift' or key == 'shift' then
-		if self.shiftPos.x==-1 then
-			self.shiftPos.x = player.tileX
-			self.shiftPos.y = player.tileY
-			log("Clone spawned!")
-		else
-			player.tileX = self.shiftPos.x
-			player.tileY = self.shiftPos.y
-			self.shiftPos = {x = -1, y = -1}
-			log("Returned to clone!")
-			updateGameState(false)
-		end
-	end
-end
 
-P.francisco = P.character:new{name = "Francisco", description = "The Cartographer", nextRoom = {yLoc = -1, xLoc = -1}, sprite = love.graphics.newImage('Graphics/francisco.png')}
+P.francisco = P.character:new{name = "Francisco", description = "The Cartographer", nextRoom = {yLoc = -1, xLoc = -1},
+sprite = 'Graphics/Characters/Francisco.png', scale = 1.1*scale}
 function P.francisco:onCharLoad()
-	tools.giveToolsByReference({tools.map})
-end
-function P.francisco:onFloorEnter()
-	tools.giveToolsByReference({tools.map})
+	tools.giveToolsByReference({tools.coin})
 end
 
-P.random = P.character:new{name = "Random", description = "", sprite = love.graphics.newImage('Graphics/random.png')}
+P.random = P.character:new{name = "Random", description = "", sprite = 'Graphics/Characters/Random.png', scale = 1.1*scale}
 function P.random:onBegin()
 	local charsToSelect = characters.getUnlockedCharacters()
 	local charSlot = util.random(#charsToSelect-1, 'misc')
@@ -343,20 +395,20 @@ function P.random:onBegin()
 	player.character:onBegin()
 end
 
-P.tim = P.character:new{name = "Tim", description = "The Box Summoner", sprite = love.graphics.newImage('Graphics/tim.png'), disabled = true}
+P.tim = P.character:new{name = "Tim", description = "The Box Summoner", sprite = 'Graphics/tim.png', disabled = true}
 function P.tim:onCharLoad()
 	tools.giveToolsByReference({tools.ramSpawner,tools.boxSpawner,tools.boomboxSpawner})
 end
 
 P.orson = P.character:new{name = "Orson", shifted = false, description = "The Mastermind", 
-  winUnlocks = {unlocks.buttonFlipperUnlock}, speedUnlock = {unlocks.poweredEndUnlock}, sprite = love.graphics.newImage('Graphics/orson.png')}
+  winUnlocks = {unlocks.buttonFlipperUnlock}, speedUnlock = {unlocks.poweredEndUnlock}, sprite = 'Graphics/orson.png', disabled = true}
 function P.orson:onCharLoad()
 	tools.brick.range = 100
 end
 function P.orson:onPostUpdatePower()
 	self.shifted = false
 end
-function P.orson:onKeyPressed(key)
+function P.orson:onKeyPressedChar(key)
 	self.shifted = true
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
 		for i = 1, roomHeight do
@@ -374,33 +426,32 @@ function P.orson:onKeyPressed(key)
 	return false
 end
 
-P.lenny = P.character:new{name = "Lenny", description = "The Ghost Snail", slime = false, sprite = love.graphics.newImage('Graphics/lenny.png')}
-function P.lenny:onCharLoad()
-	tools.giveToolsByReference({tools.wings,tools.broom,tools.broom})
-end
-function P.lenny:onFloorEnter()	
-	tools.giveToolsByReference({tools.wings,tools.broom,tools.broom})
-end
-function P.lenny:onKeyPressed(key)
+P.lenny = P.character:new{name = "Lenny", tallSprite = false, description = "The Ghost Snail", slime = false, sprite = 'Graphics/Characters/Lenny.png', scale = 1.1*scale}
+function P.lenny:onKeyPressedChar(key)
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
-		slime = not slime
+		self.slime = not self.slime
 		return true
 	end
 	return false
 end
 function P.lenny:onTileLeave()
-	if slime then
-		if room[player.prevTileY][player.prevTileX]==nil or
-			(room[player.prevTileY][player.prevTileX]:instanceof(tiles.wire) and room[player.prevTileY][player.prevTileX].destroyed) then
+	if self.slime then
+		if room[player.prevTileY][player.prevTileX]==nil
+		or (room[player.prevTileY][player.prevTileX]:instanceof(tiles.wire) and room[player.prevTileY][player.prevTileX].destroyed)
+		or (room[player.prevTileY][player.prevTileX]:instanceof(tiles.electricFloor) and room[player.prevTileY][player.prevTileX].destroyed)
+		or (room[player.prevTileY][player.prevTileX]:instanceof(tiles.wall) and room[player.prevTileY][player.prevTileX].destroyed) then
 			room[player.prevTileY][player.prevTileX]=tiles.conductiveSlime:new()
 			updateGameState(false)
 		end
 	end
 end
+function P.lenny:onStartGame()
+	self.slime = false
+end
 
-P.fish = P.character:new{name = "Fish", description = "Fish", 
+P.fish = P.character:new{name = "Fish", tallSprite = false, description = "Fish", 
   winUnlocks = {unlocks.toolDoublerUnlock}, speedUnlockTime = 1600, speedUnlock = unlocks.fogUnlock,
-  life = 100, sprite = love.graphics.newImage('Graphics/fish.png'), tint = {0.9,0.9,1}}
+  life = 100, sprite = 'Graphics/Characters/Fish.png', tint = {0.9,0.9,1}, scale = 1.1*scale}
 function P.fish:postMove()
 	self.life = self.life-1
 	if room[player.tileY][player.tileX]~=nil and room[player.tileY][player.tileX]:instanceof(tiles.puddle) then
@@ -429,10 +480,11 @@ function P.fish:onToolUse()
 	end
 end
 
-P.monk = P.character:new{name = "Monte", description = "The Blind Monk", sprite = love.graphics.newImage('Graphics/monk.png')}
+P.monk = P.character:new{name = "Monte", description = "The Blind Monk", sprite = 'Graphics/monk.png', disabled = true}
 function P.monk:onBegin()
 	self.tint = {1,1,1}
 	self:super('onBegin')
+	myShader:send("player_range", 100)
 	--[[for i = 1, 3 do
 		self.tint[i] = 0.46
 	end
@@ -480,7 +532,7 @@ function P.monk:onRoomCompletion()
 	end
 end
 
-P.random2 = P.character:new{name = "Random2", allowedCharacters = {1,2,6,8,9,11,12,14}, description = "**RanDOm**", sprite = love.graphics.newImage('Graphics/random.png'), disabled = true}
+P.random2 = P.character:new{name = "Random2", allowedCharacters = {1,2,6,8,9,11,12,14}, description = "**RanDOm**", sprite = 'Graphics/random.png', disabled = true}
 function P.random2:onRoomEnter()
 	local charNum = util.random(#self.allowedCharacters, 'misc')
 	if room.character==nil then
@@ -498,27 +550,412 @@ function P.random2:postMove()
 	end
 end
 
-P.harriet = P.character:new{name = "Harriet", description = "Herman in drag", sprite = love.graphics.newImage('Graphics/nadia.png')}
+P.harriet = P.character:new{name = "Harriet", description = "Herman in drag", sprite = 'Graphics/nadia.png', disabled = true}
 
-P[1] = P.herman
-P[2] = P.felix
-P[3] = P.most
-P[4] = P.erik
-P[5] = P.gabe
-P[6] = P.rammy
-P[7] = P.rick
-P[8] = P.frederick
-P[9] = P.battery
-P[10] = P.chell
-P[11] = P.giovanni
-P[12] = P.francisco
-P[13] = P.tim
-P[14] = P.orson
-P[15] = P.lenny
-P[16] = P.fish
-P[17] = P.monk
-P[18] = P.harriet
-P[19] = P.crate
+P.paris = P.character:new{name = "Paris", description = "The Swordsman", sword = false, swordsprite = 'Graphics/parisswordout.png', sprite = 'Graphics/paris.png', noswordsprite = 'Graphics/paris.png', disabled = true}
+function P.paris:onKeyPressedChar(key)
+	if key == 'rshift' or key == 'lshift' or key == 'shift' then
+		self.sword = not self.sword
+		self:updateSprite()
+		if self.sword then self:checkNextTile() end
+		return true
+	end
+	return false
+end
+function P.paris:updateSprite()
+	if self.sword then
+		self.sprite = self.swordsprite
+	else
+		self.sprite = self.noswordsprite
+	end
+end
+function P.paris:postMove()
+	if self.sword then self:checkNextTile() end
+end
+function P.paris:checkNextTile()
+	local checkx = player.tileX
+	local checky = player.tileY
+	if (player.prevTileX==player.tileX+1) then
+		checkx = player.tileX-1
+	elseif (player.prevTileX==player.tileX-1) then
+		checkx = player.tileX+1
+	elseif (player.prevTileY==player.tileY+1) then
+		checky = player.tileY-1
+	elseif (player.prevTileY==player.tileY-1) then
+		checky = player.tileY+1
+	end
+	if (checkx>0 and checkx<=roomLength and checky>0 and checky<=roomHeight) then
+		local tile = room[checky][checkx]
+		for i = 1, #animals do
+			if animals[i].tileY == checky and animals[i].tileX == checkx then
+				animals[i]:kill()
+			end
+		end
+		if tile~=nil and tile:instanceof(tiles.wall) and not tile:instanceof(tiles.concreteWall) and tile.blocksVision then
+			tile.blocksVision = false
+		end
+	end
+end
+
+P.ed = P.character:new{name = "Ed", description = "The Dim Bulb", sprite = 'Graphics/ed.png', lightLevel = 100, disabled = true}
+function P.ed:onCharLoad()
+	myShader:send("player_range", self.lightLevel)
+end
+function P.ed:postMove()
+	if self.lightLevel>25 then
+		self.lightLevel = self.lightLevel-2
+	end
+	myShader:send("player_range", self.lightLevel)
+end
+function P.ed:onKeyPressedChar(key)
+	if key == 'rshift' or key == 'lshift' or key == 'shift' then
+		if room[player.tileY][player.tileX]~=nil and room[player.tileY][player.tileX]:instanceof(tiles.powerSupply) and
+		not room[player.tileY][player.tileX]:instanceof(tiles.notGate) then
+			room[player.tileY][player.tileX]:destroy()
+			self.lightLevel = self.lightLevel+150
+			myShader:send("player_range", self.lightLevel)
+		end
+		return true
+	end
+	return false
+end
+
+P.olivia = P.character:new{name = "Olivia", description = "The Reveler", smallSprite = 'Graphics/pup.png',
+sprite = 'Graphics/pup.png', bigSprite = 'Graphics/pitbull.png', scaryMode = false, scale = 5}
+function P.olivia:onCharLoad()
+	myShader:send("b_and_w", true)
+	myShader:send("player_range", 500)
+end
+function P.olivia:onKeyPressedChar(key)
+	if key == 'rshift' or key == 'lshift' or key == 'shift' then
+		self.scaryMode = not self.scaryMode
+		self:updateSprite()
+		return true
+	end
+	return false
+end
+function P.olivia:updateSprite()
+	if self.scaryMode then
+		self.sprite = self.bigSprite
+	else
+		self.sprite = self.smallSprite
+	end
+end
+
+P.albert = P.character:new{name = "Albert", description = "The Convict", spotlightRange =100, updateTimeFull = 3, updateTimeCurrent = 5, sprite = 'Graphics/albert.png'}
+function P.albert:onCharLoad()
+	self:setSpotlights()
+end
+function P.albert:onFloorEnter()
+	self:setSpotlights()
+end
+function P.albert:setSpotlights()
+	spotlights = {}
+	local maxSpotX = (roomLength-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10-self.spotlightRange/2
+	for i = 1, 3 do
+		spotlights[i] = {x = maxSpotX-200, y = 400, intensity = 1, range = self.spotlightRange, velX = 1, velY = 0}
+	end
+end
+function P.albert:update(dt)
+	if spotlights==nil then return end
+	for i = 1, 3 do
+		spotlights[i].x = spotlights[i].x+spotlights[i].velX
+		spotlights[i].y = spotlights[i].y+spotlights[i].velY
+		local killDist = math.sqrt(math.pow(spotlights[i].x-player.x,2)+math.pow(spotlights[i].y-player.y,2))
+		if (killDist<self.spotlightRange) then
+			kill()
+		end
+	end
+	self.updateTimeCurrent = self.updateTimeCurrent-dt
+	if self.updateTimeCurrent<0 then
+		self.updateTimeCurrent = self.updateTimeFull
+		self:updateSpotlights()
+	end
+end
+function P.albert:updateSpotlights()
+	maxSpotX = (roomLength-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10-self.spotlightRange
+	maxSpotY = (roomHeight-1)*scale*floor.sprite:getHeight()+wallSprite.height+floor.sprite:getHeight()/2*scale+10-self.spotlightRange
+	local dirOptions = {-1,0,1}
+	for i = 1, 3 do
+		local works = false
+		local dirX = 0
+		local dirY = 0
+		while (not works) do
+			works = true
+			dirX = util.random(3, 'misc')
+			dirY = util.random(3, 'misc')
+			dirX = dirOptions[dirX]
+			dirY = dirOptions[dirY]
+			if dirX<0 and spotlights[i].x<=self.spotlightRange then
+				works = false
+			elseif dirX>0 and spotlights[i].x>=maxSpotX then
+				works = false
+			elseif dirY<0 and spotlights[i].y<=self.spotlightRange then
+				works = false
+			elseif dirY>0 and spotlights[i].y>=maxSpotY then
+				works = false
+			end
+		end
+		spotlights[i].velX = dirX
+		spotlights[i].velY = dirY
+	end
+end
+
+P.xavier = P.character:new{name = "Xavier", description = "The Sock Ninja", sockMode = false,
+sprite = 'Graphics/Characters/Eli.png', sockSprite = 'Graphics/Characters/EliSock.png',
+noSockSprite = 'Graphics/Characters/Eli.png', scale = 1.1*scale}
+function P.xavier:onKeyPressedChar(key)
+	if key == 'rshift' or key == 'lshift' or key == 'shift' then
+		self.sockMode = not self.sockMode
+		if player.attributes.sockStep>=0 then
+			self.sockMode = false
+		end
+		if not self.sockMode then
+			player.attributes.sockStep = -1
+			forcePowerUpdateNext = true
+		end
+	end
+	if self.sockMode then
+		player.attributes.sockStep = 1
+	end
+	self:updateSprite()
+	return false
+end
+function P.xavier:absoluteFinalUpdate()
+	self:updateSprite()
+end
+function P.xavier:updateSprite()
+	if self.sockMode or player.attributes.sockStep>=0 then
+		self.sprite = self.sockSprite
+	else
+		self.sprite = self.noSockSprite
+	end
+end
+function P.xavier:onRoomEnter()
+	self.sockMode = false
+end
+
+P.aurelius = P.character:new{name = "Aurelius", description = "The Golden",
+sprite = 'Graphics/Characters/Aurelius.png', scale = 1.1*scale}
+function P.aurelius:onFloorEnter()
+	for i = 1, tools.numNormalTools do
+		for j = 1, tools[i].numHeld do
+			tools.giveToolsByReference{tools.coin}
+		end
+		tools[i].numHeld = 0
+	end
+end
+
+P.arachne = P.character:new{name = "Arachne", description = "The Spidy",
+  sprite = 'Graphics/Characters/Arachne.png', scale = 1.1*scale}
+function P.arachne:onKeyPressedChar(key)
+	--log(key)
+	if key == 'rshift' or key == 'lshift' or key == 'shift' then
+		if room[player.tileY][player.tileX] == nil or room[player.tileY][player.tileX]:usableOnNothing() then
+			for i = 1, roomHeight do
+				for j = 1, roomLength do
+					if room[i][j] ~= nil and room[i][j].name == tiles.web.name then
+						return false
+					end
+				end
+			end
+			room[player.tileY][player.tileX] = tiles.web:new()
+			return true
+		end
+	end
+	return false
+end
+
+P.witch = P.character:new{name = "Nellie", description = "The Witch", humanLoc = {x = 0, y = 0}, catLoc = {x = 0, y = 0},
+humanMode = true, sprite = 'Graphics/Characters/Arachne.png',
+humanSprite = 'Graphics/Characters/Arachne.png', catSprite = 'Graphics/cat.png', scale = 1.1*scale}
+function P.witch:onSelect()
+	self.humanLoc = {x = player.tileX, y = player.tileY}
+	self.catLoc = {x = player.tileX, y = player.tileY}	
+end
+function P.witch:onRoomEnter()
+	self.humanLoc = {x = player.tileX, y = player.tileY}
+	self.catLoc = {x = player.tileX, y = player.tileY}		
+end
+P.witch.onFloorEnter = P.witch.onRoomEnter
+P.witch.onCharLoad = P.witch.onFloorEnter
+function P.witch:onKeyPressedChar(key)
+	if self.humanMode then
+			self.humanLoc = {x = player.tileX, y = player.tileY}
+	else
+		self.catLoc = {x = player.tileX, y = player.tileY}
+	end
+	if key == 'rshift' or key == 'lshift' or key == 'shift' then
+		self.humanMode = not self.humanMode
+		if self.humanMode then
+			player.tileX = self.humanLoc.x
+			player.tileY = self.humanLoc.y
+		else
+			player.tileX = self.catLoc.x
+			player.tileY = self.catLoc.y
+		end
+		self:updateSprite()
+	end
+	return true
+end
+function P.witch:updateSprite()
+	if self.humanMode then
+		self.sprite = self.humanSprite
+	else
+		self.sprite = self.catSprite
+	end
+end
+
+P.scientist = P.character:new{name = "Marie", description = "The Scientist", 
+  sprite = 'Graphics/Characters/Sciencewoman.png', jekyllSprite = 'Graphics/Characters/Sciencewoman.png', hydeSprite = 'Graphics/Characters/MrHyde.png',
+  powerSprite = 'Graphics/Characters/ShockedSciencewoman.png', powerHydeSprite = 'Graphics/Characters/ShockedMrHyde.png',
+  scale = 1.1*scale, hyde = false, pulsing = false, pulsingTimer = 0, pulsingTime = 2,
+  powered = false, storedTile = nil}
+function P.scientist:onCharLoad()
+	for i = tools.numNormalTools+1, #tools do
+		tools[i].isDisabled = true
+	end
+	tools[tools.opPotion.toolid].isDisabled = false
+	tools[tools.bombPotion.toolid].isDisabled = false
+	tools[tools.electricPotion.toolid].isDisabled = false
+	tools[tools.teleportPotion.toolid].isDisabled = false
+	tools[tools.shittyPotion.toolid].isDisabled = false
+	self.pulsing = false
+	self.hyde = false
+	tools.giveToolsByReference({tools.teleportPotion, tools.electricPotion, tools.bombPotion})
+end
+function P.scientist:electrify()
+	self.pulsing = true
+	self.forcePowerUpdate = true
+end
+function P.scientist:deelectrify()
+	self.pulsing = false
+	self.forcePowerUpdate = false
+	self.powered = false
+	self.sprite = self.hyde and self.hydeSprite or self.jekyllSprite
+end
+function P.scientist:update(dt)
+	if self.pulsing then
+		self.pulsingTimer = self.pulsingTimer + dt
+		if self.pulsingTimer % self.pulsingTime < self.pulsingTime/2 then
+			self.sprite = self.hyde and self.powerHydeSprite or self.powerSprite
+			self.powered = true
+			updateGameState(false, false)
+			checkAllDeath()
+		else
+			self.sprite = self.hyde and self.hydeSprite or self.jekyllSprite
+			self.powered = false
+			updateGameState(false, false)
+			checkAllDeath()
+		end
+	end
+end
+function P.scientist:onPreUpdatePower()
+	if self.powered then
+		if room[player.tileY][player.tileX] ~= nil then
+			self.storedTile = room[player.tileY][player.tileX]
+			self.storedTile.powered = true
+		else
+			self.storedTile = nil
+		end
+		room[player.tileY][player.tileX] = tiles.powerSupply:new()
+	end
+end
+function P.scientist:onPostUpdatePower()
+	if self.powered then
+		room[player.tileY][player.tileX] = self.storedTile
+	end
+end
+function P.scientist:transform()
+	self.hyde = true
+	self.sprite = (self.pulsing and self.powered) and self.powerHydeSprite or self.hydeSprite
+	player.attributes.flying = true
+	self.forcePowerUpdate = true
+
+end
+function P.scientist:transformBack()
+	self.hyde = false
+	self.sprite = (self.pulsing and self.powered) and self.powerSprite or self.jekyllSprite
+	player.attributes.flying = false
+	self.forcePowerUpdate = false
+end
+function P.scientist:preTileEnter(tile)
+	if self.hyde then
+		tile:destroy()
+	end
+end
+function P.scientist:postMove()
+	if self.hyde then
+		for i = 1, #animals do
+			if animals[i].tileY == player.tileY and animals[i].tileX == player.tileX then
+				animals[i]:kill()
+			end
+		end
+		for i = 1, #pushables do
+			if pushables[i].tileY == player.tileY and pushables[i].tileX == player.tileX then
+				pushables[i]:destroy()
+			end
+		end
+	end
+end
+function P.scientist:onRoomEnter()
+	if self.hyde then
+		self:transformBack()
+	end
+	if self.pulsing then
+		self:deelectrify()
+	end
+end
+function P.scientist:bypassObstructsMovement(tile)
+	return self.hyde
+end
+
+P[#P+1] = P.herman
+P[#P+1] = P.francisco
+P[#P+1] = P.aurelius
+
+P[#P+1] = P.rammy
+P[#P+1] = P.frederick
+P[#P+1] = P.lenny
+
+P[#P+1] = P.xavier
+P[#P+1] = P.giovanni
+P[#P+1] = P.felix
+
+P[#P+1] = P.battery
+
+P[#P+1] = P.erik
+P[#P+1] = P.fish
+
+
+
+P[#P+1] = P.paris
+P[#P+1] = P.ed
+P[#P+1] = P.olivia
+P[#P+1] = P.albert
+
+P[#P+1] = P.most
+
+P[#P+1] = P.gabe
+
+P[#P+1] = P.rick
+
+
+P[#P+1] = P.chell
+
+
+P[#P+1] = P.tim
+P[#P+1] = P.orson
+
+P[#P+1] = P.monk
+P[#P+1] = P.harriet
+P[#P+1] = P.crate
+
+P[#P+1] = P.arachne
+P[#P+1] = P.witch
+
+P[#P+1] = P.scientist
+
 
 P[#P+1] = P.random
 P[#P+1] = P.random2

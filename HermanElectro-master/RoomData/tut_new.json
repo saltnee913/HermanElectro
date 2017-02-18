@@ -33,9 +33,9 @@
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,[26,"This floor is meant to represent a floor in the actual game.\n\nEach floor is randomly generated from a pool of rooms."],0,0,0,[26,"The map often forms a labyrinth shape."],0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,[26,"This floor is meant to represent a floor in the actual game.\n\nEach floor is randomly generated from a pool of rooms."],0,0,0,[26,"The map often forms a labyrinth shape.\nThere is minimap in the top right of the screen."],0,0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,19,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,153,0,0,0,0,19,0,0,0,0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0,[26,"When you die in the actual game, you have to start your\nrun-through from the beginning.\n\nThis permadeath mode is disabled for the tutorial."],0,0,0,[26,"You should always be able to beat at least one available\nroom with the tools you are given."],0,0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -118,8 +118,8 @@
         [0,0,0,5.1,0,0,31,31,31,31,31,31,31,31,31,0,31,0,0,0,0,0,0,0]
         [0,0,0,5.1,0.1,0,31,19,0,0,12,12,12,12,12,12,31,0,0,0,0,0,0,0]
         [0,0,0,5.1,0,0,31,31,31,31,[31,5.1],31,31,31,31,31,31,0,0,0,0,0,0,0]
-        [0,0,0,8,5,5,5,5,5,5,6.2,0,00,0,0,0,0,0,0,0,0,0,0]
-        [0,0,0,0,0,0,0,0,0,0,[26,"Walls can have wires"],0,0,0,0,0,0,0,0,0,0,0]
+        [0,0,0,8,5,5,5,5,5,5,6.2,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        [0,0,0,0,0,0,0,0,0,0,[26,"Walls can have wires"],0,0,0,0,0,0,0,0,0,0,0,0,0]
       ],
     },
     "tut_doors":
@@ -316,9 +316,9 @@
         [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
         [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
         [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-        [0,0,0,0,0,0,0,0,0,[26,"Donate excess tools to the donation machine for\nfuture benefits. The number indicates how many\ndonations you have made this game.\n\nDonate by selecting a tool and stepping on the machine."],0,53,0,0,0,0,0,0,0,0,0,0,0,0]
         [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-        [0,0,0,0,0,0,0,0,0,[26,"The tunnel takes you to the next floor.\n\nThe number indicates how many tools you need\nto donate to progress. If you have no excess\ntools, you can progress for free.\nDonate by selecting a tool and stepping on the tile."],0,30,0,0,0,0,0,0,0,0,0,0,0,0]
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        [0,0,0,0,0,0,0,0,0,[26,"The tunnel takes you to the next floor.\nYou can always go back up once you go down."],0,30,0,0,0,0,0,0,0,0,0,0,0,0]
         [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
         [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
         [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]

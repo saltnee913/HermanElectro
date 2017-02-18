@@ -3,7 +3,7 @@
 	{
 		"rooms": 
 		{
-			"filePath": "RoomData/accessrooms.json",
+			"filePath": "RoomData/endpuzzles.json",
 			"requirements":
 			{
 				"not":
@@ -22,18 +22,32 @@
 		},
 		"shops":
 		{
-			"filePath": "RoomData/shops.json",
+			"filePath": "RoomData/endpuzzles.json",
 			"requirements":
 			{
-
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
+				},
 			}
 		},
 		"treasureRooms": 
 		{
-			"filePath": "RoomData/accessrooms.json",
+			"filePath": "RoomData/endpuzzles.json",
 			"requirements":
 			{
-				
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
+				},				
 			}
 		},
 		"finalRooms": 
@@ -41,15 +55,59 @@
 			"filePath": "RoomData/endgamerooms.json",
 			"requirements":
 			{
-				
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
+				},				
 			}
 		},
 		"donationRooms":
 		{
-			"filePath": "RoomData/donationrooms.json",
+			"filePath": "RoomData/endpuzzles.json",
 			"requirements":
 			{
-				
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
+				},				
+			}
+		},
+		"dungeons":
+		{
+			"filePath": "RoomData/dungeons.json",
+			"requirements":
+			{
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
+				},				
+			}
+		},
+		"secretRooms":
+		{
+			"filePath": "RoomData/secretrooms.json",
+			"requirements":
+			{
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
+				},				
 			}
 		}
 	},
@@ -57,13 +115,13 @@
 	{
 		"requireUnlocks": true,
 		"height": 10,
-		"numRooms": 3,
-		"generateFunction": "generateMapFinal",
+		"numRooms": 20,
+		"generateFunction": "generateSixthFloor",
 		"startRoomID": "1",
 		//numRoomsToCheck is the amount of rooms to try when deciding a room's roomid, decreasing this increases rng
 		"numRoomsToCheck": 3,
 		"finalFloor": true,
 		"tint": [0,0,0],
-		"playerRange": 100
+		"playerRange": 300
 	}
 }

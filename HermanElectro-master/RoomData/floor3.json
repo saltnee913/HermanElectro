@@ -33,7 +33,14 @@
 			"filePath": "RoomData/treasurerooms.json",
 			"requirements":
 			{
-				
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
+				},				
 			}
 		},
 		"finalRooms": 
@@ -41,7 +48,14 @@
 			"filePath": "RoomData/finalrooms.json",
 			"requirements":
 			{
-				
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
+				},				
 			}
 		},
 		"shops":
@@ -49,7 +63,14 @@
 			"filePath": "RoomData/shops.json",
 			"requirements":
 			{
-
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
+				},
 			}
 		},
 		"donationRooms":
@@ -57,20 +78,58 @@
 			"filePath": "RoomData/donationrooms.json",
 			"requirements":
 			{
-				
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
+				},				
+			}
+		}
+		,
+		"dungeons":
+		{
+			"filePath": "RoomData/dungeons.json",
+			"requirements":
+			{
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
+				},				
+			}
+		},
+		"secretRooms":
+		{
+			"filePath": "RoomData/secretrooms.json",
+			"requirements":
+			{
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
+				},				
 			}
 		}
 	},
 	"data":
 	{
 		"requireUnlocks": true,
-		"height": 15,
-		"numRooms": 8,
+		"height": 10,
+		"numRooms": 9,
 		"generateFunction": "generateMapWeighted",
 		"startRoomID": "1",
 		//numRoomsToCheck is the amount of rooms to try when deciding a room's roomid, decreasing this increases rng
 		"numRoomsToCheck": 5,
 		"tint": [0,0,0],
-		"playerRange": 150
+		"playerRange": 300
 	}
 }

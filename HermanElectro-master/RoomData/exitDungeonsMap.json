@@ -1,0 +1,92 @@
+{
+	"loadRooms":
+	{
+		"startRooms": 
+		{
+			"filePath": "RoomData/edStart.json",
+			"requirements":
+			{
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
+				},				
+			}
+		},
+		"puzzleRooms": 
+		{
+			"filePath": "RoomData/edPuzzle.json",
+			"requirements":
+			{
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
+				},				
+			}
+		},
+		"shops":
+		{
+			"filePath": "RoomData/shops.json",
+			"requirements":
+			{
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
+				},
+			}
+		},
+		"finalRooms": 
+		{
+			"filePath": "RoomData/edFinal.json",
+			"requirements":
+			{
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
+				},				
+			}
+		},
+		"donationRooms":
+		{
+			"filePath": "RoomData/donationrooms.json",
+			"requirements":
+			{
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
+				},				
+			}
+		},
+	},
+	"data":
+	{
+		"requireUnlocks": true,
+		"height": 4,
+		"numRooms": 3,
+		"generateFunction": "generateEndDungeon",
+		"startRoomID": "1",
+		//numRoomsToCheck is the amount of rooms to try when deciding a room's roomid, decreasing this increases rng
+		"numRoomsToCheck": 5,
+		"playerRange":300,
+		"tint": [0,0,0]
+	}
+}

@@ -7,22 +7,43 @@ tools = require('scripts.tools')
 local P = {}
 tiles = P
 
-P.tile = Object:new{formerPowered = nil, updatePowerOnEnter = false, text = "", updatePowerOnLeave = false, overlayable = false, overlaying = false, gone = false, lit = false, destroyed = false,
-  blocksProjectiles = false, isVisible = true, rotation = 0, powered = false, blocksMovement = false, 
+P.tile = Object:new{yOffset = 0, canElevate = true, enterCheckWin = false, untoolable = false, blueHighlighted = false, attractsAnimals = false, scaresAnimals = false, formerPowered = nil, updatePowerOnEnter = false, text = "", updatePowerOnLeave = false, overlayable = false, overlaying = false, gone = false, lit = false, destroyed = false,
+  blocksProjectiles = false, isVisible = true, rotation = 0, powered = false, blocksMovement = false, animationTimer = 0,
   blocksAnimalMovement = false, poweredNeighbors = {0,0,0,0}, blocksVision = false, dirSend = {1,1,1,1}, 
-  dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile", emitsLight = false, litWhenPowered = true, intensity = 0.5, range = 25,
-  sprite = love.graphics.newImage('Graphics/cavesfloor.png'), 
-  poweredSprite = love.graphics.newImage('Graphics/cavesfloor.png'),
-  wireHackOn = love.graphics.newImage('Graphics3D/wirehackon.png'),
-  wireHackOff = love.graphics.newImage('Graphics3D/wirehackoff.png')}
+  dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile", emitsLight = false, litWhenPowered = false, intensity = 0.5, range = 25,
+  sprite = 'Graphics/cavesfloor.png', 
+  wireHackOn = 'Graphics3D/wirehackon.png',
+  wireHackOff = 'Graphics3D/wirehackoff.png'}
+function P.tile:updateAnimation(dt)
+	if self.animation ~= nil then
+		self.animationTimer = self.animationTimer + dt
+		if self.animationTimer > self.animationLength then self.animationTimer = self.animationTimer - self.animationLength end
+		self.sprite = self.animation[math.ceil(#self.animation*self.animationTimer/self.animationLength)]
+	end
+end
+function P.tile:lightTest(x,y)
+	return false
+end
 function P.tile:onEnter(player) 
 	--self.name = "fuckyou"
+end
+function P.tile:onEnterPushable(pushable)
+	self:onEnter(pushable)
+	if self.overlay~=nil then
+		self.overlay:onEnterPushable(pushable)
+	end
 end
 function P.tile:onLeave(player) 
 	--self.name = "fuckme"
 end
+function P.tile:onLeavePushable(pushable)
+	self:onLeave(pushable)
+end
 function P.tile:onStay(player) 
 	--player.x = player.x+1
+end
+function P.tile:onStayPushable(pushable)
+	self:onStay(pushable)
 end
 function P.tile:onStayAnimal(animal)
 end
@@ -45,7 +66,7 @@ end
 function P.tile:lockInState(state)
 end
 function P.tile:getYOffset()
-	return 0
+	return self.yOffset
 end
 function P.tile:updateTile(dir)
 	if self.poweredNeighbors[1]==1 or self.poweredNeighbors[2]==1 or self.poweredNeighbors[3]==1 or self.poweredNeighbors[4]==1 then
@@ -58,8 +79,23 @@ function P.tile:updateSprite()
 end
 function P.tile:postPowerUpdate(i,j)
 end
-function P.tile:blocksMovementAnimal(animal)
-	return not animal.flying and (self.blocksMovement or self.blocksAnimalMovement)
+--guide to elevation:
+--if can block movement, make blocksMovement true
+--if can only block animal movement, make blocksAnimalMovement true
+--obstructsMovement() is for ACTUALLY blocking player movement (in new elevation system)
+--obstructsMovementAnimal() is for ACTUALLY blocking animal movement
+--map has blocksMovementAnimal() function as well
+--pretty confusing, even I am a bit confused
+function P.tile:obstructsMovementAnimal(animal)
+	if animal.flying then
+		return false
+	else
+		if math.abs(animal.elevation-self:getHeight())<=3 then
+			return false
+		else
+			return true
+		end
+	end
 end
 function P.tile:getCorrectedOffset(dir)
 	dir = dir + self.rotation
@@ -101,7 +137,7 @@ function P.tile:allowVision()
 	self.blocksVision = false
 end
 function P.tile:usableOnNothing()
-	return self.destroyed
+	return self.destroyed and not (tool~=nil and tool~=0 and tools[tool]:nothingIsSomething())
 end
 function P.tile:updateToOverlay(dir)
 	if self.overlay == nil then
@@ -112,10 +148,12 @@ function P.tile:updateToOverlay(dir)
 	if dir ~= -1 then
 		self.overlay:updateTile(dir)
 	end
-	self.canBePowered = self.overlay.canBePowered
-	self.dirSend = self.overlay.dirSend
-	self.dirAccept = self.overlay.dirAccept
-	self.powered = self.overlay.powered
+	if self.overlay:instanceof(P.wire) or self.overlay:instanceof(P.andGate) then
+		self.canBePowered = self.overlay.canBePowered
+		self.dirSend = self.overlay.dirSend
+		self.dirAccept = self.overlay.dirAccept
+		self.powered = self.overlay.powered
+	end
 end
 function P.tile:setOverlay(overlay)
 	self.overlay = overlay
@@ -129,13 +167,34 @@ function P.tile:absoluteFinalUpdate()
 end
 function P.tile:realtimeUpdate()
 end
+function P.tile:obstructsVision()
+	if not self.blocksVision then return false
+	else return self:getHeight()-3>player.elevation end
+end
+function P.tile:obstructsMovement()
+	if math.abs(player.elevation-self:getHeight())<=3 then
+		return false
+	else
+		return true
+	end
+end
+function P.tile:getHeight()
+	if self.destroyed then
+		return 0
+	else
+		return -1*self.yOffset
+	end
+end
+function P.tile.flipDirection(dir,isVertical)
+	return 0
+end
 
 P.invisibleTile = P.tile:new{isVisible = false, name = "invisibleTile"}
 local bounds = {}
 
 P.boundedTile = P.tile:new{boundary = boundaries.Boundary}
 
-P.conductiveTile = P.tile:new{charged = false, powered = false, dirSend = {1,1,1,1}, dirAccept = {1,1,1,1}, canBePowered = true, name = "conductiveTile", sprite = love.graphics.newImage('Graphics/lightoff.png'), poweredSprite = love.graphics.newImage('Graphics/lighton.png')}
+P.conductiveTile = P.tile:new{charged = false, powered = false, dirSend = {1,1,1,1}, dirAccept = {1,1,1,1}, canBePowered = true, name = "conductiveTile", sprite = 'Graphics/lightoff.png', poweredSprite = 'Graphics/lighton.png'}
 function P.conductiveTile:updateTile(dir)
 	if self.charged then
 		self.powered = true
@@ -153,10 +212,10 @@ function P.conductiveTile:destroy()
 end
 
 P.powerSupply = P.tile:new{powered = false, dirSend = {1,1,1,1}, dirAccept = {1,1,1,1}, canBePowered = true, name = "powerSupply",
-  intensity = 0.6, range = 30,
-  sprite = love.graphics.newImage('GraphicsColor/powersupply2.png'), 
-  destroyedSprite = love.graphics.newImage('GraphicsColor/powersupplydead2.png'), 
-  poweredSprite = love.graphics.newImage('GraphicsColor/powersupply2.png')}
+  intensity = 0.0, range = 30,
+  sprite = 'Graphics/Tiles/powerSupply.png', 
+  destroyedSprite = 'Graphics/Tiles/powerSupplyDead.png', 
+  poweredSprite = 'Graphics/Tiles/powerSupply.png'}
 function P.powerSupply:updateTile(dir)
 end
 function P.powerSupply:destroy()
@@ -168,7 +227,10 @@ function P.powerSupply:destroy()
 	self.dirSend = {0,0,0,0}
 end
 
-P.wire = P.conductiveTile:new{overlaying = true, powered = false, dirSend = {1,1,1,1}, dirAccept = {1,1,1,1}, destroyedSprite = love.graphics.newImage('Graphics/wirescut.png'), canBePowered = true, name = "wire", sprite = love.graphics.newImage('Graphics/wires.png'), poweredSprite = love.graphics.newImage('Graphics/poweredwires.png')}
+P.wire = P.conductiveTile:new{overlaying = true, powered = false, dirSend = {1,1,1,1}, dirAccept = {1,1,1,1}, canBePowered = true, name = "wire",
+destroyedSprite = 'Graphics/Tiles/wireCut.png', 
+sprite = 'Graphics/Tiles/wire.png',
+poweredSprite = 'Graphics/Tiles/wirePowered.png'}
 function P.wire:destroy()
 	self.sprite = self.destroyedSprite
 	self.canBePowered = false
@@ -177,10 +239,10 @@ function P.wire:destroy()
 	dirSend = {0,0,0,0}
 end
 
-P.maskedWire = P.wire:new{name = 'maskedWire', sprite = love.graphics.newImage('Graphics/maskedWire.png'), poweredSprite = love.graphics.newImage('Graphics/maskedWire.png')}
+P.maskedWire = P.wire:new{name = 'maskedWire', sprite = 'Graphics/maskedWire.png', poweredSprite = 'Graphics/maskedWire.png'}
 
 
-P.crossWire = P.wire:new{dirSend = {0,0,0,0}, dirAccept = {1,1,1,1}, name = "crossWire", sprite = love.graphics.newImage('Graphics/crosswires.png'), poweredSprite = love.graphics.newImage('Graphics/crosswires.png')}
+P.crossWire = P.wire:new{dirSend = {0,0,0,0}, dirAccept = {1,1,1,1}, name = "crossWire", sprite = 'Graphics/crosswires.png', poweredSprite = 'Graphics/crosswires.png'}
 function P.crossWire:updateTile(dir)
 	self.powered = false
 	self.dirSend = {0,0,0,0}
@@ -196,31 +258,68 @@ function P.crossWire:updateTile(dir)
 	end
 end
 
-P.horizontalWire = P.wire:new{powered = false, dirSend = {0,1,0,1}, dirAccept = {0,1,0,1}, canBePowered = true, name = "horizontalWire", sprite = love.graphics.newImage('Graphics/horizontalWireUnpowered.png'), destroyedSprite = love.graphics.newImage('Graphics/horizontalWireCut.png'), poweredSprite = love.graphics.newImage('Graphics/horizontalWirePowered.png')}
-P.verticalWire = P.wire:new{powered = false, dirSend = {1,0,1,0}, dirAccept = {1,0,1,0}, canBePowered = true, name = "verticalWire", sprite = love.graphics.newImage('Graphics/verticalWireUnpowered.png'), destroyedSprite = love.graphics.newImage('Graphics/verticalWireCut.png'), poweredSprite = love.graphics.newImage('Graphics/verticalWirePowered.png')}
-P.cornerWire = P.wire:new{dirSend = {0,1,1,0}, dirAccept = {0,1,1,0}, name = "cornerWire", sprite = love.graphics.newImage('Graphics/cornerWireUnpowered.png'), poweredSprite = love.graphics.newImage('Graphics/cornerWirePowered.png')}
-P.tWire = P.wire:new{dirSend = {0,1,1,1}, dirAccept = {0,1,1,1}, name = "tWire", sprite = love.graphics.newImage('Graphics/tWireUnpowered.png'), poweredSprite = love.graphics.newImage('Graphics/tWirePowered.png')}
+P.horizontalWire = P.wire:new{powered = false, dirSend = {0,1,0,1}, dirAccept = {0,1,0,1}, canBePowered = true, name = "horizontalWire",
+sprite = 'Graphics/Tiles/horizontalWireUnpowered.png',
+destroyedSprite = 'Graphics/Tiles/horizontalWireCut.png',
+poweredSprite = 'Graphics/Tiles/horizontalWirePowered.png'}
+P.verticalWire = P.wire:new{powered = false, dirSend = {1,0,1,0}, dirAccept = {1,0,1,0}, canBePowered = true, name = "verticalWire", sprite = 'Graphics/verticalWireUnpowered.png', destroyedSprite = 'Graphics/verticalWireCut.png', poweredSprite = 'Graphics/verticalWirePowered.png'}
+P.cornerWire = P.wire:new{dirSend = {0,1,1,0}, dirAccept = {0,1,1,0}, name = "cornerWire",
+sprite = 'Graphics/Tiles/cornerWireUnpowered.png',
+poweredSprite = 'Graphics/Tiles/cornerWirePowered.png',
+destroyedSprite = 'Graphics/Tiles/cornerWireCut.png'}
+function P.cornerWire.flipDirection(dir,isVertical)
+	if dir == 1 or dir == 3 then
+		if isVertical then return 1 else return -1 end
+	else
+		if isVertical then return (dir == 0 and 3 or -1) else return 1 end
+	end
+end
 
-P.unbreakableWire = P.wire:new{name = "unbreakableWire", litWhenPowered = false, sprite = love.graphics.newImage('Graphics/unbreakablewire.png'), poweredSprite = love.graphics.newImage('Graphics/unbreakablewire.png'), wireHackOff = love.graphics.newImage('Graphics3D/unbreakablewirehack.png'), wireHackOn = love.graphics.newImage('Graphics3D/unbreakablewirehack.png')}
-P.unbreakableHorizontalWire = P.unbreakableWire:new{name = "unbreakableHorizontalWire", dirSend = {0,1,0,1}, dirAccept = {0,1,0,1}, sprite = love.graphics.newImage('Graphics/unbreakablehorizontalwire.png'), poweredSprite = love.graphics.newImage('Graphics/unbreakablehorizontalwire.png')}
-P.unbreakableCornerWire = P.unbreakableWire:new{name = "unbreakableCornerWire", dirSend = {0,1,1,0}, dirAccept = {0,1,1,0}, sprite = love.graphics.newImage('Graphics/unbreakablecornerwire.png'), poweredSprite = love.graphics.newImage('Graphics/unbreakablecornerwire.png')}
-P.unbreakableTWire = P.unbreakableWire:new{name = "unbreakableTWire", dirSend = {0,1,1,1}, dirAccept = {0,1,1,1}, sprite = love.graphics.newImage('Graphics/unbreakabletwire.png'), poweredSprite = love.graphics.newImage('Graphics/unbreakabletwire.png')}
-P.unbreakableCrossWire = P.unbreakableWire:new{dirSend = {0,0,0,0}, dirAccept = {1,1,1,1}, name = "unbreakableCrossWire", sprite = love.graphics.newImage('Graphics/unbreakablecrosswires.png'), poweredSprite = love.graphics.newImage('Graphics/unbreakablecrosswires.png')}
+P.tWire = P.wire:new{dirSend = {0,1,1,1}, dirAccept = {0,1,1,1}, name = "tWire",
+sprite = 'Graphics/Tiles/tWireUnpowered.png',
+poweredSprite = 'Graphics/Tiles/tWirePowered.png',
+destroyedSprite = 'Graphics/Tiles/tWireCut.png'}
+function P.tWire.flipDirection(dir, isVertical)
+	if isVertical then
+		if dir == 0 then 
+			return 2
+		elseif dir == 2 then
+			return -2 
+		end
+	else
+		if dir == 1 then
+			return 2
+		elseif dir == 3 then
+			return -2
+		end
+	end
+	return 0
+end
+
+
+P.unbreakableWire = P.wire:new{name = "unbreakableWire", litWhenPowered = false, sprite = 'Graphics/unbreakablewire.png', poweredSprite = 'Graphics/unbreakablewire.png', wireHackOff = 'Graphics3D/unbreakablewirehack.png', wireHackOn = 'Graphics3D/unbreakablewirehack.png'}
+P.unbreakableHorizontalWire = P.unbreakableWire:new{name = "unbreakableHorizontalWire", dirSend = {0,1,0,1}, dirAccept = {0,1,0,1}, sprite = 'Graphics/unbreakablehorizontalwire.png', poweredSprite = 'Graphics/unbreakablehorizontalwire.png'}
+P.unbreakableCornerWire = P.unbreakableWire:new{name = "unbreakableCornerWire", dirSend = {0,1,1,0}, dirAccept = {0,1,1,0}, sprite = 'Graphics/unbreakablecornerwire.png', poweredSprite = 'Graphics/unbreakablecornerwire.png'}
+P.unbreakableCornerWire.flipDirection = P.cornerWire.flipDirection
+
+P.unbreakableTWire = P.unbreakableWire:new{name = "unbreakableTWire", dirSend = {0,1,1,1}, dirAccept = {0,1,1,1}, sprite = 'Graphics/unbreakabletwire.png', poweredSprite = 'Graphics/unbreakabletwire.png'}
+P.unbreakableTWire.flipDirection = P.tWire.flipDirection
+P.unbreakableCrossWire = P.unbreakableWire:new{dirSend = {0,0,0,0}, dirAccept = {1,1,1,1}, name = "unbreakableCrossWire", sprite = 'Graphics/unbreakablecrosswires.png', poweredSprite = 'Graphics/unbreakablecrosswires.png'}
 P.unbreakableCrossWire.updateTile = P.crossWire.updateTile
-P.unbreakablePowerSupply = P.powerSupply:new{name = "unbreakablePowerSupply", sprite = love.graphics.newImage('Graphics/unbreakablepowersupply.png'), poweredSprite = love.graphics.newImage('Graphics/unbreakablepowersupply.png')}
+P.unbreakablePowerSupply = P.powerSupply:new{name = "unbreakablePowerSupply", sprite = 'Graphics/unbreakablepowersupply.png', poweredSprite = 'Graphics/unbreakablepowersupply.png'}
 
-P.spikes = P.tile:new{powered = false, dirSend = {0,0,0,0}, dirAccept = {0,0,0,0}, canBePowered = true, name = "spikes", sprite = love.graphics.newImage('GraphicsTony/Spikes2.png')}
+P.spikes = P.tile:new{powered = false, dirSend = {0,0,0,0}, dirAccept = {0,0,0,0}, canBePowered = true, name = "spikes", sprite = 'GraphicsTony/Spikes2.png'}
 function P.spikes:willKillPlayer()
 	return true
 end
 P.spikes.willKillAnimal = P.spikes.willKillPlayer
 
-P.conductiveSpikes = P.spikes:new{name = "conductiveSpikes", sprite = love.graphics.newImage('Graphics/conductivespikes.png'), poweredSprite = love.graphics.newImage('Graphics/conductivespikes.png'), canBePowered = true, dirSend = {1,1,1,1}, dirAccept = {1,1,1,1}}
+P.conductiveSpikes = P.spikes:new{name = "conductiveSpikes", sprite = 'Graphics/conductivespikes.png', poweredSprite = 'Graphics/conductivespikes.png', canBePowered = true, dirSend = {1,1,1,1}, dirAccept = {1,1,1,1}}
 
-P.button = P.tile:new{bricked = false, updatePowerOnEnter = true, justPressed = false, down = false, powered = false, dirSend = {1,1,1,1}, 
-  dirAccept = {0,0,0,0}, canBePowered = true, name = "button", pressed = false, sprite = love.graphics.newImage('GraphicsEli/buttonOff2.png'), 
-  poweredSprite = love.graphics.newImage('GraphicsEli/buttonOff2.png'), downSprite = love.graphics.newImage('GraphicsEli/buttonOn2.png'), 
-  brickedSprite = love.graphics.newImage('GraphicsEli/buttonBricked2.png'), upSprite = love.graphics.newImage('GraphicsEli/buttonOff2.png'), timesPressed = 0}
+P.button = P.tile:new{bricked = false, meated = false, updatePowerOnEnter = true, justPressed = false, down = false, powered = false, dirSend = {1,1,1,1}, 
+  dirAccept = {0,0,0,0}, canBePowered = true, name = "button", pressed = false, sprite = 'GraphicsColor/buttonoff.png', 
+  poweredSprite = 'GraphicsEli/buttonOff2.png', downSprite = 'Graphics/buttonPressed.png', 
+  brickedSprite = 'GraphicsEli/buttonBricked2.png', upSprite = 'Graphics/button.png'}
 function P.button:resetState()
 	self.justPressed = false
 end
@@ -249,11 +348,6 @@ function P.button:onEnter(player)
 			self.dirAccept = {0,0,0,0}
 		else
 			self.dirAccept = {1,1,1,1}
-		end
-		self.timesPressed = self.timesPressed + 1
-		if self.timesPressed > 10 then
-			unlocks = require('scripts.unlocks')
-			unlocks.unlockUnlockableRef(unlocks.orsonUnlock)
 		end
 		--updateGameState()
 		self:updateSprite()
@@ -301,10 +395,10 @@ function P.button:updateTile(dir)
 end
 
 P.stickyButton = P.button:new{name = "stickyButton", 
-  downSprite = love.graphics.newImage('GraphicsEli/buttonOn.png'),
-  sprite = love.graphics.newImage('GraphicsEli/buttonOff.png'), 
-  upSprite = love.graphics.newImage('GraphicsEli/buttonOff.png'), 
-  brickedSprite = love.graphics.newImage('GraphicsEli/buttonBricked.png')}
+  downSprite = 'GraphicsEli/buttonOn.png',
+  sprite = 'GraphicsEli/buttonOff.png', 
+  upSprite = 'GraphicsEli/buttonOff.png', 
+  brickedSprite = 'GraphicsEli/buttonBricked.png'}
 function P.stickyButton:onEnter(player)
 	self.justPressed = true
 	self.down = true
@@ -325,10 +419,10 @@ P.stickyButton.onEnterAnimal = P.stickyButton.onEnter
 P.stickyButton.onLeaveAnimal = P.stickyButton.onLeave
 
 P.stayButton = P.button:new{name = "stayButton", updatePowerOnLeave = true, 
-  sprite = love.graphics.newImage('GraphicsEli/buttonOff3.png'), 
-  upSprite = love.graphics.newImage('GraphicsEli/buttonOff3.png'), 
-  downSprite = love.graphics.newImage('GraphicsEli/buttonOn3.png'), 
-  brickedSprite = love.graphics.newImage('GraphicsEli/buttonBricked3.png')}
+  sprite = 'GraphicsEli/buttonOff3.png', 
+  upSprite = 'GraphicsEli/buttonOff3.png', 
+  downSprite = 'GraphicsEli/buttonOn3.png', 
+  brickedSprite = 'GraphicsEli/buttonBricked3.png'}
 function P.stayButton:onEnter(player)
 	self.justPressed = true
 	if self.bricked then return end
@@ -351,6 +445,7 @@ function P.stayButton:postPowerUpdate(i,j)
 	if player.character.name == "Orson" and player.character.shifted then return end
 	self.down = false
 	self.dirAccept = {0,0,0,0}
+	self.justPressed = false
 	--updateGameState()
 	self:updateSprite()
 	for k = 1, #animals do
@@ -392,8 +487,10 @@ P.stayButton.onEnterAnimal = P.stayButton.onEnter
 P.stayButton.onLeaveAnimal = P.stayButton.onLeave
 --P.stayButton.onLeave = P.stayButton.onEnter
 
-P.electricFloor = P.conductiveTile:new{name = "electricfloor", sprite = love.graphics.newImage('GraphicsBrush/electricfloor.png'),--[[sprite = love.graphics.newImage('Graphics/electricfloor.png'),]] destroyedSprite = love.graphics.newImage('Graphics/electricfloorcut.png'), --[[poweredSprite = love.graphics.newImage('Graphics/electricfloorpowered.png')]]
-poweredSprite = love.graphics.newImage('GraphicsBrush/electricfloorpowered.png')}
+P.electricFloor = P.conductiveTile:new{name = "electricfloor",
+sprite = 'Graphics/Tiles/electricFloor.png',
+destroyedSprite = 'Graphics/Tiles/electricFloorCut.png',
+poweredSprite = 'Graphics/Tiles/electricFloorPowered.png'}
 function P.electricFloor:destroy()
 	self.sprite = self.destroyedSprite
 	self.canBePowered = false
@@ -406,8 +503,8 @@ function P.electricFloor:willKillPlayer()
 end
 P.electricFloor.willKillAnimal = P.electricFloor.willKillPlayer
 
-P.poweredFloor = P.conductiveTile:new{name = "poweredFloor", laddered = false, destroyedSprite = love.graphics.newImage('Graphics/trapdoorwithladder.png'), destroyedPoweredSprite = love.graphics.newImage('Graphics/trapdoorclosedwithladder.png'), --[[sprite = love.graphics.newImage('Graphics/trapdoor.png'), poweredSprite = love.graphics.newImage('Graphics/trapdoorclosed.png')]]
-sprite = love.graphics.newImage('GraphicsBrush/trapdoor.png'), poweredSprite = love.graphics.newImage('GraphicsBrush/trapdoorclosed.png')}
+P.poweredFloor = P.conductiveTile:new{name = "poweredFloor", laddered = false, destroyedSprite = 'Graphics/trapdoorwithladder.png', destroyedPoweredSprite = 'Graphics/trapdoorclosedwithladder.png', --[[sprite = 'Graphics/trapdoor.png', poweredSprite = 'Graphics/trapdoorclosed.png']]
+sprite = 'GraphicsBrush/trapdoor.png', poweredSprite = 'GraphicsBrush/trapdoorclosed.png'}
 function P.poweredFloor:ladder()
 	self.sprite = self.destroyedSprite
 	self.poweredSprite = self.destroyedPoweredSprite
@@ -422,9 +519,10 @@ end
 P.poweredFloor.willKillAnimal = P.poweredFloor.willKillPlayer
 P.poweredFloor.willDestroyPushable = P.poweredFloor.willKillPlayer
 
-P.wall = P.tile:new{overlayable = true, electrified = false, onFire = false, blocksProjectiles = true, blocksMovement = true, canBePowered = false, name = "wall", blocksVision = true, electrifiedSprite = love.graphics.newImage('Graphics/woodwallelectrified.png'), destroyedSprite = love.graphics.newImage('Graphics/woodwallbroken.png'), sprite = love.graphics.newImage('GraphicsBrush/woodwall2.png'), poweredSprite = love.graphics.newImage('Graphics3D/woodwall.png'), electrifiedPoweredSprite = love.graphics.newImage('Graphics/woodwallpowered.png'), sawable = true}
+P.wall = P.tile:new{overlayable = true, hidesDungeon = false, yOffset = -6, electrified = false, onFire = false, blocksProjectiles = true, blocksMovement = true, canBePowered = false, name = "wall", blocksVision = true,
+destroyedSprite = 'Graphics/Tiles/woodWallSawed.png', sprite = 'Graphics/Tiles/woodWall.png', sawable = true}
 function P.wall:onEnter(player)	
-	if not self.destroyed then
+	if math.abs(player.elevation-self:getHeight())>3 then
 		--player.x = player.prevx
 		--player.y = player.prevy
 		player.tileX = player.prevTileX
@@ -433,11 +531,29 @@ function P.wall:onEnter(player)
 		--player.prevy = player.y
 		player.prevTileX = player.tileX
 		player.prevTileY = player.tileY
+	else
+		player.elevation = self:getHeight()
 	end
 end
 P.wall.onStay = P.wall.onEnter
+function P.wall:onEnterPushable(pushable)
+	--[[if not self.destroyed then
+		pushable.tileX = pushable.prevTileX
+		pushable.tileY = pushable.prevTileY
+	end]]
+end
+function P.wall:obstructsMovement()
+	if math.abs(player.elevation-self:getHeight())<=3 then
+		return false
+	elseif player.character.name==characters.rammy.name and self.name == tiles.wall.name then
+		return false
+	end
+	return true
+end
+P.wall.onStayPushable = P.wall.onEnterPushable
+
 function P.wall:onEnterAnimal(animal)
-	if not self.destroyed and not animal.flying then
+	--[[if not self.destroyed and not animal.flying then
 		animal.x = animal.prevx
 		animal.y = animal.prevy
 		animal.tileX = animal.prevTileX
@@ -446,55 +562,79 @@ function P.wall:onEnterAnimal(animal)
 		animal.prevy = animal.y
 		animal.prevTileX = animal.tileX
 		animal.prevTileY = animal.tileY
-	end
+	else
+		animal.elevation = self:getHeight()
+	end]]
+	animal.elevation = self:getHeight()
 end
 P.wall.onStayAnimal = P.wall.onEnterAnimal
-function P.wall:getYOffset()
-	if self.destroyed then return 0 end
-	return yOffset
-end
 function P.wall:destroy()
 	self.blocksProjectiles = false
 	self.blocksVision = false
 	self.sprite = self.destroyedSprite
 	self.destroyed = true
 	self.blocksMovement = false
-	self.dirAccept = {0,0,0,0}
-	self.dirSend = {0,0,0,0}
-	self.overlay = nil
-end
-function P.wall:rotate(times)
-end
-
-P.metalWall = P.wall:new{dirAccept = {1,1,1,1}, dirSend = {1,1,1,1}, canBePowered = true, name = "metalwall", blocksVision = true, destroyedSprite = love.graphics.newImage('Graphics/metalwallbroken.png'), sprite = love.graphics.newImage('GraphicsColor/metalwall2.png'), poweredSprite = love.graphics.newImage('GraphicsColor/metalwallpowered2.png') }
-P.metalWall.updateTile = P.conductiveTile.updateTile
-function P.metalWall:destroy()
-	self.blocksProjectiles = false
-	self.blocksVision = false
-	self.sprite = self.destroyedSprite
-	self.destroyed = true
-	self.charged = false
 	self.canBePowered = false
 	self.dirAccept = {0,0,0,0}
 	self.dirSend = {0,0,0,0}
-	self.blocksMovement = false
 	self.overlay = nil
+	self.yOffset = 0
+	if player.attributes.lucky then
+		for i = 1, roomHeight do
+			for j = 1, roomLength do
+				if room[i][j]==self then
+					room[i][j] = tiles.toolTile:new()
+					room[i][j]:absoluteFinalUpdate()
+				end
+			end
+		end
+	end
+end
+function P.wall:onLeave()
+	updateElevation()
+	if math.abs(player.elevation-self:getHeight())>3 then
+		--player.x = player.prevx
+		--player.y = player.prevy
+		player.tileX = player.prevTileX
+		player.tileY = player.prevTileY
+		--player.prevx = player.x
+		--player.prevy = player.y
+		player.prevTileX = player.tileX
+		player.prevTileY = player.tileY
+	else
+		updateElevation()
+	end
+end
+--this function should never actually run...it's here just in case
+function P.wall:onLeaveAnimal(animal)
+	--[[updateElevation()
+	if math.abs(animal.elevation-self:getHeight())>3 then
+		--player.x = player.prevx
+		--player.y = player.prevy
+		animal.tileX = animal.prevTileX
+		animal.tileY = animal.prevTileY
+		--player.prevx = player.x
+		--player.prevy = player.y
+		animal.prevTileX = animal.tileX
+		animal.prevTileY = animal.tileY
+	else
+		updateElevation()
+	end]]
+end
+function P.wall:rotate(times)
+end
+function P.wall:getYOffset()
+	if self.destroyed then return 0
+	else return self.yOffset end
 end
 
-P.maskedMetalWall = P.metalWall:new{sprite = love.graphics.newImage('Graphics/maskedMetalWall.png'), poweredSprite = love.graphics.newImage('Graphics/maskedMetalWall.png')}
+P.metalWall = P.wall:new{dirAccept = {1,1,1,1}, dirSend = {1,1,1,1}, canBePowered = true, name = "metalwall", blocksVision = true,
+destroyedSprite = 'Graphics/Tiles/metalWallSawed.png', sprite = 'Graphics/Tiles/metalWall.png', poweredSprite = 'Graphics/Tiles/metalWallPowered.png' }
+P.metalWall.updateTile = P.conductiveTile.updateTile
 
-P.glassWall = P.wall:new{sawable = false, canBePowered = false, dirAccept = {0,0,0,0}, dirSend = {0,0,0,0}, bricked = false, name = "glasswall", blocksVision = false, electrifiedSprite = love.graphics.newImage('Graphics/glasswallelectrified.png'), destroyedSprite = love.graphics.newImage('Graphics/glassbroken.png'), sprite = love.graphics.newImage('GraphicsColor/glass.png'), poweredSprite = love.graphics.newImage('Graphics3D/glass.png'), electrifiedPoweredSprite = love.graphics.newImage('Graphics/glasswallpowered.png'), sawable = false }
-P.glassWall.getYOffset = P.wall.getYOffset
-function P.glassWall:destroy()
-	self.blocksProjectiles = false
-	self.sprite = self.destroyedSprite
-	self.destroyed = true
-	self.blocksMovement = false
-	self.blocksVision = false
-	self.dirAccept = {0,0,0,0}
-	self.dirSend = {0,0,0,0}
-	self.overlay = nil
-end
+P.maskedMetalWall = P.metalWall:new{name = "maskedMetalWall", sprite = 'Graphics/maskedMetalWall.png', poweredSprite = 'Graphics/maskedMetalWall.png'}
+
+P.glassWall = P.wall:new{sawable = false, canBePowered = false, dirAccept = {0,0,0,0}, dirSend = {0,0,0,0}, bricked = false, name = "glasswall", blocksVision = false, electrifiedSprite = 'Graphics/glasswallelectrified.png', destroyedSprite = 'Graphics/glassbroken.png', sprite = 'GraphicsColor/glass.png', poweredSprite = 'Graphics3D/glass.png', electrifiedPoweredSprite = 'Graphics/glasswallpowered.png', sawable = false }
 
 P.gate = P.conductiveTile:new{overlaying = true, name = "gate", dirSend = {0,0,0,0}, dirAccept = {0,0,0,0}, dirWireHack = {0,0,0,0}, gotten = {0,0,0,0}}
 function P.gate:updateTile(dir)
@@ -526,7 +666,7 @@ function P.gate:destroy()
 end
 P.tile.cfr = P.gate.correctForRotation
 
-P.splitGate = P.gate:new{name = "splitGate", dirSend = {1,0,0,0}, dirAccept = {1,0,0,0}, sprite = love.graphics.newImage('Graphics/splitgate.png'), poweredSprite = love.graphics.newImage('Graphics/splitgate.png') }
+P.splitGate = P.gate:new{name = "splitGate", dirSend = {1,0,0,0}, dirAccept = {1,0,0,0}, sprite = 'Graphics/splitgate.png', poweredSprite = 'Graphics/splitgate.png' }
 function P.splitGate:updateTile(dir)
 	if dir == self:cfr(1) then
 		self.powered=true
@@ -539,7 +679,10 @@ function P.splitGate:updateTile(dir)
 	end
 end
 
-P.notGate = P.powerSupply:new{overlaying = false, name = "notGate", dirSend = {1,0,0,0}, dirAccept = {1,1,1,1}, sprite = love.graphics.newImage('GraphicsColor/notgatedead2.png'), poweredSprite = love.graphics.newImage('GraphicsColor/notgate2.png') }
+P.notGate = P.powerSupply:new{overlaying = false, name = "notGate", dirSend = {1,0,0,0}, dirAccept = {1,1,1,1},
+sprite = 'Graphics/Tiles/notGateDead.png',
+poweredSprite = 'Graphics/Tiles/notGate.png',
+destroyedSprite = 'Graphics/Tiles/notGateDestroyed.png'}
 function P.notGate:updateTile(dir)
 	if self.destroyed then
 		self.powered = false
@@ -557,14 +700,16 @@ end
 function P.notGate:destroy()
 	self.destroyed = true
 	self.powered = false
+	self.sprite = self.destroyedSprite
 end
+P.notGate.flipDirection = P.tWire.flipDirection
 
-P.ambiguousNotGate = P.notGate:new{name = "ambiguousNotGate", litWhenPowered = false, sprite = love.graphics.newImage('Graphics/notgateambiguous.png'), poweredSprite = love.graphics.newImage('Graphics/notgateambiguous.png')}
+P.ambiguousNotGate = P.notGate:new{name = "ambiguousNotGate", litWhenPowered = false, sprite = 'Graphics/notgateambiguous.png', poweredSprite = 'Graphics/notgateambiguous.png'}
 
-P.andGate = P.gate:new{name = "andGate", dirSend = {1,0,0,0}, dirAccept = {0,1,0,1}, dirWireHack = {1,0,0,0}, sprite = love.graphics.newImage('GraphicsColor/andgate2.png'), poweredSprite = love.graphics.newImage('GraphicsColor/andgatepowered2.png'), 
-  off = love.graphics.newImage('GraphicsColor/andgate2.png'),
-  leftOn = love.graphics.newImage('GraphicsColor/andgateleft2.png'), 
-  rightOn = love.graphics.newImage('GraphicsColor/andgateright2.png') }
+P.andGate = P.gate:new{name = "andGate", dirSend = {1,0,0,0}, dirAccept = {0,1,0,1}, dirWireHack = {1,0,0,0}, sprite = 'GraphicsColor/andgate2.png', poweredSprite = 'GraphicsColor/andgatepowered2.png', 
+  off = 'GraphicsColor/andgate2.png',
+  leftOn = 'GraphicsColor/andgateleft2.png', 
+  rightOn = 'GraphicsColor/andgateright2.png' }
 function P.andGate:updateTile(dir)
 	if self.charged then
 		self.powered = true
@@ -586,17 +731,18 @@ function P.andGate:updateTile(dir)
 		self.dirSend = {0,0,0,0}
 	end
 end
+P.andGate.flipDirection = P.tWire.flipDirection
 
-P.ambiguousAndGate = P.andGate:new{name = "ambiguousAndGate", litWhenPowered = false, sprite = love.graphics.newImage('Graphics/andgateambiguous.png')}
+P.ambiguousAndGate = P.andGate:new{name = "ambiguousAndGate", litWhenPowered = false, sprite = 'Graphics/andgateambiguous.png'}
 P.ambiguousAndGate.poweredSprite = P.ambiguousAndGate.sprite
 P.ambiguousAndGate.off = P.ambiguousAndGate.sprite
 P.ambiguousAndGate.leftOn = P.ambiguousAndGate.sprite
 P.ambiguousAndGate.rightOn = P.ambiguousAndGate.sprite
 
-P.orGate = P.gate:new{name = "orGate", dirSend = {1,0,0,0}, dirAccept = {0,1,0,1}, dirWireHack = {1,0,0,0}, sprite = love.graphics.newImage('Graphics/orgate.png'), poweredSprite = love.graphics.newImage('Graphics/orgate.png'),
-  leftOn = love.graphics.newImage('Graphics/orgateleft.png'), 
-  rightOn = love.graphics.newImage('Graphics/orgateright.png'), 
-  bothOn = love.graphics.newImage('Graphics/orgateon.png') }
+P.orGate = P.gate:new{name = "orGate", dirSend = {1,0,0,0}, dirAccept = {0,1,0,1}, dirWireHack = {1,0,0,0}, sprite = 'Graphics/orgate.png', poweredSprite = 'Graphics/orgate.png',
+  leftOn = 'Graphics/orgateleft.png', 
+  rightOn = 'Graphics/orgateright.png', 
+  bothOn = 'Graphics/orgateon.png' }
 function P.orGate:updateTile(dir)
 	if self.charged then
 		self.powered = true
@@ -618,8 +764,9 @@ function P.orGate:updateTile(dir)
 		self.dirSend = {0,0,0,0}
 	end
 end
+P.orGate.flipDirection = P.tWire.flipDirection
 
-P.xorGate = P.gate:new{name = "xorGate", dirSend = {1,0,0,0}, dirAccept = {0,1,0,1}, dirWireHack = {1,0,0,0}, sprite = love.graphics.newImage('Graphics/xorgate.png'), poweredSprite = love.graphics.newImage('Graphics/xorgate.png')}
+P.xorGate = P.gate:new{name = "xorGate", dirSend = {1,0,0,0}, dirAccept = {0,1,0,1}, dirWireHack = {1,0,0,0}, sprite = 'Graphics/xorgate.png', poweredSprite = 'Graphics/xorgate.png'}
 function P.xorGate:updateTile(dir)
 	if self.charged then
 		self.powered = true
@@ -643,6 +790,7 @@ function P.xorGate:updateTile(dir)
 		self.dirSend = {0,0,0,0}
 	end
 end
+P.xorGate.flipDirection = P.tWire.flipDirection
 
 local function getTileX(posX)
 	return (posX-1)*floor.sprite:getWidth()*scale+wallSprite.width
@@ -652,7 +800,7 @@ local function getTileY(posY)
 	return (posY-1)*floor.sprite:getHeight()*scale+wallSprite.height
 end
 
-P.hDoor = P.tile:new{name = "hDoor", stopped = false, blocksVision = true, blocksMovement = true, blocksProjectiles = true, canBePowered = false, dirSend = {0,0,0,0}, dirAccept = {0,0,0,0}, sprite = love.graphics.newImage('Graphics/door.png'), closedSprite = love.graphics.newImage('Graphics/door.png'), openSprite = love.graphics.newImage('Graphics/doorsopen.png')}
+P.hDoor = P.tile:new{name = "hDoor", canElevate = false, stopped = false, blocksVision = true, blocksMovement = true, blocksProjectiles = true, canBePowered = false, dirSend = {0,0,0,0}, dirAccept = {0,0,0,0}, sprite = 'Graphics/door.png', closedSprite = 'Graphics/door.png', openSprite = 'Graphics/doorsopen.png'}
 function P.hDoor:updateTile(player)
 	if self.stopped then
 		self.sprite = self.openSprite
@@ -663,19 +811,60 @@ end
 function P.hDoor:onEnter(player)
 	self.sprite = self.openSprite
 	self.blocksVision = false
-	self.blocksMovement = false	
+	self.blocksMovement = false
+end
+function P.hDoor:getHeight()
+	return 6
 end
 P.hDoor.destroy = P.hDoor.onEnter
+function P.hDoor:getHeight()
+	if not self.blocksMovement then
+		return 0 
+	else
+		return 6
+	end
+end
+function P.hDoor:lightTest(x,y)
+	if not self.blocksMovement then
+		return false
+	end
+	if self.rotation % 2 == 1 then
 
-P.vDoor= P.tile:new{name = "hDoor", blocksVision = true, canBePowered = false, dirSend = {0,0,0,0}, dirAccept = {0,0,0,0}, sprite = love.graphics.newImage('Graphics/door.png'), closedSprite = love.graphics.newImage('Graphics/door.png'), openSprite = love.graphics.newImage('Graphics/doorsopen.png')}
+		if x>1 then
+			lightTest(x-1,y)
+		end
+	
+	
+		if x<roomHeight then
+			lightTest(x+1,y)
+		end
+	else
+		if y>1 then
+			lightTest(x, y-1)
+		end
+
+		if y<roomLength then
+			lightTest(x, y+1)
+		end
+	end
+end
+function P.hDoor:obstructsMovement()
+	if math.abs(player.elevation)<=3 then return false
+	else return true end
+end
+function P.hDoor:obstructsMovementAnimal()
+	return self.blocksMovement
+end
+
+P.vDoor= P.tile:new{name = "hDoor", blocksVision = true, canBePowered = false, dirSend = {0,0,0,0}, dirAccept = {0,0,0,0}, sprite = 'Graphics/door.png', closedSprite = 'Graphics/door.png', openSprite = 'Graphics/doorsopen.png'}
 function P.vDoor:onEnter(player)
 	self.sprite = self.openSprite
 	self.blocksVision = false
 	
 end
 
-P.vPoweredDoor = P.tile:new{name = "vPoweredDoor", stopped = false, blocksMovement = false, blocksVision = false, canBePowered = true, dirSend = {1,0,1,0}, dirAccept = {1,0,1,0}, sprite = love.graphics.newImage('Graphics3D/powereddooropen.png'), closedSprite = love.graphics.newImage('GraphicsColor/powereddoor.png'), openSprite = love.graphics.newImage('GraphicsColor/powereddooropen.png'), poweredSprite = love.graphics.newImage('Graphics3D/powereddoor.png'),
-closedSprite2 = love.graphics.newImage('GraphicsColor/powereddoor2.png'), openSprite2 = love.graphics.newImage('GraphicsColor/powereddooropen2.png')}
+P.vPoweredDoor = P.tile:new{name = "vPoweredDoor", canElevate = false, stopped = false, yOffset = -6, blocksMovement = false, blocksVision = false, canBePowered = true, dirSend = {1,0,1,0}, dirAccept = {1,0,1,0}, sprite = 'Graphics3D/powereddooropen.png', closedSprite = 'GraphicsColor/powereddoor.png', openSprite = 'GraphicsColor/powereddooropen.png', poweredSprite = 'Graphics3D/powereddoor.png',
+closedSprite2 = 'GraphicsColor/powereddoor2.png', openSprite2 = 'GraphicsColor/powereddooropen2.png'}
 function P.vPoweredDoor:updateTile(player)
 	if self.stopped then
 		self.blocksVision = false
@@ -699,28 +888,16 @@ function P.vPoweredDoor:updateTile(player)
 		self.sprite = self.openSprite
 	end
 end
-function P.vPoweredDoor:onEnter(player)
-	if self.blocksMovement then
-		player.x = player.prevx
-		player.y = player.prevy
-		player.tileX = player.prevTileX
-		player.tileY = player.prevTileY
-		player.prevx = player.x
-		player.prevy = player.y
-		player.prevTileX = player.tileX
-		player.prevTileY = player.tileY
-	end
+function P.vPoweredDoor:obstructsMovement()
+	return self.blocksMovement
 end
-P.vPoweredDoor.onStay = P.vPoweredDoor.onEnter
 function P.vPoweredDoor:willKillPlayer(player)
-	return t.blocksMovement
+	return self.blocksMovement
 end
 function P.vPoweredDoor:destroy()
 	self.stopped = true
 	self.open = true
-end
-function P.vPoweredDoor:getYOffset()
-	return yOffset
+	self:updateTile(player)
 end
 function P.vPoweredDoor:rotate(times)
 	self.rotation = self.rotation + times
@@ -743,6 +920,40 @@ function P.vPoweredDoor:updateSprite()
 	end
 end
 P.vPoweredDoor.willKillAnimal = P.vPoweredDoor.willKillPlayer
+function P.vPoweredDoor:getHeight()
+	if not self.blocksMovement then
+		return 0 
+	else
+		return 6
+	end
+end
+function P.vPoweredDoor:lightTest(x,y)
+	if not self.blocksMovement then
+		return false
+	end
+	if self.rotation % 2 == 0 then
+
+		if x>1 then
+			lightTest(x-1,y)
+		end
+	
+	
+		if x<roomHeight then
+			lightTest(x+1,y)
+		end
+	else
+		if y>1 then
+			lightTest(x, y-1)
+		end
+
+		if y<roomLength then
+			lightTest(x, y+1)
+		end
+	end
+end
+function P.vPoweredDoor:willDestroyPushable()
+	return self.powered
+end
 
 P.hPoweredDoor = P.vPoweredDoor:new{name = "hPoweredDoor", dirSend = {0,1,0,1}, dirAccept = {0,1,0,1}}
 function P.hPoweredDoor:updateTile(player)
@@ -763,14 +974,15 @@ function P.hDoor:onLeave(player)
 	--
 end
 
-P.endTile = P.tile:new{name = "endTile", canBePowered = false, dirAccept = {0,0,0,0}, sprite = love.graphics.newImage('GraphicsBrush/endtile.png'), done = false}
+P.endTile = P.tile:new{name = "endTile", canBePowered = false, dirAccept = {0,0,0,0},
+  sprite = 'Graphics/Tiles/endTile.png', done = false, enterCheckWin = true}
 function P.endTile:onEnter(player)
 	if map.floorInfo.finalFloor == true then
 		if roomHeight>12 and not editorMode then
 			win()
 			return
 		end
-	elseif mainMap[mapy][mapx].roomid == "final_2" then
+	elseif validSpace() and mainMap[mapy][mapx].roomid == "final_2" then
 		win()
 		unlocks.unlockUnlockableRef(unlocks.stickyButtonUnlock)
 	end
@@ -782,7 +994,8 @@ function P.endTile:onEnter(player)
 	self.gone = true
 end
 
-P.poweredEnd = P.endTile:new{name = "poweredEnd", canBePowered = true, dirAccept = {1,1,1,1}, sprite = love.graphics.newImage('Graphics/endOff.png'), poweredSprite = love.graphics.newImage('Graphics/end.png')}
+P.poweredEnd = P.endTile:new{name = "poweredEnd", canBePowered = true, dirAccept = {1,1,1,1},
+sprite = 'Graphics/Tiles/poweredEndOff.png', poweredSprite = 'Graphics/Tiles/endTile.png'}
 function P.poweredEnd:onEnter(player)
 	if self.done or not self.powered then return end
 	beatRoom()
@@ -792,7 +1005,13 @@ function P.poweredEnd:onEnter(player)
 	self.gone = true
 end
 
-P.pitbullTile = P.tile:new{name = "pitbull", animal = animalList[2], sprite = love.graphics.newImage('Graphics/animalstartingtile.png'), listIndex = 2}
+function P.poweredEnd:postPowerUpdate()
+	if room[player.tileY][player.tileX] == self then
+		self:onEnter(player)
+	end
+end
+
+P.pitbullTile = P.tile:new{name = "pitbull", animal = animalList[2], sprite = 'Graphics/animalstartingtile.png', listIndex = 2, isVisible = false}
 function P.pitbullTile:new(o)
 	o = o or {}
 	setmetatable(o, self)
@@ -800,13 +1019,40 @@ function P.pitbullTile:new(o)
 	o.animal = o.animal
 	return o
 end
+function P.pitbullTile:usableOnNothing()
+	return true
+end
 P.pupTile = P.pitbullTile:new{name = "pup", animal = animalList[3], listIndex = 3}
 P.catTile = P.pitbullTile:new{name = "cat", animal = animalList[4], listIndex = 4}
+P.ramTile = P.pitbullTile:new{name = "ram", animal = animalList[14], listIndex = 14}
 
-P.vDoor= P.hDoor:new{name = "vDoor", sprite = love.graphics.newImage('Graphics3D/door.png'), closedSprite = love.graphics.newImage('Graphics/door.png'), openSprite = love.graphics.newImage('Graphics/doorsopen.png')}
+P.spotlightTile = P.tile:new{name = "spotlight", spotlight = spotlightList.spotlight,
+baseTime = 3600, currTime = 0,
+sprite = 'Graphics/spotlightTile.png'}
+function P.spotlightTile:realtimeUpdate(dt, y, x)
+	--[[if self.destroyed then return end
+	self.currTime = self.currTime+dt*1000
+	if self.currTime>self.baseTime then
+		self.currTime = 0
+
+		local thisTile = room[y][x]
+		local spotlightToAdd = thisTile.spotlight:new()
+		spotlightToAdd.x = tileToCoords(y,x).x
+		spotlightToAdd.y = tileToCoords(y,x).y
+		spotlightToAdd.dir = thisTile.rotation
+		spotlights[#spotlights+1] = spotlightToAdd
+	end]]
+end
+
+P.fastSpotlightTile = P.spotlightTile:new{name = "fastSpotlight", spotlight = spotlightList.fastSpotlight,
+  baseTime = 1800, sprite = 'Graphics/fastSpotlightTile.png'}
+P.slowSpotlightTile = P.spotlightTile:new{name = "slowSpotlight", spotlight = spotlightList.slowSpotlight, baseTime = 7200,
+  sprite = 'Graphics/slowSpotlightTile.png'}
+
+P.vDoor= P.hDoor:new{name = "vDoor", sprite = 'Graphics3D/door.png', closedSprite = 'Graphics/door.png', openSprite = 'Graphics/doorsopen.png'}
 P.vDoor.onEnter = P.hDoor.onEnter
 
-P.sign = P.tile:new{text = "", name = "sign", sprite = love.graphics.newImage('KenGraphics/sign.png')}
+P.sign = P.tile:new{text = "", name = "sign", sprite = 'KenGraphics/sign.png'}
 function P.sign:onEnter(player)
 	messageInfo.text = self.text
 end
@@ -814,7 +1060,7 @@ function P.sign:onLeave(player)
 	messageInfo.text = nil
 end
 
-P.rotater = P.button:new{canBePowered = true, dirAccept = {1,0,1,0}, dirSend = {1,0,1,0}, sprite = love.graphics.newImage('Graphics/rotater.png'), poweredSprite = love.graphics.newImage('Graphics/rotater.png')}
+P.rotater = P.button:new{name = "rotater", canBePowered = true, dirAccept = {1,0,1,0}, dirSend = {1,0,1,0}, sprite = 'Graphics/rotater.png', poweredSprite = 'Graphics/rotater.png'}
 function P.rotater:updateSprite()
 end
 function P.rotater:onEnter(player)
@@ -840,25 +1086,68 @@ function P.rotater:lockInState(state)
 end
 P.rotater.onEnterAnimal = P.rotater.onEnter
 P.rotater.onLeaveAnimal = P.rotater.onLeave
+P.rotater.flipDirection = P.tWire.flipDirection
 
-P.cornerRotater = P.rotater:new{name = "cornerRotater", dirSend = {1,1,0,0}, dirAccept = {1,1,0,0}, poweredSprite = love.graphics.newImage('Graphics/cornerRotater.png'), sprite = love.graphics.newImage('Graphics/cornerRotater.png')}
+P.cornerRotater = P.rotater:new{name = "cornerRotater", dirSend = {1,1,0,0}, dirAccept = {1,1,0,0}, poweredSprite = 'Graphics/cornerrotater.png', sprite = 'Graphics/cornerrotater.png'}
+function P.cornerRotater.flipDirection(dir, isVertical)
+	if dir == 0 or dir == 2 then
+		return isVertical and 1 or (dir == 2 and -1 or 3)
+	else
+		return isVertical and -1 or 1
+	end
+	return 0
+end
 
-P.concreteWall = P.wall:new{sawable = false, name = "concreteWall", sprite = love.graphics.newImage('GraphicsColor/concretewall2.png'), poweredSprite = love.graphics.newImage('Graphics3D/concretewall.png'), electrifiedPoweredSprite = love.graphics.newImage('Graphics/concretewallpowered.png'), electrifiedSprite = love.graphics.newImage('Graphics/concretewallelectrified.png'), destroyedSprite = love.graphics.newImage('Graphics/concretewallbroken.png'), sawable = false}
+P.concreteWall = P.wall:new{sawable = false, name = "concreteWall",
+sprite = 'GraphicsColor/concretewall3.png', destroyedSprite = 'Graphics/concretewallbroken.png', sawable = false}
+function P.wall:onLoad()
+	local dungeonChance = util.random(100, 'misc')
+	if dungeonChance==1 then
+		self.hidesDungeon = true
+	end
+end
 function P.concreteWall:destroy()
 	self.blocksProjectiles = false
 	self.blocksVision = false
 	self.sprite = self.destroyedSprite
 	self.destroyed = true
 	self.blocksMovement = false
+	self.canBePowered = false
 	self.dirAccept = {0,0,0,0}
 	self.dirSend = {0,0,0,0}
 	self.overlay = nil
+	self.yOffset = 0
+	if not self.hidesDungeon then
+		local bonusDungeonChance = util.random(100, 'misc')
+		if bonusDungeonChance<getLuckBonus() then
+			self.hidesDungeon = true
+		end
+	end
+	if self.hidesDungeon then
+		for i = 1, roomHeight do
+			for j = 1, roomLength do
+				if room[i][j]==self then
+					room[i][j] = tiles.dungeonEnter:new()
+				end
+			end
+		end
+	end
+	if not self.hidesDungeon and player.attributes.lucky then
+		for i = 1, roomHeight do
+			for j = 1, roomLength do
+				if room[i][j]==self then
+					room[i][j] = tiles.toolTile:new()
+					room[i][j]:absoluteFinalUpdate()
+				end
+			end
+		end
+	end
 end
 
-P.concreteWallConductive = P.concreteWall:new{name = "concreteWallConductive", sprite = love.graphics.newImage('Graphics3D/concretewallconductive.png'), poweredSprite = love.graphics.newImage('Graphics3D/concretewallconductive.png'), canBePowered = true, dirAccept = {1,1,1,1}, dirSend = {1,1,1,1}}
+P.concreteWallConductive = P.concreteWall:new{name = "concreteWallConductive", sprite = 'Graphics3D/concretewallconductive.png', poweredSprite = 'Graphics3D/concretewallconductive.png', canBePowered = true, dirAccept = {1,1,1,1}, dirSend = {1,1,1,1}}
 
-P.concreteWallConductiveDirected = P.concreteWallConductive:new{name = "concreteWallConductiveDirected", sprite = love.graphics.newImage('Graphics3D/concretewallconductivedirected0.png'), poweredSprite = love.graphics.newImage('Graphics3D/concretewallconductivedirected0.png'),
-canBePowered = true, dirAccept = {1,0,1,0}, dirSend = {1,0,1,0}, sprite0 = love.graphics.newImage('Graphics3D/concretewallconductivedirected0.png'), sprite1 = love.graphics.newImage('Graphics3D/concretewallconductivedirected1.png')}
+P.concreteWallConductiveDirected = P.concreteWallConductive:new{name = "concreteWallConductiveDirected", sprite = 'Graphics3D/concretewallconductivedirected0.png', poweredSprite = 'Graphics3D/concretewallconductivedirected0.png',
+canBePowered = true, dirAccept = {1,0,1,0}, dirSend = {1,0,1,0}, sprite0 = 'Graphics3D/concretewallconductivedirected0.png', sprite1 = 'Graphics3D/concretewallconductivedirected1.png'}
 function P.concreteWallConductiveDirected:rotate(times)
 	self.rotation = self.rotation + times
 	if self.rotation >= 4 then
@@ -880,8 +1169,8 @@ function P.concreteWallConductiveDirected:updateSprite()
 	self.poweredSprite = self.sprite
 end
 
-P.concreteWallConductiveCorner = P.concreteWallConductive:new{name = "concreteWallConductiveCorner", sprite = love.graphics.newImage('Graphics3D/concretewallconductivecorner0.png'), poweredSprite = love.graphics.newImage('Graphics/concretewallconductivecorner.png'), canBePowered = true, dirAccept = {1,1,0,0}, dirSend = {1,1,0,0},
-sprite0 = love.graphics.newImage('Graphics3D/concretewallconductivecorner0.png'), sprite1 = love.graphics.newImage('Graphics3D/concretewallconductivecorner1.png'), sprite2 = love.graphics.newImage('Graphics3D/concretewallconductivecorner2.png'), sprite3 = love.graphics.newImage('Graphics3D/concretewallconductivecorner3.png')}
+P.concreteWallConductiveCorner = P.concreteWallConductive:new{name = "concreteWallConductiveCorner", sprite = 'Graphics3D/concretewallconductivecorner0.png', poweredSprite = 'Graphics/concretewallconductivecorner.png', canBePowered = true, dirAccept = {1,1,0,0}, dirSend = {1,1,0,0},
+sprite0 = 'Graphics3D/concretewallconductivecorner0.png', sprite1 = 'Graphics3D/concretewallconductivecorner1.png', sprite2 = 'Graphics3D/concretewallconductivecorner2.png', sprite3 = 'Graphics3D/concretewallconductivecorner3.png'}
 P.concreteWallConductiveCorner.rotate = P.concreteWallConductiveDirected.rotate
 function P.concreteWallConductiveCorner:updateSprite()
 	if self.destroyed then return end
@@ -892,12 +1181,12 @@ function P.concreteWallConductiveCorner:updateSprite()
 	self.poweredSprite = self.sprite
 end
 
-P.concreteWallConductiveT = P.concreteWallConductive:new{name = "concreteWallConductiveT", sprite = love.graphics.newImage('Graphics3D/concretewallconductivet0.png'), poweredSprite = love.graphics.newImage('Graphics/concretewallconductivet.png'), canBePowered = true, dirAccept = {1,1,1,0}, dirSend = {1,1,1,0},
-sprite0 = love.graphics.newImage('Graphics3D/concretewallconductivet0.png'), sprite1 = love.graphics.newImage('Graphics3D/concretewallconductivet1.png'), sprite2 = love.graphics.newImage('Graphics3D/concretewallconductivet2.png'), sprite3 = love.graphics.newImage('Graphics3D/concretewallconductivet3.png')}
+P.concreteWallConductiveT = P.concreteWallConductive:new{name = "concreteWallConductiveT", sprite = 'Graphics3D/concretewallconductivet0.png', poweredSprite = 'Graphics/concretewallconductivet.png', canBePowered = true, dirAccept = {1,1,1,0}, dirSend = {1,1,1,0},
+sprite0 = 'Graphics3D/concretewallconductivet0.png', sprite1 = 'Graphics3D/concretewallconductivet1.png', sprite2 = 'Graphics3D/concretewallconductivet2.png', sprite3 = 'Graphics3D/concretewallconductivet3.png'}
 P.concreteWallConductiveT.rotate = P.concreteWallConductiveDirected.rotate
 P.concreteWallConductiveT.updateSprite = P.concreteWallConductiveCorner.updateSprite
 
-P.tunnel = P.tile:new{name = "tunnel", toolsNeeded = -1, toolsEntered = 0, sprite = love.graphics.newImage('KenGraphics/stairs.png')}
+P.tunnel = P.tile:new{name = "tunnel", toolsNeeded = -1, toolsEntered = 0, sprite = 'KenGraphics/stairs.png'}
 function P.tunnel:onEnter(player)
 	--[[if self.toolsNeeded==0 then loadNextLevel() return end
 	local noNormalTools = true
@@ -911,7 +1200,27 @@ function P.tunnel:onEnter(player)
 	self.toolsEntered = self.toolsEntered+1
 	--donations = donations+math.ceil((7-(floorIndex))/2)
 	floorDonations = floorDonations+1]]
-	loadNextLevel()
+	if floorIndex>=7 then
+		return
+		--should do something cool, can add later
+	end
+	if floorIndex<2 then
+		return
+	end
+	goDownFloor()
+end
+
+P.upTunnel = P.tunnel:new{name = "upTunnel", sprite = 'KenGraphics/stairsUp.png'}
+function P.upTunnel:onEnter(player)
+	goUpFloor()
+end
+function P.upTunnel:onLeave(player)
+	if floorIndex==7 then
+		self.done = true
+		self.isCompleted = true
+		self.isVisible = false
+		self.gone = true	
+	end
 end
 --[[function P.tunnel:getInfoText()
 	return self.toolsNeeded
@@ -922,7 +1231,7 @@ function P.tunnel:postPowerUpdate()
 	if self.toolsNeeded<0 then self.toolsNeeded = 0 end
 end]]
 
-P.pit = P.tile:new{name = "pit", laddered = false, sprite = love.graphics.newImage('GraphicsBrush/pituncovered.png'), destroyedSprite = love.graphics.newImage('Graphics/ladderedPit.png')}
+P.pit = P.tile:new{name = "pit", laddered = false, sprite = 'GraphicsBrush/pituncovered.png', destroyedSprite = 'Graphics/ladderedPit.png'}
 function P.pit:ladder()
 	self.sprite = self.destroyedSprite
 	self.laddered = true
@@ -937,7 +1246,7 @@ end
 P.pit.willKillAnimal = P.pit.willKillPlayer
 P.pit.willDestroyPushable = P.pit.willKillPlayer
 
-P.breakablePit = P.pit:new{strength = 2, name = "breakablePit", sprite = love.graphics.newImage('GraphicsBrush/pitcovered.png'), halfBrokenSprite = love.graphics.newImage('GraphicsBrush/pithalfcovered.png'), brokenSprite = love.graphics.newImage('GraphicsBrush/pituncovered.png')}
+P.breakablePit = P.pit:new{strength = 2, name = "breakablePit", sprite = 'GraphicsBrush/pitcovered.png', halfBrokenSprite = 'GraphicsBrush/pithalfcovered.png', brokenSprite = 'GraphicsBrush/pituncovered.png'}
 function P.breakablePit:onEnter(player)
 	if self.strength>0 then
 		self.strength = self.strength - 1
@@ -957,9 +1266,8 @@ end
 P.breakablePit.willKillAnimal = P.breakablePit.willKillPlayer
 P.breakablePit.willDestroyPushable = P.breakablePit.willKillPlayer
 
-local superWeights = util.readJSON('Values/superToolWeights.json')
-P.treasureTile = P.tile:new{name = "treasureTile", sprite = love.graphics.newImage('GraphicsBrush/tt1.png'),
-  done = false, treasureWeights = superWeights.yellowTreasureTile}
+P.treasureTile = P.tile:new{name = "treasureTile", sprite = 'Graphics/Tiles/treasureTile1.png',
+  done = false}
 function P.treasureTile:onEnter()
 	if self.done then return end
 	self:giveReward()
@@ -996,11 +1304,23 @@ function P.treasureTile:giveReward()
 	elseif rand<900-donations then
 		tools.giveRandomTools(2)
 	else
-		tools.giveRandomTools(1,1)
+		local quality
+		if rand<910 then
+			quality = 1
+		elseif rand<950 then
+			quality = 2
+		elseif rand<985 then
+			quality = 3
+		elseif rand<999 then
+			quality = 4
+		else
+			quality = 5
+		end
+		tools.giveRandomTools(1,1,{quality})
 	end
 end
 
-P.mousetrap = P.conductiveTile:new{name = "mousetrap", bricked = false, formerPowered = nil, triggered = false, safe = false, sprite = love.graphics.newImage('Graphics/mousetrap.png'), safeSprite = love.graphics.newImage('Graphics/mousetrapsafe.png'), deadlySprite = love.graphics.newImage('Graphics/mousetrap.png'), brickedSprite = love.graphics.newImage('Graphics/mousetrapbricked.png')}
+P.mousetrap = P.conductiveTile:new{name = "mousetrap", bricked = false, formerPowered = nil, triggered = false, safe = false, sprite = 'Graphics/mousetrap.png', safeSprite = 'Graphics/mousetrapsafe.png', deadlySprite = 'Graphics/mousetrap.png', brickedSprite = 'Graphics/mousetrapbricked.png'}
 function P.mousetrap:onEnter()
 	if self.bricked then return end
 	if not self.safe then
@@ -1024,18 +1344,19 @@ function P.mousetrap:updateSprite()
 	self.poweredSprite = self.sprite
 end
 function P.mousetrap:willKillPlayer()
-	if self.triggered then
-		self.triggered = false
-		self.safe = true
-		self:updateSprite()
-		return true
-	end
-	return false
+	return not self.safe
 end
 function P.mousetrap:postPowerUpdate()
 	if self.bricked then return end
 	if self.formerPowered~=nil and self.formerPowered~=self.powered and self.safe then
 		self.safe = false
+		self:updateSprite()
+	end
+end
+function P.mousetrap:absoluteFinalUpdate()
+	if self.triggered then
+		self.safe = true
+		self.triggered = false
 		self:updateSprite()
 	end
 end
@@ -1047,7 +1368,7 @@ function P.mousetrap:lockInState(state)
 	self:updateSprite()
 end
 
-P.bomb = P.tile:new{name = "bomb", triggered = true, counter = 3, sprite = love.graphics.newImage('Graphics/bomb3.png'), sprite2 = love.graphics.newImage('Graphics/bomb2.png'), sprite1 = love.graphics.newImage('Graphics/bomb1.png')}
+P.bomb = P.tile:new{name = "bomb", triggered = true, counter = 3, sprite = 'Graphics/Tiles/bomb3.png', sprite2 = 'Graphics/Tiles/bomb2.png', sprite1 = 'Graphics/Tiles/bomb1.png'}
 function P.bomb:onStep(x, y)
 	if not self.triggered then return end
 	self.counter = self.counter-1
@@ -1073,36 +1394,10 @@ function P.bomb:explode(x,y)
 			unlocks.unlockUnlockableRef(unlocks.frederickUnlock)
 		end
 	end
-	for i = -1, 1 do
-		for j = -1, 1 do
-			if room[x+i]~=nil and room[x+i][y+j]~=nil then
-				room[x+i][y+j]:destroy()
-				if room[x+i][y+j]:instanceof(tiles.bomb) then
-					unlocks.unlockUnlockableRef(unlocks.bombBuddyUnlock)
-				end
-			end
-		end
-	end
-	for k = 1, #animals do
-		if not animals[k].dead and math.abs(animals[k].tileY-x)<2 and math.abs(animals[k].tileX-y)<2 then
-			animals[k]:kill()
-			if animals[k]:instanceof(animalList.bombBuddy) then
-				animals[k]:explode()
-			end
-		end
-	end
-	for k = 1, #pushables do
-		if math.abs(pushables[k].tileY-x)<2 and math.abs(pushables[k].tileX-y)<2 and not pushables[k].destroyed then
-			pushables[k]:destroy()
-			if pushables[k]:instanceof(pushableList.bombBox) then
-				unlocks.unlockUnlockableRef(unlocks.bombBuddyUnlock)
-			end
-		end
-	end
-	updatePower()
+	util.createHarmlessExplosion(x,y)
 end
 
-P.capacitor = P.conductiveTile:new{name = "capacitor", counter = 3, maxCounter = 3, dirAccept = {1,0,1,0}, sprite = love.graphics.newImage('Graphics/capacitor.png'), poweredSprite = love.graphics.newImage('Graphics/capacitor.png')}
+P.capacitor = P.conductiveTile:new{name = "capacitor", counter = 3, maxCounter = 3, dirAccept = {1,0,1,0}, sprite = 'Graphics/capacitor.png', poweredSprite = 'Graphics/capacitor.png'}
 function P.capacitor:updateTile(dir)
 	if self.charged then
 		self.powered = true
@@ -1129,8 +1424,9 @@ end
 function P.capacitor:getInfoText()
 	return self.counter
 end
+P.capacitor.flipDirection = P.tWire.flipDirection
 
-P.inductor = P.conductiveTile:new{name = "inductor", counter = 3, maxCounter = 3, dirAccept = {1,0,1,0}, sprite = love.graphics.newImage('Graphics/inductor.png'), poweredSprite = love.graphics.newImage('Graphics/inductor.png')}
+P.inductor = P.conductiveTile:new{name = "inductor", counter = 3, maxCounter = 3, dirAccept = {1,0,1,0}, sprite = 'Graphics/inductor.png', poweredSprite = 'Graphics/inductor.png'}
 function P.inductor:updateTile(dir)	if self.charged then
 		self.powered = true
 		self.dirSend = shiftArray({1,0,1,0}, self.rotation)
@@ -1146,8 +1442,9 @@ function P.inductor:updateTile(dir)	if self.charged then
 end
 P.inductor.onStep = P.capacitor.onStep
 P.inductor.getInfoText = P.capacitor.getInfoText
+P.inductor.flipDirection = P.tWire.flipDirection
 
-P.slime = P.tile:new{name = "slime", sprite = love.graphics.newImage('Graphics/slime.png')}
+P.slime = P.tile:new{name = "slime", sprite = 'Graphics/slime.png'}
 function P.slime:onEnter(player)
 	if player.character.name == characters.lenny.name then return end
 	player.waitCounter = player.waitCounter+1
@@ -1159,11 +1456,17 @@ function P.slime:onEnterAnimal(animal)
 	end
 end
 
-P.unactivatedBomb = P.bomb:new{name = "unactivatedBomb", counter = 4, triggered = false, sprite = love.graphics.newImage('Graphics/bomb3.png'), sprite2 = love.graphics.newImage('Graphics/bomb2.png'), sprite1 = love.graphics.newImage('Graphics/bomb1.png')}
+P.unactivatedBomb = P.bomb:new{name = "unactivatedBomb", counter = 4, triggered = false,
+sprite = 'Graphics/Tiles/bombUntriggered.png',
+sprite3 = 'Graphics/Tiles/bomb3.png',
+sprite2 = 'Graphics/Tiles/bomb2.png',
+sprite1 = 'Graphics/Tiles/bomb1.png'}
 function P.unactivatedBomb:onStep(x, y)
 	if self.triggered then
 		self.counter = self.counter-1
-		if self.counter == 2 then
+		if self.counter == 3 then
+			self.sprite = self.sprite3
+		elseif self.counter == 2 then
 			self.sprite = self.sprite2
 		elseif self.counter == 1 then
 			self.sprite = self.sprite1
@@ -1171,6 +1474,15 @@ function P.unactivatedBomb:onStep(x, y)
 			self.gone = true
 		end
 		self.poweredSprite = self.sprite
+	end
+end
+function P.unactivatedBomb:updateSprite()
+	if self.counter == 3 then
+		self.sprite = self.sprite3
+	elseif self.counter == 2 then
+		self.sprite = self.sprite2
+	elseif self.counter == 1 then
+		self.sprite = self.sprite1
 	end
 end
 function P.unactivatedBomb:onEnter(player)
@@ -1182,7 +1494,7 @@ end
 
 P.snailTile = P.pitbullTile:new{name = "snail", animal = animalList[5], listIndex = 5}
 
-P.doghouse = P.pitbullTile:new{name = "doghouse", sprite = love.graphics.newImage('Graphics/doghouse.png')}
+P.doghouse = P.pitbullTile:new{name = "doghouse", sprite = 'Graphics/doghouse.png'}
 function P.doghouse:onStep(x, y)
 	if player.tileX == y and player.tileY == x then return end
 	for i = 1, #animals do
@@ -1198,9 +1510,24 @@ end
 
 P.batTile = P.pitbullTile:new{name = "bat", animal = animalList[6], listIndex = 6}
 
-P.meat = P.tile:new{name = "meat", sprite = love.graphics.newImage('Graphics/meat.png')}
+P.meat = P.tile:new{name = "meat", sprite = 'Graphics/Tiles/meat.png', attractsAnimals = true}
+P.rottenMeat = P.tile:new{name = "rottenMeat", sprite = 'Graphics/Tiles/rottenMeat.png', scaresAnimals = true}
 
-P.beggar = P.tile:new{name = "beggar", alive = true, counter = 0, sprite = love.graphics.newImage('Graphics/beggar.png'), deadSprite = love.graphics.newImage('Graphics/beggardead.png')}
+P.explosiveMeat = P.tile:new{name = "explosiveMeat", sprite = 'Graphics/Tiles/explosiveMeat.png'}
+function P.explosiveMeat:onEnterAnimal()
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]==self or (room[i][j]~=nil and room[i][j].overlay~=nil and room[i][j].overlay==self) then
+				self:explode(i,j)
+				room[i][j] = nil
+			end
+		end
+	end
+end
+P.explosiveMeat.explode = P.bomb.explode
+
+P.beggar = P.tile:new{name = "beggar", alive = true, counter = 0, sprite = 'GraphicsEli/whiteOrb1.png', deadSprite = 'Graphics/beggardead.png', 
+  animation = {'GraphicsEli/whiteOrb1.png', 'GraphicsEli/whiteOrb2.png', 'GraphicsEli/whiteOrb3.png', 'GraphicsEli/whiteOrb4.png', 'GraphicsEli/whiteOrb3.png', 'GraphicsEli/whiteOrb2.png'}, animationLength = 1}
 function P.beggar:onEnter(player)
 	--[[if tool==0 or tool>7 then return end
 	if not self.alive then return end
@@ -1221,11 +1548,13 @@ function P.beggar:getInfoText()
 	--return self.counter
 end
 function P.beggar:destroy()
-	self.sprite = self.deadSprite
-	self.alive = false
-	local paysOut = util.random('toolDrop')
-	if paysOut<0.5 and not player.character.name==characters.felix.name then return end
-	self:providePayment()
+	if self.alive then
+		self.animation = {self.sprite}
+		self.alive = false
+		local paysOut = util.random('toolDrop')
+		if paysOut<0.5 and not player.character.name==characters.felix.name then return end
+		self:providePayment()
+	end
 end
 function P.beggar:providePayment()
 	local paymentType = util.random('toolDrop')
@@ -1234,32 +1563,137 @@ function P.beggar:providePayment()
 	else P.greenBeggar:providePayment() end
 end
 
-P.redBeggar = P.beggar:new{name = "redBeggar", sprite = love.graphics.newImage('Graphics/redbeggar.png'), deadSprite = love.graphics.newImage('Graphics/redbeggardead.png')}
+P.redBeggar = P.beggar:new{name = "redBeggar", sprite = 'GraphicsEli/redOrb1.png', deadSprite = 'Graphics/redbeggardead.png', 
+  animation = {'GraphicsEli/redOrb1.png', 'GraphicsEli/redOrb2.png', 'GraphicsEli/redOrb3.png', 'GraphicsEli/redOrb4.png', 'GraphicsEli/redOrb3.png', 'GraphicsEli/redOrb2.png'}, animationLength = 1}
 function P.redBeggar:providePayment()
-	local greenTools = util.random('toolDrop')
+	local redTools = util.random('toolDrop')
+	redTools = redTools+getLuckBonus()/100
 	local ttg = 0
-	if greenTools<0.5 then ttg = 1
-	elseif greenTools<0.95 then ttg = 2
-	else ttg = 3 end
-	tools.giveRandomTools(ttg)
+	if redTools<0.50 then ttg = 1
+	elseif redTools<0.95 then ttg = 2
+	elseif redTools<0.99 then ttg = 3 end
+	
+	if ttg>0 then
+		tools.giveRandomTools(ttg)
+		return
+	end
+
+	local superToGive = util.random(7, 'toolDrop')
+	local superDrop = self:getSuperDrops()[superToGive]
+	unlockedSupertools = unlocks.getUnlockedSupertools()
+	if not unlockedSupertools[superToGive] or superDrop.isDisabled then
+		tools.giveRandomTools(2)
+		return
+	end
+
+	if util.getSupertoolTypesHeld()<3 or superDrop.numHeld>0 then
+		tools.giveToolsByReference({superDrop})
+	else
+		for i = 1, roomHeight do
+			for j = 1, roomLength do
+				if room[i][j]==self then
+					tools.dropTool(superDrop, i, j)
+				end
+			end
+		end
+	end
+end
+function P.redBeggar:getSuperDrops()
+	return {tools.superSaw, tools.longLadder, tools.superWaterBottle, tools.superWireCutters, tools.superSponge,
+	tools.superGun, tools.superBrick}
 end
 
-P.greenBeggar = P.beggar:new{name = "greenBeggar", sprite = love.graphics.newImage('Graphics/greenbeggar.png'), deadSprite = love.graphics.newImage('Graphics/greenbeggardead.png')}
+P.greenBeggar = P.beggar:new{name = "greenBeggar", sprite = 'GraphicsEli/greenOrb1.png', deadSprite = 'Graphics/greenbeggardead.png', 
+  animation = {'GraphicsEli/greenOrb1.png', 'GraphicsEli/greenOrb2.png', 'GraphicsEli/greenOrb3.png', 'GraphicsEli/greenOrb4.png', 'GraphicsEli/greenOrb3.png', 'GraphicsEli/greenOrb2.png'}, animationLength = 1}
 function P.greenBeggar:providePayment()
-	donations = donations+100
-	player.luckTimer = tools.toolDisplayTimer.base
+	local luckyCoin = util.random(100, 'toolDrop')
+	local ttg = tools.coin
+	if luckyCoin<getLuckBonus() then
+		ttg = tools.luckyPenny
+	end
+
+	unlockedSupertools = unlocks.getUnlockedSupertools()
+	if not unlockedSupertools[tools.luckyPenny] or tools.luckyPenny.isDisabled then
+		ttg = tools.coin
+	end
+
+	if util.getSupertoolTypesHeld()<3 or ttg.numHeld>0 then
+		tools.giveToolsByReference({ttg})
+	else
+		for i = 1, roomHeight do
+			for j = 1, roomLength do
+				if room[i][j]==self then
+					room[i][j] = tiles.supertoolTile:new()
+					room[i][j].tool = ttg
+				end
+			end
+		end
+	end
 end
 
-P.blueBeggar = P.beggar:new{name = "blueBeggar", sprite = love.graphics.newImage('Graphics/bluebeggar.png'), deadSprite = love.graphics.newImage('Graphics/bluebeggardead.png')}
+P.blueBeggar = P.beggar:new{name = "blueBeggar", sprite = 'GraphicsEli/blueOrb1.png', deadSprite = 'Graphics/bluebeggardead.png', 
+  animation = {'GraphicsEli/blueOrb1.png', 'GraphicsEli/blueOrb2.png', 'GraphicsEli/blueOrb3.png', 'GraphicsEli/blueOrb4.png', 'GraphicsEli/blueOrb3.png', 'GraphicsEli/blueOrb2.png'}, animationLength = 1}
 function P.blueBeggar:providePayment()
-	tools.giveSupertools(1)
+	local quality = util.random('toolDrop')
+	quality = quality+getLuckBonus()/100
+	if quality < 0.075 then
+		quality = 1
+	elseif quality < 0.6 then
+		quality = 2
+	elseif quality < 0.885 then
+		quality = 3
+	elseif quality < 0.985 then
+		quality = 4
+	else
+		quality = 5
+	end
+	tools.giveSupertools(1, {quality})
 end
 
-P.ladder = P.tile:new{name = "ladder", sprite = love.graphics.newImage('Graphics/laddertile.png'), blocksAnimalMovement = true}
+P.whiteBeggar = P.beggar:new{name = "whiteBeggar"}
+function P.whiteBeggar:providePayment()
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]==self then
+				room[i][j] = tiles.tunnel:new()
+				return
+			end
+		end
+	end
+end
 
-P.mousetrapOff = P.mousetrap:new{name = "mousetrapOff", safe = true, sprite = love.graphics.newImage('Graphics/mousetrapsafe.png')}
+P.blackBeggar = P.beggar:new{name = "blackBeggar"}
+function P.blackBeggar:providePayment()
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]==self then
+				room[i][j] = tiles.dungeonEnter:new()
+				return
+			end
+		end
+	end
+end
 
-P.donationMachine = P.tile:new{name = "donationMachine", sprite = love.graphics.newImage('Graphics/donationmachine.png')}
+P.goldBeggar = P.beggar:new{name = "goldBeggar"}
+function P.goldBeggar:providePayment()
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]==self then
+				room[i][j] = tiles.endTile:new()
+				return
+			end
+		end
+	end
+end
+
+P.ladder = P.tile:new{name = "ladder", sprite = 'Graphics/laddertile.png', blocksAnimalMovement = true}
+function P.ladder:obstructsMovementAnimal(animal)
+	return true
+end
+
+P.mousetrapOff = P.mousetrap:new{name = "mousetrapOff", safe = true, sprite = 'Graphics/mousetrapsafe.png'}
+
+P.donationMachine = P.tile:new{name = "donationMachine", sprite = 'Graphics/donationmachine.png'}
 function P.donationMachine:getInfoText()
 	return donations
 end
@@ -1284,7 +1718,7 @@ function P.donationMachine:destroy()
 	end
 end
 
-P.entrancePortal = P.tile:new{name = "entrancePortal", sprite = love.graphics.newImage('Graphics/entrancePortal.png')}
+P.entrancePortal = P.tile:new{name = "entrancePortal", sprite = 'Graphics/Tiles/entrancePortal.png'}
 function P.entrancePortal:onEnter(player)
 	for i = 1, roomHeight do
 		shouldBreak = false
@@ -1337,9 +1771,64 @@ end
 P.entrancePortal.onStay = P.entrancePortal.onEnter
 P.entrancePortal.onStayAnimal = P.entrancePortal.onEnterAnimal
 
-P.exitPortal = P.tile:new{name = "exitPortal", sprite = love.graphics.newImage('Graphics/exitPortal.png')}
+P.exitPortal = P.tile:new{name = "exitPortal", sprite = 'Graphics/exitPortal.png'}
 
-P.treasureTile2 = P.treasureTile:new{name = "treasureTile2", sprite = love.graphics.newImage('GraphicsBrush/tt2.png'), treasureWeights = superWeights.treasureRoomTile}
+P.entrancePortal2 = P.entrancePortal:new{name = "entrancePortal2", sprite = 'Graphics/entranceportal2.png'}
+function P.entrancePortal2:onEnter(player)
+	for i = 1, roomHeight do
+		shouldBreak = false
+		for j = 1, roomLength do
+			if room[i][j]~=nil and room[i][j]:instanceof(tiles.exitPortal2) then
+				local movePlayer = true
+				for k = 1, #pushables do
+					if pushables[k].tileX == j and pushables[k].tileY == i then
+						movePlayer = false
+					end
+				end
+				if movePlayer then
+					player.tileX = j
+					player.tileY = i
+				end
+				shouldBreak = true
+				break
+			end
+		end
+		if shouldBreak then break end
+	end
+end
+function P.entrancePortal2:onEnterAnimal(animal)
+	for i = 1, roomHeight do
+		shouldBreak = false
+		for j = 1, roomLength do
+			if room[i][j]~=nil and room[i][j]:instanceof(tiles.exitPortal2) then
+				local moveAnimal = true
+				for k = 1, #pushables do
+					if pushables[k].tileX == j and pushables[k].tileY == i then
+						moveAnimal = false
+					end
+				end
+				for k = 1, #animals do
+					if animals[k].tileX == j and animals[k].tileY == i and not animals[k].dead then
+						moveAnimal = false
+					end
+				end
+				if moveAnimal then
+					animal.tileX = j
+					animal.tileY = i
+				end
+				shouldBreak = true
+				break
+			end
+		end
+		if shouldBreak then break end
+	end
+end
+P.entrancePortal2.onStay = P.entrancePortal2.onEnter
+P.entrancePortal2.onStayAnimal = P.entrancePortal2.onEnterAnimal
+
+P.exitPortal2 = P.tile:new{name = "exitPortal2", sprite = 'Graphics/exitportal2.png'}
+
+P.treasureTile2 = P.treasureTile:new{name = "treasureTile2", sprite = 'Graphics/Tiles/treasureTile2.png'}
 
 function P.treasureTile2:onEnter()
 	if self.done then return end
@@ -1354,15 +1843,21 @@ function P.treasureTile2:giveReward()
 	if reward<775 then
 		tools.giveRandomTools(1)
 	else
-		tools.giveRandomTools(1,1,self.treasureWeights)
+		local quality
+		if reward<888 then
+			quality = 2
+		else
+			quality = 3
+		end
+		tools.giveRandomTools(1,1,{quality})
 	end
 end
 
-P.treasureTile3 = P.treasureTile:new{name = "treasureTile3", sprite = love.graphics.newImage('GraphicsBrush/tt3.png')}
+P.treasureTile3 = P.treasureTile:new{name = "treasureTile3", sprite = 'Graphics/Tiles/treasureTile3.png'}
 
-P.treasureTile4 = P.treasureTile:new{name = "treasureTile4", sprite = love.graphics.newImage('GraphicsBrush/tt4.png')}
+P.treasureTile4 = P.treasureTile:new{name = "treasureTile4", sprite = 'Graphics/Tiles/treasureTile4.png'}
 
-P.conductiveSlime = P.conductiveTile:new{name = "conductiveSlime", sprite = love.graphics.newImage('Graphics/conductiveslime.png'), poweredSprite = love.graphics.newImage('Graphics/conductiveslimepowered.png')}
+P.conductiveSlime = P.conductiveTile:new{name = "conductiveSlime", sprite = 'Graphics/conductiveslime.png', poweredSprite = 'Graphics/conductiveslimepowered.png'}
 P.conductiveSlime.onEnter = P.slime.onEnter
 P.conductiveSlime.onEnterAnimal = P.slime.onEnterAnimal
 function P.conductiveSlime:willKillPlayer()
@@ -1384,10 +1879,17 @@ P.sonTile = P.pitbullTile:new{name = "sonTile", animal = animalList[12], listInd
 
 P.daughterTile = P.pitbullTile:new{name = "daughterTile", animal = animalList[13], listIndex = 13}
 
-P.untriggeredPowerSupply = P.conductiveTile:new{name = "untriggeredPowerSupply", sprite = love.graphics.newImage('Graphics/untriggeredpowersupply.png'), poweredSprite = love.graphics.newImage('Graphics/powersupply.png')}
+P.untriggeredPowerSupply = P.conductiveTile:new{name = "untriggeredPowerSupply",
+sprite = 'Graphics/Tiles/untriggeredPowerSupply.png'}
 function P.untriggeredPowerSupply:postPowerUpdate(dir)
 	if self.poweredNeighbors[1]==1 or self.poweredNeighbors[2]==1 or self.poweredNeighbors[3]==1 or self.poweredNeighbors[4]==1 then
-		self.charged = true
+		for i = 1, roomHeight do
+			for j = 1, roomLength do
+				if room[i][j]==self then
+					room[i][j] = tiles.powerSupply:new()
+				end
+			end
+		end
 	end
 end
 function P.untriggeredPowerSupply:destroy()
@@ -1395,7 +1897,7 @@ function P.untriggeredPowerSupply:destroy()
 	self.dirAccept = {0,0,0,0}
 end
 
-P.untriggeredPowerSupplyTimer = P.conductiveTile:new{name = "untriggeredPowerSupplyTimer", readyToTransform = false, dirSend = {0,0,0,0}, canBePowered = true, sprite = love.graphics.newImage('Graphics/untriggeredpowersupplytimer.png'), poweredSprite = love.graphics.newImage('Graphics/powersupply.png')}
+P.untriggeredPowerSupplyTimer = P.conductiveTile:new{name = "untriggeredPowerSupplyTimer", readyToTransform = false, dirSend = {0,0,0,0}, canBePowered = true, sprite = 'Graphics/untriggeredpowersupplytimer.png', poweredSprite = 'Graphics/powersupply.png'}
 function P.untriggeredPowerSupplyTimer:postPowerUpdate(dir)
 	if not self.charged and (self.poweredNeighbors[1]==1 or self.poweredNeighbors[2]==1 or self.poweredNeighbors[3]==1 or self.poweredNeighbors[4]==1) then
 		self.readyToTransform = true
@@ -1414,14 +1916,15 @@ function P.untriggeredPowerSupplyTimer:destroy()
 	self.dirAccept = {0,0,0,0}
 end
 
-P.reinforcedGlass = P.concreteWall:new{name = "reinforcedGlass", blocksVision = false, sprite = love.graphics.newImage('Graphics3D/reinforcedglass.png'), poweredSprite = love.graphics.newImage('Graphics3D/reinforcedglass.png')}
+P.reinforcedGlass = P.concreteWall:new{name = "reinforcedGlass", blocksVision = false, sprite = 'Graphics3D/reinforcedglass.png', poweredSprite = 'Graphics3D/reinforcedglass.png'}
 
 P.powerTriggeredBomb = P.unactivatedBomb:new{name = "powerTriggeredBomb", canBePowered = true, powered = false, dirAccept = {1,1,1,1}, dirSend = {0,0,0,0}}
-function P.powerTriggeredBomb:postPowerUpdate()
+function P.powerTriggeredBomb:absoluteFinalUpdate()
 	if self.poweredNeighbors[1]==1 or self.poweredNeighbors[2]==1 or self.poweredNeighbors[3]==1 or self.poweredNeighbors[4]==1 then
 		if not self.triggered then
 			self.counter = 3
 			self.triggered = true
+			self:updateSprite()
 		end
 	end
 	self.poweredSprite = self.sprite
@@ -1430,12 +1933,12 @@ function P.powerTriggeredBomb:onEnter(player)
 end
 P.powerTriggeredBomb.onEnterAnimal = P.powerTriggeredBomb.onEnter
 
-P.boxTile = P.tile:new{name = "boxTile", pushable = pushableList[2], listIndex = 2, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
+P.boxTile = P.tile:new{name = "boxTile", pushable = pushableList[2], listIndex = 2, sprite = 'Graphics/boxstartingtile.png'}
 function P.boxTile:usableOnNothing()
 	return true
 end
 
-P.motionGate = P.conductiveTile:new{name = "gate", updatePowerOnLeave = true, dirSend = {0,0,0,0}, sprite = love.graphics.newImage('Graphics/gate.png'), poweredSprite = love.graphics.newImage('Graphics/gate.png')}
+P.motionGate = P.conductiveTile:new{name = "gate", updatePowerOnLeave = true, dirSend = {0,0,0,0}, sprite = 'Graphics/gate.png', poweredSprite = 'Graphics/gate.png'}
 function P.motionGate:onLeave(player)
 	if (player.prevTileX<player.tileX and self.rotation == 0) or (player.prevTileX>player.tileX and self.rotation == 2) or
 	(player.prevTileY<player.tileY and self.rotation == 1) or (player.prevTileY>player.tileY and self.rotation == 3) then
@@ -1446,13 +1949,14 @@ function P.motionGate:onLeave(player)
 	end
 end
 P.motionGate.onEnterAnimal = P.gate.onEnter
+P.motionGate.flipDirection = P.tWire.flipDirection
 
 P.motionGate2 = P.motionGate:new{name = "gate2", dirSend = {1,1,1,1}}
 
 P.playerBoxTile = P.boxTile:new{name = "playerBoxTile", pushable = pushableList[3], listIndex = 3}
 P.animalBoxTile = P.boxTile:new{name = "animalBoxTile", pushable = pushableList[4], listIndex = 4}
 
-P.puddle = P.conductiveTile:new{name = "puddle", sprite = love.graphics.newImage('Graphics/puddle.png'), poweredSprite = love.graphics.newImage('Graphics/puddlelectrified.png')}
+P.puddle = P.conductiveTile:new{name = "puddle", sprite = 'Graphics/puddle.png', poweredSprite = 'Graphics/puddlelectrified.png'}
 function P.puddle:willKillPlayer()
 	return not self.destroyed and self.powered
 end
@@ -1460,21 +1964,29 @@ function P.puddle:destroy()
 end
 P.puddle.willKillAnimal = P.puddle.willKillPlayer
 
-P.dustyGlassWall = P.glassWall:new{name = "dustyGlassWall", blocksVision = true, sprite = love.graphics.newImage('Graphics3D/dustyglass.png'), cleanSprite = love.graphics.newImage('Graphics/glass.png')}
+P.dustyGlassWall = P.glassWall:new{name = "dustyGlassWall", blocksVision = true, sprite = 'Graphics3D/dustyglass.png', cleanSprite = 'Graphics/glass.png'}
 
-P.trap = P.tile:new{name = "trap", triggered = false, sprite = love.graphics.newImage('Graphics/trap.png')}
-function P.trap:onEnter(player)
-	if self.triggered then return end
-	self.triggered = true
-	kill()
+P.web = P.tile:new{name = "web", triggered = false, sprite = 'Graphics/trap.png', triggered = false}
+function P.web:onEnter(player)
+	if self.triggered and not self.destroyed then
+		tools.giveRandomTools(1)
+		self:destroy()
+		self.isVisible = false
+		for i = 1, #animals do
+			if animals[i].tileY == player.tileY and animals[i].tileX == player.tileX then
+				animals[i].pickedUp = true
+			end
+		end
+	end
 end
-function P.trap:onEnterAnimal(animal)
-	if self.triggered or animal.flying then return end
-	self.triggered = true
-	animal:kill()
+function P.web:onEnterAnimal(animal)
+	if not self.triggered then
+		animal:kill()
+		self.triggered = true
+	end
 end
 
-P.glue = P.tile:new{name = "glue", sprite = love.graphics.newImage('Graphics/glue.png')}
+P.glue = P.tile:new{name = "glue", sprite = 'Graphics/glue.png'}
 function P.glue:onEnter(player)
 	player.waitCounter = player.waitCounter+1
 	if player.character.name == characters.lenny.name then
@@ -1497,13 +2009,13 @@ function P.glue:onEnterAnimal(animal)
 end
 P.glue.onStayAnimal = P.glue.onEnterAnimal
 
-P.conductiveBoxTile = P.tile:new{name = "conductiveBoxTile", pushable = pushableList[5], listIndex = 5, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
+P.conductiveBoxTile = P.tile:new{name = "conductiveBoxTile", pushable = pushableList[5], listIndex = 5, sprite = 'Graphics/boxstartingtile.png'}
 
-P.boomboxTile = P.boxTile:new{name = "boomboxTile", pushable = pushableList[6], listIndex = 6, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
+P.boomboxTile = P.boxTile:new{name = "boomboxTile", pushable = pushableList[6], listIndex = 6, sprite = 'Graphics/boxstartingtile.png'}
 
-P.batteringRamTile = P.tile:new{name = "batteringRamTile", pushable = pushableList[7], listIndex = 7, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
+P.batteringRamTile = P.boxTile:new{name = "batteringRamTile", pushable = pushableList[7], listIndex = 7, sprite = 'Graphics/boxstartingtile.png'}
 
-P.lamp = P.powerSupply:new{name = "lamp", emitsLight = true, intensity = 0.7, range = 50, sprite = love.graphics.newImage('Graphics/lamp.png'), poweredSprite = love.graphics.newImage('Graphics/lamp.png'), lit = true, destroyedSprite = love.graphics.newImage('Graphics/destroyedlamp.png')}
+P.lamp = P.powerSupply:new{name = "lamp", emitsLight = true, intensity = 0.7, range = 50, sprite = 'Graphics/lamp.png', poweredSprite = 'Graphics/lamp.png', lit = true, destroyedSprite = 'Graphics/destroyedlamp.png'}
 function P.lamp:destroy()
 	self.sprite = self.destroyedSprite
 	self.canBePowered = false
@@ -1528,16 +2040,31 @@ function P.flickeringLamp:realtimeUpdate()
 	end
 end
 
-P.conductiveGlass = P.glassWall:new{name = "conductiveGlass", sprite = love.graphics.newImage('Graphics3D/conductiveglass.png'), poweredSprite = love.graphics.newImage('Graphics3D/conductiveglass.png'), canBePowered = true, dirAccept = {1,1,1,1}, dirSend = {1,1,1,1}}
-function P.conductiveGlass:getYOffset()
-	return yOffset
+P.conductiveGlass = P.glassWall:new{name = "conductiveGlass", sprite = 'Graphics3D/conductiveglass.png', poweredSprite = 'Graphics3D/conductiveglass.png', canBePowered = true, dirAccept = {1,1,1,1}, dirSend = {1,1,1,1}}
+
+P.reinforcedConductiveGlass = P.reinforcedGlass:new{name = "reinforcedConductiveGlass", sprite = 'Graphics3D/reinforcedconductiveglass.png', poweredSprite = 'Graphics3D/reinforcedconductiveglass.png', canBePowered = true, dirAccept = {1,1,1,1}, dirSend = {1,1,1,1}}
+
+P.fog = P.tile:new{name = "fog", sprite = 'Graphics/fog.png', blocksVision = true}
+function P.fog:obstructsVision()
+	if not self.blocksVision then return false end
+	return true
+end
+function P.fog:obstructsMovementAnimal(animal)
+	if math.abs(animal.elevation)<=3 then
+		return false
+	else
+		return true
+	end
+end
+function P.fog:obstructsMovement()
+	if math.abs(player.elevation)<=3 then
+		return false
+	else
+		return true
+	end
 end
 
-P.reinforcedConductiveGlass = P.reinforcedGlass:new{name = "reinforcedConductiveGlass", sprite = love.graphics.newImage('Graphics3D/reinforcedconductiveglass.png'), poweredSprite = love.graphics.newImage('Graphics3D/reinforcedconductiveglass.png'), canBePowered = true, dirAccept = {1,1,1,1}, dirSend = {1,1,1,1}}
-
-P.fog = P.tile:new{name = "fog", sprite = love.graphics.newImage('Graphics/fog.png'), blocksVision = true}
-
-P.accelerator = P.conductiveTile:new{name = "accelerator", sprite = love.graphics.newImage('Graphics/accelerator.png'), poweredSprite = love.graphics.newImage('Graphics/accelerator.png')}
+P.accelerator = P.conductiveTile:new{name = "accelerator", sprite = 'Graphics/accelerator.png', poweredSprite = 'Graphics/accelerator.png'}
 function P.accelerator:yAccel()
 	if not self.powered then return 0 end
 	if self.rotation==0 then return -1
@@ -1550,8 +2077,9 @@ function P.accelerator:xAccel()
 	elseif self.rotation==3 then return -1
 	else return 0 end
 end
+P.accelerator.flipDirection = P.tWire.flipDirection
 
-P.unpoweredAccelerator = P.accelerator:new{name = "unpoweredaccelerator", canBePowered = false, sprite = love.graphics.newImage('Graphics/unpoweredaccelerator.png')}
+P.unpoweredAccelerator = P.accelerator:new{name = "unpoweredaccelerator", canBePowered = false, sprite = 'Graphics/unpoweredaccelerator.png'}
 function P.unpoweredAccelerator:yAccel()
 	if self.rotation==0 then return -1
 	elseif self.rotation==2 then return 1
@@ -1563,13 +2091,13 @@ function P.unpoweredAccelerator:xAccel()
 	else return 0 end
 end
 
-P.bombBoxTile = P.boxTile:new{name = "bombBoxTile", pushable = pushableList[8], listIndex = 8, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
+P.bombBoxTile = P.boxTile:new{name = "bombBoxTile", pushable = pushableList[8], listIndex = 8, sprite = 'Graphics/boxstartingtile.png'}
 
-P.giftBoxTile = P.boxTile:new{name = "giftBoxTile", pushable = pushableList[9], listIndex = 9, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
+P.giftBoxTile = P.boxTile:new{name = "giftBoxTile", pushable = pushableList[9], listIndex = 9, sprite = 'Graphics/boxstartingtile.png'}
 
-P.jackInTheBoxTile = P.boxTile:new{name = "jackInTheBoxTile", pushable = pushableList[10], listIndex = 10, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
+P.jackInTheBoxTile = P.boxTile:new{name = "jackInTheBoxTile", pushable = pushableList[10], listIndex = 10, sprite = 'Graphics/boxstartingtile.png'}
 
-P.finalToolsTile = P.tile:new{name = "finalToolsTile", canBePowered = false, dirAccept = {0,0,0,0}, sprite = love.graphics.newImage('Graphics/donationmachine.png'), done = false, toolsToGive = {}, giveRate = 0.75, timeLeft = 0}
+P.finalToolsTile = P.tile:new{name = "finalToolsTile", canBePowered = false, dirAccept = {0,0,0,0}, sprite = 'Graphics/donationmachine.png', done = false, toolsToGive = {}, giveRate = 0.75, timeLeft = 0}
 function P.finalToolsTile:onEnter(player)
 	if self.done then return end
 end
@@ -1624,19 +2152,19 @@ function P.finalToolsTile:getInfoText()
 	return #self.toolsToGive
 end
 
-P.grass = P.tile:new{name = "grass", sprite = love.graphics.newImage('KenGraphics/grass.png')}
-P.bed = P.tile:new{name = "bed", sprite = love.graphics.newImage('KenGraphics/bed.png')}
-P.statuebottom = P.tile:new{name = "statuebottom", sprite = love.graphics.newImage('KenGraphics/statuebottom.png')}
-P.statuetop = P.tile:new{name = "statuetop", sprite = love.graphics.newImage('KenGraphics/statuetop.png')}
-P.chairfront = P.tile:new{name = "chairfront", sprite = love.graphics.newImage('KenGraphics/chairfront.png')}
-P.chairback = P.tile:new{name = "chairback", sprite = love.graphics.newImage('KenGraphics/chairback.png')}
-P.carpetmid = P.tile:new{name = "carpetmid", sprite = love.graphics.newImage('KenGraphics/puregreen.png')}
-P.carpetedge = P.tile:new{name = "carpetedge", sprite = love.graphics.newImage('KenGraphics/carpetedge.png')}
-P.carpetcorner = P.tile:new{name = "carpetcorner", sprite = love.graphics.newImage('KenGraphics/carpetcorner.png')}
-P.bookcase = P.tile:new{name = "bookcase", sprite = love.graphics.newImage('KenGraphics/bookcase.png')}
-P.pooledge = P.tile:new{name = "pooledge", sprite = love.graphics.newImage('KenGraphics/pooledge.png')}
-P.poolcorner = P.tile:new{name = "poolcorner", sprite = love.graphics.newImage('KenGraphics/poolcorner.png')}
-P.poolcenter = P.tile:new{name = "poolcenter", sprite = love.graphics.newImage('KenGraphics/poolcenter.png')}
+P.grass = P.tile:new{name = "grass", sprite = 'KenGraphics/grass.png'}
+P.bed = P.tile:new{name = "bed", sprite = 'KenGraphics/bed.png'}
+P.statuebottom = P.tile:new{name = "statuebottom", sprite = 'KenGraphics/statuebottom.png'}
+P.statuetop = P.tile:new{name = "statuetop", sprite = 'KenGraphics/statuetop.png'}
+P.chairfront = P.tile:new{name = "chairfront", sprite = 'KenGraphics/chairfront.png'}
+P.chairback = P.tile:new{name = "chairback", sprite = 'KenGraphics/chairback.png'}
+P.carpetmid = P.tile:new{name = "carpetmid", sprite = 'KenGraphics/puregreen.png'}
+P.carpetedge = P.tile:new{name = "carpetedge", sprite = 'KenGraphics/carpetedge.png'}
+P.carpetcorner = P.tile:new{name = "carpetcorner", sprite = 'KenGraphics/carpetcorner.png'}
+P.bookcase = P.tile:new{name = "bookcase", sprite = 'KenGraphics/bookcase.png'}
+P.pooledge = P.tile:new{name = "pooledge", sprite = 'KenGraphics/pooledge.png'}
+P.poolcorner = P.tile:new{name = "poolcorner", sprite = 'KenGraphics/poolcorner.png'}
+P.poolcenter = P.tile:new{name = "poolcenter", sprite = 'KenGraphics/poolcenter.png'}
 
 P.invisibleWire = P.wire:new{name = "invisibleWire", isVisible = false}
 P.invisibleAndGate = P.wire:new{name = "invisibleAndGate", isVisible = false}
@@ -1647,16 +2175,16 @@ P.invisibleConcreteWall = P.concreteWall:new{name = "invisibleConcreteWall", isV
 P.invisibleWoodenWall = P.wall:new{name = "invisibleWoodenWall", isVisible = false}
 P.invisiblePoweredFloor = P.poweredFloor:new{name = "invisiblePoweredFloor", isVisible = false}
 P.invisibleElectricFloor = P.electricFloor:new{name = "invisibleElectricFloor", isVisible = false}
-P.invisibleBoxTile = P.tile:new{name = "invisibleBoxTile", pushable = pushableList[11], listIndex = 11, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
+P.invisibleBoxTile = P.tile:new{name = "invisibleBoxTile", pushable = pushableList[11], listIndex = 11, sprite = 'Graphics/boxstartingtile.png'}
 P.invisibleDecoy = P.tile:new{name = "invisibleDecoy", isVisible = false}
 
-P.superStickyButton = P.stickyButton:new{name = "superStickyButton", sprite = love.graphics.newImage('Graphics/superStickyButton.png'), upSprite = love.graphics.newImage('Graphics/superStickyButton.png')}
-P.unbreakableElectricFloor = P.electricFloor:new{name = "unbreakableElectricFloor", litWhenPowered = false, sprite = love.graphics.newImage('Graphics/unbreakableElectricFloor.png'), poweredSprite = love.graphics.newImage('Graphics/unbreakableElectricFloor.png')}
-P.unbrickableStayButton = P.stayButton:new{name = "unbrickableStayButton", sprite = love.graphics.newImage('Graphics/unbrickableStayButton.png'), upSprite = love.graphics.newImage('Graphics/unbrickableStayButton.png')}
+P.superStickyButton = P.stickyButton:new{name = "superStickyButton", sprite = 'Graphics/superStickyButton.png', upSprite = 'Graphics/superStickyButton.png'}
+P.unbreakableElectricFloor = P.electricFloor:new{name = "unbreakableElectricFloor", litWhenPowered = false, sprite = 'Graphics/unbreakableElectricFloor.png', poweredSprite = 'Graphics/unbreakableElectricFloor.png'}
+P.unbrickableStayButton = P.stayButton:new{name = "unbrickableStayButton", sprite = 'Graphics/unbrickableStayButton.png', upSprite = 'Graphics/unbrickableStayButton.png'}
 
-P.pinkFog = P.fog:new{name = "pinkFog", sprite = love.graphics.newImage('Graphics/pinkfog.png')}
+P.pinkFog = P.fog:new{name = "pinkFog", sprite = 'Graphics/pinkfog.png'}
 
-P.endTilePaid = P.tunnel:new{name = "endTilePaid", setTools = false, toolsNeededTotal = 0, sprite = love.graphics.newImage('Graphics/endtilepaid.png')}
+P.endTilePaid = P.tunnel:new{name = "endTilePaid", setTools = false, toolsNeededTotal = 0, sprite = 'Graphics/endtilepaid.png'}
 function P.endTilePaid:onEnter(player)
 end
 function P.endTilePaid:onEnter(player)
@@ -1713,18 +2241,23 @@ function P.endTilePaid:postPowerUpdate()
 end
 P.endTilePaid.onStep = P.endTilePaid.postPowerUpdate
 
-P.mushroom = P.tile:new{name = "mushroom", sprite = love.graphics.newImage('KenGraphics/mushroom.png')}
+P.mushroom = P.tile:new{name = "mushroom", sprite = 'KenGraphics/mushroom.png'}
 function P.mushroom:onEnter()
 	mushroomMode = true
 	shaderTriggered = true
 	globalTint = {0,0.15,0.3}
 end
 
-P.lampTile = P.tile:new{name = "lampTile", pushable = pushableList[12], listIndex = 12, sprite = love.graphics.newImage('Graphics/boxstartingtile.png')}
+P.lampTile = P.tile:new{name = "lampTile", pushable = pushableList[12], listIndex = 12, sprite = 'Graphics/boxstartingtile.png'}
 
 P.hermanTransform = P.tile:new{name = "hermanTransform", characterIndex = 1}
 function P.hermanTransform:onEnter()
 	player.character = characters[self.characterIndex]
+	player.character:onSelect()
+	myShader:send("player_range", 500)
+end
+function P.hermanTransform:postPowerUpdate()
+	self.sprite = characters[self.characterIndex].sprite
 end
 P.felixTransform = P.hermanTransform:new{name = "felixTransform", characterIndex = 2}
 P.erikTransform = P.hermanTransform:new{name = "erikTransform", characterIndex = 4}
@@ -1732,11 +2265,19 @@ P.rammyTransform = P.hermanTransform:new{name = "rammyTransform", characterIndex
 P.lennyTransform = P.hermanTransform:new{name = "lennyTransform", characterIndex = 15}
 P.fishTransform = P.hermanTransform:new{name = "fishTransform", characterIndex = 16}
 
-P.supertoolTile = P.tile:new{name = "supertoolTile", tool = nil}
+P.supertoolTile = P.tile:new{name = "supertoolTile", tool = nil, superQuality = 1}
 function P.supertoolTile:absoluteFinalUpdate()
 	if self.tool==nil then
-		local toolForTile = util.random(#tools-tools.numNormalTools, 'toolDrop')
-		self.tool = tools[toolForTile+tools.numNormalTools]
+		local quality = 0
+		local toolForTile = nil
+		local toolForTileId = 1
+		local unlockedSupers = unlocks.getUnlockedSupertools()
+		while(quality ~= self.superQuality or not unlockedSupers[toolForTileId] or tools[toolForTileId].isDisabled) do
+			toolForTileId = util.random(#tools-tools.numNormalTools, 'toolDrop')+tools.numNormalTools
+			toolForTile = tools[toolForTileId]
+			quality = toolForTile.quality
+		end
+		self.tool = toolForTile
 		self:updateSprite()
 	end
 end
@@ -1746,20 +2287,20 @@ function P.supertoolTile:updateSprite()
 	end
 end
 function P.supertoolTile:onEnter()
-	local stTypesHeld = 0
-	for i = tools.numNormalTools+1, #tools do
-		if tools[i].numHeld>0 then
-			stTypesHeld = stTypesHeld+1
-		end
-	end
+	local stTypesHeld = util.getSupertoolTypesHeld()
 	if stTypesHeld<3 or self.tool.numHeld>0 then
 		tools.giveToolsByReference({self.tool})
 		self.isVisible = false
 		self.gone = true
 	end
 end
+P.supertoolQ1 = P.supertoolTile:new{name = "supertoolTileQ1", superQuality = 1}
+P.supertoolQ2 = P.supertoolTile:new{name = "supertoolTileQ2", superQuality = 2}
+P.supertoolQ3 = P.supertoolTile:new{name = "supertoolTileQ3", superQuality = 3}
+P.supertoolQ4 = P.supertoolTile:new{name = "supertoolTileQ4", superQuality = 4}
+P.supertoolQ5 = P.supertoolTile:new{name = "supertoolTileQ5", superQuality = 5}
 
-P.toolTile = P.tile:new{name = "toolTile", tool = nil, dirSend = {0,0,0,0}}
+P.toolTile = P.tile:new{name = "toolTile", tool = nil, toolId = 1, dirSend = {0,0,0,0}}
 function P.toolTile:onEnter()
 	tools.giveToolsByReference({self.tool})
 	self.isVisible = false
@@ -1772,18 +2313,28 @@ function P.toolTile:absoluteFinalUpdate()
 		self:updateSprite()
 	end
 end
+function P.toolTile:onLoad()
+	if self.tool == nil then
+		self.tool = tools[self.toolId]
+	end
+end
+function P.toolTile:randomize()
+	local whichBasic = util.random(tools.numNormalTools, 'toolDrop')
+	self.toolId = whichBasic
+	self.tool = tools[self.toolId]
+end
 P.toolTile.updateSprite = P.supertoolTile.updateSprite
 
-P.sawTile = P.toolTile:new{name = "sawTile", tool = tools.saw, sprite = tools.saw.image}
-P.wireCuttersTile = P.toolTile:new{name = "wirecuttersTile", tool = tools.wireCutters, sprite = tools.wireCutters.image}
-P.ladderTile = P.toolTile:new{name = "ladderTile", tool = tools.ladder, sprite = tools.ladder.image}
-P.brickTile = P.toolTile:new{name = "brickTile", tool = tools.brick, sprite = tools.brick.image}
-P.gunTile = P.toolTile:new{name = "gunTile", tool = tools.gun, sprite = tools.gun.image}
-P.spongeTile = P.toolTile:new{name = "spongeTile", tool = tools.sponge, sprite = tools.sponge.image}
-P.waterBottleTile = P.toolTile:new{name = "waterBottleTile", tool = tools.waterBottle, sprite = tools.waterBottle.image}
+P.sawTile = P.toolTile:new{name = "sawTile", toolId = 1, sprite = tools.saw.image}
+P.wireCuttersTile = P.toolTile:new{name = "wirecuttersTile", toolId = 3, sprite = tools.wireCutters.image}
+P.ladderTile = P.toolTile:new{name = "ladderTile", toolId = 2, sprite = tools.ladder.image}
+P.brickTile = P.toolTile:new{name = "brickTile", toolId = 6, sprite = tools.brick.image}
+P.gunTile = P.toolTile:new{name = "gunTile", toolId = 7, sprite = tools.gun.image}
+P.spongeTile = P.toolTile:new{name = "spongeTile", toolId = 5, sprite = tools.sponge.image}
+P.waterBottleTile = P.toolTile:new{name = "waterBottleTile", toolId = 4, sprite = tools.waterBottle.image}
 
 
-P.toolTaxTile = P.concreteWall:new{name = "toolTaxTile", dirSend = {0,0,0,0}, sprite = love.graphics.newImage('Graphics/tooltaxtile.png'), tool = nil}
+P.toolTaxTile = P.reinforcedGlass:new{name = "toolTaxTile", dirSend = {0,0,0,0}, sprite = 'Graphics/tooltaxtile.png', tool = nil}
 P.toolTaxTile.absoluteFinalUpdate = P.toolTile.absoluteFinalUpdate
 function P.toolTaxTile:updateSprite()
 	if self.tool == tools.wireCutters then
@@ -1798,15 +2349,551 @@ function P.toolTaxTile:updateSprite()
 		self.overlay = P.spongeTile
 	elseif self.tool == tools.waterBottle then
 		self.overlay = P.waterBottleTile
+	elseif self.tool == tools.brick then
+		self.overlay = P.brickTile
 	end
 end
 function P.toolTaxTile:onEnter()
+	if player.elevation>=self:getHeight()-3 then return end
 	if not self.destroyed and self.tool.numHeld>0 then
 		self.tool.numHeld = self.tool.numHeld-1
-		self.tool = nil
 		self:destroy()
 	elseif not self.destroyed then
 		P.concreteWall:onEnter(player)
+	end
+end
+function P.toolTaxTile:destroy()
+	self.blocksProjectiles = false
+	self.blocksVision = false
+	self.sprite = self.destroyedSprite
+	self.destroyed = true
+	self.blocksMovement = false
+	self.dirAccept = {0,0,0,0}
+	self.dirSend = {0,0,0,0}
+	self.overlay = nil
+	self.tool = nil
+end
+function P.toolTaxTile:obstructsMovement()
+	if math.abs(player.elevation-self:getHeight())<=3 then
+		return false
+	elseif not self.destroyed and self.tool.numHeld>0 then
+		return false
+	end
+	return true
+end
+
+P.dungeonEnter = P.tile:new{name = "dungeonEnter"}
+function P.dungeonEnter:onEnter()
+	player.regularMapLoc = {x = mapx, y = mapy}
+	mapx = 1
+	mapy = mapHeight+1
+	room = mainMap[mapy][mapx].room
+	roomHeight = room.height
+	roomLength = room.length
+	createAnimals()
+	createPushables()
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]~=nil and room[i][j]:instanceof(tiles.dungeonExit) then
+				player.tileY = i
+				player.tileX = j
+				break
+			end
+		end
+	end
+	player.prevTileX = player.tileX
+	player.prevTileY = player.tileY
+	player.justTeleported = true
+end
+P.dungeonExit = P.tile:new{name = "dungeonExit"}
+function P.dungeonExit:onEnter()
+	mapx = player.regularMapLoc.x
+	mapy = player.regularMapLoc.y
+	room = mainMap[mapy][mapx].room
+	roomHeight = room.height
+	roomLength = room.length
+	player.tileX = -1
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]~=nil and room[i][j]:instanceof(tiles.dungeonEnter) then
+				player.tileY = i
+				player.tileX = j
+				break
+			end
+		end
+	end
+
+	if player.tileX==-1 then
+		for i = 1, roomHeight do
+			for j = 1, roomLength do
+				if room[i][j]~=nil and room[i][j]:instanceof(tiles.wall) and room[i][j].hidesDungeon then
+					room[i][j]:destroy()
+					player.tileY = i
+					player.tileX = j
+					break
+				end
+			end
+		end
+	end
+
+	if player.tileX==-1 then
+		local dirEnterInfo = map.getFieldForRoom(mainMap[mapy][mapx].roomid, "dirEnter")
+		if dirEnterInfo[1]==1 then
+			player.tileY = 1
+			player.tileX = math.floor(roomLength/2)
+		elseif dirEnterInfo[2]==1 then
+			player.tileY = math.floor(roomHeight/2)
+			player.tileX = roomLength
+		elseif dirEnterInfo[3]==1 then
+			player.tileY = roomHeight
+			player.tileX = math.floor(roomLength/2)
+		elseif dirEnterInfo[4]==1 then
+			player.tileY = math.floor(roomHeight/2)
+			player.tileX = 1
+		end
+	end
+
+	createAnimals()
+	createPushables()
+	player.justTeleported = true
+end
+
+P.endDungeonEnter = P.tile:new{name = "endDungeonEnter", sprite = 'Graphics/eden.png', disabled = false}
+function P.endDungeonEnter:onLoad()
+	local unlocks = require('scripts.unlocks')
+	self.disabled = not unlocks.isDungeonUnlocked()
+	self.isVisible = not self.disabled
+end
+function P.endDungeonEnter:onEnter()
+	if self.disabled then
+		return
+	end
+	player.returnFloorIndex = floorIndex
+	goToFloor(1)
+	if stairsLocs[8].coords.x~=0 then
+		mapx = stairsLocs[8].map.x
+		mapy = stairsLocs[8].map.y
+		room = mainMap[mapy][mapx].room
+		roomHeight = room.height
+		roomLength = room.length
+		player.tileX = stairsLocs[8].coords.x
+		player.tileY = stairsLocs[8].coords.y
+	else
+		for i = 1, roomHeight do
+			for j = 1, roomLength do
+				if room[i][j]~=nil and room[i][j]:instanceof(tiles.endDungeonExit) then
+					player.tileY = i
+					player.tileX = j
+					break
+				end
+			end
+		end
+	end
+end
+
+P.endDungeonExit = P.tile:new{name = "endDungeonExit", sprite = 'Graphics/edex.png'}
+function P.endDungeonExit:onEnter()
+	goToFloor(player.returnFloorIndex)
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]~=nil and room[i][j]:instanceof(tiles.endDungeonEnter) then
+				player.tileY = i
+				player.tileX = j
+				break
+			end
+		end
+	end
+end
+
+
+P.dungeonKey = P.tile:new{name = "dungeonKey", sprite = 'Graphics/key.png', enterCheckWin = true}
+function P.dungeonKey:onEnter()
+	player.dungeonKeysHeld = player.dungeonKeysHeld+1
+	self.done = true
+	self.isCompleted = true
+	self.isVisible = false
+	self.gone = true
+end
+
+P.finalKey = P.tile:new{name = "finalKey", sprite = 'Graphics/finalkey.png', enterCheckWin = true}
+function P.finalKey:onEnter(player)
+	player.finalKeysHeld = player.finalKeysHeld+1
+	spotlights = {}
+	self.done = true
+	self.isCompleted = true
+	self.isVisible = false
+	self.gone = true
+end
+
+P.finalKeyPowered = P.finalKey:new{name = "finalKeyPowered", poweredSprite = 'Graphics/finalkey.png',
+sprite = 'Graphics/keyunpowered.png',
+canBePowered = true, dirSend = {1,1,1,1}, dirAccept = {1,1,1,1}}
+function P.finalKeyPowered:onEnter()
+	if not self.powered then return end
+	player.finalKeysHeld = player.finalKeysHeld+1
+	spotlights = {}
+	self.done = true
+	self.isCompleted = true
+	self.isVisible = false
+	self.gone = true
+end
+
+P.gameWin = P.tile:new{name = "gameWin"}
+function P.gameWin:onEnter()
+	win()
+end
+
+P.dungeonKeyGate = P.reinforcedGlass:new{name = "keyTile", sprite = 'Graphics/keytile.png', untoolable = true}
+function P.dungeonKeyGate:onEnter()
+	if player.dungeonKeysHeld>=3 then
+		self:open()
+	elseif not self.destroyed then
+		P.reinforcedGlass:onEnter(player)
+	end
+end
+function P.dungeonKeyGate:obstructsMovement()
+	if math.abs(player.elevation-self:getHeight())<=3 then
+		return false
+	elseif player.dungeonKeysHeld>=3 then
+		return false
+	else
+		return true
+	end
+end
+--nothing can destroy the keyGate (including missiles) because of below code
+function P.dungeonKeyGate:destroy()
+end
+function P.dungeonKeyGate:open()
+	self.blocksProjectiles = false
+	self.blocksVision = false
+	self.sprite = self.destroyedSprite
+	self.destroyed = true
+	self.blocksMovement = false
+	self.dirAccept = {0,0,0,0}
+	self.dirSend = {0,0,0,0}
+	self.overlay = nil
+end
+
+P.finalKeyGate = P.dungeonKeyGate:new{name = "finalKeyGate"}
+function P.finalKeyGate:onEnter()
+	if player.finalKeysHeld>=20 then
+		self:open()
+	elseif not self.destroyed then
+		P.reinforcedGlass:onEnter(player)
+	end
+end
+function P.finalKeyGate:obstructsMovement()
+	if math.abs(player.elevation-self:getHeight())<=3 then
+		return false
+	elseif player.finalKeysHeld>=3 then
+		return false
+	else
+		return true
+	end
+end
+
+P.gasPuddle = P.puddle:new{name = "gasPuddle", sprite = 'Graphics/gaspuddle.png'}
+function P.gasPuddle:updateTile(dir)
+	if self.charged then
+		self.powered = true
+		return
+	end
+	if self.poweredNeighbors[1]==1 or self.poweredNeighbors[2]==1 or self.poweredNeighbors[3]==1 or self.poweredNeighbors[4]==1 then
+		self.powered = true
+	else
+		self.powered = false
+	end
+
+	if self.powered then
+		self:destroy()
+	end
+end
+function P.gasPuddle:onEnd(x, y)
+	self:explode(x,y)
+end
+function P.gasPuddle:destroy()
+	self.gone = true
+end
+function P.gasPuddle:explode(x,y)
+	P.bomb:explode(x,y)
+end
+
+P.halfWall = P.concreteWall:new{name = "halfWall", sprite = 'GraphicsColor/halfwall.png', yOffset = -3}
+
+P.elevator = P.conductiveTile:new{name = "elevator", blocksVision = true, blocksAnimalMovement = true, yOffset = -3, sprite = 'GraphicsColor/elevatordown2.png', poweredSprite = 'GraphicsColor/elevatorup.png'}
+function P.elevator:postPowerUpdate()
+	if self.powered then
+		self.yOffset = -6
+	else
+		self.yOffset = 0
+	end
+end
+P.elevator.onEnter = P.wall.onEnter
+P.elevator.onLeave = P.wall.onLeave
+
+P.elevatedButton = P.button:new{name = "elevatedButton", yOffset = -3, upSprite = 'Graphics/buttonupel.png', downSprite = 'Graphics/buttondownel.png'}
+
+P.delevator = P.elevator:new{name = "delevator", blocksAnimalMovement = true, yOffset = 0, sprite = 'GraphicsColor/delevatorup.png', poweredSprite = 'GraphicsColor/delevatordown.png'}
+function P.delevator:postPowerUpdate()
+	if self.powered then self.yOffset = 0
+	else self.yOffset = -3 end
+end
+function P.delevator:getHeight()
+	if self.powered then
+		return -6
+	else
+		return 3
+	end
+end
+
+P.groundDown = P.tile:new{name = "groundDown", sprite = 'GraphicsColor/grounddown.png'}
+function P.groundDown:getHeight()
+	return -3
+end
+
+P.tallWall = P.concreteWall:new{name = "tallWall", sprite = 'GraphicsColor/tallwall.png', yOffset = -9}
+
+P.lemonade = P.puddle:new{name = "lemonade", canBePowered = false, sprite = 'Graphics/lemonade.png'}
+function P.lemonade:willKillAnimal()
+	return true
+end
+
+P.gameStairs = P.tile:new{name = "gameStairs", sprite = 'KenGraphics/gamestairs.png'}
+function P.gameStairs:onEnter()
+	stairsLocs[1] = {map ={x = mapx, y = mapy}, coords = {x = player.tileX, y = player.tileY}}
+	startGame()
+end
+
+P.tutStairs = P.tile:new{name = "tutStairs", sprite = 'KenGraphics/tutstairs.png'}
+function P.tutStairs:onEnter()
+	stairsLocs[1] = {map ={x = mapx, y = mapy}, coords = {x = player.tileX, y = player.tileY}}
+	startTutorial()
+end
+
+P.debugStairs = P.tile:new{name = "debugStairs", sprite = 'KenGraphics/tutstairs.png'}
+function P.debugStairs:onEnter()
+	stairsLocs[1] = {map ={x = mapx, y = mapy}, coords = {x = player.tileX, y = player.tileY}}
+	startDebug()
+end
+
+P.saveStairs = P.tile:new{name = "saveStairs", sprite = 'KenGraphics/gamestairs.png', recording = nil}
+function P.saveStairs:onLoad()
+	self.recording = saving.getSave()
+	if self.recording == nil or self.recording.isDead then
+		self.isVisible = false
+	end
+end
+function P.saveStairs:onEnter()
+	if self.isVisible then
+		saving.playRecordingFast(self.recording)
+	end
+end
+
+P.playbackStairs = P.tile:new{name = "playbackStairs", sprite = 'KenGraphics/gamestairs.png', recording = nil}
+function P.playbackStairs:onLoad()
+	self.recording = saving.getSave()
+	if self.recording == nil then
+		self.isVisible = false
+	end
+end
+function P.playbackStairs:onEnter()
+	if self.isVisible then
+		saving.playBackRecording(self.recording)
+	end
+end
+
+P.unlockTile = P.tile:new{name = "unlockTile"}
+function P.unlockTile:postPowerUpdate(i, j)
+	local unlockNum = (i-1)*roomLength+j
+	if unlocks[unlockNum]~=nil then
+		self.sprite = unlocks[unlockNum].sprite
+		if not unlocks[unlockNum].unlocked then
+			self.overlay = P.darkOverlay
+		else
+			self.overlay = nil
+		end
+	end
+end
+
+P.darkOverlay = P.tile:new{name = "darkOverlay", sprite = 'NewGraphics/unlocksDarken.png'}
+
+P.playerTile = P.tile:new{name = "playerTransform", character = nil, text = "Herman", isVisible = false}
+function P.playerTile:onLoad()
+	if self.character==nil then
+		local unlockedChars = characters.getUnlockedCharacters()
+		for i = 1, #unlockedChars do
+			if unlockedChars[i].name == self.text then
+				self.character = unlockedChars[i]
+			end
+		end
+		if self.character ~= nil then
+			self.sprite = self.character.sprite
+			self.isVisible = true
+		end
+	end
+end
+function P.playerTile:onEnter()
+	if self.character ~= nil then
+		player.character = self.character
+		player.character:onSelect()
+		myShader:send("player_range", 500)
+	end
+	messageInfo.text = self:getCharInfo()
+end
+function P.playerTile:onLeave(player)
+	messageInfo.text = nil
+end
+function P.playerTile:getCharInfo()
+	local infoText = ""
+	infoText = infoText..self.character.name..", "..self.character.description.."\n"
+	infoText = infoText.."Wins: "..stats.wins[self.character.name].."\n"
+	infoText = infoText.."Losses: "..stats.losses[self.character.name]
+	return infoText
+end
+
+P.tree = P.wall:new{name = "tree", sawable = false, level = 0, sprite = 'Graphics/tree0.png',
+spriteList = {'Graphics/tree1.png', 'Graphics/tree2.png', 'Graphics/tree3.png'}}
+function P.tree:updateSprite()
+	if self.level==1 then
+		self.sprite = self.spriteList[1]
+	elseif self.level==2 then
+		self.sprite = self.spriteList[2]
+	elseif self.level==3 then
+		self.sprite = self.spriteList[3]
+	end
+end
+function P.tree:getHeight()
+	if self.level==0 then
+		return 0
+	elseif self.level==1 then
+		return 3
+	elseif self.level==2 then
+		return 6
+	elseif self.level==3 then
+		return 9
+	end
+end
+function P.tree:getYOffset()
+	if self.level==0 then
+		return 0
+	elseif self.level==1 then
+		return -3
+	elseif self.level==2 then
+		return -6
+	elseif self.level==3 then
+		return -9
+	end
+end
+function P.tree:destroy()
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]==self then
+				room[i][j] = tiles.supertoolTile:new()
+				room[i][j].tool = tools.seeds
+			end
+		end
+	end
+end
+
+P.biscuit = P.tile:new{name = "biscuit", sprite = 'Graphics/biscuit.png'}
+function P.biscuit:onEnter(player)
+	player.biscuitHeld = true
+	self.done = true
+	self.isCompleted = true
+	self.isVisible = false
+	self.gone = true
+end
+
+P.atm = P.concreteWall:new{name = "atm", sprite = 'Graphics/tooltaxtile.png', untoolable = true,
+map = {}}
+function P.atm:onLoad()
+	for i = 1, mapHeight do
+		self.map[i] = {}
+		for j = 1, mapHeight do
+			self.map[i][j] = 0
+		end
+	end
+end
+function P.atm:obstructsMovement()
+	if math.abs(player.elevation-self:getHeight())<=3 then
+		return false
+	elseif tools.coin.numHeld>0 or tools.luckyPenny.numHeld>0 then
+		return false
+	end
+	return true
+end
+function P.atm:onEnter()
+	if math.abs(player.elevation-self:getHeight())<=3 then
+		return
+	elseif tools.coin.numHeld>0 or tools.luckyPenny.numHeld>0 then
+		if tools.coin.numHeld>0 then
+			tools.coin.numHeld = tools.coin.numHeld-1
+		elseif tools.luckyPenny.numHeld>0 then
+			tools.luckyPenny.numHeld = tools.luckyPenny.numHeld01
+		end
+		
+		local gaveTools = false
+		for i = 1, #self.map do
+			for j = 1, #self.map[1] do
+				if self.map[i][j]==0 and mainMap[i][j]~=nil then
+					self.map[i][j]=1
+					local itemsNeededList = map.getItemsNeeded(mainMap[i][j].roomid)
+					local inlLen = #itemsNeededList
+					local whichIN = util.random(inlLen, 'misc')
+					local toolsToGive = {}
+					for i = 1, tools.numNormalTools do
+						print(itemsNeededList[whichIN][i])
+						for j = 1, itemsNeededList[whichIN][i] do
+							toolsToGive[#toolsToGive+1] = tools[i]
+						end
+					end
+					if #toolsToGive>0 then
+						gaveTools = true
+						tools.giveToolsByReference(toolsToGive)
+						break
+					end
+				end
+				if gaveTools then break end
+			end
+			if gaveTools then break end
+		end
+		if not gaveTools then
+			tools.giveRandomTools(1)
+		end
+
+		player.tileX = player.prevTileX
+		player.tileY = player.prevTileY
+	end
+end
+
+P.ratTile = P.pitbullTile:new{name = "rat", animal = animalList[15], listIndex = 15}
+
+P.iceBoxTile = P.tile:new{name = "iceBoxTile", pushable = pushableList[13], listIndex = 13, sprite = 'Graphics/boxstartingtile.png'}
+P.recycleBinTile = P.tile:new{name = "recycleBinTile", pushable = pushableList[14], listIndex = 14, sprite = 'Graphics/boxstartingtile.png'}
+
+P.infestedWood = P.wall:new{name = "infestedWood", sprite = 'Graphics/infestedwood.png'}
+function P.infestedWood:destroy()
+	self.blocksProjectiles = false
+	self.blocksVision = false
+	self.sprite = self.destroyedSprite
+	self.destroyed = true
+	self.blocksMovement = false
+	self.canBePowered = false
+	self.dirAccept = {0,0,0,0}
+	self.dirSend = {0,0,0,0}
+	self.overlay = nil
+	self.yOffset = 0
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]==self then
+				local animalToAdd = animalList.termite:new()
+				animalToAdd.tileX = j
+				animalToAdd.tileY = i
+				animalToAdd.prevTileX = j
+				animalToAdd.prevTileY = i
+				animals[#animals+1] = animalToAdd
+			end
+		end
 	end
 end
 
@@ -1882,7 +2969,7 @@ tiles[69] = P.playerBoxTile
 tiles[70] = P.animalBoxTile
 tiles[71] = P.puddle
 tiles[72] = P.dustyGlassWall
-tiles[73] = P.trap
+tiles[73] = P.web
 tiles[74] = P.conductiveBoxTile
 tiles[75] = P.boomboxTile
 tiles[76] = P.batteringRamTile
@@ -1960,5 +3047,55 @@ tiles[147] = P.brickTile
 tiles[148] = P.gunTile
 tiles[149] = P.toolTile
 tiles[150] = P.toolTaxTile
+tiles[151] = P.dungeonEnter
+tiles[152] = P.dungeonExit
+tiles[153] = P.upTunnel
+tiles[154] = P.supertoolQ1
+tiles[155] = P.supertoolQ2
+tiles[156] = P.supertoolQ3
+tiles[157] = P.supertoolQ4
+tiles[158] = P.supertoolQ5
+tiles[159] = P.endDungeonEnter
+tiles[160] = P.endDungeonExit
+tiles[161] = P.dungeonKey
+tiles[162] = P.dungeonKeyGate
+tiles[163] = P.gasPuddle
+tiles[164] = P.halfWall
+tiles[165] = P.elevator
+tiles[166] = P.elevatedButton
+tiles[167] = P.delevator
+tiles[168] = P.groundDown
+tiles[169] = P.tallWall
+tiles[170] = P.gameStairs
+tiles[171] = P.tutStairs
+tiles[172] = P.unlockTile
+tiles[173] = P.darkOverlay
+tiles[174] = P.debugStairs
+tiles[175] = P.playerTile
+tiles[176] = P.lemonade
+tiles[177] = P.rottenMeat
+tiles[178] = P.tree
+tiles[179] = P.biscuit
+tiles[180] = P.entrancePortal2
+tiles[181] = P.exitPortal2
+tiles[182] = P.whiteBeggar
+tiles[183] = P.blackBeggar
+tiles[184] = P.goldBeggar
+tiles[185] = P.gameWin
+tiles[186] = P.spotlightTile
+tiles[187] = P.fastSpotlightTile
+tiles[188] = P.slowSpotlightTile
+tiles[189] = P.ramTile
+tiles[190] = P.finalKey
+tiles[191] = P.finalKeyGate
+tiles[192] = P.finalKeyPowered
+tiles[193] = P.atm
+tiles[194] = P.saveStairs
+tiles[195] = P.playbackStairs
+tiles[196] = P.ratTile
+tiles[197] = P.iceBoxTile
+tiles[198] = P.recycleBinTile
+tiles[199] = P.infestedWood
+
 
 return tiles

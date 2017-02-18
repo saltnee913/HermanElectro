@@ -23,6 +23,16 @@ function P.chooseWeightedRandom(arr, random)
 	return -1
 end
 
+function P.getSupertoolTypesHeld()
+	local numSup = 0
+	for i = tools.numNormalTools+1, #tools do
+		if tools[i].numHeld>0 then
+			numSup = numSup+1
+		end
+	end
+	return numSup
+end
+
 function P.chooseRandomElement(arr, random)
 	return arr[util.random(#arr, random)]
 end
@@ -90,7 +100,6 @@ function P.writeJSON(filePath, data, state)
 	if not love.filesystem.exists(saveDir) then
 		love.filesystem.createDirectory(saveDir)
 	end
-	print(str)
 	love.filesystem.write(saveDir..'/'..filePath, str)
 end
 
@@ -127,6 +136,45 @@ function P.random(maxVal, random)
 		P.randoms[random].times = P.randoms[random].times + 1
 		return love.math.random()
 	end
+end
+
+P.images = {}
+
+function P.getImage(imageSource)
+	if P.images[imageSource] == nil then
+		P.images[imageSource] = love.graphics.newImage(imageSource)
+	end
+	return P.images[imageSource]
+end
+
+function P.createHarmlessExplosion(y, x)
+	for i = -1, 1 do
+		for j = -1, 1 do
+			if room[y+i]~=nil and room[y+i][x+j]~=nil then
+				room[y+i][x+j]:destroy()
+				if room[y+i][x+j]:instanceof(tiles.bomb) then
+					unlocks.unlockUnlockableRef(unlocks.bombBuddyUnlock)
+				end
+			end
+		end
+	end
+	for k = 1, #animals do
+		if not animals[k].dead and math.abs(animals[k].tileY-y)<2 and math.abs(animals[k].tileX-x)<2 then
+			animals[k]:kill()
+			if animals[k]:instanceof(animalList.bombBuddy) then
+				animals[k]:explode()
+			end
+		end
+	end
+	for k = 1, #pushables do
+		if math.abs(pushables[k].tileY-y)<2 and math.abs(pushables[k].tileX-x)<2 and not pushables[k].destroyed then
+			pushables[k]:destroy()
+			if pushables[k]:instanceof(pushableList.bombBox) then
+				unlocks.unlockUnlockableRef(unlocks.bombBuddyUnlock)
+			end
+		end
+	end
+	updatePower()
 end
 
 return util

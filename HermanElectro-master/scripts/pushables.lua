@@ -5,7 +5,7 @@ require('scripts.object')
 local P = {}
 pushableList = P
 
-P.pushable = Object:new{name = "pushable", waitCounter=0, visible = true, sawable = true, canBeAccelerated = true, conductive = false, prevTileX = 0, prevTileY = 0, tileX = 0, tileY = 0, destroyed = false, sprite = love.graphics.newImage('Graphics/box.png')}
+P.pushable = Object:new{name = "pushable", elevation = 0, forcePower = false, charged = false, aitCounter=0, visible = true, sawable = true, canBeAccelerated = true, conductive = false, prevTileX = 0, prevTileY = 0, tileX = 0, tileY = 0, destroyed = false, sprite = 'Graphics/box.png'}
 function P.pushable:onStep()
 end
 function P.pushable:destroy()
@@ -23,6 +23,10 @@ function P.pushable:move(mover)
 		self.tileY = self.tileY+(mover.tileY-mover.prevTileY)
 	end
 	if room[self.tileY]==nil or self.tileX>roomLength or self.tileX<1 then
+		self.tileX = self.prevTileX
+		self.tileY = self.prevTileY
+		return false
+	elseif room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX]:getHeight()>self.elevation then
 		self.tileX = self.prevTileX
 		self.tileY = self.prevTileY
 		return false
@@ -52,14 +56,17 @@ function P.pushable:move(mover)
 			return false
 		end
 	end
-	if room[self.tileY][self.tileX]~=nil and not room[self.tileY][self.tileX]:instanceof(tiles.endTile) and 
-		(self.prevTileX~=self.tileX or self.prevTileY~=self.tileY) then
-		room[self.tileY][self.tileX]:onEnter(self)
+	if room[self.tileY][self.tileX]~=nil and not room[self.tileY][self.tileX].enterCheckWin and 
+	(self.prevTileX~=self.tileX or self.prevTileY~=self.tileY) then
+		room[self.tileY][self.tileX]:onEnterPushable(self)
+		self:onEnterTile()
 	end
 
 	if not (self.prevTileY == self.tileY and self.prevTileX == self.tileX) then
-		if room[self.prevTileY][self.prevTileX]~=nil then
-			room[self.prevTileY][self.prevTileX]:onLeave(self)
+		if room[self.prevTileY][self.prevTileX]~=nil and not room[self.prevTileY][self.prevTileX]:usableOnNothing() then
+			room[self.prevTileY][self.prevTileX]:onLeavePushable(self)
+		else
+			self:onLeaveNothing()
 		end
 		if room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX]:willDestroyPushable() then
 			self.destroyed = true
@@ -68,7 +75,7 @@ function P.pushable:move(mover)
 		self.canBeAccelerated = false
 		return true
 	elseif room[self.tileY][self.tileX]~=nil then
-		room[self.tileY][self.tileX]:onStay(self)
+		room[self.tileY][self.tileX]:onStayPushable(self)
 	end
 	
 	return false
@@ -105,14 +112,15 @@ function P.pushable:moveNoMover()
 		end
 	end
 
-	if room[self.tileY][self.tileX]~=nil and not room[self.tileY][self.tileX]:instanceof(tiles.endTile) and 
-		(self.prevTileX~=self.tileX or self.prevTileY~=self.tileY) then
-		room[self.tileY][self.tileX]:onEnter(self)
+	if room[self.tileY][self.tileX]~=nil and not room[self.tileY][self.tileX].enterCheckWin and 
+	(self.prevTileX~=self.tileX or self.prevTileY~=self.tileY) then
+		room[self.tileY][self.tileX]:onEnterPushable(self)
+		self:onEnterTile()
 	end
 
 	if not (self.prevTileY == self.tileY and self.prevTileX == self.tileX) then
 		if room[self.prevTileY][self.prevTileX]~=nil then
-			room[self.prevTileY][self.prevTileX]:onLeave(self)
+			room[self.prevTileY][self.prevTileX]:onLeavePushable(self)
 		end
 		if room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX]:willDestroyPushable() then
 			self.destroyed = true
@@ -120,10 +128,14 @@ function P.pushable:moveNoMover()
 		end
 		return true
 	elseif room[self.tileY][self.tileX]~=nil then
-		room[self.tileY][self.tileX]:onStay(self)
+		room[self.tileY][self.tileX]:onStayPushable(self)
 	end
 	
 	return false
+end
+function P.pushable:onLeaveNothing()
+end
+function P.pushable:onEnterTile()
 end
 function P.pushable:animalCanMove()
 	return true
@@ -134,30 +146,30 @@ end
 function P.pushable:checkDestruction()
 	if room[self.tileY][self.tileX]~=nil then
 		t = room[self.tileY][self.tileX]
-		if self.destroyed == false and t.blocksMovement then
+		if self.destroyed == false and t:willDestroyPushable() then
 			self.destroyed = true
 			room[self.tileY][self.tileX]:destroyPushable()
 		end
 	end
 end
 
-P.box = P.pushable:new{name = "box", sprite = love.graphics.newImage('Graphics/box.png')}
+P.box = P.pushable:new{name = "box", sprite = 'Graphics/box.png'}
 
-P.playerBox = P.box:new{name = "playerBox", sprite = love.graphics.newImage('Graphics/playerBox.png'), sawable = true}
+P.playerBox = P.box:new{name = "playerBox", sprite = 'Graphics/playerBox.png', sawable = true}
 function P.playerBox:animalCanMove()
 	return self.destroyed
 end
 
-P.animalBox = P.box:new{name = "animalBox", sprite = love.graphics.newImage('Graphics/animalBox.png'), sawable = false}
+P.animalBox = P.box:new{name = "animalBox", sprite = 'Graphics/animalBox.png', sawable = false}
 function P.animalBox:playerCanMove()
 	return self.destroyed
 end
 
-P.conductiveBox = P.box:new{name = "conductiveBox", powered = false, poweredLastUpdate = false, sprite = love.graphics.newImage('Graphics/conductiveBox.png'), poweredSprite = love.graphics.newImage('Graphics/conductiveboxpowered.png'), conductive = true}
+P.conductiveBox = P.box:new{name = "conductiveBox", powered = false, poweredLastUpdate = false, sprite = 'Graphics/conductiveBox.png', poweredSprite = 'Graphics/conductiveboxpowered.png', conductive = true}
 
-P.boombox = P.box:new{name = "boombox", sprite = love.graphics.newImage('Graphics/boombox.png'), sawable = false}
+P.boombox = P.box:new{name = "boombox", sprite = 'Graphics/boombox.png', sawable = false}
 
-P.batteringRam = P.box:new{name = "batteringRam", sprite = love.graphics.newImage('Graphics/batteringram.png')}
+P.batteringRam = P.box:new{name = "batteringRam", sprite = 'Graphics/batteringram.png'}
 function P.batteringRam:move(mover)
 	if self.destroyed then
 		return true
@@ -186,15 +198,23 @@ function P.batteringRam:move(mover)
 		return false
 	end
 
-	if room[self.tileY][self.tileX]~=nil and not room[self.tileY][self.tileX]:instanceof(tiles.endTile) then
+	if room[self.tileY][self.tileX]~=nil and not room[self.tileY][self.tileX].enterCheckWin then
 		local tile = room[self.tileY][self.tileX]
-		if tile.sawable or tile:instanceof(tiles.glassWall) then tile:destroy() end
-		room[self.tileY][self.tileX]:onEnter(self)
+		if tile.sawable or tile:instanceof(tiles.glassWall) then
+			if self.elevation<tile:getHeight() then
+				tile:destroy()
+			end
+		elseif room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX]:getHeight()>self.elevation then
+			self.tileX = self.prevTileX
+			self.tileY = self.prevTileY
+			return false
+		end
+		room[self.tileY][self.tileX]:onEnterPushable(self)
 	end
 
 	if not (self.prevTileY == self.tileY and self.prevTileX == self.tileX) then
 		if room[self.prevTileY][self.prevTileX]~=nil then
-			room[self.prevTileY][self.prevTileX]:onLeave(self)
+			room[self.prevTileY][self.prevTileX]:onLeavePushable(self)
 		end
 		if room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX]:willDestroyPushable() then
 			self.destroyed = true
@@ -202,7 +222,7 @@ function P.batteringRam:move(mover)
 		end
 		return true
 	elseif room[self.tileY][self.tileX]~=nil then
-		room[self.tileY][self.tileX]:onStay(self)
+		room[self.tileY][self.tileX]:onStayPushable(self)
 	end
 
 	--[[below code allows batteringRam to kill player or animals if pushed on them
@@ -238,15 +258,15 @@ function P.batteringRam:moveNoMover()
 		return false
 	end
 
-	if room[self.tileY][self.tileX]~=nil and not room[self.tileY][self.tileX]:instanceof(tiles.endTile) then
+	if room[self.tileY][self.tileX]~=nil and not room[self.tileY][self.tileX].enterCheckWin then
 		local tile = room[self.tileY][self.tileX]
 		if tile.sawable or tile:instanceof(tiles.glassWall) then tile:destroy() end
-		room[self.tileY][self.tileX]:onEnter(self)
+		room[self.tileY][self.tileX]:onEnterPushable(self)
 	end
 
 	if not (self.prevTileY == self.tileY and self.prevTileX == self.tileX) then
 		if room[self.prevTileY][self.prevTileX]~=nil then
-			room[self.prevTileY][self.prevTileX]:onLeave(self)
+			room[self.prevTileY][self.prevTileX]:onLeavePushable(self)
 		end
 		if room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX]:willDestroyPushable() then
 			self.destroyed = true
@@ -254,7 +274,7 @@ function P.batteringRam:moveNoMover()
 		end
 		return true
 	elseif room[self.tileY][self.tileX]~=nil then
-		room[self.tileY][self.tileX]:onStay(self)
+		room[self.tileY][self.tileX]:onStayPushable(self)
 	end
 
 	--[[below code allows batteringRam to kill player or animals if pushed on them
@@ -272,7 +292,7 @@ function P.batteringRam:moveNoMover()
 	return false
 end
 
-P.bombBox = P.conductiveBox:new{name = "bombBox", sprite = love.graphics.newImage('Graphics/bombBox.png')}
+P.bombBox = P.conductiveBox:new{name = "bombBox", sprite = 'Graphics/bombBox.png'}
 function P.bombBox:destroy()
 	self.destroyed = true
 	y = self.tileX
@@ -293,14 +313,14 @@ function P.bombBox:destroy()
 	end
 end
 
-P.giftBox = P.box:new{name = "giftBox", sprite = love.graphics.newImage('Graphics/giftbox.png')}
+P.giftBox = P.box:new{name = "giftBox", sprite = 'Graphics/giftbox.png'}
 function P.giftBox:destroy()
 	tools.giveSupertools(1)
 	self.destroyed = true
 end
 
-P.jackInTheBox = P.conductiveBox:new{name = "jackInTheBox", sprite = love.graphics.newImage('Graphics/jackinthebox.png'),
-  poweredSprite = love.graphics.newImage('Graphics/jackintheboxpowered.png'), sawable = false}
+P.jackInTheBox = P.conductiveBox:new{name = "jackInTheBox", sprite = 'Graphics/jackinthebox.png',
+  poweredSprite = 'Graphics/jackintheboxpowered.png', sawable = false}
 function P.jackInTheBox:onStep()
 	if self.poweredLastUpdate then
 		for i = 1, #animals do
@@ -311,7 +331,29 @@ end
 
 P.invisibleBox = P.box:new{name = "invisibleBox", visible = false}
 
-P.lamp = P.box:new{name = "lamp", sprite = love.graphics.newImage('Graphics/lamp.png'), intensity = 1, range = 200}
+P.lamp = P.conductiveBox:new{name = "lamp", sprite = 'Graphics/lamp.png', poweredSprite = 'Graphics/lamp.png', intensity = 1, charged = true, range = 200}
+
+P.iceBox = P.box:new{name = "icebox", sprite = 'Graphics/icebox.png', forcePower = true}
+function P.iceBox:onLeaveNothing()
+	room[self.prevTileY][self.prevTileX] = tiles.puddle:new()
+end
+
+P.recycleBin = P.box:new{name = "recycleBin", sprite = 'Graphics/recycleBin.png'}
+function P.recycleBin:onEnterTile()
+	local tile = room[self.tileY][self.tileX]
+	if tile:usableOnNothing() then
+		if tile:instanceof(tiles.wire) then
+			tools.giveToolsByReference({tools.wireCutters})
+		elseif tile:instanceof(tiles.glassWall) then
+			tools.giveToolsByReference({tools.brick})
+		elseif tile:instanceof(tiles.wall) then
+			tools.giveToolsByReference({tools.saw})
+		elseif tile:instanceof(tiles.electricFloor) then
+			tools.giveToolsByReference({tools.waterBottle})
+		end
+	end
+	room[self.tileY][self.tileX] = nil
+end
 
 pushableList[1] = P.pushable
 pushableList[2] = P.box
@@ -325,5 +367,7 @@ pushableList[9] = P.giftBox
 pushableList[10] = P.jackInTheBox
 pushableList[11] = P.invisibleBox
 pushableList[12] = P.lamp
+pushableList[13] = P.iceBox
+pushableList[14] = P.recycleBin
 
 return pushableList
