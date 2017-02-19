@@ -2676,6 +2676,12 @@ function P.debugStairs:onEnter()
 	startDebug()
 end
 
+P.editorStairs = P.tile:new{name = "editorStairs", sprite = 'KenGraphics/greenstairs.png'}
+function P.editorStairs:onEnter()
+	stairsLocs[1] = {map ={x = mapx, y = mapy}, coords = {x = player.tileX, y = player.tileY}}
+	startEditor()
+end
+
 P.saveStairs = P.tile:new{name = "saveStairs", sprite = 'KenGraphics/gamestairs.png', recording = nil}
 function P.saveStairs:onLoad()
 	self.recording = saving.getSave()
@@ -3096,6 +3102,7 @@ tiles[196] = P.ratTile
 tiles[197] = P.iceBoxTile
 tiles[198] = P.recycleBinTile
 tiles[199] = P.infestedWood
+tiles[200] = P.editorStairs
 
 
 return tiles

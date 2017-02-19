@@ -863,6 +863,28 @@ function P.generateMapFinal()
 	return newmap
 end
 
+function P.generateMapEditor()
+	local roomsArray = util.createIndexArray(P.floorInfo.rooms.rooms)
+	local startRoomID = roomsArray[1]
+
+	local height = P.floorInfo.height
+	local numRooms = P.floorInfo.numRooms
+	local newmap = MapInfo:new{height = height, numRooms = numRooms}
+	for i = 0, height+1 do
+		newmap[i] = {}
+	end
+
+	local startx = math.floor(height/2)
+	local starty = math.floor(height/2)
+	newmap[starty][startx] = {roomid = startRoomID, room = P.createRoom(startRoomID), isFinal = false, isInitial = true, isCompleted = true}
+	newmap.initialY = starty
+	newmap.initialX = startx
+
+	local designRoom = roomsArray[2]
+	newmap[starty-1][startx] = {roomid = designRoom, room = P.createRoom(designRoom), isFinal = false, isInitial = false}
+	return newmap
+end
+
 function P.generateMapWeighted()
 	--set up variables
 	local height = P.floorInfo.height

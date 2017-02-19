@@ -522,6 +522,7 @@ function goToMainMenu()
 	end
 	saving.forceEndPlayback()
 	--started = false
+	editorMode = false
 	loadOpeningWorld()
 	emptyTools()
 	gamePaused = false
@@ -791,6 +792,17 @@ function startDebug()
 	player.character:onBegin()
 end
 
+function startEditor()
+	loadRandoms()
+	loadTutorial = false
+	map.floorOrder = {'RoomData/editorFloor.json'}
+	love.load()
+	loadFirstLevel()
+	tools.resetTools()
+	player.character:onBegin()
+	editorMode = true
+end
+
 function loadFirstLevel()
 	emptyTools()
 	floorIndex = 1
@@ -798,6 +810,10 @@ function loadFirstLevel()
 	loadLevel(map.floorOrder[#map.floorOrder])
 	endMap = mainMap
 	loadNextLevel(true)
+	if map.getFieldForRoom(mainMap[mapy][mapx].roomid, 'autowin') then
+		completedRooms[mapy][mapx] = 1
+		unlockDoors()
+	end
 	createElements()
 	updateGameState()
 	player.character:onStartGame()
