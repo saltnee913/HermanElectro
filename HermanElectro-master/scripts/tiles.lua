@@ -2283,7 +2283,7 @@ function P.supertoolTile:absoluteFinalUpdate()
 end
 function P.supertoolTile:updateSprite()
 	if self.tool~=nil then
-		self.sprite = self.tool.image
+		self.sprite = self.tool:getTileImage()
 	end
 end
 function P.supertoolTile:onEnter()

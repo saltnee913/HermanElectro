@@ -2079,7 +2079,7 @@ function love.draw()
 			local toolScale = charSprite:getWidth() * player.character.scale/toolWidth
 			for i = 1, #tools.toolsShown do
 				local supertool = tools[tools.toolsShown[i]]
-				love.graphics.draw(util.getImage(supertool.image), (i-math.ceil(#tools.toolsShown)/2-1)*toolScale*toolWidth+player.x, player.y - charSprite:getHeight()*player.character.scale - util.getImage(tools[1].image):getHeight()*toolScale, 0, toolScale, toolScale)
+				love.graphics.draw(util.getImage(supertool:getDisplayImage()), (i-math.ceil(#tools.toolsShown)/2-1)*toolScale*toolWidth+player.x, player.y - charSprite:getHeight()*player.character.scale - util.getImage(tools[1].image):getHeight()*toolScale, 0, toolScale, toolScale)
 				if tools.toolsShown[i] > tools.numNormalTools then --if tool is a supertool
 					--love.graphics.setFont(fontFile)
 					--love.graphics.print(supertool.name, width/2-180, 110)
@@ -3931,6 +3931,12 @@ function onToolUse(tool)
 		mainMap[mapy][mapx].toolsUsed = {}
 	end
 	mainMap[mapy][mapx].toolsUsed[#mainMap[mapy][mapx].toolsUsed+1] = tool
+
+	--deck of cards trigger
+	if tools.card.numHeld>0 then
+		tools.card:playCard()
+	end
+
 	updateTools()
 	checkAllDeath()
 end

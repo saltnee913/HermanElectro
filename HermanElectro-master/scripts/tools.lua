@@ -47,11 +47,23 @@ function P.areSupersFull()
 	return (superCount >= 3)
 end
 
+function P.getSupersHeld()
+	local supersHeld = {}
+
+	for i = tools.numNormalTools, #tools do
+		if tools[i].numHeld>0 then
+			supersHeld[#superHeld+1] = tools[i]
+		end
+	end
+
+	return supersHeld
+end
+
 function P.giveTools(toolArray)
 	local toolsToDisp = {}
 	for i = 1, #toolArray do
 		if toolArray[i] <= tools.numNormalTools or tools[toolArray[i]].numHeld ~= 0 or not tools.areSupersFull() then
-			tools[toolArray[i]].numHeld = tools[toolArray[i]].numHeld + 1
+			tools[toolArray[i]]:giveOne()
 			toolsToDisp[#toolsToDisp+1] = toolArray[i]
 		end
 	end
@@ -224,6 +236,15 @@ function P.tool:resetTool()
 end
 function P.tool:getLastTool()
 	return {tools[P.lastToolUsed]}
+end
+function P.tool:giveOne()
+	self.numHeld = self.numHeld+1
+end
+function P.tool:getTileImage()
+	return self.image
+end
+function P.tool:getDisplayImage()
+	return self.image
 end
 
 --returns a table of tables of coordinates by direction
@@ -4316,7 +4337,7 @@ function P.iceBox:useToolNothing(tileY, tileX)
 	pushables[#pushables+1] = toSpawn
 end
 
-P.nineLives = P.superTool:new{name = "Cat's Paw", lifeCount = 9, quality = 4, image = 'Graphics/catpaw9.png',
+P.nineLives = P.superTool:new{name = "Cat's Paw", description = "", lifeCount = 9, quality = 4, image = 'Graphics/catpaw9.png',
 imageSet = {'Graphics/catpaw1.png', 'Graphics/catpaw2.png', 'Graphics/catpaw3.png', 'Graphics/catpaw4.png',
 'Graphics/catpaw5.png', 'Graphics/catpaw6.png', 'Graphics/catpaw7.png', 'Graphics/catpaw8.png', 'Graphics/catpaw9.png'}}
 function P.nineLives:checkDeath()
@@ -4339,6 +4360,77 @@ function P.nineLives:updateSprite()
 	self.image = self.imageSet[self.lifeCount]
 end
 
+--1 is diamond, 2 is heart, 3 is spade, 4 is club, 5 is joker
+P.card = P.superTool:new{name = "Card", description = "Expanding the deck", quality = 2,
+image = 'Graphics/deckofcards.png', baseImage = 'Graphics/card.png',
+cardOrder = {},
+spriteOrder = {'Graphics/diamondcard.png', 'Graphics/heartcard.png', 'Graphics/spadecard.png', 'Graphics/clubcard.png', 'Graphics/jokercard.png'}}
+function P.card:giveOne()
+	self:draw(1)
+end
+function P.card:updateSprite()
+	local nextCard = self.cardOrder[#self.cardOrder]
+	if nextCard==nil then
+		self.image = self.baseImage
+	else
+		self.image = self.spriteOrder[nextCard]
+	end
+end
+function P.card:playCard()
+	local card = self.cardOrder[#self.cardOrder]
+	if card==1 then
+		if tool~=nil then
+			tools.giveToolsByReference({tools[tool]})
+		end
+	elseif card==2 then
+		tools.giveRandomTools(1)
+	elseif card==3 then
+		unlockDoorsPlus()
+	elseif card==4 then
+		tools.giveToolsByReference({tools.card, tools.card})
+	else
+		if tools[tool]~=nil then
+			tools.giveToolsByReference({tools[tool]})
+		end
+		tools.giveRandomTools(1)
+		unlockDoorsPlus()
+		tools.giveToolsByReference({tools.card, tools.card})
+	end
+	self.numHeld = self.numHeld-1
+	self.cardOrder[#self.cardOrder] = nil
+	self:updateSprite()
+end
+function P.card:draw(cardsToGive)
+	self.numHeld = self.numHeld+cardsToGive
+
+	for i = 1, cardsToGive do
+		local whichCard = util.random(54,'toolDrop')
+		if whichCard<=13 then
+			whichCard = 1
+		elseif whichCard<=26 then
+			whichCard = 2
+		elseif whichCard<=39 then
+			whichCard = 3
+		elseif whichCard<=52 then
+			whichCard = 4
+		else
+			whichCard = 5
+		end
+		self.cardOrder[#self.cardOrder+1] = whichCard
+	end
+	self:updateSprite()
+end
+function P.card:getTileImage()
+	return self.baseImage
+end
+function P.card:getDisplayImage()
+	return self.baseImage
+end
+
+P.deckOfCards = P.superTool:new{name = "Deck of Cards", description = "One hand at a time", image = 'Graphics/deckofcards.png'}
+function P.deckOfCards:giveOne()
+	tools.card:draw(7)
+end
 
 P.numNormalTools = 7
 P.lastToolUsed = 1
@@ -4531,6 +4623,8 @@ P:addTool(P.recycleBin)
 P:addTool(P.iceBox)
 
 P:addTool(P.nineLives)
+P:addTool(P.deckOfCards)
+P:addTool(P.card)
 
 P.resetTools()
 
