@@ -804,7 +804,6 @@ function P.generateMapStandard()
 end
 
 function P.getRoomWeight(room)
-	print(room)
 	local weight = P.getFieldForRoom(room, 'weight')
 	if weight==nil then
 		weight = 1
@@ -958,7 +957,7 @@ function P.generateMapWeighted()
 		if numRooms-#usedRooms == 4 then
 			local max = {x = choice.x, y = choice.y}
 			for i = 1, #available do
-				if math.abs(available[i].x-max.x)+math.abs(available[i].y-max.y)>
+				if math.abs(available[i].x-math.floor(height/2))+math.abs(available[i].y-math.floor(height/2))>
 				math.abs(max.x-math.floor(height/2))+math.abs(max.y-math.floor(height/2)) then
 					max.x = available[i].x
 					max.y = available[i].y
@@ -1159,10 +1158,11 @@ function P.generateSixthFloor()
 		end
 		--choose a room slot
 		local choice = util.chooseRandomElement(available, 'mapGen')
+		--if final room
 		if numRooms-#usedRooms == 4 then
 			local max = {x = choice.x, y = choice.y}
 			for i = 1, #available do
-				if math.abs(available[i].x-max.x)+math.abs(available[i].y-max.y)>
+				if math.abs(available[i].x-math.floor(height/2))+math.abs(available[i].y-math.floor(height/2))>
 				math.abs(max.x-math.floor(height/2))+math.abs(max.y-math.floor(height/2)) then
 					max.x = available[i].x
 					max.y = available[i].y

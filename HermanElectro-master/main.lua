@@ -2005,7 +2005,7 @@ function love.draw()
 				local playerx = (player.character.shiftPos.x-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
 				local playery = (player.character.shiftPos.y-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
 				love.graphics.draw(charSprite2, playerx-charSprite2:getWidth()*player.character.scale/2, playery-charSprite2:getHeight()*player.character.scale-player.character.shiftPos.z*scale, 0, player.character.scale, player.character.scale)
-			elseif player.character.catLoc~=nil then
+			elseif player.character.catLoc~=nil and player.character.catLoc.y == j then
 				local nonActiveSprite
 				local playerx
 				local playery
