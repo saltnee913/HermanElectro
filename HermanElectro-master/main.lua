@@ -3131,7 +3131,7 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 						end
 					end
 					for i = 1, #pushables do
-						if pushables[i]:instanceof(pushableList.boombox) then
+						if pushables[i]:instanceof(pushableList.boombox) and not pushables[i].destroyed then
 						    if math.abs(pushables[i].tileY-ani.tileY)+math.abs(pushables[i].tileX-ani.tileX)<animalDist then
 								animalDist = math.abs(pushables[i].tileY-ani.tileY)+math.abs(pushables[i].tileX-ani.tileX)
 								movex = pushables[i].tileX
@@ -3412,7 +3412,7 @@ function resolveConflicts()
 			    			end
 			    		end
 			    		for j = 1, #pushables do
-			    			if pushables[j]:instanceof(pushableList.boombox) then
+			    			if pushables[j]:instanceof(pushableList.boombox) and not pushables[j].destroyed then
 							    if math.abs(pushables[j].tileY-animals[i].tileY)+math.abs(pushables[j].tileX-animals[i].tileX)<animalDist then
 									animalDist = math.abs(pushables[j].tileY-animals[i].tileY)+math.abs(pushables[j].tileX-animals[i].tileX)
 									movex = pushables[j].tileX
