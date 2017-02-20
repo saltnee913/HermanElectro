@@ -4432,6 +4432,22 @@ function P.deckOfCards:giveOne()
 	tools.card:draw(7)
 end
 
+P.amnesiaPill = P.superTool:new{name = "Amnesia Pill", description = "Perfect for roofies!", quality = 5, baseRange = 0,
+image = 'Graphics/amnesiapill.png'}
+function P.amnesiaPill:usableOnNothing()
+	--on floors 1-6
+	return floorIndex>=2 and floorIndex<=7
+end
+P.amnesiaPill.usableOnTile = P.amnesiaPill.usableOnNothing
+function P.amnesiaPill:useToolNothing()
+	local maintainStairsLocs = stairsLocs[floorIndex-1]
+	map.loadedMaps[floorIndex]=nil
+	floorIndex = floorIndex-1
+	goDownFloor()
+	stairsLocs[floorIndex-1] = maintainStairsLocs
+end
+P.amnesiaPill.useToolTile = P.amnesiaPill.useToolNothing
+
 P.numNormalTools = 7
 P.lastToolUsed = 1
 
@@ -4625,6 +4641,7 @@ P:addTool(P.iceBox)
 P:addTool(P.nineLives)
 P:addTool(P.deckOfCards)
 P:addTool(P.card)
+P:addTool(P.amnesiaPill)
 
 P.resetTools()
 
