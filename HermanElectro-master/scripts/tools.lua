@@ -4432,7 +4432,7 @@ function P.deckOfCards:giveOne()
 	tools.card:draw(7)
 end
 
-P.amnesiaPill = P.superTool:new{name = "Amnesia Pill", description = "Perfect for roofies!", quality = 5, baseRange = 0,
+P.amnesiaPill = P.superTool:new{name = "Amnesia Pill", description = "Goes great with roofies!", quality = 5, baseRange = 0,
 image = 'Graphics/amnesiapill.png'}
 function P.amnesiaPill:usableOnNothing()
 	--on floors 1-6
