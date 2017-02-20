@@ -124,7 +124,7 @@ function P.felix:onCharLoad()
 	if not tools.felixGun.isGun then
 		tools.felixGun:switchEffects()
 	end
-	tools.giveToolsByReference({tools.bomb})
+	tools.giveToolsByReference({tools.bomb, tools.felixGun})
 end
 function P.felix:onKeyPressedChar(key)
 	--log(key)
