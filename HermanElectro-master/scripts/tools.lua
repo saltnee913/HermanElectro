@@ -4448,6 +4448,19 @@ function P.amnesiaPill:useToolNothing()
 end
 P.amnesiaPill.useToolTile = P.amnesiaPill.useToolNothing
 
+P.heartTransplant = P.superTool:new{name = "Heart Transplant", description = "Another shot at life", quality = 1,
+image = 'Graphics/heart.png'}
+function P.heartTransplant:checkDeath()
+	self.numHeld = self.numHeld-1
+	room[player.tileY][player.tileX] = nil
+	for i = 1, #animals do
+		if animals[i].tileY==player.tileY and animals[i].tileX==player.tileX then
+			animals[i]:kill()
+		end
+	end
+	return false
+end
+
 P.numNormalTools = 7
 P.lastToolUsed = 1
 
@@ -4642,6 +4655,7 @@ P:addTool(P.nineLives)
 P:addTool(P.deckOfCards)
 P:addTool(P.card)
 P:addTool(P.amnesiaPill)
+P:addTool(P.heartTransplant)
 
 P.resetTools()
 

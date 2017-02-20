@@ -894,10 +894,10 @@ function kill()
 		unlocks.unlockUnlockableRef(unlocks.portalUnlock)
 	end
 	player.dead = true
-	for i = 1, #tools do
-		if tools[i].numHeld>0 and not tools[i]:checkDeath() then
+	for i = 1, #specialTools do
+		if tools[specialTools[i]]~=nil and tools[specialTools[i]].numHeld>0 and not tools[specialTools[i]]:checkDeath() then
 			player.dead = false
-			onToolUse(i)
+			onToolUse(specialTools[i])
 			return
 		end
 	end
