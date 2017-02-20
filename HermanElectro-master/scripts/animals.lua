@@ -47,6 +47,9 @@ function P.animal:move(playerx, playery, room, isLit)
 		self:secondaryMove(playerx, playery)
 	end
 end
+function P.animal:moveOverride(movex, movey)
+	return {x = movex, y = movey}
+end
 function P.animal:primaryMove(playerx, playery)
 	local diffx = math.abs(playerx - self.tileX)
 	local diffy = math.abs(playery - self.tileY)
@@ -500,6 +503,30 @@ P.rat = P.animal:new{name = "rat", sprite = 'Graphics/rat.png', triggered = true
 
 P.termite = P.animal:new{name = "termite", sprite = 'Graphics/termite.png', waitCounter = 0}
 
+P.twinPitbull = P.pitbull:new{name = "twinPitbull", sprite = 'Graphics/twinpitbull.png'}
+function P.twinPitbull:moveOverride(movex, movey)
+	movex = self.tileX
+	movey = self.tileY
+
+	for i = 1, #animals do
+		if animals[i]:instanceof(P.twinPitbull) and animals[i]~=self then
+			if movex~=self.tileX or movey~=self.tileY then
+				local iDist = math.abs(animals[i].tileX-self.tileX)+math.abs(animals[i].tileY-self.tileY)
+				local currDist = math.abs(movex-self.tileX)+math.abs(movey-self.tileY)
+				if currDist>iDist then
+					movex = animals[i].tileX
+					movey = animals[i].tileY
+				end
+			else
+				movex = animals[i].tileX
+				movey = animals[i].tileY
+			end
+		end
+	end
+
+	return {x = movex, y = movey}
+end
+
 
 
 animalList[1] = P.animal
@@ -518,5 +545,6 @@ animalList[13] = P.daughter
 animalList[14] = P.ram
 animalList[15] = P.rat
 animalList[16] = P.termite
+animalList[17] = P.twinPitbull
 
 return animalList

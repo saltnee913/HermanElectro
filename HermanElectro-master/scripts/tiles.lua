@@ -1025,6 +1025,7 @@ end
 P.pupTile = P.pitbullTile:new{name = "pup", animal = animalList[3], listIndex = 3}
 P.catTile = P.pitbullTile:new{name = "cat", animal = animalList[4], listIndex = 4}
 P.ramTile = P.pitbullTile:new{name = "ram", animal = animalList[14], listIndex = 14}
+P.twinPitbullTile = P.pitbullTile:new{name = "twinPitbull", animal = animalList[17], listIndex = 17}
 
 P.spotlightTile = P.tile:new{name = "spotlight", spotlight = spotlightList.spotlight,
 baseTime = 3600, currTime = 0,
@@ -3005,7 +3006,7 @@ tiles[99] = P.carpetmid
 tiles[100] = P.carpetcorner
 tiles[101] = P.carpetedge
 tiles[102] = P.bookcase
-tiles[103] = P.invisibleWire
+tiles[103] = P.twinPitbullTile
 tiles[104] = P.invisibleAndGate
 tiles[105] = P.invisibleTWire
 tiles[106] = P.invisibleNotGate

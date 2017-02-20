@@ -3160,6 +3160,10 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 							end
 						end
 					end
+
+					local moveCoords = ani:moveOverride(movex, movey)
+					movex = moveCoords.x
+					movey = moveCoords.y
 					ani:move(movex, movey, room, litTiles[ani.tileY][ani.tileX]==1)
 				end
 				if room[ani.tileY][ani.tileX]~=nil then
@@ -3437,6 +3441,11 @@ function resolveConflicts()
 								end
 							end
 						end
+						
+						moveCoords = animals[i]:moveOverride(movex, movey)
+						movex = moveCoords.x
+						movey = moveCoords.y
+
 						animals[i]:secondaryMove(movex, movey)
 					end
 				end
