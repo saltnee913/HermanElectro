@@ -4525,22 +4525,19 @@ P:addTool(P.rotater)
 P:addTool(P.teleporter) --Keep
 P:addTool(P.boxCutter)
 --P:addTool(P.broom)
-<<<<<<< HEAD
+
 P:addTool(P.magnet) --Keep
-=======
+
 --P:addTool(P.magnet)
->>>>>>> origin/master
 P:addTool(P.spring) --Fix this shit
 P:addTool(P.glue)
 --P:addTool(P.endFinder)
 P:addTool(P.map)
-<<<<<<< HEAD
 P:addTool(P.ramSpawner) --Keep
 P:addTool(P.gateBreaker) --Keep
-=======
+
 P:addTool(P.ramSpawner)
 --P:addTool(P.gateBreaker)
->>>>>>> origin/master
 P:addTool(P.conductiveBoxSpawner)
 P:addTool(P.superWireCutters)
 P:addTool(P.boxSpawner)
@@ -4586,13 +4583,13 @@ P:addTool(P.sock)
 --P:addTool(P.emptyCup)
 P:addTool(P.gasPourer)
 P:addTool(P.gasPourerXtreme)
-<<<<<<< HEAD
+
 P:addTool(P.buttonPlacer)
 P:addTool(P.wireToButton)--Nice
-=======
+
 --P:addTool(P.buttonPlacer)
 P:addTool(P.wireToButton)
->>>>>>> origin/master
+
 P:addTool(P.foresight)
 P:addTool(P.tileDisplacer)
 P:addTool(P.tileSwapper)
@@ -4605,11 +4602,11 @@ P:addTool(P.lemonParty)
 P:addTool(P.inflation)--Keep
 P:addTool(P.emptyBucket)
 P:addTool(P.superWaterBottle)
-<<<<<<< HEAD
+
 P:addTool(P.wallDungeonDetector)--Keep
-=======
+
 --P:addTool(P.wallDungeonDetector)
->>>>>>> origin/master
+
 P:addTool(P.towel)
 P:addTool(P.playerCloner)
 P:addTool(P.playerBoxSpawner)
