@@ -523,7 +523,7 @@ function goToMainMenu()
 	saving.forceEndPlayback()
 	--started = false
 	editorMode = false
-	myShader:send("b_and_w", true)
+	myShader:send("b_and_w", false)
 	loadOpeningWorld()
 	emptyTools()
 	gamePaused = false
