@@ -3747,6 +3747,10 @@ function stepTrigger()
 					if room[i][j].canBePowered then updatePowerAfter = true end
 					room[i][j]:onEnd(i, j)
 					room[i][j] = nil
+				elseif room[i][j].overlay~=nil and room[i][j].overlay.gone then
+					if room[i][j].canBePowered then updatePowerAfter = true end
+					room[i][j].overlay:onEnd(i, j)
+					room[i][j].overlay = nil					
 				end
 			end
 		end

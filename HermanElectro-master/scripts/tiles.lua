@@ -1593,6 +1593,7 @@ function P.redBeggar:providePayment()
 		for i = 1, roomHeight do
 			for j = 1, roomLength do
 				if room[i][j]==self then
+					room[i][j]=nil
 					tools.dropTool(superDrop, i, j)
 				end
 			end

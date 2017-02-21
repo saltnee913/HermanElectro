@@ -4605,7 +4605,7 @@ P:addTool(P.tileMagnet)
 P:addTool(P.rottenMeat)
 P:addTool(P.pickaxe)
 P:addTool(P.luckyPenny)
---P:addTool(P.bouncer)
+P:addTool(P.bouncer)
 P:addTool(P.block)
 P:addTool(P.stealthBomber)
 
