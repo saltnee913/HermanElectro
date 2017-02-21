@@ -1939,6 +1939,13 @@ sprite = 'Graphics/boxstartingtile.png', isVisible = false}
 function P.boxTile:usableOnNothing()
 	return true
 end
+function P.boxTile:new(o)
+	o = o or {}
+	setmetatable(o, self)
+	self.__index = self
+	o.pushable = o.pushable
+	return o
+end
 
 P.motionGate = P.conductiveTile:new{name = "gate", updatePowerOnLeave = true, dirSend = {0,0,0,0}, sprite = 'Graphics/gate.png', poweredSprite = 'Graphics/gate.png'}
 function P.motionGate:onLeave(player)
@@ -2011,7 +2018,7 @@ function P.glue:onEnterAnimal(animal)
 end
 P.glue.onStayAnimal = P.glue.onEnterAnimal
 
-P.conductiveBoxTile = P.tile:new{name = "conductiveBoxTile", pushable = pushableList[5], listIndex = 5}
+P.conductiveBoxTile = P.boxTile:new{name = "conductiveBoxTile", pushable = pushableList[5], listIndex = 5}
 
 P.boomboxTile = P.boxTile:new{name = "boomboxTile", pushable = pushableList[6], listIndex = 6}
 
