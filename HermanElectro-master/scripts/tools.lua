@@ -100,9 +100,15 @@ function P.dropTool(toolReference, tileY, tileX)
 	if not unlockedSupertools[toolReference.toolid] or toolReference.isDisabled then
 		return false
 	end
-	room[tileY][tileX] = tiles.supertoolTile:new()
-	room[tileY][tileX].tool = toolReference
-	room[tileY][tileX]:updateSprite()
+	if room[tileY][tileX]==nil or room[tileY][tileX]:usableOnNothing() then
+		room[tileY][tileX] = tiles.supertoolTile:new()
+		room[tileY][tileX].tool = toolReference
+		room[tileY][tileX]:updateSprite()
+	else
+		room[tileY][tileX].overlay = tiles.supertoolTile:new()
+		room[tileY][tileX].overlay.tool = toolReference
+		room[tileY][tileX].overlay:updateSprite()
+	end
 	return true
 end
 

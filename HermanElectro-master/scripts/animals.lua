@@ -180,9 +180,11 @@ function P.animal:kill()
 			self.willDropTool = true
 		end
 	end
-	if self.willDropTool and (room[self.tileY][self.tileX]==nil or room[self.tileY][self.tileX].destroyed
-	or room[self.tileY][self.tileX]:instanceof(tiles.pitbullTile)) then
-		self:dropTool()
+	if self.willDropTool then
+		if(room[self.tileY][self.tileX]==nil or room[self.tileY][self.tileX].destroyed
+		or room[self.tileY][self.tileX]:usableOnNothing() or room[self.tileY][self.tileX].overlay==nil) then
+			self:dropTool()
+		end
 	end
 end
 function P.animal:update()
