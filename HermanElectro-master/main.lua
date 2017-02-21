@@ -523,6 +523,7 @@ function goToMainMenu()
 	saving.forceEndPlayback()
 	--started = false
 	editorMode = false
+	myShader:send("b_and_w", true)
 	loadOpeningWorld()
 	emptyTools()
 	gamePaused = false
@@ -904,6 +905,7 @@ function kill()
 	unlockedChars = characters.getUnlockedCharacters()
 	stats.losses[player.character.name] = stats.losses[player.character.name]+1
 	stats.writeStats()
+	myShader:send("b_and_w", true)
 	if not loadTutorial then --hacky hack fix
 		completedRooms[mapy][mapx] = 0 --to stop itemsNeeded tracking, it's a hack!
 	end
