@@ -415,11 +415,14 @@ function P.cat:dropTool()
 end
 
 P.bombBuddy = P.animal:new{name = "bombBuddy", scale = 0.6*scale,
-sprite = 'Graphics/bombBuddyFront.png', deadSprite = 'Graphics/catdead.png'}
+sprite = 'Graphics/bombBuddyFront.png', deadSprite = 'Graphics/catdead.png', canDropTool = true}
 function P.bombBuddy:explode()
 	room[self.tileY][self.tileX] = tiles.bomb:new()
 	room[self.tileY][self.tileX]:onEnd(self.tileY, self.tileX)
 	room[self.tileY][self.tileX] = nil
+end
+function P.bombBuddy:dropTool()
+	tools.dropTool(tools.explosiveMeat, self.tileY, self.tileX)
 end
 
 P.conductiveDog = P.pup:new{name = "conductiveDog", powered = false, conductive = true, sprite = 'Graphics/conductivedog.png'}

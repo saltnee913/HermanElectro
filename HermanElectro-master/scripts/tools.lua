@@ -956,7 +956,8 @@ P.missile.getToolableTiles = P.tool.getToolableTilesBox
 P.missile.getToolableAnimals = P.tool.getToolableAnimalsBox
 P.missile.useToolAnimal = P.gun.useToolAnimal
 
-P.meat = P.superTool:new{name = "Meat", description = "Raw temptation", baseRange = 1, image = 'Graphics/Tools/meat.png', quality = 2}
+P.meat = P.superTool:new{name = "Meat", description = "Raw temptation", baseRange = 1,
+image = 'Graphics/Tools/meat.png', quality = -1}
 function P.meat:usableOnNothing()
 	return true
 end
@@ -977,7 +978,8 @@ function P.meat:useToolTile(tile)
 end
 
 
-P.rottenMeat = P.superTool:new{name = "Rotten Meat", description = "Disgust", image = 'Graphics/Tools/rottenMeat.png', quality = 3, baseRange = 1}
+P.rottenMeat = P.superTool:new{name = "Rotten Meat", description = "Disgust",
+image = 'Graphics/Tools/rottenMeat.png', quality = -1, baseRange = 1}
 P.rottenMeat.usableOnNothing = P.meat.usableOnNothing
 function P.rottenMeat:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld-1
@@ -1341,7 +1343,8 @@ function P.boomboxSpawner:useToolNothing(tileY, tileX)
 	pushables[#pushables+1] = toSpawn
 end
 
-P.superWireCutters = P.wireCutters:new{name = "SuperWireCutters", description = "Sharper wire cutters.", image = 'Graphics/wirecutters.png', quality = 2}
+P.superWireCutters = P.wireCutters:new{name = "SuperWireCutters", description = "Sharper wire cutters.",
+image = 'Graphics/wirecutters.png', quality = -1}
 function P.superWireCutters:usableOnNonOverlay(tile)
 	return not tile.destroyed and (tile:instanceof(tiles.wire)
 	or tile:instanceof(tiles.conductiveGlass) or tile:instanceof(tiles.reinforcedConductiveGlass) or tile:instanceof(tiles.electricFloor))
@@ -2013,7 +2016,8 @@ function P.snowballGlobal:useToolNothing()
 end
 P.snowballGlobal.useToolTile = P.snowballGlobal.useToolNothing
 
-P.superBrick = P.brick:new{name = "superBrick", description = "Brick the unbrickable", mage = 'Graphics/superbrick.png', baseRange = 5, quality = 2}
+P.superBrick = P.brick:new{name = "superBrick", description = "Brick the unbrickable",
+image = 'Graphics/superbrick.png', baseRange = 5, quality = -1}
 function P.superBrick:usableOnTile(tile)
 	if not tile.bricked and tile:instanceof(tiles.button) then
 		return true
@@ -2039,7 +2043,8 @@ function P.superBrick:useToolAnimal(animal)
 	animal.waitCounter = animal.waitCounter+2
 end
 
-P.superWaterBottle = P.waterBottle:new{name = "superWaterBottle", description = "Break the unbreakable", image = 'Graphics/superwaterbottle.png', baseRange = 3, quality = 2}
+P.superWaterBottle = P.waterBottle:new{name = "superWaterBottle", description = "Break the unbreakable",
+image = 'Graphics/superwaterbottle.png', baseRange = 3, quality = -1}
 function P.superWaterBottle:usableOnTile(tile)
 	if not tile.destroyed and ((tile:instanceof(tiles.powerSupply) and not tile:instanceof(tiles.notGate)) or (tile:instanceof(tiles.electricFloor)) or tile:instanceof(tiles.untriggeredPowerSupply)) then
 		return true
@@ -2688,7 +2693,7 @@ function P.salt:useToolAnimal(animal)
 end
 
 --
-P.shell = P.superTool:new{name = "Shell", description = "Curl up and hide", image = 'Graphics/shell.png', baseRange = 0, quality = 2}
+P.shell = P.superTool:new{name = "Shell", description = "Curl up and hide", image = 'Graphics/shell.png', baseRange = 0, quality = -1}
 function P.shell:usableOnNothing()
 	return true
 end
@@ -3283,7 +3288,7 @@ function P.tunneler:useToolNothing(tileY, tileX)
 end
 
 P.longLadder = P.superTool:new{name = "Ben's Ladder", description = "For getting really high", image = 'Graphics/ladder.png',
-baseRange = 1, quality = 3}
+baseRange = 1, quality = -1}
 P.longLadder.usableOnNothing = P.ladder.usableOnNothing
 P.longLadder.useToolNothing = P.ladder.useToolNothing
 P.longLadder.usableOnTile = P.ladder.usableOnTile
@@ -3316,7 +3321,7 @@ function P.longLadder:spreadLadders(tileY, tileX)
 end
 
 P.superSaw = P.superTool:new{name = "Super Saw", description = "I came, I sawed, I conquered", image = 'Graphics/saw.png',
-baseRange = 1, quality = 3}
+baseRange = 1, quality = -1}
 function P.superSaw:usableOnPushable()
 	return true
 end
@@ -3328,7 +3333,7 @@ function P.superSaw:useToolPushable(pushable)
 end
 
 P.superSponge = P.superTool:new{name = "Super Sponge", description = "", image = 'NewGraphics/sponge copy.png',
-baseRange = 1, quality = 2}
+baseRange = 1, quality = -1}
 function P.superSponge:usableOnTile(tile)
 	if tile:instanceof(tiles.dustyGlassWall) and tile.blocksVision then
 		return true
@@ -3369,7 +3374,8 @@ function P.superSponge:spreadSponge(tileY, tileX)
 end
 
 --gun, but radial and works on concrete
-P.superGun = P.superTool:new{name = "superGun", description = "", baseRange = 5, image = 'Graphics/supergun.png', quality = 2}
+P.superGun = P.superTool:new{name = "superGun", description = "", baseRange = 5,
+image = 'Graphics/supergun.png', quality = -1}
 P.superGun.getToolableTiles = P.tool.getToolableTilesBox
 P.superGun.getToolableAnimals = P.tool.getToolableAnimalsBox
 function P.superGun:usableOnTile(tile)
@@ -4208,7 +4214,7 @@ function P.mindfulTool:getLastTool()
 end
 
 P.explosiveMeat = P.superTool:new{name = "Explosive Meat", description = "A little kick to it", baseRange = 1,
-image = 'Graphics/Tools/explosiveMeat.png', quality = 3}
+image = 'Graphics/Tools/explosiveMeat.png', quality = -1}
 P.explosiveMeat.usableOnNothing = P.meat.usableOnNothing
 function P.explosiveMeat:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld-1
@@ -4343,7 +4349,7 @@ function P.iceBox:useToolNothing(tileY, tileX)
 	pushables[#pushables+1] = toSpawn
 end
 
-P.nineLives = P.superTool:new{name = "Cat's Paw", description = "", lifeCount = 9, quality = 4, image = 'Graphics/catpaw9.png',
+P.nineLives = P.superTool:new{name = "Cat's Paw", description = "", lifeCount = 9, quality = -1, image = 'Graphics/catpaw9.png',
 imageSet = {'Graphics/catpaw1.png', 'Graphics/catpaw2.png', 'Graphics/catpaw3.png', 'Graphics/catpaw4.png',
 'Graphics/catpaw5.png', 'Graphics/catpaw6.png', 'Graphics/catpaw7.png', 'Graphics/catpaw8.png', 'Graphics/catpaw9.png'}}
 function P.nineLives:checkDeath()
@@ -4599,7 +4605,7 @@ P:addTool(P.tileMagnet)
 P:addTool(P.rottenMeat)
 P:addTool(P.pickaxe)
 P:addTool(P.luckyPenny)
-P:addTool(P.bouncer)
+--P:addTool(P.bouncer)
 P:addTool(P.block)
 P:addTool(P.stealthBomber)
 
