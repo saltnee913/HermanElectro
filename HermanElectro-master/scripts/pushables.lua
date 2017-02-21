@@ -5,7 +5,7 @@ require('scripts.object')
 local P = {}
 pushableList = P
 
-P.pushable = Object:new{name = "pushable", elevation = 0, charged = false, aitCounter=0, visible = true, sawable = true, canBeAccelerated = true, conductive = false, prevTileX = 0, prevTileY = 0, tileX = 0, tileY = 0, destroyed = false, sprite = 'Graphics/box.png'}
+P.pushable = Object:new{name = "pushable", elevation = 0, forcePower = false, charged = false, aitCounter=0, visible = true, sawable = true, canBeAccelerated = true, conductive = false, prevTileX = 0, prevTileY = 0, tileX = 0, tileY = 0, destroyed = false, sprite = 'Graphics/box.png'}
 function P.pushable:onStep()
 end
 function P.pushable:destroy()
@@ -333,7 +333,7 @@ P.invisibleBox = P.box:new{name = "invisibleBox", visible = false}
 
 P.lamp = P.conductiveBox:new{name = "lamp", sprite = 'Graphics/lamp.png', poweredSprite = 'Graphics/lamp.png', intensity = 1, charged = true, range = 200}
 
-P.iceBox = P.box:new{name = "icebox", sprite = 'Graphics/icebox.png'}
+P.iceBox = P.box:new{name = "icebox", sprite = 'Graphics/icebox.png', forcePower = true}
 function P.iceBox:onLeaveNothing()
 	room[self.prevTileY][self.prevTileX] = tiles.puddle:new()
 end

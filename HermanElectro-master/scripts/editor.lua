@@ -22,7 +22,7 @@ function P.draw()
 			elseif i>100 and i<=150 then
 				addx = -2*width
 				addy = 0
-			elseif i>150 and i<200 then
+			elseif i>150 and i<=200 then
 				addx = -3*width
 				addy = width/50
 			end

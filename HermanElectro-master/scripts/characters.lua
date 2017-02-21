@@ -124,7 +124,7 @@ function P.felix:onCharLoad()
 	if not tools.felixGun.isGun then
 		tools.felixGun:switchEffects()
 	end
-	tools.giveToolsByReference({tools.bomb})
+	tools.giveToolsByReference({tools.bomb, tools.felixGun})
 end
 function P.felix:onKeyPressedChar(key)
 	--log(key)
@@ -368,33 +368,18 @@ function P.giovanni:onKeyPressedChar(key)
 		else
 			player.tileX = self.shiftPos.x
 			player.tileY = self.shiftPos.y
-			self.shiftPos = {x = -1, y = -1}
+			self.shiftPos = {x = -1, y = -1, z = -1}
 			log("Returned to clone!")
 		end
 	end
 end
 function P.giovanni:onCharLoad()
-	self.shiftPos = {x = -1, y = -1}
+	self.shiftPos = {x = -1, y = -1, z = -1}
 end
 function P.giovanni:onRoomEnter()
-	self.shiftPos = {x = -1, y = -1}
+	self.shiftPos = {x = -1, y = -1, z = -1}
 end
 P.giovanni.onFloorEnter = P.giovanni.onRoomEnter
-function P.giovanni:onKeyPressedChar(key)
-	if key == 'rshift' or key == 'lshift' or key == 'shift' then
-		if self.shiftPos.x==-1 then
-			self.shiftPos.x = player.tileX
-			self.shiftPos.y = player.tileY
-			log("Clone spawned!")
-		else
-			player.tileX = self.shiftPos.x
-			player.tileY = self.shiftPos.y
-			self.shiftPos = {x = -1, y = -1}
-			log("Returned to clone!")
-			updateGameState(false)
-		end
-	end
-end
 
 P.francisco = P.character:new{name = "Francisco", description = "The Cartographer", nextRoom = {yLoc = -1, xLoc = -1},
 sprite = 'Graphics/Characters/Francisco.png', scale = 1.1*scale}

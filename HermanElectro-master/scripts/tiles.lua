@@ -1025,6 +1025,7 @@ end
 P.pupTile = P.pitbullTile:new{name = "pup", animal = animalList[3], listIndex = 3}
 P.catTile = P.pitbullTile:new{name = "cat", animal = animalList[4], listIndex = 4}
 P.ramTile = P.pitbullTile:new{name = "ram", animal = animalList[14], listIndex = 14}
+P.twinPitbullTile = P.pitbullTile:new{name = "twinPitbull", animal = animalList[17], listIndex = 17}
 
 P.spotlightTile = P.tile:new{name = "spotlight", spotlight = spotlightList.spotlight,
 baseTime = 3600, currTime = 0,
@@ -1592,6 +1593,7 @@ function P.redBeggar:providePayment()
 		for i = 1, roomHeight do
 			for j = 1, roomLength do
 				if room[i][j]==self then
+					room[i][j]=nil
 					tools.dropTool(superDrop, i, j)
 				end
 			end
@@ -1933,9 +1935,17 @@ function P.powerTriggeredBomb:onEnter(player)
 end
 P.powerTriggeredBomb.onEnterAnimal = P.powerTriggeredBomb.onEnter
 
-P.boxTile = P.tile:new{name = "boxTile", pushable = pushableList[2], listIndex = 2, sprite = 'Graphics/boxstartingtile.png'}
+P.boxTile = P.tile:new{name = "boxTile", pushable = pushableList[2], listIndex = 2,
+sprite = 'Graphics/boxstartingtile.png', isVisible = false}
 function P.boxTile:usableOnNothing()
 	return true
+end
+function P.boxTile:new(o)
+	o = o or {}
+	setmetatable(o, self)
+	self.__index = self
+	o.pushable = o.pushable
+	return o
 end
 
 P.motionGate = P.conductiveTile:new{name = "gate", updatePowerOnLeave = true, dirSend = {0,0,0,0}, sprite = 'Graphics/gate.png', poweredSprite = 'Graphics/gate.png'}
@@ -2009,11 +2019,11 @@ function P.glue:onEnterAnimal(animal)
 end
 P.glue.onStayAnimal = P.glue.onEnterAnimal
 
-P.conductiveBoxTile = P.tile:new{name = "conductiveBoxTile", pushable = pushableList[5], listIndex = 5, sprite = 'Graphics/boxstartingtile.png'}
+P.conductiveBoxTile = P.boxTile:new{name = "conductiveBoxTile", pushable = pushableList[5], listIndex = 5}
 
-P.boomboxTile = P.boxTile:new{name = "boomboxTile", pushable = pushableList[6], listIndex = 6, sprite = 'Graphics/boxstartingtile.png'}
+P.boomboxTile = P.boxTile:new{name = "boomboxTile", pushable = pushableList[6], listIndex = 6}
 
-P.batteringRamTile = P.boxTile:new{name = "batteringRamTile", pushable = pushableList[7], listIndex = 7, sprite = 'Graphics/boxstartingtile.png'}
+P.batteringRamTile = P.boxTile:new{name = "batteringRamTile", pushable = pushableList[7], listIndex = 7}
 
 P.lamp = P.powerSupply:new{name = "lamp", emitsLight = true, intensity = 0.7, range = 50, sprite = 'Graphics/lamp.png', poweredSprite = 'Graphics/lamp.png', lit = true, destroyedSprite = 'Graphics/destroyedlamp.png'}
 function P.lamp:destroy()
@@ -2091,11 +2101,11 @@ function P.unpoweredAccelerator:xAccel()
 	else return 0 end
 end
 
-P.bombBoxTile = P.boxTile:new{name = "bombBoxTile", pushable = pushableList[8], listIndex = 8, sprite = 'Graphics/boxstartingtile.png'}
+P.bombBoxTile = P.boxTile:new{name = "bombBoxTile", pushable = pushableList[8], listIndex = 8}
 
-P.giftBoxTile = P.boxTile:new{name = "giftBoxTile", pushable = pushableList[9], listIndex = 9, sprite = 'Graphics/boxstartingtile.png'}
+P.giftBoxTile = P.boxTile:new{name = "giftBoxTile", pushable = pushableList[9], listIndex = 9}
 
-P.jackInTheBoxTile = P.boxTile:new{name = "jackInTheBoxTile", pushable = pushableList[10], listIndex = 10, sprite = 'Graphics/boxstartingtile.png'}
+P.jackInTheBoxTile = P.boxTile:new{name = "jackInTheBoxTile", pushable = pushableList[10], listIndex = 10}
 
 P.finalToolsTile = P.tile:new{name = "finalToolsTile", canBePowered = false, dirAccept = {0,0,0,0}, sprite = 'Graphics/donationmachine.png', done = false, toolsToGive = {}, giveRate = 0.75, timeLeft = 0}
 function P.finalToolsTile:onEnter(player)
@@ -2175,7 +2185,7 @@ P.invisibleConcreteWall = P.concreteWall:new{name = "invisibleConcreteWall", isV
 P.invisibleWoodenWall = P.wall:new{name = "invisibleWoodenWall", isVisible = false}
 P.invisiblePoweredFloor = P.poweredFloor:new{name = "invisiblePoweredFloor", isVisible = false}
 P.invisibleElectricFloor = P.electricFloor:new{name = "invisibleElectricFloor", isVisible = false}
-P.invisibleBoxTile = P.tile:new{name = "invisibleBoxTile", pushable = pushableList[11], listIndex = 11, sprite = 'Graphics/boxstartingtile.png'}
+P.invisibleBoxTile = P.tile:new{name = "invisibleBoxTile", pushable = pushableList[11], listIndex = 11}
 P.invisibleDecoy = P.tile:new{name = "invisibleDecoy", isVisible = false}
 
 P.superStickyButton = P.stickyButton:new{name = "superStickyButton", sprite = 'Graphics/superStickyButton.png', upSprite = 'Graphics/superStickyButton.png'}
@@ -2248,7 +2258,7 @@ function P.mushroom:onEnter()
 	globalTint = {0,0.15,0.3}
 end
 
-P.lampTile = P.tile:new{name = "lampTile", pushable = pushableList[12], listIndex = 12, sprite = 'Graphics/boxstartingtile.png'}
+P.lampTile = P.tile:new{name = "lampTile", pushable = pushableList[12], listIndex = 12}
 
 P.hermanTransform = P.tile:new{name = "hermanTransform", characterIndex = 1}
 function P.hermanTransform:onEnter()
@@ -2283,7 +2293,7 @@ function P.supertoolTile:absoluteFinalUpdate()
 end
 function P.supertoolTile:updateSprite()
 	if self.tool~=nil then
-		self.sprite = self.tool.image
+		self.sprite = self.tool:getTileImage()
 	end
 end
 function P.supertoolTile:onEnter()
@@ -2676,6 +2686,12 @@ function P.debugStairs:onEnter()
 	startDebug()
 end
 
+P.editorStairs = P.tile:new{name = "editorStairs", sprite = 'KenGraphics/greenstairs.png'}
+function P.editorStairs:onEnter()
+	stairsLocs[1] = {map ={x = mapx, y = mapy}, coords = {x = player.tileX, y = player.tileY}}
+	startEditor()
+end
+
 P.saveStairs = P.tile:new{name = "saveStairs", sprite = 'KenGraphics/gamestairs.png', recording = nil}
 function P.saveStairs:onLoad()
 	self.recording = saving.getSave()
@@ -2738,6 +2754,17 @@ function P.playerTile:onEnter()
 		player.character:onSelect()
 		myShader:send("player_range", 500)
 	end
+	messageInfo.text = self:getCharInfo()
+end
+function P.playerTile:onLeave(player)
+	messageInfo.text = nil
+end
+function P.playerTile:getCharInfo()
+	local infoText = ""
+	infoText = infoText..self.character.name..", "..self.character.description.."\n"
+	infoText = infoText.."Wins: "..stats.wins[self.character.name].."\n"
+	infoText = infoText.."Losses: "..stats.losses[self.character.name]
+	return infoText
 end
 
 P.tree = P.wall:new{name = "tree", sawable = false, level = 0, sprite = 'Graphics/tree0.png',
@@ -2857,9 +2884,34 @@ end
 
 P.ratTile = P.pitbullTile:new{name = "rat", animal = animalList[15], listIndex = 15}
 
-P.iceBoxTile = P.tile:new{name = "iceBoxTile", pushable = pushableList[13], listIndex = 13, sprite = 'Graphics/boxstartingtile.png'}
-P.recycleBinTile = P.tile:new{name = "recycleBinTile", pushable = pushableList[14], listIndex = 14, sprite = 'Graphics/boxstartingtile.png'}
+P.iceBoxTile = P.tile:new{name = "iceBoxTile", pushable = pushableList[13], listIndex = 13}
+P.recycleBinTile = P.tile:new{name = "recycleBinTile", pushable = pushableList[14], listIndex = 14}
 
+P.infestedWood = P.wall:new{name = "infestedWood", sprite = 'Graphics/infestedwood.png'}
+function P.infestedWood:destroy()
+	self.blocksProjectiles = false
+	self.blocksVision = false
+	self.sprite = self.destroyedSprite
+	self.destroyed = true
+	self.blocksMovement = false
+	self.canBePowered = false
+	self.dirAccept = {0,0,0,0}
+	self.dirSend = {0,0,0,0}
+	self.overlay = nil
+	self.yOffset = 0
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]==self then
+				local animalToAdd = animalList.termite:new()
+				animalToAdd.tileX = j
+				animalToAdd.tileY = i
+				animalToAdd.prevTileX = j
+				animalToAdd.prevTileY = i
+				animals[#animals+1] = animalToAdd
+			end
+		end
+	end
+end
 
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
@@ -2963,7 +3015,7 @@ tiles[99] = P.carpetmid
 tiles[100] = P.carpetcorner
 tiles[101] = P.carpetedge
 tiles[102] = P.bookcase
-tiles[103] = P.invisibleWire
+tiles[103] = P.twinPitbullTile
 tiles[104] = P.invisibleAndGate
 tiles[105] = P.invisibleTWire
 tiles[106] = P.invisibleNotGate
@@ -3059,6 +3111,8 @@ tiles[195] = P.playbackStairs
 tiles[196] = P.ratTile
 tiles[197] = P.iceBoxTile
 tiles[198] = P.recycleBinTile
+tiles[199] = P.infestedWood
+tiles[200] = P.editorStairs
 
 
 return tiles

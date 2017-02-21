@@ -804,7 +804,11 @@ function P.generateMapStandard()
 end
 
 function P.getRoomWeight(room)
-	return 1
+	local weight = P.getFieldForRoom(room, 'weight')
+	if weight==nil then
+		weight = 1
+	end
+	return weight
 end
 
 --a-b does not always equal -(b-a)!!!!!!
@@ -855,6 +859,28 @@ function P.generateMapFinal()
 	newmap[starty][startx+1] = {roomid = endRoom, room = P.createRoom(endRoom), isFinal = false, isInitial = false}
 	local donationRoom = randomDonationRoomsArray[1]
 	newmap[starty+1][startx] = {roomid = donationRoom, room = P.createRoom(donationRoom), isFinal = false, isInitial = false}
+	return newmap
+end
+
+function P.generateMapEditor()
+	local roomsArray = util.createIndexArray(P.floorInfo.rooms.rooms)
+	local startRoomID = roomsArray[1]
+
+	local height = P.floorInfo.height
+	local numRooms = P.floorInfo.numRooms
+	local newmap = MapInfo:new{height = height, numRooms = numRooms}
+	for i = 0, height+1 do
+		newmap[i] = {}
+	end
+
+	local startx = math.floor(height/2)
+	local starty = math.floor(height/2)
+	newmap[starty][startx] = {roomid = startRoomID, room = P.createRoom(startRoomID), isFinal = false, isInitial = true, isCompleted = true}
+	newmap.initialY = starty
+	newmap.initialX = startx
+
+	local designRoom = roomsArray[2]
+	newmap[starty-1][startx] = {roomid = designRoom, room = P.createRoom(designRoom), isFinal = false, isInitial = false}
 	return newmap
 end
 
@@ -931,7 +957,7 @@ function P.generateMapWeighted()
 		if numRooms-#usedRooms == 4 then
 			local max = {x = choice.x, y = choice.y}
 			for i = 1, #available do
-				if math.abs(available[i].x-max.x)+math.abs(available[i].y-max.y)>
+				if math.abs(available[i].x-math.floor(height/2))+math.abs(available[i].y-math.floor(height/2))>
 				math.abs(max.x-math.floor(height/2))+math.abs(max.y-math.floor(height/2)) then
 					max.x = available[i].x
 					max.y = available[i].y
@@ -998,7 +1024,7 @@ function P.generateMapWeighted()
 						end
 					end
 				end]]
-				roomWeight = roomWeight/totalRoomsCompared + P.getRoomWeight(roomChoice)
+				roomWeight = P.getRoomWeight(roomChoiceid)
 				roomWeights[i] = roomWeight
 			end
 			roomid = roomChoices[util.chooseWeightedRandom(roomWeights, 'mapGen')]
@@ -1132,10 +1158,11 @@ function P.generateSixthFloor()
 		end
 		--choose a room slot
 		local choice = util.chooseRandomElement(available, 'mapGen')
+		--if final room
 		if numRooms-#usedRooms == 4 then
 			local max = {x = choice.x, y = choice.y}
 			for i = 1, #available do
-				if math.abs(available[i].x-max.x)+math.abs(available[i].y-max.y)>
+				if math.abs(available[i].x-math.floor(height/2))+math.abs(available[i].y-math.floor(height/2))>
 				math.abs(max.x-math.floor(height/2))+math.abs(max.y-math.floor(height/2)) then
 					max.x = available[i].x
 					max.y = available[i].y
@@ -1220,7 +1247,7 @@ function P.generateSixthFloor()
 						end
 					end
 				end]]
-				roomWeight = roomWeight/totalRoomsCompared + P.getRoomWeight(roomChoice)
+				roomWeight = roomWeight/totalRoomsCompared + P.getRoomWeight(roomChoiceid)
 				roomWeights[i] = roomWeight
 			end
 			local ultimateChoice = util.chooseWeightedRandom(roomWeights, 'mapGen')
