@@ -1,17 +1,57 @@
 local P = {}
 editor = P
 tools = require('scripts.tools')
+editorTiles = require('scripts.editorTiles')
 
 P.stealInput = false
+P.tab = 4
+--1 for basic tiles, 2 for animasl, 3 for boxes, 4 for advanced tiles
+
+P.leftStartDist = 110
+P.downStartDist = height-3.2*width/50
+P.tabLength = 105
+P.tabHeight = 20
+P.setNames = {"Basic", "Animal", "Box", "Advanced"}
 
 roomsDesigned = 0
 
 P.visionHack = false
 
 function P.draw()
-	barLength = 660
+	local tileSet = nil
+	local setName = nil
+	if editor.tab==1 then
+		tileSet = editorTiles.basicTiles
+	elseif editor.tab==2 then
+		tileSet = editorTiles.animalTiles
+	elseif editor.tab==3 then
+		tileSet = editorTiles.boxTiles
+	elseif editor.tab==4 then
+		tileSet = editorTiles.advancedTiles
+	end
+
+	for i = 1, 4 do
+		if editor.tab==i then
+			love.graphics.setColor(160,0,160)
+		else
+			love.graphics.setColor(50,0,50)
+		end
+		love.graphics.rectangle("fill", editor.leftStartDist+(i-1)*editor.tabLength, editor.downStartDist, editor.tabLength-5, editor.tabHeight)
+		love.graphics.setColor(255,140,0)
+		love.graphics.print(editor.setNames[i], editor.leftStartDist+(i-1)*editor.tabLength+5, editor.downStartDist+2);
+	end
+
 	love.graphics.setColor(255,255,255)
-	for i = 1, 200 do
+	
+	for i = 1, #tileSet do
+		toDraw = util.getImage(tileSet[i]:getEditorSprite())
+		love.graphics.draw(toDraw, (i-1)*width/50+editor.leftStartDist, height-3.2*width/50+32, 0, (width/50)/(tileWidth)*16/toDraw:getWidth(), (width/50)/(tileWidth)*16/toDraw:getWidth())
+		if tiles[editorAdd]~=nil and tiles[editorAdd].name==tileSet[i].name then
+			love.graphics.draw(green, (i-1)*width/50+editor.leftStartDist, height-3.2*width/50+32, 0, (width/50)/(tileWidth)*16/toDraw:getWidth(), (width/50)/(tileWidth)*16/toDraw:getWidth())
+		end
+	end
+
+	--[[for i = 1, 200 do
 		if tiles[i]~=nil then
 			toDraw = util.getImage(tiles[i].sprite)
 			addx = 0
@@ -28,12 +68,12 @@ function P.draw()
 			end
 			--love.graphics.rectangle("fill", (i-1)*width/25, height-width/25, width/25, width/25)
 			--sprite width: floor.sprite:getWidth()
-			love.graphics.draw(toDraw, (i-1)*width/50+addx, height-2*width/50+addy, 0, (width/50)/(tileWidth)*16/toDraw:getWidth(), (width/50)/(tileWidth)*16/toDraw:getWidth())
+			--love.graphics.draw(toDraw, (i-1)*width/50+addx, height-2*width/50+addy, 0, (width/50)/(tileWidth)*16/toDraw:getWidth(), (width/50)/(tileWidth)*16/toDraw:getWidth())
 			if editorAdd == i then
 				love.graphics.draw(green, (i-1)*width/50+addx, height-2*width/50+addy, 0, (width/50)/(tileWidth), (width/50)/(tileWidth))
 			end
 		end
-	end
+	end]]
 end
 
 function printRoom()
@@ -306,17 +346,43 @@ function P.mousepressed(x, y, button, istouch)
 	end
 	--tileLocX = math.ceil((x-wallSprite.width)/(scale*floor.sprite:getWidth()))-getTranslation().x
 	--tileLocY = math.ceil((y-wallSprite.height)/(scale*floor.sprite:getHeight()))-getTranslation().y
-	if mouseY>height-4*width/50 then
-		editorAdd = math.floor(mouseX/(width/50))+1
-		if mouseY>height-3*width/50 then
-			editorAdd = editorAdd+50
+	if mouseY>editor.downStartDist then
+		if mouseY<=editor.downStartDist+editor.tabHeight then
+			if mouseX>editor.leftStartDist+4*editor.tabLength or mouseX<editor.leftStartDist then
+				return
+			elseif mouseX>editor.leftStartDist+3*editor.tabLength then
+				editor.tab = 4
+			elseif mouseX>editor.leftStartDist+2*editor.tabLength then
+				editor.tab = 3
+			elseif mouseX>editor.leftStartDist+editor.tabLength then
+				editor.tab = 2
+			else
+				editor.tab = 1
+			end
+		elseif mouseY<=editor.downStartDist+editor.tabHeight+10+width/50 then
+			local numTile = math.floor((mouseX-editor.leftStartDist)/(width/50))+1
+			local tileSet = nil
+			if editor.tab==1 then
+				tileSet = editorTiles.basicTiles
+			elseif editor.tab==2 then
+				tileSet = editorTiles.animalTiles
+			elseif editor.tab==3 then
+				tileSet = editorTiles.boxTiles
+			elseif editor.tab==4 then
+				tileSet = editorTiles.advancedTiles
+			end
+			local tileToAdd = tileSet[numTile]
+			if tileToAdd==nil then return end
+			
+			editorAdd = 0
+			for i = 1, #tiles do
+				if tiles[i].name==tileToAdd.name then
+					editorAdd = i
+					break
+				end
+			end
 		end
-		if mouseY>height-2*width/50 then
-			editorAdd = editorAdd+50
-		end
-		if mouseY>height-width/50 then
-			editorAdd = editorAdd+50
-		end
+
 	elseif tempAdd>0 and tempAdd<=#tiles and tileLocX>=1 and tileLocX<=roomLength and tileLocY>=1 and tileLocY<=roomHeight then
 		if(room[tileLocY]~=nil and room[tileLocY][tileLocX] ~= nil and room[tileLocY][tileLocX].name == tiles[tempAdd].name) then
 			room[tileLocY][tileLocX]:rotate(1)

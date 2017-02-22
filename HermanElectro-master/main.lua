@@ -1478,7 +1478,7 @@ function powerTestPushable(x, y, lastDir)
 
 	if x>1 and room[x-1][y]~=nil and canBePowered(x-1,y,3) then
 		formerPowered = room[x-1][y].powered
-		formerSend = room[x-1][y].dirSend
+		formerSend = room[x-1][y].dirSende
 		formerAccept = room[x-1][y].dirAccept
 		--powered[x-1][y] = 1
 		room[x-1][y].poweredNeighbors[3] = 1
