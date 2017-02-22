@@ -2884,8 +2884,8 @@ end
 
 P.ratTile = P.pitbullTile:new{name = "rat", animal = animalList[15], listIndex = 15}
 
-P.iceBoxTile = P.tile:new{name = "iceBoxTile", pushable = pushableList[13], listIndex = 13}
-P.recycleBinTile = P.tile:new{name = "recycleBinTile", pushable = pushableList[14], listIndex = 14}
+P.iceBoxTile = P.boxTile:new{name = "iceBoxTile", pushable = pushableList[13], listIndex = 13}
+P.recycleBinTile = P.boxTile:new{name = "recycleBinTile", pushable = pushableList[14], listIndex = 14}
 
 P.infestedWood = P.wall:new{name = "infestedWood", sprite = 'Graphics/infestedwood.png'}
 function P.infestedWood:destroy()
