@@ -30,6 +30,7 @@ function P.draw()
 		tileSet = editorTiles.advancedTiles
 	end
 
+	--tile sets
 	for i = 1, 4 do
 		if editor.tab==i then
 			love.graphics.setColor(160,0,160)
@@ -40,6 +41,15 @@ function P.draw()
 		love.graphics.setColor(255,140,0)
 		love.graphics.print(editor.setNames[i], editor.leftStartDist+(i-1)*editor.tabLength+5, editor.downStartDist+2);
 	end
+
+	--save and load
+	love.graphics.setColor(50,0,50)
+	love.graphics.rectangle("fill", width/2+editor.leftStartDist+2*tileUnit*scale, editor.downStartDist, editor.tabLength-5, editor.tabHeight)	
+	love.graphics.rectangle("fill", width/2+editor.leftStartDist+2*tileUnit*scale+editor.tabLength, editor.downStartDist, editor.tabLength-5, editor.tabHeight)
+	
+	love.graphics.setColor(255,140,0)
+	love.graphics.print("Save", width/2+editor.leftStartDist+2*tileUnit*scale+5, editor.downStartDist+2);
+	love.graphics.print("Load", width/2+editor.leftStartDist+2*tileUnit*scale+5+editor.tabLength, editor.downStartDist+2);
 
 	love.graphics.setColor(255,255,255)
 	
@@ -348,8 +358,77 @@ function P.mousepressed(x, y, button, istouch)
 	--tileLocY = math.ceil((y-wallSprite.height)/(scale*floor.sprite:getHeight()))-getTranslation().y
 	if mouseY>editor.downStartDist then
 		if mouseY<=editor.downStartDist+editor.tabHeight then
-			if mouseX>editor.leftStartDist+4*editor.tabLength or mouseX<editor.leftStartDist then
+			if mouseX<editor.leftStartDist or mouseX>width/2+editor.leftStartDist+2*tileUnit*scale+5+editor.tabLength*2 then
 				return
+			elseif mouseX>editor.leftStartDist+4*editor.tabLength then
+				--load
+				if mouseX>width/2+editor.leftStartDist+editor.tabLength+2*tileUnit*scale+5 then
+					print("loading")
+				elseif mouseX>width/2+editor.leftStartDist+2*tileUnit*scale+5 then
+					local customRooms = {}
+					if love.filesystem.exists(saveDir..'/customRooms.json') then
+						customRooms = util.readJSON(saveDir .. '/customRooms.json')
+						if customRooms == nil then
+							customRooms = {}
+						end
+					end
+					local newRoom = {}
+					newRoom.layout = {}
+					savedRoom = {}
+					for i = 1, roomHeight do
+						newRoom.layout[i] = {}
+						savedRoom[i] = {}
+						for j = 1, roomLength do
+							savedRoom[i][j] = room[i][j]
+							if room[i][j] == nil then
+								newRoom.layout[i][j] = 0
+							else
+								local tileWithRot = 0
+								--find the tile id
+								for k = 2, #tiles do
+									if tiles[k].name == room[i][j].name then
+										tileWithRot = k
+									end
+								end
+								--add in the rotation of the tile
+								if room[i][j].rotation ~= 0 then
+									tileWithRot = tileWithRot + room[i][j].rotation/10
+								end
+				
+								if room[i][j].overlay == nil then
+									newRoom.layout[i][j] = tileWithRot
+								else
+									local overlayWithRot = 0
+									for k = 2, #tiles do
+										if tiles[k].name == room[i][j].overlay.name then
+											overlayWithRot = k
+										end
+									end
+									if room[i][j].overlay.rotation ~= 0 then
+										overlayWithRot = overlayWithRot + room[i][j].overlay.rotation/10
+									end
+									newRoom.layout[i][j] = {tileWithRot,overlayWithRot}
+								end
+
+							end
+						end
+					end
+					savedAnimals = {}
+					for i = 1, #animals do
+						savedAnimals[i] = animals[i]
+					end
+					newRoom.itemsNeeded = {}
+					newRoom.itemsNeeded[1] = {0,0,0,0,0,0,0}
+					customRooms[#customRooms+1] = {name = newRoom}
+					local state = {indent = true}
+					util.writeJSON('/customRooms.json', customRooms, state)
+					local json = require('scripts.dkjson')
+					local toPrint = json.encode({name = newRoom}, state)
+					toPrint = toPrint:sub(3)
+					toPrint = toPrint:sub(1,-3)
+					toPrint = toPrint..","
+					print(toPrint)
+				end
 			elseif mouseX>editor.leftStartDist+3*editor.tabLength then
 				editor.tab = 4
 			elseif mouseX>editor.leftStartDist+2*editor.tabLength then
