@@ -799,6 +799,7 @@ function startEditor()
 	map.floorOrder = {'RoomData/editorFloor.json'}
 	love.load()
 	loadFirstLevel()
+	map.loadCustomRooms(saveDir..'/customRooms.json')
 	tools.resetTools()
 	player.character:onBegin()
 	editorMode = true

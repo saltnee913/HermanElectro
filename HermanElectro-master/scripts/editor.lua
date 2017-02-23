@@ -421,7 +421,7 @@ function P.mousepressed(x, y, button, istouch)
 					newRoom.itemsNeeded[1] = {0,0,0,0,0,0,0}
 					customRooms[#customRooms+1] = {name = newRoom}
 					local state = {indent = true}
-					util.writeJSON('/customRooms.json', customRooms, state)
+					util.writeJSONCustom('/customRooms.json', customRooms, state)
 					local json = require('scripts.dkjson')
 					local toPrint = json.encode({name = newRoom}, state)
 					toPrint = toPrint:sub(3)

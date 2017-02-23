@@ -102,6 +102,15 @@ function P.writeJSON(filePath, data, state)
 	end
 	love.filesystem.write(saveDir..'/'..filePath, str)
 end
+function P.writeJSONCustom(filePath, data, state)
+	local str = json.encode(data, state)
+	str = "{\"rooms\":"..str:sub(5)
+	str = str:sub(1,#str-1).."}"
+	if not love.filesystem.exists(saveDir) then
+		love.filesystem.createDirectory(saveDir)
+	end
+	love.filesystem.write(saveDir..'/'..filePath, str)
+end
 
 function P.deepContains(arr, value, floor)
 	if type(arr) == 'table' then

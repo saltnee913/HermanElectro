@@ -285,6 +285,28 @@ function P.loadFloor(inFloorFile)
     map.flipRooms('rooms')
 end
 
+function P.loadCustomRooms(fileLoc)
+	if not love.filesystem.exists(fileLoc) then return end
+	local roomsData, roomsArray = util.readJSON(fileLoc, true)
+	P.floorInfo.rooms[#P.floorInfo.rooms+1] = roomsData.rooms
+	for i = 1, #roomsArray do
+		print(i)
+		P.floorInfo.roomsArray[#(P.floorInfo.roomsArray)+1] = roomsArray[i]
+	end
+
+	if map.floorInfo.tint == nil then
+		map.floorInfo.tint = {0,0,0}
+	end
+	if map.floorInfo.playerRange == nil then
+		map.floorInfo.playerRange = 200
+	end
+    myShader:send("floorTint_r", map.floorInfo.tint[1])
+    myShader:send("floorTint_g", map.floorInfo.tint[2])
+    myShader:send("floorTint_b", map.floorInfo.tint[3])
+    myShader:send("player_range", map.floorInfo.playerRange)
+    map.flipRooms('rooms')
+end
+
 local function flipRoomVertical(roomLayout)
 	local toRet = {}
 	for i = 1, #roomLayout do
