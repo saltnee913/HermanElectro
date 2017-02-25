@@ -527,6 +527,7 @@ function goToMainMenu()
 	emptyTools()
 	gamePaused = false
 	won = false
+	player.dead = false
 	updateGameState()
 	playMusic(1)
 end
