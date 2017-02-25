@@ -144,7 +144,6 @@ function P.sendNextInputFromRecording()
 	local nextInput = currentRecording[currentRecordingIndex]
 	if nextInput == nil then
 		if isReplay then
-			P.endPlayback()
 			gameSpeed = 0
 		end
 		return
