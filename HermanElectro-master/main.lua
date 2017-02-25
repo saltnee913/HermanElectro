@@ -506,7 +506,7 @@ function playMusic(index)
 end
 
 function setMusicVolume(volume)
-	music.volume = volume
+	music.volume = volumea
 	music[music.currentIndex]:setVolume(volume)
 end
 
@@ -720,6 +720,8 @@ end
 
 function startGame()
 	local seed = loadRandoms()
+	stats.runNumber = stats.runNumber + 1
+	stats.writeStats()
 	saving.createNewRecording(seed)
 	loadTutorial = false
 	map.floorOrder = map.defaultFloorOrder

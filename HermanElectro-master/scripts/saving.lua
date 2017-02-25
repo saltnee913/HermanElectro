@@ -2,6 +2,8 @@ local P = {}
 saving = P
 
 P.saveFile = 'save.json'
+P.replayDir = 'Replays'
+P.replayFile = 'replay' -- #.json automatically appended (example: Replays/replay5.json)
 P.replaySpeed = 1
 
 local isRecording = false
@@ -16,11 +18,6 @@ local currentRecordingIndex = 1
 local playbackSeed = 0
 local isReplay = false
 
-function P.createRecording(seed, inSaveNumber)
-	P.createNewRecording(seed)
-	saveNumber = inSaveNumber
-end
-
 function P.createNewRecording(seed)
 	P.endRecording()
 	isRecording = true
@@ -29,7 +26,7 @@ function P.createNewRecording(seed)
 	for i = 1, #unlocks do
 		unlocksSave[i] = unlocks[i].unlocked
 	end
-	saveNumber = 0
+	saveNumber = stats.runNumber
 end
 
 function P.recordKeyPressed(key, unicode, isRepeat)
@@ -61,8 +58,10 @@ function P.saveRecording()
 	if isPlayingBack then
 		return
 	end
-	local recordingToSave = {inputs = input, seed = recordingSeed, character = player.character.name, isDead = player.dead, unlocksSave = unlocksSave}
+	local recordingToSave = {inputs = input, seed = recordingSeed, character = player.character.name, 
+	  isDead = player.dead, unlocksSave = unlocksSave, saveNumber = saveNumber}
 	util.writeJSON(P.saveFile, recordingToSave)
+	util.writeJSON(P.replayFile..saveNumber..'.json', recordingToSave, nil, P.replayDir)
 end
 
 function P.endRecording()
@@ -121,6 +120,7 @@ function P.playRecordingFast(recording)
 	input = recording.inputs
 	recordingSeed = recording.seed
 	unlocksSave = recording.unlocksSave
+	saveNumber = recording.saveNumber
 	P.endPlayback()
 end
 
