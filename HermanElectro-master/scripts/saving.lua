@@ -80,6 +80,25 @@ function P.getSave()
 	return util.readJSON(saveDir..'/'..P.saveFile, false)
 end
 
+function P.getReplay(replayNumber)
+	if not love.filesystem.exists(saveDir..'/'..P.replayDir..'/'..P.replayFile..replayNumber..'.json') then
+		return nil
+	else
+		return util.readJSON(saveDir..'/'..P.replayDir..'/'..P.replayFile..replayNumber..'.json', false)
+	end
+end
+
+function P.getLatestReplay()
+	local save = P.getSave()
+	if save ~= nil and save.isDead then
+		return save
+	elseif save ~= nil then
+		return P.getReplay(save.saveNumber-1)
+	else
+		return P.getReplay(stats.runNumber)
+	end
+end
+
 
 function P.isPlayingBack()
 	return isPlayingBack

@@ -2707,7 +2707,7 @@ end
 
 P.playbackStairs = P.tile:new{name = "playbackStairs", sprite = 'KenGraphics/gamestairs.png', recording = nil}
 function P.playbackStairs:onLoad()
-	self.recording = saving.getSave()
+	self.recording = saving.getLatestReplay()
 	if self.recording == nil then
 		self.isVisible = false
 	end
