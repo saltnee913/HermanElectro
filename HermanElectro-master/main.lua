@@ -720,8 +720,10 @@ end
 
 function startGame()
 	local seed = loadRandoms()
-	stats.runNumber = stats.runNumber + 1
-	stats.writeStats()
+	if not saving.isPlayingBack() then
+		stats.runNumber = stats.runNumber + 1
+		stats.writeStats()
+	end
 	saving.createNewRecording(seed)
 	loadTutorial = false
 	map.floorOrder = map.defaultFloorOrder
