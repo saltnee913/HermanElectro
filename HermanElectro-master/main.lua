@@ -520,7 +520,7 @@ function goToMainMenu()
 	elseif not saving.isPlayingBack() then
 		saving.endRecording()
 	end
-	saving.forceEndPlayback()
+	saving.endPlayback()
 	--started = false
 	editorMode = false
 	loadOpeningWorld()

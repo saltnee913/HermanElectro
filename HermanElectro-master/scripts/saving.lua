@@ -8,11 +8,18 @@ local isRecording = false
 local input = {}
 local recordingSeed = 0
 local unlocksSave = {}
+local saveNumber = 0
 
 local isPlayingBack = false
 local currentRecording = {}
 local currentRecordingIndex = 1
 local playbackSeed = 0
+local isReplay = false
+
+function P.createRecording(seed, inSaveNumber)
+	P.createNewRecording(seed)
+	saveNumber = inSaveNumber
+end
 
 function P.createNewRecording(seed)
 	P.endRecording()
@@ -22,6 +29,7 @@ function P.createNewRecording(seed)
 	for i = 1, #unlocks do
 		unlocksSave[i] = unlocks[i].unlocked
 	end
+	saveNumber = 0
 end
 
 function P.recordKeyPressed(key, unicode, isRepeat)
@@ -98,11 +106,13 @@ function P.playRecording(recording)
 end
 
 function P.playBackRecording(recording)
+	isReplay = true
 	P.playRecording(recording)
 	gameSpeed = P.replaySpeed
 end
 
 function P.playRecordingFast(recording)
+	isReplay = false
 	P.playRecording(recording)
 	while(currentRecordingIndex <= #recording.inputs) do
 		love.update(0.01)
@@ -133,7 +143,10 @@ function P.sendNextInputFromRecording()
 	end
 	local nextInput = currentRecording[currentRecordingIndex]
 	if nextInput == nil then
-		P.endPlayback()
+		if isReplay then
+			P.endPlayback()
+			gameSpeed = 0
+		end
 		return
 	end
 	if nextInput.time <= gameTime.totalTime then
@@ -144,11 +157,6 @@ function P.sendNextInputFromRecording()
 end
 
 function P.endPlayback()
-	P.forceEndPlayback()
-	P.saveRecording()
-end
-
-function P.forceEndPlayback()
 	isPlayingBack = false
 	gameSpeed = 1
 	gamePaused = false
