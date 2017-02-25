@@ -258,11 +258,12 @@ return unlocks
 --NoTreasureRooms: 
 --NoEndTreasure: 
 --NoBeggar: 
---NoTrippleEntryOnUnbeaten: Mindful
+--NoTrippleEntryOnUnbeaten: Mindful  --Maybe add an easier version of this aswell, or two consecutive floor blocks 
+	--NoTrippleEntryOnUbeaten(F4-6) (Win required?)
+	--NoTrippleEntryOnUbeaten(F1-3) (Win required?)
 --NoTax: ShopRoller +Aurellius: LuckyPenny(?)
 --NoRegress: Tunneler(?)
---30<Basics@F6: 
---50<Tools: 
+
 
 
 --OnGet
@@ -275,10 +276,10 @@ return unlocks
 --10x Brick: 
 
 --OnGet
---Spread(1): +7(?) ToolRoller(?) 
---Spread(2): +7(?) ToolRoller(?)
---Spread(3): +7(?) ToolRoller(?)
---Spread(4)? 
+	--Spread(1): +7(?) ToolRoller(?) 
+--Spread(2): +7(?) ToolRoller(?) SuperBasics(?)
+--Spread(3): +7(?) ToolRoller(?) SuperBasics(?)
+	--Spread(4)? 
 
 --OnBeat
 --F1: Tile
@@ -289,6 +290,15 @@ return unlocks
 --F6: FDungeon
 --FDungeons: Erik(?)
 
+--KillAll
+--GreenBeggars: 
+--RedBeggars:
+--BlueBeggars:
+
+--Winstreak
+--2:
+--3:
+--??4??
 
 --CHARSPECIFICS
 
@@ -303,15 +313,16 @@ return unlocks
 --Some characters such as Frederick may have reduced access to acheives
 --Most acheives should not requisite
 
---KillAll
---GreenBeggars: 
---RedBeggars:
---BlueBeggars:
+
+
 
 --TaxTiles
 --5: 
 --10+Win:
 --15+Win:
+
+
+--160 Total Unlocks
 
 
 

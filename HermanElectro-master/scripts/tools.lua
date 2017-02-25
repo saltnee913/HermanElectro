@@ -4507,7 +4507,7 @@ end
 
 P.resetTools()
 
-P:addTool(P.crowbar)
+P:addTool(P.crowbar) 
 P:addTool(P.visionChanger) 
 P:addTool(P.bomb)
 P:addTool(P.electrifier) --Keep
@@ -4665,7 +4665,7 @@ P:addTool(P.animalEnslaver)
 --P:addTool(P.investmentBonus)
 --P:addTool(P.completionBonus)
 --P:addTool(P.roomCompletionBonus)
-P:addTool(P.fishingPole)
+P:addTool(P.fishingPole) -- 
 P:addTool(P.blankTool) -- Keep
 P:addTool(P.mindfulTool)
 P:addTool(P.explosiveMeat)
@@ -4685,5 +4685,9 @@ P:addTool(P.amnesiaPill)
 P:addTool(P.heartTransplant)
 
 P.resetTools()
+-- Make a tool based cursor
+
+-- Add Erik's brilliant card based SUPER PARADIGM!
+
 
 return tools
