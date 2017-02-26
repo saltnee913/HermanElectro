@@ -506,7 +506,7 @@ function playMusic(index)
 end
 
 function setMusicVolume(volume)
-	music.volume = volumea
+	music.volume = volume
 	music[music.currentIndex]:setVolume(volume)
 end
 
