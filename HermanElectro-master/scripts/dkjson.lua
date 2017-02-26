@@ -250,7 +250,7 @@ function json.encodeexception(reason, value, state, defaultmessage)
   return quotestring("<" .. defaultmessage .. ">")
 end
 
-encode2 = function (value, indent, level, buffer, buflen, tables, globalorder, state)
+encode2 = function (value, indent, level, buffer, buflen, tables, globalorder, state, depth)
   local valtype = type (value)
   local valmeta = getmetatable (value)
   valmeta = type (valmeta) == 'table' and valmeta -- only tables
@@ -296,13 +296,13 @@ encode2 = function (value, indent, level, buffer, buflen, tables, globalorder, s
     end
     local msg
     if isa then -- JSON array
-      if indent then
+      if indent and depth == 0 then
         buflen = addnewline2 (level, buffer, buflen)
       end
       buflen = buflen + 1
       buffer[buflen] = "["
       for i = 1, n do
-        buflen, msg = encode2 (value[i], indent, level, buffer, buflen, tables, globalorder, state)
+        buflen, msg = encode2 (value[i], indent, level, buffer, buflen, tables, globalorder, state, (depth == nil and 0 or depth + 1))
         if not buflen then return nil, msg end
         if i < n then
           buflen = buflen + 1
