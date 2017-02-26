@@ -99,6 +99,14 @@ function P.getLatestReplay()
 	end
 end
 
+function P.getImportedReplay()
+	if not love.filesystem.exists(saveDir..'/'..P.replayDir..'/'..P.replayFile..'.json') then
+		return nil
+	else
+		return util.readJSON(saveDir..'/'..P.replayDir..'/'..P.replayFile..'.json', false)
+	end
+end
+
 
 function P.isPlayingBack()
 	return isPlayingBack

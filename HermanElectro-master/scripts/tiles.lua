@@ -2718,6 +2718,14 @@ function P.playbackStairs:onEnter()
 	end
 end
 
+P.replayViewer = P.playbackStairs:new{name = "replayStairs"}
+function P.replayViewer:onLoad()
+	self.recording = saving.getImportedReplay()
+	if self.recording == nil then
+		self.isVisible = false
+	end
+end
+
 P.unlockTile = P.tile:new{name = "unlockTile"}
 function P.unlockTile:postPowerUpdate(i, j)
 	local unlockNum = (i-1)*roomLength+j
@@ -3113,6 +3121,7 @@ tiles[197] = P.iceBoxTile
 tiles[198] = P.recycleBinTile
 tiles[199] = P.infestedWood
 tiles[200] = P.editorStairs
+tiles[201] = P.replayViewer
 
 
 return tiles
