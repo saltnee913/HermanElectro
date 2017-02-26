@@ -25,7 +25,14 @@
 			"filePath": "RoomData/endpuzzles.json",
 			"requirements":
 			{
-
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
+				},
 			}
 		},
 		"treasureRooms": 
@@ -33,7 +40,14 @@
 			"filePath": "RoomData/endpuzzles.json",
 			"requirements":
 			{
-				
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
+				},				
 			}
 		},
 		"finalRooms": 
@@ -41,7 +55,14 @@
 			"filePath": "RoomData/endgamerooms.json",
 			"requirements":
 			{
-				
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
+				},				
 			}
 		},
 		"donationRooms":
@@ -49,7 +70,14 @@
 			"filePath": "RoomData/endpuzzles.json",
 			"requirements":
 			{
-				
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
+				},				
 			}
 		},
 		"dungeons":
@@ -57,7 +85,14 @@
 			"filePath": "RoomData/dungeons.json",
 			"requirements":
 			{
-				
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
+				},				
 			}
 		},
 		"secretRooms":
@@ -65,7 +100,14 @@
 			"filePath": "RoomData/secretrooms.json",
 			"requirements":
 			{
-				
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
+				},				
 			}
 		}
 	},

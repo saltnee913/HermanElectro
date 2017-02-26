@@ -47,6 +47,9 @@ function P.animal:move(playerx, playery, room, isLit)
 		self:secondaryMove(playerx, playery)
 	end
 end
+function P.animal:moveOverride(movex, movey)
+	return {x = movex, y = movey}
+end
 function P.animal:primaryMove(playerx, playery)
 	local diffx = math.abs(playerx - self.tileX)
 	local diffy = math.abs(playery - self.tileY)
@@ -172,14 +175,16 @@ function P.animal:kill()
 	self.dead = true
 	self.sprite = self.deadSprite
 	if self.canDropTool and not self.willDropTool then
-		local bonusDropChance = util.random(100, 'toolDrop')
+		local bonusDropChance = util.random(35, 'toolDrop')
 		if bonusDropChance<=getLuckBonus() then
 			self.willDropTool = true
 		end
 	end
-	if self.willDropTool and (room[self.tileY][self.tileX]==nil or room[self.tileY][self.tileX].destroyed
-	or room[self.tileY][self.tileX]:instanceof(tiles.pitbullTile)) then
-		self:dropTool()
+	if self.willDropTool then
+		if(room[self.tileY][self.tileX]==nil or room[self.tileY][self.tileX].destroyed
+		or room[self.tileY][self.tileX]:usableOnNothing() or room[self.tileY][self.tileX].overlay==nil) then
+			self:dropTool()
+		end
 	end
 end
 function P.animal:update()
@@ -410,11 +415,14 @@ function P.cat:dropTool()
 end
 
 P.bombBuddy = P.animal:new{name = "bombBuddy", scale = 0.6*scale,
-sprite = 'Graphics/bombBuddyFront.png', deadSprite = 'Graphics/catdead.png'}
+sprite = 'Graphics/bombBuddyFront.png', deadSprite = 'Graphics/catdead.png', canDropTool = true}
 function P.bombBuddy:explode()
 	room[self.tileY][self.tileX] = tiles.bomb:new()
 	room[self.tileY][self.tileX]:onEnd(self.tileY, self.tileX)
 	room[self.tileY][self.tileX] = nil
+end
+function P.bombBuddy:dropTool()
+	tools.dropTool(tools.explosiveMeat, self.tileY, self.tileX)
 end
 
 P.conductiveDog = P.pup:new{name = "conductiveDog", powered = false, conductive = true, sprite = 'Graphics/conductivedog.png'}
@@ -500,6 +508,30 @@ P.rat = P.animal:new{name = "rat", sprite = 'Graphics/rat.png', triggered = true
 
 P.termite = P.animal:new{name = "termite", sprite = 'Graphics/termite.png', waitCounter = 0}
 
+P.twinPitbull = P.pitbull:new{name = "twinPitbull", sprite = 'Graphics/twinpitbull.png'}
+function P.twinPitbull:moveOverride(movex, movey)
+	movex = self.tileX
+	movey = self.tileY
+
+	for i = 1, #animals do
+		if animals[i]:instanceof(P.twinPitbull) and animals[i]~=self then
+			if movex~=self.tileX or movey~=self.tileY then
+				local iDist = math.abs(animals[i].tileX-self.tileX)+math.abs(animals[i].tileY-self.tileY)
+				local currDist = math.abs(movex-self.tileX)+math.abs(movey-self.tileY)
+				if currDist>iDist then
+					movex = animals[i].tileX
+					movey = animals[i].tileY
+				end
+			else
+				movex = animals[i].tileX
+				movey = animals[i].tileY
+			end
+		end
+	end
+
+	return {x = movex, y = movey}
+end
+
 
 
 animalList[1] = P.animal
@@ -518,5 +550,6 @@ animalList[13] = P.daughter
 animalList[14] = P.ram
 animalList[15] = P.rat
 animalList[16] = P.termite
+animalList[17] = P.twinPitbull
 
 return animalList

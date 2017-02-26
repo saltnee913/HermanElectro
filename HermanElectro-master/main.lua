@@ -506,22 +506,28 @@ function playMusic(index)
 end
 
 function setMusicVolume(volume)
-	music.volume = volume
+	music.volume = volumea
 	music[music.currentIndex]:setVolume(volume)
 end
 
 function goToMainMenu()
+	if room[player.tileY][player.tileX]~=nil then
+		room[player.tileY][player.tileX]:onLeave()
+	end
+
 	if saving.isPlayingBack() and not gamePaused then
 		return
 	elseif not saving.isPlayingBack() then
 		saving.endRecording()
 	end
-	saving.forceEndPlayback()
+	saving.endPlayback()
 	--started = false
+	editorMode = false
 	loadOpeningWorld()
 	emptyTools()
 	gamePaused = false
 	won = false
+	player.dead = false
 	updateGameState()
 	playMusic(1)
 end
@@ -715,6 +721,10 @@ end
 
 function startGame()
 	local seed = loadRandoms()
+	if not saving.isPlayingBack() then
+		stats.runNumber = stats.runNumber + 1
+		stats.writeStats()
+	end
 	saving.createNewRecording(seed)
 	loadTutorial = false
 	map.floorOrder = map.defaultFloorOrder
@@ -787,6 +797,17 @@ function startDebug()
 	player.character:onBegin()
 end
 
+function startEditor()
+	loadRandoms()
+	loadTutorial = false
+	map.floorOrder = {'RoomData/editorFloor.json'}
+	love.load()
+	loadFirstLevel()
+	tools.resetTools()
+	player.character:onBegin()
+	editorMode = true
+end
+
 function loadFirstLevel()
 	emptyTools()
 	floorIndex = 1
@@ -794,6 +815,10 @@ function loadFirstLevel()
 	loadLevel(map.floorOrder[#map.floorOrder])
 	endMap = mainMap
 	loadNextLevel(true)
+	if map.getFieldForRoom(mainMap[mapy][mapx].roomid, 'autowin') then
+		completedRooms[mapy][mapx] = 1
+		unlockDoors()
+	end
 	createElements()
 	updateGameState()
 	player.character:onStartGame()
@@ -874,10 +899,10 @@ function kill()
 		unlocks.unlockUnlockableRef(unlocks.portalUnlock)
 	end
 	player.dead = true
-	for i = 1, #tools do
-		if tools[i].numHeld>0 and not tools[i]:checkDeath() then
+	for i = 1, #specialTools do
+		if tools[specialTools[i]]~=nil and tools[specialTools[i]].numHeld>0 and not tools[specialTools[i]]:checkDeath() then
 			player.dead = false
-			onToolUse(i)
+			onToolUse(specialTools[i])
 			return
 		end
 	end
@@ -1978,14 +2003,14 @@ function love.draw()
 					local charSprite = util.getImage(player.character.sprite)
 					local playerx = (player.clonePos.x-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
 					local playery = (player.clonePos.y-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
-					love.graphics.draw(charSprite, playerx-charSprite:getWidth()*player.character.scale/2, playery-charSprite:getHeight()*player.character.scale-player.elevation*scale, 0, player.character.scale, player.character.scale)
+					love.graphics.draw(charSprite, playerx-charSprite:getWidth()*player.character.scale/2, playery-charSprite:getHeight()*player.character.scale-player.clonePos.z*scale, 0, player.character.scale, player.character.scale)
 				end
 			elseif player.character.shiftPos~=nil and player.character.shiftPos.y == j then
 				local charSprite2 = util.getImage(player.character.sprite2)
 				local playerx = (player.character.shiftPos.x-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
 				local playery = (player.character.shiftPos.y-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
-				love.graphics.draw(charSprite2, playerx-charSprite2:getWidth()*player.character.scale/2, playery-charSprite2:getHeight()*player.character.scale-player.elevation*scale, 0, player.character.scale, player.character.scale)
-			elseif player.character.catLoc~=nil then
+				love.graphics.draw(charSprite2, playerx-charSprite2:getWidth()*player.character.scale/2, playery-charSprite2:getHeight()*player.character.scale-player.character.shiftPos.z*scale, 0, player.character.scale, player.character.scale)
+			elseif player.character.catLoc~=nil and player.character.catLoc.y == j then
 				local nonActiveSprite
 				local playerx
 				local playery
@@ -2059,7 +2084,7 @@ function love.draw()
 			local toolScale = charSprite:getWidth() * player.character.scale/toolWidth
 			for i = 1, #tools.toolsShown do
 				local supertool = tools[tools.toolsShown[i]]
-				love.graphics.draw(util.getImage(supertool.image), (i-math.ceil(#tools.toolsShown)/2-1)*toolScale*toolWidth+player.x, player.y - charSprite:getHeight()*player.character.scale - util.getImage(tools[1].image):getHeight()*toolScale, 0, toolScale, toolScale)
+				love.graphics.draw(util.getImage(supertool:getDisplayImage()), (i-math.ceil(#tools.toolsShown)/2-1)*toolScale*toolWidth+player.x, player.y - charSprite:getHeight()*player.character.scale - util.getImage(tools[1].image):getHeight()*toolScale, 0, toolScale, toolScale)
 				if tools.toolsShown[i] > tools.numNormalTools then --if tool is a supertool
 					--love.graphics.setFont(fontFile)
 					--love.graphics.print(supertool.name, width/2-180, 110)
@@ -2442,7 +2467,6 @@ function createPushables()
 					pushables[index].prevTileX = pushables[index].tileX
 					pushables[index].prevTileY = pushables[index].tileY
 				end
-				room[i][j] = nil
 			end
 		end
 	end
@@ -3111,7 +3135,7 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 						end
 					end
 					for i = 1, #pushables do
-						if pushables[i]:instanceof(pushableList.boombox) then
+						if pushables[i]:instanceof(pushableList.boombox) and not pushables[i].destroyed then
 						    if math.abs(pushables[i].tileY-ani.tileY)+math.abs(pushables[i].tileX-ani.tileX)<animalDist then
 								animalDist = math.abs(pushables[i].tileY-ani.tileY)+math.abs(pushables[i].tileX-ani.tileX)
 								movex = pushables[i].tileX
@@ -3140,6 +3164,10 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 							end
 						end
 					end
+
+					local moveCoords = ani:moveOverride(movex, movey)
+					movex = moveCoords.x
+					movey = moveCoords.y
 					ani:move(movex, movey, room, litTiles[ani.tileY][ani.tileX]==1)
 				end
 				if room[ani.tileY][ani.tileX]~=nil then
@@ -3388,7 +3416,7 @@ function resolveConflicts()
 			    			end
 			    		end
 			    		for j = 1, #pushables do
-			    			if pushables[j]:instanceof(pushableList.boombox) then
+			    			if pushables[j]:instanceof(pushableList.boombox) and not pushables[j].destroyed then
 							    if math.abs(pushables[j].tileY-animals[i].tileY)+math.abs(pushables[j].tileX-animals[i].tileX)<animalDist then
 									animalDist = math.abs(pushables[j].tileY-animals[i].tileY)+math.abs(pushables[j].tileX-animals[i].tileX)
 									movex = pushables[j].tileX
@@ -3417,6 +3445,11 @@ function resolveConflicts()
 								end
 							end
 						end
+						
+						moveCoords = animals[i]:moveOverride(movex, movey)
+						movex = moveCoords.x
+						movey = moveCoords.y
+
 						animals[i]:secondaryMove(movex, movey)
 					end
 				end
@@ -3719,6 +3752,10 @@ function stepTrigger()
 					if room[i][j].canBePowered then updatePowerAfter = true end
 					room[i][j]:onEnd(i, j)
 					room[i][j] = nil
+				elseif room[i][j].overlay~=nil and room[i][j].overlay.gone then
+					if room[i][j].canBePowered then updatePowerAfter = true end
+					room[i][j].overlay:onEnd(i, j)
+					room[i][j].overlay = nil					
 				end
 			end
 		end
@@ -3911,6 +3948,12 @@ function onToolUse(tool)
 		mainMap[mapy][mapx].toolsUsed = {}
 	end
 	mainMap[mapy][mapx].toolsUsed[#mainMap[mapy][mapx].toolsUsed+1] = tool
+
+	--deck of cards trigger
+	if tools.card.numHeld>0 then
+		tools.card:playCard()
+	end
+
 	updateTools()
 	checkAllDeath()
 end
