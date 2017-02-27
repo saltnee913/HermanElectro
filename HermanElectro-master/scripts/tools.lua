@@ -3285,6 +3285,7 @@ function P.tunneler:usableOnNothing()
 end
 function P.tunneler:useToolNothing(tileY, tileX)
 	room[tileY][tileX] = tiles.tunnel:new()
+	self.numHeld = self.numHeld - 1
 end
 
 P.longLadder = P.superTool:new{name = "Ben's Ladder", description = "For getting really high", image = 'Graphics/ladder.png',
