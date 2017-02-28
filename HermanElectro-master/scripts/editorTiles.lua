@@ -42,11 +42,15 @@ P.basicTiles[#P.basicTiles+1] = tiles.notGate
 P.basicTiles[#P.basicTiles+1] = tiles.andGate
 P.basicTiles[#P.basicTiles+1] = tiles.wire
 P.basicTiles[#P.basicTiles+1] = tiles.horizontalWire
+P.basicTiles[#P.basicTiles+1] = tiles.tWire
 P.basicTiles[#P.basicTiles+1] = tiles.cornerWire
 P.basicTiles[#P.basicTiles+1] = tiles.button
 P.basicTiles[#P.basicTiles+1] = tiles.stayButton
 P.basicTiles[#P.basicTiles+1] = tiles.stickyButton
 P.basicTiles[#P.basicTiles+1] = tiles.puddle
+P.basicTiles[#P.basicTiles+1] = tiles.tunnel
+P.basicTiles[#P.basicTiles+1] = tiles.upTunnel
+P.basicTiles[#P.basicTiles+1] = tiles.sign
 
 P.advancedTiles[#P.advancedTiles+1] = tiles.spikes
 P.advancedTiles[#P.advancedTiles+1] = tiles.entrancePortal
@@ -65,5 +69,22 @@ P.advancedTiles[#P.advancedTiles+1] = tiles.fog
 P.advancedTiles[#P.advancedTiles+1] = tiles.accelerator
 P.advancedTiles[#P.advancedTiles+1] = tiles.poweredAccelerator
 P.advancedTiles[#P.advancedTiles+1] = tiles.infestedWood
+P.advancedTiles[#P.advancedTiles+1] = tiles.redBeggar
+P.advancedTiles[#P.advancedTiles+1] = tiles.greenBeggar
+P.advancedTiles[#P.advancedTiles+1] = tiles.blueBeggar
+P.advancedTiles[#P.advancedTiles+1] = tiles.goldBeggar
+P.advancedTiles[#P.advancedTiles+1] = tiles.blackBeggar
+P.advancedTiles[#P.advancedTiles+1] = tiles.whiteBeggar
+P.advancedTiles[#P.advancedTiles+1] = tiles.elevator
+P.advancedTiles[#P.advancedTiles+1] = tiles.delevator
+P.advancedTiles[#P.advancedTiles+1] = tiles.halfWall
+P.advancedTiles[#P.advancedTiles+1] = tiles.tallWall
+P.advancedTiles[#P.advancedTiles+1] = tiles.supertoolQ1
+P.advancedTiles[#P.advancedTiles+1] = tiles.supertoolQ2
+P.advancedTiles[#P.advancedTiles+1] = tiles.supertoolQ3
+P.advancedTiles[#P.advancedTiles+1] = tiles.supertoolQ4
+P.advancedTiles[#P.advancedTiles+1] = tiles.supertoolQ5
+
+
 
 return P

@@ -104,8 +104,16 @@ function P.writeJSON(filePath, data, state)
 end
 function P.writeJSONCustom(filePath, data, state)
 	local str = json.encode(data, state)
-	str = "{\"rooms\":"..str:sub(5)
-	str = str:sub(1,#str-1).."}"
+	local addRooms = true
+	if love.filesystem.exists(saveDir..'/'..filePath) then
+		addRooms = false
+	end
+
+	if addRooms then
+		str = "{\"rooms\":"..str:sub(5)
+		str = str:sub(1,#str-1).."}"
+	end
+	
 	if not love.filesystem.exists(saveDir) then
 		love.filesystem.createDirectory(saveDir)
 	end

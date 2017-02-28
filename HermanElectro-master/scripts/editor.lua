@@ -4,7 +4,7 @@ tools = require('scripts.tools')
 editorTiles = require('scripts.editorTiles')
 
 P.stealInput = false
-P.tab = 4
+P.tab = 1
 --1 for basic tiles, 2 for animasl, 3 for boxes, 4 for advanced tiles
 
 P.leftStartDist = 110
