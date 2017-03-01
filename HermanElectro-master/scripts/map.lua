@@ -288,9 +288,8 @@ end
 function P.loadCustomRooms(fileLoc)
 	if not love.filesystem.exists(fileLoc) then return end
 	local roomsData, roomsArray = util.readJSON(fileLoc, true)
-	P.floorInfo.rooms[#P.floorInfo.rooms+1] = roomsData.rooms
+	P.floorInfo.rooms.customRooms = roomsData.rooms
 	for i = 1, #roomsArray do
-		print(i)
 		P.floorInfo.roomsArray[#(P.floorInfo.roomsArray)+1] = roomsArray[i]
 	end
 
