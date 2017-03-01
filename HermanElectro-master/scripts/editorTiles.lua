@@ -50,6 +50,7 @@ P.basicTiles[#P.basicTiles+1] = tiles.stickyButton
 P.basicTiles[#P.basicTiles+1] = tiles.puddle
 P.basicTiles[#P.basicTiles+1] = tiles.tunnel
 P.basicTiles[#P.basicTiles+1] = tiles.upTunnel
+P.basicTiles[#P.basicTiles+1] = tiles.vPoweredDoor
 P.basicTiles[#P.basicTiles+1] = tiles.sign
 
 P.advancedTiles[#P.advancedTiles+1] = tiles.spikes
@@ -84,6 +85,7 @@ P.advancedTiles[#P.advancedTiles+1] = tiles.supertoolQ2
 P.advancedTiles[#P.advancedTiles+1] = tiles.supertoolQ3
 P.advancedTiles[#P.advancedTiles+1] = tiles.supertoolQ4
 P.advancedTiles[#P.advancedTiles+1] = tiles.supertoolQ5
+P.advancedTiles[#P.advancedTiles+1] = tiles.poweredEnd
 
 
 

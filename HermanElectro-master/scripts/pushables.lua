@@ -203,6 +203,11 @@ function P.batteringRam:move(mover)
 		if tile.sawable or tile:instanceof(tiles.glassWall) then
 			if self.elevation<tile:getHeight() then
 				tile:destroy()
+				for i = 1, #animals do
+					if self.tileX == animals[i].tileX and self.tileY == animals[i].tileY then
+						animals[i]:kill()
+					end
+				end
 			end
 		elseif room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX]:getHeight()>self.elevation then
 			self.tileX = self.prevTileX

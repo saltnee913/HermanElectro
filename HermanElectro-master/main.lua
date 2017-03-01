@@ -3349,6 +3349,14 @@ function postAnimalMovement()
 			end
 		end
 	end
+
+	for i = 1, #animals do
+		for j = 1, #pushables do
+			if animals[i].tileX == pushables[j].tileX and animals[i].tileY == pushables[j].tileY then
+				animals[i]:kill()
+			end
+		end
+	end
 end
 
 function resetAnimals()
