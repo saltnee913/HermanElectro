@@ -527,12 +527,13 @@ function P.mousemoved(x, y, dx, dy)
 end
 
 function P.saveRoom()
-	P.stealInput = false
 
 	if map.createRoom(nameEnter)~=nil then
 		log("Save failed -- name already taken (continue typing to insert a new name)")
 		return
 	end
+	
+	P.stealInput = false
 
 	args[2] = '  "'..nameEnter..'":'..args[2]:sub(11)
 	util.writeJSONCustom(args[1],args[2])
