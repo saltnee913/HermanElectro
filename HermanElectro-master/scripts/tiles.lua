@@ -2716,7 +2716,7 @@ end
 
 P.playbackStairs = P.tile:new{name = "playbackStairs", sprite = 'KenGraphics/gamestairs.png', recording = nil}
 function P.playbackStairs:onLoad()
-	self.recording = saving.getSave()
+	self.recording = saving.getLatestReplay()
 	if self.recording == nil then
 		self.isVisible = false
 	end
@@ -2724,6 +2724,14 @@ end
 function P.playbackStairs:onEnter()
 	if self.isVisible then
 		saving.playBackRecording(self.recording)
+	end
+end
+
+P.replayViewer = P.playbackStairs:new{name = "replayStairs"}
+function P.replayViewer:onLoad()
+	self.recording = saving.getImportedReplay()
+	if self.recording == nil then
+		self.isVisible = false
 	end
 end
 
@@ -3122,6 +3130,7 @@ tiles[197] = P.iceBoxTile
 tiles[198] = P.recycleBinTile
 tiles[199] = P.infestedWood
 tiles[200] = P.editorStairs
+tiles[201] = P.replayViewer
 
 
 return tiles

@@ -249,3 +249,81 @@ P.dungeonUnlockId = #P
 P[#P+1] = P.lockedTiles
 
 return unlocks
+
+
+--HARDCORE
+
+--WIN+ VVVV
+--NoTreasure: 
+--NoTreasureRooms: 
+--NoEndTreasure: 
+--NoBeggar: 
+--NoTrippleEntryOnUnbeaten: Mindful  --Maybe add an easier version of this aswell, or two consecutive floor blocks 
+	--NoTrippleEntryOnUbeaten(F4-6) (Win required?)
+	--NoTrippleEntryOnUbeaten(F1-3) (Win required?)
+--NoTax: ShopRoller +Aurellius: LuckyPenny(?)
+--NoRegress: Tunneler(?)
+
+
+
+--OnGet
+--10x Saw: Blaze(?)
+--10x Water: Fish(?) PowerBreaker(?)
+--10x Ladder: Wings
+--10x Gun: BigBadBeam
+--10x Clipper: WireToButton(?) Wirebreaker(?)
+--10x Sponge: Crowbar(?) Supersponge(?)
+--10x Brick: 
+
+--OnGet
+	--Spread(1): +7(?) ToolRoller(?) 
+--Spread(2): +7(?) ToolRoller(?) SuperBasics(?)
+--Spread(3): +7(?) ToolRoller(?) SuperBasics(?)
+	--Spread(4)? 
+
+--OnBeat
+--F1: Tile
+--F2: Tile
+--F3: Tile
+--F4: Tile
+--F5: Tile
+--F6: FDungeon
+--FDungeons: Erik(?)
+
+--KillAll
+--GreenBeggars: 
+--RedBeggars:
+--BlueBeggars:
+
+--Winstreak
+--2:
+--3:
+--??4??
+
+--CHARSPECIFICS
+
+--DungeonWIN+
+--Erik: Knight(?) Glitch(?) MentalBlock(?)
+--Fish: FishingPole(?) (Weak) Cup(?)
+
+--F6WIN+
+--Aurellius: Deflation(?) LuckyPenny(?)
+
+
+--Some characters such as Frederick may have reduced access to acheives
+--Most acheives should not requisite
+
+
+
+
+--TaxTiles
+--5: 
+--10+Win:
+--15+Win:
+
+
+--160 Total Unlocks
+
+
+
+

@@ -520,7 +520,7 @@ function goToMainMenu()
 	elseif not saving.isPlayingBack() then
 		saving.endRecording()
 	end
-	saving.forceEndPlayback()
+	saving.endPlayback()
 	--started = false
 	editorMode = false
 	myShader:send("b_and_w", false)
@@ -528,6 +528,7 @@ function goToMainMenu()
 	emptyTools()
 	gamePaused = false
 	won = false
+	player.dead = false
 	updateGameState()
 	playMusic(1)
 end
@@ -721,6 +722,10 @@ end
 
 function startGame()
 	local seed = loadRandoms()
+	if not saving.isPlayingBack() then
+		stats.runNumber = stats.runNumber + 1
+		stats.writeStats()
+	end
 	saving.createNewRecording(seed)
 	loadTutorial = false
 	map.floorOrder = map.defaultFloorOrder

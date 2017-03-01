@@ -2,17 +2,21 @@ local P = {}
 saving = P
 
 P.saveFile = 'save.json'
+P.replayDir = 'Replays'
+P.replayFile = 'replay' -- #.json automatically appended (example: Replays/replay5.json)
 P.replaySpeed = 1
 
 local isRecording = false
 local input = {}
 local recordingSeed = 0
 local unlocksSave = {}
+local saveNumber = 0
 
 local isPlayingBack = false
 local currentRecording = {}
 local currentRecordingIndex = 1
 local playbackSeed = 0
+local isReplay = false
 
 function P.createNewRecording(seed)
 	P.endRecording()
@@ -22,6 +26,7 @@ function P.createNewRecording(seed)
 	for i = 1, #unlocks do
 		unlocksSave[i] = unlocks[i].unlocked
 	end
+	saveNumber = stats.runNumber
 end
 
 function P.recordKeyPressed(key, unicode, isRepeat)
@@ -53,8 +58,10 @@ function P.saveRecording()
 	if isPlayingBack then
 		return
 	end
-	local recordingToSave = {inputs = input, seed = recordingSeed, character = player.character.name, isDead = player.dead, unlocksSave = unlocksSave}
+	local recordingToSave = {inputs = input, seed = recordingSeed, character = player.character.name, 
+	  isDead = player.dead, unlocksSave = unlocksSave, saveNumber = saveNumber}
 	util.writeJSON(P.saveFile, recordingToSave)
+	util.writeJSON(P.replayFile..saveNumber..'.json', recordingToSave, nil, P.replayDir)
 end
 
 function P.endRecording()
@@ -71,6 +78,33 @@ function P.getSave()
 		return nil
 	end
 	return util.readJSON(saveDir..'/'..P.saveFile, false)
+end
+
+function P.getReplay(replayNumber)
+	if not love.filesystem.exists(saveDir..'/'..P.replayDir..'/'..P.replayFile..replayNumber..'.json') then
+		return nil
+	else
+		return util.readJSON(saveDir..'/'..P.replayDir..'/'..P.replayFile..replayNumber..'.json', false)
+	end
+end
+
+function P.getLatestReplay()
+	local save = P.getSave()
+	if save ~= nil and save.isDead then
+		return save
+	elseif save ~= nil then
+		return P.getReplay(save.saveNumber-1)
+	else
+		return P.getReplay(stats.runNumber)
+	end
+end
+
+function P.getImportedReplay()
+	if not love.filesystem.exists(saveDir..'/'..P.replayDir..'/'..P.replayFile..'.json') then
+		return nil
+	else
+		return util.readJSON(saveDir..'/'..P.replayDir..'/'..P.replayFile..'.json', false)
+	end
 end
 
 
@@ -98,11 +132,13 @@ function P.playRecording(recording)
 end
 
 function P.playBackRecording(recording)
+	isReplay = true
 	P.playRecording(recording)
 	gameSpeed = P.replaySpeed
 end
 
 function P.playRecordingFast(recording)
+	isReplay = false
 	P.playRecording(recording)
 	while(currentRecordingIndex <= #recording.inputs) do
 		love.update(0.01)
@@ -111,6 +147,7 @@ function P.playRecordingFast(recording)
 	input = recording.inputs
 	recordingSeed = recording.seed
 	unlocksSave = recording.unlocksSave
+	saveNumber = recording.saveNumber
 	P.endPlayback()
 end
 
@@ -133,7 +170,9 @@ function P.sendNextInputFromRecording()
 	end
 	local nextInput = currentRecording[currentRecordingIndex]
 	if nextInput == nil then
-		P.endPlayback()
+		if isReplay then
+			gameSpeed = 0
+		end
 		return
 	end
 	if nextInput.time <= gameTime.totalTime then
@@ -144,11 +183,6 @@ function P.sendNextInputFromRecording()
 end
 
 function P.endPlayback()
-	P.forceEndPlayback()
-	P.saveRecording()
-end
-
-function P.forceEndPlayback()
 	isPlayingBack = false
 	gameSpeed = 1
 	gamePaused = false
