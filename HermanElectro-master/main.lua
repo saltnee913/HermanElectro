@@ -2261,7 +2261,7 @@ function love.draw()
 		tutorial.draw()
 	end
 	if debugText ~= nil then
-		text.print(debugText, 0, 100, {0,255,0,255}, fontFile, 22)
+		text.print(debugText, 0, 100, {255,140,0,255}, nil, 22)
 	end
 end
 

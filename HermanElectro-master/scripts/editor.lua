@@ -216,6 +216,7 @@ function P.keypressed(key, unicode)
 		print(toPrint)
 	end
 	if key=='tab' then
+		if nameEnter~=nil then return end
 		roomHack = mainMap[mapy][mapx].roomid .. ''
 		P.stealInput = true
 		log('Room Hack: '..roomHack)
@@ -291,16 +292,10 @@ function P.inputSteal(key, unicode)
 	elseif nameEnter~=nil then
 		if key=='backspace' then
 			nameEnter = nameEnter:sub(1, -2)
+			log(nameEnter)
 		end
 		if key=='return' then
-			if args==nil then return end
-			P.stealInput = false
-
-			args[2] = '  "'..nameEnter..'":'..args[2]:sub(11)
-			util.writeJSONCustom(args[1],args[2])
-			log("Saved!")
-			nameEnter = nil
-			args = nil
+			editor.saveRoom()
 		end
 	end
 end
@@ -393,6 +388,7 @@ function P.mousepressed(x, y, button, istouch)
 					print("loading")
 				elseif mouseX>width/2+editor.leftStartDist+2*tileUnit*scale+5 then
 					if args==nil then
+						if roomHack~=nil then return end
 						local customRooms = {}
 						if love.filesystem.exists(saveDir..'/customRooms.json') then
 							customRooms = util.readJSON(saveDir .. '/customRooms.json')
@@ -459,13 +455,7 @@ function P.mousepressed(x, y, button, istouch)
 						log('Enter name: ')
 						editor.stealInput = true
 					else
-						P.stealInput = false
-
-						args[2] = '  "'..nameEnter..'":'..args[2]:sub(11)
-						util.writeJSONCustom(args[1],args[2])
-						log("Saved!")
-						nameEnter = nil
-						args = nil
+						editor.saveRoom()
 					end
 				end
 			elseif mouseX>editor.leftStartDist+3*editor.tabLength then
@@ -534,6 +524,29 @@ function P.mousemoved(x, y, dx, dy)
 		end
 		postTileAddCleanup(tempAdd, tileLocY, tileLocX)
 	end
+end
+
+function P.saveRoom()
+	P.stealInput = false
+
+	if map.createRoom(nameEnter)~=nil then
+		log("Save failed -- name already taken (continue typing to insert a new name)")
+		return
+	end
+
+	args[2] = '  "'..nameEnter..'":'..args[2]:sub(11)
+	util.writeJSONCustom(args[1],args[2])
+	log("Saved!")
+	local justNamed = nameEnter
+
+	nameEnter = nil
+	args = nil
+	local roomsData, roomsArray = util.readJSON(saveDir..'/customRooms.json', true)
+	map.floorInfo.rooms.customRooms = roomsData.rooms
+	--add room to current list
+	map.floorInfo.roomsArray[#(map.floorInfo.roomsArray)+1] = roomsArray[#roomsArray]
+
+	hackEnterRoom(justNamed)
 end
 
 return editor
