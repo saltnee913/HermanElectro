@@ -188,6 +188,9 @@ end
 function P.tile.flipDirection(dir,isVertical)
 	return 0
 end
+function P.tile:getEditorSprite()
+	return self.sprite
+end
 
 P.invisibleTile = P.tile:new{isVisible = false, name = "invisibleTile"}
 local bounds = {}
@@ -1021,6 +1024,9 @@ function P.pitbullTile:new(o)
 end
 function P.pitbullTile:usableOnNothing()
 	return true
+end
+function P.pitbullTile:getEditorSprite()
+	return self.animal.sprite
 end
 P.pupTile = P.pitbullTile:new{name = "pup", animal = animalList[3], listIndex = 3}
 P.catTile = P.pitbullTile:new{name = "cat", animal = animalList[4], listIndex = 4}
@@ -1947,6 +1953,9 @@ function P.boxTile:new(o)
 	o.pushable = o.pushable
 	return o
 end
+function P.boxTile:getEditorSprite()
+	return self.pushable.sprite
+end
 
 P.motionGate = P.conductiveTile:new{name = "gate", updatePowerOnLeave = true, dirSend = {0,0,0,0}, sprite = 'Graphics/gate.png', poweredSprite = 'Graphics/gate.png'}
 function P.motionGate:onLeave(player)
@@ -2258,7 +2267,7 @@ function P.mushroom:onEnter()
 	globalTint = {0,0.15,0.3}
 end
 
-P.lampTile = P.tile:new{name = "lampTile", pushable = pushableList[12], listIndex = 12}
+P.lampTile = P.boxTile:new{name = "lampTile", pushable = pushableList[12], listIndex = 12}
 
 P.hermanTransform = P.tile:new{name = "hermanTransform", characterIndex = 1}
 function P.hermanTransform:onEnter()
@@ -2892,8 +2901,8 @@ end
 
 P.ratTile = P.pitbullTile:new{name = "rat", animal = animalList[15], listIndex = 15}
 
-P.iceBoxTile = P.tile:new{name = "iceBoxTile", pushable = pushableList[13], listIndex = 13}
-P.recycleBinTile = P.tile:new{name = "recycleBinTile", pushable = pushableList[14], listIndex = 14}
+P.iceBoxTile = P.boxTile:new{name = "iceBoxTile", pushable = pushableList[13], listIndex = 13}
+P.recycleBinTile = P.boxTile:new{name = "recycleBinTile", pushable = pushableList[14], listIndex = 14}
 
 P.infestedWood = P.wall:new{name = "infestedWood", sprite = 'Graphics/infestedwood.png'}
 function P.infestedWood:destroy()

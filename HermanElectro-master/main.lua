@@ -523,6 +523,7 @@ function goToMainMenu()
 	saving.endPlayback()
 	--started = false
 	editorMode = false
+	myShader:send("b_and_w", false)
 	loadOpeningWorld()
 	emptyTools()
 	gamePaused = false
@@ -803,6 +804,7 @@ function startEditor()
 	map.floorOrder = {'RoomData/editorFloor.json'}
 	love.load()
 	loadFirstLevel()
+	map.loadCustomRooms(saveDir..'/customRooms.json')
 	tools.resetTools()
 	player.character:onBegin()
 	editorMode = true
@@ -909,6 +911,7 @@ function kill()
 	unlockedChars = characters.getUnlockedCharacters()
 	stats.losses[player.character.name] = stats.losses[player.character.name]+1
 	stats.writeStats()
+	myShader:send("b_and_w", true)
 	if not loadTutorial then --hacky hack fix
 		completedRooms[mapy][mapx] = 0 --to stop itemsNeeded tracking, it's a hack!
 	end
@@ -1481,7 +1484,7 @@ function powerTestPushable(x, y, lastDir)
 
 	if x>1 and room[x-1][y]~=nil and canBePowered(x-1,y,3) then
 		formerPowered = room[x-1][y].powered
-		formerSend = room[x-1][y].dirSend
+		formerSend = room[x-1][y].dirSende
 		formerAccept = room[x-1][y].dirAccept
 		--powered[x-1][y] = 1
 		room[x-1][y].poweredNeighbors[3] = 1
@@ -2329,7 +2332,7 @@ end
 function log(text)
 	debugText = text
 	if text ~= nil and text ~= "" then
-		print('LOG: '..debugText)
+		--print('LOG: '..debugText)
 	end
 end
 
