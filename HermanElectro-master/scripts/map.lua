@@ -1018,7 +1018,7 @@ function P.generateMapWeighted()
 				roomChoices[i] = roomChoiceid
 				local state = {indent = true, keyorder = keyOrder}
 	
-				local roomWeight = 0
+				local roomWeight = 1
 				local totalRoomsCompared = 0
 				for i = 1, height do
 					for j = 1, height do
@@ -1045,7 +1045,7 @@ function P.generateMapWeighted()
 						end
 					end
 				end]]
-				roomWeight = P.getRoomWeight(roomChoiceid)
+				roomWeight = roomWeight*P.getRoomWeight(roomChoiceid)
 				roomWeights[i] = roomWeight
 			end
 			roomid = roomChoices[util.chooseWeightedRandom(roomWeights, 'mapGen')]
