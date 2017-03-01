@@ -102,22 +102,57 @@ function P.writeJSON(filePath, data, state)
 	end
 	love.filesystem.write(saveDir..'/'..filePath, str)
 end
-function P.writeJSONCustom(filePath, data, state)
-	local str = json.encode(data, state)
-	local addRooms = true
-	if love.filesystem.exists(saveDir..'/'..filePath) then
-		addRooms = false
-	end
+function P.writeJSONCustom(filePath, roomToAdd)
+	if not love.filesystem.exists(saveDir..'/'..filePath) then
+		local str = "{\"rooms\": {\n"
+		str = str..roomToAdd.."\n}}"
+		
+		if not love.filesystem.exists(saveDir) then
+			love.filesystem.createDirectory(saveDir)
+		end
 
-	if addRooms then
-		str = "{\"rooms\":"..str:sub(5)
-		str = str:sub(1,#str-1).."}"
+		love.filesystem.write(saveDir..'/'..filePath, str)
+	else
+		local str = love.filesystem.read(saveDir..'/'..filePath)
+		str = str:sub(1,#str-4)
+		str = str..",\n"
+		str = str..roomToAdd
+		str = str.."\n}}"
+		love.filesystem.write(saveDir..'/'..filePath, str)
 	end
-	
-	if not love.filesystem.exists(saveDir) then
-		love.filesystem.createDirectory(saveDir)
+end
+
+function P.roomToString(newRoom)
+	local ret = '"'..newRoom.roomid..'":\n'
+
+	--layout
+	ret = ret.."{\n[\n"
+	for i = 1, #newRoom.layout do
+		ret = ret.."["
+		for j = 1, #newRoom.layout[i] do
+			if type(newRoom.layout[i][j])~='number' then
+				ret = ret.."["
+				for k = 1, #newRoom.layout[i][j] do
+					ret = ret..newRoom.layout[i][j][k]
+					if not k==#newRoom.layout[i][j] then
+						ret = ret..","
+					end
+				end
+				ret = ret.."]"
+			else
+				ret = ret..newRoom.layout[i][j]
+				if not j==#newRoom.layout[i] then
+					ret = ret..","
+				end
+			end
+		end
+		ret = ret.."],"
 	end
-	love.filesystem.write(saveDir..'/'..filePath, str)
+	ret = ret.."],"
+
+	ret = ret.."}"
+
+	return ret
 end
 
 function P.deepContains(arr, value, floor)

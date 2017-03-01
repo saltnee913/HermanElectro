@@ -2327,7 +2327,7 @@ end
 function log(text)
 	debugText = text
 	if text ~= nil and text ~= "" then
-		print('LOG: '..debugText)
+		--print('LOG: '..debugText)
 	end
 end
 

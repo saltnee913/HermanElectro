@@ -51,6 +51,14 @@ function P.draw()
 	love.graphics.print("Save", width/2+editor.leftStartDist+2*tileUnit*scale+5, editor.downStartDist+2);
 	love.graphics.print("Load", width/2+editor.leftStartDist+2*tileUnit*scale+5+editor.tabLength, editor.downStartDist+2);
 
+	if nameEnter~=nil then
+		local textAdd = ''
+		if editor.stealInput and roomHack==nil then
+			textAdd = "Enter name: "
+		end
+		--love.graphics.print(textAdd..nameEnter, width/2+editor.leftStartDist+2*tileUnit*scale+5+editor.tabLength+(editor.tabLength+5), editor.downStartDist+2);
+	end
+
 	love.graphics.setColor(255,255,255)
 	
 	for i = 1, #tileSet do
@@ -258,26 +266,42 @@ function P.keypressed(key, unicode)
 end
 
 function P.inputSteal(key, unicode)
-	if key=='backspace' then
-		roomHack = roomHack:sub(1, -2)
-		log('Room Hack: '..roomHack)
-	end
-	if key=='right' then
-		roomHack = map.getNextRoom(roomHack)
-		log('Room Hack: '..roomHack)
-	end
-	if key == 'left' then
-		roomHack = map.getPrevRoom(roomHack)
-		log('Room Hack: '..roomHack)
-	end
-	if key=='return' then
-		P.stealInput = false
-		if hackEnterRoom(roomHack) then
-			log('Teleported to room: '..roomHack)
-		else
-			log('Could not find room: '..roomHack)
+	if roomHack~=nil then
+		if key=='backspace' then
+			roomHack = roomHack:sub(1, -2)
+			log('Room Hack: '..roomHack)
 		end
-		roomHack = nil
+		if key=='right' then
+			roomHack = map.getNextRoom(roomHack)
+			log('Room Hack: '..roomHack)
+		end
+		if key == 'left' then
+			roomHack = map.getPrevRoom(roomHack)
+			log('Room Hack: '..roomHack)
+		end
+		if key=='return' then
+			P.stealInput = false
+			if hackEnterRoom(roomHack) then
+				log('Teleported to room: '..roomHack)
+			else
+				log('Could not find room: '..roomHack)
+			end
+			roomHack = nil
+		end
+	elseif nameEnter~=nil then
+		if key=='backspace' then
+			nameEnter = nameEnter:sub(1, -2)
+		end
+		if key=='return' then
+			if args==nil then return end
+			P.stealInput = false
+
+			args[2] = '  "'..nameEnter..'":'..args[2]:sub(11)
+			util.writeJSONCustom(args[1],args[2])
+			log("Saved!")
+			nameEnter = nil
+			args = nil
+		end
 	end
 end
 
@@ -285,6 +309,9 @@ function P.textinput(text)
 	if roomHack~=nil then
 		roomHack = roomHack .. text
 		log('Room Hack: '..roomHack)
+	elseif nameEnter~=nil then
+		nameEnter = nameEnter .. text
+		log('Enter name: '..nameEnter)
 	end
 end
 
@@ -365,69 +392,81 @@ function P.mousepressed(x, y, button, istouch)
 				if mouseX>width/2+editor.leftStartDist+editor.tabLength+2*tileUnit*scale+5 then
 					print("loading")
 				elseif mouseX>width/2+editor.leftStartDist+2*tileUnit*scale+5 then
-					local customRooms = {}
-					if love.filesystem.exists(saveDir..'/customRooms.json') then
-						customRooms = util.readJSON(saveDir .. '/customRooms.json')
-						if customRooms == nil then
-							customRooms = {}
-						end
-					end
-					local newRoom = {}
-					newRoom.layout = {}
-					savedRoom = {}
-					for i = 1, roomHeight do
-						newRoom.layout[i] = {}
-						savedRoom[i] = {}
-						for j = 1, roomLength do
-							savedRoom[i][j] = room[i][j]
-							if room[i][j] == nil then
-								newRoom.layout[i][j] = 0
-							else
-								local tileWithRot = 0
-								--find the tile id
-								for k = 2, #tiles do
-									if tiles[k].name == room[i][j].name then
-										tileWithRot = k
-									end
-								end
-								--add in the rotation of the tile
-								if room[i][j].rotation ~= 0 then
-									tileWithRot = tileWithRot + room[i][j].rotation/10
-								end
-				
-								if room[i][j].overlay == nil then
-									newRoom.layout[i][j] = tileWithRot
-								else
-									local overlayWithRot = 0
-									for k = 2, #tiles do
-										if tiles[k].name == room[i][j].overlay.name then
-											overlayWithRot = k
-										end
-									end
-									if room[i][j].overlay.rotation ~= 0 then
-										overlayWithRot = overlayWithRot + room[i][j].overlay.rotation/10
-									end
-									newRoom.layout[i][j] = {tileWithRot,overlayWithRot}
-								end
-
+					if args==nil then
+						local customRooms = {}
+						if love.filesystem.exists(saveDir..'/customRooms.json') then
+							customRooms = util.readJSON(saveDir .. '/customRooms.json')
+							if customRooms == nil then
+								customRooms = {}
 							end
 						end
+						local newRoom = {}
+						newRoom.layout = {}
+						savedRoom = {}
+						for i = 1, roomHeight do
+							newRoom.layout[i] = {}
+							savedRoom[i] = {}
+							for j = 1, roomLength do
+								savedRoom[i][j] = room[i][j]
+								if room[i][j] == nil then
+									newRoom.layout[i][j] = 0
+								else
+									local tileWithRot = 0
+									--find the tile id
+									for k = 2, #tiles do
+										if tiles[k].name == room[i][j].name then
+											tileWithRot = k
+										end
+									end
+									--add in the rotation of the tile
+									if room[i][j].rotation ~= 0 then
+										tileWithRot = tileWithRot + room[i][j].rotation/10
+									end
+					
+									if room[i][j].overlay == nil then
+										newRoom.layout[i][j] = tileWithRot
+									else
+										local overlayWithRot = 0
+										for k = 2, #tiles do
+											if tiles[k].name == room[i][j].overlay.name then
+												overlayWithRot = k
+											end
+										end
+										if room[i][j].overlay.rotation ~= 0 then
+											overlayWithRot = overlayWithRot + room[i][j].overlay.rotation/10
+										end
+										newRoom.layout[i][j] = {tileWithRot,overlayWithRot}
+									end
+
+								end
+							end
+						end
+						savedAnimals = {}
+						for i = 1, #animals do
+							savedAnimals[i] = animals[i]
+						end
+						newRoom.itemsNeeded = {}
+						newRoom.itemsNeeded[1] = {0,0,0,0,0,0,0}
+						customRooms[#customRooms+1] = {name = newRoom}
+						local state = {indent = true}
+						local json = require('scripts.dkjson')
+						local toPrint = json.encode({name = newRoom}, state)
+						toPrint = toPrint:sub(3)
+						toPrint = toPrint:sub(1,-3)
+						toPrint = toPrint..","
+						args = {'/customRooms.json', toPrint}
+						nameEnter = ''
+						log('Enter name: ')
+						editor.stealInput = true
+					else
+						P.stealInput = false
+
+						args[2] = '  "'..nameEnter..'":'..args[2]:sub(11)
+						util.writeJSONCustom(args[1],args[2])
+						log("Saved!")
+						nameEnter = nil
+						args = nil
 					end
-					savedAnimals = {}
-					for i = 1, #animals do
-						savedAnimals[i] = animals[i]
-					end
-					newRoom.itemsNeeded = {}
-					newRoom.itemsNeeded[1] = {0,0,0,0,0,0,0}
-					customRooms[#customRooms+1] = {name = newRoom}
-					local state = {indent = true}
-					util.writeJSONCustom('/customRooms.json', customRooms, state)
-					local json = require('scripts.dkjson')
-					local toPrint = json.encode({name = newRoom}, state)
-					toPrint = toPrint:sub(3)
-					toPrint = toPrint:sub(1,-3)
-					toPrint = toPrint..","
-					print(toPrint)
 				end
 			elseif mouseX>editor.leftStartDist+3*editor.tabLength then
 				editor.tab = 4
