@@ -267,6 +267,16 @@ function P.keypressed(key, unicode)
 end
 
 function P.inputSteal(key, unicode)
+	if key=='escape' then
+		P.stealInput = false
+		if nameEnter ~= nil then
+			log('Saving Cancelled')
+		else
+			log('Room Hack Cancelled')
+		end
+		roomHack = nil
+		nameEnter = nil
+	end
 	if roomHack~=nil then
 		if key=='backspace' then
 			roomHack = roomHack:sub(1, -2)
@@ -292,7 +302,7 @@ function P.inputSteal(key, unicode)
 	elseif nameEnter~=nil then
 		if key=='backspace' then
 			nameEnter = nameEnter:sub(1, -2)
-			log(nameEnter)
+			log('Enter name: '..nameEnter)
 		end
 		if key=='return' then
 			editor.saveRoom()
@@ -532,7 +542,7 @@ function P.saveRoom()
 		log("Save failed -- name already taken (continue typing to insert a new name)")
 		return
 	end
-	
+
 	P.stealInput = false
 
 	args[2] = '  "'..nameEnter..'":'..args[2]:sub(11)

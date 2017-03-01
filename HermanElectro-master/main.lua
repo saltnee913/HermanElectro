@@ -2809,6 +2809,12 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 		end
 		return
 	end
+
+	if editor.stealInput then
+		editor.inputSteal(key, unicode)
+		return
+	end
+	
 	if key=="escape" then
 		gamePaused = true
 		return
@@ -2900,10 +2906,6 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 		end
 	end
 
-	if editor.stealInput then
-		editor.inputSteal(key, unicode)
-		return
-	end
 	if key=="e" then
 		editorMode = not editorMode
 		if floorIndex == -1 then
