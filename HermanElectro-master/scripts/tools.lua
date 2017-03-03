@@ -4480,7 +4480,7 @@ function P.shield:usableOnNothing()
 end
 P.shield.usableOnTile = P.shield.usableOnNothing
 function P.shield:useToolNothing()
-	player.attributes.shieldCounter = player.attributes.shieldCounter+10
+	player.attributes.shieldCounter = player.attributes.shieldCounter+30
 	self.active = true
 	self:updateSprite()
 end
