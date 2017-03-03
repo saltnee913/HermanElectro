@@ -2035,7 +2035,7 @@ function love.draw()
 
 	for k = 1, #spotlights do
 		local sl = spotlights[k]
-		love.graphics.draw(sl.sprite, sl.x, sl.y, 0, scale, yScale)				
+		love.graphics.draw(sl.sprite, sl.x, sl.y-6*scale, 0, scale, yScale)				
 	end
 
 	love.graphics.setShader()
