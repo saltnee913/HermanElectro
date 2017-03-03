@@ -86,6 +86,9 @@ P.advancedTiles[#P.advancedTiles+1] = tiles.supertoolQ3
 P.advancedTiles[#P.advancedTiles+1] = tiles.supertoolQ4
 P.advancedTiles[#P.advancedTiles+1] = tiles.supertoolQ5
 P.advancedTiles[#P.advancedTiles+1] = tiles.poweredEnd
+P.advancedTiles[#P.advancedTiles+1] = tiles.dungeonKey
+P.advancedTiles[#P.advancedTiles+1] = tiles.untriggeredPowerSupply
+P.advancedTiles[#P.advancedTiles+1] = tiles.openDungeon
 
 
 

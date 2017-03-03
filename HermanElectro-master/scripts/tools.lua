@@ -1917,7 +1917,7 @@ function P.powerBreaker:useToolNothing(tileY, tileX)
 end
 P.powerBreaker.useToolTile = P.powerBreaker.useToolNothing
 
-P.gabeMaker = P.superTool:new{name = "gabeMaker", description = "Gabriel", baseRange = 0, image = 'Graphics/gabeSmall.png', quality = 5}
+P.gabeMaker = P.superTool:new{name = "Gabe Maker", description = "Gabriel", baseRange = 0, image = 'Graphics/gabeSmall.png', quality = 5}
 function P.gabeMaker:usableOnNothing()
 	return true
 end
@@ -4473,6 +4473,26 @@ function P.heartTransplant:checkDeath()
 	return false
 end
 
+P.shield = P.superTool:new{name = "Holy Shield", description = "Aura of protection", quality = 1, image = 'Graphics/shield.png',
+baseImage = 'Graphics/shield.png', activeImage = 'Graphics/shieldactive.png', active = false}
+function P.shield:usableOnNothing()
+	return not self.active
+end
+P.shield.usableOnTile = P.shield.usableOnNothing
+function P.shield:useToolNothing()
+	player.attributes.shieldCounter = player.attributes.shieldCounter+10
+	self.active = true
+	self:updateSprite()
+end
+P.shield.useToolTile = P.shield.useToolNothing
+function P.shield:updateSprite()
+	if self.active then
+		self.image = self.activeImage
+	else
+		self.image = self.baseImage
+	end
+end
+
 P.numNormalTools = 7
 P.lastToolUsed = 1
 
@@ -4683,6 +4703,7 @@ P:addTool(P.deckOfCards)
 P:addTool(P.card)
 P:addTool(P.amnesiaPill)
 P:addTool(P.heartTransplant)
+P:addTool(P.shield)
 
 P.resetTools()
 -- Make a tool based cursor

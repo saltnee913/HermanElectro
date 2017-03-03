@@ -162,7 +162,7 @@ end
 function P.deepContains(arr, value, floor)
 	if type(arr) == 'table' then
 		for i = 1, #arr do
-			if(P.deepContains(arr[i], value, floor)) then
+			if(type(arr[i])=='number' and P.deepContains(arr[i], value, floor)) then
 				return true
 			end
 		end

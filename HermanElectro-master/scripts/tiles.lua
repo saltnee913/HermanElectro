@@ -2285,6 +2285,19 @@ P.lennyTransform = P.hermanTransform:new{name = "lennyTransform", characterIndex
 P.fishTransform = P.hermanTransform:new{name = "fishTransform", characterIndex = 16}
 
 P.supertoolTile = P.tile:new{name = "supertoolTile", tool = nil, superQuality = 1}
+function P.supertoolTile:onLoad()
+	if self.tool==nil then
+		for i = 1, #tools do
+			if tools[i].name == self.text then
+				self.tool = tools[i]
+				break
+			end
+		end
+		if self.tool ~= nil then
+			self:updateSprite()
+		end
+	end
+end
 function P.supertoolTile:absoluteFinalUpdate()
 	if self.tool==nil then
 		local quality = 0
@@ -2930,6 +2943,13 @@ function P.infestedWood:destroy()
 	end
 end
 
+P.openDungeon = P.tile:new{name = "openDungeon", untoolable = true}
+function P.openDungeon:onEnter()
+	if player.dungeonKeysHeld>=3 then
+		unlockDoors()
+	end
+end
+
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
 tiles[3] = P.powerSupply
@@ -3131,6 +3151,7 @@ tiles[198] = P.recycleBinTile
 tiles[199] = P.infestedWood
 tiles[200] = P.editorStairs
 tiles[201] = P.replayViewer
+tiles[202] = P.openDungeon
 
 
 return tiles
