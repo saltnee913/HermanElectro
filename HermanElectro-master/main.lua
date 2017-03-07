@@ -473,7 +473,7 @@ function love.load()
 			y = (6-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10, prevTileX = 3, prevTileY 	= 10,
 			prevx = (3-1)*scale*tileWidth+wallSprite.width+tileWidth/2*scale-10,
 			prevy = (10-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10,
-			width = 20, height = 20, speed = 250, luckTimer = 0, regularMapLoc = {x = 0, y = 0}, returnFloorIndex = 0, attributes = {lucky = false, gifted = false, permaMap = false, xrayVision = false, upgradedToolUse = false, fast = {fast = false, fastStep = false}, flying = false, fear = false, shelled = false, tall = false, extendedRange = 0, sockStep = -1, invisible = false}}
+			width = 20, height = 20, speed = 250, luckTimer = 0, regularMapLoc = {x = 0, y = 0}, returnFloorIndex = 0, attributes = {shieldCounter = 0, lucky = false, gifted = false, permaMap = false, xrayVision = false, upgradedToolUse = false, fast = {fast = false, fastStep = false}, flying = false, fear = false, shelled = false, tall = false, extendedRange = 0, sockStep = -1, invisible = false}}
 	player.character = setChar
 
 	map.clearBlacklist()
@@ -2035,7 +2035,7 @@ function love.draw()
 
 	for k = 1, #spotlights do
 		local sl = spotlights[k]
-		love.graphics.draw(sl.sprite, sl.x, sl.y, 0, scale, yScale)				
+		love.graphics.draw(sl.sprite, sl.x, sl.y-6*scale, 0, scale, yScale)				
 	end
 
 	love.graphics.setShader()
@@ -2719,7 +2719,7 @@ function love.update(dt)
 	for i = 1, #spotlights do
 		spotlights[i]:update(dt)
 	end
-	if #spotlights>0 then checkDeathSpotlights() end
+	if #spotlights>0 or player.attributes.shieldCounter>0 then checkDeathSpotlights(dt) end
 
 	--key press
 	keyTimer.timeLeft = keyTimer.timeLeft - dt
@@ -3351,6 +3351,14 @@ function postAnimalMovement()
 			end
 		end
 	end
+
+	for i = 1, #animals do
+		for j = 1, #pushables do
+			if animals[i].tileX == pushables[j].tileX and animals[i].tileY == pushables[j].tileY then
+				animals[i]:kill()
+			end
+		end
+	end
 end
 
 function resetAnimals()
@@ -3489,7 +3497,7 @@ function checkDeath()
 			kill()
 		end
 	end
-	checkDeathSpotlights()
+	checkDeathSpotlights(0)
 	for i = 1, #animals do
 		if animals[i]:willKillPlayer(player) and not player.safeFromAnimals then
 			kill()
@@ -3497,7 +3505,19 @@ function checkDeath()
 	end
 end
 
-function checkDeathSpotlights()
+function checkDeathSpotlights(dt)
+	if player.attributes.shieldCounter>0 then
+		player.attributes.shieldCounter = player.attributes.shieldCounter-dt
+		if player.attributes.shieldCounter<=0 and tools.shield.numHeld>0 then
+			player.attributes.shieldCounter = 0
+			tools.shield.numHeld = tools.shield.numHeld-1
+			updateTools()
+			tools.shield.active = false
+			tools.shield:updateSprite()
+		end
+		return
+	end
+
 	for i = 1, #spotlights do
 		local sx = spotlights[i].x+tileUnit/2*scale
 		local sy = spotlights[i].y+tileUnit/2*scale
@@ -3814,6 +3834,10 @@ function unlockDoors()
 			if mainMap[mapy+i][mapx+j]~=nil then
 				local potentialId = mainMap[mapy+i][mapx+j].roomid
 				if map.getFieldForRoom(potentialId, "hidden")~=nil and map.getFieldForRoom(potentialId, "hidden") then
+					canUnlock = false
+				end
+				--if endDungeon
+				if i==-1 and floorIndex==1 and player.dungeonKeysHeld<3 then
 					canUnlock = false
 				end
 			end

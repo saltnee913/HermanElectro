@@ -7,11 +7,11 @@ spotlightsList = P
 
 
 P.spotlight  = Object:new{name = "spotlight", x = 0.0, y = 0.0, dir = 1, speed = 0.1,
-sprite = love.graphics.newImage('Graphics/white.png')}
+sprite = love.graphics.newImage('Graphics/whitespot.png')}
 P.fastSpotlight = P.spotlight:new{name = "fastSpotlight", speed = 0.2,
-sprite = love.graphics.newImage('Graphics/purple.png')}
+sprite = love.graphics.newImage('Graphics/purplespot.png')}
 P.slowSpotlight = P.spotlight:new{name = "slowSpotlight", speed = 0.05,
-sprite = love.graphics.newImage('Graphics/yellow.png')}
+sprite = love.graphics.newImage('Graphics/yellowspot.png')}
 
 function P.spotlight:update(dt)
 	--directions same as for dirEnter: 0 up, 1 right, 2 down, 3 left
