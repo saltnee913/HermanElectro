@@ -824,8 +824,13 @@ function P.generateMapStandard()
 	return newmap
 end
 
-function P.getRoomWeight(room)
-	local weight = P.getFieldForRoom(room, 'weight')
+function P.getRoomWeight(room, roomArr)
+	local weight
+	if roomArr == nil then
+		weight = P.getFieldForRoom(room, 'weight')
+	else
+		weight = roomArr[room].weight
+	end
 	if weight==nil then
 		weight = 1
 	end
@@ -905,6 +910,15 @@ function P.generateMapEditor()
 	return newmap
 end
 
+local function getRandomRoomArrays(roomArr, random)
+	local randomRoomArray = util.createRandomKeyArray(roomArr, random)
+	local weightsArray = {}
+	for i = 1, #randomRoomArray do
+		weightsArray[i] = P.getRoomWeight(randomRoomArray[i], roomArr)
+	end
+	return randomRoomArray, weightsArray
+end
+
 function P.generateMapWeighted()
 	--set up variables
 	local height = P.floorInfo.height
@@ -917,10 +931,10 @@ function P.generateMapWeighted()
 	blacklist[#blacklist+1] = startRoomID
 	local randomRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.rooms, 'mapGen', blacklist)
 	local randomRoomsArray = removeSets(randomRoomsArray)
-	local randomTreasureRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.treasureRooms, 'mapGen')
-	local randomFinalRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.finalRooms, 'mapGen')
-	local randomDonationRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.donationRooms, 'mapGen')
-	local randomShopsArray = util.createRandomKeyArray(P.floorInfo.rooms.shops, 'mapGen')
+	local randomTreasureRoomsArray, treasureRoomWeights = getRandomRoomArrays(P.floorInfo.rooms.treasureRooms, 'mapGen')
+	local randomFinalRoomsArray, finalRoomWeights = getRandomRoomArrays(P.floorInfo.rooms.finalRooms, 'mapGen')
+	local randomDonationRoomsArray, donationRoomWeights = getRandomRoomArrays(P.floorInfo.rooms.donationRooms, 'mapGen')
+	local randomShopsArray, shopWeights = getRandomRoomArrays(P.floorInfo.rooms.shops, 'mapGen')
 	--create first room
 	local startRoomID = P.floorInfo.startRoomID
 	newmap[math.floor(height/2)][math.floor(height/2)] = {roomid = startRoomID, room = P.createRoom(startRoomID, roomsArray), isFinal = false, isInitial = true, isCompleted = false}
@@ -989,13 +1003,13 @@ function P.generateMapWeighted()
 		local roomid
 
 		if numRooms - #usedRooms == 4 then
-			roomid = util.chooseRandomElement(randomFinalRoomsArray, 'mapGen')
+			roomid = randomFinalRoomsArray[util.chooseWeightedRandom(finalRoomWeights, 'mapGen')]
 		elseif numRooms - #usedRooms == 3 then
-			roomid = util.chooseRandomElement(randomTreasureRoomsArray, 'mapGen')
+			roomid = randomTreasureRoomsArray[util.chooseWeightedRandom(treasureRoomWeights, 'mapGen')]
 		elseif numRooms - #usedRooms == 2 then
-			roomid = util.chooseRandomElement(randomDonationRoomsArray, 'mapGen')
+			roomid = randomDonationRoomsArray[util.chooseWeightedRandom(donationRoomWeights, 'mapGen')]
 		elseif numRooms - #usedRooms == 1 then
-			roomid = util.chooseRandomElement(randomShopsArray, 'mapGen')
+			roomid = randomShopsArray[util.chooseWeightedRandom(shopWeights, 'mapGen')]
 		else
 			--creates an array of 5 possible choices with weights
 			local roomChoices = {}
