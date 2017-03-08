@@ -89,7 +89,10 @@ P.advancedTiles[#P.advancedTiles+1] = tiles.poweredEnd
 P.advancedTiles[#P.advancedTiles+1] = tiles.dungeonKey
 P.advancedTiles[#P.advancedTiles+1] = tiles.untriggeredPowerSupply
 P.advancedTiles[#P.advancedTiles+1] = tiles.openDungeon
-
+P.advancedTiles[#P.advancedTiles+1] = tiles.spotlightTile
+P.advancedTiles[#P.advancedTiles+1] = tiles.slowSpotlightTile
+P.advancedTiles[#P.advancedTiles+1] = tiles.fastSpotlightTile
+P.advancedTiles[#P.advancedTiles+1] = tiles.toolTaxTile
 
 
 return P

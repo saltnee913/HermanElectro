@@ -1616,6 +1616,7 @@ end
 
 function love.draw()
 	myShader:send("shaderTriggered", shaderTriggered)
+	--myShader:send("b_and_w", true)
 	love.graphics.setBackgroundColor(0,0,0)
 	if titlescreenCounter>0 then
 		local sHeight = titlescreen:getHeight()
@@ -2030,12 +2031,14 @@ function love.draw()
 				love.graphics.draw(nonActiveSprite, playerx-nonActiveSprite:getWidth()*player.character.scale/2, playery-nonActiveSprite:getHeight()*player.character.scale-player.elevation*scale, 0, player.character.scale, player.character.scale)
 			end
 		end
+
+
 		--love.graphics.draw(walls, 0, 0, 0, width/walls:getWidth(), height/walls:getHeight())
 	end
 
 	for k = 1, #spotlights do
 		local sl = spotlights[k]
-		love.graphics.draw(sl.sprite, sl.x, sl.y-6*scale, 0, scale, yScale)				
+		love.graphics.draw(sl.sprite, sl.x, sl.y-6*scale, 0, scale, yScale)
 	end
 
 	love.graphics.setShader()

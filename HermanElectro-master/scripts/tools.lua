@@ -4474,7 +4474,7 @@ function P.heartTransplant:checkDeath()
 end
 
 P.shield = P.superTool:new{name = "Holy Shield", description = "Aura of protection", quality = 1, image = 'Graphics/shield.png',
-baseImage = 'Graphics/shield.png', activeImage = 'Graphics/shieldactive.png', active = false}
+baseImage = 'Graphics/shield.png', activeImage = 'Graphics/shieldactive.png', active = false, baseRange = 0}
 function P.shield:usableOnNothing()
 	return not self.active
 end
