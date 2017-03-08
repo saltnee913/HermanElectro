@@ -1363,7 +1363,7 @@ end
 --generates end dungeon accessible in starting room of each floor
 function P.generateEndDungeon()
 	local randomStartRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.startRooms, 'mapGen')
-	local puzzleRooms = util.createRandomKeyArray(P.floorInfo.rooms.puzzleRooms, 'mapGen')
+	local puzzleRooms, puzzleWeights = getRandomRoomArrays(P.floorInfo.rooms.puzzleRooms, 'mapGen')
 	local randomFinalRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.finalRooms, 'mapGen')
 	local startRoomID = randomStartRoomsArray[1]
 
@@ -1383,19 +1383,19 @@ function P.generateEndDungeon()
 	if not unlocks.isDungeonUnlocked() then
 		return newmap
 	end
-	local puzzleRoom1 = puzzleRooms[util.random(#puzzleRooms,'mapGen')]
+	puzzleRoom1 = puzzleRooms[util.chooseWeightedRandom(puzzleWeights, 'mapGen')]
 	while(map.getFieldForRoom(puzzleRoom1, 'dirEnter')[4]==0) do
-		puzzleRoom1 = puzzleRooms[util.random(#puzzleRooms,'mapGen')]
+		puzzleRoom1 = puzzleRooms[util.chooseWeightedRandom(puzzleWeights, 'mapGen')]
 	end
 	newmap[starty][startx+1] = {roomid = puzzleRoom1, room = P.createRoom(puzzleRoom1), isFinal = false, isInitial = false}
-	local puzzleRoom2 = puzzleRooms[util.random(#puzzleRooms,'mapGen')]
+	puzzleRoom2 = puzzleRooms[util.chooseWeightedRandom(puzzleWeights, 'mapGen')]
 	while(puzzleRoom2 == puzzleRoom1 or map.getFieldForRoom(puzzleRoom2, 'dirEnter')[2]==0) do
-		puzzleRoom2 = puzzleRooms[util.random(#puzzleRooms,'mapGen')]
+		puzzleRoom2 = puzzleRooms[util.chooseWeightedRandom(puzzleWeights, 'mapGen')]
 	end
 	newmap[starty][startx-1] = {roomid = puzzleRoom2, room = P.createRoom(puzzleRoom2), isFinal = false, isInitial = false}
-	local puzzleRoom3 = puzzleRooms[util.random(#puzzleRooms,'mapGen')]
+	puzzleRoom3 = puzzleRooms[util.chooseWeightedRandom(puzzleWeights, 'mapGen')]
 	while(puzzleRoom3 == puzzleRoom2 or puzzleRoom3 == puzzleRoom1 or map.getFieldForRoom(puzzleRoom3, 'dirEnter')[1]==0) do
-		puzzleRoom3 = puzzleRooms[util.random(#puzzleRooms,'mapGen')]
+		puzzleRoom3 = puzzleRooms[util.chooseWeightedRandom(puzzleWeights, 'mapGen')]
 	end
 	newmap[starty+1][startx] = {roomid = puzzleRoom3, room = P.createRoom(puzzleRoom3), isFinal = false, isInitial = false}
 	local finalRoom = randomFinalRoomsArray[1]
