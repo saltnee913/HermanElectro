@@ -2036,8 +2036,43 @@ function love.draw()
 		--love.graphics.draw(walls, 0, 0, 0, width/walls:getWidth(), height/walls:getHeight())
 	end
 
+
 	for k = 1, #spotlights do
 		local sl = spotlights[k]
+		--[[local stx = sl.x-wallSprite.width
+		stx = stx/(tileWidth*scale)+1
+
+		local sty = sl.y-wallSprite.height
+		sty = sty/(tileHeight*scale)+1
+
+		local tilesOn = {x = {}, y = {}}
+		tilesOn.x[1] = math.floor(stx)
+		if stx+1>math.floor(stx)+1 then
+			tilesOn.x[2] = math.floor(stx)+1
+		end
+
+		tilesOn.y[1] = math.floor(sty)
+		if sty+1>math.floor(sty)+1 then
+			tilesOn.y[2] = math.floor(sty)+1
+		end
+
+		for i = 1, #tilesOn.x do
+			for j = 1, #tilesOn.y do
+				local tx = tilesOn.x[i]
+				local ty = tilesOn.y[j]
+
+				local addY = 0
+				local yScale = scale
+				if room[ty][tx]~=nil then
+					addY = room[ty][tx]:getYOffset()
+					yScale = scale*(16-addY)/16
+				else addY=0 end
+
+				love.graphics.draw(green, (tx-1)*tileWidth*scale+wallSprite.width, (addY+(ty-1)*tileHeight)*scale+wallSprite.height, 0, scale, yScale)
+
+			end
+		end]]
+
 		love.graphics.draw(sl.sprite, sl.x, sl.y-6*scale, 0, scale, yScale)
 	end
 
