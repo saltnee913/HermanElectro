@@ -9,11 +9,20 @@ unlocks = P
 
 P.unlocksFile = 'unlocks.json'
 
-P.unlocksDisplay = {base = 3, timeLeft = 0, unlockToShow = 1}
+local unlockDisplay = Object:new{timeLeft = 3, unlockToShow = 1, nextUnlock = nil}
+P.unlocksDisplay = nil
 P.frame = 'Graphics/unlocksframe.png'
 
 function P.updateTimer(dt)
-	P.unlocksDisplay.timeLeft = P.unlocksDisplay.timeLeft - dt
+	local unlockDisplayer = P.unlocksDisplay
+	if unlockDisplayer == nil then return end
+	if unlockDisplayer.timeLeft < 0 then
+		P.unlocksDisplay = unlockDisplayer.nextUnlock
+	end
+	while(unlockDisplayer ~= nil) do
+		unlockDisplayer.timeLeft = unlockDisplayer.timeLeft - dt
+		unlockDisplayer = unlockDisplayer.nextUnlock
+	end
 end 
 
 local function readUnlocks()
@@ -38,8 +47,16 @@ local function writeUnlocks()
 end
 
 function P.displayUnlock(unlockId)
-	P.unlocksDisplay.timeLeft = P.unlocksDisplay.base
-	P.unlocksDisplay.unlockToShow = unlockId
+	local newUnlockDisplay = unlockDisplay:new{unlockToShow = unlockId}
+	if P.unlocksDisplay == nil then
+		P.unlocksDisplay = newUnlockDisplay
+	else
+		local topUnlock = P.unlocksDisplay
+		while(topUnlock.nextUnlock ~= nil) do
+			topUnlock = topUnlock.nextUnlock
+		end
+		topUnlock.nextUnlock = newUnlockDisplay
+	end
 end
 
 function P.unlockUnlockable(unlockId)

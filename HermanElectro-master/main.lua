@@ -2245,16 +2245,21 @@ function love.draw()
 	end
 
 	--Display unlock screen
-	if unlocks.unlocksDisplay.timeLeft > 0 then
-		local unlock = unlocks[unlocks.unlocksDisplay.unlockToShow]
+	local unlockDisplayer = unlocks.unlocksDisplay
+	local unlockDisplayNum = 0
+	while(unlockDisplayer ~= nil) do
+		local unlock = unlocks[unlockDisplayer.unlockToShow]
 		local unlockSprite = util.getImage(unlock.sprite)
 		local unlocksFrame = util.getImage(unlocks.frame)
 		local tScale = tileWidth/math.max(unlockSprite:getWidth(), unlockSprite:getHeight())
 		local uScale = width/500
 		local offsetY = (unlocksFrame:getHeight() - unlockSprite:getHeight()*tScale)/2
 		local offsetX = (unlocksFrame:getWidth() - unlockSprite:getWidth()*tScale)/2
-		love.graphics.draw(unlocksFrame, 0, height-unlocksFrame:getHeight()*uScale, 0, uScale, uScale)
-		love.graphics.draw(unlockSprite, offsetX*uScale, height-(unlockSprite:getHeight()*tScale+offsetY)*uScale, 0, uScale*tScale, uScale*tScale)
+		local unlockNumOffset = unlocksFrame:getHeight()*uScale*unlockDisplayNum
+		love.graphics.draw(unlocksFrame, 0, height-unlocksFrame:getHeight()*uScale-unlockNumOffset, 0, uScale, uScale)
+		love.graphics.draw(unlockSprite, offsetX*uScale, height-(unlockSprite:getHeight()*tScale+offsetY)*uScale-unlockNumOffset, 0, uScale*tScale, uScale*tScale)
+		unlockDisplayer = unlockDisplayer.nextUnlock
+		unlockDisplayNum = unlockDisplayNum + 1
 	end
 	barLength = 200
 	if editorMode then
