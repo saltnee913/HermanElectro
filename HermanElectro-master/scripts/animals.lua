@@ -321,7 +321,7 @@ function P.pitbull:willKillPlayer()
 	return player.tileX == self.tileX and player.tileY == self.tileY and not self.dead
 end
 function P.pitbull:dropTool()
-	local whichTool = util.random(2, 'toolDrop')
+	local whichTool = util.random(1, 'toolDrop')
 	if whichTool==1 then
 		if not tools.dropTool(tools.meat, self.tileY, self.tileX) then
 			return
@@ -504,7 +504,12 @@ function P.ram:afraidSecondaryMove(playerx, playery)
 	return true
 end
 
-P.rat = P.animal:new{name = "rat", sprite = 'Graphics/rat.png', triggered = true}
+P.rat = P.animal:new{name = "rat", sprite = 'Graphics/rat.png', triggered = true, canDropTool = true}
+function P.rat:dropTool()
+	if not tools.dropTool(tools.rottenMeat, self.tileY, self.tileX) then
+		return
+	end
+end
 
 P.termite = P.animal:new{name = "termite", sprite = 'Graphics/termite.png', waitCounter = 0}
 
