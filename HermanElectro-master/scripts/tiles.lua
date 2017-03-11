@@ -2332,7 +2332,7 @@ P.supertoolQ3 = P.supertoolTile:new{name = "supertoolTileQ3", superQuality = 3}
 P.supertoolQ4 = P.supertoolTile:new{name = "supertoolTileQ4", superQuality = 4}
 P.supertoolQ5 = P.supertoolTile:new{name = "supertoolTileQ5", superQuality = 5}
 
-P.toolTile = P.tile:new{name = "toolTile", tool = nil, toolId = 1, dirSend = {0,0,0,0}}
+P.toolTile = P.tile:new{name = "toolTile", tool = nil, toolId = -1, dirSend = {0,0,0,0}}
 function P.toolTile:onEnter()
 	tools.giveToolsByReference({self.tool})
 	self.isVisible = false
@@ -2347,6 +2347,9 @@ function P.toolTile:absoluteFinalUpdate()
 end
 function P.toolTile:onLoad()
 	if self.tool == nil then
+		if self.toolId == -1 then
+			self:randomize()
+		end
 		self.tool = tools[self.toolId]
 	end
 end

@@ -11,27 +11,33 @@ P.leftStartDist = 110
 P.downStartDist = height-3.2*width/50
 P.tabLength = 105
 P.tabHeight = 20
-P.setNames = {"Basic", "Animal", "Box", "Advanced"}
 
 roomsDesigned = 0
 
 P.visionHack = false
 
+P.setNames = {"Basic", "Animal", "Box", "Shop", "Advanced"}
+local function getTileSet()
+	if editor.tab==1 then
+		return editorTiles.basicTiles
+	elseif editor.tab==2 then
+		return editorTiles.animalTiles
+	elseif editor.tab==3 then
+		return editorTiles.boxTiles
+	elseif editor.tab==4 then
+		return editorTiles.shopTiles
+	elseif editor.tab==5 then
+		return editorTiles.advancedTiles
+	end
+end
+
 function P.draw()
 	local tileSet = nil
 	local setName = nil
-	if editor.tab==1 then
-		tileSet = editorTiles.basicTiles
-	elseif editor.tab==2 then
-		tileSet = editorTiles.animalTiles
-	elseif editor.tab==3 then
-		tileSet = editorTiles.boxTiles
-	elseif editor.tab==4 then
-		tileSet = editorTiles.advancedTiles
-	end
+	tileSet = getTileSet(editor.tab)
 
 	--tile sets
-	for i = 1, 4 do
+	for i = 1, #P.setNames do
 		if editor.tab==i then
 			love.graphics.setColor(160,0,160)
 		else
@@ -392,7 +398,7 @@ function P.mousepressed(x, y, button, istouch)
 		if mouseY<=editor.downStartDist+editor.tabHeight then
 			if mouseX<editor.leftStartDist or mouseX>width/2+editor.leftStartDist+2*tileUnit*scale+5+editor.tabLength*2 then
 				return
-			elseif mouseX>editor.leftStartDist+4*editor.tabLength then
+			elseif mouseX>editor.leftStartDist+#P.setNames*editor.tabLength then
 				--load
 				if mouseX>width/2+editor.leftStartDist+editor.tabLength+2*tileUnit*scale+5 then
 					print("loading")
@@ -468,27 +474,16 @@ function P.mousepressed(x, y, button, istouch)
 						editor.saveRoom()
 					end
 				end
-			elseif mouseX>editor.leftStartDist+3*editor.tabLength then
-				editor.tab = 4
-			elseif mouseX>editor.leftStartDist+2*editor.tabLength then
-				editor.tab = 3
-			elseif mouseX>editor.leftStartDist+editor.tabLength then
-				editor.tab = 2
 			else
-				editor.tab = 1
+				for i = 1, #P.setNames do
+					if mouseX>editor.leftStartDist+(i-1)*editor.tabLength then
+						editor.tab = i
+					end
+				end
 			end
 		elseif mouseY<=editor.downStartDist+editor.tabHeight+10+width/50 then
 			local numTile = math.floor((mouseX-editor.leftStartDist)/(width/50))+1
-			local tileSet = nil
-			if editor.tab==1 then
-				tileSet = editorTiles.basicTiles
-			elseif editor.tab==2 then
-				tileSet = editorTiles.animalTiles
-			elseif editor.tab==3 then
-				tileSet = editorTiles.boxTiles
-			elseif editor.tab==4 then
-				tileSet = editorTiles.advancedTiles
-			end
+			local tileSet = getTileSet()
 			local tileToAdd = tileSet[numTile]
 			if tileToAdd==nil then return end
 			
