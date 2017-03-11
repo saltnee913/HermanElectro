@@ -1866,8 +1866,8 @@ P.treasureTile3 = P.treasureTile:new{name = "treasureTile3", sprite = 'Graphics/
 P.treasureTile4 = P.treasureTile:new{name = "treasureTile4", sprite = 'Graphics/Tiles/treasureTile4.png'}
 
 P.conductiveSlime = P.conductiveTile:new{name = "conductiveSlime", sprite = 'Graphics/conductiveslime.png', poweredSprite = 'Graphics/conductiveslimepowered.png'}
-P.conductiveSlime.onEnter = P.slime.onEnter
-P.conductiveSlime.onEnterAnimal = P.slime.onEnterAnimal
+--P.conductiveSlime.onEnter = P.slime.onEnter
+--P.conductiveSlime.onEnterAnimal = P.slime.onEnterAnimal
 function P.conductiveSlime:willKillPlayer()
 	return self.powered
 end
