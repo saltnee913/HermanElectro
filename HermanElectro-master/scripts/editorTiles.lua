@@ -16,6 +16,7 @@ P.animalTiles[#P.animalTiles+1] = tiles.catTile
 P.animalTiles[#P.animalTiles+1] = tiles.glueSnailTile
 P.animalTiles[#P.animalTiles+1] = tiles.bombBuddyTile
 P.animalTiles[#P.animalTiles+1] = tiles.ratTile
+P.animalTiles[#P.animalTiles+1] = tiles.conductiveSnailTile
 
 P.boxTiles[#P.boxTiles+1] = tiles.boxTile
 P.boxTiles[#P.boxTiles+1] = tiles.animalBoxTile
@@ -52,6 +53,11 @@ P.basicTiles[#P.basicTiles+1] = tiles.tunnel
 P.basicTiles[#P.basicTiles+1] = tiles.upTunnel
 P.basicTiles[#P.basicTiles+1] = tiles.vPoweredDoor
 P.basicTiles[#P.basicTiles+1] = tiles.sign
+P.basicTiles[#P.basicTiles+1] = tiles.hDoor
+P.basicTiles[#P.basicTiles+1] = tiles.treasureTile
+P.basicTiles[#P.basicTiles+1] = tiles.treasureTile2
+P.basicTiles[#P.basicTiles+1] = tiles.treasureTile3
+P.basicTiles[#P.basicTiles+1] = tiles.treasureTile4
 
 P.advancedTiles[#P.advancedTiles+1] = tiles.spikes
 P.advancedTiles[#P.advancedTiles+1] = tiles.entrancePortal

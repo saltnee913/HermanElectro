@@ -2790,6 +2790,7 @@ function P.playerTile:onLeave(player)
 	messageInfo.text = nil
 end
 function P.playerTile:getCharInfo()
+	if self.character==nil then return end
 	local infoText = ""
 	infoText = infoText..self.character.name..", "..self.character.description.."\n"
 	infoText = infoText.."Wins: "..stats.wins[self.character.name].."\n"
