@@ -282,6 +282,7 @@ function P.inputSteal(key, unicode)
 		end
 		roomHack = nil
 		nameEnter = nil
+		args = nil
 	end
 	if roomHack~=nil then
 		if key=='backspace' then
