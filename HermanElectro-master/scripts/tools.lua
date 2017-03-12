@@ -1100,9 +1100,6 @@ end
 P.spring = P.superTool:new{name = "Spring", description = "Up, up in the air I go.", useWithArrowKeys = false, baseRange = 4, image = 'Graphics/spring.png', quality = 3}
 function P.spring:usableOnTile(tile)
 	if tile.untoolable then return false end
-	if tile:getHeight()>0 then
-		return true
-	end
 	for i = 1, #pushables do
 		if pushables[i].tileX == tile.tileX and pushables[i].tileY == tile.tileY then return false end
 	end
