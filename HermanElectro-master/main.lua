@@ -721,6 +721,7 @@ function loadNextLevel(dontChangeTime)
 end
 
 function startGame()
+	stats.resetTempStats()
 	local seed = loadRandoms()
 	if not saving.isPlayingBack() then
 		stats.runNumber = stats.runNumber + 1
@@ -771,6 +772,7 @@ function loadOpeningWorld()
 end
 
 function startTutorial()
+	stats.resetTempStats()
 	tutorial.load()
 	loadRandoms()
 	loadTutorial = true
@@ -789,6 +791,7 @@ function startTutorial()
 end
 
 function startDebug()
+	stats.resetTempStats()
 	loadRandoms()
 	loadTutorial = false
 	map.floorOrder = {'RoomData/debugFloor.json', 'RoomData/exitDungeonsMap.json'}
@@ -799,6 +802,7 @@ function startDebug()
 end
 
 function startEditor()
+	stats.resetTempStats()
 	loadRandoms()
 	loadTutorial = false
 	map.floorOrder = {'RoomData/editorFloor.json'}
