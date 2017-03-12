@@ -4,28 +4,27 @@ unlocks = require('scripts.unlocks')
 local P = {}
 characters = P
 
-function P.getUnlockedCharacters()
-	local lockedChars = {}
-	for i = 1, #unlocks do
-		if unlocks[i].charIds ~= nil and not unlocks[i].unlocked then
-			for j = 1, #unlocks[i].charIds do
-				lockedChars[#lockedChars+1] = unlocks[i].charIds[j]
-			end
-		end
-	end
-	local toRet = {}
+function P.getUnlockedCharacter(charName)
 	for i = 1, #characters do
-		local isLocked = (characters[i].disabled == true)
-		for j = 1, #lockedChars do
-			if lockedChars[j] == i then
-				isLocked = true
-			end
-		end
-		if not isLocked then
-			toRet[#toRet+1] = characters[i]
+		if characters[i].name == charName then
+			return P.isCharacterUnlocked(charName) and characters[i] or nil
 		end
 	end
-	return toRet
+	return nil
+end
+
+function P.isCharacterUnlocked(charName)
+	for i = 1, #unlocks do
+		unlock = unlocks[i]
+		if not unlock.unlocked and unlock.charIds ~= nil then
+			for i = 1, #unlock.charIds do
+				if unlock.charIds[i] == charName then
+					return false
+				end
+			end
+		end
+	end
+	return true
 end
 
 P.character = Object:new{name = "Name", tallSprite = true, dirFacing = "down", scale = 0, sprite = 'Graphics/Characters/Herman.png',

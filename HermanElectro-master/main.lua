@@ -912,7 +912,6 @@ function kill()
 			return
 		end
 	end
-	unlockedChars = characters.getUnlockedCharacters()
 	stats.losses[player.character.name] = stats.losses[player.character.name]+1
 	stats.writeStats()
 	myShader:send("b_and_w", true)
@@ -950,7 +949,6 @@ function win()
 		stats.wins[player.character.name] = stats.wins[player.character.name]+1
 		stats.writeStats()
 	end
-	unlockedChars = characters.getUnlockedCharacters()
 end
 
 maxLamps = 100

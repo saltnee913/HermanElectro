@@ -59,10 +59,9 @@ function P.readStats()
 	if not love.filesystem.exists(saveDir..'/'..P.statsFile) then return end
 	local statsInfo = util.readJSON(saveDir..'/'..P.statsFile, false)
 	if statsInfo == nil then
-		local unlockedChars = characters.getUnlockedCharacters()
-		for i = 1, #unlockedChars do
-			P.wins[unlockedChars[i].name] = 0
-			P.losses[unlockedChars[i].name] = 0
+		for i = 1, #characters do
+			P.wins[characters[i].name] = 0
+			P.losses[characters[i].name] = 0
 		end
 		return
 	end
@@ -76,11 +75,10 @@ end
 
 function P.writeStats()
 	local statsInfo = {P.wins, P.losses, P.runNumber, P.statsData}
-	local unlockedChars = characters.getUnlockedCharacters()
-	for i = 1, #unlockedChars do
-		if P.wins[unlockedChars[i].name]==nil then
-			P.wins[unlockedChars[i].name] = 0
-			P.losses[unlockedChars[i].name] = 0			
+	for i = 1, #characters do
+		if P.wins[characters[i].name]==nil then
+			P.wins[characters[i].name] = 0
+			P.losses[characters[i].name] = 0			
 		end
 	end
 	util.writeJSON(P.statsFile, statsInfo)
