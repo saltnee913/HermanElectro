@@ -179,7 +179,7 @@ function P.useToolTile(tileY, tileX)
 			for i = 1, #(P.toolableAnimals[dir]) do
 				if P.toolableAnimals[dir][i].tileY == tileY and P.toolableAnimals[dir][i].tileX == tileX then
 					tools[tool]:useToolAnimal(P.toolableAnimals[dir][i])
-					P.addUseStat(toolid)
+					P.addUseStat(tool)
 					return true
 				end
 			end
@@ -190,7 +190,7 @@ function P.useToolTile(tileY, tileX)
 			for i = 1, #(P.toolablePushables[dir]) do
 				if P.toolablePushables[dir][i].tileY == tileY and P.toolablePushables[dir][i].tileX == tileX then
 					tools[tool]:useToolPushable(P.toolablePushables[dir][i])
-					P.addUseStat(toolid)
+					P.addUseStat(tool)
 					return true
 				end
 			end
@@ -205,7 +205,7 @@ function P.useToolTile(tileY, tileX)
 					else
 						tools[tool]:useToolTile(room[tileY][tileX], tileY, tileX)
 					end
-					P.addUseStat(toolid)
+					P.addUseStat(tool)
 					return true
 				end
 			end
