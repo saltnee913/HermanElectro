@@ -133,7 +133,7 @@ P.unlock = Object:new{name = 'generic', unlocked = false, sprite = tiles.fog.spr
 
 
 P.charUnlock = P.unlock:new{name = 'character', charIds = {1}}
---P.felixUnlock = P.charUnlock:new{name = 'felix the sharpshooter', charIds = {2}, sprite = 'Graphics/felix.png'}
+P.felixUnlock = P.charUnlock:new{name = 'felix the sharpshooter', charIds = {2}, sprite = 'Graphics/felix.png'}
 P.erikUnlock = P.charUnlock:new{name = 'erik knighton', charIds = {4}, sprite = tiles.beggar.sprite}
 P.rammyUnlock = P.charUnlock:new{name = 'rammy the ram', charIds = {6}, sprite = 'Graphics/ram.png'}
 P.frederickUnlock = P.charUnlock:new{name = 'frederick the frog', charIds = {8}, sprite = 'Graphics/frederick.png'}
@@ -204,6 +204,7 @@ P.winUnlocks = {P.rammyUnlock, P.bombsUnlock, P.ambiguousGates, P.unbreakableEfl
 P.floorUnlocks = {P.doorUnlock, P.catUnlock, P.boxesUnlock, P.unbreakableWires, P.mousetrapUnlock, P.wizardUnlock}
 
 --characters
+P[#P+1] = P.felixUnlock --done
 P[#P+1] = P.erikUnlock --done
 P[#P+1] = P.rammyUnlock --done
 P[#P+1] = P.frederickUnlock --done

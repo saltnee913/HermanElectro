@@ -12,7 +12,11 @@ P.statsFile = 'stats.json'
 P.wins = {}
 P.losses = {}
 P.statsData = {}
-P.tempStatsData = {}
+P.tempStatsData = {} --stats for each run
+P.statUnlockTriggers = {}
+P.tempUnlockTriggers = {}
+P.tempUnlockTriggers["beggarsShot"] = {}
+P.tempUnlockTriggers["beggarsShot"][5] = unlocks.felixUnlock
 P.runNumber = 0
 
 function P.resetTempStats()
@@ -25,21 +29,30 @@ function P.incrementStat(stat)
 	else
 		P.tempStatsData[stat] = P.tempStatsData[stat]+1
 	end
+	if P.tempUnlockTriggers[stat]~=nil and P.tempUnlockTriggers[stat][P.tempStatsData[stat]] ~= nil then
+		unlocks.unlockUnlockableRef(P.tempUnlockTriggers[stat][P.tempStatsData[stat]])
+	end
 	if saving.isPlayingBack() then return end
 	if P.statsData[stat] == nil then
 		P.statsData[stat] = 1
 	else
 		P.statsData[stat] = P.statsData[stat]+1
 	end
+	if P.statUnlockTriggers[stat]~=nil and P.statUnlockTriggers[stat][P.statsData[stat]] ~= nil then
+		unlocks.unlockUnlockableRef(P.statUnlockTriggers[stat][P.statsData[stat]])
+	end
 	P.writeStats()
 end
 
 function P.getStat(stat)
-	if P.statsData[stat] == nil then
-		return 0
+	local statData = 0
+	local tempData = 0
+	if P.statsData[stat] ~= nil then
+		statData = P.statsData[stat]
 	else
-		return P.statsData[stat]
+		tempData = P.statsData[stat]
 	end
+	return statData, tempData
 end
 
 function P.readStats()

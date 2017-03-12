@@ -1556,6 +1556,7 @@ function P.beggar:getInfoText()
 end
 function P.beggar:destroy()
 	if self.alive then
+		stats.incrementStat("beggarsShot")
 		self.animation = {self.sprite}
 		self.alive = false
 		local paysOut = util.random('toolDrop')
