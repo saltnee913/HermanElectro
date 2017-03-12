@@ -1247,8 +1247,7 @@ function P.pit:willKillPlayer()
 	return not self.laddered
 end
 function P.pit:destroyPushable()
-	self.sprite = self.destroyedSprite
-	self.laddered = true
+	self:ladder()
 end
 P.pit.willKillAnimal = P.pit.willKillPlayer
 P.pit.willDestroyPushable = P.pit.willKillPlayer
