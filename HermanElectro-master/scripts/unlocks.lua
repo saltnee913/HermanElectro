@@ -132,17 +132,17 @@ end
 P.unlock = Object:new{name = 'generic', unlocked = false, sprite = tiles.fog.sprite}
 
 
-P.charUnlock = P.unlock:new{name = 'character', charIds = {1}}
---P.felixUnlock = P.charUnlock:new{name = 'felix the sharpshooter', charIds = {2}, sprite = 'Graphics/felix.png'}
-P.erikUnlock = P.charUnlock:new{name = 'erik knighton', charIds = {4}, sprite = tiles.beggar.sprite}
-P.rammyUnlock = P.charUnlock:new{name = 'rammy the ram', charIds = {6}, sprite = 'Graphics/ram.png'}
-P.frederickUnlock = P.charUnlock:new{name = 'frederick the frog', charIds = {8}, sprite = 'Graphics/frederick.png'}
-P.batteryUnlock = P.charUnlock:new{name = 'bob the battery', charIds = {9}, sprite = 'Graphics/powersupply.png'}
+P.charUnlock = P.unlock:new{name = 'character', charIds = {"Herman"}}
+P.felixUnlock = P.charUnlock:new{name = 'felix the sharpshooter', charIds = {"Felix"}, sprite = 'Graphics/felix.png'}
+P.erikUnlock = P.charUnlock:new{name = 'erik knighton', charIds = {"Erik"}, sprite = tiles.beggar.sprite}
+P.rammyUnlock = P.charUnlock:new{name = 'rammy the ram', charIds = {"Rammy"}, sprite = 'Graphics/ram.png'}
+P.frederickUnlock = P.charUnlock:new{name = 'frederick the frog', charIds = {"Frederick"}, sprite = 'Graphics/frederick.png'}
+P.batteryUnlock = P.charUnlock:new{name = 'bob the battery', charIds = {"Bob"}, sprite = 'Graphics/powersupply.png'}
 --P.carlaUnlock
-P.wizardUnlock = P.charUnlock:new{name = 'giovanni the sorceror', charIds = {11}, sprite = 'Graphics/giovannighost.png'}
+P.wizardUnlock = P.charUnlock:new{name = 'giovanni the sorceror', charIds = {"Giovanni"}, sprite = 'Graphics/giovannighost.png'}
 --P.gabeUnlock = P.charUnlock:new{name = 'gabe the angel', charIds = {5}, sprite = 'Graphics/gabe.png'}
-P.lennyUnlock = P.charUnlock:new{name = 'lenny the ghost snail', charIds = {15}, sprite = 'Graphics/lenny.png'}
-P.fishUnlock = P.charUnlock:new{name = 'fish fish', charIds = {16}, sprite = 'Graphics/fish.png'}
+P.lennyUnlock = P.charUnlock:new{name = 'lenny the ghost snail', charIds = {"Lenny"}, sprite = 'Graphics/lenny.png'}
+P.fishUnlock = P.charUnlock:new{name = 'fish fish', charIds = {"Fish"}, sprite = 'Graphics/fish.png'}
 
 
 P.tileUnlock = P.unlock:new{name = 'tile', tileIds = {1}, sprite = tiles.tile.sprite}
@@ -204,6 +204,7 @@ P.winUnlocks = {P.rammyUnlock, P.bombsUnlock, P.ambiguousGates, P.unbreakableEfl
 P.floorUnlocks = {P.doorUnlock, P.catUnlock, P.boxesUnlock, P.unbreakableWires, P.mousetrapUnlock, P.wizardUnlock}
 
 --characters
+P[#P+1] = P.felixUnlock --done
 P[#P+1] = P.erikUnlock --done
 P[#P+1] = P.rammyUnlock --done
 P[#P+1] = P.frederickUnlock --done

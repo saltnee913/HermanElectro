@@ -1556,6 +1556,7 @@ function P.beggar:getInfoText()
 end
 function P.beggar:destroy()
 	if self.alive then
+		stats.incrementStat("beggarsShot")
 		self.animation = {self.sprite}
 		self.alive = false
 		local paysOut = util.random('toolDrop')
@@ -2769,12 +2770,7 @@ P.darkOverlay = P.tile:new{name = "darkOverlay", sprite = 'NewGraphics/unlocksDa
 P.playerTile = P.tile:new{name = "playerTransform", character = nil, text = "Herman", isVisible = false}
 function P.playerTile:onLoad()
 	if self.character==nil then
-		local unlockedChars = characters.getUnlockedCharacters()
-		for i = 1, #unlockedChars do
-			if unlockedChars[i].name == self.text then
-				self.character = unlockedChars[i]
-			end
-		end
+		self.character = characters.getUnlockedCharacter(self.text)
 		if self.character ~= nil then
 			self.sprite = self.character.sprite
 			self.isVisible = true

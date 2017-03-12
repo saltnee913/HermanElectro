@@ -721,6 +721,7 @@ function loadNextLevel(dontChangeTime)
 end
 
 function startGame()
+	stats.resetTempStats()
 	local seed = loadRandoms()
 	if not saving.isPlayingBack() then
 		stats.runNumber = stats.runNumber + 1
@@ -771,6 +772,7 @@ function loadOpeningWorld()
 end
 
 function startTutorial()
+	stats.resetTempStats()
 	tutorial.load()
 	loadRandoms()
 	loadTutorial = true
@@ -789,6 +791,7 @@ function startTutorial()
 end
 
 function startDebug()
+	stats.resetTempStats()
 	loadRandoms()
 	loadTutorial = false
 	map.floorOrder = {'RoomData/debugFloor.json', 'RoomData/exitDungeonsMap.json'}
@@ -799,6 +802,7 @@ function startDebug()
 end
 
 function startEditor()
+	stats.resetTempStats()
 	loadRandoms()
 	loadTutorial = false
 	map.floorOrder = {'RoomData/editorFloor.json'}
@@ -908,7 +912,6 @@ function kill()
 			return
 		end
 	end
-	unlockedChars = characters.getUnlockedCharacters()
 	stats.losses[player.character.name] = stats.losses[player.character.name]+1
 	stats.writeStats()
 	myShader:send("b_and_w", true)
@@ -946,7 +949,6 @@ function win()
 		stats.wins[player.character.name] = stats.wins[player.character.name]+1
 		stats.writeStats()
 	end
-	unlockedChars = characters.getUnlockedCharacters()
 end
 
 maxLamps = 100
