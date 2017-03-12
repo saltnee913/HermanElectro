@@ -1825,7 +1825,7 @@ function love.draw()
 					end
 					if litTiles[j][i]~=0 and room[j][i].overlay ~= nil then
 						local overlay = room[j][i].overlay
-						local toDraw2 = (overlay.powered and util.getImage(overlay.poweredSprite)) or util.getImage(overlay.sprite)
+						local toDraw2 = overlay.powered and util.getImage(overlay.poweredSprite) or util.getImage(overlay.sprite)
 						local rot2 = overlay.rotation
 						local tempi2 = i
 						local tempj2 = j
