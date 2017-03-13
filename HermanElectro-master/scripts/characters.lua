@@ -235,7 +235,7 @@ function P.frederick:onCharLoad()
 	tools.giveToolsByReference({tools.spring,tools.spring,tools.spring,tools.spring,tools.visionChanger,tools.visionChanger})
 end
 function P.frederick:onFloorEnter()
-	tools.giveToolsByReference({tools.spring})
+	--tools.giveToolsByReference({tools.spring})
 end
 
 P.battery = P.character:new{name = "Bob", tallSprite = false, description = "The Battery",
