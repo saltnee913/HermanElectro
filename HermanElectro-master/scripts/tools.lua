@@ -4581,6 +4581,9 @@ P:addTool(P.swapper)
 P:addTool(P.bucketOfWater)
 P:addTool(P.flame) --Keep
 P:addTool(P.toolReroller)
+
+P:addTool(P.nineLives)
+P:addTool(P.heartTransplant)
 P:addTool(P.revive) --Keep
 P:addTool(P.explosiveGun)
 P:addTool(P.buttonFlipper)
@@ -4705,11 +4708,11 @@ P:addTool(P.shittyPotion)
 P:addTool(P.recycleBin)
 P:addTool(P.iceBox)
 
-P:addTool(P.nineLives)
+
 P:addTool(P.deckOfCards)
 P:addTool(P.card)
 P:addTool(P.amnesiaPill)
-P:addTool(P.heartTransplant)
+
 P:addTool(P.shield)
 
 P.resetTools()
