@@ -922,6 +922,9 @@ end
 
 function win()
 	if not won then
+		if loadTutorial then
+			unlocks.unlockUnlockableRef(unlocks.franciscoUnlock, true)
+		end
 		for i = 1, #unlocks.winUnlocks do
 			if unlocks.winUnlocks[i].unlocked == false then
 				unlocks.unlockUnlockableRef(unlocks.winUnlocks[i])

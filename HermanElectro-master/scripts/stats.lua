@@ -25,7 +25,14 @@ function P.resetTempStats()
 	P.tempStatsData = {}
 end
 
+function P.doStatsSave()
+	return not loadTutorial
+end
+
 function P.incrementStat(stat)
+	if not P.doStatsSave() then
+		return
+	end
 	if P.tempStatsData[stat] == nil then
 		P.tempStatsData[stat] = 1
 	else

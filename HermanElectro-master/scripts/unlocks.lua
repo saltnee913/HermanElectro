@@ -59,8 +59,8 @@ function P.displayUnlock(unlockId)
 	end
 end
 
-function P.unlockUnlockable(unlockId)
-	if P[unlockId].unlocked == false and not loadTutorial then
+function P.unlockUnlockable(unlockId, bypassTut)
+	if P[unlockId].unlocked == false and ((bypassTut == true) or not loadTutorial) then
 		P.displayUnlock(unlockId)
 		P[unlockId].unlocked = true
 		writeUnlocks()
@@ -80,11 +80,11 @@ function P.lockUnlockable(unlockId)
 		end	
 end
 
-function P.unlockUnlockableRef(unlock)
+function P.unlockUnlockableRef(unlock, bypassTut)
 	if unlock.unlocked == false then
 		for i = 1, #unlocks do
 			if unlocks[i] == unlock then
-				P.unlockUnlockable(i)
+				P.unlockUnlockable(i, bypassTut)
 			end
 		end
 	end
@@ -207,7 +207,7 @@ P.floorUnlocks = {P.doorUnlock, P.catUnlock, P.boxesUnlock, P.unbreakableWires, 
 --characters
 P[#P+1] = P.felixUnlock --done
 P[#P+1] = P.frederickUnlock --done
-P[#P+1] = P.franciscoUnlock
+P[#P+1] = P.franciscoUnlock --done
 P[#P+1] = P.rammyUnlock
 P[#P+1] = P.aureliusUnlock 
 P[#P+1] = P.lennyUnlock
