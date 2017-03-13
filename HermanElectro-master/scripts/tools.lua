@@ -142,6 +142,10 @@ function P.updateToolableTiles(toolid)
 	end
 end
 
+function P.addUseStat(toolid)
+	stats.incrementStat(tools[toolid].name..'Uses')
+end
+
 --prioritizes animals, matters if we want a tool to work on both animals and tiles
 function P.useToolDir(toolid, dir)
 	if P.toolablePushables~=nil and P.toolablePushables[dir][1]~=nil and tools[toolid]~=nil then
@@ -149,6 +153,7 @@ function P.useToolDir(toolid, dir)
 	end
 	if P.toolableAnimals ~= nil and P.toolableAnimals[dir][1] ~= nil and tools[toolid]~=nil then
 		tools[toolid]:useToolAnimal(P.toolableAnimals[dir][1])
+		P.addUseStat(toolid)
 		return true
 	end
 	if P.toolableTiles ~= nil and P.toolableTiles[dir][1] ~= nil then
@@ -161,6 +166,7 @@ function P.useToolDir(toolid, dir)
 				tools[toolid]:useToolTile(room[P.toolableTiles[dir][1].y][P.toolableTiles[dir][1].x], P.toolableTiles[dir][1].y, P.toolableTiles[dir][1].x)
 			end
 		end
+		P.addUseStat(toolid)
 		return true
 	end
 	return false
@@ -173,6 +179,7 @@ function P.useToolTile(tileY, tileX)
 			for i = 1, #(P.toolableAnimals[dir]) do
 				if P.toolableAnimals[dir][i].tileY == tileY and P.toolableAnimals[dir][i].tileX == tileX then
 					tools[tool]:useToolAnimal(P.toolableAnimals[dir][i])
+					P.addUseStat(tool)
 					return true
 				end
 			end
@@ -183,6 +190,7 @@ function P.useToolTile(tileY, tileX)
 			for i = 1, #(P.toolablePushables[dir]) do
 				if P.toolablePushables[dir][i].tileY == tileY and P.toolablePushables[dir][i].tileX == tileX then
 					tools[tool]:useToolPushable(P.toolablePushables[dir][i])
+					P.addUseStat(tool)
 					return true
 				end
 			end
@@ -197,6 +205,7 @@ function P.useToolTile(tileY, tileX)
 					else
 						tools[tool]:useToolTile(room[tileY][tileX], tileY, tileX)
 					end
+					P.addUseStat(tool)
 					return true
 				end
 			end
@@ -1100,9 +1109,6 @@ end
 P.spring = P.superTool:new{name = "Spring", description = "Up, up in the air I go.", useWithArrowKeys = false, baseRange = 4, image = 'Graphics/spring.png', quality = 3}
 function P.spring:usableOnTile(tile)
 	if tile.untoolable then return false end
-	if tile:getHeight()>0 then
-		return true
-	end
 	for i = 1, #pushables do
 		if pushables[i].tileX == tile.tileX and pushables[i].tileY == tile.tileY then return false end
 	end

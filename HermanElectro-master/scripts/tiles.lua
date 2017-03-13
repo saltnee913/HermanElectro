@@ -1247,8 +1247,7 @@ function P.pit:willKillPlayer()
 	return not self.laddered
 end
 function P.pit:destroyPushable()
-	self.sprite = self.destroyedSprite
-	self.laddered = true
+	self:ladder()
 end
 P.pit.willKillAnimal = P.pit.willKillPlayer
 P.pit.willDestroyPushable = P.pit.willKillPlayer
@@ -1396,10 +1395,6 @@ end
 function P.bomb:explode(x,y)
 	if not editorMode and math.abs(player.tileY-x)<2 and math.abs(player.tileX-y)<2 then 
 		kill()
-		if self.name == P.bomb.name then
-			unlocks = require('scripts.unlocks')
-			unlocks.unlockUnlockableRef(unlocks.frederickUnlock)
-		end
 	end
 	util.createHarmlessExplosion(x,y)
 end
@@ -1556,6 +1551,7 @@ function P.beggar:getInfoText()
 end
 function P.beggar:destroy()
 	if self.alive then
+		stats.incrementStat("beggarsShot")
 		self.animation = {self.sprite}
 		self.alive = false
 		local paysOut = util.random('toolDrop')
@@ -2769,12 +2765,7 @@ P.darkOverlay = P.tile:new{name = "darkOverlay", sprite = 'NewGraphics/unlocksDa
 P.playerTile = P.tile:new{name = "playerTransform", character = nil, text = "Herman", isVisible = false}
 function P.playerTile:onLoad()
 	if self.character==nil then
-		local unlockedChars = characters.getUnlockedCharacters()
-		for i = 1, #unlockedChars do
-			if unlockedChars[i].name == self.text then
-				self.character = unlockedChars[i]
-			end
-		end
+		self.character = characters.getUnlockedCharacter(self.text)
 		if self.character ~= nil then
 			self.sprite = self.character.sprite
 			self.isVisible = true
@@ -2796,8 +2787,8 @@ function P.playerTile:getCharInfo()
 	if self.character==nil then return end
 	local infoText = ""
 	infoText = infoText..self.character.name..", "..self.character.description.."\n"
-	infoText = infoText.."Wins: "..stats.wins[self.character.name].."\n"
-	infoText = infoText.."Losses: "..stats.losses[self.character.name]
+	infoText = infoText.."Wins: "..stats.getStat(self.character.name..'Wins').."\n"
+	infoText = infoText.."Losses: "..stats.getStat(self.character.name..'Losses')
 	return infoText
 end
 

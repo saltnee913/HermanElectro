@@ -721,10 +721,10 @@ function loadNextLevel(dontChangeTime)
 end
 
 function startGame()
+	stats.resetTempStats()
 	local seed = loadRandoms()
 	if not saving.isPlayingBack() then
-		stats.runNumber = stats.runNumber + 1
-		stats.writeStats()
+		stats.incrementStat('runNumber')
 	end
 	saving.createNewRecording(seed)
 	loadTutorial = false
@@ -771,6 +771,7 @@ function loadOpeningWorld()
 end
 
 function startTutorial()
+	stats.resetTempStats()
 	tutorial.load()
 	loadRandoms()
 	loadTutorial = true
@@ -789,6 +790,7 @@ function startTutorial()
 end
 
 function startDebug()
+	stats.resetTempStats()
 	loadRandoms()
 	loadTutorial = false
 	map.floorOrder = {'RoomData/debugFloor.json', 'RoomData/exitDungeonsMap.json'}
@@ -799,6 +801,7 @@ function startDebug()
 end
 
 function startEditor()
+	stats.resetTempStats()
 	loadRandoms()
 	loadTutorial = false
 	map.floorOrder = {'RoomData/editorFloor.json'}
@@ -908,9 +911,8 @@ function kill()
 			return
 		end
 	end
-	unlockedChars = characters.getUnlockedCharacters()
-	stats.losses[player.character.name] = stats.losses[player.character.name]+1
-	stats.writeStats()
+	stats.incrementStat(player.character.name..'Losses')
+	stats.incrementStat('totalLosses')
 	myShader:send("b_and_w", true)
 	if not loadTutorial then --hacky hack fix
 		completedRooms[mapy][mapx] = 0 --to stop itemsNeeded tracking, it's a hack!
@@ -920,6 +922,9 @@ end
 
 function win()
 	if not won then
+		if loadTutorial then
+			unlocks.unlockUnlockableRef(unlocks.franciscoUnlock, true)
+		end
 		for i = 1, #unlocks.winUnlocks do
 			if unlocks.winUnlocks[i].unlocked == false then
 				unlocks.unlockUnlockableRef(unlocks.winUnlocks[i])
@@ -943,10 +948,9 @@ function win()
 			unlocks.unlockUnlockableRef(unlocks.gabeUnlock)
 		end
 		won = true
-		stats.wins[player.character.name] = stats.wins[player.character.name]+1
-		stats.writeStats()
+		stats.incrementStat(player.character.name..'Wins')
+		stats.incrementStat('totalWins')
 	end
-	unlockedChars = characters.getUnlockedCharacters()
 end
 
 maxLamps = 100
@@ -1658,8 +1662,8 @@ function love.draw()
 			love.graphics.draw(charsToDraw[i].sprite, width/5*column-width/10-10, height/3*(row-1)+height/6+20, 0, charsToDraw[i].scale, charsToDraw[i].scale)
 			love.graphics.print(charsToDraw[i].name, width/5*column-width/10-10, height/3*(row-1)+height/6-100)
 			love.graphics.print(charsToDraw[i].description, width/5*column-width/10-10, height/3*(row-1)+height/6-80)
-			love.graphics.print("Wins: "..stats.wins[charsToDraw[i].name], width/5*column-width/10-10, height/3*(row-1)+height/6-60)
-			love.graphics.print("Losses: "..stats.losses[charsToDraw[i].name], width/5*column-width/10-10, height/3*(row-1)+height/6-40)
+			love.graphics.print("Wins: "..stats.getStat[charsToDraw[i].name..'Wins'], width/5*column-width/10-10, height/3*(row-1)+height/6-60)
+			love.graphics.print("Losses: "..stats.getStat[charsToDraw[i].name..'Losses'], width/5*column-width/10-10, height/3*(row-1)+height/6-40)
 		end
 
 		return
@@ -1825,7 +1829,7 @@ function love.draw()
 					end
 					if litTiles[j][i]~=0 and room[j][i].overlay ~= nil then
 						local overlay = room[j][i].overlay
-						local toDraw2 = (overlay.powered and util.getImage(overlay.poweredSprite)) or util.getImage(overlay.sprite)
+						local toDraw2 = overlay.powered and util.getImage(overlay.poweredSprite) or util.getImage(overlay.sprite)
 						local rot2 = overlay.rotation
 						local tempi2 = i
 						local tempj2 = j
@@ -3397,7 +3401,7 @@ function postAnimalMovement()
 
 	for i = 1, #animals do
 		for j = 1, #pushables do
-			if animals[i].tileX == pushables[j].tileX and animals[i].tileY == pushables[j].tileY then
+			if (not pushables[j].destroyed) and animals[i].tileX == pushables[j].tileX and animals[i].tileY == pushables[j].tileY then
 				animals[i]:kill()
 			end
 		end

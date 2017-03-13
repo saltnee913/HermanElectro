@@ -26,7 +26,7 @@ function P.createNewRecording(seed)
 	for i = 1, #unlocks do
 		unlocksSave[i] = unlocks[i].unlocked
 	end
-	saveNumber = stats.runNumber
+	saveNumber = stats.getStat('runNumber')
 end
 
 function P.recordKeyPressed(key, unicode, isRepeat)
@@ -95,7 +95,7 @@ function P.getLatestReplay()
 	elseif save ~= nil then
 		return P.getReplay(save.saveNumber-1)
 	else
-		return P.getReplay(stats.runNumber)
+		return P.getReplay(stats.getStat('runNumber'))
 	end
 end
 

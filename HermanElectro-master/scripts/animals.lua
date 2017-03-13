@@ -138,6 +138,7 @@ function P.animal:secondaryMove(playerx, playery)
 end
 
 function P.animal:checkDeath()
+	if self.dead then return end
 	if room[self.tileY]~=nil and room[self.tileY][self.tileX]~=nil then
 		t = room[self.tileY][self.tileX]
 		if self.dead == false and t:willKillAnimal() then
@@ -172,6 +173,7 @@ function P.animal:onNullLeave(tileY, tileX)
 	return room[tileY][tileX]
 end
 function P.animal:kill()
+	if self.dead then return end
 	self.dead = true
 	self.sprite = self.deadSprite
 	if self.canDropTool and not self.willDropTool then
@@ -341,6 +343,7 @@ function P.snail:onNullLeave()
 	return tiles.slime:new()
 end
 function P.snail:kill()
+	if self.dead then return end
 	self.dead = true
 	self.sprite = self.deadSprite
 	if self.canDropTool and not self.willDropTool then
@@ -367,6 +370,7 @@ function P.conductiveSnail:onNullLeave()
 	return tiles.conductiveSlime:new()
 end
 function P.conductiveSnail:kill()
+	if self.dead then return end
 	self.dead = true
 	self.sprite = self.deadSprite
 	if self.canDropTool and not self.willDropTool then
@@ -388,6 +392,7 @@ function P.glueSnail:onNullLeave()
 	return tiles.glue:new()
 end
 function P.glueSnail:kill()
+	if self.dead then return end
 	self.dead = true
 	self.sprite = self.deadSprite
 	if self.canDropTool and not self.willDropTool then
