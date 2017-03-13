@@ -4459,6 +4459,7 @@ function P.amnesiaPill:usableOnNothing()
 end
 P.amnesiaPill.usableOnTile = P.amnesiaPill.usableOnNothing
 function P.amnesiaPill:useToolNothing()
+	self.numHeld = self.numHeld-1
 	local maintainStairsLocs = stairsLocs[floorIndex-1]
 	map.loadedMaps[floorIndex]=nil
 	floorIndex = floorIndex-1
