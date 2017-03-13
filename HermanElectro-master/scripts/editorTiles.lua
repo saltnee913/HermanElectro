@@ -71,7 +71,6 @@ P.advancedTiles[#P.advancedTiles+1] = tiles.unbreakableCornerWire
 P.advancedTiles[#P.advancedTiles+1] = tiles.unbreakableElectricFloor
 P.advancedTiles[#P.advancedTiles+1] = tiles.superStickyButton
 P.advancedTiles[#P.advancedTiles+1] = tiles.unbrickableStayButton
-P.advancedTiles[#P.advancedTiles+1] = tiles.unbreakableCornerWire
 P.advancedTiles[#P.advancedTiles+1] = tiles.dustyGlassWall
 P.advancedTiles[#P.advancedTiles+1] = tiles.fog
 P.advancedTiles[#P.advancedTiles+1] = tiles.accelerator
