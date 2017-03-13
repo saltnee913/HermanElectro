@@ -14306,7 +14306,7 @@
           [0,3,1,0,0,2,0]]
     },
 
-    "guns_ladders_or_bricks_1":
+    /*"guns_ladders_or_bricks_1":
     {
       "layout":
         [
@@ -14329,7 +14329,7 @@
           [0,3,0,0,0,0,0],
           [0,0,0,0,0,3,0]],
       "set": "guns_ladders_or_bricks"
-    },
+    },*/
     "guns_ladders_or_bricks_2":
     {
       "layout":
