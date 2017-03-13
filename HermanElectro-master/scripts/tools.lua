@@ -4567,10 +4567,10 @@ P:addTool(P.gateBreaker) --Keep
 
 P:addTool(P.ramSpawner)
 --P:addTool(P.gateBreaker)
-P:addTool(P.conductiveBoxSpawner)
+--P:addTool(P.conductiveBoxSpawner)
 P:addTool(P.superWireCutters)
 P:addTool(P.boxSpawner)
-P:addTool(P.boomboxSpawner)
+--P:addTool(P.boomboxSpawner)
 --P:addTool(P.laser)
 P:addTool(P.gas)
 P:addTool(P.superLaser)
@@ -4583,6 +4583,9 @@ P:addTool(P.swapper)
 P:addTool(P.bucketOfWater)
 P:addTool(P.flame) --Keep
 P:addTool(P.toolReroller)
+
+P:addTool(P.nineLives)
+P:addTool(P.heartTransplant)
 P:addTool(P.revive) --Keep
 P:addTool(P.explosiveGun)
 P:addTool(P.buttonFlipper)
@@ -4605,7 +4608,7 @@ P:addTool(P.wireExtender)
 P:addTool(P.lamp)
 P:addTool(P.coin) --Keep
 
-P:addTool(P.mask)
+--P:addTool(P.mask)
 P:addTool(P.growthHormones)
 P:addTool(P.robotArm) --Keep
 P:addTool(P.sock)
@@ -4613,7 +4616,7 @@ P:addTool(P.sock)
 P:addTool(P.gasPourer)
 P:addTool(P.gasPourerXtreme)
 
-P:addTool(P.buttonPlacer)
+--P:addTool(P.buttonPlacer)
 P:addTool(P.wireToButton)--Nice
 
 --P:addTool(P.buttonPlacer)
@@ -4632,7 +4635,7 @@ P:addTool(P.inflation)--Keep
 P:addTool(P.emptyBucket)
 P:addTool(P.superWaterBottle)
 
-P:addTool(P.wallDungeonDetector)--Keep
+--P:addTool(P.wallDungeonDetector)--Keep
 
 --P:addTool(P.wallDungeonDetector)
 
@@ -4640,7 +4643,7 @@ P:addTool(P.towel)
 P:addTool(P.playerCloner)
 P:addTool(P.playerBoxSpawner)
 P:addTool(P.bombBoxSpawner)
-P:addTool(P.jackInTheBoxSpawner)
+--P:addTool(P.jackInTheBoxSpawner)
 P:addTool(P.salt)--So bad it's good
 P:addTool(P.shell)
 P:addTool(P.shift) --Lets talk about this one
@@ -4656,10 +4659,10 @@ P:addTool(P.stealthBomber)
 P:addTool(P.icegun) --Cooler than laser 
 P:addTool(P.seeds)
 P:addTool(P.supertoolDoubler) -- Ehhh lets talk
-P:addTool(P.coffee) --No idea what this does
+--P:addTool(P.coffee) --No idea what this does
 P:addTool(P.boxDisplacer)
 P:addTool(P.boxCloner)
-P:addTool(P.tilePusher)
+--P:addTool(P.tilePusher)
 P:addTool(P.portalPlacerDouble)
 --P:addTool(P.spinningSword)
 P:addTool(P.ironMan)
@@ -4674,7 +4677,7 @@ P:addTool(P.woodenRain)
 --P:addTool(P.tempUpgrade)
 --P:addTool(P.permaUpgrade)
 P:addTool(P.christmasSurprise)
-P:addTool(P.ironWoman)
+--P:addTool(P.ironWoman)
 P:addTool(P.wallReroller)
 P:addTool(P.beggarReroller) --Strong keep
 P:addTool(P.xrayVision)
@@ -4684,7 +4687,7 @@ P:addTool(P.compass)
 --P:addTool(P.santasHat)
 P:addTool(P.luckySaw)
 P:addTool(P.luckyBrick)
-P:addTool(P.luckyCharm)
+--P:addTool(P.luckyCharm)
 P:addTool(P.trader)
 P:addTool(P.tileFlipper)
 P:addTool(P.animalReroller)
@@ -4707,11 +4710,11 @@ P:addTool(P.shittyPotion)
 P:addTool(P.recycleBin)
 P:addTool(P.iceBox)
 
-P:addTool(P.nineLives)
+
 P:addTool(P.deckOfCards)
 P:addTool(P.card)
 P:addTool(P.amnesiaPill)
-P:addTool(P.heartTransplant)
+
 P:addTool(P.shield)
 
 P.resetTools()
