@@ -2791,8 +2791,8 @@ function P.playerTile:getCharInfo()
 	if self.character==nil then return end
 	local infoText = ""
 	infoText = infoText..self.character.name..", "..self.character.description.."\n"
-	infoText = infoText.."Wins: "..stats.wins[self.character.name].."\n"
-	infoText = infoText.."Losses: "..stats.losses[self.character.name]
+	infoText = infoText.."Wins: "..stats.getStat(self.character.name..'Wins').."\n"
+	infoText = infoText.."Losses: "..stats.getStat(self.character.name..'Losses')
 	return infoText
 end
 
