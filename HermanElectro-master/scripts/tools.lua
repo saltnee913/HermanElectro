@@ -4534,6 +4534,8 @@ end
 
 P.resetTools()
 
+--Ideas: mushroom concoction (rainbow invincible mode), floor unlocker
+
 P:addTool(P.crowbar) 
 P:addTool(P.visionChanger) 
 P:addTool(P.bomb)

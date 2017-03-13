@@ -3446,6 +3446,7 @@ function resolveConflicts()
 		if firstRun then
 			for i = 1, #animals do
 				if animals[i].tileX==animals[i].prevTileX and animals[i].tileY==animals[i].prevTileY then
+					animals[i]:checkDeath()
 					tryMove = true
 					if animals[i].dead or not animals[i].triggered then
 						tryMove = false

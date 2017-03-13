@@ -135,7 +135,7 @@ function P.felix:onKeyPressedChar(key)
 	return false
 end
 function P.felix:onFloorEnter()
-	tools.giveTools({7,7})
+	--tools.giveTools({7,7})
 end
 
 P.most = P.character:new{name = "Ben", description = "The Explorer",
