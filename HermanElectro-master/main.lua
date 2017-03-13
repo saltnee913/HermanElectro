@@ -912,6 +912,7 @@ function kill()
 		end
 	end
 	stats.incrementStat(player.character.name..'Losses')
+	stats.incrementStat('totalLosses')
 	myShader:send("b_and_w", true)
 	if not loadTutorial then --hacky hack fix
 		completedRooms[mapy][mapx] = 0 --to stop itemsNeeded tracking, it's a hack!
@@ -945,6 +946,7 @@ function win()
 		end
 		won = true
 		stats.incrementStat(player.character.name..'Wins')
+		stats.incrementStat('totalWins')
 	end
 end
 

@@ -206,7 +206,7 @@ P.floorUnlocks = {P.doorUnlock, P.catUnlock, P.boxesUnlock, P.unbreakableWires, 
 
 --characters
 P[#P+1] = P.felixUnlock --done
-P[#P+1] = P.frederickUnlock
+P[#P+1] = P.frederickUnlock --done
 P[#P+1] = P.franciscoUnlock
 P[#P+1] = P.rammyUnlock
 P[#P+1] = P.aureliusUnlock 
