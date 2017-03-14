@@ -194,6 +194,11 @@ P.buttonFlipperUnlock = P.unlock:new{name = 'button flipper', toolIds = {tools.b
 P.superGunUnlock = P.unlock:new{name = "super gun!", toolIds = {tools.superGun}, sprite = tools.superGun.image}
 P.suicideKingUnlock = P.unlock:new{name = "use with caution", toolIds = {tools.suicideKing}, sprite = tools.suicideKing.image}
 P.screwdriverUnlock = P.unlock:new{name = "screwdriver", toolIds = {tools.screwdriver}, sprite = tools.screwdriver.image}
+P.toolIncrementerUnlock = P.unlock:new{name = "toolbox", toolIds = {tools.toolIncrementer}, sprite = tools.toolIncrementer.image}
+P.toolRerollerUnlock = P.unlock:new{name = "Tool Reroller", toolIds = {tools.toolReroller}, sprite = tools.toolReroller.image}
+P.superToolUnlock = P.unlock:new{name = "Super Supertools", toolIds = {tools.superSaw, tools.longLadder,
+tools.superWireCutters, tools.superWaterBottle, tools.superSponge, tools.superBrick, tools.superGun},
+sprite = tools.superSaw.image}
 
 P.roomUnlock = P.unlock:new{name = 'room', roomIds = {"1"}}
 P.beggarPartyUnlock = P.roomUnlock:new{name = 'beggars love you', roomIds = {"beggar_party"}, sprite = tiles.beggar.sprite}
@@ -268,6 +273,9 @@ P[#P+1] = P.suicideKingUnlock --done
 P[#P+1] = P.screwdriverUnlock
 P[#P+1] = P.glueUnlock
 P[#P+1] = P.trapUnlock
+P[#P+1] = P.superToolUnlock
+P[#P+1] = P.toolIncrementerUnlock
+P[#P+1] = P.toolRerollerUnlock
 
 --rooms
 P[#P+1] = P.beggarPartyUnlock --done

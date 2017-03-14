@@ -3807,6 +3807,27 @@ function checkAllDeath()
 end
 
 function updateTools()
+	local maxSpread = tools[1].numHeld
+	local balancedBasics = true
+	for i = 1, tools.numNormalTools do
+		if tools[i].numHeld<maxSpread then
+			maxSpread = tools[i].numHeld
+		end
+		if tools[i].numHeld~=maxSpread then
+			balancedBasics = false
+		end
+	end
+
+	if maxSpread>0 and balancedBasics then
+		unlocks.unlockUnlockableRef(unlocks.toolIncrementerUnlock)
+	end
+	if maxSpread>=2 then
+		unlocks.unlockUnlockableRef(unlocks.toolRerollerUnlock)
+	end
+	if maxSpread>=3 then
+		unlocks.unlockUnlockableRef(unlocks.superToolUnlock)
+	end
+
 	for i = 1, 3 do
 		if specialTools[i]~=0 and tools[specialTools[i]].numHeld==0 then
 			specialTools[3]=0
@@ -3824,9 +3845,9 @@ function updateTools()
 		end
 	end
 
-	if tools.waterBottle.numHeld>=10 then
+	--[[if tools.waterBottle.numHeld>=10 then
 		unlocks.unlockUnlockableRef(unlocks.fishUnlock)
-	end
+	end]]
 
 end
 
