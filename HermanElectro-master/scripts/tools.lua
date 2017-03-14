@@ -853,6 +853,14 @@ function P.visionChanger:usableOnTile(tile)
 end
 P.visionChanger.usableOnNothing = P.visionChanger.usableOnTile
 function P.visionChanger:useToolTile(tile)
+	local prevLitTiles = {}
+	for i = 1, roomHeight do
+		prevLitTiles[i] = {}
+		for j = 1, roomLength do
+			prevLitTiles[i][j] = litTiles[i][j]
+		end
+	end
+
 	self.numHeld = self.numHeld-1
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
@@ -860,6 +868,13 @@ function P.visionChanger:useToolTile(tile)
 				room[i][j]:allowVision()
 				litTiles[i][j]=1
 			end
+		end
+	end
+
+	for i = 1, #animals do
+		if litTiles[animals[i].tileY][animals[i].tileX]==1 and
+		prevLitTiles[animals[i].tileY][animals[i].tileX]~=1 and not animals[i].triggered then
+			unlocks.unlockUnlockableRef(unlocks.ratUnlock)
 		end
 	end
 end

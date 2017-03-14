@@ -158,6 +158,7 @@ P.untoolableButtons = P.tileUnlock:new{name = 'untoolable buttons', tileIds = {1
 P.mousetrapUnlock = P.tileUnlock:new{name = 'mousetraps', tileIds = {38,52}, sprite = tiles.mousetrap.sprite}
 P.breakablePitUnlock = P.tileUnlock:new{name = 'watch where you step', tileIds = {33}, sprite = tiles.breakablePit.sprite}
 P.catUnlock = P.tileUnlock:new{name = 'meow', tileIds = {23}, sprite = animalList.cat.sprite}
+P.ratUnlock = P.tileUnlock:new{name = 'eek', tileIds = {196}, sprite = animalList.rat.sprite}
 P.spikesUnlock = P.tileUnlock:new{name = 'pointy', tileIds = {28}, sprite = tiles.spikes.sprite}
 P.poweredEndUnlock = P.tileUnlock:new{name = 'powered end tiles', tileIds = {37}, sprite = tiles.poweredEnd.sprite}
 P.snailsUnlock = P.tileUnlock:new{name = 'snails!', tileIds = {43,45}, sprite = animalList.snail.sprite}
@@ -227,7 +228,10 @@ P[#P+1] = P.unbreakableEfloorUnlock --done
 P[#P+1] = P.untoolableButtons
 P[#P+1] = P.mousetrapUnlock --done
 P[#P+1] = P.breakablePitUnlock --done
+
 P[#P+1] = P.catUnlock --done
+P[#P+1] = P.ratUnlock
+
 P[#P+1] = P.spikesUnlock
 P[#P+1] = P.poweredEndUnlock --done
 P[#P+1] = P.snailsUnlock --done
