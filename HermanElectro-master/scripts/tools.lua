@@ -3472,13 +3472,14 @@ function P.superLadder:useToolNothing(tileY, tileX)
 	room[tileY][tileX] = tiles.ladder:new()
 end
 
-P.woodenRain = P.superTool:new{name = "woodenRain", description = "", image = 'Graphics/ladder.png',
+P.woodenRain = P.superTool:new{name = "Wooden Rain", description = "I'll make it rain", image = 'Graphics/ladder.png',
 baseRange = 0, quality = 2}
 function P.woodenRain:usableOnNothing()
 	return true
 end
 P.woodenRain.usableOnTile = P.woodenRain.usableOnNothing
 function P.woodenRain:useToolNothing()
+
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
 			local isValid = true
@@ -3493,6 +3494,7 @@ function P.woodenRain:useToolNothing()
 				end
 			end
 			if isValid then
+				self.numHeld = self.numHeld - 1
 				room[i][j] = tiles.ladder:new()
 			end
 		end
