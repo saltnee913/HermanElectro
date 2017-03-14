@@ -199,6 +199,8 @@ P.toolRerollerUnlock = P.unlock:new{name = "Tool Reroller", toolIds = {tools.too
 P.superToolUnlock = P.unlock:new{name = "Super Supertools", toolIds = {tools.superSaw, tools.longLadder,
 tools.superWireCutters, tools.superWaterBottle, tools.superSponge, tools.superBrick, tools.superGun},
 sprite = tools.superSaw.image}
+P.laptopUnlock = P.unlock:new{name = "Laptop", toolIds = {tools.laptop}, sprite = tools.laptop.image}
+P.superLaserUnlock = P.unlock:new{name = "Super Laser", toolIds = {tools.superLaser}, sprite = tools.superLaser.image}
 
 P.roomUnlock = P.unlock:new{name = 'room', roomIds = {"1"}}
 P.beggarPartyUnlock = P.roomUnlock:new{name = 'beggars love you', roomIds = {"beggar_party"}, sprite = tiles.beggar.sprite}
@@ -276,6 +278,8 @@ P[#P+1] = P.trapUnlock
 P[#P+1] = P.superToolUnlock
 P[#P+1] = P.toolIncrementerUnlock
 P[#P+1] = P.toolRerollerUnlock
+P[#P+1] = P.laptopUnlock
+P[#P+1] = P.superLaserUnlock
 
 --rooms
 P[#P+1] = P.beggarPartyUnlock --done

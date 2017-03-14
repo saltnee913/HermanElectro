@@ -533,6 +533,7 @@ function P.mousemoved(x, y, dx, dy)
 end
 
 function P.saveRoom()
+	unlocks.unlockUnlockableRef(unlocks.laptopUnlock)
 
 	if map.createRoom(nameEnter)~=nil then
 		log("Save failed -- name already taken (continue typing to insert a new name)")

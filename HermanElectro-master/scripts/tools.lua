@@ -1389,11 +1389,15 @@ function P.laser:usableOnTile()
 end
 P.laser.usableOnNothing = P.laser.usableOnTile
 local function killDogs(tileY, tileX)
+	local dogsKilled = 0
 	if tileX == player.tileX then
 		for i = 1, #animals do
 			if animals[i].tileX == player.tileX then
 				if (tileY > player.tileY and animals[i].tileY > player.tileY) or
-				  (tileY < player.tileY and animals[i].tileY < player.tileY) then 
+				  (tileY < player.tileY and animals[i].tileY < player.tileY) then
+				  	if not animals[i].dead then
+				  		dogsKilled = dogsKilled+1
+				  	end
 					animals[i]:kill()
 				end
 			end
@@ -1403,10 +1407,17 @@ local function killDogs(tileY, tileX)
 			if animals[i].tileY == player.tileY then
 				if (tileX >= player.tileX and animals[i].tileX >= player.tileX) or
 				  (tileX < player.tileX and animals[i].tileX < player.tileX) then
+					if not animals[i].dead then
+				  		dogsKilled = dogsKilled+1
+				  	end
 					animals[i]:kill()
 				end
 			end
 		end
+	end
+
+	if dogsKilled>=3 then
+		unlocks.unlockUnlockableRef(unlocks.superLaserUnlock)
 	end
 end
 function P.laser:useToolTile(tile, tileY, tileX)
