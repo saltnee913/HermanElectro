@@ -2415,6 +2415,7 @@ end
 
 P.dungeonEnter = P.tile:new{name = "dungeonEnter"}
 function P.dungeonEnter:onEnter()
+	unlocks.unlockUnlockableRef(unlocks.rammyUnlock, true)
 	player.regularMapLoc = {x = mapx, y = mapy}
 	mapx = 1
 	mapy = mapHeight+1
@@ -2435,6 +2436,7 @@ function P.dungeonEnter:onEnter()
 	player.prevTileX = player.tileX
 	player.prevTileY = player.tileY
 	player.justTeleported = true
+
 end
 P.dungeonExit = P.tile:new{name = "dungeonExit"}
 function P.dungeonExit:onEnter()
@@ -2571,6 +2573,7 @@ end
 
 P.gameWin = P.tile:new{name = "gameWin"}
 function P.gameWin:onEnter()
+	
 	win()
 end
 
