@@ -2312,7 +2312,7 @@ function P.mask:useToolTile(tile)
 end
 P.mask.useToolNothing = P.mask.useToolTile
 
-P.growthHormones = P.superTool:new{name = "growthHormones", description = "Growing up", image = 'Graphics/growthHormones.png', baseRange = 0, quality = 1}
+P.growthHormones = P.superTool:new{name = "growthHormones", description = "Growing up", image = 'Graphics/growthHormones.png', baseRange = 0, quality = 2}
 function P.growthHormones:usableOnTile(tile)
 	return true
 end
@@ -4505,7 +4505,7 @@ function P.amnesiaPill:useToolNothing()
 end
 P.amnesiaPill.useToolTile = P.amnesiaPill.useToolNothing
 
-P.heartTransplant = P.superTool:new{name = "Heart Transplant", description = "Another shot at life", quality = 1,
+P.heartTransplant = P.superTool:new{name = "Heart Transplant", description = "Another shot at life", quality = 2,
 image = 'Graphics/heart.png'}
 function P.heartTransplant:checkDeath()
 	self.numHeld = self.numHeld-1
