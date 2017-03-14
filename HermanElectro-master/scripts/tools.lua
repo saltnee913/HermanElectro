@@ -542,7 +542,16 @@ function P.wireCutters:useToolTile(tile)
 	if tile:instanceof(tiles.conductiveGlass) or tile:instanceof(tiles.reinforcedConductiveGlass) then tile.canBePowered = false
 	elseif (tile.overlay~=nil and self:usableOnNonOverlay(tile.overlay)) then
 		tile.overlay:destroy()
-	else tile:destroy() end
+		if tile.overlay:instanceof(tiles.crossWire) then
+			unlocks.unlockUnlockableRef(unlocks.cornerRotaterUnlock)
+		end
+	else
+		tile:destroy()
+		if tile:instanceof(tiles.crossWire) then
+			unlocks.unlockUnlockableRef(unlocks.cornerRotaterUnlock)
+		end
+	end
+
 end
 function P.wireCutters:useToolPushable(pushable)
 	pushable.conductive = false

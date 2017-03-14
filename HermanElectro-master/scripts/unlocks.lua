@@ -177,6 +177,9 @@ P.directionGatesUnlock = P.tileUnlock:new{name = "erik's shitty direction gates"
 P.stickyButtonUnlock = P.tileUnlock:new{name = "sticky buttons", tileIds = {9}, sprite = tiles.stickyButton.sprite}
 P.stayButtonUnlock = P.tileUnlock:new{name = "stay buttons", tileIds = {10}, sprite = tiles.stayButton.sprite}
 P.doorUnlock = P.tileUnlock:new{name = "door unlock", tileIds = {18}, sprite = tiles.hDoor.sprite}
+--we spelled rotator wrong
+P.cornerRotaterUnlock = P.tileUnlock:new{name = "corner rotators", tileIds = {116}, sprite = tiles.cornerRotater.sprite}
+
 --unlocks to prevent tiles from appearing
 P.lockedTiles = P.tileUnlock:new{name = 'permanentlyLockedTiles', tileIds = {103,104,105,106,107,108,109,110,111,112,113},hidden = true}
 
@@ -228,6 +231,7 @@ P[#P+1] = P.unbreakableEfloorUnlock --done
 P[#P+1] = P.untoolableButtons
 P[#P+1] = P.mousetrapUnlock --done
 P[#P+1] = P.breakablePitUnlock --done
+P[#P+1] = P.cornerRotaterUnlock
 
 P[#P+1] = P.catUnlock --done
 P[#P+1] = P.ratUnlock
