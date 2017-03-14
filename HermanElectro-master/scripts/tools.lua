@@ -3449,7 +3449,7 @@ end
 
 --same as ladder but more range; used primarily for tool upgrades
 P.superLadder = P.superTool:new{name = "superLadder", description = "", image = 'Graphics/ladder.png',
-baseRange = 6, quality = 1}
+baseRange = 6, quality = -1}
 function P.superLadder:usableOnTile(tile)
 	if not tile.laddered then
 		if tile:instanceof(tiles.breakablePit) and tile.strength == 0 then
