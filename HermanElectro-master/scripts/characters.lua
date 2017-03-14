@@ -119,19 +119,19 @@ end
 
 P.felix = P.character:new{name = "Felix", description = "The Sharpshooter", winUnlocks = {unlocks.missileUnlock}, speedUnlocks = {unlocks.superGunUnlock}, sprite = 'Graphics/felix.png', startingTools = {0,0,0,0,0,0,1}}
 function P.felix:onCharLoad()
-	tools[7] = tools.felixGun
-	if not tools.felixGun.isGun then
-		tools.felixGun:switchEffects()
-	end
-	tools.giveToolsByReference({tools.bomb, tools.felixGun})
+	--tools[7] = tools.felixGun
+	--if not tools.felixGun.isGun then
+		--tools.felixGun:switchEffects()
+	--end
+	tools.giveToolsByReference({tools.bomb, tools.gun})
 end
 function P.felix:onKeyPressedChar(key)
 	--log(key)
-	if key == 'rshift' or key == 'lshift' or key == 'shift' then
+	--[[if key == 'rshift' or key == 'lshift' or key == 'shift' then
 		tools.felixGun:switchEffects()
 		tools.updateToolableTiles(tool)
 		return true
-	end
+	end]]
 	return false
 end
 function P.felix:onFloorEnter()

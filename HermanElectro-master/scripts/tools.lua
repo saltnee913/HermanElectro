@@ -2008,7 +2008,7 @@ function P.superSnowball:useToolAnimal(animal)
 	animal.frozen = true
 end
 
-P.snowballGlobal = P.snowball:new{name = "snowballGlobal", description = "Iceage", image = 'Graphics/snowballglobal.png', baseRange = 0, quality = 3}
+P.snowballGlobal = P.snowball:new{name = "Mask", description = "The demon in the mask", image = 'Graphics/Tools/mask.png', baseRange = 0, quality = 3}
 
 function P.snowballGlobal:usableOnNothing()
 	return true
@@ -4560,7 +4560,7 @@ P:addTool(P.boxCutter)
 
 P:addTool(P.magnet) --Keep
 
---P:addTool(P.magnet)
+P:addTool(P.magnet)
 P:addTool(P.spring) --Fix this shit
 P:addTool(P.glue)
 --P:addTool(P.endFinder)
@@ -4574,7 +4574,7 @@ P:addTool(P.ramSpawner)
 P:addTool(P.superWireCutters)
 P:addTool(P.boxSpawner)
 --P:addTool(P.boomboxSpawner)
---P:addTool(P.laser)
+P:addTool(P.laser)
 P:addTool(P.gas)
 P:addTool(P.superLaser)
 P:addTool(P.armageddon)
@@ -4615,7 +4615,7 @@ P:addTool(P.coin) --Keep
 P:addTool(P.growthHormones)
 P:addTool(P.robotArm) --Keep
 P:addTool(P.sock)
---P:addTool(P.emptyCup)
+P:addTool(P.emptyCup)
 P:addTool(P.gasPourer)
 P:addTool(P.gasPourerXtreme)
 

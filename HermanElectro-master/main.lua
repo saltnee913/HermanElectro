@@ -525,7 +525,7 @@ function goToMainMenu()
 	editorMode = false
 	myShader:send("b_and_w", false)
 	loadOpeningWorld()
-	emptyTools()
+	resetPlayer()
 	gamePaused = false
 	won = false
 	player.dead = false
@@ -538,6 +538,17 @@ function emptyTools()
 		tools[i].numHeld = 0
 		tools[i]:resetTool()
 	end
+	updateTools()
+end
+
+function resetPlayer()
+	emptyTools()
+	player.attributes.flying = false
+	player.attributes.fear = false
+	player.attributes.sockStep = -1
+	player.attributes.shelled = false
+	player.attributes.invisible = false
+	player.attributes.fast = {fast = false, fastStep = false}
 end
 
 function loadRandoms()
