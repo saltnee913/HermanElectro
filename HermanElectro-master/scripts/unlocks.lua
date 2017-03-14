@@ -184,6 +184,7 @@ P.cornerRotaterUnlock = P.tileUnlock:new{name = "corner rotators", tileIds = {11
 P.lockedTiles = P.tileUnlock:new{name = 'permanentlyLockedTiles', tileIds = {103,104,105,106,107,108,109,110,111,112,113},hidden = true}
 
 P.toolUnlock = P.unlock:new{name = 'tool', toolIds = {}, sprite = tools.saw.image}
+P.glueUnlock = P.unlock:new{name = 'glue', toolIds = {tools.glue}, sprite = tools.glue.image}
 P.missileUnlock = P.unlock:new{name = 'missile', toolIds = {tools.missile}, sprite = tools.missile.image}
 P.toolDoublerUnlock = P.unlock:new{name = 'tool doubler', toolIds = {tools.toolDoubler}, sprite = tools.toolDoubler.image}
 P.reviveUnlock = P.unlock:new{name = 'revived!', toolIds = {tools.revive}, sprite = tools.revive.image}
@@ -264,6 +265,7 @@ P[#P+1] = P.buttonFlipperUnlock --done
 P[#P+1] = P.superGunUnlock
 P[#P+1] = P.suicideKingUnlock --done
 P[#P+1] = P.screwdriverUnlock
+P[#P+1] = P.glueUnlock
 
 --rooms
 P[#P+1] = P.beggarPartyUnlock --done

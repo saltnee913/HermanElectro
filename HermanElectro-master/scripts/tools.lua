@@ -67,9 +67,9 @@ function P.giveTools(toolArray)
 			toolsToDisp[#toolsToDisp+1] = toolArray[i]
 		end
 	end
-	if tools.revive.numHeld>=9 then
+	--[[if tools.revive.numHeld>=9 then
 		unlocks.unlockUnlockableRef(unlocks.suicideKingUnlock)
-	end
+	end]]
 	P.displayTools(toolsToDisp)
 	updateTools()
 end
@@ -625,15 +625,15 @@ function P.brick:useToolTile(tile)
 		tile:destroy()
 	else
 		tile:lockInState(true)
-		unlocks:unlockUnlockableRef(unlocks.stayButtonUnlock)
+		--unlocks:unlockUnlockableRef(unlocks.stayButtonUnlock)
 	end
 end
 function P.brick:useToolAnimal(animal)
 	self.numHeld = self.numHeld-1
 	animal.waitCounter = animal.waitCounter+1
-	if animal.waitCounter>=3 then
+	--[[if animal.waitCounter>=3 then
 		unlocks.unlockUnlockableRef(unlocks.catUnlock)
-	end
+	end]]
 end
 
 P.gun = P.tool:new{name = 'gun', baseRange = 3, image = 'Graphics/Tools/gun.png'}
@@ -653,7 +653,7 @@ end
 function P.gun:useToolTile(tile)
 	self.numHeld = self.numHeld-1
 	if tile:instanceof(tiles.beggar) then
-		unlocks.unlockUnlockableRef(unlocks.beggarPartyUnlock)
+		--unlocks.unlockUnlockableRef(unlocks.beggarPartyUnlock)
 		tile:destroy()
 	else
 		tile:allowVision()
@@ -684,8 +684,8 @@ function P.sponge:useToolTile(tile, tileY, tileX)
 		tile.blocksVision = false
 		tile.sprite = tile.cleanSprite
 	elseif tile:instanceof(tiles.puddle) then
-		unlocks = require('scripts.unlocks')
-		unlocks.unlockUnlockableRef(unlocks.puddleUnlock)
+		--unlocks = require('scripts.unlocks')
+		--unlocks.unlockUnlockableRef(unlocks.puddleUnlock)
 		room[tileY][tileX] = nil
 	elseif tile:instanceof(tiles.stickyButton) or tile:instanceof(tiles.button) then
 		if tile:instanceof(tiles.stayButton) then
@@ -1839,7 +1839,7 @@ P.explosiveGun = P.gun:new{name = "explosiveGun", description = "Boom Boom", bas
 function P.explosiveGun:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld-1
 	if tile:instanceof(tiles.beggar) then
-		unlocks.unlockUnlockableRef(unlocks.beggarPartyUnlock)
+		--unlocks.unlockUnlockableRef(unlocks.beggarPartyUnlock)
 		tile:destroy()
 	else
 		tile:allowVision()
@@ -3425,7 +3425,7 @@ P.superGun.usableOnAnimal = P.gun.usableOnAnimal
 function P.superGun:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld-1
 	if tile:instanceof(tiles.beggar) then
-		unlocks.unlockUnlockableRef(unlocks.beggarPartyUnlock)
+		--unlocks.unlockUnlockableRef(unlocks.beggarPartyUnlock)
 		tile:destroy()
 	else
 		tile:allowVision()

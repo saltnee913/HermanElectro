@@ -407,6 +407,8 @@ function P.glueSnail:kill()
 	if self.dead then return end
 	self.dead = true
 	self.sprite = self.deadSprite
+	unlocks.unlockUnlockableRef(unlocks.glueUnlock)
+
 	if self.canDropTool and not self.willDropTool then
 		local bonusDropChance = util.random(100, 'toolDrop')
 		if bonusDropChance<=getLuckBonus() then

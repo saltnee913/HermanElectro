@@ -987,7 +987,7 @@ function P.endTile:onEnter(player)
 		end
 	elseif validSpace() and mainMap[mapy][mapx].roomid == "final_2" then
 		win()
-		unlocks.unlockUnlockableRef(unlocks.stickyButtonUnlock)
+		--unlocks.unlockUnlockableRef(unlocks.stickyButtonUnlock)
 	end
 	if self.done then return end
 	beatRoom()
@@ -1707,8 +1707,8 @@ function P.donationMachine:onEnter(player)
 	local mult = 1
 	if tool > tools.numNormalTools then
 		mult = 1
-		unlocks = require('scripts.unlocks')
-		unlocks.unlockUnlockableRef(unlocks.snailsUnlock)
+		--unlocks = require('scripts.unlocks')
+		--unlocks.unlockUnlockableRef(unlocks.snailsUnlock)
 	end
 	donations = donations+mult*math.ceil((10-(floorIndex))/2)
 	floorDonations = floorDonations+1
@@ -2005,8 +2005,8 @@ P.glue = P.tile:new{name = "glue", sprite = 'Graphics/glue.png'}
 function P.glue:onEnter(player)
 	player.waitCounter = player.waitCounter+1
 	if player.character.name == characters.lenny.name then
-		unlocks = require('scripts.unlocks')
-		unlocks.unlockUnlockableRef(unlocks.glueSnailUnlock)
+		--unlocks = require('scripts.unlocks')
+		--unlocks.unlockUnlockableRef(unlocks.glueSnailUnlock)
 	end
 end
 
@@ -2015,8 +2015,8 @@ function P.glue:onStay(player)
 end
 function P.glue:onEnterAnimal(animal)
 	if animal:instanceof(animalList.snail) then
-		unlocks = require('scripts.unlocks')
-		unlocks.unlockUnlockableRef(unlocks.glueSnailUnlock)
+		--unlocks = require('scripts.unlocks')
+		--unlocks.unlockUnlockableRef(unlocks.glueSnailUnlock)
 		return
 	end
 	if animal.flying then return end
@@ -2415,7 +2415,7 @@ end
 
 P.dungeonEnter = P.tile:new{name = "dungeonEnter"}
 function P.dungeonEnter:onEnter()
-	unlocks.unlockUnlockableRef(unlocks.rammyUnlock, true)
+	--unlocks.unlockUnlockableRef(unlocks.rammyUnlock, true)
 	player.regularMapLoc = {x = mapx, y = mapy}
 	mapx = 1
 	mapy = mapHeight+1

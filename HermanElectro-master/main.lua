@@ -911,9 +911,9 @@ end
 
 function kill()
 	if editorMode or globalDeathBlock or floorIndex<1 then return end
-	if validSpace() and completedRooms[mapy][mapx]>0 then
+	--[[if validSpace() and completedRooms[mapy][mapx]>0 then
 		unlocks.unlockUnlockableRef(unlocks.portalUnlock)
-	end
+	end]]
 	player.dead = true
 	for i = 1, #specialTools do
 		if tools[specialTools[i]]~=nil and tools[specialTools[i]].numHeld>0 and not tools[specialTools[i]]:checkDeath() then
@@ -963,9 +963,9 @@ function win()
 		won = true
 		stats.incrementStat(player.character.name..'Wins')
 		stats.incrementStat('totalWins')
-		if player.character.name=="Herman" then
+		--[[if player.character.name=="Herman" then
 			unlocks.unlockUnlockableRef(unlocks.boxesUnlock, true)
-		end
+		end]]
 	end
 end
 
