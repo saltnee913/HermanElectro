@@ -10778,7 +10778,7 @@
     ],
     "itemsNeeded":
     [
-    [0,0,0,0,0,2,0]
+    [0,0,0,0,0,0,0] //2brick intended
     ],
     "set": "cat_ram"
     },
