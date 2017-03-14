@@ -129,23 +129,23 @@ end
 
 P.felix = P.character:new{name = "Felix", description = "The Sharpshooter", winUnlocks = {unlocks.missileUnlock}, speedUnlocks = {unlocks.superGunUnlock}, sprite = 'Graphics/felix.png', startingTools = {0,0,0,0,0,0,1}}
 function P.felix:onCharLoad()
-	tools[7] = tools.felixGun
-	if not tools.felixGun.isGun then
-		tools.felixGun:switchEffects()
-	end
-	tools.giveToolsByReference({tools.bomb, tools.felixGun})
+	--tools[7] = tools.felixGun
+	--if not tools.felixGun.isGun then
+		--tools.felixGun:switchEffects()
+	--end
+	tools.giveToolsByReference({tools.bomb, tools.gun})
 end
 function P.felix:onKeyPressedChar(key)
 	--log(key)
-	if key == 'rshift' or key == 'lshift' or key == 'shift' then
+	--[[if key == 'rshift' or key == 'lshift' or key == 'shift' then
 		tools.felixGun:switchEffects()
 		tools.updateToolableTiles(tool)
 		return true
-	end
+	end]]
 	return false
 end
 function P.felix:onFloorEnter()
-	tools.giveTools({7,7})
+	--tools.giveTools({7,7})
 end
 
 P.most = P.character:new{name = "Ben", description = "The Explorer",
@@ -245,7 +245,7 @@ function P.frederick:onCharLoad()
 	tools.giveToolsByReference({tools.spring,tools.spring,tools.spring,tools.spring,tools.visionChanger,tools.visionChanger})
 end
 function P.frederick:onFloorEnter()
-	tools.giveToolsByReference({tools.spring})
+	--tools.giveToolsByReference({tools.spring})
 end
 
 P.battery = P.character:new{name = "Bob", tallSprite = false, description = "The Battery",

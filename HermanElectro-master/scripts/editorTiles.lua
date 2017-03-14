@@ -29,6 +29,8 @@ P.boxTiles[#P.boxTiles+1] = tiles.conductiveBoxTile
 P.boxTiles[#P.boxTiles+1] = tiles.bombBoxTile
 P.boxTiles[#P.boxTiles+1] = tiles.batteringRamTile
 P.boxTiles[#P.boxTiles+1] = tiles.lampTile
+P.boxTiles[#P.boxTiles+1] = tiles.accelerator
+P.boxTiles[#P.boxTiles+1] = tiles.unpoweredAccelerator
 
 P.basicTiles[#P.basicTiles+1] = tiles.endTile
 P.basicTiles[#P.basicTiles+1] = tiles.wall
@@ -71,7 +73,6 @@ P.advancedTiles[#P.advancedTiles+1] = tiles.unbreakableCornerWire
 P.advancedTiles[#P.advancedTiles+1] = tiles.unbreakableElectricFloor
 P.advancedTiles[#P.advancedTiles+1] = tiles.superStickyButton
 P.advancedTiles[#P.advancedTiles+1] = tiles.unbrickableStayButton
-P.advancedTiles[#P.advancedTiles+1] = tiles.unbreakableCornerWire
 P.advancedTiles[#P.advancedTiles+1] = tiles.dustyGlassWall
 P.advancedTiles[#P.advancedTiles+1] = tiles.fog
 P.advancedTiles[#P.advancedTiles+1] = tiles.accelerator

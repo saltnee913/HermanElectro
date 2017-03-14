@@ -1976,6 +1976,8 @@ function P.lube:useToolTile(tile, tileY, tileX)
 	elseif tile:instanceof(tiles.stickyButton) or tile:instanceof(tiles.button) then
 		room[tileY][tileX] = tiles.button:new()
 		room[tileY][tileX].bricked = false
+	elseif tile:instanceof(tiles.puddle) then
+		room[tileY][tileX] = nil
 	elseif not tile.destroyed then
 		tile:destroy()
 	end
@@ -2006,7 +2008,7 @@ function P.superSnowball:useToolAnimal(animal)
 	animal.frozen = true
 end
 
-P.snowballGlobal = P.snowball:new{name = "snowballGlobal", description = "Iceage", image = 'Graphics/snowballglobal.png', baseRange = 0, quality = 3}
+P.snowballGlobal = P.snowball:new{name = "Mask", description = "The demon in the mask", image = 'Graphics/Tools/mask.png', baseRange = 0, quality = 3}
 
 function P.snowballGlobal:usableOnNothing()
 	return true
@@ -4459,6 +4461,7 @@ function P.amnesiaPill:usableOnNothing()
 end
 P.amnesiaPill.usableOnTile = P.amnesiaPill.usableOnNothing
 function P.amnesiaPill:useToolNothing()
+	self.numHeld = self.numHeld-1
 	local maintainStairsLocs = stairsLocs[floorIndex-1]
 	map.loadedMaps[floorIndex]=nil
 	floorIndex = floorIndex-1
@@ -4534,6 +4537,8 @@ end
 
 P.resetTools()
 
+--Ideas: mushroom concoction (rainbow invincible mode), floor unlocker
+
 P:addTool(P.crowbar) 
 P:addTool(P.visionChanger) 
 P:addTool(P.bomb)
@@ -4555,7 +4560,7 @@ P:addTool(P.boxCutter)
 
 P:addTool(P.magnet) --Keep
 
---P:addTool(P.magnet)
+P:addTool(P.magnet)
 P:addTool(P.spring) --Fix this shit
 P:addTool(P.glue)
 --P:addTool(P.endFinder)
@@ -4565,11 +4570,11 @@ P:addTool(P.gateBreaker) --Keep
 
 P:addTool(P.ramSpawner)
 --P:addTool(P.gateBreaker)
-P:addTool(P.conductiveBoxSpawner)
+--P:addTool(P.conductiveBoxSpawner)
 P:addTool(P.superWireCutters)
 P:addTool(P.boxSpawner)
-P:addTool(P.boomboxSpawner)
---P:addTool(P.laser)
+--P:addTool(P.boomboxSpawner)
+P:addTool(P.laser)
 P:addTool(P.gas)
 P:addTool(P.superLaser)
 P:addTool(P.armageddon)
@@ -4581,6 +4586,9 @@ P:addTool(P.swapper)
 P:addTool(P.bucketOfWater)
 P:addTool(P.flame) --Keep
 P:addTool(P.toolReroller)
+
+P:addTool(P.nineLives)
+P:addTool(P.heartTransplant)
 P:addTool(P.revive) --Keep
 P:addTool(P.explosiveGun)
 P:addTool(P.buttonFlipper)
@@ -4603,15 +4611,15 @@ P:addTool(P.wireExtender)
 P:addTool(P.lamp)
 P:addTool(P.coin) --Keep
 
-P:addTool(P.mask)
+--P:addTool(P.mask)
 P:addTool(P.growthHormones)
 P:addTool(P.robotArm) --Keep
 P:addTool(P.sock)
---P:addTool(P.emptyCup)
+P:addTool(P.emptyCup)
 P:addTool(P.gasPourer)
 P:addTool(P.gasPourerXtreme)
 
-P:addTool(P.buttonPlacer)
+--P:addTool(P.buttonPlacer)
 P:addTool(P.wireToButton)--Nice
 
 --P:addTool(P.buttonPlacer)
@@ -4630,7 +4638,7 @@ P:addTool(P.inflation)--Keep
 P:addTool(P.emptyBucket)
 P:addTool(P.superWaterBottle)
 
-P:addTool(P.wallDungeonDetector)--Keep
+--P:addTool(P.wallDungeonDetector)--Keep
 
 --P:addTool(P.wallDungeonDetector)
 
@@ -4638,7 +4646,7 @@ P:addTool(P.towel)
 P:addTool(P.playerCloner)
 P:addTool(P.playerBoxSpawner)
 P:addTool(P.bombBoxSpawner)
-P:addTool(P.jackInTheBoxSpawner)
+--P:addTool(P.jackInTheBoxSpawner)
 P:addTool(P.salt)--So bad it's good
 P:addTool(P.shell)
 P:addTool(P.shift) --Lets talk about this one
@@ -4654,10 +4662,10 @@ P:addTool(P.stealthBomber)
 P:addTool(P.icegun) --Cooler than laser 
 P:addTool(P.seeds)
 P:addTool(P.supertoolDoubler) -- Ehhh lets talk
-P:addTool(P.coffee) --No idea what this does
+--P:addTool(P.coffee) --No idea what this does
 P:addTool(P.boxDisplacer)
 P:addTool(P.boxCloner)
-P:addTool(P.tilePusher)
+--P:addTool(P.tilePusher)
 P:addTool(P.portalPlacerDouble)
 --P:addTool(P.spinningSword)
 P:addTool(P.ironMan)
@@ -4672,7 +4680,7 @@ P:addTool(P.woodenRain)
 --P:addTool(P.tempUpgrade)
 --P:addTool(P.permaUpgrade)
 P:addTool(P.christmasSurprise)
-P:addTool(P.ironWoman)
+--P:addTool(P.ironWoman)
 P:addTool(P.wallReroller)
 P:addTool(P.beggarReroller) --Strong keep
 P:addTool(P.xrayVision)
@@ -4682,7 +4690,7 @@ P:addTool(P.compass)
 --P:addTool(P.santasHat)
 P:addTool(P.luckySaw)
 P:addTool(P.luckyBrick)
-P:addTool(P.luckyCharm)
+--P:addTool(P.luckyCharm)
 P:addTool(P.trader)
 P:addTool(P.tileFlipper)
 P:addTool(P.animalReroller)
@@ -4705,11 +4713,11 @@ P:addTool(P.shittyPotion)
 P:addTool(P.recycleBin)
 P:addTool(P.iceBox)
 
-P:addTool(P.nineLives)
+
 P:addTool(P.deckOfCards)
 P:addTool(P.card)
 P:addTool(P.amnesiaPill)
-P:addTool(P.heartTransplant)
+
 P:addTool(P.shield)
 
 P.resetTools()

@@ -525,7 +525,7 @@ function goToMainMenu()
 	editorMode = false
 	myShader:send("b_and_w", false)
 	loadOpeningWorld()
-	emptyTools()
+	resetPlayer()
 	gamePaused = false
 	won = false
 	player.dead = false
@@ -538,6 +538,17 @@ function emptyTools()
 		tools[i].numHeld = 0
 		tools[i]:resetTool()
 	end
+	updateTools()
+end
+
+function resetPlayer()
+	emptyTools()
+	player.attributes.flying = false
+	player.attributes.fear = false
+	player.attributes.sockStep = -1
+	player.attributes.shelled = false
+	player.attributes.invisible = false
+	player.attributes.fast = {fast = false, fastStep = false}
 end
 
 function loadRandoms()
@@ -724,8 +735,7 @@ function startGame()
 	stats.resetTempStats()
 	local seed = loadRandoms()
 	if not saving.isPlayingBack() then
-		stats.runNumber = stats.runNumber + 1
-		stats.writeStats()
+		stats.incrementStat('runNumber')
 	end
 	saving.createNewRecording(seed)
 	loadTutorial = false
@@ -912,17 +922,21 @@ function kill()
 			return
 		end
 	end
-	stats.losses[player.character.name] = stats.losses[player.character.name]+1
-	stats.writeStats()
-	myShader:send("b_and_w", true)
 	if not loadTutorial then --hacky hack fix
 		completedRooms[mapy][mapx] = 0 --to stop itemsNeeded tracking, it's a hack!
 	end
+	stats.incrementStat(player.character.name..'Losses')
+	stats.incrementStat('totalLosses')
+	myShader:send("b_and_w", true)
+	
 	saving.endRecording()
 end
 
 function win()
 	if not won then
+		if loadTutorial then
+			unlocks.unlockUnlockableRef(unlocks.franciscoUnlock, true)
+		end
 		for i = 1, #unlocks.winUnlocks do
 			if unlocks.winUnlocks[i].unlocked == false then
 				unlocks.unlockUnlockableRef(unlocks.winUnlocks[i])
@@ -945,9 +959,13 @@ function win()
 		if gabeUnlock then
 			unlocks.unlockUnlockableRef(unlocks.gabeUnlock)
 		end
+		
 		won = true
-		stats.wins[player.character.name] = stats.wins[player.character.name]+1
-		stats.writeStats()
+		stats.incrementStat(player.character.name..'Wins')
+		stats.incrementStat('totalWins')
+		if player.character.name=="Herman" then
+			unlocks.unlockUnlockableRef(unlocks.boxesUnlock, true)
+		end
 	end
 end
 
@@ -1660,8 +1678,8 @@ function love.draw()
 			love.graphics.draw(charsToDraw[i].sprite, width/5*column-width/10-10, height/3*(row-1)+height/6+20, 0, charsToDraw[i].scale, charsToDraw[i].scale)
 			love.graphics.print(charsToDraw[i].name, width/5*column-width/10-10, height/3*(row-1)+height/6-100)
 			love.graphics.print(charsToDraw[i].description, width/5*column-width/10-10, height/3*(row-1)+height/6-80)
-			love.graphics.print("Wins: "..stats.wins[charsToDraw[i].name], width/5*column-width/10-10, height/3*(row-1)+height/6-60)
-			love.graphics.print("Losses: "..stats.losses[charsToDraw[i].name], width/5*column-width/10-10, height/3*(row-1)+height/6-40)
+			love.graphics.print("Wins: "..stats.getStat[charsToDraw[i].name..'Wins'], width/5*column-width/10-10, height/3*(row-1)+height/6-60)
+			love.graphics.print("Losses: "..stats.getStat[charsToDraw[i].name..'Losses'], width/5*column-width/10-10, height/3*(row-1)+height/6-40)
 		end
 
 		return
@@ -3399,7 +3417,7 @@ function postAnimalMovement()
 
 	for i = 1, #animals do
 		for j = 1, #pushables do
-			if animals[i].tileX == pushables[j].tileX and animals[i].tileY == pushables[j].tileY then
+			if (not pushables[j].destroyed) and animals[i].tileX == pushables[j].tileX and animals[i].tileY == pushables[j].tileY then
 				animals[i]:kill()
 			end
 		end
@@ -3444,6 +3462,7 @@ function resolveConflicts()
 		if firstRun then
 			for i = 1, #animals do
 				if animals[i].tileX==animals[i].prevTileX and animals[i].tileY==animals[i].prevTileY then
+					animals[i]:checkDeath()
 					tryMove = true
 					if animals[i].dead or not animals[i].triggered then
 						tryMove = false

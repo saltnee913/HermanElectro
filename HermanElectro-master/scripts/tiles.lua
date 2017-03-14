@@ -1247,8 +1247,7 @@ function P.pit:willKillPlayer()
 	return not self.laddered
 end
 function P.pit:destroyPushable()
-	self.sprite = self.destroyedSprite
-	self.laddered = true
+	self:ladder()
 end
 P.pit.willKillAnimal = P.pit.willKillPlayer
 P.pit.willDestroyPushable = P.pit.willKillPlayer
@@ -1396,10 +1395,6 @@ end
 function P.bomb:explode(x,y)
 	if not editorMode and math.abs(player.tileY-x)<2 and math.abs(player.tileX-y)<2 then 
 		kill()
-		if self.name == P.bomb.name then
-			unlocks = require('scripts.unlocks')
-			unlocks.unlockUnlockableRef(unlocks.frederickUnlock)
-		end
 	end
 	util.createHarmlessExplosion(x,y)
 end
@@ -2420,6 +2415,7 @@ end
 
 P.dungeonEnter = P.tile:new{name = "dungeonEnter"}
 function P.dungeonEnter:onEnter()
+	unlocks.unlockUnlockableRef(unlocks.rammyUnlock, true)
 	player.regularMapLoc = {x = mapx, y = mapy}
 	mapx = 1
 	mapy = mapHeight+1
@@ -2440,6 +2436,7 @@ function P.dungeonEnter:onEnter()
 	player.prevTileX = player.tileX
 	player.prevTileY = player.tileY
 	player.justTeleported = true
+
 end
 P.dungeonExit = P.tile:new{name = "dungeonExit"}
 function P.dungeonExit:onEnter()
@@ -2576,6 +2573,7 @@ end
 
 P.gameWin = P.tile:new{name = "gameWin"}
 function P.gameWin:onEnter()
+	
 	win()
 end
 
@@ -2792,8 +2790,8 @@ function P.playerTile:getCharInfo()
 	if self.character==nil then return end
 	local infoText = ""
 	infoText = infoText..self.character.name..", "..self.character.description.."\n"
-	infoText = infoText.."Wins: "..stats.wins[self.character.name].."\n"
-	infoText = infoText.."Losses: "..stats.losses[self.character.name]
+	infoText = infoText.."Wins: "..stats.getStat(self.character.name..'Wins').."\n"
+	infoText = infoText.."Losses: "..stats.getStat(self.character.name..'Losses')
 	return infoText
 end
 
