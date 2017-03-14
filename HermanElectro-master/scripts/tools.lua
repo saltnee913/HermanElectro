@@ -4587,6 +4587,7 @@ P:addTool(P.magnet) --Keep
 P:addTool(P.magnet)
 P:addTool(P.spring) --Fix this shit
 P:addTool(P.glue)
+P:addTool(P.trap)
 --P:addTool(P.endFinder)
 P:addTool(P.map)
 P:addTool(P.ramSpawner) --Keep

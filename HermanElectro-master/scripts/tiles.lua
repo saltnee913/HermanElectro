@@ -1328,6 +1328,11 @@ end
 
 P.mousetrap = P.conductiveTile:new{name = "mousetrap", bricked = false, formerPowered = nil, triggered = false, safe = false, sprite = 'Graphics/mousetrap.png', safeSprite = 'Graphics/mousetrapsafe.png', deadlySprite = 'Graphics/mousetrap.png', brickedSprite = 'Graphics/mousetrapbricked.png'}
 function P.mousetrap:onEnter()
+	--make sure not box
+	if room[player.tileY][player.tileX]==self then
+		unlocks.unlockUnlockableRef(unlocks.trapUnlock)
+	end
+
 	if self.bricked then return end
 	if not self.safe then
 		self.triggered = true
