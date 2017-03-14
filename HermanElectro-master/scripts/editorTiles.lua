@@ -100,6 +100,7 @@ P.advancedTiles[#P.advancedTiles+1] = tiles.openDungeon
 P.advancedTiles[#P.advancedTiles+1] = tiles.spotlightTile
 P.advancedTiles[#P.advancedTiles+1] = tiles.slowSpotlightTile
 P.advancedTiles[#P.advancedTiles+1] = tiles.fastSpotlightTile
+P.advancedTiles[#P.advancedTiles+1] = tiles.mousetrap
 
 P.shopTiles[#P.shopTiles+1] = tiles.toolTaxTile
 P.shopTiles[#P.shopTiles+1] = tiles.toolTile

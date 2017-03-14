@@ -867,7 +867,7 @@ function loadLevel(floorPath)
 					for j2 = 1, mainMap[i][j].room.length do
 						if mainMap[i][j].room[i2][j2]~=nil and mainMap[i][j].room[i2][j2].name == tiles.boxTile.name then
 							local rand = util.random(100, 'mapGen')
-							if rand<1+getLuckBonus() then
+							if rand<=1+getLuckBonus() then
 								mainMap[i][j].room[i2][j2] = tiles.giftBoxTile:new()
 							end
 						end
@@ -911,9 +911,9 @@ end
 
 function kill()
 	if editorMode or globalDeathBlock or floorIndex<1 then return end
-	if validSpace() and completedRooms[mapy][mapx]>0 then
+	--[[if validSpace() and completedRooms[mapy][mapx]>0 then
 		unlocks.unlockUnlockableRef(unlocks.portalUnlock)
-	end
+	end]]
 	player.dead = true
 	for i = 1, #specialTools do
 		if tools[specialTools[i]]~=nil and tools[specialTools[i]].numHeld>0 and not tools[specialTools[i]]:checkDeath() then
@@ -963,9 +963,9 @@ function win()
 		won = true
 		stats.incrementStat(player.character.name..'Wins')
 		stats.incrementStat('totalWins')
-		if player.character.name=="Herman" then
+		--[[if player.character.name=="Herman" then
 			unlocks.unlockUnlockableRef(unlocks.boxesUnlock, true)
-		end
+		end]]
 	end
 end
 
@@ -3807,6 +3807,27 @@ function checkAllDeath()
 end
 
 function updateTools()
+	local maxSpread = tools[1].numHeld
+	local balancedBasics = true
+	for i = 1, tools.numNormalTools do
+		if tools[i].numHeld<maxSpread then
+			maxSpread = tools[i].numHeld
+		end
+		if tools[i].numHeld~=maxSpread then
+			balancedBasics = false
+		end
+	end
+
+	if maxSpread>0 and balancedBasics then
+		unlocks.unlockUnlockableRef(unlocks.toolIncrementerUnlock)
+	end
+	if maxSpread>=2 then
+		unlocks.unlockUnlockableRef(unlocks.toolRerollerUnlock)
+	end
+	if maxSpread>=3 then
+		unlocks.unlockUnlockableRef(unlocks.superToolUnlock)
+	end
+
 	for i = 1, 3 do
 		if specialTools[i]~=0 and tools[specialTools[i]].numHeld==0 then
 			specialTools[3]=0
@@ -3824,9 +3845,9 @@ function updateTools()
 		end
 	end
 
-	if tools.waterBottle.numHeld>=10 then
+	--[[if tools.waterBottle.numHeld>=10 then
 		unlocks.unlockUnlockableRef(unlocks.fishUnlock)
-	end
+	end]]
 
 end
 

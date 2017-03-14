@@ -67,9 +67,9 @@ function P.giveTools(toolArray)
 			toolsToDisp[#toolsToDisp+1] = toolArray[i]
 		end
 	end
-	if tools.revive.numHeld>=9 then
+	--[[if tools.revive.numHeld>=9 then
 		unlocks.unlockUnlockableRef(unlocks.suicideKingUnlock)
-	end
+	end]]
 	P.displayTools(toolsToDisp)
 	updateTools()
 end
@@ -542,7 +542,16 @@ function P.wireCutters:useToolTile(tile)
 	if tile:instanceof(tiles.conductiveGlass) or tile:instanceof(tiles.reinforcedConductiveGlass) then tile.canBePowered = false
 	elseif (tile.overlay~=nil and self:usableOnNonOverlay(tile.overlay)) then
 		tile.overlay:destroy()
-	else tile:destroy() end
+		if tile.overlay:instanceof(tiles.crossWire) then
+			unlocks.unlockUnlockableRef(unlocks.cornerRotaterUnlock)
+		end
+	else
+		tile:destroy()
+		if tile:instanceof(tiles.crossWire) then
+			unlocks.unlockUnlockableRef(unlocks.cornerRotaterUnlock)
+		end
+	end
+
 end
 function P.wireCutters:useToolPushable(pushable)
 	pushable.conductive = false
@@ -616,15 +625,15 @@ function P.brick:useToolTile(tile)
 		tile:destroy()
 	else
 		tile:lockInState(true)
-		unlocks:unlockUnlockableRef(unlocks.stayButtonUnlock)
+		--unlocks:unlockUnlockableRef(unlocks.stayButtonUnlock)
 	end
 end
 function P.brick:useToolAnimal(animal)
 	self.numHeld = self.numHeld-1
 	animal.waitCounter = animal.waitCounter+1
-	if animal.waitCounter>=3 then
+	--[[if animal.waitCounter>=3 then
 		unlocks.unlockUnlockableRef(unlocks.catUnlock)
-	end
+	end]]
 end
 
 P.gun = P.tool:new{name = 'gun', baseRange = 3, image = 'Graphics/Tools/gun.png'}
@@ -644,7 +653,7 @@ end
 function P.gun:useToolTile(tile)
 	self.numHeld = self.numHeld-1
 	if tile:instanceof(tiles.beggar) then
-		unlocks.unlockUnlockableRef(unlocks.beggarPartyUnlock)
+		--unlocks.unlockUnlockableRef(unlocks.beggarPartyUnlock)
 		tile:destroy()
 	else
 		tile:allowVision()
@@ -675,8 +684,8 @@ function P.sponge:useToolTile(tile, tileY, tileX)
 		tile.blocksVision = false
 		tile.sprite = tile.cleanSprite
 	elseif tile:instanceof(tiles.puddle) then
-		unlocks = require('scripts.unlocks')
-		unlocks.unlockUnlockableRef(unlocks.puddleUnlock)
+		--unlocks = require('scripts.unlocks')
+		--unlocks.unlockUnlockableRef(unlocks.puddleUnlock)
 		room[tileY][tileX] = nil
 	elseif tile:instanceof(tiles.stickyButton) or tile:instanceof(tiles.button) then
 		if tile:instanceof(tiles.stayButton) then
@@ -853,6 +862,14 @@ function P.visionChanger:usableOnTile(tile)
 end
 P.visionChanger.usableOnNothing = P.visionChanger.usableOnTile
 function P.visionChanger:useToolTile(tile)
+	local prevLitTiles = {}
+	for i = 1, roomHeight do
+		prevLitTiles[i] = {}
+		for j = 1, roomLength do
+			prevLitTiles[i][j] = litTiles[i][j]
+		end
+	end
+
 	self.numHeld = self.numHeld-1
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
@@ -860,6 +877,13 @@ function P.visionChanger:useToolTile(tile)
 				room[i][j]:allowVision()
 				litTiles[i][j]=1
 			end
+		end
+	end
+
+	for i = 1, #animals do
+		if litTiles[animals[i].tileY][animals[i].tileX]==1 and
+		prevLitTiles[animals[i].tileY][animals[i].tileX]~=1 and not animals[i].triggered then
+			unlocks.unlockUnlockableRef(unlocks.ratUnlock)
 		end
 	end
 end
@@ -1365,11 +1389,15 @@ function P.laser:usableOnTile()
 end
 P.laser.usableOnNothing = P.laser.usableOnTile
 local function killDogs(tileY, tileX)
+	local dogsKilled = 0
 	if tileX == player.tileX then
 		for i = 1, #animals do
 			if animals[i].tileX == player.tileX then
 				if (tileY > player.tileY and animals[i].tileY > player.tileY) or
-				  (tileY < player.tileY and animals[i].tileY < player.tileY) then 
+				  (tileY < player.tileY and animals[i].tileY < player.tileY) then
+				  	if not animals[i].dead then
+				  		dogsKilled = dogsKilled+1
+				  	end
 					animals[i]:kill()
 				end
 			end
@@ -1379,10 +1407,17 @@ local function killDogs(tileY, tileX)
 			if animals[i].tileY == player.tileY then
 				if (tileX >= player.tileX and animals[i].tileX >= player.tileX) or
 				  (tileX < player.tileX and animals[i].tileX < player.tileX) then
+					if not animals[i].dead then
+				  		dogsKilled = dogsKilled+1
+				  	end
 					animals[i]:kill()
 				end
 			end
 		end
+	end
+
+	if dogsKilled>=3 then
+		unlocks.unlockUnlockableRef(unlocks.superLaserUnlock)
 	end
 end
 function P.laser:useToolTile(tile, tileY, tileX)
@@ -1815,7 +1850,7 @@ P.explosiveGun = P.gun:new{name = "explosiveGun", description = "Boom Boom", bas
 function P.explosiveGun:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld-1
 	if tile:instanceof(tiles.beggar) then
-		unlocks.unlockUnlockableRef(unlocks.beggarPartyUnlock)
+		--unlocks.unlockUnlockableRef(unlocks.beggarPartyUnlock)
 		tile:destroy()
 	else
 		tile:allowVision()
@@ -3401,7 +3436,7 @@ P.superGun.usableOnAnimal = P.gun.usableOnAnimal
 function P.superGun:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld-1
 	if tile:instanceof(tiles.beggar) then
-		unlocks.unlockUnlockableRef(unlocks.beggarPartyUnlock)
+		--unlocks.unlockUnlockableRef(unlocks.beggarPartyUnlock)
 		tile:destroy()
 	else
 		tile:allowVision()
@@ -4563,6 +4598,7 @@ P:addTool(P.magnet) --Keep
 P:addTool(P.magnet)
 P:addTool(P.spring) --Fix this shit
 P:addTool(P.glue)
+P:addTool(P.trap)
 --P:addTool(P.endFinder)
 P:addTool(P.map)
 P:addTool(P.ramSpawner) --Keep

@@ -158,6 +158,7 @@ P.untoolableButtons = P.tileUnlock:new{name = 'untoolable buttons', tileIds = {1
 P.mousetrapUnlock = P.tileUnlock:new{name = 'mousetraps', tileIds = {38,52}, sprite = tiles.mousetrap.sprite}
 P.breakablePitUnlock = P.tileUnlock:new{name = 'watch where you step', tileIds = {33}, sprite = tiles.breakablePit.sprite}
 P.catUnlock = P.tileUnlock:new{name = 'meow', tileIds = {23}, sprite = animalList.cat.sprite}
+P.ratUnlock = P.tileUnlock:new{name = 'eek', tileIds = {196}, sprite = animalList.rat.sprite}
 P.spikesUnlock = P.tileUnlock:new{name = 'pointy', tileIds = {28}, sprite = tiles.spikes.sprite}
 P.poweredEndUnlock = P.tileUnlock:new{name = 'powered end tiles', tileIds = {37}, sprite = tiles.poweredEnd.sprite}
 P.snailsUnlock = P.tileUnlock:new{name = 'snails!', tileIds = {43,45}, sprite = animalList.snail.sprite}
@@ -176,10 +177,15 @@ P.directionGatesUnlock = P.tileUnlock:new{name = "erik's shitty direction gates"
 P.stickyButtonUnlock = P.tileUnlock:new{name = "sticky buttons", tileIds = {9}, sprite = tiles.stickyButton.sprite}
 P.stayButtonUnlock = P.tileUnlock:new{name = "stay buttons", tileIds = {10}, sprite = tiles.stayButton.sprite}
 P.doorUnlock = P.tileUnlock:new{name = "door unlock", tileIds = {18}, sprite = tiles.hDoor.sprite}
+--we spelled rotator wrong
+P.cornerRotaterUnlock = P.tileUnlock:new{name = "corner rotators", tileIds = {116}, sprite = tiles.cornerRotater.sprite}
+
 --unlocks to prevent tiles from appearing
 P.lockedTiles = P.tileUnlock:new{name = 'permanentlyLockedTiles', tileIds = {103,104,105,106,107,108,109,110,111,112,113},hidden = true}
 
 P.toolUnlock = P.unlock:new{name = 'tool', toolIds = {}, sprite = tools.saw.image}
+P.glueUnlock = P.unlock:new{name = 'glue', toolIds = {tools.glue}, sprite = tools.glue.image}
+P.trapUnlock = P.unlock:new{name = 'trap queen', toolIds = {tools.trap}, sprite = tools.trap.image}
 P.missileUnlock = P.unlock:new{name = 'missile', toolIds = {tools.missile}, sprite = tools.missile.image}
 P.toolDoublerUnlock = P.unlock:new{name = 'tool doubler', toolIds = {tools.toolDoubler}, sprite = tools.toolDoubler.image}
 P.reviveUnlock = P.unlock:new{name = 'revived!', toolIds = {tools.revive}, sprite = tools.revive.image}
@@ -188,6 +194,13 @@ P.buttonFlipperUnlock = P.unlock:new{name = 'button flipper', toolIds = {tools.b
 P.superGunUnlock = P.unlock:new{name = "super gun!", toolIds = {tools.superGun}, sprite = tools.superGun.image}
 P.suicideKingUnlock = P.unlock:new{name = "use with caution", toolIds = {tools.suicideKing}, sprite = tools.suicideKing.image}
 P.screwdriverUnlock = P.unlock:new{name = "screwdriver", toolIds = {tools.screwdriver}, sprite = tools.screwdriver.image}
+P.toolIncrementerUnlock = P.unlock:new{name = "toolbox", toolIds = {tools.toolIncrementer}, sprite = tools.toolIncrementer.image}
+P.toolRerollerUnlock = P.unlock:new{name = "Tool Reroller", toolIds = {tools.toolReroller}, sprite = tools.toolReroller.image}
+P.superToolUnlock = P.unlock:new{name = "Super Supertools", toolIds = {tools.superSaw, tools.longLadder,
+tools.superWireCutters, tools.superWaterBottle, tools.superSponge, tools.superBrick, tools.superGun},
+sprite = tools.superSaw.image}
+P.laptopUnlock = P.unlock:new{name = "Laptop", toolIds = {tools.laptop}, sprite = tools.laptop.image}
+P.superLaserUnlock = P.unlock:new{name = "Super Laser", toolIds = {tools.superLaser}, sprite = tools.superLaser.image}
 
 P.roomUnlock = P.unlock:new{name = 'room', roomIds = {"1"}}
 P.beggarPartyUnlock = P.roomUnlock:new{name = 'beggars love you', roomIds = {"beggar_party"}, sprite = tiles.beggar.sprite}
@@ -227,7 +240,11 @@ P[#P+1] = P.unbreakableEfloorUnlock --done
 P[#P+1] = P.untoolableButtons
 P[#P+1] = P.mousetrapUnlock --done
 P[#P+1] = P.breakablePitUnlock --done
+P[#P+1] = P.cornerRotaterUnlock
+
 P[#P+1] = P.catUnlock --done
+P[#P+1] = P.ratUnlock
+
 P[#P+1] = P.spikesUnlock
 P[#P+1] = P.poweredEndUnlock --done
 P[#P+1] = P.snailsUnlock --done
@@ -256,6 +273,13 @@ P[#P+1] = P.buttonFlipperUnlock --done
 P[#P+1] = P.superGunUnlock
 P[#P+1] = P.suicideKingUnlock --done
 P[#P+1] = P.screwdriverUnlock
+P[#P+1] = P.glueUnlock
+P[#P+1] = P.trapUnlock
+P[#P+1] = P.superToolUnlock
+P[#P+1] = P.toolIncrementerUnlock
+P[#P+1] = P.toolRerollerUnlock
+P[#P+1] = P.laptopUnlock
+P[#P+1] = P.superLaserUnlock
 
 --rooms
 P[#P+1] = P.beggarPartyUnlock --done

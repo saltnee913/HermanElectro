@@ -4,6 +4,16 @@ unlocks = require('scripts.unlocks')
 local P = {}
 characters = P
 
+function P.getUnlockedCharacters()
+	local unlockedChars = {}
+	for i = 1, #characters do
+		if P.isCharacterUnlocked(characters[i].name) then
+			unlockedChars[#unlockedChars+1] = characters[i]
+		end
+	end
+	return unlockedChars
+end
+
 function P.getUnlockedCharacter(charName)
 	for i = 1, #characters do
 		if characters[i].name == charName then
