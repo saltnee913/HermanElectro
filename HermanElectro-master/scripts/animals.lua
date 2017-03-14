@@ -51,6 +51,9 @@ function P.animal:moveOverride(movex, movey)
 	return {x = movex, y = movey}
 end
 function P.animal:primaryMove(playerx, playery)
+	if player.attributes.shelled or player.attributes.invisible then
+		return
+	end
 	local diffx = math.abs(playerx - self.tileX)
 	local diffy = math.abs(playery - self.tileY)
 
@@ -97,6 +100,9 @@ function P.animal:pushableCheck()
 end
 
 function P.animal:secondaryMove(playerx, playery)
+	if player.attributes.shelled or player.attributes.invisible then
+		return
+	end
 	if player.character.name == "Leonard" and player.character.scaryMode == true then
 		self:afraidSecondaryMove(playerx, playery)
 		return
@@ -198,6 +204,9 @@ end
 function P.animal:explode()
 end
 function P.animal:afraidPrimaryMove(playerx, playery, room, isLit)
+	if player.attributes.shelled or player.attributes.invisible then
+		return
+	end
 	local diffCatx = math.abs(playerx - self.tileX)
 	local diffCaty = math.abs(playery - self.tileY)
 
@@ -283,6 +292,9 @@ function P.animal:tryMove(diffx, diffy)
 end
 
 function P.animal:afraidSecondaryMove(playerx, playery)
+	if player.attributes.shelled or player.attributes.invisible then
+		return
+	end
 	local diffx = math.abs(playerx - self.tileX)
 	local diffy = math.abs(playery - self.tileY)
 
