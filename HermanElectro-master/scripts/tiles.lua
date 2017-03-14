@@ -2573,6 +2573,7 @@ end
 
 P.gameWin = P.tile:new{name = "gameWin"}
 function P.gameWin:onEnter()
+	
 	win()
 end
 

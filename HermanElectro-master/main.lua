@@ -959,9 +959,13 @@ function win()
 		if gabeUnlock then
 			unlocks.unlockUnlockableRef(unlocks.gabeUnlock)
 		end
+		
 		won = true
 		stats.incrementStat(player.character.name..'Wins')
 		stats.incrementStat('totalWins')
+		if player.character.name=="Herman" then
+			unlocks.unlockUnlockableRef(unlocks.boxesUnlock, true)
+		end
 	end
 end
 
