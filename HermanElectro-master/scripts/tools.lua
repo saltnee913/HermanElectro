@@ -1976,6 +1976,8 @@ function P.lube:useToolTile(tile, tileY, tileX)
 	elseif tile:instanceof(tiles.stickyButton) or tile:instanceof(tiles.button) then
 		room[tileY][tileX] = tiles.button:new()
 		room[tileY][tileX].bricked = false
+	elseif tile:instanceof(tiles.puddle) then
+		room[tileY][tileX] = nil
 	elseif not tile.destroyed then
 		tile:destroy()
 	end
