@@ -572,6 +572,8 @@ function loadRandoms()
 end
 
 function goDownFloor()
+	saveElements()
+
 	stairsLocs[floorIndex] = {map = {x = mapx, y = mapy}, coords = {x = player.tileX, y = player.tileY}}
 	if map.loadedMaps[floorIndex+1] == nil then
 		loadNextLevel()
@@ -605,6 +607,8 @@ function goDownFloor()
 end
 
 function goUpFloor()
+	saveElements()
+
 	stairsLocs[floorIndex] = {map = {x = mapx, y = mapy}, coords = {x = player.tileX, y = player.tileY}}
 	if floorIndex == 2 then
 		goToMainMenu()
@@ -637,6 +641,8 @@ function goUpFloor()
 	postFloorChange()
 end
 function goToFloor(floorNum)
+	saveElements()
+
 	local stairsLocsIndex = floorIndex
 	if floorIndex==1 then
 		stairsLocsIndex = 8
@@ -2613,6 +2619,12 @@ function getLuckBonus()
 	return luckBonus
 end
 
+function saveElements()
+	room.pushables = pushables
+	room.animals = animals
+	room.spotlights = spotlights
+end
+
 function enterRoom(dir)
 	if not tools.shrooms.active then
 		turnOffMushroomMode()
@@ -2622,10 +2634,9 @@ function enterRoom(dir)
 	log("")
 	resetTranslation()
 	resetPlayerAttributesRoom()
+
 	--set pushables of prev. room to pushables array, saving for next entry
-	room.pushables = pushables
-	room.animals = animals
-	room.spotlights = spotlights
+	saveElements()
 
 	local plusOne = true
 
