@@ -2747,6 +2747,12 @@ function postRoomEnter()
 		tools.tileSwapper.toSwapCoords = nil
 		tools.tileSwapper.image = tools.tileSwapper.baseImage
 	end
+	if tools.playerCloner.cloneExists then
+		tools.playerCloner.cloneExists = false
+		player.clonePos = {x = 0, y = 0, z = 0}
+		tools.playerCloner.image = tools.playerCloner.imageNoClone
+	end
+
 	if player.attributes.gifted then
 		for i = 1, #pushables do
 			if pushables[i].name == "box" then
