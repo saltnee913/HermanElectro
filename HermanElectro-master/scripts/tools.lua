@@ -4423,6 +4423,13 @@ function P.nineLives:checkDeath()
 			animals[i]:kill()
 		end
 	end
+
+	for i = 1, #spotlights do
+		if spotlights[i]:onPlayer() then
+			spotlights[i].active = false
+		end
+	end
+
 	self:updateSprite()
 	return false
 end
@@ -4529,6 +4536,13 @@ function P.heartTransplant:checkDeath()
 			animals[i]:kill()
 		end
 	end
+
+	for i = 1, #spotlights do
+		if spotlights[i]:onPlayer() then
+			spotlights[i].active = false
+		end
+	end
+	
 	return false
 end
 

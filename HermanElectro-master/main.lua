@@ -2109,8 +2109,9 @@ function love.draw()
 
 			end
 		end]]
-
-		love.graphics.draw(sl.sprite, sl.x, sl.y-6*scale, 0, scale, yScale)
+		if sl.active then
+			love.graphics.draw(sl.sprite, sl.x, sl.y-6*scale, 0, scale, yScale)
+		end
 	end
 
 	love.graphics.setShader()
@@ -3640,17 +3641,8 @@ function checkDeathSpotlights(dt)
 	end
 
 	for i = 1, #spotlights do
-		local sx = spotlights[i].x+tileUnit/2*scale
-		local sy = spotlights[i].y+tileUnit/2*scale
-		local playerx = tileToCoords(player.tileY, player.tileX).x+tileUnit/2*scale
-		local playery = tileToCoords(player.tileY, player.tileX).y+tileUnit/2*scale
-		local playery2 = tileToCoords(player.tileY-1, player.tileX).y+tileUnit/2*scale --for tall players
-		local radius = tileUnit/2*scale
-		local spotDist = math.sqrt((sx-playerx)*(sx-playerx)+(sy-playery)*(sy-playery))
-		local spotDist2 = math.sqrt((sx-playerx)*(sx-playerx)+(sy-playery2)*(sy-playery2))
-		if spotDist<radius --[[or (player.character.tallSprite and spotDist2 < radius)]] then
+		if spotlights[i].active and spotlights[i]:onPlayer() then
 			kill('spotlight')
-			return
 		end
 	end
 end
