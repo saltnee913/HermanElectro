@@ -1194,7 +1194,7 @@ function P.generateSixthFloor()
 		--choose a room slot
 		local choice = util.chooseRandomElement(available, 'mapGen')
 		--if final room
-		if numRooms-#usedRooms == 4 then
+		if numRooms-#usedRooms == 1 then
 			local max = {x = choice.x, y = choice.y}
 			for i = 1, #available do
 				if math.abs(available[i].x-math.floor(height/2))+math.abs(available[i].y-math.floor(height/2))>
