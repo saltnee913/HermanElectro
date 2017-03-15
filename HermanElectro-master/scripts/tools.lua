@@ -2182,13 +2182,19 @@ function P.donationCracker:useToolTile()
 	donations = 0
 end
 
-P.wireExtender = P.superTool:new{name = "wireExtender", description = "Longer is better", image = 'Graphics/wireextender.png', quality = 1}
+P.wireExtender = P.superTool:new{name = "Extension Cord", description = "Longer is better", image = 'Graphics/wireextender.png', quality = 1, baseRange = 1}
 function P.wireExtender:usableOnTile(tile)
 	return tile:instanceof(tiles.wire)
 end
 function P.wireExtender:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld-1
-	room[tileY][tileX] = tiles.wire:new()
+	if room[tileY][tileX]:instanceof(tiles.unbreakableWire) then
+		room[tileY][tileX] = tiles.unbreakableWire:new()
+	elseif tile:instanceof(tiles.crossWire) then
+		--do nothing
+	else
+		room[tileY][tileX] = tiles.wire:new()
+	end
 end
 
 P.coin = P.superTool:new{name = "Coin", description = "All costs must be payed", image = 'Graphics/Tools/coin.png', range = 1, quality = 1}
@@ -4604,6 +4610,12 @@ function P.shrooms:updateSprite()
 	end
 end
 
+P.ammoPack = P.superTool:new{name = "Ammo Pack", description = "Reset, reload, recover", quality = 3,
+image = 'Graphics/Tools/gun.png'}
+function P.ammoPack:giveOne()
+	tools.gun.numHeld = tools.gun.numHeld+3
+end
+
 P.numNormalTools = 7
 P.lastToolUsed = 1
 
@@ -4819,6 +4831,7 @@ P:addTool(P.amnesiaPill)
 
 P:addTool(P.shield)
 P:addTool(P.shrooms)
+P:addTool(P.ammoPack)
 
 P.resetTools()
 -- Make a tool based cursor
