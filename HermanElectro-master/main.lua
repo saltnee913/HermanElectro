@@ -915,14 +915,14 @@ function loadLevel(floorPath)
 	end
 end
 
-function kill()
+function kill(deathSource)
 	if editorMode or globalDeathBlock or floorIndex<1 then return end
 	--[[if validSpace() and completedRooms[mapy][mapx]>0 then
 		unlocks.unlockUnlockableRef(unlocks.portalUnlock)
 	end]]
 	player.dead = true
 	for i = 1, #specialTools do
-		if tools[specialTools[i]]~=nil and tools[specialTools[i]].numHeld>0 and not tools[specialTools[i]]:checkDeath() then
+		if tools[specialTools[i]]~=nil and tools[specialTools[i]].numHeld>0 and not tools[specialTools[i]]:checkDeath(deathSource) then
 			player.dead = false
 			onToolUse(specialTools[i])
 			return
@@ -3598,7 +3598,7 @@ function checkDeathSpotlights(dt)
 		local spotDist = math.sqrt((sx-playerx)*(sx-playerx)+(sy-playery)*(sy-playery))
 		local spotDist2 = math.sqrt((sx-playerx)*(sx-playerx)+(sy-playery2)*(sy-playery2))
 		if spotDist<radius --[[or (player.character.tallSprite and spotDist2 < radius)]] then
-			kill()
+			kill('spotlight')
 			return
 		end
 	end
