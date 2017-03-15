@@ -1925,7 +1925,7 @@ function P.untriggeredPowerSupplyTimer:destroy()
 	self.dirAccept = {0,0,0,0}
 end
 
-P.reinforcedGlass = P.concreteWall:new{name = "reinforcedGlass", blocksVision = false, sprite = 'Graphics3D/reinforcedglass.png', poweredSprite = 'Graphics3D/reinforcedglass.png'}
+P.reinforcedGlass = P.concreteWall:new{name = "reinforcedGlass", cracked = false, blocksVision = false, sprite = 'Graphics3D/reinforcedglass.png', poweredSprite = 'Graphics3D/reinforcedglass.png'}
 
 P.powerTriggeredBomb = P.unactivatedBomb:new{name = "powerTriggeredBomb", canBePowered = true, powered = false, dirAccept = {1,1,1,1}, dirSend = {0,0,0,0}}
 function P.powerTriggeredBomb:absoluteFinalUpdate()
