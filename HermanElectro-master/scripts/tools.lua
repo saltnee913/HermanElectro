@@ -1895,7 +1895,7 @@ function P.map:useToolNothing(tileY, tileX)
 end
 P.map.useToolTile = P.map.useToolNothing
 
-P.buttonFlipper = P.superTool:new{name = "ButtonFlipper", "Click... click-click-click-click", baseRange = 0, image = 'Graphics/buttonflipper.png', quality = 2}
+P.buttonFlipper = P.superTool:new{name = "ButtonFlipper", "Click... click-click-click-click", baseRange = 0, image = 'Graphics/buttonflipper.png', quality = 3}
 function P.buttonFlipper:usableOnNothing()
 	return true
 end
@@ -3885,7 +3885,7 @@ end
 P.secretTeleporter.useToolTile = P.secretTeleporter.useToolNothing
 
 P.buttonReroller = P.superTool:new{name = "Button Reroller", description = "Rolled", image = 'Graphics/button.png',
-baseRange = 0, quality = 2}
+baseRange = 0, quality = 1}
 function P.buttonReroller:usableOnNothing()
 	return true
 end
@@ -4046,7 +4046,7 @@ end
 
 P.boxReroller = P.superTool:new{name = "Box Reroller", description = "",
 image = 'Graphics/roomreroller.png',
-baseRange = 0, quality = 2}
+baseRange = 0, quality = 1}
 function P.boxReroller:usableOnNothing()
 	return true
 end
