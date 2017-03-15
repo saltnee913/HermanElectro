@@ -88,11 +88,6 @@ P.advancedTiles[#P.advancedTiles+1] = tiles.elevator
 P.advancedTiles[#P.advancedTiles+1] = tiles.delevator
 P.advancedTiles[#P.advancedTiles+1] = tiles.halfWall
 P.advancedTiles[#P.advancedTiles+1] = tiles.tallWall
-P.advancedTiles[#P.advancedTiles+1] = tiles.supertoolQ1
-P.advancedTiles[#P.advancedTiles+1] = tiles.supertoolQ2
-P.advancedTiles[#P.advancedTiles+1] = tiles.supertoolQ3
-P.advancedTiles[#P.advancedTiles+1] = tiles.supertoolQ4
-P.advancedTiles[#P.advancedTiles+1] = tiles.supertoolQ5
 P.advancedTiles[#P.advancedTiles+1] = tiles.poweredEnd
 P.advancedTiles[#P.advancedTiles+1] = tiles.dungeonKey
 P.advancedTiles[#P.advancedTiles+1] = tiles.untriggeredPowerSupply
@@ -104,6 +99,18 @@ P.advancedTiles[#P.advancedTiles+1] = tiles.mousetrap
 
 P.shopTiles[#P.shopTiles+1] = tiles.toolTaxTile
 P.shopTiles[#P.shopTiles+1] = tiles.toolTile
+P.shopTiles[#P.shopTiles+1] = tiles.supertoolQ1
+P.shopTiles[#P.shopTiles+1] = tiles.supertoolQ2
+P.shopTiles[#P.shopTiles+1] = tiles.supertoolQ3
+P.shopTiles[#P.shopTiles+1] = tiles.supertoolQ4
+P.shopTiles[#P.shopTiles+1] = tiles.supertoolQ5
+P.shopTiles[#P.shopTiles+1] = tiles.sawTile
+P.shopTiles[#P.shopTiles+1] = tiles.ladderTile
+P.shopTiles[#P.shopTiles+1] = tiles.wireCuttersTile
+P.shopTiles[#P.shopTiles+1] = tiles.waterBottleTile
+P.shopTiles[#P.shopTiles+1] = tiles.spongeTile
+P.shopTiles[#P.shopTiles+1] = tiles.brickTile
+P.shopTiles[#P.shopTiles+1] = tiles.gunTile
 
 
 return P
