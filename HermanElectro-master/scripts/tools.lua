@@ -4416,7 +4416,7 @@ function P.nineLives:updateSprite()
 end
 
 --1 is diamond, 2 is heart, 3 is spade, 4 is club, 5 is joker
-P.card = P.superTool:new{name = "Card", description = "Expanding the deck", quality = 2,
+P.card = P.superTool:new{name = "Card", description = "Expanding the deck", quality = 3,
 image = 'Graphics/deckofcards.png', baseImage = 'Graphics/card.png',
 cardOrder = {},
 spriteOrder = {'Graphics/diamondcard.png', 'Graphics/heartcard.png', 'Graphics/spadecard.png', 'Graphics/clubcard.png', 'Graphics/jokercard.png'}}
