@@ -2008,6 +2008,7 @@ end
 
 P.glue = P.tile:new{name = "glue", sprite = 'Graphics/glue.png'}
 function P.glue:onEnter(player)
+	if player.attributes.flying then return end
 	player.waitCounter = player.waitCounter+1
 	if player.character.name == characters.lenny.name then
 		--unlocks = require('scripts.unlocks')
@@ -2024,6 +2025,7 @@ function P.glue:onEnterAnimal(animal)
 		unlocks.unlockUnlockableRef(unlocks.glueSnailUnlock)
 		return
 	end]]
+	if animal:instanceof(animalList.glueSnail) then return end
 	if animal.flying then return end
 	animal.waitCounter = animal.waitCounter+1
 end
@@ -2301,16 +2303,7 @@ function P.supertoolTile:onLoad()
 end
 function P.supertoolTile:absoluteFinalUpdate()
 	if self.tool==nil then
-		local quality = 0
-		local toolForTile = nil
-		local toolForTileId = 1
-		local unlockedSupers = unlocks.getUnlockedSupertools()
-		while(quality ~= self.superQuality or not unlockedSupers[toolForTileId] or tools[toolForTileId].isDisabled) do
-			toolForTileId = util.random(#tools-tools.numNormalTools, 'toolDrop')+tools.numNormalTools
-			toolForTile = tools[toolForTileId]
-			quality = toolForTile.quality
-		end
-		self.tool = toolForTile
+		self.tool = tools[tools.chooseSupertool(self.superQuality)]
 		self:updateSprite()
 	end
 end

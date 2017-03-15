@@ -473,7 +473,7 @@ function love.load()
 			y = (6-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10, prevTileX = 3, prevTileY 	= 10,
 			prevx = (3-1)*scale*tileWidth+wallSprite.width+tileWidth/2*scale-10,
 			prevy = (10-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10,
-			width = 20, height = 20, speed = 250, luckTimer = 0, regularMapLoc = {x = 0, y = 0}, returnFloorIndex = 0, attributes = {shieldCounter = 0, lucky = false, gifted = false, permaMap = false, xrayVision = false, upgradedToolUse = false, fast = {fast = false, fastStep = false}, flying = false, fear = false, shelled = false, tall = false, extendedRange = 0, sockStep = -1, invisible = false}}
+			width = 20, height = 20, speed = 250, luckTimer = 0, regularMapLoc = {x = 0, y = 0}, supersHeld = {total = 0}, returnFloorIndex = 0, attributes = {shieldCounter = 0, lucky = false, gifted = false, permaMap = false, xrayVision = false, upgradedToolUse = false, fast = {fast = false, fastStep = false}, flying = false, fear = false, shelled = false, tall = false, extendedRange = 0, sockStep = -1, invisible = false}}
 	player.character = setChar
 
 	map.clearBlacklist()
@@ -549,6 +549,8 @@ function resetPlayer()
 	player.attributes.shelled = false
 	player.attributes.invisible = false
 	player.attributes.fast = {fast = false, fastStep = false}
+
+	player.supersHeld = {total = 0}
 end
 
 function loadRandoms()
@@ -777,6 +779,10 @@ function loadOpeningWorld()
     myShader:send("player_y", player.y+getTranslation().y*tileWidth*scale+(height2-height)/2)
 	
 	player.character:onBegin()
+
+	--remove supers
+	emptyTools()
+
 	unlockDoors()
 	updateGameState()
 end
@@ -909,14 +915,14 @@ function loadLevel(floorPath)
 	end
 end
 
-function kill()
+function kill(deathSource)
 	if editorMode or globalDeathBlock or floorIndex<1 then return end
 	--[[if validSpace() and completedRooms[mapy][mapx]>0 then
 		unlocks.unlockUnlockableRef(unlocks.portalUnlock)
 	end]]
 	player.dead = true
 	for i = 1, #specialTools do
-		if tools[specialTools[i]]~=nil and tools[specialTools[i]].numHeld>0 and not tools[specialTools[i]]:checkDeath() then
+		if tools[specialTools[i]]~=nil and tools[specialTools[i]].numHeld>0 and not tools[specialTools[i]]:checkDeath(deathSource) then
 			player.dead = false
 			onToolUse(specialTools[i])
 			return
@@ -3592,7 +3598,7 @@ function checkDeathSpotlights(dt)
 		local spotDist = math.sqrt((sx-playerx)*(sx-playerx)+(sy-playery)*(sy-playery))
 		local spotDist2 = math.sqrt((sx-playerx)*(sx-playerx)+(sy-playery2)*(sy-playery2))
 		if spotDist<radius --[[or (player.character.tallSprite and spotDist2 < radius)]] then
-			kill()
+			kill('spotlight')
 			return
 		end
 	end
