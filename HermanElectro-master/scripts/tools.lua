@@ -745,7 +745,7 @@ end
 function P.chooseSupertool(quality)
 	unlocks = require('scripts.unlocks')
 	unlockedSupertools = unlocks.getUnlockedSupertools()
-	if qualities == nil then
+	if quality == nil then
 		local toolId
 		repeat
 			toolId = util.random(#tools-tools.numNormalTools,'toolDrop')+tools.numNormalTools
