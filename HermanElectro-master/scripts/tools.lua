@@ -66,14 +66,15 @@ function P.giveTools(toolArray)
 			tools[toolArray[i]]:giveOne()
 			toolsToDisp[#toolsToDisp+1] = toolArray[i]
 
-			local newSuper = false
-			for i = 1, #player.supersHeld do
-				if player.supersHeld[i]==toolArray[i].name then
+			local newSuper = true
+			for j = 1, #player.supersHeld do
+				if player.supersHeld[j]==tools[toolArray[i]].name then
 					newSuper = false
 				end
 			end
 
-			if newSuper then player.supersHeld[#player.supersHeld+1] = toolArray[i].name end
+			if newSuper then player.supersHeld[#player.supersHeld+1] = tools[toolArray[i]].name end
+
 			if #player.supersHeld>=10 then
 				unlocks.unlockUnlockableRef(unlocks.scientistUnlock)
 			end

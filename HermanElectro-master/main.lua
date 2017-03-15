@@ -549,6 +549,8 @@ function resetPlayer()
 	player.attributes.shelled = false
 	player.attributes.invisible = false
 	player.attributes.fast = {fast = false, fastStep = false}
+
+	player.supersHeld = {}
 end
 
 function loadRandoms()
