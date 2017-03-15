@@ -2531,7 +2531,9 @@ function P.shopReroller:useToolTile(tile)
 		for j = 1, roomLength do
 			if room[i][j]~=nil then
 				if room[i][j]:instanceof(tiles.supertoolTile) then
+					local stQual = room[i][j].superQuality
 					room[i][j] = tiles.supertoolTile:new()
+					room[i][j].superQuality = stQual
 				elseif room[i][j]:instanceof(tiles.toolTile) then
 					room[i][j] = tiles.toolTile:new()
 				end
