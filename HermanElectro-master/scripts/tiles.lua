@@ -2265,9 +2265,7 @@ P.endTilePaid.onStep = P.endTilePaid.postPowerUpdate
 
 P.mushroom = P.tile:new{name = "mushroom", sprite = 'KenGraphics/mushroom.png'}
 function P.mushroom:onEnter()
-	mushroomMode = true
-	shaderTriggered = true
-	globalTint = {0,0.15,0.3}
+	turnOnMushroomMode()
 end
 
 P.lampTile = P.boxTile:new{name = "lampTile", pushable = pushableList[12], listIndex = 12}

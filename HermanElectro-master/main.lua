@@ -252,12 +252,14 @@ function love.load()
 		extern number player_range = 300;
 		extern number bonus_range = 0;
 		extern bool b_and_w = false;
+		extern bool createShadows = true;
 		extern vec4 spotlights[3];
 
 		vec4 effect( vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords ){
 		  	vec4 pixel = Texel(texture, texture_coords );//This is the current pixel color
 		  	if (!shaderTriggered) return pixel;
-			number xdist = player_x-screen_coords[0];
+
+	  		number xdist = player_x-screen_coords[0];
 			number ydist = player_y-screen_coords[1];
 			number playerDist = sqrt(xdist*xdist+ydist*ydist)/(player_range+bonus_range);
 			if (playerDist<2)
@@ -267,6 +269,8 @@ function love.load()
 			number divVal = 100000;
 			if (playerDist<divVal)
 			  	divVal = playerDist;
+			if (!createShadows)
+				divVal = 1;
 			number totaltint_r = tint_r/divVal;
 			number totaltint_g = tint_g/divVal;
 			number totaltint_b = tint_b/divVal;
@@ -333,7 +337,7 @@ function love.load()
 
 		--started = false
 		shaderTriggered = true
-		mushroomMode = falsed
+		mushroomMode = false
 		globalTint = {0,0,0}
 		globalTintRising = {1,1,1}
 		charSelect = false
@@ -473,7 +477,7 @@ function love.load()
 			y = (6-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10, prevTileX = 3, prevTileY 	= 10,
 			prevx = (3-1)*scale*tileWidth+wallSprite.width+tileWidth/2*scale-10,
 			prevy = (10-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10,
-			width = 20, height = 20, speed = 250, luckTimer = 0, regularMapLoc = {x = 0, y = 0}, supersHeld = {total = 0}, returnFloorIndex = 0, attributes = {shieldCounter = 0, lucky = false, gifted = false, permaMap = false, xrayVision = false, upgradedToolUse = false, fast = {fast = false, fastStep = false}, flying = false, fear = false, shelled = false, tall = false, extendedRange = 0, sockStep = -1, invisible = false}}
+			width = 20, height = 20, speed = 250, luckTimer = 0, regularMapLoc = {x = 0, y = 0}, supersHeld = {total = 0}, returnFloorIndex = 0, attributes = {invincibleCounter = 0, shieldCounter = 0, lucky = false, gifted = false, permaMap = false, xrayVision = false, upgradedToolUse = false, fast = {fast = false, fastStep = false}, flying = false, fear = false, shelled = false, tall = false, extendedRange = 0, sockStep = -1, invisible = false}}
 	player.character = setChar
 
 	map.clearBlacklist()
@@ -917,7 +921,7 @@ function loadLevel(floorPath)
 end
 
 function kill(deathSource)
-	if editorMode or globalDeathBlock or floorIndex<1 then return end
+	if editorMode or globalDeathBlock or floorIndex<1 or player.attributes.invincibleCounter>0 then return end
 	--[[if validSpace() and completedRooms[mapy][mapx]>0 then
 		unlocks.unlockUnlockableRef(unlocks.portalUnlock)
 	end]]
@@ -2571,6 +2575,37 @@ function resetPlayerAttributesStep()
 	end
 end
 
+function updateAttributesRealtime(dt)
+	if player.attributes.invincibleCounter>0 then
+		player.attributes.invincibleCounter = math.max(player.attributes.invincibleCounter-dt,0)
+		if player.attributes.invincibleCounter==0 then
+			if tools.shrooms.active then
+				tools.shrooms.numHeld = tools.shrooms.numHeld-1
+				updateTools()
+				tools.shrooms.active = false
+				tools.shrooms:updateSprite()
+				turnOffMushroomMode()
+
+			end
+		end
+	end
+end
+
+function turnOffMushroomMode()
+	mushroomMode = false
+	myShader:send("createShadows", true)
+	globalTint = {1,1,1}
+	myShader:send("tint_r", globalTint[1])
+	myShader:send("tint_g", globalTint[2])
+	myShader:send("tint_b", globalTint[3])
+end
+
+function turnOnMushroomMode()
+	mushroomMode = true
+	globalTint = {0.5,0.75,1}
+	myShader:send("createShadows", false)
+end
+
 function getLuckBonus()
 	local luckBonus = player.baseLuckBonus
 	luckBonus = luckBonus+3.5*tools.luckyPenny.numHeld
@@ -2579,11 +2614,9 @@ function getLuckBonus()
 end
 
 function enterRoom(dir)
-	mushroomMode = false
-	globalTint = {1,1,1}
-	myShader:send("tint_r", globalTint[1])
-	myShader:send("tint_g", globalTint[2])
-	myShader:send("tint_b", globalTint[3])
+	if not tools.shrooms.active then
+		turnOffMushroomMode()
+	end
 
 	if not validSpace() then return end
 	log("")
@@ -2768,6 +2801,8 @@ function love.update(dt)
 	if player~=nil and player.character~=nil then
 		player.character:update(dt)
 	end
+	updateAttributesRealtime(dt)
+
 	if (titlescreenCounter>0) then
 		titlescreenCounter = titlescreenCounter-dt
 	end
@@ -2814,24 +2849,24 @@ function love.update(dt)
 	updateLamps()
 
 	if mushroomMode then
-		if globalTint[1]<0 then
+		if globalTint[1]<0.2 then
 			globalTintRising[1] = 1
-		elseif globalTint[1]>0.3 then
+		elseif globalTint[1]>0.8 then
 			globalTintRising[1] = -1
 		end
-		if globalTint[2]<0 then
+		if globalTint[2]<0.2 then
 			globalTintRising[2] = 1
-		elseif globalTint[2]>0.3 then
+		elseif globalTint[2]>0.8 then
 			globalTintRising[2] = -1
 		end
-		if globalTint[3]<0 then
+		if globalTint[3]<0.2 then
 			globalTintRising[3] = 1
-		elseif globalTint[3]>0.3 then
+		elseif globalTint[3]>0.8 then
 			globalTintRising[3] = -1
 		end
 
 		for i = 1, 3 do
-			globalTint[i] = globalTint[i]+dt/4*globalTintRising[i]
+			globalTint[i] = globalTint[i]+dt/2*globalTintRising[i]
 		end
 		myShader:send("tint_r", globalTint[1])
 		myShader:send("tint_g", globalTint[2])
@@ -3577,14 +3612,18 @@ function checkDeath()
 end
 
 function checkDeathSpotlights(dt)
+	if player.attributes.invisible then return end
+
 	if player.attributes.shieldCounter>0 then
 		player.attributes.shieldCounter = player.attributes.shieldCounter-dt
 		if player.attributes.shieldCounter<=0 and tools.shield.numHeld>0 then
 			player.attributes.shieldCounter = 0
-			tools.shield.numHeld = tools.shield.numHeld-1
-			updateTools()
-			tools.shield.active = false
-			tools.shield:updateSprite()
+			if tools.shield.active then
+				tools.shield.numHeld = tools.shield.numHeld-1
+				updateTools()
+				tools.shield.active = false
+				tools.shield:updateSprite()
+			end
 		end
 		return
 	end

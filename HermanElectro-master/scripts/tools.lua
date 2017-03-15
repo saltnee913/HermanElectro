@@ -805,6 +805,19 @@ function P.shovel:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld-1
 	room[tileY][tileX] = tiles.pit:new()
 end
+function P.shovel:usableOnTile(tile)
+	return tile:instanceof(tiles.mushroom)
+end
+function P.shovel:useToolTile(tile)
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]==tile then
+				room[i][j] = tiles.supertoolTile:new()
+				room[i][j].tool = tools.shrooms
+			end
+		end
+	end
+end
 
 P.electrifier = P.superTool:new{name = 'Moisten', description = "Let the love flow.", baseRange = 1, image = 'Graphics/electrifier.png', quality = 3}
 function P.electrifier:usableOnTile(tile)
@@ -4550,7 +4563,25 @@ function P.reactiveShield:checkDeath(deathSource)
 end
 
 P.shrooms = P.superTool:new{name = "Mushroom Conconction", description = "Get weird", quality = 3,
-image = 'KenGraphics/mushroom/png', baseRange = 0}
+image = 'KenGraphics/mushroom.png', baseRange = 0, baseImage = 'KenGraphics/mushroom.png', activeImage = 'Graphics/shieldactive.png', active = false}
+function P.shrooms:usableOnNothing()
+	return not self.active
+end
+P.shrooms.usableOnTile = P.shield.usableOnNothing
+function P.shrooms:useToolNothing()
+	player.attributes.invincibleCounter = player.attributes.invincibleCounter+10
+	self.active = true
+	turnOnMushroomMode()
+	self:updateSprite()
+end
+P.shrooms.useToolTile = P.shrooms.useToolNothing
+function P.shrooms:updateSprite()
+	if self.active then
+		self.image = self.activeImage
+	else
+		self.image = self.baseImage
+	end
+end
 
 P.numNormalTools = 7
 P.lastToolUsed = 1
@@ -4586,7 +4617,7 @@ end
 
 P.resetTools()
 
---Ideas: mushroom concoction (rainbow invincible mode), floor unlocker
+--Ideas: mushroom concoction (rainbow invincible mode), floor unlocker, ammo pack (3 guns)
 
 P:addTool(P.crowbar) 
 P:addTool(P.visionChanger) 
@@ -4766,6 +4797,7 @@ P:addTool(P.card)
 P:addTool(P.amnesiaPill)
 
 P:addTool(P.shield)
+P:addTool(P.shrooms)
 
 P.resetTools()
 -- Make a tool based cursor
