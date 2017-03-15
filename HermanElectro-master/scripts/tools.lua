@@ -65,6 +65,18 @@ function P.giveTools(toolArray)
 		if toolArray[i] <= tools.numNormalTools or tools[toolArray[i]].numHeld ~= 0 or not tools.areSupersFull() then
 			tools[toolArray[i]]:giveOne()
 			toolsToDisp[#toolsToDisp+1] = toolArray[i]
+
+			local newSuper = false
+			for i = 1, #player.supersHeld do
+				if player.supersHeld[i]==toolArray[i].name then
+					newSuper = false
+				end
+			end
+
+			if newSuper then player.supersHeld[#player.supersHeld+1] = toolArray[i].name end
+			if #player.supersHeld>=10 then
+				unlocks.unlockUnlockableRef(unlocks.scientistUnlock)
+			end
 		end
 	end
 	--[[if tools.revive.numHeld>=9 then
@@ -608,7 +620,7 @@ function P.brick:usableOnTile(tile, tileY, tileX)
 	if not tile.destroyed and tile:instanceof(tiles.glassWall) then
 		return true
 	end
-	if tile:instanceof(tiles.hDoor) then
+	if tile:instanceof(tiles.hDoor) and not tile.destroyed then
 		return true
 	end
 	if tile:instanceof(tiles.mousetrap) and not tile.bricked then
@@ -2179,7 +2191,7 @@ function P.wireExtender:useToolTile(tile, tileY, tileX)
 	room[tileY][tileX] = tiles.wire:new()
 end
 
-P.coin = P.superTool:new{name = "Coin", description = "All costs must be payed", image = 'Graphics/Tools/coin.png', range = 1, quality = 2}
+P.coin = P.superTool:new{name = "Coin", description = "All costs must be payed", image = 'Graphics/Tools/coin.png', range = 1, quality = 1}
 --Don't pretend things are free --
 function P.coin:usableOnTile(tile)
 	if tile:instanceof(tiles.toolTaxTile) and not tile.destroyed then
@@ -2951,7 +2963,7 @@ function P.pickaxe:useToolPushable(pushable)
 	pushable:destroy()
 end
 
-P.luckyPenny = P.coin:new{name = "Lucky Penny", description = "May all your wishes come true", quality = 3, image = 'Graphics/Tools/luckyPenny.png'}
+P.luckyPenny = P.coin:new{name = "Lucky Penny", description = "May all your wishes come true", quality = 2, image = 'Graphics/Tools/luckyPenny.png'}
 
 P.helmet = P.superTool:new{name = "Knight's Helmet", description = "You're feeling slanted", quality = 3, image = 'Graphics/helmet.png', baseRange = 2}
 P.helmet.getToolableTiles = P.tool.getToolableTilesBox

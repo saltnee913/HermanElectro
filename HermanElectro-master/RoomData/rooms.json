@@ -5964,7 +5964,9 @@
       "itemsNeeded":
         [
           //[saws, ladders, wireCutters, waterBottles, sponges, bricks, guns]
-          [0,0,0,2,0,0,0]
+          [0,0,0,2,0,0,0],
+          [2,0,0,1,0,0,0],
+          [2,0,0,0,0,0,1]
         ],
       "set": "chain_reaction"
     },
