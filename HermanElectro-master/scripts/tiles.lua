@@ -2303,16 +2303,7 @@ function P.supertoolTile:onLoad()
 end
 function P.supertoolTile:absoluteFinalUpdate()
 	if self.tool==nil then
-		local quality = 0
-		local toolForTile = nil
-		local toolForTileId = 1
-		local unlockedSupers = unlocks.getUnlockedSupertools()
-		while(quality ~= self.superQuality or not unlockedSupers[toolForTileId] or tools[toolForTileId].isDisabled) do
-			toolForTileId = util.random(#tools-tools.numNormalTools, 'toolDrop')+tools.numNormalTools
-			toolForTile = tools[toolForTileId]
-			quality = toolForTile.quality
-		end
-		self.tool = toolForTile
+		self.tool = tools[tools.chooseSupertool(self.superQuality)]
 		self:updateSprite()
 	end
 end

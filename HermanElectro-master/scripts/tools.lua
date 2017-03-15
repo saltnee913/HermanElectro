@@ -47,18 +47,6 @@ function P.areSupersFull()
 	return (superCount >= 3)
 end
 
-function P.getSupersHeld()
-	local supersHeld = {}
-
-	for i = tools.numNormalTools, #tools do
-		if tools[i].numHeld>0 then
-			supersHeld[#superHeld+1] = tools[i]
-		end
-	end
-
-	return supersHeld
-end
-
 function P.giveTools(toolArray)
 	local toolsToDisp = {}
 	for i = 1, #toolArray do
@@ -66,17 +54,12 @@ function P.giveTools(toolArray)
 			tools[toolArray[i]]:giveOne()
 			toolsToDisp[#toolsToDisp+1] = toolArray[i]
 
-			local newSuper = true
-			for j = 1, #player.supersHeld do
-				if player.supersHeld[j]==tools[toolArray[i]].name then
-					newSuper = false
+			if toolArray[i] > tools.numNormalTools and player.supersHeld[toolArray[i]] ~= true then
+				player.supersHeld.total = player.supersHeld.total + 1
+				if player.supersHeld.total >= 10 then
+					unlocks.unlockUnlockableRef(unlocks.scientistUnlock)
 				end
-			end
-
-			if newSuper then player.supersHeld[#player.supersHeld+1] = tools[toolArray[i]].name end
-
-			if #player.supersHeld>=10 then
-				unlocks.unlockUnlockableRef(unlocks.scientistUnlock)
+				player.supersHeld[toolArray[i]] = true
 			end
 		end
 	end
@@ -87,6 +70,7 @@ function P.giveTools(toolArray)
 	updateTools()
 end
 
+--for basics only
 function P.giveToolsByArray(toolArray)
 	for i = 1, P.numNormalTools do
 		tools[i].numHeld = tools[i].numHeld + toolArray[i]
@@ -4618,7 +4602,6 @@ P:addTool(P.map)
 P:addTool(P.ramSpawner) --Keep
 P:addTool(P.gateBreaker) --Keep
 
-P:addTool(P.ramSpawner)
 --P:addTool(P.gateBreaker)
 --P:addTool(P.conductiveBoxSpawner)
 P:addTool(P.superWireCutters)
