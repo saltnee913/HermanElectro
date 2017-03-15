@@ -745,6 +745,7 @@ function startGame()
 	love.load()
 	loadFirstLevel()
 	tools.resetTools()
+	--resetPlayer()
 	player.character:onBegin()
 end
 
