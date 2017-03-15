@@ -779,6 +779,10 @@ function loadOpeningWorld()
     myShader:send("player_y", player.y+getTranslation().y*tileWidth*scale+(height2-height)/2)
 	
 	player.character:onBegin()
+
+	--remove supers
+	emptyTools()
+
 	unlockDoors()
 	updateGameState()
 end
