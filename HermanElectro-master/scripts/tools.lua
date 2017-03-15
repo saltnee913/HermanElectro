@@ -1746,6 +1746,7 @@ P.teleporter = P.superTool:new{name = "Teleporter", description = "Who knows whe
 function P.teleporter:usableOnNothing()
 	return true
 end
+P.teleporter.usableOnTile = P.teleporter.usableOnNothing
 function P.teleporter:useToolNothing()
 	self.numHeld = self.numHeld-1
 
@@ -1809,6 +1810,7 @@ function P.teleporter:useToolNothing()
 		end
 	end
 end
+P.teleporter.useToolTile = P.teleporter.useToolNothing
 
 P.revive = P.superTool:new{name = "Revive", description = "Not yet.", baseRange = 0, image = 'Graphics/revive.png', destroyOnRevive = true, quality = 5}
 function P.revive:checkDeath()
@@ -4546,6 +4548,9 @@ function P.reactiveShield:checkDeath(deathSource)
 	end
 	return true
 end
+
+P.shrooms = P.superTool:new{name = "Mushroom Conconction", description = "Get weird", quality = 3,
+image = 'KenGraphics/mushroom/png', baseRange = 0}
 
 P.numNormalTools = 7
 P.lastToolUsed = 1
