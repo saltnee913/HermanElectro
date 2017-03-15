@@ -598,17 +598,17 @@ end
 P.brick = P.tool:new{name = 'brick', baseRange = 3, image = 'Graphics/brick.png'}
 function P.brick:usableOnTile(tile, tileY, tileX)
 	local dist = math.abs(player.tileY - tileY) + math.abs(player.tileX - tileX)
+	if tile.destroyed then return end
 	if not tile.bricked and tile:instanceof(tiles.button) and not tile:instanceof(tiles.superStickyButton)
 		and not tile:instanceof(tiles.unbrickableStayButton) and dist <= 3 then
 		return true
-	end
-	if not tile.destroyed and tile:instanceof(tiles.glassWall) then
+	elseif not tile.destroyed and tile:instanceof(tiles.glassWall) then
 		return true
-	end
-	if tile:instanceof(tiles.hDoor) and not tile.destroyed then
+	elseif tile:instanceof(tiles.reinforcedGlass) and tile.cracked then
 		return true
-	end
-	if tile:instanceof(tiles.mousetrap) and not tile.bricked then
+	elseif tile:instanceof(tiles.hDoor) then
+		return true
+	elseif tile:instanceof(tiles.mousetrap) and not tile.bricked then
 		return true
 	end
 	return false
@@ -618,7 +618,7 @@ function P.brick:usableOnAnimal(animal)
 end
 function P.brick:useToolTile(tile)
 	self.numHeld = self.numHeld - 1
-	if tile:instanceof(tiles.glassWall) or tile:instanceof(tiles.hDoor) then
+	if tile:instanceof(tiles.glassWall) or tile:instanceof(tiles.hDoor) or tile:instanceof(tiles.reinforcedGlass) then
 		tile:destroy()
 	else
 		tile:lockInState(true)
@@ -2182,13 +2182,19 @@ function P.donationCracker:useToolTile()
 	donations = 0
 end
 
-P.wireExtender = P.superTool:new{name = "wireExtender", description = "Longer is better", image = 'Graphics/wireextender.png', quality = 1}
+P.wireExtender = P.superTool:new{name = "Extension Cord", description = "Longer is better", image = 'Graphics/wireextender.png', quality = 1, baseRange = 1}
 function P.wireExtender:usableOnTile(tile)
 	return tile:instanceof(tiles.wire)
 end
 function P.wireExtender:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld-1
-	room[tileY][tileX] = tiles.wire:new()
+	if room[tileY][tileX]:instanceof(tiles.unbreakableWire) then
+		room[tileY][tileX] = tiles.unbreakableWire:new()
+	elseif tile:instanceof(tiles.crossWire) then
+		--do nothing
+	else
+		room[tileY][tileX] = tiles.wire:new()
+	end
 end
 
 P.coin = P.superTool:new{name = "Coin", description = "All costs must be payed", image = 'Graphics/Tools/coin.png', range = 1, quality = 1}
@@ -2525,7 +2531,9 @@ function P.shopReroller:useToolTile(tile)
 		for j = 1, roomLength do
 			if room[i][j]~=nil then
 				if room[i][j]:instanceof(tiles.supertoolTile) then
+					local stQual = room[i][j].superQuality
 					room[i][j] = tiles.supertoolTile:new()
+					room[i][j].superQuality = stQual
 				elseif room[i][j]:instanceof(tiles.toolTile) then
 					room[i][j] = tiles.toolTile:new()
 				end
@@ -2956,7 +2964,13 @@ function P.pickaxe:useToolTile(tile)
 	self.numHeld = self.numHeld-1
 	if tile.sawable then
 		tile:destroy()
-	else tile.sawable = true end
+	elseif tile:instanceof(tiles.reinforcedGlass) then
+			tile.cracked = true
+	elseif tile:instanceof(tiles.glassWall) then
+		tile:destroy()
+	else
+		tile.sawable = true
+	end
 end
 function P.pickaxe:useToolPushable(pushable)
 	self.numHeld = self.numHeld-1
@@ -3972,16 +3986,17 @@ end
 
 P.luckyBrick = P.superTool:new{name = "Lucky Brick", description = "Knock on...glass?",
 image = 'Graphics/brick.png',
-baseRange = 1, quality = 2}
-function P.luckyBrick:usableOnTile(tile)
-	return tile:instanceof(tiles.glassWall) and not tile:instanceof(tiles.reinforcedGlass) and not tile.destroyed
-end
+baseRange = 3, quality = 2}
+P.luckyBrick.usableOnTile = P.brick.usableOnTile
 function P.luckyBrick:useToolTile(tile, tileY, tileX)
-	self.numHeld = self.numHeld-1
-	
-	tile:destroy()
-	room[tileY][tileX] = tiles.toolTile:new()
-	room[tileY][tileX]:absoluteFinalUpdate()
+	self.numHeld = self.numHeld - 1
+	if tile:instanceof(tiles.glassWall) or tile:instanceof(tiles.hDoor) or tile:instanceof(tiles.reinforcedGlass) then
+		tile:destroy()
+		room[tileY][tileX] = tiles.toolTile:new()
+		room[tileY][tileX]:absoluteFinalUpdate()
+	else
+		tile:lockInState(true)
+	end
 end
 
 P.luckyCharm = P.superTool:new{name = "Medallion of Destruction", description = "With destruction comes fortune",
@@ -4542,7 +4557,7 @@ function P.heartTransplant:checkDeath()
 			spotlights[i].active = false
 		end
 	end
-	
+
 	return false
 end
 
@@ -4595,6 +4610,12 @@ function P.shrooms:updateSprite()
 	else
 		self.image = self.baseImage
 	end
+end
+
+P.ammoPack = P.superTool:new{name = "Ammo Pack", description = "Reset, reload, recover", quality = 3,
+image = 'Graphics/Tools/gun.png'}
+function P.ammoPack:giveOne()
+	tools.gun.numHeld = tools.gun.numHeld+3
 end
 
 P.numNormalTools = 7
@@ -4812,6 +4833,7 @@ P:addTool(P.amnesiaPill)
 
 P:addTool(P.shield)
 P:addTool(P.shrooms)
+P:addTool(P.ammoPack)
 
 P.resetTools()
 -- Make a tool based cursor

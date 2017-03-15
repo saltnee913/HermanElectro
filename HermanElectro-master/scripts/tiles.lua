@@ -1925,7 +1925,7 @@ function P.untriggeredPowerSupplyTimer:destroy()
 	self.dirAccept = {0,0,0,0}
 end
 
-P.reinforcedGlass = P.concreteWall:new{name = "reinforcedGlass", blocksVision = false, sprite = 'Graphics3D/reinforcedglass.png', poweredSprite = 'Graphics3D/reinforcedglass.png'}
+P.reinforcedGlass = P.concreteWall:new{name = "reinforcedGlass", cracked = false, blocksVision = false, sprite = 'Graphics3D/reinforcedglass.png', poweredSprite = 'Graphics3D/reinforcedglass.png'}
 
 P.powerTriggeredBomb = P.unactivatedBomb:new{name = "powerTriggeredBomb", canBePowered = true, powered = false, dirAccept = {1,1,1,1}, dirSend = {0,0,0,0}}
 function P.powerTriggeredBomb:absoluteFinalUpdate()
@@ -2640,10 +2640,22 @@ function P.gasPuddle:updateTile(dir)
 	end
 end
 function P.gasPuddle:onEnd(x, y)
-	self:explode(x,y)
+	if not self.gone then
+		self.gone = true
+		self:explode(x,y)
+	end
 end
 function P.gasPuddle:destroy()
-	self.gone = true
+	if not self.gone then
+		self.gone = true
+		for i = 1, roomHeight do
+			for j = 1, roomLength do
+				if room[i][j]==self then
+					self:explode(j,i)
+				end
+			end
+		end
+	end
 end
 function P.gasPuddle:explode(x,y)
 	P.bomb:explode(x,y)
