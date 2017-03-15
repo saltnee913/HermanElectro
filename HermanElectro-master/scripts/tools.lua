@@ -819,7 +819,7 @@ function P.electrifier:useToolTile(tile)
 end
 --Low enerrgy precedent?
 --Insulate or Isolate? Insulin?
-P.delectrifier = P.superTool:new{name = 'Insulate', description = "Low energy precedent", baseRange = 1, image = 'Graphics/electrifier2.png', quality = 3}
+P.delectrifier = P.superTool:new{name = 'Insulate', description = "Low energy precedent", baseRange = 1, image = 'Graphics/electrifier2.png', quality = 4}
 --You didn't have to cut me off?
 function P.delectrifier:usableOnTile(tile)
 	if tile.canBePowered then return true end
@@ -1296,7 +1296,7 @@ function P.jackInTheBoxSpawner:useToolNothing(tileY, tileX)
 	pushables[#pushables+1] = toSpawn
 end
 
-P.lamp = P.boxSpawner:new{name = "Lamp", description  = "A star in a jar", baseRange = 1, image = 'Graphics/lamp.png', quality = 3}
+P.lamp = P.boxSpawner:new{name = "Lamp", description  = "A star in a jar", baseRange = 1, image = 'Graphics/lamp.png', quality = 4}
 function P.lamp:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld-1
 	local toSpawn = pushableList.lamp:new()
@@ -1968,7 +1968,7 @@ function P.gabeMaker:useToolNothing(tileY, tileX)
 end
 P.gabeMaker.useToolTile = P.gabeMaker.useToolNothing
 
-P.roomUnlocker = P.superTool:new{name = "Room Unlocker", description = "Gatecrashing", baseRange = 0, image = 'Graphics/roomunlocker.png', quality = 2}
+P.roomUnlocker = P.superTool:new{name = "Room Unlocker", description = "Gatecrashing", baseRange = 0, image = 'Graphics/roomunlocker.png', quality = 3}
 function P.roomUnlocker:usableOnNothing()
 	return true
 end
@@ -2585,7 +2585,7 @@ function P.lemonParty:spreadLemonade(tileY, tileX)
 	end
 end
 
-P.inflation = P.superTool:new{name = "Deflation", description = "The more you have, the more you get", image = 'Graphics/inflation.png', baseRange = 0, quality = 2}
+P.inflation = P.superTool:new{name = "Deflation", description = "The more you have, the more you get", image = 'Graphics/inflation.png', baseRange = 0, quality = 3}
 function P.inflation:usableOnNothing()
 	return true
 end
@@ -2844,7 +2844,7 @@ function P.shift:useToolTile(tile, tileY, tileX)
 	room[player.tileY][player.tileX]:onEnter()
 end
 
-P.block = P.superTool:new{name = "Mental block", description = "Poof", image = 'Graphics/woodwall.png', baseRange = 1, quality = 3}
+P.block = P.superTool:new{name = "Mental block", description = "Poof", image = 'Graphics/woodwall.png', baseRange = 1, quality = 2}
 function P.block:usableOnNothing()
 	return true
 end
@@ -2856,7 +2856,7 @@ function P.block:useToolNothing(tileLocY, tileLocX)
 	room[tileLocY][tileLocX] = tiles.wall:new()
 end
 
-P.tileMagnet = P.superTool:new{name = "Super Magnet", description = "It pulls its weight.", image = 'Graphics/tilemagnet.png', quality = 3, baseRange = 4}
+P.tileMagnet = P.superTool:new{name = "Super Magnet", description = "It pulls its weight.", image = 'Graphics/tilemagnet.png', quality = 4, baseRange = 4}
 function P.tileMagnet:usableOnTile(tile, tileY, tileX)
 	--[[local tileX = 0
 	local tileY = 0
@@ -2975,7 +2975,7 @@ function P.helmet:useToolTile(tile, tileY, tileX)
 	room[player.tileY][player.tileX]:onEnter(player)
 end
 
-P.stealthBomber = P.superTool:new{name = "Stealth Bomber", description = "Drop 'n' Go", image = 'Graphics/stealthbomber.png', baseRange = 2, quality = 3}
+P.stealthBomber = P.superTool:new{name = "Stealth Bomber", description = "Drop 'n' Go", image = 'Graphics/stealthbomber.png', baseRange = 2, quality = 4}
 P.stealthBomber.getToolableTiles = P.tool.getToolableTilesBox
 function P.stealthBomber:usableOnNothing(tileY, tileX)
 	for i = 1, #pushables do
@@ -3038,7 +3038,7 @@ function P.seeds:useToolNothing(tileY, tileX)
 	room[tileY][tileX] = tiles.tree:new()
 end
 
-P.supertoolDoubler = P.superTool:new{name = "Supertool Doubler", description = "Power, multiplied", baseRange = 0, quality = 3, image = 'Graphics/supertooldoubler.png'}
+P.supertoolDoubler = P.superTool:new{name = "Supertool Doubler", description = "Power, multiplied", baseRange = 0, quality = 4, image = 'Graphics/supertooldoubler.png'}
 function P.supertoolDoubler:usableOnNothing()
 	return true
 end
@@ -3476,7 +3476,7 @@ function P.woodenRain:usableOnNothing()
 end
 P.woodenRain.usableOnTile = P.woodenRain.usableOnNothing
 function P.woodenRain:useToolNothing()
-
+self.numHeld = self.numHeld - 1
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
 			local isValid = true
@@ -3491,7 +3491,7 @@ function P.woodenRain:useToolNothing()
 				end
 			end
 			if isValid then
-				self.numHeld = self.numHeld - 1
+				
 				room[i][j] = tiles.ladder:new()
 			end
 		end
@@ -3716,7 +3716,7 @@ end
 
 --selects walls from: glass, reinforcedGlass, concrete, metal, wood, tallWall, halfWall, toolTaxTile, dustyGlassWall
 P.wallReroller = P.superTool:new{name = "Wall Reroller", description = "", image = 'Graphics/wallreroller.png',
-baseRange = 0, quality = 3}
+baseRange = 0, quality = 4}
 function P.wallReroller:usableOnNothing()
 	return true
 end
@@ -4360,7 +4360,7 @@ function P.shittyPotion:useToolTile()
 end
 P.shittyPotion.useToolNothing = P.shittyPotion.useToolTile
 
-P.recycleBin = P.boxSpawner:new{name = "Recycle Bin", description = "Saving Earth, one tool at a time", image = 'Graphics/recyclebin.png', quality = 2}
+P.recycleBin = P.boxSpawner:new{name = "Recycle Bin", description = "Saving Earth, one tool at a time", image = 'Graphics/recyclebin.png', quality = 3}
 function P.recycleBin:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld-1
 	local toSpawn = pushableList[14]:new()
@@ -4376,7 +4376,7 @@ function P.recycleBin:useToolNothing(tileY, tileX)
 	pushables[#pushables+1] = toSpawn
 end
 
-P.iceBox = P.boxSpawner:new{name = "Ice Box", description = "Brrrrrrrrrr", image = 'Graphics/icebox.png', quality = 2}
+P.iceBox = P.boxSpawner:new{name = "Ice Box", description = "Brrrrrrrrrr", image = 'Graphics/icebox.png', quality = 3}
 function P.iceBox:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld-1
 	local toSpawn = pushableList[13]:new()
@@ -4504,7 +4504,7 @@ function P.amnesiaPill:useToolNothing()
 end
 P.amnesiaPill.useToolTile = P.amnesiaPill.useToolNothing
 
-P.heartTransplant = P.superTool:new{name = "Heart Transplant", description = "Another shot at life", quality = 2,
+P.heartTransplant = P.superTool:new{name = "Heart Transplant", description = "Another shot at life", quality = 3,
 image = 'Graphics/heart.png'}
 function P.heartTransplant:checkDeath()
 	self.numHeld = self.numHeld-1
@@ -4600,7 +4600,7 @@ P:addTool(P.trap)
 --P:addTool(P.endFinder)
 P:addTool(P.map)
 P:addTool(P.ramSpawner) --Keep
-P:addTool(P.gateBreaker) --Keep
+--P:addTool(P.gateBreaker) --Keep
 
 --P:addTool(P.gateBreaker)
 --P:addTool(P.conductiveBoxSpawner)
