@@ -4610,7 +4610,6 @@ P:addTool(P.boxCutter)
 
 P:addTool(P.magnet) --Keep
 
-P:addTool(P.magnet)
 P:addTool(P.spring) --Fix this shit
 P:addTool(P.glue)
 P:addTool(P.trap)
@@ -4673,8 +4672,6 @@ P:addTool(P.gasPourerXtreme)
 --P:addTool(P.buttonPlacer)
 P:addTool(P.wireToButton)--Nice
 
---P:addTool(P.buttonPlacer)
-P:addTool(P.wireToButton)
 
 P:addTool(P.foresight)
 P:addTool(P.tileDisplacer)
