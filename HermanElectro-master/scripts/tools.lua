@@ -4537,6 +4537,16 @@ function P.shield:updateSprite()
 	end
 end
 
+P.reactiveShield = P.superTool:new{name = "Mirror", description = "Don't get caught", quality = -1, image = 'Graphics/shield.png', baseRange = 0}
+function P.reactiveShield:checkDeath(deathSource)
+	if deathSource == 'spotlight' then
+		self.numHeld = self.numHeld-1
+		player.attributes.shieldCounter = player.attributes.shieldCounter+3
+		return false
+	end
+	return true
+end
+
 P.numNormalTools = 7
 P.lastToolUsed = 1
 
@@ -4735,6 +4745,7 @@ P:addTool(P.fishingPole) --
 P:addTool(P.blankTool) -- Keep
 P:addTool(P.mindfulTool)
 P:addTool(P.explosiveMeat)
+P:addTool(P.reactiveShield)
 
 P:addTool(P.opPotion)
 P:addTool(P.bombPotion) --will replace with grenade
