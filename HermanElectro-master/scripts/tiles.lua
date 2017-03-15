@@ -2310,6 +2310,7 @@ end
 function P.supertoolTile:updateSprite()
 	if self.tool~=nil then
 		self.sprite = self.tool:getTileImage()
+		self.poweredSprite = self.sprite
 	end
 end
 function P.supertoolTile:onEnter()
