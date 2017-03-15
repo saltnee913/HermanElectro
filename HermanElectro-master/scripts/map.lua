@@ -1364,7 +1364,7 @@ end
 function P.generateEndDungeon()
 	local randomStartRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.startRooms, 'mapGen')
 	local puzzleRooms, puzzleWeights = getRandomRoomArrays(P.floorInfo.rooms.puzzleRooms, 'mapGen')
-	local randomFinalRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.finalRooms, 'mapGen')
+	local randomFinalRoomsArray, finalRoomWeights = getRandomRoomArrays(P.floorInfo.rooms.finalRooms, 'mapGen')
 	local startRoomID = randomStartRoomsArray[1]
 
 	local height = P.floorInfo.height
@@ -1398,7 +1398,7 @@ function P.generateEndDungeon()
 		puzzleRoom3 = puzzleRooms[util.chooseWeightedRandom(puzzleWeights, 'mapGen')]
 	end
 	newmap[starty+1][startx] = {roomid = puzzleRoom3, room = P.createRoom(puzzleRoom3), isFinal = false, isInitial = false}
-	local finalRoom = randomFinalRoomsArray[1]
+	local finalRoom = randomFinalRoomsArray[util.chooseWeightedRandom(finalRoomWeights, 'mapGen')]
 	newmap[starty-1][startx] = {roomid = finalRoom, room = P.createRoom(finalRoom), isFinal = false, isInitial = false}
 	return newmap
 end
