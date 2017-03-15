@@ -4602,7 +4602,6 @@ P:addTool(P.map)
 P:addTool(P.ramSpawner) --Keep
 P:addTool(P.gateBreaker) --Keep
 
-P:addTool(P.ramSpawner)
 --P:addTool(P.gateBreaker)
 --P:addTool(P.conductiveBoxSpawner)
 P:addTool(P.superWireCutters)
