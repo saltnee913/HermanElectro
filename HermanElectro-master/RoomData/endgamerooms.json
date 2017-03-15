@@ -29,6 +29,8 @@
   "superFields":
   {
     "dirEnter": [1,1,1,1],
+    "minimapColor": [200, 0, 200],
+    "autowin": true,
     "hasEndTile": true
   }
 }
