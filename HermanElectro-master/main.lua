@@ -957,19 +957,6 @@ function win()
 		if loadTutorial then
 			unlocks.unlockUnlockableRef(unlocks.franciscoUnlock, true)
 		end
-		for i = 1, #unlocks.winUnlocks do
-			if unlocks.winUnlocks[i].unlocked == false then
-				unlocks.unlockUnlockableRef(unlocks.winUnlocks[i])
-				break
-			end
-		end
-		for i = 1, #player.character.winUnlocks do
-			local unlock = player.character.winUnlocks[i]
-			if unlock.unlocked == false then
-				unlocks.unlockUnlockableRef(unlock)
-				break
-			end
-		end
 		if gameTime.totalTime < 900 then
 			unlocks.unlockUnlockableRef(unlocks.erikUnlock)
 		end
@@ -978,6 +965,10 @@ function win()
 		end
 		
 		won = true
+		if player.dungeonKeysHeld >= 3 then
+			stats.incrementStat(player.character.name..'DungeonWins')
+			stats.incrementStat('totalDungeonWins')
+		end
 		stats.incrementStat(player.character.name..'Wins')
 		stats.incrementStat('totalWins')
 		--[[if player.character.name=="Herman" then

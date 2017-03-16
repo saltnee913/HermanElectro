@@ -38,7 +38,7 @@ function P.isCharacterUnlocked(charName)
 end
 
 P.character = Object:new{name = "Name", tallSprite = true, dirFacing = "down", scale = 0, sprite = 'Graphics/Characters/Herman.png',
-  description = "description", startingTools = {0,0,0,0,0,0,0}, scale = 0.25 * width/1200, forcePowerUpdate = false, winUnlocks = {}, tint = {1,1,1}}
+  description = "description", startingTools = {0,0,0,0,0,0,0}, scale = 0.25 * width/1200, forcePowerUpdate = false, tint = {1,1,1}, floorSixUnlocks = {}}
 function P.character:onBegin()
     myShader:send("tint_r", self.tint[1])
     myShader:send("tint_g", self.tint[2])
@@ -119,14 +119,15 @@ function P.character:bypassObstructsMovement(tile)
 	return false
 end
 
-P.herman = P.character:new{name = "Herman", description = "The Electrician", winUnlocks = {unlocks.reviveUnlock}, scale = 1.1*scale, sprites = {'Graphics/Characters/Herman.png', 'Graphics/Characters/Herman.png', 'Graphics/Characters/Herman.png', 'Graphics/Characters/Herman.png'}}
+P.herman = P.character:new{name = "Herman", description = "The Electrician", 
+  scale = 1.1*scale, sprites = {'Graphics/Characters/Herman.png', 'Graphics/Characters/Herman.png', 'Graphics/Characters/Herman.png', 'Graphics/Characters/Herman.png'}}
 function P.herman:onCharLoad()
 	if loadTutorial then return end
 	tools.giveToolsByReference({tools.revive})
 	myShader:send("player_range", 600)
 end
 
-P.felix = P.character:new{name = "Felix", description = "The Sharpshooter", winUnlocks = {unlocks.missileUnlock}, sprite = 'Graphics/felix.png', startingTools = {0,0,0,0,0,0,1}}
+P.felix = P.character:new{name = "Felix", description = "The Sharpshooter", sprite = 'Graphics/felix.png', startingTools = {0,0,0,0,0,0,1}}
 function P.felix:onCharLoad()
 	--tools[7] = tools.felixGun
 	--if not tools.felixGun.isGun then
@@ -216,7 +217,7 @@ function P.gabe:onRoomEnter()
 	player.attributes.flying = true
 end
 
-P.rammy = P.character:new{name = "Rammy", tallSprite = false, description = "The Ram", winUnlocks = {unlocks.ramUnlock},
+P.rammy = P.character:new{name = "Rammy", tallSprite = false, description = "The Ram",
 	sprite = 'Graphics/ram.png'}
 
 function P.rammy:preTileEnter(tile)
@@ -326,7 +327,6 @@ function P.chell.specialLightTest(tileY,tileX)
 end
 
 P.crate = P.character:new{name = "Carla", roomTrigger = false, description = "The Crate", isCrate = false, 
-  winUnlocks = {unlocks.conditionalBoxes},
   sprite = 'Graphics/carlaperson.png',
   humanSprite = 'Graphics/carlaperson.png', crateSprite = 'Graphics/carlabox.png', disabled = true}
 function P.crate:setCrate(isCrate)
@@ -408,8 +408,7 @@ function P.tim:onCharLoad()
 	tools.giveToolsByReference({tools.ramSpawner,tools.boxSpawner,tools.boomboxSpawner})
 end
 
-P.orson = P.character:new{name = "Orson", shifted = false, description = "The Mastermind", 
-  winUnlocks = {unlocks.buttonFlipperUnlock}, sprite = 'Graphics/orson.png', disabled = true}
+P.orson = P.character:new{name = "Orson", shifted = false, description = "The Mastermind", sprite = 'Graphics/orson.png', disabled = true}
 function P.orson:onCharLoad()
 	tools.brick.range = 100
 end
@@ -458,7 +457,6 @@ function P.lenny:onStartGame()
 end
 
 P.fish = P.character:new{name = "Fish", tallSprite = false, description = "Fish", 
-  winUnlocks = {unlocks.toolDoublerUnlock}, 
   life = 100, sprite = 'Graphics/Characters/Fish.png', tint = {0.9,0.9,1}, scale = 1.1*scale}
 function P.fish:postMove()
 	self.life = self.life-1

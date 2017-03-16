@@ -266,7 +266,9 @@ function P.keypressed(key, unicode)
     		if not unlocks[i].hidden then
     			unlocks.lockUnlockable(i)
     		end
-    	end  		
+    	end
+    	stats.statsData = {}
+    	stats.writeStats()  		
     elseif key == "o" then
     	createElements()
     end
