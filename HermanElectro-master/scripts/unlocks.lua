@@ -228,7 +228,7 @@ P.dungeonUnlock = P.unlock:new{name = 'dungeon', sprite = tiles.endDungeonEnter.
 
 
 --P.floorUnlocks = {P.doorUnlock, P.catUnlock, P.boxesUnlock, P.unbreakableWires, P.mousetrapUnlock, P.wizardUnlock}
-P.floorUnlocks = {nil,P.doorUnlock,nil,nil,nil,nil}
+P.floorUnlocks = {nil,P.doorUnlock,nil,nil,P.fogUnlock,nil}
 
 --characters
 P[#P+1] = P.felixUnlock --done
