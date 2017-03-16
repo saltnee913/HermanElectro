@@ -2570,9 +2570,8 @@ function resetPlayerAttributesTool()
 		player.attributes.upgradedToolUse = false
 		tools.tempUpgrade:resetTools()
 	end
-	if not tools[tool]==tools.mindfulTool then
-		tools.lastToolUsed = tool
-	end
+
+	tools.lastToolUsed = tool
 end
 
 function resetPlayerAttributesStep()
