@@ -1899,6 +1899,9 @@ function P.map:useToolNothing(tileY, tileX)
 				if map.getFieldForRoom(mainMap[i][j].roomid, 'hidden')~=nil and map.getFieldForRoom(mainMap[i][j].roomid, 'hidden') and
 				not (visibleMap[i][j]>=0.5) then
 					visibleMap[i][j]=0.5
+				elseif map.getFieldForRoom(mainMap[i][j].roomid, 'locked')~=nil and map.getFieldForRoom(mainMap[i][j].roomid, 'locked') and
+				not (visibleMap[i][j]>=0.5) then
+					visibleMap[i][j]=0.5
 				else
 					visibleMap[i][j]=1
 				end

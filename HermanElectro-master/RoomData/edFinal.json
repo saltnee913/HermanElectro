@@ -145,13 +145,12 @@
     "weight": 0.1
     },
   },
-  },
   "superFields":
   {
     "dirEnter": [0,0,0,1],
     "minimapColor": [139,69,19],
     "hasEndTile": false,
-    "autowin": true,
-    "floorTileOverride": "dungeon"
+    "floorTileOverride": "dungeon",
+    "locked": true
   }
 }
