@@ -123,7 +123,7 @@ end
 P.herman = P.character:new{name = "Herman", description = "The Electrician", winUnlocks = {unlocks.reviveUnlock}, scale = 1.1*scale, sprites = {'Graphics/Characters/Herman.png', 'Graphics/Characters/Herman.png', 'Graphics/Characters/Herman.png', 'Graphics/Characters/Herman.png'}}
 function P.herman:onCharLoad()
 	if loadTutorial then return end
-	tools.giveToolsByReference({tools.blankTool, tools.blankTool, tools.wireExtender})
+	tools.giveToolsByReference({tools.blankTool, tools.blankTool, tools.mindfulTool})
 	myShader:send("player_range", 600)
 end
 

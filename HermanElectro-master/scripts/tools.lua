@@ -4225,8 +4225,9 @@ for k, v in pairs(P.tool) do
 	if string.find(k, 'getToolable') then
 		P.blankTool[k] = function(self)
 			local otherTools = self:getOtherSupers()
+
 			if #otherTools == 0 then
-				return {}
+				return {{},{},{},{},{}}
 			elseif #otherTools == 1 then
 				return otherTools[1][k](otherTools[1])
 			else
@@ -4265,13 +4266,13 @@ for k, v in pairs(P.tool) do
 end
 
 P.mindfulTool = P.superTool:new{name = "Mindful Tool", description = "Never forget where you came from.", quality = 3, 
-  image = 'Graphics/Tools/mindfulTool.png', lastTool = 1}
+  image = 'Graphics/Tools/mindfulTool.png', lastTool = tools.saw}
 for k, v in pairs(P.tool) do
 	if string.find(k, 'getToolable') then
 		P.mindfulTool[k] = function(self)
 			local otherTools = self:getLastTool()
 			if #otherTools == 0 then
-				return {}
+				return {{},{},{},{},{}}
 			elseif #otherTools == 1 then
 				return otherTools[1][k](otherTools[1])
 			else
@@ -4306,6 +4307,7 @@ for k, v in pairs(P.tool) do
 				otherTools[i][k](otherTools[i],a,b,c,d,e,f,g)
 				otherTools[i].numHeld = otherTools[i].numHeld+1
 			end
+			tools.lastToolUsed = tools.blankTool
 		end
 	end
 end
@@ -4313,13 +4315,14 @@ function P.mindfulTool:getLastTool()
 	local lastToolList = P.tool:getLastTool()
 	if #lastToolList==1 then
 		--edge cases
-		if lastToolList[1]:instanceof(tools.mindfulTool) then
+		if lastToolList[1].name == tools.mindfulTool.name then
 			lastToolList[1] = self.lastTool
-		elseif lastToolList[1]:instanceof(tools.blankTool) then
+		end
+		if lastToolList[1].name == tools.blankTool.name then
 			lastToolList = {}
 			for i = tools.numNormalTools+1, #tools do
-				if tools[i].numHeld>0 and not tools[i].name==tools.blankTool.name and not tools[i].name==tools.mindfulTool.name then
-					lastToolList[#lastToolList] = tools[i]
+				if tools[i].numHeld>0 and (tools[i].name~=tools.blankTool.name) and (tools[i].name ~= self.name) then
+					lastToolList[#lastToolList+1] = tools[i]
 				end
 			end
 		end
