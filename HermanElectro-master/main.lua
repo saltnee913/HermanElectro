@@ -793,7 +793,7 @@ function loadOpeningWorld()
 	myShader:send("tint_r", player.character.tint[1])
     myShader:send("tint_g", player.character.tint[2])
     myShader:send("tint_b", player.character.tint[3])
-    
+
 	--remove supers
 	emptyTools()
 
@@ -3961,7 +3961,7 @@ function stepTrigger()
 end
 
 --unlocks all rooms besides hidden rooms (secret rooms and special dungeons)
-function unlockDoors()
+function unlockDoors(openLocked)
 	if player.attributes.xrayVision then
 		unlockDoorsPlus()
 		return
@@ -3979,9 +3979,7 @@ function unlockDoors()
 				local potentialId = mainMap[mapy+i][mapx+j].roomid
 				if map.getFieldForRoom(potentialId, "hidden")~=nil and map.getFieldForRoom(potentialId, "hidden") then
 					canUnlock = false
-				end
-				--if endDungeon
-				if i==-1 and floorIndex==1 and player.dungeonKeysHeld<3 then
+				elseif not openLocked and map.getFieldForRoom(potentialId, "locked")~=nil and map.getFieldForRoom(potentialId, "locked") then
 					canUnlock = false
 				end
 			end
@@ -3992,15 +3990,27 @@ function unlockDoors()
 	end
 end
 
+
 --unlocks secret rooms as well
-function unlockDoorsPlus()
+function unlockDoorsPlus(openLocked)
 	completedRooms[mapy][mapx] = 1
 	local testRooms = {{-1,0}, {1,0}, {0,-1}, {0,1}}
 	for k = 1, #testRooms do
 		local i = testRooms[k][1]
 		local j = testRooms[k][2]
 		if mapy+i>=0 and mapy+i<mapHeight+1 and mapx+j>=0 and mapx+j<mapHeight+1 then
-			visibleMap[mapy+i][mapx+j] = 1
+			if mapy+i>=0 and mapy+i<mapHeight+1 and mapx+j>=0 and mapx+j<mapHeight+1 then
+				canUnlock = true
+				if mainMap[mapy+i][mapx+j]~=nil then
+					local potentialId = mainMap[mapy+i][mapx+j].roomid
+					if not openLocked and map.getFieldForRoom(potentialId, "locked")~=nil and map.getFieldForRoom(potentialId, "locked") then
+						canUnlock = false
+					end
+				end
+				if canUnlock then
+					visibleMap[mapy+i][mapx+j] = 1
+				end
+			end
 		end
 	end
 end

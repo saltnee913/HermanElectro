@@ -2953,7 +2953,7 @@ end
 P.openDungeon = P.tile:new{name = "openDungeon", untoolable = true}
 function P.openDungeon:onEnter()
 	if player.dungeonKeysHeld>=3 then
-		unlockDoors()
+		unlockDoors(true)
 	end
 end
 
