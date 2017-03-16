@@ -140,7 +140,9 @@ function P.updateToolableTiles(toolid)
 end
 
 function P.addUseStat(toolid)
-	stats.incrementStat(tools[toolid].name..'Uses')
+	if tools[toolid]~=nil then
+		stats.incrementStat(tools[toolid].name..'Uses')
+	end
 end
 
 --prioritizes animals, matters if we want a tool to work on both animals and tiles
@@ -2185,16 +2187,28 @@ end
 P.wireExtender = P.superTool:new{name = "Extension Cord", description = "Longer is better", image = 'Graphics/wireextender.png', quality = 1, baseRange = 1}
 function P.wireExtender:usableOnTile(tile)
 	return tile:instanceof(tiles.wire)
+	or (tile.overlay~=nil and tile.overlay:instanceof(tiles.wire))
 end
 function P.wireExtender:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld-1
-	if room[tileY][tileX]:instanceof(tiles.unbreakableWire) then
-		room[tileY][tileX] = tiles.unbreakableWire:new()
-	elseif tile:instanceof(tiles.crossWire) then
-		--do nothing
+	if tile:instanceof(tiles.wire) then
+		if room[tileY][tileX]:instanceof(tiles.unbreakableWire) then
+			room[tileY][tileX] = tiles.unbreakableWire:new()
+		elseif tile:instanceof(tiles.crossWire) then
+			--do nothing
+		else
+			room[tileY][tileX] = tiles.wire:new()
+		end
 	else
-		room[tileY][tileX] = tiles.wire:new()
+		if room[tileY][tileX].overlay:instanceof(tiles.unbreakableWire) then
+			room[tileY][tileX].overlay = tiles.unbreakableWire:new()
+		elseif tile.overlay:instanceof(tiles.crossWire) then
+			--do nothing
+		else
+			room[tileY][tileX].overlay = tiles.wire:new()
+		end
 	end
+
 end
 
 P.coin = P.superTool:new{name = "Coin", description = "All costs must be payed", image = 'Graphics/Tools/coin.png', range = 1, quality = 1}
@@ -4213,8 +4227,9 @@ for k, v in pairs(P.tool) do
 	if string.find(k, 'getToolable') then
 		P.blankTool[k] = function(self)
 			local otherTools = self:getOtherSupers()
+
 			if #otherTools == 0 then
-				return {}
+				return {{},{},{},{},{}}
 			elseif #otherTools == 1 then
 				return otherTools[1][k](otherTools[1])
 			else
@@ -4253,34 +4268,65 @@ for k, v in pairs(P.tool) do
 end
 
 P.mindfulTool = P.superTool:new{name = "Mindful Tool", description = "Never forget where you came from.", quality = 3, 
-  image = 'Graphics/Tools/mindfulTool.png'}
+  image = 'Graphics/Tools/mindfulTool.png', lastTool = tools.saw}
 for k, v in pairs(P.tool) do
 	if string.find(k, 'getToolable') then
 		P.mindfulTool[k] = function(self)
 			local otherTools = self:getLastTool()
 			if #otherTools == 0 then
-				return {}
+				return {{},{},{},{},{}}
 			elseif #otherTools == 1 then
 				return otherTools[1][k](otherTools[1])
+			else
+				local toRet = {{},{},{},{},{}}
+				local tilesA = otherTools[1][k](otherTools[1])
+				local tilesB = otherTools[2][k](otherTools[2])
+				for dir = 1, 5 do
+					for i = 1, #tilesA[dir] do
+						toRet[dir][i] = tilesA[dir][i]
+					end
+					for i = 1, #tilesB[dir] do
+						local shouldSkip = false
+						for j = 1, #tilesA[dir] do
+							if tilesB[dir][i] == tilesA[dir][j] then
+								shouldSkip = true
+							end
+						end
+						if not shouldSkip then
+							toRet[dir][#toRet[dir]+1] = tilesB[dir][i]
+						end
+					end
+				end
+				return toRet
 			end
 		end
 	elseif string.match(k, 'useTool') then
 		P.mindfulTool[k] = function(self,a,b,c,d,e,f,g) --the a,b,c,d,e is a hack because for some reason ... doesn't work
 			self.numHeld = self.numHeld - 1
 			local otherTools = self:getLastTool()
+			self.lastTool = otherTools[#otherTools]
 			for i = 1, #otherTools do
 				otherTools[i][k](otherTools[i],a,b,c,d,e,f,g)
 				otherTools[i].numHeld = otherTools[i].numHeld+1
 			end
+			tools.lastToolUsed = tools.blankTool
 		end
 	end
 end
 function P.mindfulTool:getLastTool()
 	local lastToolList = P.tool:getLastTool()
 	if #lastToolList==1 then
-		if lastToolList[1]:instanceof(tools.mindfulTool) or
-		lastToolList[1]:instanceof(tools.blankTool) then
-			lastToolList[1] = tools.armageddon
+		--edge cases
+		if lastToolList[1].name == tools.mindfulTool.name then
+			lastToolList[1] = self.lastTool
+		end
+		if lastToolList[1].name == tools.blankTool.name then
+			lastToolList = {}
+			for i = tools.numNormalTools+1, #tools do
+				if tools[i].numHeld>0 and (tools[i].name~=tools.blankTool.name) and (tools[i].name ~= self.name) then
+					lastToolList[#lastToolList+1] = tools[i]
+				end
+			end
 		end
 	end
 	return lastToolList

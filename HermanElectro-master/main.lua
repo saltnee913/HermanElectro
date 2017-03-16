@@ -789,8 +789,11 @@ function loadOpeningWorld()
     myShader:send("player_x", player.x+getTranslation().x*tileWidth*scale+(width2-width)/2)
     myShader:send("player_y", player.y+getTranslation().y*tileWidth*scale+(height2-height)/2)
 	
-	player.character:onBegin()
-
+	--player.character:onBegin()
+	myShader:send("tint_r", player.character.tint[1])
+    myShader:send("tint_g", player.character.tint[2])
+    myShader:send("tint_b", player.character.tint[3])
+    
 	--remove supers
 	emptyTools()
 
@@ -2570,9 +2573,8 @@ function resetPlayerAttributesTool()
 		player.attributes.upgradedToolUse = false
 		tools.tempUpgrade:resetTools()
 	end
-	if not tools[tool]==tools.mindfulTool then
-		tools.lastToolUsed = tool
-	end
+
+	tools.lastToolUsed = tool
 end
 
 function resetPlayerAttributesStep()
