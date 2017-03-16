@@ -2311,7 +2311,8 @@ function P.supertoolTile:updateSprite()
 		self.poweredSprite = self.sprite
 	end
 end
-function P.supertoolTile:onEnter()
+function P.supertoolTile:onEnter(entered)
+	if not (player.tileX==entered.tileX and player.tileY==entered.tileY) then return end
 	local stTypesHeld = util.getSupertoolTypesHeld()
 	if stTypesHeld<3 or self.tool.numHeld>0 then
 		tools.giveToolsByReference({self.tool})
@@ -2326,7 +2327,8 @@ P.supertoolQ4 = P.supertoolTile:new{name = "supertoolTileQ4", superQuality = 4}
 P.supertoolQ5 = P.supertoolTile:new{name = "supertoolTileQ5", superQuality = 5}
 
 P.toolTile = P.tile:new{name = "toolTile", tool = nil, toolId = -1, dirSend = {0,0,0,0}}
-function P.toolTile:onEnter()
+function P.toolTile:onEnter(entered)
+	if not (player.tileX==entered.tileX and player.tileY==entered.tileY) then return end
 	tools.giveToolsByReference({self.tool})
 	self.isVisible = false
 	self.gone = true
@@ -2784,7 +2786,8 @@ function P.playerTile:onLoad()
 		end
 	end
 end
-function P.playerTile:onEnter()
+function P.playerTile:onEnter(entered)
+	if not (player.tileX==entered.tileX and player.tileY==entered.tileY) then return end
 	if self.character ~= nil then
 		player.character = self.character
 		player.character:onSelect()
