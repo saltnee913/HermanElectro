@@ -2364,7 +2364,13 @@ end
 P.growthHormones.useToolNothing = P.growthHormones.useToolTile
 
 
+
+
+------ Some EK tools with special refill mechanics
 P.thruCover = P.gun:new{name= "ThruCover Ammo", description = "Tactical Strike", image = 'Graphics/gun.png', quality = 3}
+function P.thruCover:giveOne()
+	self.numHeld =self.numHeld + 2
+end
 function P.thruCover:getToolableAnimals()
 	local bool = 0
 	if not player.attributes.tall then
@@ -2393,11 +2399,12 @@ function P.thruCover:getToolableTiles()
 	end
 	return toolableTiles
 end
-function P.thruCover:giveOne()
-	self.numHeld =self.numHeld + 2
-end
+
 
 P.iceyShot = P.gun:new{name= "IceyShot", description = "Super Cool", image = 'Graphics/icegun.png', quality = 3}
+function P.iceyShot:giveOne()
+	self.numHeld =self.numHeld + 3
+end
 function P.iceyShot:useToolAnimal(animal)
 	self.numHeld = self.numHeld -1
 	local toAdd = pushableList.iceBox:new()
@@ -2426,9 +2433,24 @@ function P.iceyShot:getToolableAnimals()
 	end
 	return toolableAnimals
 end
-function P.iceyShot:giveOne()
-	self.numHeld =self.numHeld + 3
+
+
+P.gumball = P.superTool:new{name = "A Brown Gumball", description = "Tastes like shadows", quality = -1, baseRange = 0}
+function P.gumball:usableOnTile(tile)
+	return true
 end
+
+function P.gumball:useToolTile(tile)
+	player.attributes.invisible = true
+	--Code to make this temporary
+end
+
+P.powderMix = P.superTool:new{name = "Tasty Powder", description = "Add to water", quality = -1, base range = 1}
+function P.powderMix:usableOnTile(tile)
+	return false
+end
+
+------ 
 
 
 P.robotArm = P.superTool:new{name = "robotArm", description = "Reach for the stars", image = 'Graphics/robotArm.png', quality = 2, baseRange = 0}
