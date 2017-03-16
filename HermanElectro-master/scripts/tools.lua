@@ -140,7 +140,9 @@ function P.updateToolableTiles(toolid)
 end
 
 function P.addUseStat(toolid)
-	stats.incrementStat(tools[toolid].name..'Uses')
+	if tools[toolid]~=nil then
+		stats.incrementStat(tools[toolid].name..'Uses')
+	end
 end
 
 --prioritizes animals, matters if we want a tool to work on both animals and tiles
