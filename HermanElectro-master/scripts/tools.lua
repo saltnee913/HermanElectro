@@ -2363,15 +2363,37 @@ P.growthHormones.useToolNothing = P.growthHormones.useToolTile
 
 P.thruCover = P.gun:new{name= "ThruCover Ammo", description = "Tactical Strike", image = 'Graphics/gun.png', quality = 3}
 function P.thruCover:getToolableAnimals()
-	player.attributes.tall = true
+	local bool = 0
+	if not player.attributes.tall then
+		player.attributes.tall = true
+		bool = 1
+	end
+		
 	local toolableAnimals = P.gun:getToolableAnimals()
-	player.attributes.tall = false
+	
+	if bool then
+		player.attributes.tall = false
+	end
 	return toolableAnimals
+end
+function P.thruCover:getToolableTiles()
+	local bool = 0
+	if not player.attributes.tall then
+		player.attributes.tall = true
+		bool = 1
+	end
+		
+	local toolableTiles= P.gun:getToolableTiles()
+	
+	if bool then
+		player.attributes.tall = false
+	end
+	return toolableTiles
 end
 function P.thruCover:giveOne()
 	self.numHeld =self.numHeld + 2
 end
-	
+
 
 P.robotArm = P.superTool:new{name = "robotArm", description = "Reach for the stars", image = 'Graphics/robotArm.png', quality = 2, baseRange = 0}
 function P.robotArm:usableOnTile(tile)
