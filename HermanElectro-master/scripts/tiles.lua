@@ -301,6 +301,14 @@ end
 
 
 P.unbreakableWire = P.wire:new{name = "unbreakableWire", litWhenPowered = false, sprite = 'Graphics/unbreakablewire.png', poweredSprite = 'Graphics/unbreakablewire.png', wireHackOff = 'Graphics3D/unbreakablewirehack.png', wireHackOn = 'Graphics3D/unbreakablewirehack.png'}
+function P.unbreakableWire:destroy()
+	self.sprite = self.destroyedSprite
+	self.canBePowered = false
+	self.destroyed = true
+	dirAccept = {0,0,0,0}
+	dirSend = {0,0,0,0}
+	unlocks.unlockUnlockableRef(unlocks.unbreakableElectricFloorUnlock)
+end
 P.unbreakableHorizontalWire = P.unbreakableWire:new{name = "unbreakableHorizontalWire", dirSend = {0,1,0,1}, dirAccept = {0,1,0,1}, sprite = 'Graphics/unbreakablehorizontalwire.png', poweredSprite = 'Graphics/unbreakablehorizontalwire.png'}
 P.unbreakableCornerWire = P.unbreakableWire:new{name = "unbreakableCornerWire", dirSend = {0,1,1,0}, dirAccept = {0,1,1,0}, sprite = 'Graphics/unbreakablecornerwire.png', poweredSprite = 'Graphics/unbreakablecornerwire.png'}
 P.unbreakableCornerWire.flipDirection = P.cornerWire.flipDirection
@@ -2111,6 +2119,13 @@ function P.unpoweredAccelerator:xAccel()
 	if self.rotation==1 then return 1
 	elseif self.rotation==3 then return -1
 	else return 0 end
+end
+function P.unpoweredAccelerator:onEnter(enterer)
+	for i = 1, #pushables do
+		if pushables[i].tileX==enterer.tileX and pushables[i].tileY==enterer.tileY then
+			unlocks.unlockUnlockableRef(unlocks.poweredAccelUnlock)
+		end
+	end
 end
 
 P.bombBoxTile = P.boxTile:new{name = "bombBoxTile", pushable = pushableList[8], listIndex = 8}

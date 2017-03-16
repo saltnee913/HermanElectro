@@ -3080,6 +3080,9 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 					end
 				end
 			else
+				if floorIndex>=5 then
+					unlocks.unlockUnlockableRef(unlocks.roomRerollerUnlock)
+				end
 				startGame()
 			end
 		end

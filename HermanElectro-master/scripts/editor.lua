@@ -547,6 +547,7 @@ function P.saveRoom()
 	args[2] = '  "'..nameEnter..'":'..args[2]:sub(11)
 	util.writeJSONCustom(args[1],args[2])
 	log("Saved!")
+	unlocks.unlockUnlockableRef(unlocks.laptopUnlock)
 	local justNamed = nameEnter
 
 	nameEnter = nil

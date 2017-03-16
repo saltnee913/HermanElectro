@@ -595,6 +595,12 @@ function P.waterBottle:usableOnNothing()
 end
 function P.waterBottle:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld - 1
+	if room[tileY][tileX]~=nil then
+		local t = room[tileY][tileX]
+		if t:instanceof(tiles.wire) or t:instanceof(tiles.electricFloor) then
+			unlocks.unlockUnlockableRef(unlocks.wireExtenderUnlock)
+		end
+	end
 	room[tileY][tileX] = tiles.puddle:new()
 end
 
@@ -2123,6 +2129,12 @@ function P.superWaterBottle:usableOnNothing()
 end
 function P.superWaterBottle:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld - 1
+	if room[tileY][tileX]~=nil then
+		local t = room[tileY][tileX]
+		if t:instanceof(tiles.wire) or t:instanceof(tiles.electricFloor) then
+			unlocks.unlockUnlockableRef(unlocks.wireExtenderUnlock)
+		end
+	end
 	room[tileY][tileX] = tiles.puddle:new()
 end
 

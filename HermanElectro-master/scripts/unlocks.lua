@@ -165,12 +165,14 @@ P.catUnlock = P.tileUnlock:new{name = 'meow', tileIds = {23}, sprite = animalLis
 P.ratUnlock = P.tileUnlock:new{name = 'eek', tileIds = {196}, sprite = animalList.rat.sprite}
 P.spikesUnlock = P.tileUnlock:new{name = 'pointy', tileIds = {28}, sprite = tiles.spikes.sprite}
 P.poweredEndUnlock = P.tileUnlock:new{name = 'powered end tiles', tileIds = {37}, sprite = tiles.poweredEnd.sprite}
+P.unbreakableElectricFloorUnlock = P.tileUnlock:new{name = 'unbreakable electric floor', tileIds = {114}, sprite = tiles.unbreakableElectricFloor.sprite}
 --^@Orson Unlocks
 P.snailsUnlock = P.tileUnlock:new{name = 'snails!', tileIds = {43,45}, sprite = animalList.snail.sprite}
 P.conductiveSnailsUnlock = P.tileUnlock:new{name = 'powered snails!', tileIds = {61,62}, sprite = animalList.conductiveSnail.sprite}
 P.glueSnailUnlock = P.tileUnlock:new{name = 'glue snails!', tileIds = {121}, sprite = animalList.glueSnail.sprite}
 P.bombBuddyUnlock = P.tileUnlock:new{name = "bomb buddy :)", tileIds = {122}, sprite = animalList.bombBuddy.sprite}
-P.termiteUnlock = P.tileUnlock:new{name = "bomb buddy :)", tileIds = {199}, sprite = animalList.termite.sprite}
+P.termiteUnlock = P.tileUnlock:new{name = "eek! termites!", tileIds = {199}, sprite = animalList.termite.sprite}
+
 
 P.untriggeredPowerUnlock = P.tileUnlock:new{name = 'untriggered power supplies', tileIds = {63}, sprite = tiles.untriggeredPowerSupply.sprite}
 
@@ -214,6 +216,9 @@ tools.superWireCutters, tools.superWaterBottle, tools.superSponge, tools.superBr
 sprite = tools.superSaw.image}
 P.laptopUnlock = P.unlock:new{name = "Laptop", toolIds = {tools.laptop}, sprite = tools.laptop.image}
 P.superLaserUnlock = P.unlock:new{name = "Super Laser", toolIds = {tools.superLaser}, sprite = tools.superLaser.image}
+P.laptopUnlock = P.unlock:new{name = 'laptop', toolIds = {tools.laptop}, sprite = tools.laptop.image}
+P.roomRerollerUnlock = P.unlock:new{name = 'roomReroller', toolIds = {tools.roomReroller}, sprite = tools.roomReroller.image}
+P.wireExtenderUnlock = P.unlock:new{name = 'wireExtender', toolIds = {tools.wireExtender}, sprite = tools.wireExtender.image}
 
 P.roomUnlock = P.unlock:new{name = 'room', roomIds = {"1"}}
 P.beggarPartyUnlock = P.roomUnlock:new{name = 'beggars love you', roomIds = {"beggar_party"}, sprite = tiles.beggar.sprite}
@@ -257,6 +262,7 @@ P[#P+1] = P.breakablePitUnlock --done
 P[#P+1] = P.cornerRotaterUnlock
 P[#P+1] = P.portalsUnlock
 P[#P+1] = P.poweredAccelUnlock
+P[#P+1] = P.unbreakableElectricFloorUnlock
 
 P[#P+1] = P.catUnlock --done
 P[#P+1] = P.ratUnlock
@@ -298,6 +304,9 @@ P[#P+1] = P.toolIncrementerUnlock
 P[#P+1] = P.toolRerollerUnlock
 P[#P+1] = P.laptopUnlock
 P[#P+1] = P.superLaserUnlock
+P[#P+1] = P.laptopUnlock
+P[#P+1] = P.roomRerollerUnlock
+P[#P+1] = P.wireExtenderUnlock
 --P[#P+1] = P.doorstopUnlock
  
 
