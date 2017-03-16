@@ -2427,7 +2427,7 @@ function P.iceyShot:getToolableAnimals()
 	return toolableAnimals
 end
 function P.iceyShot:giveOne()
-	self.numHeld =self.numHeld + 2
+	self.numHeld =self.numHeld + 3
 end
 
 
