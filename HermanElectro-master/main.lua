@@ -3845,13 +3845,13 @@ end
 function checkPickups()
 	if room[player.tileY][player.tileX]~=nil and room[player.tileY][player.tileX].tool~=nil
 	and room[player.tileY][player.tileX].isVisible then
-		room[player.tileY][player.tileX]:onEnter()
+		room[player.tileY][player.tileX]:onEnter(player)
 	end
 end
 
 function checkWin()
 	if room[player.tileY][player.tileX]~=nil and room[player.tileY][player.tileX].enterCheckWin then
-		room[player.tileY][player.tileX]:onEnter()
+		room[player.tileY][player.tileX]:onEnter(player)
 	end
 end
 
