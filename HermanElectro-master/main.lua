@@ -970,11 +970,8 @@ function win()
 				break
 			end
 		end
-		if gameTime.timeLeft > gameTime.levelTime * floorIndex then
+		if gameTime.totalTime < 900 then
 			unlocks.unlockUnlockableRef(unlocks.erikUnlock)
-		end
-		if player.character.speedUnlock ~= nil and gameTime.timeLeft > player.character.speedUnlockTime then
-			unlocks.unlockUnlockableRef(player.character.speedUnlock)
 		end
 		if gabeUnlock then
 			unlocks.unlockUnlockableRef(unlocks.gabeUnlock)
