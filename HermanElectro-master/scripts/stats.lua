@@ -17,10 +17,10 @@ P.statUnlockTriggers = {}
 P.statUnlockTriggers["boxesSawed"] = {[11] = unlocks.playerBoxUnlock}
 P.statUnlockTriggers["totalLosses"] = {[3] = unlocks.frederickUnlock}
 P.statUnlockTriggers["totalWins"] = {[3] = unlocks.dungeonUnlock}
+P.statUnlockTriggers["HermanWins"] = {[1] = unlocks.boxesUnlock}
+P.statUnlockTriggers["FelixDungeonWins"] = {[1] = unlocks.missileUnlock}
 P.tempUnlockTriggers = {}
 P.tempUnlockTriggers["beggarsShot"] = {[5] = unlocks.felixUnlock}
-P.tempUnlockTriggers["HermanWins"] = {[1] = unlocks.boxesUnlock}
-P.tempUnlockTriggers["FelixDungeonWins"] = {[1] = unlocks.missileUnlock}
 P.runNumber = 0
 
 function P.resetTempStats()
