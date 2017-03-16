@@ -179,6 +179,7 @@ P.untriggeredPowerUnlock = P.tileUnlock:new{name = 'untriggered power supplies',
 
 P.boxUnlock = P.tileUnlock:new{name = 'boxes', tileIds = {66,69,70,74,75,76,90,197}, sprite = pushables.box.sprite}
 P.playerBoxUnlock = P.tileUnlock:new{name = 'player only boxes', tileIds = {69}, sprite = pushables.playerBox.sprite}
+P.animalBoxUnlock = P.tileUnlock:new{name = 'animal only boxes', tileIds = {70}, sprite = pushables.animalBox.sprite}
 P.conductiveBoxes = P.tileUnlock:new{name = 'conductive boxes', tileIds = {74}, sprite = pushables.conductiveBox.sprite}
 P.boomboxUnlock = P.tileUnlock:new{name = 'boots and cats', tileIds = {75}, sprite = pushables.boombox.sprite}
 P.ramUnlock = P.tileUnlock:new{name = 'battering ram', tileIds = {76}, sprite = pushables.batteringRam.sprite}
@@ -276,6 +277,7 @@ P[#P+1] = P.glueSnailUnlock --done
 P[#P+1] = P.bombBuddyUnlock --done
 P[#P+1] = P.untriggeredPowerUnlock
 P[#P+1] = P.playerBoxUnlock --done
+P[#P+1] = P.animalBoxUnlock
 P[#P+1] = P.conductiveBoxes --done
 P[#P+1] = P.boomboxUnlock
 P[#P+1] = P.iceBoxUnlock
