@@ -4039,7 +4039,7 @@ function P.trader:useToolNothing()
 end
 P.trader.useToolTile = P.trader.useToolNothing
 
-P.tileFlipper = P.superTool:new{name = "Tile Flipper", description = "", quality = 3, baseRange = 2,
+P.tileFlipper = P.superTool:new{name = "Tile Flipper", description = "", quality = -1, baseRange = 2,
 image = 'Graphics/tileFlipper.png'}
 function P.tileFlipper:usableOnTile()
 	return true
