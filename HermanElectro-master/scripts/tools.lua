@@ -4050,7 +4050,7 @@ function P.tileFlipper:useToolTile(tile, tileY, tileX)
 	end
 end
 
-P.animalReroller = P.superTool:new{name = "Animal Reroller", description = "", image = 'Graphics/toolreroller.png',
+P.animalReroller = P.superTool:new{name = "Animal Reroller", description = "What could go wrong?", image = 'Graphics/toolreroller.png',
 baseRange = 0, quality = 2}
 function P.animalReroller:usableOnNothing()
 	return true
