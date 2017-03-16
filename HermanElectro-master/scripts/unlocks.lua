@@ -175,8 +175,8 @@ P.termiteUnlock = P.tileUnlock:new{name = "bomb buddy :)", tileIds = {199}, spri
 P.untriggeredPowerUnlock = P.tileUnlock:new{name = 'untriggered power supplies', tileIds = {63}, sprite = tiles.untriggeredPowerSupply.sprite}
 
 
-P.boxUnlock = P.tileUnlock:new{name = 'boxes', tileIds = {66}, sprite = pushables.box.sprite}
-P.conditionalBoxes = P.tileUnlock:new{name = 'player only and dog only boxes', tileIds = {69,70}, sprite = pushables.playerBox.sprite}
+P.boxUnlock = P.tileUnlock:new{name = 'boxes', tileIds = {66,69,70,74,75,76,90,197}, sprite = pushables.box.sprite}
+P.playerBoxUnlock = P.tileUnlock:new{name = 'player only boxes', tileIds = {69}, sprite = pushables.playerBox.sprite}
 P.conductiveBoxes = P.tileUnlock:new{name = 'conductive boxes', tileIds = {74}, sprite = pushables.conductiveBox.sprite}
 P.boomboxUnlock = P.tileUnlock:new{name = 'boots and cats', tileIds = {75}, sprite = pushables.boombox.sprite}
 P.ramUnlock = P.tileUnlock:new{name = 'battering ram', tileIds = {76}, sprite = pushables.batteringRam.sprite}
@@ -228,7 +228,7 @@ P.dungeonUnlock = P.unlock:new{name = 'dungeon', sprite = tiles.endDungeonEnter.
 
 
 --P.floorUnlocks = {P.doorUnlock, P.catUnlock, P.boxesUnlock, P.unbreakableWires, P.mousetrapUnlock, P.wizardUnlock}
-P.floorUnlocks = {nil,P.doorUnlock,nil,nil,nil,nil}
+P.floorUnlocks = {nil,P.doorUnlock,nil,nil,P.fogUnlock,nil}
 
 --characters
 P[#P+1] = P.felixUnlock --done
@@ -269,7 +269,7 @@ P[#P+1] = P.conductiveSnailsUnlock --done
 P[#P+1] = P.glueSnailUnlock --done
 P[#P+1] = P.bombBuddyUnlock --done
 P[#P+1] = P.untriggeredPowerUnlock
-P[#P+1] = P.conditionalBoxes --done
+P[#P+1] = P.playerBoxUnlock --done
 P[#P+1] = P.conductiveBoxes --done
 P[#P+1] = P.boomboxUnlock
 P[#P+1] = P.iceBoxUnlock
