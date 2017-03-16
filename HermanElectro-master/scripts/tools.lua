@@ -2360,6 +2360,19 @@ function P.growthHormones:useToolTile(tile)
 end
 P.growthHormones.useToolNothing = P.growthHormones.useToolTile
 
+
+P.thruCover = P.gun:new{name= "ThruCover Ammo", description = "Tactical Strike", image = 'Graphics/gun.png', quality = 3}
+function P.thruCover:getToolableAnimals()
+	player.attributes.tall = true
+	local toolableAnimals = P.gun:getToolableAnimals()
+	player.attributes.tall = false
+	return toolableAnimals
+end
+function P.thruCover:giveOne()
+	self.numHeld =self.numHeld + 2
+end
+	
+
 P.robotArm = P.superTool:new{name = "robotArm", description = "Reach for the stars", image = 'Graphics/robotArm.png', quality = 2, baseRange = 0}
 function P.robotArm:usableOnTile(tile)
 	return true
@@ -4872,7 +4885,7 @@ P:addTool(P.shittyPotion)
 P:addTool(P.recycleBin)
 P:addTool(P.iceBox)
 
-
+P:addTool(P.thruCover)
 P:addTool(P.deckOfCards)
 P:addTool(P.card)
 P:addTool(P.amnesiaPill)
