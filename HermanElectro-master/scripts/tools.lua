@@ -2445,10 +2445,10 @@ function P.gumball:useToolTile(tile)
 	--Code to make this temporary
 end
 
-P.powderMix = P.superTool:new{name = "Tasty Powder", description = "Add to water", quality = -1, base range = 1}
+P.powderMix = P.superTool:new{name = "Tasty Powder", description = "Add to water", quality = -1, baseRange = 1}
 function P.powderMix:usableOnTile(tile)
 	return false
-end
+end --PowderMixes change the behaviors of puddles
 
 ------ 
 
