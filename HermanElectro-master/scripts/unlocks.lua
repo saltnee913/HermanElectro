@@ -175,7 +175,7 @@ P.termiteUnlock = P.tileUnlock:new{name = "bomb buddy :)", tileIds = {199}, spri
 P.untriggeredPowerUnlock = P.tileUnlock:new{name = 'untriggered power supplies', tileIds = {63}, sprite = tiles.untriggeredPowerSupply.sprite}
 
 
-P.boxUnlock = P.tileUnlock:new{name = 'boxes', tileIds = {66}, sprite = pushables.box.sprite}
+P.boxUnlock = P.tileUnlock:new{name = 'boxes', tileIds = {66,69,70,74,75,76,90,197}, sprite = pushables.box.sprite}
 P.playerBoxUnlock = P.tileUnlock:new{name = 'player only boxes', tileIds = {69}, sprite = pushables.playerBox.sprite}
 P.conductiveBoxes = P.tileUnlock:new{name = 'conductive boxes', tileIds = {74}, sprite = pushables.conductiveBox.sprite}
 P.boomboxUnlock = P.tileUnlock:new{name = 'boots and cats', tileIds = {75}, sprite = pushables.boombox.sprite}
