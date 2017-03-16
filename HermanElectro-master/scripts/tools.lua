@@ -498,6 +498,7 @@ function P.saw:usableOnPushable(pushable)
 end
 function P.saw:useToolPushable(pushable)
 	self.numHeld = self.numHeld - 1
+	stats.incrementStat("boxesSawed")
 	pushable:destroy()
 end
 
