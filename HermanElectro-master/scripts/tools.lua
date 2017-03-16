@@ -2397,6 +2397,39 @@ function P.thruCover:giveOne()
 	self.numHeld =self.numHeld + 2
 end
 
+P.iceyShot = P.gun:new{name= "IceyShot", description = "Super Cool", image = 'Graphics/icegun.png', quality = 3}
+function P.iceyShot:useToolAnimal(animal)
+	self.numHeld = self.numHeld -1
+	local toAdd = pushableList.iceBox:new()
+	toAdd.tileX = animal.tileX
+	toAdd.prevTileX = animal.tileX
+	toAdd.tileY = animal.tileY
+	toAdd.prevTileY = animal.tileY
+	animal:kill()
+	pushables[#pushables+1] = toAdd
+	--room[y][x] = pushables.iceBox:new()
+	--table.insert(pushables, P.iceBox:new())
+	--pushables[#pushables].tileY = y
+	--pushables[#pushables].tileX = x
+end
+function P.iceyShot:getToolableAnimals()
+	local bool = 0
+	if not player.attributes.tall then
+		player.attributes.tall = true
+		bool = 1
+	end
+		
+	local toolableAnimals = P.gun:getToolableAnimals()
+	
+	if bool then
+		player.attributes.tall = false
+	end
+	return toolableAnimals
+end
+function P.iceyShot:giveOne()
+	self.numHeld =self.numHeld + 3
+end
+
 
 P.robotArm = P.superTool:new{name = "robotArm", description = "Reach for the stars", image = 'Graphics/robotArm.png', quality = 2, baseRange = 0}
 function P.robotArm:usableOnTile(tile)
@@ -4910,7 +4943,6 @@ P:addTool(P.shittyPotion)
 P:addTool(P.recycleBin)
 P:addTool(P.iceBox)
 
-P:addTool(P.thruCover)
 P:addTool(P.deckOfCards)
 P:addTool(P.card)
 P:addTool(P.amnesiaPill)
@@ -4918,6 +4950,9 @@ P:addTool(P.amnesiaPill)
 P:addTool(P.shield)
 P:addTool(P.shrooms)
 P:addTool(P.ammoPack)
+
+P:addTool(P.thruCover)
+P:addTool(P.iceyShot)
 
 P.resetTools()
 -- Make a tool based cursor
