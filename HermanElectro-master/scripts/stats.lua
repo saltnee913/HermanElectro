@@ -13,12 +13,16 @@ P.wins = {}
 P.losses = {}
 P.statsData = {}
 P.tempStatsData = {} --stats for each run
+
+--these unlock whenever you reach total stats
 P.statUnlockTriggers = {}
 P.statUnlockTriggers["boxesSawed"] = {[11] = unlocks.playerBoxUnlock}
 P.statUnlockTriggers["totalLosses"] = {[3] = unlocks.frederickUnlock}
 P.statUnlockTriggers["totalWins"] = {[3] = unlocks.dungeonUnlock}
 P.statUnlockTriggers["HermanWins"] = {[1] = unlocks.boxesUnlock}
 P.statUnlockTriggers["FelixDungeonWins"] = {[1] = unlocks.missileUnlock}
+
+--these unlock whenever you do this many things in a run
 P.tempUnlockTriggers = {}
 P.tempUnlockTriggers["beggarsShot"] = {[5] = unlocks.felixUnlock}
 P.runNumber = 0
