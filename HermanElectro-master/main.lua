@@ -3879,6 +3879,14 @@ function updateTools()
 		unlocks.unlockUnlockableRef(unlocks.superToolUnlock)
 	end
 
+	local unlockDoubler = true
+	for i = 1, 3 do
+		if specialTools[i]==0 or tools[specialTools[i]].numHeld<2 then
+			unlockDoubler = false
+		end
+	end
+	if unlockDoubler then unlocks.unlockUnlockableRef(unlocks.supertoolDoublerUnlock) end
+
 	for i = 1, 3 do
 		if specialTools[i]~=0 and tools[specialTools[i]].numHeld==0 then
 			specialTools[3]=0

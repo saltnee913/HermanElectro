@@ -228,6 +228,7 @@ P.tunnelerUnlock = P.unlock:new{name = 'tunneler', toolIds = {tools.tunneler}, s
 P.pickaxeUnlock = P.unlock:new{name = 'pickaxe', toolIds = {tools.pickaxe}, sprite = tools.pickaxe.image}
 P.luckySawUnlock = P.unlock:new{name = 'luckySaw', toolIds = {tools.luckySaw}, sprite = tools.luckySaw.image}
 P.luckyBrickUnlock = P.unlock:new{name = 'luckyBrick', toolIds = {tools.luckyBrick}, sprite = tools.luckyBrick.image}
+P.supertoolDoublerUnlock = P.unlock:new{name = 'supertoolDoubler', toolIds = {tools.supertoolDoubler}, sprite = tools.supertoolDoubler.image}
 
 P.roomUnlock = P.unlock:new{name = 'room', roomIds = {"1"}}
 P.beggarPartyUnlock = P.roomUnlock:new{name = 'beggars love you', roomIds = {"beggar_party"}, sprite = tiles.beggar.sprite}
@@ -325,6 +326,7 @@ P[#P+1] = P.tunnelerUnlock
 P[#P+1] = P.pickaxeUnlock
 P[#P+1] = P.luckyBrickUnlock
 P[#P+1] = P.luckySawUnlock
+P[#P+1] = P.supertoolDoublerUnlock
 
 --rooms
 P[#P+1] = P.beggarPartyUnlock --done
