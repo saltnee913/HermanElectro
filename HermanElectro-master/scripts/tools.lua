@@ -1643,7 +1643,7 @@ end
 function P.roomReroller:getTilesWhitelist()
 	return {tiles.wire, tiles.cornerWire, tiles.horizontalWire, tiles.metalWall, tiles.concreteWall, tiles.wall, tiles.glassWall,
 	tiles.electricFloor, tiles.poweredFloor, tiles.pit, tiles.notGate, tiles.andGate, tiles.ladder, tiles.puddle, tiles.button, tiles.stayButton,
-	tiles.stickyButton}
+	tiles.stickyButton, tiles.powerSupply}
 end
 function P.roomReroller:getTreasureTiles()
 	return {tiles.treasureTile, tiles.treasureTile2, tiles.treasureTile3, tiles.treasureTile4}
