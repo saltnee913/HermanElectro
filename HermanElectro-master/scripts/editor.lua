@@ -219,6 +219,7 @@ function P.keypressed(key, unicode)
 		toPrint = toPrint:sub(3)
 		toPrint = toPrint:sub(1,-3)
 		toPrint = toPrint..","
+		toPrint = "  \""..mainMap[mapy][mapx].roomid.."\""..toPrint:sub(10)
 		print(toPrint)
 	end
 	if key=='tab' then
