@@ -220,6 +220,12 @@ P.superLaserUnlock = P.unlock:new{name = "Super Laser", toolIds = {tools.superLa
 P.laptopUnlock = P.unlock:new{name = 'laptop', toolIds = {tools.laptop}, sprite = tools.laptop.image}
 P.roomRerollerUnlock = P.unlock:new{name = 'roomReroller', toolIds = {tools.roomReroller}, sprite = tools.roomReroller.image}
 P.wireExtenderUnlock = P.unlock:new{name = 'wireExtender', toolIds = {tools.wireExtender}, sprite = tools.wireExtender.image}
+P.doorstopUnlock = P.unlock:new{name = 'doorstop', toolIds = {tools.doorstop}, sprite = tools.doorstop.image}
+P.gasPourerUnlock = P.unlock:new{name = 'gasPourer', toolIds = {tools.gasPourer}, sprite = tools.gasPourer.image}
+P.gasPourerXtremeUnlock = P.unlock:new{name = 'gasPourerXtreme', toolIds = {tools.gasPourerXtreme}, sprite = tools.gasPourerXtreme.image}
+P.secretTeleporterUnlock = P.unlock:new{name = 'secretTeleporter', toolIds = {tools.secretTeleporter}, sprite = tools.secretTeleporter.image}
+P.tunnelerUnlock = P.unlock:new{name = 'tunneler', toolIds = {tools.tunneler}, sprite = tools.tunneler.image}
+P.pickaxeUnlock = P.unlock:new{name = 'pickaxe', toolIds = {tools.pickaxe}, sprite = tools.pickaxe.image}
 
 P.roomUnlock = P.unlock:new{name = 'room', roomIds = {"1"}}
 P.beggarPartyUnlock = P.roomUnlock:new{name = 'beggars love you', roomIds = {"beggar_party"}, sprite = tiles.beggar.sprite}
@@ -309,11 +315,13 @@ P[#P+1] = P.superLaserUnlock
 P[#P+1] = P.laptopUnlock
 P[#P+1] = P.roomRerollerUnlock
 P[#P+1] = P.wireExtenderUnlock
---P[#P+1] = P.doorstopUnlock
- 
-
-
-
+P[#P+1] = P.doorstopUnlock
+P[#P+1] = P.gasPourerUnlock
+P[#P+1] = P.gasPourerXtremeUnlock
+P[#P+1] = P.secretTeleporterUnlock
+P[#P+1] = P.tunnelerUnlock
+P[#P+1] = P.pickaxeUnlock
+--easy to add: lucky brick, lucky saw, super doubler
 
 --rooms
 P[#P+1] = P.beggarPartyUnlock --done

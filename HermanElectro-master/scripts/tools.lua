@@ -1817,6 +1817,9 @@ function P.teleporter:useToolNothing()
 				completedRooms[mapy][mapx] = 1
 				unlockDoors()
 			end
+			if map.getFieldForRoom(currentid, 'hidden') then
+				unlocks.unlockUnlockableRef(unlocks.secretTeleporterUnlock)
+			end
 			if loadTutorial then
 				player.enterX = player.tileX
 				player.enterY = player.tileY
@@ -2496,6 +2499,7 @@ end
 function P.gasPourer:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld-1
 	room[tileY][tileX] = tiles.gasPuddle:new()
+	unlocks.unlockUnlockableRef(unlocks.gasPourerXtremeUnlock)
 end
 
 P.gasPourerXtreme = P.gasPourer:new{name = "gasPourerXtreme", description = "Explosive landfill", image = 'Graphics/gaspourerxtreme.png', quality = 4, baseRange = 1}

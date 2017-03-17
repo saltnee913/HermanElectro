@@ -1673,6 +1673,7 @@ function P.whiteBeggar:providePayment()
 		for j = 1, roomLength do
 			if room[i][j]==self then
 				room[i][j] = tiles.tunnel:new()
+				unlocks.unlockUnlockableRef(unlocks.tunnelerUnlock)
 				return
 			end
 		end
@@ -2331,6 +2332,9 @@ function P.supertoolTile:onEnter(entered)
 	local stTypesHeld = util.getSupertoolTypesHeld()
 	if stTypesHeld<3 or self.tool.numHeld>0 then
 		tools.giveToolsByReference({self.tool})
+		if self.tool==tools.axe then
+			unlocks.unlockUnlockableRef(unlocks.pickaxeUnlock)
+		end
 		self.isVisible = false
 		self.gone = true
 	end

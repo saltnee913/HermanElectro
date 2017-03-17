@@ -306,6 +306,7 @@ end
 P.bombBox = P.conductiveBox:new{name = "bombBox", sprite = 'Graphics/bombBox.png'}
 function P.bombBox:destroy()
 	if self.destroyed then return end
+	unlocks.unlockUnlockableRef(unlocks.gasPourerUnlock)
 	self.destroyed = true
 	y = self.tileX
 	x = self.tileY

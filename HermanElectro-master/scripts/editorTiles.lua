@@ -96,6 +96,7 @@ P.advancedTiles[#P.advancedTiles+1] = tiles.fastSpotlightTile
 P.advancedTiles[#P.advancedTiles+1] = tiles.mousetrap
 P.advancedTiles[#P.advancedTiles+1] = tiles.mushroom
 P.advancedTiles[#P.advancedTiles+1] = tiles.endDungeonEnter
+P.advancedTiles[#P.advancedTiles+1] = tiles.powerTriggeredBomb
 
 P.shopTiles[#P.shopTiles+1] = tiles.toolTaxTile
 P.shopTiles[#P.shopTiles+1] = tiles.toolTile
