@@ -3102,6 +3102,21 @@ function P.pickaxe:useToolPushable(pushable)
 end
 
 P.luckyPenny = P.coin:new{name = "Lucky Penny", description = "May all your wishes come true", quality = 2, image = 'Graphics/Tools/luckyPenny.png'}
+function P.luckyPenny:useToolTile(tile)
+	self.numHeld = self.numHeld-1
+	if tile:instanceof(tiles.puddle) then
+		player.baseLuckBonus = player.baseLuckBonus+3.5
+	else
+		if tile:instanceof(tiles.toolTaxTile) then
+			if tile.tool==tools.brick then
+				unlocks.unlockUnlockableRef(unlocks.luckyBrickUnlock)
+			elseif tile.tool==tools.saw then
+				unlocks.unlockUnlockableRef(unlocks.luckySawUnlock)
+			end
+		end
+		tile:destroy()
+	end
+end
 
 P.helmet = P.superTool:new{name = "Knight's Helmet", description = "You're feeling slanted", quality = 3, image = 'Graphics/helmet.png', baseRange = 2}
 P.helmet.getToolableTiles = P.tool.getToolableTilesBox
@@ -4106,6 +4121,14 @@ function P.luckySaw:useToolTile(tile, tileY, tileX)
 	tile:destroy()
 	room[tileY][tileX] = tiles.toolTile:new()
 	room[tileY][tileX]:absoluteFinalUpdate()
+end
+function P.saw:usableOnPushable(pushable)
+	return not pushable.destroyed and pushable.sawable
+end
+function P.saw:useToolPushable(pushable)
+	self.numHeld = self.numHeld - 1
+	stats.incrementStat("boxesSawed")
+	pushable:destroy()
 end
 
 P.luckyBrick = P.superTool:new{name = "Lucky Brick", description = "Knock on...glass?",
