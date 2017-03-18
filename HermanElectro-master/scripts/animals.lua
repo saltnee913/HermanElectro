@@ -558,6 +558,8 @@ function P.twinPitbull:moveOverride(movex, movey)
 	return {x = movex, y = movey}
 end
 
+P.testChargedBoss = P.animal:new{name = "testChargedBoss", sprite = 'Graphics/termite.png', charged = true, conductive = true}
+
 
 
 animalList[1] = P.animal
@@ -577,5 +579,6 @@ animalList[14] = P.ram
 animalList[15] = P.rat
 animalList[16] = P.termite
 animalList[17] = P.twinPitbull
+animalList[18] = P.testChargedBoss
 
 return animalList

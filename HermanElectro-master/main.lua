@@ -1225,6 +1225,9 @@ function updatePower()
 					local conductPower = false
 					local pX = animals[i].tileX
 					local pY = animals[i].tileY
+
+					if animals[i].charged then conductPower = true end
+
 					if (room[pY-1]~=nil and room[pY-1][pX]~=nil and room[pY-1][pX].powered and room[pY-1][pX].dirSend[3]==1) or
 					(room[pY+1]~=nil and room[pY+1][pX]~=nil and room[pY+1][pX].powered and room[pY+1][pX].dirSend[1]==1) or
 					(room[pY][pX-1]~=nil and room[pY][pX-1].powered and room[pY][pX-1].dirSend[2]==1) or
@@ -1310,6 +1313,42 @@ function updatePower()
 							powerTest(pY, px, 0)
 						end
 						pushables[i].powered = true
+					end
+				end
+			end
+			for i = 1, #animals do
+				if animals[i].conductive then
+					local conductPower = false
+					local pX = animals[i].tileX
+					local pY = animals[i].tileY
+
+					if animals[i].charged then conductPower = true end
+
+					if (room[pY-1]~=nil and room[pY-1][pX]~=nil and room[pY-1][pX].powered and room[pY-1][pX].dirSend[3]==1) or
+					(room[pY+1]~=nil and room[pY+1][pX]~=nil and room[pY+1][pX].powered and room[pY+1][pX].dirSend[1]==1) or
+					(room[pY][pX-1]~=nil and room[pY][pX-1].powered and room[pY][pX-1].dirSend[2]==1) or
+					(room[pY][pX+1]~=nil and room[pY][pX+1].powered and room[pY][pX+1].dirSend[4]==1) then
+						conductPower = true
+					end
+					for j = 1, #pushables do
+						if pushables[j].powered and not pushables[j].destroyed then
+							if animals[i].tileY == pushables[j].tileY and math.abs(animals[i].tileX-pushables[j].tileX)==1
+							or animals[i].tileX == pushables[j].tileX and math.abs(pushables[j].tileY-animals[i].tileY)==1 then
+								conductPower = true
+							end
+						end
+					end
+					for j = 1, #animals do
+						if animals[j].conductive and animals[j].powered then
+							if animals[i].tileY == animals[j].tileY and math.abs(animals[i].tileX-animals[j].tileX)==1
+							or animals[i].tileX == animals[j].tileX and math.abs(animals[j].tileY-animals[i].tileY)==1 then
+								conductPower = true
+							end
+						end
+					end
+					if conductPower then
+						powerTestPushable(pY, pX, 0)
+						animals[i].powered = true
 					end
 				end
 			end
