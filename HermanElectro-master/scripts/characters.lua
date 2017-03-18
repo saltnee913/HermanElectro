@@ -123,7 +123,7 @@ P.herman = P.character:new{name = "Herman", description = "The Electrician",
   scale = 1.1*scale, sprites = {'Graphics/Characters/Herman.png', 'Graphics/Characters/Herman.png', 'Graphics/Characters/Herman.png', 'Graphics/Characters/Herman.png'}}
 function P.herman:onCharLoad()
 	if loadTutorial then return end
-	tools.giveToolsByReference({tools.revive})
+	tools.giveToolsByReference({tools.map, tools.map, tools.map, tools.map, tools.map, tools.map})
 	myShader:send("player_range", 600)
 end
 
