@@ -1215,7 +1215,7 @@ function P.tunnel:onEnter(player)
 	self.toolsEntered = self.toolsEntered+1
 	--donations = donations+math.ceil((7-(floorIndex))/2)
 	floorDonations = floorDonations+1]]
-	if floorIndex>=7 then
+	if floorIndex>=9 then
 		return
 		--should do something cool, can add later
 	end
@@ -2521,14 +2521,14 @@ function P.endDungeonEnter:onEnter()
 	end
 	player.returnFloorIndex = floorIndex
 	goToFloor(1)
-	if stairsLocs[8].coords.x~=0 then
-		mapx = stairsLocs[8].map.x
-		mapy = stairsLocs[8].map.y
+	if stairsLocs[#stairsLocs].coords.x~=0 then
+		mapx = stairsLocs[#stairsLocs].map.x
+		mapy = stairsLocs[#stairsLocs].map.y
 		room = mainMap[mapy][mapx].room
 		roomHeight = room.height
 		roomLength = room.length
-		player.tileX = stairsLocs[8].coords.x
-		player.tileY = stairsLocs[8].coords.y
+		player.tileX = stairsLocs[#stairsLocs].coords.x
+		player.tileY = stairsLocs[#stairsLocs].coords.y
 	else
 		for i = 1, roomHeight do
 			for j = 1, roomLength do
@@ -2590,8 +2590,7 @@ function P.finalKeyPowered:onEnter()
 end
 
 P.gameWin = P.tile:new{name = "gameWin"}
-function P.gameWin:onEnter()
-	
+function P.gameWin:onEnter()	
 	win()
 end
 
