@@ -525,7 +525,7 @@ function P.ladder:useToolNothing(tileY, tileX)
 	room[tileY][tileX] = tiles.ladder:new()
 end
 
-P.wireCutters = P.tool:new{name = 'wire-cutters', image = 'Graphics/Tools/wireCutters.png'}
+P.wireCutters = P.tool:new{name = 'wire-cutters', image = 'Graphics/Tools/wirecutters.png'}
 function P.wireCutters:usableOnNonOverlay(tile)
 	return not tile.destroyed and ((tile:instanceof(tiles.wire) and not tile:instanceof(tiles.unbreakableWire))
 	or tile:instanceof(tiles.conductiveGlass) or tile:instanceof(tiles.reinforcedConductiveGlass) or (tile:instanceof(tiles.electricFloor) and not tile:instanceof(tiles.unbreakableElectricFloor)))
@@ -4834,42 +4834,60 @@ P.resetTools()
 --Ideas: mushroom concoction (rainbow invincible mode), floor unlocker, ammo pack (3 guns)
 
 P:addTool(P.crowbar) 
+P:addTool(P.compass)
+P:addTool(P.flame)
+
 P:addTool(P.visionChanger) 
 P:addTool(P.bomb)
+
+
 P:addTool(P.electrifier) --Keep
 P:addTool(P.delectrifier)
 --P:addTool(P.unsticker)
 P:addTool(P.doorstop)
+
 P:addTool(P.charger)
+
 P:addTool(P.missile)
+
 P:addTool(P.shovel) --Keep
 --P:addTool(P.woodGrabber)
 --P:addTool(P.corpseGrabber)
 P:addTool(P.pitbullChanger)
+
 P:addTool(P.meat)
+
 P:addTool(P.rotater)
+
 P:addTool(P.teleporter) --Keep
+
+
 P:addTool(P.boxCutter)
 --P:addTool(P.broom)
 
 P:addTool(P.magnet) --Keep
 
 P:addTool(P.spring) --Fix this shit
+
 P:addTool(P.glue)
 P:addTool(P.trap)
 --P:addTool(P.endFinder)
 P:addTool(P.map)
+
 P:addTool(P.ramSpawner) --Keep
 --P:addTool(P.gateBreaker) --Keep
 
 --P:addTool(P.gateBreaker)
 --P:addTool(P.conductiveBoxSpawner)
 P:addTool(P.superWireCutters)
+
 P:addTool(P.boxSpawner)
 --P:addTool(P.boomboxSpawner)
-P:addTool(P.laser)
+
 P:addTool(P.gas)
 P:addTool(P.superLaser)
+P:addTool(P.laser)
+
 P:addTool(P.armageddon)
 P:addTool(P.toolIncrementer)
 --P:addTool(P.toolDoubler)
@@ -4877,14 +4895,18 @@ P:addTool(P.roomReroller)
 P:addTool(P.wings)
 P:addTool(P.swapper)
 P:addTool(P.bucketOfWater)
-P:addTool(P.flame) --Keep
+ --Keep
 P:addTool(P.toolReroller)
 
 P:addTool(P.nineLives)
 P:addTool(P.heartTransplant)
+
 P:addTool(P.revive) --Keep
+
 P:addTool(P.explosiveGun)
+
 P:addTool(P.buttonFlipper)
+
 P:addTool(P.wireBreaker)
 P:addTool(P.powerBreaker)
 P:addTool(P.gabeMaker)
@@ -4977,7 +4999,7 @@ P:addTool(P.beggarReroller) --Strong keep
 P:addTool(P.xrayVision)
 P:addTool(P.secretTeleporter)
 P:addTool(P.buttonReroller)
-P:addTool(P.compass)
+
 --P:addTool(P.santasHat)
 P:addTool(P.luckySaw)
 P:addTool(P.luckyBrick)
@@ -4995,26 +5017,37 @@ P:addTool(P.fishingPole) --
 P:addTool(P.blankTool) -- Keep
 P:addTool(P.mindfulTool)
 P:addTool(P.explosiveMeat)
-P:addTool(P.reactiveShield)
+
+
+
+
 
 P:addTool(P.opPotion)
 P:addTool(P.bombPotion) --will replace with grenade
 P:addTool(P.electricPotion)
 P:addTool(P.teleportPotion)
 P:addTool(P.shittyPotion)
+
+
 P:addTool(P.recycleBin)
 P:addTool(P.iceBox)
 
 P:addTool(P.deckOfCards)
 P:addTool(P.card)
+
 P:addTool(P.amnesiaPill)
+P:addTool(P.shrooms)
+
+
+P:addTool(P.reactiveShield)
+
 
 P:addTool(P.shield)
-P:addTool(P.shrooms)
 P:addTool(P.ammoPack)
-
 P:addTool(P.thruCover)
 P:addTool(P.iceyShot)
+
+
 
 P.resetTools()
 -- Make a tool based cursor
