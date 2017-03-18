@@ -331,8 +331,8 @@ function love.load()
 		love.graphics.setBackgroundColor(0,0,0)
 		floorIndex = -1
 		stairsLocs = {}
-		--1 is opening world, 2-7 are floors 1-6, 8 is dungeon
-		for i = 1, 8 do
+		--1 is opening world, 2-end-1 are floors, end is dungeon
+		for i = 1, #map.defaultFloorOrder+1 do
 			stairsLocs[i] = {map = {x = 0, y = 0}, coords = {x = 0, y = 0}}
 		end
 
@@ -397,6 +397,8 @@ function love.load()
 		--floortiles[1] = {grassrock1, grassrock2, grassrock3}
 		floortiles[1] = {love.graphics.newImage('Graphics/woodfloortest.png'),love.graphics.newImage('Graphics/woodfloortest.png'),love.graphics.newImage('Graphics/woodfloortest.png')}
 		floortiles[6] = floortiles[4]
+		floortiles[7] = floortiles[4]
+		floortiles[8] = floortiles[4]
 
 		floors = {}
 		floors[1] = love.graphics.newImage('Graphics/biggreenfloor.png')
@@ -504,7 +506,7 @@ function playMusic(index)
 	for i = 1, #music do
 		music[i]:stop()
 	end
-	if (index>0) then
+	if (index>0 and music[index]~=nil) then
 		music[index]:setVolume(music.volume)
 		music[index]:play()
 	end
@@ -646,7 +648,7 @@ function goToFloor(floorNum)
 
 	local stairsLocsIndex = floorIndex
 	if floorIndex==1 then
-		stairsLocsIndex = 8
+		stairsLocsIndex = #stairsLocs
 	end
 	stairsLocs[stairsLocsIndex] = {map = {x = mapx, y = mapy}, coords = {x = player.tileX, y = player.tileY}}
 	floorIndex = floorNum
