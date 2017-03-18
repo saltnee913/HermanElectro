@@ -1071,7 +1071,7 @@ function P.woodGrabber:useToolTile(tile, tileY, tileX)
 	room[tileY][tileX] = nil
 end
 
-P.pitbullChanger = P.superTool:new{name = "pitbullChanger", description = "Tabloid transformation",baseRange = 3, image = 'Graphics/pitbullChanger.png', quality = 1}
+P.pitbullChanger = P.superTool:new{name = "Giovanni's Wand", description = "Tabloid transformation",baseRange = 3, image = 'Graphics/pitbullChanger.png', quality = 1}
 function P.pitbullChanger:usableOnAnimal(animal)
 	return not animal.dead and animal:instanceof(animalList.pitbull)
 end
@@ -4703,7 +4703,7 @@ function P.deckOfCards:giveOne()
 	tools.card:draw(7)
 end
 
-P.amnesiaPill = P.superTool:new{name = "Amnesia Pill", description = "Goes great with roofies!", quality = 5, baseRange = 0,
+P.amnesiaPill = P.superTool:new{name = "Herman's Amnesia Pill", description = "Goes great with roofies!", quality = 5, baseRange = 0,
 image = 'Graphics/amnesiapill.png'}
 function P.amnesiaPill:usableOnNothing()
 	--on floors 1-6
