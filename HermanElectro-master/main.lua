@@ -2878,6 +2878,10 @@ function love.update(dt)
 	end
 	if #spotlights>0 or player.attributes.shieldCounter>0 then checkDeathSpotlights(dt) end
 
+	for i = 1, #animals do
+		animals[i]:update(dt)
+	end
+
 	--key press
 	keyTimer.timeLeft = keyTimer.timeLeft - dt
 	tools.updateTimer(dt)
@@ -3369,6 +3373,11 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 		    	if (pushables[i].conductive or pushables[i].forcePower) and (pushables[i].tileX~=pushables[i].prevTileX or pushables[i].tileY~=pushables[i].prevTileY) then
 		    		noPowerUpdate = false
 		    	end
+	    	end
+	    	for i = 1, #animals do
+	    		if animals[i].conductive then
+	    			noPowerUpdate = false
+	    		end
 	    	end
 		end
 		for i = 1, #pushables do
