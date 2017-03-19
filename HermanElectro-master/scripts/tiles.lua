@@ -1040,6 +1040,7 @@ P.pupTile = P.pitbullTile:new{name = "pup", animal = animalList[3], listIndex = 
 P.catTile = P.pitbullTile:new{name = "cat", animal = animalList[4], listIndex = 4}
 P.ramTile = P.pitbullTile:new{name = "ram", animal = animalList[14], listIndex = 14}
 P.twinPitbullTile = P.pitbullTile:new{name = "twinPitbull", animal = animalList[17], listIndex = 17}
+P.testChargedBossTile = P.pitbullTile:new{name = "testChargedBoss", animal = animalList[18], listIndex = 18}
 
 P.spotlightTile = P.tile:new{name = "spotlight", spotlight = spotlightList.spotlight,
 baseTime = 3600, currTime = 0,
@@ -3180,6 +3181,7 @@ tiles[199] = P.infestedWood
 tiles[200] = P.editorStairs
 tiles[201] = P.replayViewer
 tiles[202] = P.openDungeon
+tiles[203] = P.testChargedBossTile
 
 
 return tiles

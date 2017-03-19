@@ -558,6 +558,22 @@ function P.twinPitbull:moveOverride(movex, movey)
 	return {x = movex, y = movey}
 end
 
+P.testChargedBoss = P.pitbull:new{name = "testChargedBoss", sprite = 'Graphics/twinpitbull.png',
+chargeCounter = 1.5, maxChargeCounter = 1.5, charged = true, conductive = true}
+function P.testChargedBoss:update(dt)
+	self.chargeCounter = self.chargeCounter-dt
+	if self.chargeCounter<=0 then
+		self.charged = not self.charged
+		self.chargeCounter = self.maxChargeCounter
+		updateGameState(false,false)
+	end
+end
+function P.testChargedBoss:kill()
+	if self.dead then return end
+	self.dead = true
+	self.sprite = self.deadSprite
+	self.conductive = false
+end
 
 
 animalList[1] = P.animal
@@ -577,5 +593,6 @@ animalList[14] = P.ram
 animalList[15] = P.rat
 animalList[16] = P.termite
 animalList[17] = P.twinPitbull
+animalList[18] = P.testChargedBoss
 
 return animalList
