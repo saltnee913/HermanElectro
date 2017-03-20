@@ -4833,14 +4833,8 @@ P.resetTools()
 
 P:addTool(P.missile)
 P:addTool(P.laser)
-
-
-
-
-
 P:addTool(P.explosiveMeat)
 P:addTool(P.stealthBomber)
-
 P:addTool(P.superGun)
 P:addTool(P.explosiveGun)
 P:addTool(P.ammoPack)
@@ -4848,26 +4842,6 @@ P:addTool(P.thruCover)
 P:addTool(P.iceyShot) 
 P:addTool(P.icegun) --Cooler than laser
 
-
-
-
---Themes Prison + Escape
-P:addTool(P.knife)
-P:addTool(P.crowbar) 
-P:addTool(P.shovel)
-P:addTool(P.map)
-P:addTool(P.roomUnlocker) --Keep
-P:addTool(P.tunneler)
-P:addTool(P.lamp)
-P:addTool(P.emptyBucket)
-P:addTool(P.emptyCup)
-
-P:addTool(P.animalTrainer)
-P:addTool(P.secretTeleporter)
-P:addTool(P.longLadder)
-P:addTool(P.pickaxe) --Maybe Change, but defnitely keep
-P:addTool(P.towel)
-P:addTool(P.compass)
 
 
 --Themes Drugs
@@ -4909,33 +4883,19 @@ P:addTool(P.inflation)--Keep
 P:addTool(P.shopReroller)
 P:addTool(P.laptop) --Keep
 P:addTool(P.snowballGlobal)
-P:addTool(P.swapper)P:addTool(P.heartTransplant)
-P:addTool(P.lube) 
-P:addTool(P.bombBoxSpawner)
+P:addTool(P.swapper)
+P:addTool(P.heartTransplant)-- Desc"New memories"
+P:addTool(P.lube)
+P:addTool(P.bombBoxSpawner)-- 
 P:addTool(P.beggarReroller) --Strong keep
 P:addTool(P.iceBox)
+P:addTool(P.armageddon)
 
----Theme Tools
-P:addTool(P.bomb)
-P:addTool(P.boxCutter)
-P:addTool(P.magnet) --Keep
-P:addTool(P.superWireCutters)
-P:addTool(P.bucketOfWater)
-P:addTool(P.toolIncrementer)
-P:addTool(P.superLaser)
-P:addTool(P.axe) 
-P:addTool(P.superBrick)
-P:addTool(P.screwdriver) --Keep
-P:addTool(P.stoolPlacer)
-P:addTool(P.superSaw)
-P:addTool(P.superSponge)
-P:addTool(P.luckySaw)
-P:addTool(P.luckyBrick)
-P:addTool(P.fishingPole) -- 
+
 
 --Theme Choice/Uncertainty
-P:addTool(P.teleporter) --Keep
-P:addTool(P.coin) --Keep
+
+
 P:addTool(P.ghostStep)--Nice
 P:addTool(P.boxCloner)
 P:addTool(P.supertoolReroller) -- MUST KEEP
@@ -4943,9 +4903,13 @@ P:addTool(P.wallReroller)
 P:addTool(P.animalReroller)
 P:addTool(P.toolReroller)
 P:addTool(P.boxReroller)
+
+P:addTool(P.teleporter) --Keep
+P:addTool(P.coin) --Keep
 P:addTool(P.deckOfCards)
 P:addTool(P.card)
 P:addTool(P.amnesiaPill)
+
 
 
 --Theme Electricity/Connection
@@ -4966,22 +4930,67 @@ P:addTool(P.portalPlacerDouble)
 P:addTool(P.buttonReroller)
 
 
+--Themes Prison + Escape
+P:addTool(P.knife)
+P:addTool(P.crowbar) 
+P:addTool(P.shovel)
+P:addTool(P.map)
+P:addTool(P.roomUnlocker) --Keep
+P:addTool(P.tunneler)
+P:addTool(P.lamp)
+P:addTool(P.emptyBucket)
+P:addTool(P.emptyCup)
+
+P:addTool(P.animalTrainer)
+P:addTool(P.secretTeleporter)
+P:addTool(P.longLadder)
+P:addTool(P.pickaxe) --Maybe Change, but defnitely keep
+P:addTool(P.towel)
+P:addTool(P.compass)
+
+
+---Theme Tools
+P:addTool(P.bomb)
+P:addTool(P.boxCutter)
+P:addTool(P.magnet) --Keep
+P:addTool(P.superWireCutters)
+P:addTool(P.bucketOfWater)
+P:addTool(P.toolIncrementer)
+P:addTool(P.superLaser)
+P:addTool(P.axe) 
+P:addTool(P.superBrick)
+P:addTool(P.screwdriver) --Keep
+P:addTool(P.stoolPlacer)
+P:addTool(P.superSaw)
+P:addTool(P.superSponge)
+P:addTool(P.luckySaw)
+P:addTool(P.luckyBrick)
+P:addTool(P.fishingPole) -- 
+
+
+
+
+
+--Unique
+P:addTool(P.robotArm) --Keep
 
 P:addTool(P.meat)
 
 P:addTool(P.spring) --Fix this shit
+
 P:addTool(P.glue)
 
 P:addTool(P.ramSpawner) --Keep
 
 P:addTool(P.boxSpawner)
-P:addTool(P.armageddon)
+
+
 
 P:addTool(P.roomReroller)
 
 P:addTool(P.superSnowball) -- Mask - Hypnotoad
 
-P:addTool(P.robotArm) --Keep
+
 P:addTool(P.sock)
 P:addTool(P.gasPourer)
 P:addTool(P.gasPourerXtreme)
