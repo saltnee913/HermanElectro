@@ -2,6 +2,7 @@ require('scripts.object')
 require('scripts.boundaries')
 require('scripts.animals')
 require('scripts.pushables')
+bosses = require('scripts.bosses')
 tools = require('scripts.tools')
 
 local P = {}
@@ -2441,8 +2442,7 @@ function P.dungeonEnter:onEnter()
 	room = mainMap[mapy][mapx].room
 	roomHeight = room.height
 	roomLength = room.length
-	createAnimals()
-	createPushables()
+	createElements()
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
 			if room[i][j]~=nil and room[i][j]:instanceof(tiles.dungeonExit) then
@@ -2505,8 +2505,7 @@ function P.dungeonExit:onEnter()
 		end
 	end
 
-	createAnimals()
-	createPushables()
+	createElements()
 	player.justTeleported = true
 end
 
@@ -2979,6 +2978,8 @@ function P.openDungeon:onEnter()
 	end
 end
 
+P.bossTile = P.tile:new{name = 'bossTile', boss = bosses.boss}
+
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
 tiles[3] = P.powerSupply
@@ -3182,6 +3183,7 @@ tiles[200] = P.editorStairs
 tiles[201] = P.replayViewer
 tiles[202] = P.openDungeon
 tiles[203] = P.testChargedBossTile
+tiles[204] = P.bossTile
 
 
 return tiles

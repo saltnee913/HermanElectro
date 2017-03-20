@@ -38,8 +38,10 @@ function P.spotlight:onPlayer()
 	local spotDist = math.sqrt((sx-playerx)*(sx-playerx)+(sy-playery)*(sy-playery))
 	local spotDist2 = math.sqrt((sx-playerx)*(sx-playerx)+(sy-playery2)*(sy-playery2))
 	if spotDist<radius --[[or (player.character.tallSprite and spotDist2 < radius)]] then
+		log('on')
 		return true
 	end
+	log('off')
 	return false
 end
 

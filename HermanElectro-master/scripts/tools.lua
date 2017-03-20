@@ -1826,8 +1826,7 @@ function P.teleporter:useToolNothing()
 			end
 
 			if (prevMapX~=mapx or prevMapY~=mapy) or dir == -1 then
-				createAnimals()
-				createPushables()
+				createElements()
 			end
 			visibleMap[mapy][mapx] = 1
 			keyTimer.timeLeft = keyTimer.suicideDelay
@@ -4042,8 +4041,7 @@ function P.secretTeleporter:useToolNothing()
 		end
 
 		if (prevMapX~=mapx or prevMapY~=mapy) or dir == -1 then
-			createAnimals()
-			createPushables()
+			createElements()
 		end
 		visibleMap[mapy][mapx] = 1
 		keyTimer.timeLeft = keyTimer.suicideDelay
