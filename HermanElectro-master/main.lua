@@ -21,6 +21,7 @@ map = require('scripts.map')
 
 boundaries = require('scripts.boundaries') 
 --require('scripts.tools')
+bosses = require('scripts.bosses')
 animalList = require('scripts.animals')
 tools = require('scripts.tools')
 editor = require('scripts.editor')
@@ -227,6 +228,7 @@ function love.load()
 	animalCounter = 1 --is this still relevant?
 	spotlights = {}
 	pushables = {}
+	bossList = {}
 	messageInfo = {x = 0, y = 0, text = nil}
 	gabeUnlock = true
 	--width = 16*screenScale
@@ -1958,6 +1960,11 @@ function love.draw()
 				end
 			end
 		end
+		for i = 1, #bossList do
+			if bossList[i]:getBottomTileY()==j then
+				bossList[i]:drawBoss()
+			end
+		end
 		for i = 1, #animals do
 			if animals[i]~=nil and litTiles[animals[i].tileY][animals[i].tileX]==1 and not animals[i].pickedUp and animals[i].tileY==j then
 				local animalSprite = util.getImage(animals[i].sprite)
@@ -1978,6 +1985,7 @@ function love.draw()
 				love.graphics.draw(toDraw, pushablex, pushabley, 0, scale, scale)
 			end
 		end
+
 
 
 		if tools.toolableAnimals~=nil then
@@ -2485,13 +2493,22 @@ function createElements()
 	createAnimals()
 	createPushables()
 	createSpotlights()
+	createBosses()
 end
 
 function tileToCoords(tileY, tileX)
 	local ret = {x = 0, y = 0}
-	ret.x = (tileX-1)*scale*tileHeight+wallSprite.width
-	ret.y = (tileY-1)*scale*tileHeight+wallSprite.height
+	ret.x = tileToCoordsX(tileX)
+	ret.y = tileToCoordsY(tileY)
 	return ret
+end
+
+function tileToCoordsY(tileY)
+	return (tileY-1)*scale*tileHeight+wallSprite.height
+end
+
+function tileToCoordsX(tileX)
+	return (tileX-1)*scale*tileHeight+wallSprite.width
 end
 
 function createSpotlights()
@@ -2535,6 +2552,20 @@ function createAnimals()
 					end
 					animalCounter=animalCounter+1
 				end
+			end
+		end
+	end
+end
+
+function createBosses()
+	if room.bosses~=nil then bosses = room.bosses return end
+	bossList = {}
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i]~=nil and room[i][j]~=nil and room[i][j].name~=nil and (room[i][j].boss~=nil) then
+				bossToSpawn = room[i][j].boss:new()
+				bossToSpawn:load(i,j)
+				bossList[#bossList+1] = bossToSpawn
 			end
 		end
 	end
@@ -2631,6 +2662,7 @@ function saveElements()
 	room.pushables = pushables
 	room.animals = animals
 	room.spotlights = spotlights
+	room.bosses = bossList
 end
 
 function enterRoom(dir)
@@ -2861,6 +2893,10 @@ function love.update(dt)
 		if started and validSpace() and (completedRooms[mapy][mapx]~=1 or gameTime.goesDownInCompleted) then
 			gameTime.timeLeft = gameTime.timeLeft-dt
 		end
+	end
+
+	for i = 1, #bossList do
+		bossList[i]:superUpdate(dt)
 	end
 
 	--key press
