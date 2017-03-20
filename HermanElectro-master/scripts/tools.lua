@@ -4797,6 +4797,18 @@ function P.ammoPack:giveOne()
 	tools.gun.numHeld = tools.gun.numHeld+3
 end
 
+P.stopwatch = P.superTool:new{name = "Stopwatch", description = "Master of time", quality = 2, baseRange = 0,
+image = 'KenGraphics/mushroom.png'}
+function P.stopwatch:usableOnNothing()
+	return true
+end
+P.stopwatch.usableOnTile = P.stopwatch.usableOnNothing
+function P.stopwatch:useToolNothing()
+	self.numHeld = self.numHeld-1
+	player.attributes.timeFrozen = true
+end
+P.stopwatch.useToolTile = P.stopwatch.useToolNothing
+
 P.numNormalTools = 7
 P.lastToolUsed = 1
 
@@ -5007,6 +5019,8 @@ P:addTool(P.electricPotion)
 P:addTool(P.teleportPotion)
 P:addTool(P.shittyPotion)
 
+P:addTool(P.stopwatch)
+
 
 
 P.resetTools()
@@ -5014,6 +5028,7 @@ P.resetTools()
 
 -- Add Erik's brilliant card based SUPER PARADIGM!
 
+--ideas: stopwatch as Erik starting item, freezes time/animals/electricity/spotlights
 
 
 

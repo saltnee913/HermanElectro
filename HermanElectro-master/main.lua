@@ -9,7 +9,6 @@ fontSize = 12
 
 debug = true
 loadTutorial = false
-easyMode = false
 gamePaused = false
 
 gameSpeed = 1
@@ -254,7 +253,6 @@ function love.load()
 		extern number bonus_range = 0;
 		extern bool b_and_w = false;
 		extern bool createShadows = true;
-		extern vec4 spotlights[3];
 
 		vec4 effect( vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords ){
 		  	vec4 pixel = Texel(texture, texture_coords );//This is the current pixel color
@@ -275,20 +273,6 @@ function love.load()
 			number totaltint_r = tint_r/divVal;
 			number totaltint_g = tint_g/divVal;
 			number totaltint_b = tint_b/divVal;
-
-			//spotlights
-			for (int i=0;i<3;i=i+1) {
-				if (spotlights[i][0]>=0) {
-					number lampxdist = spotlights[i][0]-screen_coords[0];
-					number lampydist = spotlights[i][1]-screen_coords[1];
-					number totalLampDist = sqrt(lampxdist*lampxdist+lampydist*lampydist);
-					if (totalLampDist<spotlights[i][3]) {
-					totaltint_r = 1;
-					totaltint_g = 1;
-					totaltint_b = 0;
-					}
-				}
-            }
 
 			//lamps
 			for (int i=0;i<10;i=i+1) {
@@ -480,12 +464,12 @@ function love.load()
 			y = (6-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10, prevTileX = 3, prevTileY 	= 10,
 			prevx = (3-1)*scale*tileWidth+wallSprite.width+tileWidth/2*scale-10,
 			prevy = (10-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10,
-			width = 20, height = 20, speed = 250, luckTimer = 0, regularMapLoc = {x = 0, y = 0}, supersHeld = {total = 0}, returnFloorIndex = 0, attributes = {invincibleCounter = 0, shieldCounter = 0, lucky = false, gifted = false, permaMap = false, xrayVision = false, upgradedToolUse = false, fast = {fast = false, fastStep = false}, flying = false, fear = false, shelled = false, tall = false, extendedRange = 0, sockStep = -1, invisible = false}}
+			width = 20, height = 20, speed = 250, luckTimer = 0, regularMapLoc = {x = 0, y = 0}, supersHeld = {total = 0}, returnFloorIndex = 0, attributes = {timeFrozen = false, invincibleCounter = 0, shieldCounter = 0, lucky = false, gifted = false, permaMap = false, xrayVision = false, upgradedToolUse = false, fast = {fast = false, fastStep = false}, flying = false, fear = false, shelled = false, tall = false, extendedRange = 0, sockStep = -1, invisible = false}}
 	player.character = setChar
 
 	map.clearBlacklist()
 
-	if loadTutorial or easyMode then
+	if loadTutorial then
 		player.enterX = player.tileX
 		player.enterY = player.tileY
 		player.totalItemsGiven = {0,0,0,0,0,0,0}
@@ -985,19 +969,6 @@ maxLamps = 100
 function updateLamps(tileY, tileX)
 	if not started then return end
 
-	spotlightsSend = {}
-	if spotlights~=nil and player.character.name=="Albert" then
-		for i = 1, #spotlights do
-			spotlightsSend[#spotlightsSend+1] = {spotlights[i].x, spotlights[i].y, spotlights[i].intensity, spotlights[i].range}		
-		end
-	end
-	local spotIndex = #spotlightsSend
-	while spotIndex<3 do
-		spotlightsSend[#spotlightsSend+1] = {-1,-1,-1,0}
-		spotIndex = spotIndex+1
-	end
-	myShader:send("spotlights", unpack(spotlightsSend))
-
 	local lampHolder = {}
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
@@ -1099,6 +1070,7 @@ function checkLight(i, j, x, y)
 end
 
 function updatePower()
+	if player.attributes.timeFrozen then return end
 	player.character:onPreUpdatePower()
 	powerCount = 0
 
@@ -2596,6 +2568,7 @@ function resetPlayerAttributesRoom()
 	player.attributes.shelled = false
 	player.attributes.invisible = false
 	player.attributes.fast = {fast = false, fastStep = false}
+	player.attributes.timeFrozen = false
 end
 
 function resetPlayerAttributesTool()
@@ -2735,7 +2708,7 @@ function enterRoom(dir)
 		completedRooms[mapy][mapx] = 1
 		unlockDoors()
 	end
-	if loadTutorial or easyMode then
+	if loadTutorial then
 		player.enterX = player.tileX
 		player.enterY = player.tileY
 	end
@@ -2873,13 +2846,21 @@ function love.update(dt)
 			slLen = slLen-1
 		end
 	end]]
-	for i = 1, #spotlights do
-		spotlights[i]:update(dt)
-	end
+
 	if #spotlights>0 or player.attributes.shieldCounter>0 then checkDeathSpotlights(dt) end
 
-	for i = 1, #animals do
-		animals[i]:update(dt)
+	if not player.attributes.timeFrozen then
+		for i = 1, #spotlights do
+			spotlights[i]:update(dt)
+		end
+		for i = 1, #animals do
+			animals[i]:update(dt)
+		end
+
+		--game timer
+		if started and validSpace() and (completedRooms[mapy][mapx]~=1 or gameTime.goesDownInCompleted) then
+			gameTime.timeLeft = gameTime.timeLeft-dt
+		end
 	end
 
 	--key press
@@ -2894,9 +2875,6 @@ function love.update(dt)
 	end
 
 	--game timer
-	if started and validSpace() and (completedRooms[mapy][mapx]~=1 or gameTime.goesDownInCompleted) then
-		gameTime.timeLeft = gameTime.timeLeft-dt
-	end
 	if gameTime.timeLeft<=0 and not loadTutorial then
 		kill()
 	end
@@ -3077,10 +3055,6 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 		end
 		gameTime.timeLeft = gameTime.timeLeft+20000
 	end
-	if key=="y" then
-		easyMode = not easyMode
-	end
-
 
 	--k ability: open doors with k on supertools
 	--[[if key=="k" then
@@ -3095,7 +3069,7 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 		mainMap.cheated = true--kind of hacky
 	else
 		if key == 'r' then
-			if loadTutorial or easyMode then
+			if loadTutorial then
 				player.dead = false
 				player.y = (player.enterY-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
 				player.tileY = player.enterY
@@ -3112,10 +3086,6 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 					end
 					tools[i].numHeld = player.totalItemsGiven[i] - player.totalItemsNeeded[i]
 					if tools[i].numHeld < 0 then tools[i].numHeld = 0 end
-				end
-				if easyMode then
-					listOfItemsNeeded = map.getItemsNeeded(mainMap[mapy][mapx].roomid)
-					tools.giveToolsByArray(listOfItemsNeeded[1])
 				end
 				completedRooms[mapy][mapx] = 0
 				for i = 0, mainMap.height do
