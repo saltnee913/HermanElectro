@@ -1580,6 +1580,23 @@ function P.beggar:providePayment()
 	elseif paymentType<0.66 then P.blueBeggar:providePayment()
 	else P.greenBeggar:providePayment() end
 end
+function P.beggar:absoluteFinalUpdate()
+	if not (self.name==tiles.beggar.name) then return end
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]==self then
+				local whichBeggar = util.random(3, 'misc')
+				if whichBeggar==1 then
+					room[i][j] = tiles.redBeggar:new()
+				elseif whichBeggar==2 then
+					room[i][j] = tiles.blueBeggar:new()
+				else
+					room[i][j] = tiles.greenBeggar:new()
+				end
+			end
+		end
+	end
+end
 
 P.redBeggar = P.beggar:new{name = "redBeggar", sprite = 'GraphicsEli/redOrb1.png', deadSprite = 'Graphics/redbeggardead.png', 
   animation = {'GraphicsEli/redOrb1.png', 'GraphicsEli/redOrb2.png', 'GraphicsEli/redOrb3.png', 'GraphicsEli/redOrb4.png', 'GraphicsEli/redOrb3.png', 'GraphicsEli/redOrb2.png'}, animationLength = 1}
