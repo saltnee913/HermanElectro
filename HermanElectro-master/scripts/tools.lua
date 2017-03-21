@@ -1071,7 +1071,7 @@ function P.woodGrabber:useToolTile(tile, tileY, tileX)
 	room[tileY][tileX] = nil
 end
 
-P.pitbullChanger = P.superTool:new{name = "pitbullChanger", description = "Tabloid transformation",baseRange = 3, image = 'Graphics/pitbullChanger.png', quality = 1}
+P.pitbullChanger = P.superTool:new{name = "Giovanni's Wand", description = "Tabloid transformation",baseRange = 3, image = 'Graphics/pitbullChanger.png', quality = 1}
 function P.pitbullChanger:usableOnAnimal(animal)
 	return not animal.dead and animal:instanceof(animalList.pitbull)
 end
@@ -1826,8 +1826,7 @@ function P.teleporter:useToolNothing()
 			end
 
 			if (prevMapX~=mapx or prevMapY~=mapy) or dir == -1 then
-				createAnimals()
-				createPushables()
+				createElements()
 			end
 			visibleMap[mapy][mapx] = 1
 			keyTimer.timeLeft = keyTimer.suicideDelay
@@ -4042,8 +4041,7 @@ function P.secretTeleporter:useToolNothing()
 		end
 
 		if (prevMapX~=mapx or prevMapY~=mapy) or dir == -1 then
-			createAnimals()
-			createPushables()
+			createElements()
 		end
 		visibleMap[mapy][mapx] = 1
 		keyTimer.timeLeft = keyTimer.suicideDelay
@@ -4703,7 +4701,7 @@ function P.deckOfCards:giveOne()
 	tools.card:draw(7)
 end
 
-P.amnesiaPill = P.superTool:new{name = "Amnesia Pill", description = "Goes great with roofies!", quality = 5, baseRange = 0,
+P.amnesiaPill = P.superTool:new{name = "Herman's Amnesia Pill", description = "Goes great with roofies!", quality = 5, baseRange = 0,
 image = 'Graphics/amnesiapill.png'}
 function P.amnesiaPill:usableOnNothing()
 	--on floors 1-6
@@ -4797,6 +4795,18 @@ function P.ammoPack:giveOne()
 	tools.gun.numHeld = tools.gun.numHeld+3
 end
 
+P.stopwatch = P.superTool:new{name = "Stopwatch", description = "Master of time", quality = 2, baseRange = 0,
+image = 'KenGraphics/mushroom.png'}
+function P.stopwatch:usableOnNothing()
+	return true
+end
+P.stopwatch.usableOnTile = P.stopwatch.usableOnNothing
+function P.stopwatch:useToolNothing()
+	self.numHeld = self.numHeld-1
+	player.attributes.timeFrozen = true
+end
+P.stopwatch.useToolTile = P.stopwatch.useToolNothing
+
 P.numNormalTools = 7
 P.lastToolUsed = 1
 
@@ -4833,191 +4843,181 @@ P.resetTools()
 
 --Ideas: mushroom concoction (rainbow invincible mode), floor unlocker, ammo pack (3 guns)
 
-P:addTool(P.crowbar) 
-P:addTool(P.compass)
-P:addTool(P.flame)
-
-P:addTool(P.visionChanger) 
-P:addTool(P.bomb)
-
-
-P:addTool(P.electrifier) --Keep
-P:addTool(P.delectrifier)
---P:addTool(P.unsticker)
-P:addTool(P.doorstop)
-
-P:addTool(P.charger)
-
 P:addTool(P.missile)
+P:addTool(P.laser)
+P:addTool(P.explosiveMeat)
+P:addTool(P.stealthBomber)
+P:addTool(P.superGun)
+P:addTool(P.explosiveGun)
+P:addTool(P.ammoPack)
+P:addTool(P.thruCover)
+P:addTool(P.iceyShot) 
+P:addTool(P.icegun) --Cooler than laser
 
-P:addTool(P.shovel) --Keep
---P:addTool(P.woodGrabber)
---P:addTool(P.corpseGrabber)
+
+
+
+--Themes Drugs
+P:addTool(P.visionChanger) 
+P:addTool(P.gas)
+P:addTool(P.wings)
+P:addTool(P.ironMan)
+P:addTool(P.seeds)
+P:addTool(P.salt)--So bad it's good
+P:addTool(P.superWaterBottle)P:addTool(P.foresight)
+P:addTool(P.growthHormones)
+P:addTool(P.gabeMaker)
+P:addTool(P.flame) --Keep
+P:addTool(P.lemonadeCup)
+P:addTool(P.lemonParty)
+P:addTool(P.shell)
+P:addTool(P.xrayVision)
+P:addTool(P.blankTool) -- Keep
+P:addTool(P.mindfulTool)
+P:addTool(P.reactiveShield)
+P:addTool(P.shield)
+P:addTool(P.shrooms)
+P:addTool(P.revive) --Keep
+P:addTool(P.nineLives)
+
+--Theme Identity/Memes - Social
 P:addTool(P.pitbullChanger)
+P:addTool(P.trap)
+P:addTool(P.doorstop)
+P:addTool(P.charger)
+P:addTool(P.recycleBin)
+P:addTool(P.animalEnslaver)
+P:addTool(P.trader)
+P:addTool(P.christmasSurprise)
+P:addTool(P.luckyPenny)
+P:addTool(P.playerBoxSpawner)
+P:addTool(P.playerCloner)
+P:addTool(P.inflation)--Keep
+P:addTool(P.shopReroller)
+P:addTool(P.laptop) --Keep
+P:addTool(P.snowballGlobal)
+P:addTool(P.swapper)
+P:addTool(P.heartTransplant)-- Desc"New memories"
+P:addTool(P.lube)
+P:addTool(P.bombBoxSpawner)-- 
+P:addTool(P.beggarReroller) --Strong keep
+P:addTool(P.iceBox)
+P:addTool(P.armageddon)
 
-P:addTool(P.meat)
 
-P:addTool(P.rotater)
+
+--Theme Choice/Uncertainty
+
+
+P:addTool(P.ghostStep)--Nice
+P:addTool(P.boxCloner)
+P:addTool(P.supertoolReroller) -- MUST KEEP
+P:addTool(P.wallReroller)
+P:addTool(P.animalReroller)
+P:addTool(P.toolReroller)
+P:addTool(P.boxReroller)
 
 P:addTool(P.teleporter) --Keep
+P:addTool(P.coin) --Keep
+P:addTool(P.deckOfCards)
+P:addTool(P.card)
+P:addTool(P.amnesiaPill)
 
 
-P:addTool(P.boxCutter)
---P:addTool(P.broom)
 
-P:addTool(P.magnet) --Keep
-
-P:addTool(P.spring) --Fix this shit
-
-P:addTool(P.glue)
-P:addTool(P.trap)
---P:addTool(P.endFinder)
-P:addTool(P.map)
-
-P:addTool(P.ramSpawner) --Keep
---P:addTool(P.gateBreaker) --Keep
-
---P:addTool(P.gateBreaker)
---P:addTool(P.conductiveBoxSpawner)
-P:addTool(P.superWireCutters)
-
-P:addTool(P.boxSpawner)
---P:addTool(P.boomboxSpawner)
-
-P:addTool(P.gas)
-P:addTool(P.superLaser)
-P:addTool(P.laser)
-
-P:addTool(P.armageddon)
-P:addTool(P.toolIncrementer)
---P:addTool(P.toolDoubler)
-P:addTool(P.roomReroller)
-P:addTool(P.wings)
-P:addTool(P.swapper)
-P:addTool(P.bucketOfWater)
- --Keep
-P:addTool(P.toolReroller)
-
-P:addTool(P.nineLives)
-P:addTool(P.heartTransplant)
-
-P:addTool(P.revive) --Keep
-
-P:addTool(P.explosiveGun)
-
+--Theme Electricity/Connection
+P:addTool(P.electrifier) --Keep
+P:addTool(P.delectrifier)
+P:addTool(P.rotater)
 P:addTool(P.buttonFlipper)
 
 P:addTool(P.wireBreaker)
 P:addTool(P.powerBreaker)
-P:addTool(P.gabeMaker)
-P:addTool(P.roomUnlocker) --Keep
-P:addTool(P.axe) 
-P:addTool(P.lube) 
---P:addTool(P.snowball)
-P:addTool(P.knife)
-P:addTool(P.superSnowball)
-P:addTool(P.snowballGlobal)
-P:addTool(P.superBrick)
 P:addTool(P.portalPlacer)
---P:addTool(P.suicideKing) EXPLAIN THIS SHIT
-P:addTool(P.screwdriver) --Keep
-P:addTool(P.laptop) --Keep
 P:addTool(P.wireExtender)
-P:addTool(P.lamp)
-P:addTool(P.coin) --Keep
-
---P:addTool(P.mask)
-P:addTool(P.growthHormones)
-P:addTool(P.robotArm) --Keep
-P:addTool(P.sock)
-P:addTool(P.emptyCup)
-P:addTool(P.gasPourer)
-P:addTool(P.gasPourerXtreme)
-
---P:addTool(P.buttonPlacer)
 P:addTool(P.wireToButton)--Nice
-
-
-P:addTool(P.foresight)
 P:addTool(P.tileDisplacer)
 P:addTool(P.tileSwapper)
 P:addTool(P.tileCloner)--Epic
-P:addTool(P.shopReroller)
-P:addTool(P.ghostStep)--Nice
-P:addTool(P.stoolPlacer)
-P:addTool(P.lemonadeCup)
-P:addTool(P.lemonParty)
-P:addTool(P.inflation)--Keep
-P:addTool(P.emptyBucket)
-P:addTool(P.superWaterBottle)
-
---P:addTool(P.wallDungeonDetector)--Keep
-
---P:addTool(P.wallDungeonDetector)
-
-P:addTool(P.towel)
-P:addTool(P.playerCloner)
-P:addTool(P.playerBoxSpawner)
-P:addTool(P.bombBoxSpawner)
---P:addTool(P.jackInTheBoxSpawner)
-P:addTool(P.salt)--So bad it's good
-P:addTool(P.shell)
-P:addTool(P.shift) --Lets talk about this one
-P:addTool(P.glitch) --Epic
 P:addTool(P.tileMagnet)
-P:addTool(P.rottenMeat)
-P:addTool(P.pickaxe) --Maybe Change, but defnitely keep
-P:addTool(P.luckyPenny)
-P:addTool(P.bouncer) --lol
-P:addTool(P.block) --Hmmm
-P:addTool(P.stealthBomber)
-
-P:addTool(P.icegun) --Cooler than laser 
-P:addTool(P.seeds)
-P:addTool(P.supertoolDoubler) -- Ehhh lets talk
---P:addTool(P.coffee) --No idea what this does
-P:addTool(P.boxDisplacer)
-P:addTool(P.boxCloner)
---P:addTool(P.tilePusher)
 P:addTool(P.portalPlacerDouble)
---P:addTool(P.spinningSword)
-P:addTool(P.ironMan)
-P:addTool(P.supertoolReroller) -- MUST KEEP
-P:addTool(P.tunneler)
-P:addTool(P.longLadder)
-P:addTool(P.superSaw)
-P:addTool(P.superSponge)
---P:addTool(P.superLadder)
-P:addTool(P.superGun)
-P:addTool(P.woodenRain)
---P:addTool(P.tempUpgrade)
---P:addTool(P.permaUpgrade)
-P:addTool(P.christmasSurprise)
---P:addTool(P.ironWoman)
-P:addTool(P.wallReroller)
-P:addTool(P.beggarReroller) --Strong keep
-P:addTool(P.xrayVision)
-P:addTool(P.secretTeleporter)
 P:addTool(P.buttonReroller)
 
---P:addTool(P.santasHat)
+
+--Themes Prison + Escape
+P:addTool(P.knife)
+P:addTool(P.crowbar) 
+P:addTool(P.shovel)
+P:addTool(P.map)
+P:addTool(P.roomUnlocker) --Keep
+P:addTool(P.tunneler)
+P:addTool(P.lamp)
+P:addTool(P.emptyBucket)
+P:addTool(P.emptyCup)
+
+P:addTool(P.animalTrainer)
+P:addTool(P.secretTeleporter)
+P:addTool(P.longLadder)
+P:addTool(P.pickaxe) --Maybe Change, but defnitely keep
+P:addTool(P.towel)
+P:addTool(P.compass)
+
+
+---Theme Tools
+P:addTool(P.bomb)
+P:addTool(P.boxCutter)
+P:addTool(P.magnet) --Keep
+P:addTool(P.superWireCutters)
+P:addTool(P.bucketOfWater)
+P:addTool(P.toolIncrementer)
+P:addTool(P.superLaser)
+P:addTool(P.axe) 
+P:addTool(P.superBrick)
+P:addTool(P.screwdriver) --Keep
+P:addTool(P.stoolPlacer)
+P:addTool(P.superSaw)
+P:addTool(P.superSponge)
 P:addTool(P.luckySaw)
 P:addTool(P.luckyBrick)
---P:addTool(P.luckyCharm)
-P:addTool(P.trader)
---P:addTool(P.tileFlipper)
-P:addTool(P.animalReroller)
-P:addTool(P.boxReroller)
-P:addTool(P.animalTrainer)
-P:addTool(P.animalEnslaver)
---P:addTool(P.investmentBonus)
---P:addTool(P.completionBonus)
---P:addTool(P.roomCompletionBonus)
 P:addTool(P.fishingPole) -- 
-P:addTool(P.blankTool) -- Keep
-P:addTool(P.mindfulTool)
-P:addTool(P.explosiveMeat)
 
+
+
+
+
+--Unique
+P:addTool(P.robotArm) --Keep
+
+P:addTool(P.meat)
+
+P:addTool(P.spring) --Fix this shit
+
+P:addTool(P.glue)
+
+P:addTool(P.ramSpawner) --Keep
+
+P:addTool(P.boxSpawner)
+
+
+
+P:addTool(P.roomReroller)
+
+P:addTool(P.superSnowball) -- Mask - Hypnotoad
+
+
+P:addTool(P.sock)
+P:addTool(P.gasPourer)
+P:addTool(P.gasPourerXtreme)
+
+P:addTool(P.shift) --Lets talk about this one
+P:addTool(P.glitch) --Epic
+P:addTool(P.rottenMeat)
+P:addTool(P.bouncer) --lol
+P:addTool(P.block) --Hmmm
+P:addTool(P.supertoolDoubler) -- Ehhh lets talk
+
+P:addTool(P.boxDisplacer)
+P:addTool(P.woodenRain)
 
 
 
@@ -5028,25 +5028,7 @@ P:addTool(P.electricPotion)
 P:addTool(P.teleportPotion)
 P:addTool(P.shittyPotion)
 
-
-P:addTool(P.recycleBin)
-P:addTool(P.iceBox)
-
-P:addTool(P.deckOfCards)
-P:addTool(P.card)
-
-P:addTool(P.amnesiaPill)
-P:addTool(P.shrooms)
-
-
-P:addTool(P.reactiveShield)
-
-
-P:addTool(P.shield)
-P:addTool(P.ammoPack)
-P:addTool(P.thruCover)
-P:addTool(P.iceyShot)
-
+P:addTool(P.stopwatch)
 
 
 P.resetTools()
@@ -5054,5 +5036,41 @@ P.resetTools()
 
 -- Add Erik's brilliant card based SUPER PARADIGM!
 
+--ideas: stopwatch as Erik starting item, freezes time/animals/electricity/spotlights
+
+
 
 return tools
+
+
+--P:addTool(P.unsticker)
+ --Keep
+--P:addTool(P.woodGrabber)
+--P:addTool(P.corpseGrabber)
+--P:addTool(P.broom)
+--P:addTool(P.endFinder)
+--P:addTool(P.gateBreaker) --Keep
+--P:addTool(P.gateBreaker)
+--P:addTool(P.conductiveBoxSpawner)
+--P:addTool(P.boomboxSpawner)
+--P:addTool(P.toolDoubler)
+--P:addTool(P.snowball)
+--P:addTool(P.suicideKing) EXPLAIN THIS SHIT
+--P:addTool(P.mask)
+--P:addTool(P.buttonPlacer)
+--P:addTool(P.wallDungeonDetector)--Keep
+--P:addTool(P.wallDungeonDetector)
+--P:addTool(P.jackInTheBoxSpawner)
+--P:addTool(P.coffee) --No idea what this does
+--P:addTool(P.tilePusher)
+--P:addTool(P.spinningSword)
+--P:addTool(P.superLadder)
+--P:addTool(P.tempUpgrade)
+--P:addTool(P.permaUpgrade)
+--P:addTool(P.ironWoman)
+--P:addTool(P.santasHat)
+--P:addTool(P.luckyCharm)
+--P:addTool(P.tileFlipper)
+--P:addTool(P.investmentBonus)
+--P:addTool(P.completionBonus)
+--P:addTool(P.roomCompletionBonus)

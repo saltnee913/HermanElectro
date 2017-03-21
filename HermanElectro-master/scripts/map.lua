@@ -8,7 +8,8 @@ local P = {}
 map = P
 
 --Temporary variable, we have to do this a better way later
-P.defaultFloorOrder = {'RoomData/floor1.json', 'RoomData/floor2.json', 'RoomData/floor3.json', 'RoomData/floor4.json', 'RoomData/floor5.json', 'RoomData/floor6.json', 'RoomData/exitDungeonsMap.json'}
+P.defaultFloorOrder = {'RoomData/floor1.json', 'RoomData/floor2.json', 'RoomData/floor3.json', 'RoomData/floor4.json', 'RoomData/floor5.json', 'RoomData/floor6.json',
+'RoomData/floor7.json', 'RoomData/floor8.json', 'RoomData/exitDungeonsMap.json'}
 P.floorOrder = P.defaultFloorOrder
 
 local MapInfo = Object:new{floor = 1, height = 0, numRooms = 0}
@@ -923,6 +924,9 @@ function P.generateMapWeighted()
 	--set up variables
 	local height = P.floorInfo.height
 	local numRooms = P.floorInfo.numRooms
+	local numTreasure = P.floorInfo.numTreasure
+	local numShop = P.floorInfo.numShop
+	local numDonation = P.floorInfo.numDonation
 	local newmap = MapInfo:new{height = height, numRooms = numRooms}
 	for i = 0, height+1 do
 		newmap[i] = {}
@@ -989,7 +993,7 @@ function P.generateMapWeighted()
 		end
 		--choose a room slot
 		local choice = util.chooseRandomElement(available, 'mapGen')
-		if numRooms-#usedRooms == 4 then
+		if numRooms-#usedRooms == 1+numDonation+numTreasure+numShop then
 			local max = {x = choice.x, y = choice.y}
 			for i = 1, #available do
 				if math.abs(available[i].x-math.floor(height/2))+math.abs(available[i].y-math.floor(height/2))>
@@ -1002,14 +1006,14 @@ function P.generateMapWeighted()
 		end
 		local roomid
 
-		if numRooms - #usedRooms == 4 then
+		if numRooms - #usedRooms == 1+numDonation+numTreasure+numShop then
 			roomid = randomFinalRoomsArray[util.chooseWeightedRandom(finalRoomWeights, 'mapGen')]
-		elseif numRooms - #usedRooms == 3 then
-			roomid = randomTreasureRoomsArray[util.chooseWeightedRandom(treasureRoomWeights, 'mapGen')]
-		elseif numRooms - #usedRooms == 2 then
-			roomid = randomDonationRoomsArray[util.chooseWeightedRandom(donationRoomWeights, 'mapGen')]
-		elseif numRooms - #usedRooms == 1 then
+		elseif numRooms - #usedRooms < 1+numShop then
 			roomid = randomShopsArray[util.chooseWeightedRandom(shopWeights, 'mapGen')]
+		elseif numRooms - #usedRooms < 1+numShop+numDonation then
+			roomid = randomDonationRoomsArray[util.chooseWeightedRandom(donationRoomWeights, 'mapGen')]
+		elseif numRooms - #usedRooms < 1+numShop+numDonation+numTreasure then
+			roomid = randomTreasureRoomsArray[util.chooseWeightedRandom(treasureRoomWeights, 'mapGen')]
 		else
 			--creates an array of 5 possible choices with weights
 			local roomChoices = {}

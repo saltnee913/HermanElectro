@@ -16,7 +16,7 @@
 				},
 				"or":
 				{
-					"toolRange": [4,7],
+					"toolRange": [0,7],
 					"equals":
 					{
 						"key": "roomid",
@@ -120,15 +120,15 @@
 	{
 		"requireUnlocks": true,
 		"height": 10,
-		"numRooms": 9,
+		"numRooms": 3,
 		"generateFunction": "generateMapWeighted",
 		"startRoomID": "1",
 		//numRoomsToCheck is the amount of rooms to try when deciding a room's roomid, decreasing this increases rng
 		"numRoomsToCheck": 5,
 		"tint": [0,0,0],
 		"playerRange": 300,
-		"numTreasure": 2,
-		"numShop": 1,
-		"numDonation": 1
+		"numTreasure": 0,
+		"numShop": 0,
+		"numDonation": 0
 	}
 }

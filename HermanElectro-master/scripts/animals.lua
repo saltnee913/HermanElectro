@@ -20,7 +20,7 @@ scale = (width - 2*wallSprite.width)/(20.3 * 16)*5/6
 --speed same as player (250)
 P.animal = Object:new{elevation = 0, scale = scale, yOffset = 0, frozen = false, trained = false, conductive = false, pickedUp = false, canDropTool = false, willDropTool = false, flying = false, triggered = false, waitCounter = 1, dead = false, name = "animal", tileX, tileY, prevx, prevy, prevTileX, prevTileY, x, y, speed = 250, width = 16*scale, height = 16*scale, sprite = 'Graphics/pitbull.png', deadSprite = 'Graphics/pitbulldead.png', tilesOn = {}, oldTilesOn = {}}
 function P.animal:move(playerx, playery, room, isLit)
-	if player.attributes.shelled or player.attributes.invisible then
+	if player.attributes.shelled or player.attributes.invisible or player.attributes.timeFrozen then
 		return
 	elseif player.attributes.fear then
 		self:afraidPrimaryMove(playerx, playery, room, isLit)
@@ -51,7 +51,7 @@ function P.animal:moveOverride(movex, movey)
 	return {x = movex, y = movey}
 end
 function P.animal:primaryMove(playerx, playery)
-	if player.attributes.shelled or player.attributes.invisible then
+	if player.attributes.shelled or player.attributes.invisible or player.attributes.timeFrozen then
 		return
 	end
 	local diffx = math.abs(playerx - self.tileX)
@@ -100,7 +100,7 @@ function P.animal:pushableCheck()
 end
 
 function P.animal:secondaryMove(playerx, playery)
-	if player.attributes.shelled or player.attributes.invisible then
+	if player.attributes.shelled or player.attributes.invisible or player.attributes.timeFrozen then
 		return
 	end
 	if player.character.name == "Leonard" and player.character.scaryMode == true then
@@ -185,7 +185,7 @@ function P.animal:kill()
 	self.dead = true
 	self.sprite = self.deadSprite
 	if self.canDropTool and not self.willDropTool then
-		local bonusDropChance = util.random(35, 'toolDrop')
+		local bonusDropChance = util.random(100, 'toolDrop')
 		if bonusDropChance<=getLuckBonus() then
 			self.willDropTool = true
 		end
@@ -206,7 +206,7 @@ end
 function P.animal:explode()
 end
 function P.animal:afraidPrimaryMove(playerx, playery, room, isLit)
-	if player.attributes.shelled or player.attributes.invisible then
+	if player.attributes.shelled or player.attributes.invisible or player.attributes.timeFrozen then
 		return
 	end
 	local diffCatx = math.abs(playerx - self.tileX)
@@ -294,7 +294,7 @@ function P.animal:tryMove(diffx, diffy)
 end
 
 function P.animal:afraidSecondaryMove(playerx, playery)
-	if player.attributes.shelled or player.attributes.invisible then
+	if player.attributes.shelled or player.attributes.invisible or player.attributes.timeFrozen then
 		return
 	end
 	local diffx = math.abs(playerx - self.tileX)
@@ -558,6 +558,22 @@ function P.twinPitbull:moveOverride(movex, movey)
 	return {x = movex, y = movey}
 end
 
+P.testChargedBoss = P.pitbull:new{name = "testChargedBoss", sprite = 'Graphics/twinpitbull.png',
+chargeCounter = 1.5, maxChargeCounter = 1.5, charged = true, conductive = true}
+function P.testChargedBoss:update(dt)
+	self.chargeCounter = self.chargeCounter-dt
+	if self.chargeCounter<=0 then
+		self.charged = not self.charged
+		self.chargeCounter = self.maxChargeCounter
+		updateGameState(false,false)
+	end
+end
+function P.testChargedBoss:kill()
+	if self.dead then return end
+	self.dead = true
+	self.sprite = self.deadSprite
+	self.conductive = false
+end
 
 
 animalList[1] = P.animal
@@ -577,5 +593,6 @@ animalList[14] = P.ram
 animalList[15] = P.rat
 animalList[16] = P.termite
 animalList[17] = P.twinPitbull
+animalList[18] = P.testChargedBoss
 
 return animalList

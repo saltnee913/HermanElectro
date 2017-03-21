@@ -9,7 +9,6 @@ fontSize = 12
 
 debug = true
 loadTutorial = false
-easyMode = false
 gamePaused = false
 
 gameSpeed = 1
@@ -22,6 +21,7 @@ map = require('scripts.map')
 
 boundaries = require('scripts.boundaries') 
 --require('scripts.tools')
+bosses = require('scripts.bosses')
 animalList = require('scripts.animals')
 tools = require('scripts.tools')
 editor = require('scripts.editor')
@@ -228,6 +228,7 @@ function love.load()
 	animalCounter = 1 --is this still relevant?
 	spotlights = {}
 	pushables = {}
+	bossList = {}
 	messageInfo = {x = 0, y = 0, text = nil}
 	gabeUnlock = true
 	--width = 16*screenScale
@@ -254,7 +255,6 @@ function love.load()
 		extern number bonus_range = 0;
 		extern bool b_and_w = false;
 		extern bool createShadows = true;
-		extern vec4 spotlights[3];
 
 		vec4 effect( vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords ){
 		  	vec4 pixel = Texel(texture, texture_coords );//This is the current pixel color
@@ -275,20 +275,6 @@ function love.load()
 			number totaltint_r = tint_r/divVal;
 			number totaltint_g = tint_g/divVal;
 			number totaltint_b = tint_b/divVal;
-
-			//spotlights
-			for (int i=0;i<3;i=i+1) {
-				if (spotlights[i][0]>=0) {
-					number lampxdist = spotlights[i][0]-screen_coords[0];
-					number lampydist = spotlights[i][1]-screen_coords[1];
-					number totalLampDist = sqrt(lampxdist*lampxdist+lampydist*lampydist);
-					if (totalLampDist<spotlights[i][3]) {
-					totaltint_r = 1;
-					totaltint_g = 1;
-					totaltint_b = 0;
-					}
-				}
-            }
 
 			//lamps
 			for (int i=0;i<10;i=i+1) {
@@ -331,8 +317,8 @@ function love.load()
 		love.graphics.setBackgroundColor(0,0,0)
 		floorIndex = -1
 		stairsLocs = {}
-		--1 is opening world, 2-7 are floors 1-6, 8 is dungeon
-		for i = 1, 8 do
+		--1 is opening world, 2-end-1 are floors, end is dungeon
+		for i = 1, #map.defaultFloorOrder+1 do
 			stairsLocs[i] = {map = {x = 0, y = 0}, coords = {x = 0, y = 0}}
 		end
 
@@ -397,6 +383,8 @@ function love.load()
 		--floortiles[1] = {grassrock1, grassrock2, grassrock3}
 		floortiles[1] = {love.graphics.newImage('Graphics/woodfloortest.png'),love.graphics.newImage('Graphics/woodfloortest.png'),love.graphics.newImage('Graphics/woodfloortest.png')}
 		floortiles[6] = floortiles[4]
+		floortiles[7] = floortiles[4]
+		floortiles[8] = floortiles[4]
 
 		floors = {}
 		floors[1] = love.graphics.newImage('Graphics/biggreenfloor.png')
@@ -478,12 +466,12 @@ function love.load()
 			y = (6-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10, prevTileX = 3, prevTileY 	= 10,
 			prevx = (3-1)*scale*tileWidth+wallSprite.width+tileWidth/2*scale-10,
 			prevy = (10-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10,
-			width = 20, height = 20, speed = 250, luckTimer = 0, regularMapLoc = {x = 0, y = 0}, supersHeld = {total = 0}, returnFloorIndex = 0, attributes = {invincibleCounter = 0, shieldCounter = 0, lucky = false, gifted = false, permaMap = false, xrayVision = false, upgradedToolUse = false, fast = {fast = false, fastStep = false}, flying = false, fear = false, shelled = false, tall = false, extendedRange = 0, sockStep = -1, invisible = false}}
+			width = 20, height = 20, speed = 250, luckTimer = 0, regularMapLoc = {x = 0, y = 0}, supersHeld = {total = 0}, returnFloorIndex = 0, attributes = {timeFrozen = false, invincibleCounter = 0, shieldCounter = 0, lucky = false, gifted = false, permaMap = false, xrayVision = false, upgradedToolUse = false, fast = {fast = false, fastStep = false}, flying = false, fear = false, shelled = false, tall = false, extendedRange = 0, sockStep = -1, invisible = false}}
 	player.character = setChar
 
 	map.clearBlacklist()
 
-	if loadTutorial or easyMode then
+	if loadTutorial then
 		player.enterX = player.tileX
 		player.enterY = player.tileY
 		player.totalItemsGiven = {0,0,0,0,0,0,0}
@@ -504,7 +492,7 @@ function playMusic(index)
 	for i = 1, #music do
 		music[i]:stop()
 	end
-	if (index>0) then
+	if (index>0 and music[index]~=nil) then
 		music[index]:setVolume(music.volume)
 		music[index]:play()
 	end
@@ -646,7 +634,7 @@ function goToFloor(floorNum)
 
 	local stairsLocsIndex = floorIndex
 	if floorIndex==1 then
-		stairsLocsIndex = 8
+		stairsLocsIndex = #stairsLocs
 	end
 	stairsLocs[stairsLocsIndex] = {map = {x = mapx, y = mapy}, coords = {x = player.tileX, y = player.tileY}}
 	floorIndex = floorNum
@@ -983,19 +971,6 @@ maxLamps = 100
 function updateLamps(tileY, tileX)
 	if not started then return end
 
-	spotlightsSend = {}
-	if spotlights~=nil and player.character.name=="Albert" then
-		for i = 1, #spotlights do
-			spotlightsSend[#spotlightsSend+1] = {spotlights[i].x, spotlights[i].y, spotlights[i].intensity, spotlights[i].range}		
-		end
-	end
-	local spotIndex = #spotlightsSend
-	while spotIndex<3 do
-		spotlightsSend[#spotlightsSend+1] = {-1,-1,-1,0}
-		spotIndex = spotIndex+1
-	end
-	myShader:send("spotlights", unpack(spotlightsSend))
-
 	local lampHolder = {}
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
@@ -1097,6 +1072,7 @@ function checkLight(i, j, x, y)
 end
 
 function updatePower()
+	if player.attributes.timeFrozen then return end
 	player.character:onPreUpdatePower()
 	powerCount = 0
 
@@ -1223,6 +1199,9 @@ function updatePower()
 					local conductPower = false
 					local pX = animals[i].tileX
 					local pY = animals[i].tileY
+
+					if animals[i].charged then conductPower = true end
+
 					if (room[pY-1]~=nil and room[pY-1][pX]~=nil and room[pY-1][pX].powered and room[pY-1][pX].dirSend[3]==1) or
 					(room[pY+1]~=nil and room[pY+1][pX]~=nil and room[pY+1][pX].powered and room[pY+1][pX].dirSend[1]==1) or
 					(room[pY][pX-1]~=nil and room[pY][pX-1].powered and room[pY][pX-1].dirSend[2]==1) or
@@ -1308,6 +1287,42 @@ function updatePower()
 							powerTest(pY, px, 0)
 						end
 						pushables[i].powered = true
+					end
+				end
+			end
+			for i = 1, #animals do
+				if animals[i].conductive then
+					local conductPower = false
+					local pX = animals[i].tileX
+					local pY = animals[i].tileY
+
+					if animals[i].charged then conductPower = true end
+
+					if (room[pY-1]~=nil and room[pY-1][pX]~=nil and room[pY-1][pX].powered and room[pY-1][pX].dirSend[3]==1) or
+					(room[pY+1]~=nil and room[pY+1][pX]~=nil and room[pY+1][pX].powered and room[pY+1][pX].dirSend[1]==1) or
+					(room[pY][pX-1]~=nil and room[pY][pX-1].powered and room[pY][pX-1].dirSend[2]==1) or
+					(room[pY][pX+1]~=nil and room[pY][pX+1].powered and room[pY][pX+1].dirSend[4]==1) then
+						conductPower = true
+					end
+					for j = 1, #pushables do
+						if pushables[j].powered and not pushables[j].destroyed then
+							if animals[i].tileY == pushables[j].tileY and math.abs(animals[i].tileX-pushables[j].tileX)==1
+							or animals[i].tileX == pushables[j].tileX and math.abs(pushables[j].tileY-animals[i].tileY)==1 then
+								conductPower = true
+							end
+						end
+					end
+					for j = 1, #animals do
+						if animals[j].conductive and animals[j].powered then
+							if animals[i].tileY == animals[j].tileY and math.abs(animals[i].tileX-animals[j].tileX)==1
+							or animals[i].tileX == animals[j].tileX and math.abs(animals[j].tileY-animals[i].tileY)==1 then
+								conductPower = true
+							end
+						end
+					end
+					if conductPower then
+						powerTestPushable(pY, pX, 0)
+						animals[i].powered = true
 					end
 				end
 			end
@@ -1945,6 +1960,11 @@ function love.draw()
 				end
 			end
 		end
+		for i = 1, #bossList do
+			if bossList[i]:getBottomTileY()==j then
+				bossList[i]:drawBoss()
+			end
+		end
 		for i = 1, #animals do
 			if animals[i]~=nil and litTiles[animals[i].tileY][animals[i].tileX]==1 and not animals[i].pickedUp and animals[i].tileY==j then
 				local animalSprite = util.getImage(animals[i].sprite)
@@ -1965,6 +1985,7 @@ function love.draw()
 				love.graphics.draw(toDraw, pushablex, pushabley, 0, scale, scale)
 			end
 		end
+
 
 
 		if tools.toolableAnimals~=nil then
@@ -2472,13 +2493,22 @@ function createElements()
 	createAnimals()
 	createPushables()
 	createSpotlights()
+	createBosses()
 end
 
 function tileToCoords(tileY, tileX)
 	local ret = {x = 0, y = 0}
-	ret.x = (tileX-1)*scale*tileHeight+wallSprite.width
-	ret.y = (tileY-1)*scale*tileHeight+wallSprite.height
+	ret.x = tileToCoordsX(tileX)
+	ret.y = tileToCoordsY(tileY)
 	return ret
+end
+
+function tileToCoordsY(tileY)
+	return (tileY-1)*scale*tileHeight+wallSprite.height
+end
+
+function tileToCoordsX(tileX)
+	return (tileX-1)*scale*tileHeight+wallSprite.width
 end
 
 function createSpotlights()
@@ -2527,6 +2557,20 @@ function createAnimals()
 	end
 end
 
+function createBosses()
+	if room.bosses~=nil then bosses = room.bosses return end
+	bossList = {}
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i]~=nil and room[i][j]~=nil and room[i][j].name~=nil and (room[i][j].boss~=nil) then
+				bossToSpawn = room[i][j].boss:new()
+				bossToSpawn:load(i,j)
+				bossList[#bossList+1] = bossToSpawn
+			end
+		end
+	end
+end
+
 function createPushables()
 	if room.pushables~=nil then pushables = room.pushables return end
 	pushables = {}
@@ -2555,6 +2599,7 @@ function resetPlayerAttributesRoom()
 	player.attributes.shelled = false
 	player.attributes.invisible = false
 	player.attributes.fast = {fast = false, fastStep = false}
+	player.attributes.timeFrozen = false
 end
 
 function resetPlayerAttributesTool()
@@ -2617,6 +2662,7 @@ function saveElements()
 	room.pushables = pushables
 	room.animals = animals
 	room.spotlights = spotlights
+	room.bosses = bossList
 end
 
 function enterRoom(dir)
@@ -2694,7 +2740,7 @@ function enterRoom(dir)
 		completedRooms[mapy][mapx] = 1
 		unlockDoors()
 	end
-	if loadTutorial or easyMode then
+	if loadTutorial then
 		player.enterX = player.tileX
 		player.enterY = player.tileY
 	end
@@ -2832,10 +2878,26 @@ function love.update(dt)
 			slLen = slLen-1
 		end
 	end]]
-	for i = 1, #spotlights do
-		spotlights[i]:update(dt)
-	end
+
 	if #spotlights>0 or player.attributes.shieldCounter>0 then checkDeathSpotlights(dt) end
+
+	if not player.attributes.timeFrozen then
+		for i = 1, #spotlights do
+			spotlights[i]:update(dt)
+		end
+		for i = 1, #animals do
+			animals[i]:update(dt)
+		end
+
+		--game timer
+		if started and validSpace() and (completedRooms[mapy][mapx]~=1 or gameTime.goesDownInCompleted) then
+			gameTime.timeLeft = gameTime.timeLeft-dt
+		end
+	end
+
+	for i = 1, #bossList do
+		bossList[i]:superUpdate(dt)
+	end
 
 	--key press
 	keyTimer.timeLeft = keyTimer.timeLeft - dt
@@ -2849,9 +2911,6 @@ function love.update(dt)
 	end
 
 	--game timer
-	if started and validSpace() and (completedRooms[mapy][mapx]~=1 or gameTime.goesDownInCompleted) then
-		gameTime.timeLeft = gameTime.timeLeft-dt
-	end
 	if gameTime.timeLeft<=0 and not loadTutorial then
 		kill()
 	end
@@ -3032,10 +3091,6 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 		end
 		gameTime.timeLeft = gameTime.timeLeft+20000
 	end
-	if key=="y" then
-		easyMode = not easyMode
-	end
-
 
 	--k ability: open doors with k on supertools
 	--[[if key=="k" then
@@ -3050,7 +3105,7 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 		mainMap.cheated = true--kind of hacky
 	else
 		if key == 'r' then
-			if loadTutorial or easyMode then
+			if loadTutorial then
 				player.dead = false
 				player.y = (player.enterY-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
 				player.tileY = player.enterY
@@ -3067,10 +3122,6 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 					end
 					tools[i].numHeld = player.totalItemsGiven[i] - player.totalItemsNeeded[i]
 					if tools[i].numHeld < 0 then tools[i].numHeld = 0 end
-				end
-				if easyMode then
-					listOfItemsNeeded = map.getItemsNeeded(mainMap[mapy][mapx].roomid)
-					tools.giveToolsByArray(listOfItemsNeeded[1])
 				end
 				completedRooms[mapy][mapx] = 0
 				for i = 0, mainMap.height do
@@ -3328,6 +3379,11 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 		    	if (pushables[i].conductive or pushables[i].forcePower) and (pushables[i].tileX~=pushables[i].prevTileX or pushables[i].tileY~=pushables[i].prevTileY) then
 		    		noPowerUpdate = false
 		    	end
+	    	end
+	    	for i = 1, #animals do
+	    		if animals[i].conductive then
+	    			noPowerUpdate = false
+	    		end
 	    	end
 		end
 		for i = 1, #pushables do

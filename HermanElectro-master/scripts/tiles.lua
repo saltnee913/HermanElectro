@@ -2,6 +2,7 @@ require('scripts.object')
 require('scripts.boundaries')
 require('scripts.animals')
 require('scripts.pushables')
+bosses = require('scripts.bosses')
 tools = require('scripts.tools')
 
 local P = {}
@@ -1040,6 +1041,7 @@ P.pupTile = P.pitbullTile:new{name = "pup", animal = animalList[3], listIndex = 
 P.catTile = P.pitbullTile:new{name = "cat", animal = animalList[4], listIndex = 4}
 P.ramTile = P.pitbullTile:new{name = "ram", animal = animalList[14], listIndex = 14}
 P.twinPitbullTile = P.pitbullTile:new{name = "twinPitbull", animal = animalList[17], listIndex = 17}
+P.testChargedBossTile = P.pitbullTile:new{name = "testChargedBoss", animal = animalList[18], listIndex = 18}
 
 P.spotlightTile = P.tile:new{name = "spotlight", spotlight = spotlightList.spotlight,
 baseTime = 3600, currTime = 0,
@@ -1215,7 +1217,7 @@ function P.tunnel:onEnter(player)
 	self.toolsEntered = self.toolsEntered+1
 	--donations = donations+math.ceil((7-(floorIndex))/2)
 	floorDonations = floorDonations+1]]
-	if floorIndex>=7 then
+	if floorIndex>=9 then
 		return
 		--should do something cool, can add later
 	end
@@ -1577,6 +1579,23 @@ function P.beggar:providePayment()
 	if paymentType<0.33 then P.redBeggar:providePayment()
 	elseif paymentType<0.66 then P.blueBeggar:providePayment()
 	else P.greenBeggar:providePayment() end
+end
+function P.beggar:absoluteFinalUpdate()
+	if not (self.name==tiles.beggar.name) then return end
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]==self then
+				local whichBeggar = util.random(3, 'misc')
+				if whichBeggar==1 then
+					room[i][j] = tiles.redBeggar:new()
+				elseif whichBeggar==2 then
+					room[i][j] = tiles.blueBeggar:new()
+				else
+					room[i][j] = tiles.greenBeggar:new()
+				end
+			end
+		end
+	end
 end
 
 P.redBeggar = P.beggar:new{name = "redBeggar", sprite = 'GraphicsEli/redOrb1.png', deadSprite = 'Graphics/redbeggardead.png', 
@@ -2440,8 +2459,7 @@ function P.dungeonEnter:onEnter()
 	room = mainMap[mapy][mapx].room
 	roomHeight = room.height
 	roomLength = room.length
-	createAnimals()
-	createPushables()
+	createElements()
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
 			if room[i][j]~=nil and room[i][j]:instanceof(tiles.dungeonExit) then
@@ -2504,8 +2522,7 @@ function P.dungeonExit:onEnter()
 		end
 	end
 
-	createAnimals()
-	createPushables()
+	createElements()
 	player.justTeleported = true
 end
 
@@ -2521,14 +2538,14 @@ function P.endDungeonEnter:onEnter()
 	end
 	player.returnFloorIndex = floorIndex
 	goToFloor(1)
-	if stairsLocs[8].coords.x~=0 then
-		mapx = stairsLocs[8].map.x
-		mapy = stairsLocs[8].map.y
+	if stairsLocs[#stairsLocs].coords.x~=0 then
+		mapx = stairsLocs[#stairsLocs].map.x
+		mapy = stairsLocs[#stairsLocs].map.y
 		room = mainMap[mapy][mapx].room
 		roomHeight = room.height
 		roomLength = room.length
-		player.tileX = stairsLocs[8].coords.x
-		player.tileY = stairsLocs[8].coords.y
+		player.tileX = stairsLocs[#stairsLocs].coords.x
+		player.tileY = stairsLocs[#stairsLocs].coords.y
 	else
 		for i = 1, roomHeight do
 			for j = 1, roomLength do
@@ -2590,8 +2607,7 @@ function P.finalKeyPowered:onEnter()
 end
 
 P.gameWin = P.tile:new{name = "gameWin"}
-function P.gameWin:onEnter()
-	
+function P.gameWin:onEnter()	
 	win()
 end
 
@@ -2979,6 +2995,8 @@ function P.openDungeon:onEnter()
 	end
 end
 
+P.bossTile = P.tile:new{name = 'bossTile', boss = bosses.boss}
+
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
 tiles[3] = P.powerSupply
@@ -3181,6 +3199,8 @@ tiles[199] = P.infestedWood
 tiles[200] = P.editorStairs
 tiles[201] = P.replayViewer
 tiles[202] = P.openDungeon
+tiles[203] = P.testChargedBossTile
+tiles[204] = P.bossTile
 
 
 return tiles
