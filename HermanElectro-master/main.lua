@@ -387,7 +387,8 @@ function love.load()
 		floortiles[8] = floortiles[4]
 
 		floors = {}
-		floors[1] = love.graphics.newImage('Graphics/biggreenfloor.png')
+		floors[1] = love.graphics.newImage('Graphics/Floors/f1.png')
+		floors[2] = love.graphics.newImage('Graphics/Floors/f6.png')
 
 		secondaryTiles = {}
 		--secondaryTiles[1] = {flowerrock1, flowerrock2, flowerrock3}
@@ -1782,12 +1783,13 @@ function love.draw()
 	love.graphics.setShader(myShader)
 
 	if floors[floorIndex-1]~=nil then
+		--17 pixels from left/right/bottom, 33 from top
 		local floorSprite = floors[floorIndex-1]
 
-		local xScale = scale*16*roomLength/floorSprite:getWidth()
-		local yScale = scale*16*roomHeight/floorSprite:getHeight()
+		local xScale = scale*16*roomLength/(floorSprite:getWidth()-34)
+		local yScale = scale*16*roomHeight/(floorSprite:getHeight()-50)
 
-		love.graphics.draw(floorSprite, wallSprite.width, wallSprite.height,
+		love.graphics.draw(floorSprite, wallSprite.width-17*scale, wallSprite.height-33*scale,
 		0, xScale, yScale)
 	end
 
