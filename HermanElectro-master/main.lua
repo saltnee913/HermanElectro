@@ -389,6 +389,7 @@ function love.load()
 		floors = {}
 		floors[1] = love.graphics.newImage('Graphics/Floors/f1.png')
 		floors[2] = love.graphics.newImage('Graphics/Floors/f6.png')
+		floors[6] = love.graphics.newImage('Graphics/Floors/f6.png')
 
 		secondaryTiles = {}
 		--secondaryTiles[1] = {flowerrock1, flowerrock2, flowerrock3}
