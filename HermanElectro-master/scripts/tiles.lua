@@ -2995,7 +2995,7 @@ function P.openDungeon:onEnter()
 	end
 end
 
-P.bossTile = P.tile:new{name = 'bossTile', boss = bosses.boss}
+P.bossTile = P.tile:new{name = 'bossTile', boss = bosses.bobBoss}
 
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile

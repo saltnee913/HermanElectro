@@ -1076,6 +1076,9 @@ end
 function updatePower()
 	if player.attributes.timeFrozen then return end
 	player.character:onPreUpdatePower()
+	for i = 1, #bossList do
+		bossList[i]:onPreUpdatePower()
+	end
 	powerCount = 0
 
 	for i = 1, #pushables do
@@ -1402,6 +1405,9 @@ function updatePower()
 		--	kill()
 		--end
 	--end
+	for i = 1, #bossList do
+		bossList[i]:onPostUpdatePower()
+	end
 	player.character:onPostUpdatePower()
 end
 

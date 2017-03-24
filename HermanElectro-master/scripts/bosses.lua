@@ -23,8 +23,13 @@ function P.boss:drawBoss()
 	love.graphics.draw(util.getImage(self.sprite), self.x, self.y, 0, scale, scale)
 end
 
+function P.boss:update(dt)
+
+end
+
 function P.boss:superUpdate(dt)
 	self:updateMovement(dt)
+	self:update(dt)
 end
 
 function P.boss:updateMovement(dt)
@@ -42,22 +47,25 @@ function P.boss:updateMovement(dt)
 	end
 end
 
+function P.boss:doOnMoved()
+
+end
+
 function P.boss:onMoved(offset)
 	self.oldX = self.oldX + offset.x*scale*tileWidth
 	self.oldY = self.oldY + offset.y*scale*tileHeight
-	local oldBottom = self:getBottomTileY()
 	for i = 1, #self.tileY do
 		self.tileY[i] = self.tileY[i] + offset.y
 	end
 	for i = 1, #self.tileX do
 		self.tileX[i] = self.tileX[i] + offset.x
 	end
-	log(player.tileY..'/'..self:getBottomTileY()..'/'..oldBottom)
 	self.dirMoving = self:chooseMovement()
+	self:doOnMoved()
 end
 
 function P.boss:chooseMovement()
-	return 3
+	return 4
 end
 
 function P.boss:getBottomTileY()
@@ -65,6 +73,66 @@ function P.boss:getBottomTileY()
 		return self.tileY[#self.tileY] + 1
 	else
 		return self.tileY[#self.tileY]
+	end
+end
+
+function P.boss:onPreUpdatePower()
+end
+function P.boss:onPostUpdatePower()
+end
+
+P.bobBoss = P.boss:new{name = 'battery acid', 
+  sprite = 'Graphics/Bosses/BossBobUnpowered.png', poweredSprite = 'Graphics/Bosses/BossBobPowered.png', unpoweredSprite = 'Graphics/Bosses/BossBobUnpowered.png',
+  speed = 1.5, isPowered = false, 
+  poweredTime = 3, unPoweredTime = 3, timeToSwitch = 0}
+
+function P.bobBoss:doOnMoved()
+	updateGameState()
+	checkAllDeath()
+end
+function P.bobBoss:setPowered(inPowered)
+	self.powered = inPowered
+	if self.powered then
+		self.sprite = self.poweredSprite
+	else
+		self.sprite = self.unpoweredSprite
+	end
+	updateGameState()
+	checkAllDeath()
+end
+function P.bobBoss:update(dt)
+	self.timeToSwitch = self.timeToSwitch + dt
+	if self.powered and self.timeToSwitch > self.poweredTime then
+		self:setPowered(false)
+		self.timeToSwitch = self.timeToSwitch - self.poweredTime
+	elseif not self.powered and self.timeToSwitch > self.unPoweredTime then
+		self:setPowered(true)
+		self.timeToSwitch = self.timeToSwitch - self.unPoweredTime
+	end
+end
+function P.bobBoss:onPreUpdatePower()
+	if self.powered then
+		self.storedTiles = {}
+		for i = 1, #self.tileX do
+			local tileX = self.tileX[i]
+			local tileY = self.tileY[i]
+			if room[tileY][tileX] ~= nil then
+				self.storedTiles[i] = room[tileY][tileX]:new()
+				self.storedTiles[i].powered = true
+			else
+				self.storedTiles[i] = nil
+			end
+			room[tileY][tileX] = tiles.powerSupply:new()
+		end
+	end
+end
+function P.bobBoss:onPostUpdatePower()
+	if self.powered then
+		for i = 1, #self.tileX do
+			local tileX = self.tileX[i]
+			local tileY = self.tileY[i]
+			room[tileY][tileX] = self.storedTiles[i]
+		end
 	end
 end
 
