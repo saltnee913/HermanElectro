@@ -86,6 +86,35 @@ P.bobBoss = P.boss:new{name = 'battery acid',
   speed = 1.5, isPowered = false, 
   poweredTime = 3, unPoweredTime = 3, timeToSwitch = 0}
 
+function P.bobBoss:isSomethingToSide(dir)
+	if dir == 1 then
+		return (room[self.tileY[1]-1][self.tileX[1]] ~= nil and room[self.tileY[1]-1][self.tileX[1]].blocksMovement)
+			or (room[self.tileY[2]-1][self.tileX[2]] ~= nil and room[self.tileY[2]-1][self.tileX[2]].blocksMovement)
+	elseif dir == 2 then
+		return (room[self.tileY[2]][self.tileX[2]+1] ~= nil and room[self.tileY[2]][self.tileX[2]+1].blocksMovement)
+			or (room[self.tileY[4]][self.tileX[4]+1] ~= nil and room[self.tileY[4]][self.tileX[4]+1].blocksMovement)
+	elseif dir == 3 then
+		return (room[self.tileY[4]+1][self.tileX[4]] ~= nil and room[self.tileY[4]+1][self.tileX[4]].blocksMovement)
+			or (room[self.tileY[3]+1][self.tileX[3]] ~= nil and room[self.tileY[3]+1][self.tileX[3]].blocksMovement)
+	elseif dir == 4 then
+		return (room[self.tileY[1]][self.tileX[1]-1] ~= nil and room[self.tileY[1]][self.tileX[1]-1].blocksMovement)
+			or (room[self.tileY[3]][self.tileX[3]-1] ~= nil and room[self.tileY[3]][self.tileX[3]-1].blocksMovement)
+	else
+		return false
+	end
+end
+function P.bobBoss:chooseMovement()
+	if self.dirMoving ~= 0 and not self:isSomethingToSide(self.dirMoving) then
+		return self.dirMoving
+	else
+		for i = 1, 4 do
+			if i ~= self.dirMoving+2 and i ~= self.dirMoving-2 and not self:isSomethingToSide(i) then
+				return i
+			end
+		end
+		return 0
+	end
+end
 function P.bobBoss:doOnMoved()
 	updateGameState()
 	checkAllDeath()
