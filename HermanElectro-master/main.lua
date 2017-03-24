@@ -387,7 +387,9 @@ function love.load()
 		floortiles[8] = floortiles[4]
 
 		floors = {}
-		floors[1] = love.graphics.newImage('Graphics/biggreenfloor.png')
+		floors[1] = love.graphics.newImage('Graphics/Floors/f1.png')
+		floors[2] = love.graphics.newImage('Graphics/Floors/f6.png')
+		floors[6] = love.graphics.newImage('Graphics/Floors/f6.png')
 
 		secondaryTiles = {}
 		--secondaryTiles[1] = {flowerrock1, flowerrock2, flowerrock3}
@@ -1583,7 +1585,7 @@ function powerTestSpecial(x, y, lastDir)
 		return
 	end
 
-	if x>1 and room[x-1][y]~=nil and not room[x-1][y]:instanceof(tiles.notGate) and canBePowered(x-1,y,3) and lastDir~=1 then
+	if x>1 and room[x-1][y]~=nil and (not room[x-1][y]:instanceof(tiles.notGate)) and canBePowered(x-1,y,3) and lastDir~=1 then
 		formerPowered = room[x-1][y].powered
 		formerSend = room[x-1][y].dirSend
 		formerAccept = room[x-1][y].dirAccept
@@ -1600,7 +1602,7 @@ function powerTestSpecial(x, y, lastDir)
 	end
 
 
-	if x<roomHeight and room[x+1][y]~=nil and not room[x+1][y]:instanceof(tiles.notGate) and canBePowered(x+1,y,1) and lastDir~=3 then
+	if x<roomHeight and room[x+1][y]~=nil and (not room[x+1][y]:instanceof(tiles.notGate)) and canBePowered(x+1,y,1) and lastDir~=3 then
 		--powered[x+1][y] = 1
 		formerPowered = room[x+1][y].powered
 		formerSend = room[x+1][y].dirSend
@@ -1616,7 +1618,7 @@ function powerTestSpecial(x, y, lastDir)
 		end
 	end
 
-	if y>1 and room[x][y-1]~=nil and not room[x][y-1]:instanceof(tiles.notGate) and canBePowered(x,y-1,2) and lastDir~=4 then
+	if y>1 and room[x][y-1]~=nil and (not room[x][y-1]:instanceof(tiles.notGate)) and canBePowered(x,y-1,2) and lastDir~=4 then
 		formerPowered = room[x][y-1].powered
 		formerSend = room[x][y-1].dirSend
 		formerAccept = room[x][y-1].dirAccept
@@ -1632,8 +1634,9 @@ function powerTestSpecial(x, y, lastDir)
 		end
 	end
 
-	if y<roomLength and room[x][y+1]~=nil and not room[x][y+1]:instanceof(tiles.notGate) and canBePowered(x,y+1,4) and lastDir~=2 then
+	if y<roomLength and room[x][y+1]~=nil and (not room[x][y+1]:instanceof(tiles.notGate)) and canBePowered(x,y+1,4) and lastDir~=2 then
 		formerPowered = room[x][y+1].powered
+		
 		formerSend = room[x][y+1].dirSend
 		formerAccept = room[x][y+1].dirAccept
 		--powered[x][y+1] = 1
@@ -1782,12 +1785,13 @@ function love.draw()
 	love.graphics.setShader(myShader)
 
 	if floors[floorIndex-1]~=nil then
+		--17 pixels from left/right/bottom, 33 from top
 		local floorSprite = floors[floorIndex-1]
 
-		local xScale = scale*16*roomLength/floorSprite:getWidth()
-		local yScale = scale*16*roomHeight/floorSprite:getHeight()
+		local xScale = scale*16*roomLength/(floorSprite:getWidth()-34)
+		local yScale = scale*16*roomHeight/(floorSprite:getHeight()-50)
 
-		love.graphics.draw(floorSprite, wallSprite.width, wallSprite.height,
+		love.graphics.draw(floorSprite, wallSprite.width-17*scale, wallSprite.height-33*scale,
 		0, xScale, yScale)
 	end
 

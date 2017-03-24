@@ -27,7 +27,7 @@ function P.spotlight:update(dt)
 end
 
 function P.spotlight:onPlayer()
-	if not self.active then return end
+	if not self.active then return false end
 
 	local sx = self.x+tileUnit/2*scale
 	local sy = self.y+tileUnit/2*scale

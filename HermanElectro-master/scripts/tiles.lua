@@ -254,11 +254,17 @@ function P.crossWire:updateTile(dir)
 		self.powered = true
 		self.dirSend[self:cfr(2)]=1
 		self.dirSend[self:cfr(4)]=1
+	else
+		self.dirSend[self:cfr(2)]=0
+		self.dirSend[self:cfr(4)]=0		
 	end
 	if self.poweredNeighbors[self:cfr(1)]==1 or self.poweredNeighbors[self:cfr(3)]==1 then
 		self.powered = true
 		self.dirSend[self:cfr(1)]=1
 		self.dirSend[self:cfr(3)]=1
+	else
+		self.dirSend[self:cfr(1)]=0
+		self.dirSend[self:cfr(3)]=0		
 	end
 end
 
@@ -652,13 +658,13 @@ P.gate = P.conductiveTile:new{overlaying = true, name = "gate", dirSend = {0,0,0
 function P.gate:updateTile(dir)
 	self.gotten[dir] = 1
 end
-function P.tile:correctForRotation(dir)
-	local temp = dir + self.rotation
-	while(temp > 4) do
-		temp = temp - 4
+function P.gate:correctForRotation(dir)
+	local tempRot = dir + self.rotation
+	while(tempRot > 4) do
+		tempRot = tempRot - 4
 	end
 	--if temp ~= dir then print(temp..';'..dir) end
-	return temp
+	return tempRot
 end
 function P.gate:rotate(times)
 	self.rotation = self.rotation + times
