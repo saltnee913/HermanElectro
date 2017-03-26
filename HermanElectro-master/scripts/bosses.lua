@@ -85,6 +85,27 @@ function P.boss:onMoved(offset)
 	self:doOnMoved()
 end
 
+function P.boss:isSomethingToSide(dir)
+	local offset = util.getOffsetByDir(dir)
+	for i = 1, #self.tileX do
+		local newX = self.tileX[i] + offset.x
+		local newY = self.tileY[i] + offset.y
+		if newX < 1 then
+			return true
+		elseif newX > roomLength then
+			return true
+		elseif newY < 1 then
+			return true
+		elseif newY > roomHeight then
+			return true
+		else
+			if room[newY][newX] ~= nil and room[newY][newX].blocksMovement then
+				return true
+			end
+		end
+	end
+	return false
+end
 function P.boss:chooseMovement()
 	return 4
 end
@@ -123,23 +144,6 @@ function P.bobBoss:willKillPlayer(player)
 end
 P.bobBoss.willKillAnimal = P.bobBoss.willKillPlayer
 
-function P.bobBoss:isSomethingToSide(dir)
-	if dir == 1 then
-		return (room[self.tileY[1]-1][self.tileX[1]] ~= nil and room[self.tileY[1]-1][self.tileX[1]].blocksMovement)
-			or (room[self.tileY[2]-1][self.tileX[2]] ~= nil and room[self.tileY[2]-1][self.tileX[2]].blocksMovement)
-	elseif dir == 2 then
-		return (room[self.tileY[2]][self.tileX[2]+1] ~= nil and room[self.tileY[2]][self.tileX[2]+1].blocksMovement)
-			or (room[self.tileY[4]][self.tileX[4]+1] ~= nil and room[self.tileY[4]][self.tileX[4]+1].blocksMovement)
-	elseif dir == 3 then
-		return (room[self.tileY[4]+1][self.tileX[4]] ~= nil and room[self.tileY[4]+1][self.tileX[4]].blocksMovement)
-			or (room[self.tileY[3]+1][self.tileX[3]] ~= nil and room[self.tileY[3]+1][self.tileX[3]].blocksMovement)
-	elseif dir == 4 then
-		return (room[self.tileY[1]][self.tileX[1]-1] ~= nil and room[self.tileY[1]][self.tileX[1]-1].blocksMovement)
-			or (room[self.tileY[3]][self.tileX[3]-1] ~= nil and room[self.tileY[3]][self.tileX[3]-1].blocksMovement)
-	else
-		return false
-	end
-end
 function P.bobBoss:chooseMovement()
 	if self.dirMoving ~= 0 and not self:isSomethingToSide(self.dirMoving) then
 		return self.dirMoving
@@ -149,13 +153,22 @@ function P.bobBoss:chooseMovement()
 				return i
 			end
 		end
+		if not self:isSomethingToSide(self.dirMoving+2) then
+			if self.dirMoving+2 > 4 then
+				return self.dirMoving-2
+			else
+				return self.dirMoving+2
+			end
+		end
 		return 0
 	end
 end
+
 function P.bobBoss:doOnMoved()
 	updateGameState()
 	checkAllDeath()
 end
+
 function P.bobBoss:setPowered(inPowered)
 	self.powered = inPowered
 	if self.powered then
@@ -166,6 +179,7 @@ function P.bobBoss:setPowered(inPowered)
 	updateGameState()
 	checkAllDeath()
 end
+
 function P.bobBoss:update(dt)
 	self.timeToSwitch = self.timeToSwitch + dt
 	if self.powered and self.timeToSwitch > self.poweredTime then
@@ -176,6 +190,7 @@ function P.bobBoss:update(dt)
 		self.timeToSwitch = self.timeToSwitch - self.unPoweredTime
 	end
 end
+
 function P.bobBoss:onPreUpdatePower()
 	if self.powered then
 		self.storedTiles = {}
@@ -192,6 +207,7 @@ function P.bobBoss:onPreUpdatePower()
 		end
 	end
 end
+
 function P.bobBoss:onPostUpdatePower()
 	if self.powered then
 		for i = 1, #self.tileX do
