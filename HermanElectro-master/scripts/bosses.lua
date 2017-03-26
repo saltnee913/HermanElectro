@@ -123,6 +123,26 @@ end
 function P.boss:onPostUpdatePower()
 end
 
+local function chooseMovementWallBounce(self)
+	if self.dirMoving ~= 0 and not self:isSomethingToSide(self.dirMoving) then
+		return self.dirMoving
+	else
+		for i = 1, 4 do
+			if i ~= self.dirMoving+2 and i ~= self.dirMoving-2 and not self:isSomethingToSide(i) then
+				return i
+			end
+		end
+		if not self:isSomethingToSide(self.dirMoving+2) then
+			if self.dirMoving+2 > 4 then
+				return self.dirMoving-2
+			else
+				return self.dirMoving+2
+			end
+		end
+		return 0
+	end
+end
+
 P.bobBoss = P.boss:new{name = 'battery acid', 
   sprite = 'Graphics/Bosses/BossBobUnpowered.png', poweredSprite = 'Graphics/Bosses/BossBobPowered.png', unpoweredSprite = 'Graphics/Bosses/BossBobUnpowered.png',
   deadSprite = 'Graphics/Bosses/BossBobUnpowered.png',
@@ -144,25 +164,7 @@ function P.bobBoss:willKillPlayer(player)
 end
 P.bobBoss.willKillAnimal = P.bobBoss.willKillPlayer
 
-function P.bobBoss:chooseMovement()
-	if self.dirMoving ~= 0 and not self:isSomethingToSide(self.dirMoving) then
-		return self.dirMoving
-	else
-		for i = 1, 4 do
-			if i ~= self.dirMoving+2 and i ~= self.dirMoving-2 and not self:isSomethingToSide(i) then
-				return i
-			end
-		end
-		if not self:isSomethingToSide(self.dirMoving+2) then
-			if self.dirMoving+2 > 4 then
-				return self.dirMoving-2
-			else
-				return self.dirMoving+2
-			end
-		end
-		return 0
-	end
-end
+P.bobBoss.chooseMovement = chooseMovementWallBounce
 
 function P.bobBoss:doOnMoved()
 	updateGameState()
