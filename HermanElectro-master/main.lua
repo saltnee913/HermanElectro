@@ -559,6 +559,7 @@ function loadRandoms()
 	util.newRandom('mapGen', seed)
 	util.newRandom('toolDrop', seed*3)
 	util.newRandom('misc', seed*5)
+	util.newRandom('boss', seed*7)
 	return seed
 end
 

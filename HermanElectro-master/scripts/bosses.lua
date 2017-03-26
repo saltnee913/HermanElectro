@@ -85,6 +85,7 @@ function P.boss:onMoved(offset)
 		self.tileX[i] = self.tileX[i] + offset.x
 	end
 	self.dirMoving = self:chooseMovement()
+	log(self.dirMoving)
 	self:doOnMoved()
 end
 
@@ -133,10 +134,14 @@ local function chooseMovementWallBounce(self)
 	if self.dirMoving ~= 0 and not self:isSomethingToSide(self.dirMoving) then
 		return self.dirMoving
 	else
+		local dirCanMove = {}
 		for i = 1, 4 do
 			if i ~= self.dirMoving+2 and i ~= self.dirMoving-2 and not self:isSomethingToSide(i) then
-				return i
+				dirCanMove[#dirCanMove+1] = i
 			end
+		end
+		if #dirCanMove > 0 then
+			return dirCanMove[util.random(#dirCanMove, 'boss')]
 		end
 		if not self:isSomethingToSide(self.dirMoving+2) then
 			if self.dirMoving+2 > 4 then
