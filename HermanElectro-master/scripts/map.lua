@@ -8,7 +8,8 @@ local P = {}
 map = P
 
 --Temporary variable, we have to do this a better way later
-P.defaultFloorOrder = {'RoomData/floor1.json', 'RoomData/floor2.json', 'RoomData/floor3.json', 'RoomData/floor4.json', 'RoomData/floor5.json', 'RoomData/floor6.json', 'RoomData/exitDungeonsMap.json'}
+P.defaultFloorOrder = {'RoomData/floor1.json', 'RoomData/floor2.json', 'RoomData/floor3.json', 'RoomData/floor4.json', 'RoomData/floor5.json', 'RoomData/floor6.json',
+'RoomData/floor7.json', 'RoomData/floor8.json', 'RoomData/exitDungeonsMap.json'}
 P.floorOrder = P.defaultFloorOrder
 
 local MapInfo = Object:new{floor = 1, height = 0, numRooms = 0}
@@ -272,6 +273,27 @@ function P.loadFloor(inFloorFile)
 			print()
 		end]]
 	end
+	if map.floorInfo.tint == nil then
+		map.floorInfo.tint = {0,0,0}
+	end
+	if map.floorInfo.playerRange == nil then
+		map.floorInfo.playerRange = 200
+	end
+    myShader:send("floorTint_r", map.floorInfo.tint[1])
+    myShader:send("floorTint_g", map.floorInfo.tint[2])
+    myShader:send("floorTint_b", map.floorInfo.tint[3])
+    myShader:send("player_range", map.floorInfo.playerRange)
+    map.flipRooms('rooms')
+end
+
+function P.loadCustomRooms(fileLoc)
+	if not love.filesystem.exists(fileLoc) then return end
+	local roomsData, roomsArray = util.readJSON(fileLoc, true)
+	P.floorInfo.rooms.customRooms = roomsData.rooms
+	for i = 1, #roomsArray do
+		P.floorInfo.roomsArray[#(P.floorInfo.roomsArray)+1] = roomsArray[i]
+	end
+
 	if map.floorInfo.tint == nil then
 		map.floorInfo.tint = {0,0,0}
 	end
@@ -803,9 +825,13 @@ function P.generateMapStandard()
 	return newmap
 end
 
-function P.getRoomWeight(room)
-	print(room)
-	local weight = P.getFieldForRoom(room, 'weight')
+function P.getRoomWeight(room, roomArr)
+	local weight
+	if roomArr == nil then
+		weight = P.getFieldForRoom(room, 'weight')
+	else
+		weight = roomArr[room].weight
+	end
 	if weight==nil then
 		weight = 1
 	end
@@ -863,10 +889,44 @@ function P.generateMapFinal()
 	return newmap
 end
 
+function P.generateMapEditor()
+	local roomsArray = util.createIndexArray(P.floorInfo.rooms.rooms)
+	local startRoomID = roomsArray[1]
+
+	local height = P.floorInfo.height
+	local numRooms = P.floorInfo.numRooms
+	local newmap = MapInfo:new{height = height, numRooms = numRooms}
+	for i = 0, height+1 do
+		newmap[i] = {}
+	end
+
+	local startx = math.floor(height/2)
+	local starty = math.floor(height/2)
+	newmap[starty][startx] = {roomid = startRoomID, room = P.createRoom(startRoomID), isFinal = false, isInitial = true, isCompleted = true}
+	newmap.initialY = starty
+	newmap.initialX = startx
+
+	local designRoom = roomsArray[2]
+	newmap[starty-1][startx] = {roomid = designRoom, room = P.createRoom(designRoom), isFinal = false, isInitial = false}
+	return newmap
+end
+
+local function getRandomRoomArrays(roomArr, random)
+	local randomRoomArray = util.createRandomKeyArray(roomArr, random)
+	local weightsArray = {}
+	for i = 1, #randomRoomArray do
+		weightsArray[i] = P.getRoomWeight(randomRoomArray[i], roomArr)
+	end
+	return randomRoomArray, weightsArray
+end
+
 function P.generateMapWeighted()
 	--set up variables
 	local height = P.floorInfo.height
 	local numRooms = P.floorInfo.numRooms
+	local numTreasure = P.floorInfo.numTreasure
+	local numShop = P.floorInfo.numShop
+	local numDonation = P.floorInfo.numDonation
 	local newmap = MapInfo:new{height = height, numRooms = numRooms}
 	for i = 0, height+1 do
 		newmap[i] = {}
@@ -875,10 +935,10 @@ function P.generateMapWeighted()
 	blacklist[#blacklist+1] = startRoomID
 	local randomRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.rooms, 'mapGen', blacklist)
 	local randomRoomsArray = removeSets(randomRoomsArray)
-	local randomTreasureRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.treasureRooms, 'mapGen')
-	local randomFinalRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.finalRooms, 'mapGen')
-	local randomDonationRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.donationRooms, 'mapGen')
-	local randomShopsArray = util.createRandomKeyArray(P.floorInfo.rooms.shops, 'mapGen')
+	local randomTreasureRoomsArray, treasureRoomWeights = getRandomRoomArrays(P.floorInfo.rooms.treasureRooms, 'mapGen')
+	local randomFinalRoomsArray, finalRoomWeights = getRandomRoomArrays(P.floorInfo.rooms.finalRooms, 'mapGen')
+	local randomDonationRoomsArray, donationRoomWeights = getRandomRoomArrays(P.floorInfo.rooms.donationRooms, 'mapGen')
+	local randomShopsArray, shopWeights = getRandomRoomArrays(P.floorInfo.rooms.shops, 'mapGen')
 	--create first room
 	local startRoomID = P.floorInfo.startRoomID
 	newmap[math.floor(height/2)][math.floor(height/2)] = {roomid = startRoomID, room = P.createRoom(startRoomID, roomsArray), isFinal = false, isInitial = true, isCompleted = false}
@@ -933,10 +993,10 @@ function P.generateMapWeighted()
 		end
 		--choose a room slot
 		local choice = util.chooseRandomElement(available, 'mapGen')
-		if numRooms-#usedRooms == 4 then
+		if numRooms-#usedRooms == 1+numDonation+numTreasure+numShop then
 			local max = {x = choice.x, y = choice.y}
 			for i = 1, #available do
-				if math.abs(available[i].x-max.x)+math.abs(available[i].y-max.y)>
+				if math.abs(available[i].x-math.floor(height/2))+math.abs(available[i].y-math.floor(height/2))>
 				math.abs(max.x-math.floor(height/2))+math.abs(max.y-math.floor(height/2)) then
 					max.x = available[i].x
 					max.y = available[i].y
@@ -946,14 +1006,14 @@ function P.generateMapWeighted()
 		end
 		local roomid
 
-		if numRooms - #usedRooms == 4 then
-			roomid = util.chooseRandomElement(randomFinalRoomsArray, 'mapGen')
-		elseif numRooms - #usedRooms == 3 then
-			roomid = util.chooseRandomElement(randomTreasureRoomsArray, 'mapGen')
-		elseif numRooms - #usedRooms == 2 then
-			roomid = util.chooseRandomElement(randomDonationRoomsArray, 'mapGen')
-		elseif numRooms - #usedRooms == 1 then
-			roomid = util.chooseRandomElement(randomShopsArray, 'mapGen')
+		if numRooms - #usedRooms == 1+numDonation+numTreasure+numShop then
+			roomid = randomFinalRoomsArray[util.chooseWeightedRandom(finalRoomWeights, 'mapGen')]
+		elseif numRooms - #usedRooms < 1+numShop then
+			roomid = randomShopsArray[util.chooseWeightedRandom(shopWeights, 'mapGen')]
+		elseif numRooms - #usedRooms < 1+numShop+numDonation then
+			roomid = randomDonationRoomsArray[util.chooseWeightedRandom(donationRoomWeights, 'mapGen')]
+		elseif numRooms - #usedRooms < 1+numShop+numDonation+numTreasure then
+			roomid = randomTreasureRoomsArray[util.chooseWeightedRandom(treasureRoomWeights, 'mapGen')]
 		else
 			--creates an array of 5 possible choices with weights
 			local roomChoices = {}
@@ -976,7 +1036,7 @@ function P.generateMapWeighted()
 				roomChoices[i] = roomChoiceid
 				local state = {indent = true, keyorder = keyOrder}
 	
-				local roomWeight = 0
+				local roomWeight = 1
 				local totalRoomsCompared = 0
 				for i = 1, height do
 					for j = 1, height do
@@ -1003,7 +1063,7 @@ function P.generateMapWeighted()
 						end
 					end
 				end]]
-				roomWeight = P.getRoomWeight(roomChoiceid)
+				roomWeight = roomWeight*P.getRoomWeight(roomChoiceid)
 				roomWeights[i] = roomWeight
 			end
 			roomid = roomChoices[util.chooseWeightedRandom(roomWeights, 'mapGen')]
@@ -1137,10 +1197,11 @@ function P.generateSixthFloor()
 		end
 		--choose a room slot
 		local choice = util.chooseRandomElement(available, 'mapGen')
-		if numRooms-#usedRooms == 4 then
+		--if final room
+		if numRooms-#usedRooms == 1 then
 			local max = {x = choice.x, y = choice.y}
 			for i = 1, #available do
-				if math.abs(available[i].x-max.x)+math.abs(available[i].y-max.y)>
+				if math.abs(available[i].x-math.floor(height/2))+math.abs(available[i].y-math.floor(height/2))>
 				math.abs(max.x-math.floor(height/2))+math.abs(max.y-math.floor(height/2)) then
 					max.x = available[i].x
 					max.y = available[i].y
@@ -1306,8 +1367,8 @@ end
 --generates end dungeon accessible in starting room of each floor
 function P.generateEndDungeon()
 	local randomStartRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.startRooms, 'mapGen')
-	local puzzleRooms = util.createRandomKeyArray(P.floorInfo.rooms.puzzleRooms, 'mapGen')
-	local randomFinalRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.finalRooms, 'mapGen')
+	local puzzleRooms, puzzleWeights = getRandomRoomArrays(P.floorInfo.rooms.puzzleRooms, 'mapGen')
+	local randomFinalRoomsArray, finalRoomWeights = getRandomRoomArrays(P.floorInfo.rooms.finalRooms, 'mapGen')
 	local startRoomID = randomStartRoomsArray[1]
 
 	local height = P.floorInfo.height
@@ -1326,22 +1387,22 @@ function P.generateEndDungeon()
 	if not unlocks.isDungeonUnlocked() then
 		return newmap
 	end
-	local puzzleRoom1 = puzzleRooms[util.random(#puzzleRooms,'mapGen')]
+	puzzleRoom1 = puzzleRooms[util.chooseWeightedRandom(puzzleWeights, 'mapGen')]
 	while(map.getFieldForRoom(puzzleRoom1, 'dirEnter')[4]==0) do
-		puzzleRoom1 = puzzleRooms[util.random(#puzzleRooms,'mapGen')]
+		puzzleRoom1 = puzzleRooms[util.chooseWeightedRandom(puzzleWeights, 'mapGen')]
 	end
 	newmap[starty][startx+1] = {roomid = puzzleRoom1, room = P.createRoom(puzzleRoom1), isFinal = false, isInitial = false}
-	local puzzleRoom2 = puzzleRooms[util.random(#puzzleRooms,'mapGen')]
+	puzzleRoom2 = puzzleRooms[util.chooseWeightedRandom(puzzleWeights, 'mapGen')]
 	while(puzzleRoom2 == puzzleRoom1 or map.getFieldForRoom(puzzleRoom2, 'dirEnter')[2]==0) do
-		puzzleRoom2 = puzzleRooms[util.random(#puzzleRooms,'mapGen')]
+		puzzleRoom2 = puzzleRooms[util.chooseWeightedRandom(puzzleWeights, 'mapGen')]
 	end
 	newmap[starty][startx-1] = {roomid = puzzleRoom2, room = P.createRoom(puzzleRoom2), isFinal = false, isInitial = false}
-	local puzzleRoom3 = puzzleRooms[util.random(#puzzleRooms,'mapGen')]
+	puzzleRoom3 = puzzleRooms[util.chooseWeightedRandom(puzzleWeights, 'mapGen')]
 	while(puzzleRoom3 == puzzleRoom2 or puzzleRoom3 == puzzleRoom1 or map.getFieldForRoom(puzzleRoom3, 'dirEnter')[1]==0) do
-		puzzleRoom3 = puzzleRooms[util.random(#puzzleRooms,'mapGen')]
+		puzzleRoom3 = puzzleRooms[util.chooseWeightedRandom(puzzleWeights, 'mapGen')]
 	end
 	newmap[starty+1][startx] = {roomid = puzzleRoom3, room = P.createRoom(puzzleRoom3), isFinal = false, isInitial = false}
-	local finalRoom = randomFinalRoomsArray[1]
+	local finalRoom = randomFinalRoomsArray[util.chooseWeightedRandom(finalRoomWeights, 'mapGen')]
 	newmap[starty-1][startx] = {roomid = finalRoom, room = P.createRoom(finalRoom), isFinal = false, isInitial = false}
 	return newmap
 end

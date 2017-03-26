@@ -6,12 +6,12 @@ local P = {}
 spotlightsList = P
 
 
-P.spotlight  = Object:new{name = "spotlight", x = 0.0, y = 0.0, dir = 1, speed = 0.1,
-sprite = love.graphics.newImage('Graphics/white.png')}
+P.spotlight  = Object:new{name = "spotlight", x = 0.0, y = 0.0, dir = 1, speed = 0.1, active = true,
+sprite = love.graphics.newImage('Graphics/whitespot.png')}
 P.fastSpotlight = P.spotlight:new{name = "fastSpotlight", speed = 0.2,
-sprite = love.graphics.newImage('Graphics/purple.png')}
+sprite = love.graphics.newImage('Graphics/purplespot.png')}
 P.slowSpotlight = P.spotlight:new{name = "slowSpotlight", speed = 0.05,
-sprite = love.graphics.newImage('Graphics/yellow.png')}
+sprite = love.graphics.newImage('Graphics/yellowspot.png')}
 
 function P.spotlight:update(dt)
 	--directions same as for dirEnter: 0 up, 1 right, 2 down, 3 left
@@ -24,6 +24,25 @@ function P.spotlight:update(dt)
 	self.y = self.y+dirToGo.y*self.speed*dt*1000
 
 	return self:checkBounds()
+end
+
+function P.spotlight:onPlayer()
+	if not self.active then return false end
+
+	local sx = self.x+tileUnit/2*scale
+	local sy = self.y+tileUnit/2*scale
+	local playerx = tileToCoords(player.tileY, player.tileX).x+tileUnit/2*scale
+	local playery = tileToCoords(player.tileY, player.tileX).y+tileUnit/2*scale
+	local playery2 = tileToCoords(player.tileY-1, player.tileX).y+tileUnit/2*scale --for tall players
+	local radius = tileUnit/2*scale
+	local spotDist = math.sqrt((sx-playerx)*(sx-playerx)+(sy-playery)*(sy-playery))
+	local spotDist2 = math.sqrt((sx-playerx)*(sx-playerx)+(sy-playery2)*(sy-playery2))
+	if spotDist<radius --[[or (player.character.tallSprite and spotDist2 < radius)]] then
+		log('on')
+		return true
+	end
+	log('off')
+	return false
 end
 
 function P.spotlight:checkBounds()

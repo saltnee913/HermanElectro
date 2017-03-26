@@ -20,7 +20,7 @@ scale = (width - 2*wallSprite.width)/(20.3 * 16)*5/6
 --speed same as player (250)
 P.animal = Object:new{elevation = 0, scale = scale, yOffset = 0, frozen = false, trained = false, conductive = false, pickedUp = false, canDropTool = false, willDropTool = false, flying = false, triggered = false, waitCounter = 1, dead = false, name = "animal", tileX, tileY, prevx, prevy, prevTileX, prevTileY, x, y, speed = 250, width = 16*scale, height = 16*scale, sprite = 'Graphics/pitbull.png', deadSprite = 'Graphics/pitbulldead.png', tilesOn = {}, oldTilesOn = {}}
 function P.animal:move(playerx, playery, room, isLit)
-	if player.attributes.shelled or player.attributes.invisible then
+	if player.attributes.shelled or player.attributes.invisible or player.attributes.timeFrozen then
 		return
 	elseif player.attributes.fear then
 		self:afraidPrimaryMove(playerx, playery, room, isLit)
@@ -47,7 +47,13 @@ function P.animal:move(playerx, playery, room, isLit)
 		self:secondaryMove(playerx, playery)
 	end
 end
+function P.animal:moveOverride(movex, movey)
+	return {x = movex, y = movey}
+end
 function P.animal:primaryMove(playerx, playery)
+	if player.attributes.shelled or player.attributes.invisible or player.attributes.timeFrozen then
+		return
+	end
 	local diffx = math.abs(playerx - self.tileX)
 	local diffy = math.abs(playery - self.tileY)
 
@@ -94,6 +100,9 @@ function P.animal:pushableCheck()
 end
 
 function P.animal:secondaryMove(playerx, playery)
+	if player.attributes.shelled or player.attributes.invisible or player.attributes.timeFrozen then
+		return
+	end
 	if player.character.name == "Leonard" and player.character.scaryMode == true then
 		self:afraidSecondaryMove(playerx, playery)
 		return
@@ -135,12 +144,15 @@ function P.animal:secondaryMove(playerx, playery)
 end
 
 function P.animal:checkDeath()
+	if self.dead then return end
 	if room[self.tileY]~=nil and room[self.tileY][self.tileX]~=nil then
 		t = room[self.tileY][self.tileX]
 		if self.dead == false and t:willKillAnimal() then
 			self:kill()
 			if t:instanceof(tiles.vPoweredDoor) then
-				unlocks.unlockUnlockableRef(unlocks.doorUnlock)
+				unlocks.unlockUnlockableRef(unlocks.doorstopUnlock)
+			elseif t:instanceof(tiles.lemonade) then
+				unlocks.unlockUnlockableRef(unlocks.lemonPartyUnlock)
 			end
 			if room[self.tileY][self.tileX]:instanceof(tiles.pit) or room[self.tileY][self.tileX]:instanceof(tiles.poweredFloor) then
 				local animalsInPit = 0
@@ -161,6 +173,11 @@ function P.animal:checkDeath()
 			self:kill()
 		end
 	end
+	for i = 1, #bossList do
+		if bossList[i]:willKillAnimal(self) then
+			self:kill()
+		end
+	end
 end
 function P.animal:hasMoved()
 	return self.prevTileX ~= self.tileX or self.prevTileY ~= self.tileY
@@ -169,6 +186,7 @@ function P.animal:onNullLeave(tileY, tileX)
 	return room[tileY][tileX]
 end
 function P.animal:kill()
+	if self.dead then return end
 	self.dead = true
 	self.sprite = self.deadSprite
 	if self.canDropTool and not self.willDropTool then
@@ -177,9 +195,11 @@ function P.animal:kill()
 			self.willDropTool = true
 		end
 	end
-	if self.willDropTool and (room[self.tileY][self.tileX]==nil or room[self.tileY][self.tileX].destroyed
-	or room[self.tileY][self.tileX]:instanceof(tiles.pitbullTile)) then
-		self:dropTool()
+	if self.willDropTool then
+		if(room[self.tileY][self.tileX]==nil or room[self.tileY][self.tileX].destroyed
+		or room[self.tileY][self.tileX]:usableOnNothing() or room[self.tileY][self.tileX].overlay==nil) then
+			self:dropTool()
+		end
 	end
 end
 function P.animal:update()
@@ -191,6 +211,9 @@ end
 function P.animal:explode()
 end
 function P.animal:afraidPrimaryMove(playerx, playery, room, isLit)
+	if player.attributes.shelled or player.attributes.invisible or player.attributes.timeFrozen then
+		return
+	end
 	local diffCatx = math.abs(playerx - self.tileX)
 	local diffCaty = math.abs(playery - self.tileY)
 
@@ -276,6 +299,9 @@ function P.animal:tryMove(diffx, diffy)
 end
 
 function P.animal:afraidSecondaryMove(playerx, playery)
+	if player.attributes.shelled or player.attributes.invisible or player.attributes.timeFrozen then
+		return
+	end
 	local diffx = math.abs(playerx - self.tileX)
 	local diffy = math.abs(playery - self.tileY)
 
@@ -316,7 +342,7 @@ function P.pitbull:willKillPlayer()
 	return player.tileX == self.tileX and player.tileY == self.tileY and not self.dead
 end
 function P.pitbull:dropTool()
-	local whichTool = util.random(2, 'toolDrop')
+	local whichTool = util.random(1, 'toolDrop')
 	if whichTool==1 then
 		if not tools.dropTool(tools.meat, self.tileY, self.tileX) then
 			return
@@ -336,6 +362,7 @@ function P.snail:onNullLeave()
 	return tiles.slime:new()
 end
 function P.snail:kill()
+	if self.dead then return end
 	self.dead = true
 	self.sprite = self.deadSprite
 	if self.canDropTool and not self.willDropTool then
@@ -362,6 +389,7 @@ function P.conductiveSnail:onNullLeave()
 	return tiles.conductiveSlime:new()
 end
 function P.conductiveSnail:kill()
+	if self.dead then return end
 	self.dead = true
 	self.sprite = self.deadSprite
 	if self.canDropTool and not self.willDropTool then
@@ -383,8 +411,11 @@ function P.glueSnail:onNullLeave()
 	return tiles.glue:new()
 end
 function P.glueSnail:kill()
+	if self.dead then return end
 	self.dead = true
 	self.sprite = self.deadSprite
+	unlocks.unlockUnlockableRef(unlocks.glueUnlock)
+
 	if self.canDropTool and not self.willDropTool then
 		local bonusDropChance = util.random(100, 'toolDrop')
 		if bonusDropChance<=getLuckBonus() then
@@ -410,11 +441,14 @@ function P.cat:dropTool()
 end
 
 P.bombBuddy = P.animal:new{name = "bombBuddy", scale = 0.6*scale,
-sprite = 'Graphics/bombBuddyFront.png', deadSprite = 'Graphics/catdead.png'}
+sprite = 'Graphics/bombBuddyFront.png', deadSprite = 'Graphics/catdead.png', canDropTool = true}
 function P.bombBuddy:explode()
 	room[self.tileY][self.tileX] = tiles.bomb:new()
 	room[self.tileY][self.tileX]:onEnd(self.tileY, self.tileX)
 	room[self.tileY][self.tileX] = nil
+end
+function P.bombBuddy:dropTool()
+	tools.dropTool(tools.explosiveMeat, self.tileY, self.tileX)
 end
 
 P.conductiveDog = P.pup:new{name = "conductiveDog", powered = false, conductive = true, sprite = 'Graphics/conductivedog.png'}
@@ -496,10 +530,55 @@ function P.ram:afraidSecondaryMove(playerx, playery)
 	return true
 end
 
-P.rat = P.animal:new{name = "rat", sprite = 'Graphics/rat.png', triggered = true}
+P.rat = P.animal:new{name = "rat", sprite = 'Graphics/rat.png', triggered = true, canDropTool = true}
+function P.rat:dropTool()
+	if not tools.dropTool(tools.rottenMeat, self.tileY, self.tileX) then
+		return
+	end
+end
 
 P.termite = P.animal:new{name = "termite", sprite = 'Graphics/termite.png', waitCounter = 0}
 
+P.twinPitbull = P.pitbull:new{name = "twinPitbull", sprite = 'Graphics/twinpitbull.png'}
+function P.twinPitbull:moveOverride(movex, movey)
+	movex = self.tileX
+	movey = self.tileY
+
+	for i = 1, #animals do
+		if animals[i]:instanceof(P.twinPitbull) and animals[i]~=self then
+			if movex~=self.tileX or movey~=self.tileY then
+				local iDist = math.abs(animals[i].tileX-self.tileX)+math.abs(animals[i].tileY-self.tileY)
+				local currDist = math.abs(movex-self.tileX)+math.abs(movey-self.tileY)
+				if currDist>iDist then
+					movex = animals[i].tileX
+					movey = animals[i].tileY
+				end
+			else
+				movex = animals[i].tileX
+				movey = animals[i].tileY
+			end
+		end
+	end
+
+	return {x = movex, y = movey}
+end
+
+P.testChargedBoss = P.pitbull:new{name = "testChargedBoss", sprite = 'Graphics/twinpitbull.png',
+chargeCounter = 1.5, maxChargeCounter = 1.5, charged = true, conductive = true}
+function P.testChargedBoss:update(dt)
+	self.chargeCounter = self.chargeCounter-dt
+	if self.chargeCounter<=0 then
+		self.charged = not self.charged
+		self.chargeCounter = self.maxChargeCounter
+		updateGameState(false,false)
+	end
+end
+function P.testChargedBoss:kill()
+	if self.dead then return end
+	self.dead = true
+	self.sprite = self.deadSprite
+	self.conductive = false
+end
 
 
 animalList[1] = P.animal
@@ -518,5 +597,7 @@ animalList[13] = P.daughter
 animalList[14] = P.ram
 animalList[15] = P.rat
 animalList[16] = P.termite
+animalList[17] = P.twinPitbull
+animalList[18] = P.testChargedBoss
 
 return animalList

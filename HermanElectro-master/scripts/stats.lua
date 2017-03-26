@@ -11,32 +11,75 @@ stats = P
 P.statsFile = 'stats.json'
 P.wins = {}
 P.losses = {}
+P.statsData = {}
+P.tempStatsData = {} --stats for each run
+
+--these unlock whenever you reach total stats
+P.statUnlockTriggers = {}
+P.statUnlockTriggers["boxesSawed"] = {[11] = unlocks.playerBoxUnlock}
+P.statUnlockTriggers["totalLosses"] = {[3] = unlocks.frederickUnlock}
+P.statUnlockTriggers["totalWins"] = {[3] = unlocks.dungeonUnlock}
+P.statUnlockTriggers["HermanWins"] = {[1] = unlocks.boxesUnlock}
+P.statUnlockTriggers["FelixDungeonWins"] = {[1] = unlocks.missileUnlock}
+
+--these unlock whenever you do this many things in a run
+P.tempUnlockTriggers = {}
+P.tempUnlockTriggers["beggarsShot"] = {[5] = unlocks.felixUnlock}
+P.runNumber = 0
+
+function P.resetTempStats()
+	P.tempStatsData = {}
+end
+
+function P.doStatsSave()
+	return not loadTutorial
+end
+
+function P.incrementStat(stat)
+	if not P.doStatsSave() then
+		return
+	end
+	if P.tempStatsData[stat] == nil then
+		P.tempStatsData[stat] = 1
+	else
+		P.tempStatsData[stat] = P.tempStatsData[stat]+1
+	end
+	if P.tempUnlockTriggers[stat]~=nil and P.tempUnlockTriggers[stat][P.tempStatsData[stat]] ~= nil then
+		unlocks.unlockUnlockableRef(P.tempUnlockTriggers[stat][P.tempStatsData[stat]])
+	end
+	if saving.isPlayingBack() then return end
+	if P.statsData[stat] == nil then
+		P.statsData[stat] = 1
+	else
+		P.statsData[stat] = P.statsData[stat]+1
+	end
+	if P.statUnlockTriggers[stat]~=nil and P.statUnlockTriggers[stat][P.statsData[stat]] ~= nil then
+		unlocks.unlockUnlockableRef(P.statUnlockTriggers[stat][P.statsData[stat]])
+	end
+	P.writeStats()
+end
+
+function P.getStat(stat)
+	local statData = 0
+	local tempData = 0
+	if P.statsData[stat] ~= nil then
+		statData = P.statsData[stat]
+	else
+		tempData = P.statsData[stat]
+	end
+	return statData, tempData
+end
 
 function P.readStats()
 	if not love.filesystem.exists(saveDir..'/'..P.statsFile) then return end
 	local statsInfo = util.readJSON(saveDir..'/'..P.statsFile, false)
-	if statsInfo == nil then
-		local unlockedChars = characters.getUnlockedCharacters()
-		for i = 1, #unlockedChars do
-			P.wins[unlockedChars[i].name] = 0
-			P.losses[unlockedChars[i].name] = 0
-		end
-		return
+	if statsInfo ~= nil then
+		P.statsData = statsInfo
 	end
-	P.wins = statsInfo[1]
-	P.losses = statsInfo[2]
 end
 
 function P.writeStats()
-	local statsInfo = {P.wins, P.losses}
-	local unlockedChars = characters.getUnlockedCharacters()
-	for i = 1, #unlockedChars do
-		if P.wins[unlockedChars[i].name]==nil then
-			P.wins[unlockedChars[i].name] = 0
-			P.losses[unlockedChars[i].name] = 0			
-		end
-	end
-	util.writeJSON(P.statsFile, statsInfo)
+	util.writeJSON(P.statsFile, P.statsData)
 end
 
 function P.load()

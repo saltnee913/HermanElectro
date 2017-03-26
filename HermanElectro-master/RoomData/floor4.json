@@ -126,6 +126,9 @@
 		//numRoomsToCheck is the amount of rooms to try when deciding a room's roomid, decreasing this increases rng
 		"numRoomsToCheck": 5,
 		"tint": [0,0,0],
-		"playerRange": 300
+		"playerRange": 300,
+		"numTreasure": 1,
+		"numShop": 1,
+		"numDonation": 1
 	}
 }

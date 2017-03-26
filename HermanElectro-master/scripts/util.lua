@@ -95,12 +95,68 @@ function P.readJSON(filePath, askForRooms)
 	end
 end
 
-function P.writeJSON(filePath, data, state)
-	local str = json.encode(data, state)
-	if not love.filesystem.exists(saveDir) then
-		love.filesystem.createDirectory(saveDir)
+function P.writeJSON(filePath, data, state, directory)
+	local usedSaveDir = saveDir
+	if directory ~= nil then
+		usedSaveDir = saveDir..'/'..directory
 	end
-	love.filesystem.write(saveDir..'/'..filePath, str)
+	local str = json.encode(data, state)
+	if not love.filesystem.exists(usedSaveDir) then
+		love.filesystem.createDirectory(usedSaveDir)
+	end
+	love.filesystem.write(usedSaveDir..'/'..filePath, str)
+end
+function P.writeJSONCustom(filePath, roomToAdd)
+	if not love.filesystem.exists(saveDir..'/'..filePath) then
+		local str = "{\"rooms\": {\n"
+		str = str..roomToAdd.."\n}}"
+		
+		if not love.filesystem.exists(saveDir) then
+			love.filesystem.createDirectory(saveDir)
+		end
+
+		love.filesystem.write(saveDir..'/'..filePath, str)
+	else
+		local str = love.filesystem.read(saveDir..'/'..filePath)
+		str = str:sub(1,#str-4)
+		str = str..",\n"
+		str = str..roomToAdd
+		str = str.."\n}}"
+		love.filesystem.write(saveDir..'/'..filePath, str)
+	end
+end
+
+function P.roomToString(newRoom)
+	local ret = '"'..newRoom.roomid..'":\n'
+
+	--layout
+	ret = ret.."{\n[\n"
+	for i = 1, #newRoom.layout do
+		ret = ret.."["
+		for j = 1, #newRoom.layout[i] do
+			if type(newRoom.layout[i][j])~='number' then
+				ret = ret.."["
+				for k = 1, #newRoom.layout[i][j] do
+					ret = ret..newRoom.layout[i][j][k]
+					if not k==#newRoom.layout[i][j] then
+						ret = ret..","
+					end
+				end
+				ret = ret.."]"
+			else
+				ret = ret..newRoom.layout[i][j]
+				if not j==#newRoom.layout[i] then
+					ret = ret..","
+				end
+			end
+		end
+		ret = ret.."],"
+	end
+	ret = ret.."],"
+
+	ret = ret.."}"
+
+	return ret
 end
 
 function P.deepContains(arr, value, floor)
@@ -111,7 +167,7 @@ function P.deepContains(arr, value, floor)
 			end
 		end
 		return false
-	elseif floor ~= nil and arr ~= nil and value ~= nil then
+	elseif floor ~= nil and arr ~= nil and value ~= nil and type(arr) == 'number' then
 		return math.floor(arr) == math.floor(value)
 	else
 		return arr == value

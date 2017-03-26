@@ -1,17 +1,81 @@
 local P = {}
 editor = P
 tools = require('scripts.tools')
+editorTiles = require('scripts.editorTiles')
 
 P.stealInput = false
+P.tab = 1
+--1 for basic tiles, 2 for animasl, 3 for boxes, 4 for advanced tiles
+
+P.leftStartDist = 110
+P.downStartDist = height-3.2*width/50
+P.tabLength = 105
+P.tabHeight = 20
 
 roomsDesigned = 0
 
 P.visionHack = false
 
+P.setNames = {"Basic", "Animal", "Box", "Shop", "Advanced"}
+local function getTileSet()
+	if editor.tab==1 then
+		return editorTiles.basicTiles
+	elseif editor.tab==2 then
+		return editorTiles.animalTiles
+	elseif editor.tab==3 then
+		return editorTiles.boxTiles
+	elseif editor.tab==4 then
+		return editorTiles.shopTiles
+	elseif editor.tab==5 then
+		return editorTiles.advancedTiles
+	end
+end
+
 function P.draw()
-	barLength = 660
+	local tileSet = nil
+	local setName = nil
+	tileSet = getTileSet(editor.tab)
+
+	--tile sets
+	for i = 1, #P.setNames do
+		if editor.tab==i then
+			love.graphics.setColor(160,0,160)
+		else
+			love.graphics.setColor(50,0,50)
+		end
+		love.graphics.rectangle("fill", editor.leftStartDist+(i-1)*editor.tabLength, editor.downStartDist, editor.tabLength-5, editor.tabHeight)
+		love.graphics.setColor(255,140,0)
+		love.graphics.print(editor.setNames[i], editor.leftStartDist+(i-1)*editor.tabLength+5, editor.downStartDist+2);
+	end
+
+	--save and load
+	love.graphics.setColor(50,0,50)
+	love.graphics.rectangle("fill", width/2+editor.leftStartDist+2*tileUnit*scale, editor.downStartDist, editor.tabLength-5, editor.tabHeight)	
+	love.graphics.rectangle("fill", width/2+editor.leftStartDist+2*tileUnit*scale+editor.tabLength, editor.downStartDist, editor.tabLength-5, editor.tabHeight)
+	
+	love.graphics.setColor(255,140,0)
+	love.graphics.print("Save", width/2+editor.leftStartDist+2*tileUnit*scale+5, editor.downStartDist+2);
+	love.graphics.print("Load", width/2+editor.leftStartDist+2*tileUnit*scale+5+editor.tabLength, editor.downStartDist+2);
+
+	if nameEnter~=nil then
+		local textAdd = ''
+		if editor.stealInput and roomHack==nil then
+			textAdd = "Enter name: "
+		end
+		--love.graphics.print(textAdd..nameEnter, width/2+editor.leftStartDist+2*tileUnit*scale+5+editor.tabLength+(editor.tabLength+5), editor.downStartDist+2);
+	end
+
 	love.graphics.setColor(255,255,255)
-	for i = 1, 200 do
+	
+	for i = 1, #tileSet do
+		toDraw = util.getImage(tileSet[i]:getEditorSprite())
+		love.graphics.draw(toDraw, (i-1)*width/50+editor.leftStartDist, height-3.2*width/50+32, 0, (width/50)/(tileWidth)*16/toDraw:getWidth(), (width/50)/(tileWidth)*16/toDraw:getWidth())
+		if tiles[editorAdd]~=nil and tiles[editorAdd].name==tileSet[i].name then
+			love.graphics.draw(green, (i-1)*width/50+editor.leftStartDist, height-3.2*width/50+32, 0, (width/50)/(tileWidth)*16/toDraw:getWidth(), (width/50)/(tileWidth)*16/toDraw:getWidth())
+		end
+	end
+
+	--[[for i = 1, 200 do
 		if tiles[i]~=nil then
 			toDraw = util.getImage(tiles[i].sprite)
 			addx = 0
@@ -22,18 +86,18 @@ function P.draw()
 			elseif i>100 and i<=150 then
 				addx = -2*width
 				addy = 0
-			elseif i>150 and i<200 then
+			elseif i>150 and i<=200 then
 				addx = -3*width
 				addy = width/50
 			end
 			--love.graphics.rectangle("fill", (i-1)*width/25, height-width/25, width/25, width/25)
 			--sprite width: floor.sprite:getWidth()
-			love.graphics.draw(toDraw, (i-1)*width/50+addx, height-2*width/50+addy, 0, (width/50)/(tileWidth)*16/toDraw:getWidth(), (width/50)/(tileWidth)*16/toDraw:getWidth())
+			--love.graphics.draw(toDraw, (i-1)*width/50+addx, height-2*width/50+addy, 0, (width/50)/(tileWidth)*16/toDraw:getWidth(), (width/50)/(tileWidth)*16/toDraw:getWidth())
 			if editorAdd == i then
 				love.graphics.draw(green, (i-1)*width/50+addx, height-2*width/50+addy, 0, (width/50)/(tileWidth), (width/50)/(tileWidth))
 			end
 		end
-	end
+	end]]
 end
 
 function printRoom()
@@ -155,9 +219,11 @@ function P.keypressed(key, unicode)
 		toPrint = toPrint:sub(3)
 		toPrint = toPrint:sub(1,-3)
 		toPrint = toPrint..","
+		toPrint = "  \""..mainMap[mapy][mapx].roomid.."\""..toPrint:sub(10)
 		print(toPrint)
 	end
 	if key=='tab' then
+		if nameEnter~=nil then return end
 		roomHack = mainMap[mapy][mapx].roomid .. ''
 		P.stealInput = true
 		log('Room Hack: '..roomHack)
@@ -171,6 +237,7 @@ function P.keypressed(key, unicode)
     	animals = {}
     	pushables = {}
     	spotlights = {}
+    	bossList = {}
     end
 	if key == "z" and prevRoom~=nil then
     	room = prevRoom
@@ -201,33 +268,56 @@ function P.keypressed(key, unicode)
     		if not unlocks[i].hidden then
     			unlocks.lockUnlockable(i)
     		end
-    	end  		
+    	end
+    	stats.statsData = {}
+    	stats.writeStats()  		
     elseif key == "o" then
     	createElements()
     end
 end
 
 function P.inputSteal(key, unicode)
-	if key=='backspace' then
-		roomHack = roomHack:sub(1, -2)
-		log('Room Hack: '..roomHack)
-	end
-	if key=='right' then
-		roomHack = map.getNextRoom(roomHack)
-		log('Room Hack: '..roomHack)
-	end
-	if key == 'left' then
-		roomHack = map.getPrevRoom(roomHack)
-		log('Room Hack: '..roomHack)
-	end
-	if key=='return' then
+	if key=='escape' then
 		P.stealInput = false
-		if hackEnterRoom(roomHack) then
-			log('Teleported to room: '..roomHack)
+		if nameEnter ~= nil then
+			log('Saving Cancelled')
 		else
-			log('Could not find room: '..roomHack)
+			log('Room Hack Cancelled')
 		end
 		roomHack = nil
+		nameEnter = nil
+		args = nil
+	end
+	if roomHack~=nil then
+		if key=='backspace' then
+			roomHack = roomHack:sub(1, -2)
+			log('Room Hack: '..roomHack)
+		end
+		if key=='right' then
+			roomHack = map.getNextRoom(roomHack)
+			log('Room Hack: '..roomHack)
+		end
+		if key == 'left' then
+			roomHack = map.getPrevRoom(roomHack)
+			log('Room Hack: '..roomHack)
+		end
+		if key=='return' then
+			P.stealInput = false
+			if hackEnterRoom(roomHack) then
+				log('Teleported to room: '..roomHack)
+			else
+				log('Could not find room: '..roomHack)
+			end
+			roomHack = nil
+		end
+	elseif nameEnter~=nil then
+		if key=='backspace' then
+			nameEnter = nameEnter:sub(1, -2)
+			log('Enter name: '..nameEnter)
+		end
+		if key=='return' then
+			editor.saveRoom()
+		end
 	end
 end
 
@@ -235,6 +325,9 @@ function P.textinput(text)
 	if roomHack~=nil then
 		roomHack = roomHack .. text
 		log('Room Hack: '..roomHack)
+	elseif nameEnter~=nil then
+		nameEnter = nameEnter .. text
+		log('Enter name: '..nameEnter)
 	end
 end
 
@@ -306,17 +399,108 @@ function P.mousepressed(x, y, button, istouch)
 	end
 	--tileLocX = math.ceil((x-wallSprite.width)/(scale*floor.sprite:getWidth()))-getTranslation().x
 	--tileLocY = math.ceil((y-wallSprite.height)/(scale*floor.sprite:getHeight()))-getTranslation().y
-	if mouseY>height-4*width/50 then
-		editorAdd = math.floor(mouseX/(width/50))+1
-		if mouseY>height-3*width/50 then
-			editorAdd = editorAdd+50
+	if mouseY>editor.downStartDist then
+		if mouseY<=editor.downStartDist+editor.tabHeight then
+			if mouseX<editor.leftStartDist or mouseX>width/2+editor.leftStartDist+2*tileUnit*scale+5+editor.tabLength*2 then
+				return
+			elseif mouseX>editor.leftStartDist+#P.setNames*editor.tabLength then
+				--load
+				if mouseX>width/2+editor.leftStartDist+editor.tabLength+2*tileUnit*scale+5 then
+					print("loading")
+				elseif mouseX>width/2+editor.leftStartDist+2*tileUnit*scale+5 then
+					if args==nil then
+						if roomHack~=nil then return end
+						local customRooms = {}
+						if love.filesystem.exists(saveDir..'/customRooms.json') then
+							customRooms = util.readJSON(saveDir .. '/customRooms.json')
+							if customRooms == nil then
+								customRooms = {}
+							end
+						end
+						local newRoom = {}
+						newRoom.layout = {}
+						savedRoom = {}
+						for i = 1, roomHeight do
+							newRoom.layout[i] = {}
+							savedRoom[i] = {}
+							for j = 1, roomLength do
+								savedRoom[i][j] = room[i][j]
+								if room[i][j] == nil then
+									newRoom.layout[i][j] = 0
+								else
+									local tileWithRot = 0
+									--find the tile id
+									for k = 2, #tiles do
+										if tiles[k].name == room[i][j].name then
+											tileWithRot = k
+										end
+									end
+									--add in the rotation of the tile
+									if room[i][j].rotation ~= 0 then
+										tileWithRot = tileWithRot + room[i][j].rotation/10
+									end
+					
+									if room[i][j].overlay == nil then
+										newRoom.layout[i][j] = tileWithRot
+									else
+										local overlayWithRot = 0
+										for k = 2, #tiles do
+											if tiles[k].name == room[i][j].overlay.name then
+												overlayWithRot = k
+											end
+										end
+										if room[i][j].overlay.rotation ~= 0 then
+											overlayWithRot = overlayWithRot + room[i][j].overlay.rotation/10
+										end
+										newRoom.layout[i][j] = {tileWithRot,overlayWithRot}
+									end
+
+								end
+							end
+						end
+						savedAnimals = {}
+						for i = 1, #animals do
+							savedAnimals[i] = animals[i]
+						end
+						newRoom.itemsNeeded = {}
+						newRoom.itemsNeeded[1] = {0,0,0,0,0,0,0}
+						customRooms[#customRooms+1] = {name = newRoom}
+						local state = {indent = true}
+						local json = require('scripts.dkjson')
+						local toPrint = json.encode({name = newRoom}, state)
+						toPrint = toPrint:sub(3)
+						toPrint = toPrint:sub(1,-3)
+						toPrint = toPrint..","
+						args = {'/customRooms.json', toPrint}
+						nameEnter = ''
+						log('Enter name: ')
+						editor.stealInput = true
+					else
+						editor.saveRoom()
+					end
+				end
+			else
+				for i = 1, #P.setNames do
+					if mouseX>editor.leftStartDist+(i-1)*editor.tabLength then
+						editor.tab = i
+					end
+				end
+			end
+		elseif mouseY<=editor.downStartDist+editor.tabHeight+10+width/50 then
+			local numTile = math.floor((mouseX-editor.leftStartDist)/(width/50))+1
+			local tileSet = getTileSet()
+			local tileToAdd = tileSet[numTile]
+			if tileToAdd==nil then return end
+			
+			editorAdd = 0
+			for i = 1, #tiles do
+				if tiles[i].name==tileToAdd.name then
+					editorAdd = i
+					break
+				end
+			end
 		end
-		if mouseY>height-2*width/50 then
-			editorAdd = editorAdd+50
-		end
-		if mouseY>height-width/50 then
-			editorAdd = editorAdd+50
-		end
+
 	elseif tempAdd>0 and tempAdd<=#tiles and tileLocX>=1 and tileLocX<=roomLength and tileLocY>=1 and tileLocY<=roomHeight then
 		if(room[tileLocY]~=nil and room[tileLocY][tileLocX] ~= nil and room[tileLocY][tileLocX].name == tiles[tempAdd].name) then
 			room[tileLocY][tileLocX]:rotate(1)
@@ -350,6 +534,32 @@ function P.mousemoved(x, y, dx, dy)
 		end
 		postTileAddCleanup(tempAdd, tileLocY, tileLocX)
 	end
+end
+
+function P.saveRoom()
+	unlocks.unlockUnlockableRef(unlocks.laptopUnlock)
+
+	if map.createRoom(nameEnter)~=nil then
+		log("Save failed -- name already taken (continue typing to insert a new name)")
+		return
+	end
+
+	P.stealInput = false
+
+	args[2] = '  "'..nameEnter..'":'..args[2]:sub(11)
+	util.writeJSONCustom(args[1],args[2])
+	log("Saved!")
+	unlocks.unlockUnlockableRef(unlocks.laptopUnlock)
+	local justNamed = nameEnter
+
+	nameEnter = nil
+	args = nil
+	local roomsData, roomsArray = util.readJSON(saveDir..'/customRooms.json', true)
+	map.floorInfo.rooms.customRooms = roomsData.rooms
+	--add room to current list
+	map.floorInfo.roomsArray[#(map.floorInfo.roomsArray)+1] = roomsArray[#roomsArray]
+
+	hackEnterRoom(justNamed)
 end
 
 return editor

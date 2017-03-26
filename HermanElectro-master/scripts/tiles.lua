@@ -2,6 +2,7 @@ require('scripts.object')
 require('scripts.boundaries')
 require('scripts.animals')
 require('scripts.pushables')
+bosses = require('scripts.bosses')
 tools = require('scripts.tools')
 
 local P = {}
@@ -188,6 +189,9 @@ end
 function P.tile.flipDirection(dir,isVertical)
 	return 0
 end
+function P.tile:getEditorSprite()
+	return self.sprite
+end
 
 P.invisibleTile = P.tile:new{isVisible = false, name = "invisibleTile"}
 local bounds = {}
@@ -250,11 +254,17 @@ function P.crossWire:updateTile(dir)
 		self.powered = true
 		self.dirSend[self:cfr(2)]=1
 		self.dirSend[self:cfr(4)]=1
+	else
+		self.dirSend[self:cfr(2)]=0
+		self.dirSend[self:cfr(4)]=0		
 	end
 	if self.poweredNeighbors[self:cfr(1)]==1 or self.poweredNeighbors[self:cfr(3)]==1 then
 		self.powered = true
 		self.dirSend[self:cfr(1)]=1
 		self.dirSend[self:cfr(3)]=1
+	else
+		self.dirSend[self:cfr(1)]=0
+		self.dirSend[self:cfr(3)]=0		
 	end
 end
 
@@ -298,6 +308,14 @@ end
 
 
 P.unbreakableWire = P.wire:new{name = "unbreakableWire", litWhenPowered = false, sprite = 'Graphics/unbreakablewire.png', poweredSprite = 'Graphics/unbreakablewire.png', wireHackOff = 'Graphics3D/unbreakablewirehack.png', wireHackOn = 'Graphics3D/unbreakablewirehack.png'}
+function P.unbreakableWire:destroy()
+	self.sprite = self.destroyedSprite
+	self.canBePowered = false
+	self.destroyed = true
+	dirAccept = {0,0,0,0}
+	dirSend = {0,0,0,0}
+	unlocks.unlockUnlockableRef(unlocks.unbreakableElectricFloorUnlock)
+end
 P.unbreakableHorizontalWire = P.unbreakableWire:new{name = "unbreakableHorizontalWire", dirSend = {0,1,0,1}, dirAccept = {0,1,0,1}, sprite = 'Graphics/unbreakablehorizontalwire.png', poweredSprite = 'Graphics/unbreakablehorizontalwire.png'}
 P.unbreakableCornerWire = P.unbreakableWire:new{name = "unbreakableCornerWire", dirSend = {0,1,1,0}, dirAccept = {0,1,1,0}, sprite = 'Graphics/unbreakablecornerwire.png', poweredSprite = 'Graphics/unbreakablecornerwire.png'}
 P.unbreakableCornerWire.flipDirection = P.cornerWire.flipDirection
@@ -640,13 +658,13 @@ P.gate = P.conductiveTile:new{overlaying = true, name = "gate", dirSend = {0,0,0
 function P.gate:updateTile(dir)
 	self.gotten[dir] = 1
 end
-function P.tile:correctForRotation(dir)
-	local temp = dir + self.rotation
-	while(temp > 4) do
-		temp = temp - 4
+function P.gate:correctForRotation(dir)
+	local tempRot = dir + self.rotation
+	while(tempRot > 4) do
+		tempRot = tempRot - 4
 	end
 	--if temp ~= dir then print(temp..';'..dir) end
-	return temp
+	return tempRot
 end
 function P.gate:rotate(times)
 	self.rotation = self.rotation + times
@@ -984,7 +1002,7 @@ function P.endTile:onEnter(player)
 		end
 	elseif validSpace() and mainMap[mapy][mapx].roomid == "final_2" then
 		win()
-		unlocks.unlockUnlockableRef(unlocks.stickyButtonUnlock)
+		--unlocks.unlockUnlockableRef(unlocks.stickyButtonUnlock)
 	end
 	if self.done then return end
 	beatRoom()
@@ -1022,9 +1040,14 @@ end
 function P.pitbullTile:usableOnNothing()
 	return true
 end
+function P.pitbullTile:getEditorSprite()
+	return self.animal.sprite
+end
 P.pupTile = P.pitbullTile:new{name = "pup", animal = animalList[3], listIndex = 3}
 P.catTile = P.pitbullTile:new{name = "cat", animal = animalList[4], listIndex = 4}
 P.ramTile = P.pitbullTile:new{name = "ram", animal = animalList[14], listIndex = 14}
+P.twinPitbullTile = P.pitbullTile:new{name = "twinPitbull", animal = animalList[17], listIndex = 17}
+P.testChargedBossTile = P.pitbullTile:new{name = "testChargedBoss", animal = animalList[18], listIndex = 18}
 
 P.spotlightTile = P.tile:new{name = "spotlight", spotlight = spotlightList.spotlight,
 baseTime = 3600, currTime = 0,
@@ -1200,7 +1223,7 @@ function P.tunnel:onEnter(player)
 	self.toolsEntered = self.toolsEntered+1
 	--donations = donations+math.ceil((7-(floorIndex))/2)
 	floorDonations = floorDonations+1]]
-	if floorIndex>=7 then
+	if floorIndex>=9 then
 		return
 		--should do something cool, can add later
 	end
@@ -1240,8 +1263,7 @@ function P.pit:willKillPlayer()
 	return not self.laddered
 end
 function P.pit:destroyPushable()
-	self.sprite = self.destroyedSprite
-	self.laddered = true
+	self:ladder()
 end
 P.pit.willKillAnimal = P.pit.willKillPlayer
 P.pit.willDestroyPushable = P.pit.willKillPlayer
@@ -1322,6 +1344,11 @@ end
 
 P.mousetrap = P.conductiveTile:new{name = "mousetrap", bricked = false, formerPowered = nil, triggered = false, safe = false, sprite = 'Graphics/mousetrap.png', safeSprite = 'Graphics/mousetrapsafe.png', deadlySprite = 'Graphics/mousetrap.png', brickedSprite = 'Graphics/mousetrapbricked.png'}
 function P.mousetrap:onEnter()
+	--make sure not box
+	if room[player.tileY][player.tileX]==self then
+		unlocks.unlockUnlockableRef(unlocks.trapUnlock)
+	end
+
 	if self.bricked then return end
 	if not self.safe then
 		self.triggered = true
@@ -1389,10 +1416,6 @@ end
 function P.bomb:explode(x,y)
 	if not editorMode and math.abs(player.tileY-x)<2 and math.abs(player.tileX-y)<2 then 
 		kill()
-		if self.name == P.bomb.name then
-			unlocks = require('scripts.unlocks')
-			unlocks.unlockUnlockableRef(unlocks.frederickUnlock)
-		end
 	end
 	util.createHarmlessExplosion(x,y)
 end
@@ -1549,6 +1572,7 @@ function P.beggar:getInfoText()
 end
 function P.beggar:destroy()
 	if self.alive then
+		stats.incrementStat("beggarsShot")
 		self.animation = {self.sprite}
 		self.alive = false
 		local paysOut = util.random('toolDrop')
@@ -1561,6 +1585,23 @@ function P.beggar:providePayment()
 	if paymentType<0.33 then P.redBeggar:providePayment()
 	elseif paymentType<0.66 then P.blueBeggar:providePayment()
 	else P.greenBeggar:providePayment() end
+end
+function P.beggar:absoluteFinalUpdate()
+	if not (self.name==tiles.beggar.name) then return end
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]==self then
+				local whichBeggar = util.random(3, 'misc')
+				if whichBeggar==1 then
+					room[i][j] = tiles.redBeggar:new()
+				elseif whichBeggar==2 then
+					room[i][j] = tiles.blueBeggar:new()
+				else
+					room[i][j] = tiles.greenBeggar:new()
+				end
+			end
+		end
+	end
 end
 
 P.redBeggar = P.beggar:new{name = "redBeggar", sprite = 'GraphicsEli/redOrb1.png', deadSprite = 'Graphics/redbeggardead.png', 
@@ -1592,6 +1633,7 @@ function P.redBeggar:providePayment()
 		for i = 1, roomHeight do
 			for j = 1, roomLength do
 				if room[i][j]==self then
+					room[i][j]=nil
 					tools.dropTool(superDrop, i, j)
 				end
 			end
@@ -1656,6 +1698,7 @@ function P.whiteBeggar:providePayment()
 		for j = 1, roomLength do
 			if room[i][j]==self then
 				room[i][j] = tiles.tunnel:new()
+				unlocks.unlockUnlockableRef(unlocks.tunnelerUnlock)
 				return
 			end
 		end
@@ -1703,8 +1746,8 @@ function P.donationMachine:onEnter(player)
 	local mult = 1
 	if tool > tools.numNormalTools then
 		mult = 1
-		unlocks = require('scripts.unlocks')
-		unlocks.unlockUnlockableRef(unlocks.snailsUnlock)
+		--unlocks = require('scripts.unlocks')
+		--unlocks.unlockUnlockableRef(unlocks.snailsUnlock)
 	end
 	donations = donations+mult*math.ceil((10-(floorIndex))/2)
 	floorDonations = floorDonations+1
@@ -1858,8 +1901,8 @@ P.treasureTile3 = P.treasureTile:new{name = "treasureTile3", sprite = 'Graphics/
 P.treasureTile4 = P.treasureTile:new{name = "treasureTile4", sprite = 'Graphics/Tiles/treasureTile4.png'}
 
 P.conductiveSlime = P.conductiveTile:new{name = "conductiveSlime", sprite = 'Graphics/conductiveslime.png', poweredSprite = 'Graphics/conductiveslimepowered.png'}
-P.conductiveSlime.onEnter = P.slime.onEnter
-P.conductiveSlime.onEnterAnimal = P.slime.onEnterAnimal
+--P.conductiveSlime.onEnter = P.slime.onEnter
+--P.conductiveSlime.onEnterAnimal = P.slime.onEnterAnimal
 function P.conductiveSlime:willKillPlayer()
 	return self.powered
 end
@@ -1916,7 +1959,7 @@ function P.untriggeredPowerSupplyTimer:destroy()
 	self.dirAccept = {0,0,0,0}
 end
 
-P.reinforcedGlass = P.concreteWall:new{name = "reinforcedGlass", blocksVision = false, sprite = 'Graphics3D/reinforcedglass.png', poweredSprite = 'Graphics3D/reinforcedglass.png'}
+P.reinforcedGlass = P.concreteWall:new{name = "reinforcedGlass", cracked = false, blocksVision = false, sprite = 'Graphics3D/reinforcedglass.png', poweredSprite = 'Graphics3D/reinforcedglass.png'}
 
 P.powerTriggeredBomb = P.unactivatedBomb:new{name = "powerTriggeredBomb", canBePowered = true, powered = false, dirAccept = {1,1,1,1}, dirSend = {0,0,0,0}}
 function P.powerTriggeredBomb:absoluteFinalUpdate()
@@ -1933,9 +1976,20 @@ function P.powerTriggeredBomb:onEnter(player)
 end
 P.powerTriggeredBomb.onEnterAnimal = P.powerTriggeredBomb.onEnter
 
-P.boxTile = P.tile:new{name = "boxTile", pushable = pushableList[2], listIndex = 2, sprite = 'Graphics/boxstartingtile.png'}
+P.boxTile = P.tile:new{name = "boxTile", pushable = pushableList[2], listIndex = 2,
+sprite = 'Graphics/boxstartingtile.png', isVisible = false}
 function P.boxTile:usableOnNothing()
 	return true
+end
+function P.boxTile:new(o)
+	o = o or {}
+	setmetatable(o, self)
+	self.__index = self
+	o.pushable = o.pushable
+	return o
+end
+function P.boxTile:getEditorSprite()
+	return self.pushable.sprite
 end
 
 P.motionGate = P.conductiveTile:new{name = "gate", updatePowerOnLeave = true, dirSend = {0,0,0,0}, sprite = 'Graphics/gate.png', poweredSprite = 'Graphics/gate.png'}
@@ -1988,10 +2042,11 @@ end
 
 P.glue = P.tile:new{name = "glue", sprite = 'Graphics/glue.png'}
 function P.glue:onEnter(player)
+	if player.attributes.flying then return end
 	player.waitCounter = player.waitCounter+1
 	if player.character.name == characters.lenny.name then
-		unlocks = require('scripts.unlocks')
-		unlocks.unlockUnlockableRef(unlocks.glueSnailUnlock)
+		--unlocks = require('scripts.unlocks')
+		--unlocks.unlockUnlockableRef(unlocks.glueSnailUnlock)
 	end
 end
 
@@ -1999,21 +2054,22 @@ function P.glue:onStay(player)
 	player.waitCounter = player.waitCounter+1
 end
 function P.glue:onEnterAnimal(animal)
-	if animal:instanceof(animalList.snail) then
+	--[[if animal:instanceof(animalList.snail) then
 		unlocks = require('scripts.unlocks')
 		unlocks.unlockUnlockableRef(unlocks.glueSnailUnlock)
 		return
-	end
+	end]]
+	if animal:instanceof(animalList.glueSnail) then return end
 	if animal.flying then return end
 	animal.waitCounter = animal.waitCounter+1
 end
 P.glue.onStayAnimal = P.glue.onEnterAnimal
 
-P.conductiveBoxTile = P.tile:new{name = "conductiveBoxTile", pushable = pushableList[5], listIndex = 5, sprite = 'Graphics/boxstartingtile.png'}
+P.conductiveBoxTile = P.boxTile:new{name = "conductiveBoxTile", pushable = pushableList[5], listIndex = 5}
 
-P.boomboxTile = P.boxTile:new{name = "boomboxTile", pushable = pushableList[6], listIndex = 6, sprite = 'Graphics/boxstartingtile.png'}
+P.boomboxTile = P.boxTile:new{name = "boomboxTile", pushable = pushableList[6], listIndex = 6}
 
-P.batteringRamTile = P.boxTile:new{name = "batteringRamTile", pushable = pushableList[7], listIndex = 7, sprite = 'Graphics/boxstartingtile.png'}
+P.batteringRamTile = P.boxTile:new{name = "batteringRamTile", pushable = pushableList[7], listIndex = 7}
 
 P.lamp = P.powerSupply:new{name = "lamp", emitsLight = true, intensity = 0.7, range = 50, sprite = 'Graphics/lamp.png', poweredSprite = 'Graphics/lamp.png', lit = true, destroyedSprite = 'Graphics/destroyedlamp.png'}
 function P.lamp:destroy()
@@ -2090,12 +2146,19 @@ function P.unpoweredAccelerator:xAccel()
 	elseif self.rotation==3 then return -1
 	else return 0 end
 end
+function P.unpoweredAccelerator:onEnter(enterer)
+	for i = 1, #pushables do
+		if pushables[i].tileX==enterer.tileX and pushables[i].tileY==enterer.tileY then
+			unlocks.unlockUnlockableRef(unlocks.poweredAccelUnlock)
+		end
+	end
+end
 
-P.bombBoxTile = P.boxTile:new{name = "bombBoxTile", pushable = pushableList[8], listIndex = 8, sprite = 'Graphics/boxstartingtile.png'}
+P.bombBoxTile = P.boxTile:new{name = "bombBoxTile", pushable = pushableList[8], listIndex = 8}
 
-P.giftBoxTile = P.boxTile:new{name = "giftBoxTile", pushable = pushableList[9], listIndex = 9, sprite = 'Graphics/boxstartingtile.png'}
+P.giftBoxTile = P.boxTile:new{name = "giftBoxTile", pushable = pushableList[9], listIndex = 9}
 
-P.jackInTheBoxTile = P.boxTile:new{name = "jackInTheBoxTile", pushable = pushableList[10], listIndex = 10, sprite = 'Graphics/boxstartingtile.png'}
+P.jackInTheBoxTile = P.boxTile:new{name = "jackInTheBoxTile", pushable = pushableList[10], listIndex = 10}
 
 P.finalToolsTile = P.tile:new{name = "finalToolsTile", canBePowered = false, dirAccept = {0,0,0,0}, sprite = 'Graphics/donationmachine.png', done = false, toolsToGive = {}, giveRate = 0.75, timeLeft = 0}
 function P.finalToolsTile:onEnter(player)
@@ -2175,7 +2238,7 @@ P.invisibleConcreteWall = P.concreteWall:new{name = "invisibleConcreteWall", isV
 P.invisibleWoodenWall = P.wall:new{name = "invisibleWoodenWall", isVisible = false}
 P.invisiblePoweredFloor = P.poweredFloor:new{name = "invisiblePoweredFloor", isVisible = false}
 P.invisibleElectricFloor = P.electricFloor:new{name = "invisibleElectricFloor", isVisible = false}
-P.invisibleBoxTile = P.tile:new{name = "invisibleBoxTile", pushable = pushableList[11], listIndex = 11, sprite = 'Graphics/boxstartingtile.png'}
+P.invisibleBoxTile = P.tile:new{name = "invisibleBoxTile", pushable = pushableList[11], listIndex = 11}
 P.invisibleDecoy = P.tile:new{name = "invisibleDecoy", isVisible = false}
 
 P.superStickyButton = P.stickyButton:new{name = "superStickyButton", sprite = 'Graphics/superStickyButton.png', upSprite = 'Graphics/superStickyButton.png'}
@@ -2243,12 +2306,10 @@ P.endTilePaid.onStep = P.endTilePaid.postPowerUpdate
 
 P.mushroom = P.tile:new{name = "mushroom", sprite = 'KenGraphics/mushroom.png'}
 function P.mushroom:onEnter()
-	mushroomMode = true
-	shaderTriggered = true
-	globalTint = {0,0.15,0.3}
+	turnOnMushroomMode()
 end
 
-P.lampTile = P.tile:new{name = "lampTile", pushable = pushableList[12], listIndex = 12, sprite = 'Graphics/boxstartingtile.png'}
+P.lampTile = P.boxTile:new{name = "lampTile", pushable = pushableList[12], listIndex = 12}
 
 P.hermanTransform = P.tile:new{name = "hermanTransform", characterIndex = 1}
 function P.hermanTransform:onEnter()
@@ -2266,30 +2327,39 @@ P.lennyTransform = P.hermanTransform:new{name = "lennyTransform", characterIndex
 P.fishTransform = P.hermanTransform:new{name = "fishTransform", characterIndex = 16}
 
 P.supertoolTile = P.tile:new{name = "supertoolTile", tool = nil, superQuality = 1}
+function P.supertoolTile:onLoad()
+	if self.tool==nil then
+		for i = 1, #tools do
+			if tools[i].name == self.text then
+				self.tool = tools[i]
+				break
+			end
+		end
+		if self.tool ~= nil then
+			self:updateSprite()
+		end
+	end
+end
 function P.supertoolTile:absoluteFinalUpdate()
 	if self.tool==nil then
-		local quality = 0
-		local toolForTile = nil
-		local toolForTileId = 1
-		local unlockedSupers = unlocks.getUnlockedSupertools()
-		while(quality ~= self.superQuality or not unlockedSupers[toolForTileId] or tools[toolForTileId].isDisabled) do
-			toolForTileId = util.random(#tools-tools.numNormalTools, 'toolDrop')+tools.numNormalTools
-			toolForTile = tools[toolForTileId]
-			quality = toolForTile.quality
-		end
-		self.tool = toolForTile
+		self.tool = tools[tools.chooseSupertool(self.superQuality)]
 		self:updateSprite()
 	end
 end
 function P.supertoolTile:updateSprite()
 	if self.tool~=nil then
-		self.sprite = self.tool.image
+		self.sprite = self.tool:getTileImage()
+		self.poweredSprite = self.sprite
 	end
 end
-function P.supertoolTile:onEnter()
+function P.supertoolTile:onEnter(entered)
+	if not (player.tileX==entered.tileX and player.tileY==entered.tileY) then return end
 	local stTypesHeld = util.getSupertoolTypesHeld()
 	if stTypesHeld<3 or self.tool.numHeld>0 then
 		tools.giveToolsByReference({self.tool})
+		if self.tool==tools.axe then
+			unlocks.unlockUnlockableRef(unlocks.pickaxeUnlock)
+		end
 		self.isVisible = false
 		self.gone = true
 	end
@@ -2300,8 +2370,9 @@ P.supertoolQ3 = P.supertoolTile:new{name = "supertoolTileQ3", superQuality = 3}
 P.supertoolQ4 = P.supertoolTile:new{name = "supertoolTileQ4", superQuality = 4}
 P.supertoolQ5 = P.supertoolTile:new{name = "supertoolTileQ5", superQuality = 5}
 
-P.toolTile = P.tile:new{name = "toolTile", tool = nil, toolId = 1, dirSend = {0,0,0,0}}
-function P.toolTile:onEnter()
+P.toolTile = P.tile:new{name = "toolTile", tool = nil, toolId = -1, dirSend = {0,0,0,0}}
+function P.toolTile:onEnter(entered)
+	if not (player.tileX==entered.tileX and player.tileY==entered.tileY) then return end
 	tools.giveToolsByReference({self.tool})
 	self.isVisible = false
 	self.gone = true
@@ -2315,6 +2386,9 @@ function P.toolTile:absoluteFinalUpdate()
 end
 function P.toolTile:onLoad()
 	if self.tool == nil then
+		if self.toolId == -1 then
+			self:randomize()
+		end
 		self.tool = tools[self.toolId]
 	end
 end
@@ -2384,14 +2458,14 @@ end
 
 P.dungeonEnter = P.tile:new{name = "dungeonEnter"}
 function P.dungeonEnter:onEnter()
+	--unlocks.unlockUnlockableRef(unlocks.rammyUnlock, true)
 	player.regularMapLoc = {x = mapx, y = mapy}
 	mapx = 1
 	mapy = mapHeight+1
 	room = mainMap[mapy][mapx].room
 	roomHeight = room.height
 	roomLength = room.length
-	createAnimals()
-	createPushables()
+	createElements()
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
 			if room[i][j]~=nil and room[i][j]:instanceof(tiles.dungeonExit) then
@@ -2404,6 +2478,7 @@ function P.dungeonEnter:onEnter()
 	player.prevTileX = player.tileX
 	player.prevTileY = player.tileY
 	player.justTeleported = true
+
 end
 P.dungeonExit = P.tile:new{name = "dungeonExit"}
 function P.dungeonExit:onEnter()
@@ -2453,8 +2528,7 @@ function P.dungeonExit:onEnter()
 		end
 	end
 
-	createAnimals()
-	createPushables()
+	createElements()
 	player.justTeleported = true
 end
 
@@ -2470,14 +2544,14 @@ function P.endDungeonEnter:onEnter()
 	end
 	player.returnFloorIndex = floorIndex
 	goToFloor(1)
-	if stairsLocs[8].coords.x~=0 then
-		mapx = stairsLocs[8].map.x
-		mapy = stairsLocs[8].map.y
+	if stairsLocs[#stairsLocs].coords.x~=0 then
+		mapx = stairsLocs[#stairsLocs].map.x
+		mapy = stairsLocs[#stairsLocs].map.y
 		room = mainMap[mapy][mapx].room
 		roomHeight = room.height
 		roomLength = room.length
-		player.tileX = stairsLocs[8].coords.x
-		player.tileY = stairsLocs[8].coords.y
+		player.tileX = stairsLocs[#stairsLocs].coords.x
+		player.tileY = stairsLocs[#stairsLocs].coords.y
 	else
 		for i = 1, roomHeight do
 			for j = 1, roomLength do
@@ -2539,7 +2613,7 @@ function P.finalKeyPowered:onEnter()
 end
 
 P.gameWin = P.tile:new{name = "gameWin"}
-function P.gameWin:onEnter()
+function P.gameWin:onEnter()	
 	win()
 end
 
@@ -2609,10 +2683,22 @@ function P.gasPuddle:updateTile(dir)
 	end
 end
 function P.gasPuddle:onEnd(x, y)
-	self:explode(x,y)
+	if not self.gone then
+		self.gone = true
+		self:explode(x,y)
+	end
 end
 function P.gasPuddle:destroy()
-	self.gone = true
+	if not self.gone then
+		self.gone = true
+		for i = 1, roomHeight do
+			for j = 1, roomLength do
+				if room[i][j]==self then
+					self:explode(j,i)
+				end
+			end
+		end
+	end
 end
 function P.gasPuddle:explode(x,y)
 	P.bomb:explode(x,y)
@@ -2676,6 +2762,12 @@ function P.debugStairs:onEnter()
 	startDebug()
 end
 
+P.editorStairs = P.tile:new{name = "editorStairs", sprite = 'KenGraphics/greenstairs.png'}
+function P.editorStairs:onEnter()
+	stairsLocs[1] = {map ={x = mapx, y = mapy}, coords = {x = player.tileX, y = player.tileY}}
+	startEditor()
+end
+
 P.saveStairs = P.tile:new{name = "saveStairs", sprite = 'KenGraphics/gamestairs.png', recording = nil}
 function P.saveStairs:onLoad()
 	self.recording = saving.getSave()
@@ -2691,7 +2783,7 @@ end
 
 P.playbackStairs = P.tile:new{name = "playbackStairs", sprite = 'KenGraphics/gamestairs.png', recording = nil}
 function P.playbackStairs:onLoad()
-	self.recording = saving.getSave()
+	self.recording = saving.getLatestReplay()
 	if self.recording == nil then
 		self.isVisible = false
 	end
@@ -2699,6 +2791,14 @@ end
 function P.playbackStairs:onEnter()
 	if self.isVisible then
 		saving.playBackRecording(self.recording)
+	end
+end
+
+P.replayViewer = P.playbackStairs:new{name = "replayStairs"}
+function P.replayViewer:onLoad()
+	self.recording = saving.getImportedReplay()
+	if self.recording == nil then
+		self.isVisible = false
 	end
 end
 
@@ -2720,19 +2820,15 @@ P.darkOverlay = P.tile:new{name = "darkOverlay", sprite = 'NewGraphics/unlocksDa
 P.playerTile = P.tile:new{name = "playerTransform", character = nil, text = "Herman", isVisible = false}
 function P.playerTile:onLoad()
 	if self.character==nil then
-		local unlockedChars = characters.getUnlockedCharacters()
-		for i = 1, #unlockedChars do
-			if unlockedChars[i].name == self.text then
-				self.character = unlockedChars[i]
-			end
-		end
+		self.character = characters.getUnlockedCharacter(self.text)
 		if self.character ~= nil then
 			self.sprite = self.character.sprite
 			self.isVisible = true
 		end
 	end
 end
-function P.playerTile:onEnter()
+function P.playerTile:onEnter(entered)
+	if not (player.tileX==entered.tileX and player.tileY==entered.tileY) then return end
 	if self.character ~= nil then
 		player.character = self.character
 		player.character:onSelect()
@@ -2744,10 +2840,11 @@ function P.playerTile:onLeave(player)
 	messageInfo.text = nil
 end
 function P.playerTile:getCharInfo()
+	if self.character==nil then return end
 	local infoText = ""
 	infoText = infoText..self.character.name..", "..self.character.description.."\n"
-	infoText = infoText.."Wins: "..stats.wins[self.character.name].."\n"
-	infoText = infoText.."Losses: "..stats.losses[self.character.name]
+	infoText = infoText.."Wins: "..stats.getStat(self.character.name..'Wins').."\n"
+	infoText = infoText.."Losses: "..stats.getStat(self.character.name..'Losses')
 	return infoText
 end
 
@@ -2868,8 +2965,8 @@ end
 
 P.ratTile = P.pitbullTile:new{name = "rat", animal = animalList[15], listIndex = 15}
 
-P.iceBoxTile = P.tile:new{name = "iceBoxTile", pushable = pushableList[13], listIndex = 13, sprite = 'Graphics/boxstartingtile.png'}
-P.recycleBinTile = P.tile:new{name = "recycleBinTile", pushable = pushableList[14], listIndex = 14, sprite = 'Graphics/boxstartingtile.png'}
+P.iceBoxTile = P.boxTile:new{name = "iceBoxTile", pushable = pushableList[13], listIndex = 13}
+P.recycleBinTile = P.boxTile:new{name = "recycleBinTile", pushable = pushableList[14], listIndex = 14}
 
 P.infestedWood = P.wall:new{name = "infestedWood", sprite = 'Graphics/infestedwood.png'}
 function P.infestedWood:destroy()
@@ -2896,6 +2993,15 @@ function P.infestedWood:destroy()
 		end
 	end
 end
+
+P.openDungeon = P.tile:new{name = "openDungeon", untoolable = true}
+function P.openDungeon:onEnter()
+	if player.dungeonKeysHeld>=3 then
+		unlockDoors(true)
+	end
+end
+
+P.bossTile = P.tile:new{name = 'bossTile', boss = bosses.bobBoss}
 
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
@@ -3096,6 +3202,11 @@ tiles[196] = P.ratTile
 tiles[197] = P.iceBoxTile
 tiles[198] = P.recycleBinTile
 tiles[199] = P.infestedWood
+tiles[200] = P.editorStairs
+tiles[201] = P.replayViewer
+tiles[202] = P.openDungeon
+tiles[203] = P.testChargedBossTile
+tiles[204] = P.bossTile
 
 
 return tiles
