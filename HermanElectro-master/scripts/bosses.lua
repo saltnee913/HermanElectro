@@ -85,7 +85,6 @@ function P.boss:onMoved(offset)
 		self.tileX[i] = self.tileX[i] + offset.x
 	end
 	self.dirMoving = self:chooseMovement()
-	log(self.dirMoving)
 	self:doOnMoved()
 end
 
