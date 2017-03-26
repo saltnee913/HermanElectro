@@ -23,6 +23,16 @@ function P.boss:drawBoss()
 	love.graphics.draw(util.getImage(self.sprite), self.x, self.y, 0, scale, scale)
 end
 
+function P.boss:willKillPlayer(player)
+	for i = 1, #self.tileX do
+		if player.tileX == self.tileX[i] and player.tileY == self.tileY[i] then
+			return true
+		end
+	end
+	return false
+end
+P.boss.willKillAnimal = P.boss.willKillPlayer
+
 function P.boss:update(dt)
 
 end
@@ -164,5 +174,15 @@ function P.bobBoss:onPostUpdatePower()
 		end
 	end
 end
+
+function P.bobBoss:willKillPlayer(player)
+	for i = 1, #self.tileX do
+		if player.tileX == self.tileX[i] and player.tileY == self.tileY[i] then
+			return self.powered
+		end
+	end
+	return false
+end
+P.bobBoss.willKillAnimal = P.bobBoss.willKillPlayer
 
 return bosses
