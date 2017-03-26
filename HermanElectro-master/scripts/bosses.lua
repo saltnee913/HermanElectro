@@ -1,6 +1,9 @@
 local P = {}
 bosses = P
 
+------------------------------------------------------------
+----------------------Boss Prototype------------------------
+------------------------------------------------------------
 P.boss = Object:new{name = 'boss', x = 0, y = 0, oldX = 0, oldY = 0, tileX = {}, tileY = {}, 
   sprite = 'Graphics/Bosses/BossBobUnpowered.png', deadSprite = 'Graphics/Bosses/BossBobUnpowered.png',
   dirMoving = 0, speed = 2, dead = false}
@@ -123,6 +126,9 @@ end
 function P.boss:onPostUpdatePower()
 end
 
+------------------------------------------------------------
+------------------Boss Movement Functions-------------------
+------------------------------------------------------------
 local function chooseMovementWallBounce(self)
 	if self.dirMoving ~= 0 and not self:isSomethingToSide(self.dirMoving) then
 		return self.dirMoving
@@ -143,6 +149,9 @@ local function chooseMovementWallBounce(self)
 	end
 end
 
+------------------------------------------------------------
+--------------------------Bob Boss--------------------------
+------------------------------------------------------------
 P.bobBoss = P.boss:new{name = 'battery acid', 
   sprite = 'Graphics/Bosses/BossBobUnpowered.png', poweredSprite = 'Graphics/Bosses/BossBobPowered.png', unpoweredSprite = 'Graphics/Bosses/BossBobUnpowered.png',
   deadSprite = 'Graphics/Bosses/BossBobUnpowered.png',
