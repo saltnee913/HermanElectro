@@ -173,6 +173,11 @@ function P.animal:checkDeath()
 			self:kill()
 		end
 	end
+	for i = 1, #bossList do
+		if bossList[i]:willKillAnimal(self) then
+			self:kill()
+		end
+	end
 end
 function P.animal:hasMoved()
 	return self.prevTileX ~= self.tileX or self.prevTileY ~= self.tileY

@@ -1,7 +1,12 @@
 local P = {}
 bosses = P
 
-P.boss = Object:new{name = 'boss', x = 0, y = 0, oldX = 0, oldY = 0, tileX = {}, tileY = {}, sprite = 'Graphics/Bosses/BossBobUnpowered.png', dirMoving = 0, speed = 2}
+------------------------------------------------------------
+----------------------Boss Prototype------------------------
+------------------------------------------------------------
+P.boss = Object:new{name = 'boss', x = 0, y = 0, oldX = 0, oldY = 0, tileX = {}, tileY = {}, 
+  sprite = 'Graphics/Bosses/BossBobUnpowered.png', deadSprite = 'Graphics/Bosses/BossBobUnpowered.png',
+  dirMoving = 0, speed = 2, dead = false}
 
 function P.boss:load(tileY, tileX)
 	self.tileY[1] = tileY
@@ -20,14 +25,33 @@ function P.boss:load(tileY, tileX)
 end
 
 function P.boss:drawBoss()
-	love.graphics.draw(util.getImage(self.sprite), self.x, self.y, 0, scale, scale)
+	if self.dead then
+		love.graphics.draw(util.getImage(self.deadSprite), self.x, self.y, 0, scale, scale)
+	else
+		love.graphics.draw(util.getImage(self.sprite), self.x, self.y, 0, scale, scale)
+	end
 end
+
+function P.boss:kill()
+	self.dead = true
+end
+
+function P.boss:willKillPlayer(player)
+	for i = 1, #self.tileX do
+		if player.tileX == self.tileX[i] and player.tileY == self.tileY[i] then
+			return true
+		end
+	end
+	return false
+end
+P.boss.willKillAnimal = P.boss.willKillPlayer
 
 function P.boss:update(dt)
 
 end
 
 function P.boss:superUpdate(dt)
+	if self.dead then return end
 	self:updateMovement(dt)
 	self:update(dt)
 end
@@ -64,6 +88,27 @@ function P.boss:onMoved(offset)
 	self:doOnMoved()
 end
 
+function P.boss:isSomethingToSide(dir)
+	local offset = util.getOffsetByDir(dir)
+	for i = 1, #self.tileX do
+		local newX = self.tileX[i] + offset.x
+		local newY = self.tileY[i] + offset.y
+		if newX < 1 then
+			return true
+		elseif newX > roomLength then
+			return true
+		elseif newY < 1 then
+			return true
+		elseif newY > roomHeight then
+			return true
+		else
+			if room[newY][newX] ~= nil and room[newY][newX].blocksMovement then
+				return true
+			end
+		end
+	end
+	return false
+end
 function P.boss:chooseMovement()
 	return 4
 end
@@ -81,29 +126,10 @@ end
 function P.boss:onPostUpdatePower()
 end
 
-P.bobBoss = P.boss:new{name = 'battery acid', 
-  sprite = 'Graphics/Bosses/BossBobUnpowered.png', poweredSprite = 'Graphics/Bosses/BossBobPowered.png', unpoweredSprite = 'Graphics/Bosses/BossBobUnpowered.png',
-  speed = 1.5, isPowered = false, 
-  poweredTime = 3, unPoweredTime = 3, timeToSwitch = 0}
-
-function P.bobBoss:isSomethingToSide(dir)
-	if dir == 1 then
-		return (room[self.tileY[1]-1][self.tileX[1]] ~= nil and room[self.tileY[1]-1][self.tileX[1]].blocksMovement)
-			or (room[self.tileY[2]-1][self.tileX[2]] ~= nil and room[self.tileY[2]-1][self.tileX[2]].blocksMovement)
-	elseif dir == 2 then
-		return (room[self.tileY[2]][self.tileX[2]+1] ~= nil and room[self.tileY[2]][self.tileX[2]+1].blocksMovement)
-			or (room[self.tileY[4]][self.tileX[4]+1] ~= nil and room[self.tileY[4]][self.tileX[4]+1].blocksMovement)
-	elseif dir == 3 then
-		return (room[self.tileY[4]+1][self.tileX[4]] ~= nil and room[self.tileY[4]+1][self.tileX[4]].blocksMovement)
-			or (room[self.tileY[3]+1][self.tileX[3]] ~= nil and room[self.tileY[3]+1][self.tileX[3]].blocksMovement)
-	elseif dir == 4 then
-		return (room[self.tileY[1]][self.tileX[1]-1] ~= nil and room[self.tileY[1]][self.tileX[1]-1].blocksMovement)
-			or (room[self.tileY[3]][self.tileX[3]-1] ~= nil and room[self.tileY[3]][self.tileX[3]-1].blocksMovement)
-	else
-		return false
-	end
-end
-function P.bobBoss:chooseMovement()
+------------------------------------------------------------
+------------------Boss Movement Functions-------------------
+------------------------------------------------------------
+local function chooseMovementWallBounce(self)
 	if self.dirMoving ~= 0 and not self:isSomethingToSide(self.dirMoving) then
 		return self.dirMoving
 	else
@@ -112,13 +138,48 @@ function P.bobBoss:chooseMovement()
 				return i
 			end
 		end
+		if not self:isSomethingToSide(self.dirMoving+2) then
+			if self.dirMoving+2 > 4 then
+				return self.dirMoving-2
+			else
+				return self.dirMoving+2
+			end
+		end
 		return 0
 	end
 end
+
+------------------------------------------------------------
+--------------------------Bob Boss--------------------------
+------------------------------------------------------------
+P.bobBoss = P.boss:new{name = 'battery acid', 
+  sprite = 'Graphics/Bosses/BossBobUnpowered.png', poweredSprite = 'Graphics/Bosses/BossBobPowered.png', unpoweredSprite = 'Graphics/Bosses/BossBobUnpowered.png',
+  deadSprite = 'Graphics/Bosses/BossBobUnpowered.png',
+  speed = 1.5, powered = false, 
+  poweredTime = 3, unPoweredTime = 3, timeToSwitch = 0}
+
+function P.bobBoss:kill()
+	self.dead = true
+	self.powered = false
+end
+
+function P.bobBoss:willKillPlayer(player)
+	for i = 1, #self.tileX do
+		if player.tileX == self.tileX[i] and player.tileY == self.tileY[i] then
+			return self.powered
+		end
+	end
+	return false
+end
+P.bobBoss.willKillAnimal = P.bobBoss.willKillPlayer
+
+P.bobBoss.chooseMovement = chooseMovementWallBounce
+
 function P.bobBoss:doOnMoved()
 	updateGameState()
 	checkAllDeath()
 end
+
 function P.bobBoss:setPowered(inPowered)
 	self.powered = inPowered
 	if self.powered then
@@ -129,6 +190,7 @@ function P.bobBoss:setPowered(inPowered)
 	updateGameState()
 	checkAllDeath()
 end
+
 function P.bobBoss:update(dt)
 	self.timeToSwitch = self.timeToSwitch + dt
 	if self.powered and self.timeToSwitch > self.poweredTime then
@@ -139,6 +201,7 @@ function P.bobBoss:update(dt)
 		self.timeToSwitch = self.timeToSwitch - self.unPoweredTime
 	end
 end
+
 function P.bobBoss:onPreUpdatePower()
 	if self.powered then
 		self.storedTiles = {}
@@ -155,6 +218,7 @@ function P.bobBoss:onPreUpdatePower()
 		end
 	end
 end
+
 function P.bobBoss:onPostUpdatePower()
 	if self.powered then
 		for i = 1, #self.tileX do

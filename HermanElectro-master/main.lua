@@ -3689,6 +3689,11 @@ function checkDeath()
 			kill()
 		end
 	end
+	for i = 1, #bossList do
+		if bossList[i]:willKillPlayer(player) then
+			kill()
+		end
+	end
 end
 
 function checkDeathSpotlights(dt)
