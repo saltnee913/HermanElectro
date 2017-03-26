@@ -1862,6 +1862,9 @@ function P.revive:checkDeath()
 	for j = 1, #pushables do
 		pushables[j]:destroy()
 	end
+	for i = 1, #bossList do
+		bossList[i]:kill()
+	end
 	spotlights = {}
 	updateGameState(false)
 	log("Revived!")

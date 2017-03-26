@@ -1,7 +1,9 @@
 local P = {}
 bosses = P
 
-P.boss = Object:new{name = 'boss', x = 0, y = 0, oldX = 0, oldY = 0, tileX = {}, tileY = {}, sprite = 'Graphics/Bosses/BossBobUnpowered.png', dirMoving = 0, speed = 2}
+P.boss = Object:new{name = 'boss', x = 0, y = 0, oldX = 0, oldY = 0, tileX = {}, tileY = {}, 
+  sprite = 'Graphics/Bosses/BossBobUnpowered.png', deadSprite = 'Graphics/Bosses/BossBobUnpowered.png',
+  dirMoving = 0, speed = 2, dead = false}
 
 function P.boss:load(tileY, tileX)
 	self.tileY[1] = tileY
@@ -20,7 +22,15 @@ function P.boss:load(tileY, tileX)
 end
 
 function P.boss:drawBoss()
-	love.graphics.draw(util.getImage(self.sprite), self.x, self.y, 0, scale, scale)
+	if self.dead then
+		love.graphics.draw(util.getImage(self.deadSprite), self.x, self.y, 0, scale, scale)
+	else
+		love.graphics.draw(util.getImage(self.sprite), self.x, self.y, 0, scale, scale)
+	end
+end
+
+function P.boss:kill()
+	self.dead = true
 end
 
 function P.boss:willKillPlayer(player)
@@ -38,6 +48,7 @@ function P.boss:update(dt)
 end
 
 function P.boss:superUpdate(dt)
+	if self.dead then return end
 	self:updateMovement(dt)
 	self:update(dt)
 end
@@ -93,8 +104,24 @@ end
 
 P.bobBoss = P.boss:new{name = 'battery acid', 
   sprite = 'Graphics/Bosses/BossBobUnpowered.png', poweredSprite = 'Graphics/Bosses/BossBobPowered.png', unpoweredSprite = 'Graphics/Bosses/BossBobUnpowered.png',
-  speed = 1.5, isPowered = false, 
+  deadSprite = 'Graphics/Bosses/BossBobUnpowered.png',
+  speed = 1.5, powered = false, 
   poweredTime = 3, unPoweredTime = 3, timeToSwitch = 0}
+
+function P.bobBoss:kill()
+	self.dead = true
+	self.powered = false
+end
+
+function P.bobBoss:willKillPlayer(player)
+	for i = 1, #self.tileX do
+		if player.tileX == self.tileX[i] and player.tileY == self.tileY[i] then
+			return self.powered
+		end
+	end
+	return false
+end
+P.bobBoss.willKillAnimal = P.bobBoss.willKillPlayer
 
 function P.bobBoss:isSomethingToSide(dir)
 	if dir == 1 then
@@ -174,15 +201,5 @@ function P.bobBoss:onPostUpdatePower()
 		end
 	end
 end
-
-function P.bobBoss:willKillPlayer(player)
-	for i = 1, #self.tileX do
-		if player.tileX == self.tileX[i] and player.tileY == self.tileY[i] then
-			return self.powered
-		end
-	end
-	return false
-end
-P.bobBoss.willKillAnimal = P.bobBoss.willKillPlayer
 
 return bosses
