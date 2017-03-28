@@ -9,6 +9,8 @@ P.boss = Object:new{name = 'boss', x = 0, y = 0, oldX = 0, oldY = 0, tileX = {},
   dirMoving = 0, speed = 2, dead = false}
 
 function P.boss:load(tileY, tileX)
+	self.tileY = {}
+	self.tileX = {}
 	self.tileY[1] = tileY
 	self.tileX[1] = tileX
 	self.tileY[2] = tileY
