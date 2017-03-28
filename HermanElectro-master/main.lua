@@ -2569,7 +2569,7 @@ function createAnimals()
 end
 
 function createBosses()
-	if room.bosses~=nil then bosses = room.bosses return end
+	if room.bosses~=nil then bossList = room.bosses return end
 	bossList = {}
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
