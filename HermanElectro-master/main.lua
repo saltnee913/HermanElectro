@@ -953,7 +953,8 @@ function win()
 		if gameTime.totalTime < 900 then
 			unlocks.unlockUnlockableRef(unlocks.erikUnlock)
 		end
-		if gabeUnlock then
+		--if gabeUnlock then
+		if player.attributes.flying then
 			unlocks.unlockUnlockableRef(unlocks.gabeUnlock)
 		end
 		

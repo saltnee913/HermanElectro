@@ -100,7 +100,7 @@ function P.animal:pushableCheck()
 end
 
 function P.animal:secondaryMove(playerx, playery)
-	if player.attributes.shelled or player.attributes.invisible or player.attributes.timeFrozen then
+	if player.attributes.shelled or player.attributes.invisible or player.attributes.timeFrozen or self.frozen then
 		return
 	end
 	if player.character.name == "Leonard" and player.character.scaryMode == true then

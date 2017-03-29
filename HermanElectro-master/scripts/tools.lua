@@ -1448,7 +1448,8 @@ function P.laser:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld-1
 end
 
-P.icegun = P.superTool:new{name = "Freeze Ray", description = "Piercing permafrost", baseRange = 100, image = 'Graphics/icegun.png', quality = 2}
+P.icegun = P.superTool:new{name = "Freeze Ray", description = "Piercing permafrost", baseRange = 100,
+image = 'Graphics/icegun.png', quality = 2}
 function P.icegun:usableOnTile()
 	return true
 end
@@ -1461,6 +1462,14 @@ local function iceDogs(tileY, tileX)
 				  (tileY < player.tileY and animals[i].tileY < player.tileY) then 
 					if not animals[i].dead then
 						animals[i].frozen = true
+						local freezeChance = util.random(3, 'misc')
+						if freezeChance == 1 then
+							animals[i]:kill()
+							local toSpawn = pushableList.iceBox:new()
+							toSpawn.tileY = animals[i].tileY
+							toSpawn.tileX = animals[i].tileX
+							pushables[#pushables+1] = toSpawn
+						end
 					end
 				end
 			end
@@ -1472,6 +1481,14 @@ local function iceDogs(tileY, tileX)
 				  (tileX < player.tileX and animals[i].tileX < player.tileX) then
 					if not animals[i].dead then
 						animals[i].frozen = true
+						local freezeChance = util.random(3, 'misc')
+						if freezeChance == 1 then
+							animals[i]:kill()
+							local toSpawn = pushableList.iceBox:new()
+							toSpawn.tileY = animals[i].tileY
+							toSpawn.tileX = animals[i].tileX
+							pushables[#pushables+1] = toSpawn
+						end
 					end
 				end
 			end
