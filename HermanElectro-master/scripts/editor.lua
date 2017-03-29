@@ -255,6 +255,7 @@ function P.keypressed(key, unicode)
     	animals = savedAnimals
     elseif key == "l" then
 		P.visionHack = not P.visionHack
+	elseif key == "h" then win()
     elseif key == "=" then
     	--unlock everything
     	for i = 1, #unlocks do
