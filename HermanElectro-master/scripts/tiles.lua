@@ -436,7 +436,7 @@ end
 P.stickyButton.onEnterAnimal = P.stickyButton.onEnter
 P.stickyButton.onLeaveAnimal = P.stickyButton.onLeave
 
-P.stayButton = P.button:new{name = "stayButton", updatePowerOnLeave = true, 
+P.stayButton = P.button:new{name = "stayButton", updatePowerOnLeave = true,
   sprite = 'GraphicsEli/buttonOff3.png', 
   upSprite = 'GraphicsEli/buttonOff3.png', 
   downSprite = 'GraphicsEli/buttonOn3.png', 
@@ -458,14 +458,15 @@ function P.stayButton:onLeave(player)
 		self:updateSprite()
 	end
 	self.justPressed = false
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]==self then
+				self:checkDeadAnimalPresence(i,j)
+			end
+		end
+	end
 end
-function P.stayButton:postPowerUpdate(i,j)
-	if player.character.name == "Orson" and player.character.shifted then return end
-	self.down = false
-	self.dirAccept = {0,0,0,0}
-	self.justPressed = false
-	--updateGameState()
-	self:updateSprite()
+function P.stayButton:checkDeadAnimalPresence(i,j)
 	for k = 1, #animals do
 		if animals[k].dead and not animals[k].pickedUp then
 			if animals[k].tileX == j and animals[k].tileY == i then
@@ -476,6 +477,15 @@ function P.stayButton:postPowerUpdate(i,j)
 			end
 		end
 	end
+end
+function P.stayButton:postPowerUpdate(i,j)
+	if player.character.name == "Orson" and player.character.shifted then return end
+	self.down = false
+	self.dirAccept = {0,0,0,0}
+	self.justPressed = false
+	--updateGameState()
+	self:updateSprite()
+	self:checkDeadAnimalPresence(i,j)
 	for k = 1, #animals do
 		if not animals[k].dead then
 			if animals[k].tileX == j and animals[k].tileY == i then
