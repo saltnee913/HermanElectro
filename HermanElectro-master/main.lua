@@ -2949,9 +2949,6 @@ function love.update(dt)
 		kill()
 	end
 	gameTime.totalTime = gameTime.totalTime+dt
-	if gameTime.totalTime > 15 then
-		kill()
-	end
 
 	updateLamps()
 
