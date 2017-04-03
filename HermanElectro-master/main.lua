@@ -326,6 +326,10 @@ function love.load()
 		--started = false
 		shaderTriggered = true
 		mushroomMode = false
+
+		floorTransition = false
+		floorTransitionInfo = {floor = 0, override = "", moved = false}
+
 		globalTint = {0,0,0}
 		globalTintRising = {1,1,1}
 		charSelect = false
@@ -343,7 +347,7 @@ function love.load()
 		white = love.graphics.newImage('Graphics/white.png')
 		linuxTest = love.graphics.newImage('Graphics/linuxTest.png')
 		toolWrapper = love.graphics.newImage('GraphicsEli/marble1.png')
-		titlescreenCounter = 0
+		titlescreenCounter = 3
 		--floortile = love.graphics.newImage('Graphics/floortile.png')
 		--floortile = love.graphics.newImage('Graphics/floortilemost.png')
 		--floortile = love.graphics.newImage('Graphics/floortilenew.png')
@@ -465,7 +469,7 @@ function love.load()
 		setChar = player.character
 	end
 
-	player = { 	baseLuckBonus = 1, dungeonKeysHeld = 0, finalKeysHeld = 0, biscuitHeld = false, clonePos = {x = 0, y = 0, z = 0}, dead = false, elevation = 0, moveMode = 0, speed = 50*scale, safeFromAnimals = false, bonusRange = 0, active = true, waitCounter = 0, tileX = 10, tileY = 6, x = (1-1)*scale*tileWidth+wallSprite.width+tileWidth/2*scale-10, 
+	player = { 	baseLuckBonus = 1, dungeonKeysHeld = 0, finalKeysHeld = 0, range = 300, biscuitHeld = false, clonePos = {x = 0, y = 0, z = 0}, dead = false, elevation = 0, moveMode = 0, speed = 50*scale, safeFromAnimals = false, bonusRange = 0, active = true, waitCounter = 0, tileX = 10, tileY = 6, x = (1-1)*scale*tileWidth+wallSprite.width+tileWidth/2*scale-10, 
 			y = (6-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10, prevTileX = 3, prevTileY 	= 10,
 			prevx = (3-1)*scale*tileWidth+wallSprite.width+tileWidth/2*scale-10,
 			prevy = (10-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10,
@@ -564,8 +568,12 @@ function loadRandoms()
 	return seed
 end
 
-function goDownFloor()
+function preFloorChange()
 	saveElements()
+end
+
+function goDownFloor()
+	preFloorChange()
 
 	stairsLocs[floorIndex] = {map = {x = mapx, y = mapy}, coords = {x = player.tileX, y = player.tileY}}
 	if map.loadedMaps[floorIndex+1] == nil then
@@ -600,7 +608,7 @@ function goDownFloor()
 end
 
 function goUpFloor()
-	saveElements()
+	preFloorChange()
 
 	stairsLocs[floorIndex] = {map = {x = mapx, y = mapy}, coords = {x = player.tileX, y = player.tileY}}
 	if floorIndex == 2 then
@@ -634,11 +642,15 @@ function goUpFloor()
 	postFloorChange()
 end
 function goToFloor(floorNum)
-	saveElements()
+	preFloorChange()
 
 	local stairsLocsIndex = floorIndex
 	if floorIndex==1 then
 		stairsLocsIndex = #stairsLocs
+	elseif floorIndex==2 then
+		goToMainMenu()
+		postFloorChange()
+		return
 	end
 	stairsLocs[stairsLocsIndex] = {map = {x = mapx, y = mapy}, coords = {x = player.tileX, y = player.tileY}}
 	floorIndex = floorNum
@@ -688,6 +700,13 @@ function postFloorChange()
 		completedRooms[mapy][mapx] = 1
 		unlockDoors()
 	end
+
+	player.x = (player.tileX-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
+	player.y = (player.tileY-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
+    myShader:send("player_x", player.x+getTranslation().x*tileWidth*scale+(width2-width)/2)
+    myShader:send("player_y", player.y+getTranslation().y*tileWidth*scale+(height2-height)/2)
+
+    updateGameState()
 end
 
 function loadNextLevel(dontChangeTime)
@@ -1780,8 +1799,8 @@ function love.draw()
 			end
 		end
 	end
-	love.graphics.setShader()
-	--[[for i = 1, roomLength do
+	--[[love.graphics.setShader()
+	for i = 1, roomLength do
 		if not (i==math.floor(roomLength/2) or i==math.floor(roomLength/2)+1) then
 			love.graphics.draw(topwall, (i-1)*tileWidth*scale+wallSprite.width, (yOffset+(-1)*tileHeight)*scale+wallSprite.height, 0, scale*16/topwall:getWidth(), scale*16/topwall:getWidth())
 		else
@@ -2140,6 +2159,7 @@ function love.draw()
 		end
 	end
 
+	if floorTransition then return end
 	love.graphics.setShader()
 
 	--[[for i = 1, roomLength do
@@ -2665,6 +2685,11 @@ function updateAttributesRealtime(dt)
 	end
 end
 
+function beginFloorSequence(nextFloor, floorOverride)
+	floorTransition = true
+	floorTransitionInfo = {floor = nextFloor, override = floorOverride, moved = false}
+end
+
 function turnOffMushroomMode()
 	mushroomMode = false
 	myShader:send("createShadows", true)
@@ -2901,6 +2926,34 @@ function love.update(dt)
 		processMove(lastMoveKey, dt)
 	end
 
+	if floorTransition then
+		if floorTransitionInfo.moved then
+			if player.range<map.floorInfo.playerRange then
+				if dt<0.03 then
+					player.range = player.range+190*dt
+				else player.range = player.range+190*0.3 end
+			else
+				player.range = map.floorInfo.playerRange
+				floorTransition = false
+				floorTransitionInfo = {floor = 0, override = "", moved = false}
+			end
+		else
+			player.range = player.range-300*dt
+			if player.range<0 then
+				myShader:send("player_range", player.range)
+				if floorTransitionInfo.override=="up" then
+					goUpFloor()
+				elseif floorTransitionInfo.override=="down" then
+					goDownFloor()
+				else
+					goToFloor(floorTransitionInfo.floor)
+				end
+				floorTransitionInfo.moved = true
+			end
+		end
+		myShader:send("player_range", player.range)
+	end
+
 	text.updateTextTimers(dt)
 
 	--[[to check for removed spotlights
@@ -3005,6 +3058,13 @@ function seedEnter(text)
 end
 
 function love.keypressed(key, unicode, isRepeat, isPlayback)
+	if floorTransition and not floorTransitionInfo.moved then return end
+
+	if titlescreenCounter>0 then
+		titlescreenCounter = 0
+		return
+	end
+
 	if toolManuel.opened then
 		toolManuel.keypressed(key, unicode)
 	elseif gamePaused then

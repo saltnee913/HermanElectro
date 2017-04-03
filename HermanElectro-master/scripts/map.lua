@@ -282,7 +282,8 @@ function P.loadFloor(inFloorFile)
     myShader:send("floorTint_r", map.floorInfo.tint[1])
     myShader:send("floorTint_g", map.floorInfo.tint[2])
     myShader:send("floorTint_b", map.floorInfo.tint[3])
-    myShader:send("player_range", map.floorInfo.playerRange)
+    --myShader:send("player_range", map.floorInfo.playerRange)
+    --player.range = map.floorInfo.playerRange
     map.flipRooms('rooms')
 end
 
@@ -303,7 +304,8 @@ function P.loadCustomRooms(fileLoc)
     myShader:send("floorTint_r", map.floorInfo.tint[1])
     myShader:send("floorTint_g", map.floorInfo.tint[2])
     myShader:send("floorTint_b", map.floorInfo.tint[3])
-    myShader:send("player_range", map.floorInfo.playerRange)
+    --myShader:send("player_range", map.floorInfo.playerRange)
+    --player.range = map.floorInfo.playerRange
     map.flipRooms('rooms')
 end
 
@@ -812,6 +814,9 @@ function P.generateMapStandard()
 
 	if map.floorInfo.tint == nil then
 		map.floorInfo.tint = {0,0,0}
+		myShader:send("tint_r", globalTint[1])
+	myShader:send("tint_g", globalTint[2])
+	myShader:send("tint_b", globalTint[3])
 	end
 	if map.floorInfo.playerRange == nil then
 		map.floorInfo.playerRange = 200
@@ -819,7 +824,8 @@ function P.generateMapStandard()
     myShader:send("floorTint_r", map.floorInfo.tint[1])
     myShader:send("floorTint_g", map.floorInfo.tint[2])
     myShader:send("floorTint_b", map.floorInfo.tint[3])
-    myShader:send("player_range", map.floorInfo.playerRange)
+    --myShader:send("player_range", map.floorInfo.playerRange)
+    --player.range = map.floorInfo.playerRange
 
 	--printMap(newmap)
 	return newmap
@@ -1553,7 +1559,8 @@ function P.generateMapFromJSON()
     myShader:send("floorTint_r", map.floorInfo.tint[1])
     myShader:send("floorTint_g", map.floorInfo.tint[2])
     myShader:send("floorTint_b", map.floorInfo.tint[3])
-    myShader:send("player_range", map.floorInfo.playerRange)
+    --myShader:send("player_range", map.floorInfo.playerRange)
+    --player.range = map.floorInfo.playerRange
 	newmap[0] = {}
 	printMap(newmap)
 	return newmap

@@ -1240,12 +1240,14 @@ function P.tunnel:onEnter(player)
 	if floorIndex<2 then
 		return
 	end
-	goDownFloor()
+	--goDownFloor()
+	beginFloorSequence(0, "down")
 end
 
 P.upTunnel = P.tunnel:new{name = "upTunnel", sprite = 'KenGraphics/stairsUp.png'}
 function P.upTunnel:onEnter(player)
-	goUpFloor()
+	--goUpFloor()
+	beginFloorSequence(0, "up")
 end
 function P.upTunnel:onLeave(player)
 	if floorIndex==7 then
@@ -2622,7 +2624,7 @@ function P.finalKeyPowered:onEnter()
 	self.gone = true
 end
 
-P.gameWin = P.tile:new{name = "gameWin"}
+P.gameWin = P.tile:new{name = "gameWin", sprite = love.graphics.newImage('Graphics/blue.png')}
 function P.gameWin:onEnter()	
 	win()
 end
