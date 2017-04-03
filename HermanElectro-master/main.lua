@@ -707,6 +707,10 @@ function postFloorChange()
     myShader:send("player_y", player.y+getTranslation().y*tileWidth*scale+(height2-height)/2)
 
     updateGameState()
+
+    if floorIndex==7 then
+		stats.incrementStat(player.character.name..'ReachFloor6')    	
+    end
 end
 
 function loadNextLevel(dontChangeTime)
@@ -982,6 +986,11 @@ function win()
 			stats.incrementStat(player.character.name..'DungeonWins')
 			stats.incrementStat('totalDungeonWins')
 		end
+
+		if floorIndex>=8 then
+			stats.incrementStat(player.character.name..'WinsPlus')
+		end
+
 		stats.incrementStat(player.character.name..'Wins')
 		stats.incrementStat('totalWins')
 		--[[if player.character.name=="Herman" then

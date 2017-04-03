@@ -209,7 +209,7 @@ function P.createHarmlessExplosion(y, x)
 			if room[y+i]~=nil and room[y+i][x+j]~=nil then
 				room[y+i][x+j]:destroy()
 				if room[y+i][x+j]:instanceof(tiles.bomb) then
-					unlocks.unlockUnlockableRef(unlocks.bombBuddyUnlock)
+					--unlocks.unlockUnlockableRef(unlocks.bombBuddyUnlock)
 				end
 			end
 		end
@@ -226,7 +226,7 @@ function P.createHarmlessExplosion(y, x)
 		if math.abs(pushables[k].tileY-y)<2 and math.abs(pushables[k].tileX-x)<2 and not pushables[k].destroyed then
 			pushables[k]:destroy()
 			if pushables[k]:instanceof(pushableList.bombBox) then
-				unlocks.unlockUnlockableRef(unlocks.bombBuddyUnlock)
+				--unlocks.unlockUnlockableRef(unlocks.bombBuddyUnlock)
 			end
 		end
 	end

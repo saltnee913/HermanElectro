@@ -185,7 +185,7 @@ P.boomboxUnlock = P.tileUnlock:new{name = 'boots and cats', tileIds = {75}, spri
 P.ramUnlock = P.tileUnlock:new{name = 'battering ram', tileIds = {76}, sprite = pushables.batteringRam.sprite}
 P.jackInTheBoxUnlock = P.tileUnlock:new{name = 'jack in the box', tileIds = {90}, sprite = pushables.jackInTheBox.sprite}
 P.iceBoxUnlock = P.tileUnlock:new{name = 'Chill', tileIds = {197}, sprite = pushables.iceBox.sprite}
-
+P.bombBoxUnlock = P.tileUnlock:new{name = "Boom! Box", tileIds = {87}, sprite = pushables.bombBox.sprite}
 
 P.dirtyGlassUnlock = P.tileUnlock:new{name = 'who leaves all this dust here', tileIds = {72}, sprite = tiles.dustyGlassWall.sprite}
 P.fogUnlock = P.tileUnlock:new{name = "i can't see a thing", tileIds = {81,117}, sprite = tiles.fog.sprite}
@@ -195,6 +195,7 @@ P.directionGatesUnlock = P.tileUnlock:new{name = "erik's shitty direction gates"
 P.doorUnlock = P.tileUnlock:new{name = "door unlock", tileIds = {18}, sprite = tiles.hDoor.sprite}
 --we spelled rotator wrong
 P.cornerRotaterUnlock = P.tileUnlock:new{name = "corner rotators", tileIds = {116}, sprite = tiles.cornerRotater.sprite}
+P.infestedWoodUnlock = P.tileUnlock:new{name = "Infested....", tileIds = {199}, sprite = tiles.infestedWood.sprite}
 
 --unlocks to prevent tiles from appearing
 P.lockedTiles = P.tileUnlock:new{name = 'permanentlyLockedTiles', tileIds = {103,104,105,106,107,108,109,110,111,112,113},hidden = true}
@@ -230,6 +231,14 @@ P.luckySawUnlock = P.unlock:new{name = 'luckySaw', toolIds = {tools.luckySaw}, s
 P.luckyBrickUnlock = P.unlock:new{name = 'luckyBrick', toolIds = {tools.luckyBrick}, sprite = tools.luckyBrick.image}
 P.supertoolDoublerUnlock = P.unlock:new{name = 'supertoolDoubler', toolIds = {tools.supertoolDoubler}, sprite = tools.supertoolDoubler.image}
 P.lemonPartyUnlock = P.unlock:new{name = 'Lemon Party! Woohoo!', toolIds = {tools.lemonParty}, sprite = tools.lemonParty.image}
+P.pitbullChangerUnlock = P.unlock:new{name = 'You found your wand!', toolIds = {tools.pitbullChanger}, sprite = tools.pitbullChanger.image}
+P.inflationUnlock = P.unlock:new{name = 'Inflation, not just for balloons', toolIds = {tools.inflation}, sprite = tools.inflation.image}
+P.tileSwapperUnlock = P.unlock:new{name = 'Tile Swapper', toolIds = {tools.tileSwapper}, sprite = tools.tileSwapper.image}
+P.stopwatchUnlock = P.unlock:new{name = 'Stopwatch', toolIds = {tools.stopwatch}, sprite = tools.stopwatch.image}
+P.robotArmUnlock = P.unlock:new{name = 'Robot Arm', toolIds = {tools.robotArm}, sprite = tools.robotArm.image}
+P.wingsUnlock = P.unlock:new{name = 'Wings', toolIds = {tools.wings}, sprite = tools.wings.image}
+P.growthHormonesUnlock = P.unlock:new{name = 'Growth Hormones', toolIds = {tools.growthHormones}, sprite = tools.growthHormones.image}
+
 
 P.roomUnlock = P.unlock:new{name = 'room', roomIds = {"1"}}
 P.beggarPartyUnlock = P.roomUnlock:new{name = 'beggars love you', roomIds = {"beggar_party"}, sprite = tiles.beggar.sprite}
@@ -262,6 +271,8 @@ P[#P+1] = P.scientistUnlock
 
 --tiles
 P[#P+1] = P.boxesUnlock --done
+P[#P+1] = P.bombBoxUnlock
+
 P[#P+1] = P.acceleratorUnlock
 P[#P+1] = P.unbreakableWires --done
 P[#P+1] = P.rotatersUnlock
@@ -297,6 +308,7 @@ P[#P+1] = P.dirtyGlassUnlock
 P[#P+1] = P.fogUnlock --done
 P[#P+1] = P.directionGatesUnlock
 P[#P+1] = P.doorUnlock --done
+P[#P+1] = P.infestedWoodUnlock
 --P[#P+1] = P.stickyButtonUnlock
 --P[#P+1] = P.stayButtonUnlock
 
@@ -329,6 +341,13 @@ P[#P+1] = P.luckyBrickUnlock
 P[#P+1] = P.luckySawUnlock
 P[#P+1] = P.supertoolDoublerUnlock
 P[#P+1] = P.lemonPartyUnlock
+P[#P+1] = P.pitbullChangerUnlock
+P[#P+1] = P.inflationUnlock
+P[#P+1] = P.tileSwapperUnlock
+P[#P+1] = P.stopwatchUnlock
+P[#P+1] = P.growthHormonesUnlock
+P[#P+1] = P.robotArmUnlock
+P[#P+1] = P.wingsUnlock
 
 --rooms
 P[#P+1] = P.beggarPartyUnlock --done
