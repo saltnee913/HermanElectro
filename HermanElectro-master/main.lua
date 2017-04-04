@@ -647,10 +647,6 @@ function goToFloor(floorNum)
 	local stairsLocsIndex = floorIndex
 	if floorIndex==1 then
 		stairsLocsIndex = #stairsLocs
-	elseif floorIndex==2 then
-		goToMainMenu()
-		postFloorChange()
-		return
 	end
 	stairsLocs[stairsLocsIndex] = {map = {x = mapx, y = mapy}, coords = {x = player.tileX, y = player.tileY}}
 	floorIndex = floorNum
@@ -1835,7 +1831,7 @@ function love.draw()
 	for j = 1, roomHeight do
 		for i = 1, roomLength do
 
-			if (floors[floorIndex-1]==nil) then
+			if (floors[floorIndex-1]==nil or editorMode) then
 				if floorIndex<=1 then
 					toDrawFloor = dungeonFloor
 				else
