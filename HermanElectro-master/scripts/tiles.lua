@@ -2726,6 +2726,10 @@ function P.elevator:postPowerUpdate()
 		self.yOffset = 0
 	end
 end
+function P.elevator:getHeight()
+	if self.powered then return 6
+	else return 0 end
+end
 P.elevator.onEnter = P.wall.onEnter
 P.elevator.onLeave = P.wall.onLeave
 
