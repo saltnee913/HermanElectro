@@ -3852,7 +3852,7 @@ function checkDeathSpotlights(dt)
 	end
 
 	for i = 1, #spotlights do
-		if spotlights[i].active and spotlights[i]:onPlayer() then
+		if spotlights[i]~=nil and spotlights[i].active and spotlights[i]:onPlayer() then
 			kill('spotlight')
 		end
 	end

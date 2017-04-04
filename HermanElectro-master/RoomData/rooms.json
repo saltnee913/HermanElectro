@@ -15386,7 +15386,8 @@
         [
           [0,0,0,1,0,0,0],
           [0,0,1,0,0,0,0]],
-        "set": "el_dog"
+        "set": "el_dog",
+        "dumb": true
     },
     "el_dog_2":
     {
@@ -15416,7 +15417,8 @@
           [0,0,2,0,0,0,0],
           [0,0,0,2,0,0,0],
           [1,0,0,0,0,0,1]],
-        "set": "el_dog"
+        "set": "el_dog",
+        "dumb": true
     },
     "el_dog_3":
     {
@@ -15448,7 +15450,8 @@
           [0,0,0,3,0,0,0],
           [1,0,0,1,0,0,1]
         ],
-        "set": "el_dog"
+        "set": "el_dog",
+        "dumb": true
     },
 
     "climb_in_1":
@@ -15473,7 +15476,8 @@
       "itemsNeeded":
         [
           [0,0,1,0,0,0,0]],
-        "set": "climb_in"
+        "set": "climb_in",
+        "dumb": true
     },
 
 
@@ -15500,7 +15504,8 @@
       "itemsNeeded":
         [
           [2,0,0,0,0,0,0]],
-        "set": "climb_in"
+        "set": "climb_in",
+        "dumb": true
     },
     "climb_in_3":
     {
@@ -15524,7 +15529,8 @@
       "itemsNeeded":
         [
           [0,0,1,1,0,1,0]],
-      "set": "climb_in"
+      "set": "climb_in",
+        "dumb": true
     },
 
     "up_path":
@@ -15548,7 +15554,8 @@
       "itemsNeeded":
         [
           [0,0,1,0,0,0,0],
-          [0,0,0,0,0,1,0]]
+          [0,0,0,0,0,1,0]],
+        "dumb": true
     },
     "around_dogs_1":
     {
@@ -15569,7 +15576,8 @@
       "itemsNeeded":
         [
           [0,0,0,1,0,1,0]],
-        "set": "around_dogs"
+        "set": "around_dogs",
+        "dumb": true
     },
 
     "around_dogs_2":
@@ -15605,10 +15613,11 @@
         [
           [0,0,0,0,0,2,0],
           [0,0,0,1,0,1,0]],
-        "set": "around_dogs"
+        "set": "around_dogs",
+        "dumb": true
     },
 
-    "lots_of_boxes":
+    "lots_of_boxes!":
     {
       "layout":
       [
