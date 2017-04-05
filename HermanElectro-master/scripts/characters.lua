@@ -41,9 +41,9 @@ P.character = Object:new{name = "Name", tallSprite = true, dirFacing = "down", s
   description = "description", startingTools = {0,0,0,0,0,0,0}, scale = 0.25 * width/1200, randomOption = true, forcePowerUpdate = false, tint = {1,1,1}, winUnlocks = {},
   animationTimer = 0, animationLength = 0}
 function P.character:onBegin()
-    myShader:send("tint_r", self.tint[1])
+    --[[myShader:send("tint_r", self.tint[1])
     myShader:send("tint_g", self.tint[2])
-    myShader:send("tint_b", self.tint[3])
+    myShader:send("tint_b", self.tint[3])]]
 	self:setStartingTools()
 	self:onCharLoad()
 end

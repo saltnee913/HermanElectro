@@ -332,6 +332,9 @@ function love.load()
 		floorTransition = false
 		floorTransitionInfo = {floor = 0, override = "", moved = false}
 
+		gameTransition = false
+		gameTransitionInfo = {type = "", moved = false}
+
 		globalTint = {0,0,0}
 		globalTintRising = {1,1,1}
 		charSelect = false
@@ -2166,7 +2169,7 @@ function love.draw()
 		end
 	end
 
-	if floorTransition then return end
+	if floorTransition or gameTransition then return end
 	love.graphics.setShader()
 
 	--[[for i = 1, roomLength do
@@ -2294,7 +2297,7 @@ function love.draw()
 		end
 	end
 
-	if not editorMode then
+	if not editorMode and floorIndex>=1 then
 		love.graphics.setNewFont(fontSize)
 		for i = 0, 6 do
 			love.graphics.setColor(255,255,255)
@@ -2697,6 +2700,11 @@ function beginFloorSequence(nextFloor, floorOverride)
 	floorTransitionInfo = {floor = nextFloor, override = floorOverride, moved = false}
 end
 
+function beginGameSequence(type)
+	gameTransition = true
+	gameTransitionInfo = {gameType = type}
+end
+
 function turnOffMushroomMode()
 	mushroomMode = false
 	myShader:send("createShadows", true)
@@ -2967,6 +2975,53 @@ function love.update(dt)
 			end
 		end
 		myShader:send("player_range", player.range)
+	elseif gameTransition then
+		if gameTransitionInfo.moved then
+			--[[for i = 1, 3 do
+				if dt>0.03 then
+					globalTint[i] = globalTint[i]+0.03
+				else
+					globalTint[i] = globalTint[i]+dt
+				end
+				if globalTint[i]>1 then
+					globalTint[i] = 1
+					gameTransitionInfo = {gameType = "", moved = false}
+					gameTransition = false
+				end
+			end
+			myShader:send("tint_r", globalTint[1])
+			myShader:send("tint_g", globalTint[2])
+			myShader:send("tint_b", globalTint[3])]]
+			globalTint = {1,1,1}
+			myShader:send("tint_r", globalTint[1])
+			myShader:send("tint_g", globalTint[2])
+			myShader:send("tint_b", globalTint[3])
+			gameTransitionInfo.gameType = ""
+			gameTransition = false
+		else
+			for i = 1, 3 do
+				globalTint[i] = globalTint[i]-dt
+				if globalTint[i]<0 then
+					globalTint[i] = 0
+					gameTransitionInfo.moved = true
+				end
+			end
+			if gameTransitionInfo.moved then
+				myShader:send("tint_r", globalTint[1])
+				myShader:send("tint_g", globalTint[2])
+				myShader:send("tint_b", globalTint[3])
+				if gameTransitionInfo.gameType == "main" then
+					startGame()
+				elseif gameTransitionInfo.gameType == "tut" then
+					startTutorial()
+				end
+				gameTransitionInfo.gameType = ""
+			else
+				myShader:send("tint_r", globalTint[1])
+				myShader:send("tint_g", globalTint[2])
+				myShader:send("tint_b", globalTint[3])
+			end
+		end
 	end
 
 	text.updateTextTimers(dt)
@@ -3074,7 +3129,10 @@ function seedEnter(text)
 end
 
 function love.keypressed(key, unicode, isRepeat, isPlayback)
-	if floorTransition and not floorTransitionInfo.moved then return end
+	if (floorTransition and not floorTransitionInfo.moved) or 
+		(gameTransition and not gameTransitionInfo.moved) then
+		return
+	end
 
 	if titlescreenCounter>0 then
 		titlescreenCounter = 0

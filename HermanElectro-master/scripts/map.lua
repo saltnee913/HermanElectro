@@ -814,9 +814,9 @@ function P.generateMapStandard()
 
 	if map.floorInfo.tint == nil then
 		map.floorInfo.tint = {0,0,0}
-		myShader:send("tint_r", globalTint[1])
-	myShader:send("tint_g", globalTint[2])
-	myShader:send("tint_b", globalTint[3])
+		--[[myShader:send("tint_r", globalTint[1])
+		myShader:send("tint_g", globalTint[2])
+		myShader:send("tint_b", globalTint[3])]]
 	end
 	if map.floorInfo.playerRange == nil then
 		map.floorInfo.playerRange = 200

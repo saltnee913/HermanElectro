@@ -238,6 +238,8 @@ P.stopwatchUnlock = P.unlock:new{name = 'Stopwatch', toolIds = {tools.stopwatch}
 P.robotArmUnlock = P.unlock:new{name = 'Robot Arm', toolIds = {tools.robotArm}, sprite = tools.robotArm.image}
 P.wingsUnlock = P.unlock:new{name = 'Wings', toolIds = {tools.wings}, sprite = tools.wings.image}
 P.growthHormonesUnlock = P.unlock:new{name = 'Growth Hormones', toolIds = {tools.growthHormones}, sprite = tools.growthHormones.image}
+P.portalPlacerUnlock = P.unlock:new{name = 'Portal Placer', toolIds = {tools.portalPlacer}, sprite = tools.portalPlacer.image}
+P.portalPlacerDoubleUnlock = P.unlock:new{name = 'Portal Placer Double', toolIds = {tools.portalPlacerDouble}, sprite = tools.portalPlacerDouble.image}
 
 
 P.roomUnlock = P.unlock:new{name = 'room', roomIds = {"1"}}
@@ -348,6 +350,8 @@ P[#P+1] = P.stopwatchUnlock
 P[#P+1] = P.growthHormonesUnlock
 P[#P+1] = P.robotArmUnlock
 P[#P+1] = P.wingsUnlock
+P[#P+1] = P.portalPlacerUnlock
+P[#P+1] = P.portalPlacerDoubleUnlock
 
 --rooms
 P[#P+1] = P.beggarPartyUnlock --done

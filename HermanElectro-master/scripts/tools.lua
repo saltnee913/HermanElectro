@@ -63,6 +63,11 @@ function P.giveTools(toolArray)
 			end
 		end
 	end
+
+	if tools.portalPlacer.numHeld>1 then
+		unlocks.unlockUnlockableRef(unlocks.portalPlacerDoubleUnlock)
+	end
+
 	--[[if tools.revive.numHeld>=9 then
 		unlocks.unlockUnlockableRef(unlocks.suicideKingUnlock)
 	end]]
@@ -856,14 +861,14 @@ function P.delectrifier:useToolTile(tile)
 		tile.overlay.canBePowered = false
 		if tile.overlay:instanceof(tiles.powerSupply) or tile.overlay:instanceof(tiles.notGate) or tile.overlay:instanceof(tiles.wire) then tile.overlay:destroy() end
 	end
-	if player.character == characters.monk and tile:instanceof(tiles.lamp) then
+	--[[if player.character == characters.monk and tile:instanceof(tiles.lamp) then
 		for i = 1, 3 do
 			player.character.tint[i] = 0
 		end
 	    myShader:send("tint_r", player.character.tint[1])
 	    myShader:send("tint_g", player.character.tint[2])
 	    myShader:send("tint_b", player.character.tint[3])
-	end
+	end]]
 end
 
 P.charger = P.superTool:new{name = 'Energizer', description = "Power to the People", baseRange = 1, image = 'Graphics/charger.png', quality = 4}
