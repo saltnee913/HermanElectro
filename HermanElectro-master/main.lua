@@ -254,7 +254,7 @@ function love.load()
 		extern vec4 lamps[100];
 		extern number player_range = 300;
 		extern number bonus_range = 0;
-		extern bool b_and_w = false;
+		extern number b_and_w = 0;
 		extern bool createShadows = true;
 
 		vec4 effect( vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords ){
@@ -297,11 +297,11 @@ function love.load()
             pixel.g = pixel.g*totaltint_g*(1-(floorTint_r+floorTint_b));
             pixel.b = pixel.b*totaltint_b*(1-(floorTint_r+floorTint_g));
             
-            if (b_and_w) {
+            if (b_and_w>0) {
         		float avg = (pixel.r+pixel.g+pixel.b)/3;
-        		pixel.r = avg;
-        		pixel.g = avg;
-        		pixel.b = avg;
+        		pixel.r = avg*b_and_w+pixel.r*(1-b_and_w);
+        		pixel.g = avg*b_and_w+pixel.g*(1-b_and_w);
+        		pixel.b = avg*b_and_w+pixel.b*(1-b_and_w);
             }
 
 			return pixel;
@@ -525,7 +525,7 @@ function goToMainMenu()
 	saving.endPlayback()
 	--started = false
 	editorMode = false
-	myShader:send("b_and_w", false)
+	myShader:send("b_and_w", 0)
 	loadOpeningWorld()
 	resetPlayer()
 	gamePaused = false
@@ -3053,6 +3053,7 @@ function love.update(dt)
 			end
 		end
 	end
+	--player.character:updateAnimation(dt)
 
 end
 

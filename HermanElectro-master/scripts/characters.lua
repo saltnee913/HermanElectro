@@ -38,7 +38,8 @@ function P.isCharacterUnlocked(charName)
 end
 
 P.character = Object:new{name = "Name", tallSprite = true, dirFacing = "down", scale = 0, sprite = 'Graphics/Characters/Herman.png',
-  description = "description", startingTools = {0,0,0,0,0,0,0}, scale = 0.25 * width/1200, randomOption = true, forcePowerUpdate = false, tint = {1,1,1}, winUnlocks = {}}
+  description = "description", startingTools = {0,0,0,0,0,0,0}, scale = 0.25 * width/1200, randomOption = true, forcePowerUpdate = false, tint = {1,1,1}, winUnlocks = {},
+  animationTimer = 0, animationLength = 0}
 function P.character:onBegin()
     myShader:send("tint_r", self.tint[1])
     myShader:send("tint_g", self.tint[2])
@@ -117,6 +118,13 @@ function P.character:absoluteFinalUpdate()
 end
 function P.character:bypassObstructsMovement(tile)
 	return false
+end
+function P.character:updateAnimation(dt)
+	if self.animation ~= nil then
+		self.animationTimer = self.animationTimer + dt
+		if self.animationTimer > self.animationLength then self.animationTimer = self.animationTimer - self.animationLength end
+		self.sprite = self.animation[math.ceil(#self.animation*self.animationTimer/self.animationLength)]
+	end
 end
 
 P.herman = P.character:new{name = "Herman", description = "The Electrician", 
