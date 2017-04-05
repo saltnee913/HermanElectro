@@ -78,9 +78,9 @@ P.ladderScreens = {
 		drawAtTile(player.character.sprite, 7, 4, x, y)
 	end,
 	function(x, y, scale)
-		drawGreen(2, 0, x, y)
 		drawAtTile(animalList.pitbull.sprite, 3, 0, x, y)
 		drawAtTile(player.character.sprite, 1, 0, x, y)
+		drawGreen(2, 0, x, y)
 
 		drawAtTile(tiles.ladder.sprite, 9, 0, x, y)
 		drawAtTile(animalList.pitbull.sprite, 10, 0, x, y)
@@ -96,7 +96,28 @@ P.ladderScreens = {
 	end
 }
 
-P.wireCutterScreens = {}
+P.wireCutterScreens = {
+	function(x, y, scale)
+		drawAtTile(tiles.verticalWire.sprite, 1, 0, x, y)
+		drawAtTile(player.character.sprite, 0, 0, x, y)
+		drawGreen(1, 0, x, y)
+
+		drawAtTile(tiles.verticalWire.destroyedSprite, 8, 0, x, y)
+		drawAtTile(player.character.sprite, 7, 0, x, y)
+
+
+		drawAtTile(tiles.powerSupply.sprite, 1, 4, x, y)
+		drawAtTile(tiles.verticalWire.poweredSprite, 1, 5, x, y)
+		drawAtTile(tiles.verticalWire.poweredSprite, 1, 6, x, y)
+		drawAtTile(player.character.sprite, 0, 5, x, y)
+		drawGreen(1, 5, x, y)
+
+		drawAtTile(tiles.powerSupply.sprite, 8, 4, x, y)
+		drawAtTile(tiles.verticalWire.destroyedSprite, 8, 5, x, y)
+		drawAtTile(tiles.verticalWire.sprite, 8, 6, x, y)
+		drawAtTile(player.character.sprite, 7, 5, x, y)
+	end
+}
 P.waterScreens = {}
 P.spongeScreens = {}
 P.brickScreens = {}
