@@ -28,11 +28,11 @@ editor = require('scripts.editor')
 characters = require('scripts.characters')
 unlocks = require('scripts.unlocks')
 tutorial = require('scripts.tutorial')
-toolManuel = require('scripts.toolManuel')
 unlocksScreen = require('scripts.unlocksScreen')
 stats = require('scripts.stats')
 text = require('scripts.text')
 saving = require('scripts.saving')
+toolManuel = require('scripts.toolManuel')
 loadedOnce = false
 
 saveDir = 'SaveData'
@@ -346,7 +346,7 @@ function love.load()
 		walls = love.graphics.newImage('Graphics/walls3.png')
 		--black = love.graphics.newImage('Graphics/dark.png')
 		black = love.graphics.newImage('GraphicsColor/smoke.png')
-		green = love.graphics.newImage('Graphics/green.png')
+		green = 'Graphics/green.png'
 		blue = love.graphics.newImage('Graphics/blue.png')
 		gray = love.graphics.newImage('Graphics/gray.png')
 		white = love.graphics.newImage('Graphics/white.png')
@@ -2038,7 +2038,7 @@ function love.draw()
 						local ty = tools.toolableAnimals[dir][i].tileY
 						if ty==j then
 							if dir == 1 or tools.toolableAnimals[1][1] == nil or not (tx == tools.toolableAnimals[1][1].tileX and ty == tools.toolableAnimals[1][1].tileY) then
-								love.graphics.draw(green, (tx-1)*tileWidth*scale+wallSprite.width, (ty-1)*tileHeight*scale+wallSprite.height-tools.toolableAnimals[dir][i].elevation*scale, 0, scale, scale)
+								love.graphics.draw(util.getImage(green), (tx-1)*tileWidth*scale+wallSprite.width, (ty-1)*tileHeight*scale+wallSprite.height-tools.toolableAnimals[dir][i].elevation*scale, 0, scale, scale)
 							end
 						end
 					end
@@ -2053,7 +2053,7 @@ function love.draw()
 						local ty = tools.toolablePushables[dir][i].tileY
 						if ty==j then
 							if dir == 1 or tools.toolablePushables[1][1] == nil or not (tx == tools.toolablePushables[1][1].tileX and ty == tools.toolablePushables[1][1].tileY) then
-								love.graphics.draw(green, (tx-1)*tileWidth*scale+wallSprite.width, (ty-1)*tileHeight*scale+wallSprite.height, 0, scale, scale)
+								love.graphics.draw(util.getImage(green), (tx-1)*tileWidth*scale+wallSprite.width, (ty-1)*tileHeight*scale+wallSprite.height, 0, scale, scale)
 							end
 						end
 					end
@@ -2073,7 +2073,7 @@ function love.draw()
 							yScale = scale*(16-addY)/16
 						else addY=0 end
 						if dir == 1 or tools.toolableTiles[1][1] == nil or not (tx == tools.toolableTiles[1][1].x and ty == tools.toolableTiles[1][1].y) then
-							love.graphics.draw(green, (tx-1)*tileWidth*scale+wallSprite.width, (addY+(ty-1)*tileHeight)*scale+wallSprite.height, 0, scale, yScale)
+							love.graphics.draw(util.getImage(green), (tx-1)*tileWidth*scale+wallSprite.width, (addY+(ty-1)*tileHeight)*scale+wallSprite.height, 0, scale, yScale)
 						end
 					end
 				end
