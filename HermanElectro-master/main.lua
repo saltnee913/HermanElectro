@@ -747,6 +747,11 @@ function loadNextLevel(dontChangeTime)
 			if room[i][j]~=nil and room[i][j]:instanceof(tiles.upTunnel) then
 				player.tileY = i
 				player.tileX = j
+
+				player.x = (player.tileX-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
+				player.y = (player.tileY-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
+			    myShader:send("player_x", player.x+getTranslation().x*tileWidth*scale+(width2-width)/2)
+			    myShader:send("player_y", player.y+getTranslation().y*tileWidth*scale+(height2-height)/2)
 			end
 		end
 	end

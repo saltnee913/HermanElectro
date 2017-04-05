@@ -71,7 +71,7 @@ function P.draw()
 		toDraw = util.getImage(tileSet[i]:getEditorSprite())
 		love.graphics.draw(toDraw, (i-1)*width/50+editor.leftStartDist, height-3.2*width/50+32, 0, (width/50)/(tileWidth)*16/toDraw:getWidth(), (width/50)/(tileWidth)*16/toDraw:getWidth())
 		if tiles[editorAdd]~=nil and tiles[editorAdd].name==tileSet[i].name then
-			love.graphics.draw(green, (i-1)*width/50+editor.leftStartDist, height-3.2*width/50+32, 0, (width/50)/(tileWidth)*16/toDraw:getWidth(), (width/50)/(tileWidth)*16/toDraw:getWidth())
+			love.graphics.draw(util.getImage(green), (i-1)*width/50+editor.leftStartDist, height-3.2*width/50+32, 0, (width/50)/(tileWidth)*16/toDraw:getWidth(), (width/50)/(tileWidth)*16/toDraw:getWidth())
 		end
 	end
 
