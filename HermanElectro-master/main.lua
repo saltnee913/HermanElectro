@@ -243,9 +243,9 @@ function love.load()
 	forcePowerUpdateNext = false
 	myShader = love.graphics.newShader[[
 		extern bool shaderTriggered;
-		extern number tint_r;
-		extern number tint_g;
-		extern number tint_b;
+		extern number tint_r = 0;
+		extern number tint_g = 0;
+		extern number tint_b = 0;
 		extern number floorTint_r;
 		extern number floorTint_g;
 		extern number floorTint_b;
@@ -289,7 +289,7 @@ function love.load()
 				}
             }
 
-            if(totaltint_r>1) totaltint_r=1;
+        	if(totaltint_r>1) totaltint_r=1;
             if(totaltint_g>1) totaltint_g=1;
             if(totaltint_b>1) totaltint_b=1;
 
@@ -327,6 +327,8 @@ function love.load()
 		shaderTriggered = true
 		mushroomMode = false
 
+		--should move much of stuff below to separate graphics class
+
 		floorTransition = false
 		floorTransitionInfo = {floor = 0, override = "", moved = false}
 
@@ -347,7 +349,7 @@ function love.load()
 		white = love.graphics.newImage('Graphics/white.png')
 		linuxTest = love.graphics.newImage('Graphics/linuxTest.png')
 		toolWrapper = love.graphics.newImage('GraphicsEli/marble1.png')
-		titlescreenCounter = 3
+		titlescreenCounter = 5
 		--floortile = love.graphics.newImage('Graphics/floortile.png')
 		--floortile = love.graphics.newImage('Graphics/floortilemost.png')
 		--floortile = love.graphics.newImage('Graphics/floortilenew.png')
@@ -1695,6 +1697,7 @@ function canBePowered(x,y,dir)
 end
 
 function love.draw()
+	love.graphics.setShader(myShader)
 	myShader:send("shaderTriggered", shaderTriggered)
 	--myShader:send("b_and_w", true)
 	love.graphics.setBackgroundColor(0,0,0)
@@ -1755,7 +1758,6 @@ function love.draw()
 	--love.graphics.draw(rocks, rocksQuad, 0, 0)
 	--love.graphics.draw(rocks, -mapx * width, -mapy * height, 0, 1, 1)
 	local toDrawFloor = nil
-	love.graphics.setShader(myShader)
 
 	if floorIndex<=1 then
 		toDrawFloor = dungeonFloor
@@ -2921,6 +2923,14 @@ function love.update(dt)
 
 	if (titlescreenCounter>0) then
 		titlescreenCounter = titlescreenCounter-dt
+		if globalTint[1]<1 then
+			for i = 1, 3 do
+				globalTint[i] = globalTint[i]+dt/3
+				myShader:send("tint_r", globalTint[1])
+				myShader:send("tint_g", globalTint[2])
+				myShader:send("tint_b", globalTint[3])
+			end
+		end
 	end
 	if loadTutorial then
 		tutorial.update(dt)
@@ -3067,6 +3077,10 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 
 	if titlescreenCounter>0 then
 		titlescreenCounter = 0
+		globalTint = {1,1,1}
+		myShader:send("tint_r", globalTint[1])
+		myShader:send("tint_g", globalTint[2])
+		myShader:send("tint_b", globalTint[3])
 		return
 	end
 
