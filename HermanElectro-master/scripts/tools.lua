@@ -1869,11 +1869,10 @@ function P.revive:checkDeath()
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
 			if room[i][j]~=nil then
-				if not room[i][j]:instanceof(tiles.endTile) and not room[i][j]:instanceof(tiles.tunnel) then
-					room[i][j]=tiles.invisibleTile:new()
-				end
 				if room[i][j]:instanceof(tiles.poweredEnd) then
 					room[i][j]=tiles.endTile:new()
+				elseif not room[i][j]:instanceof(tiles.endTile) and not room[i][j]:instanceof(tiles.tunnel) then
+					room[i][j]=nil
 				end
 			end
 		end
