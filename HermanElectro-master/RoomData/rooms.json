@@ -13387,7 +13387,8 @@
     [0,0,1,1,0,1,0],
     [1,0,0,1,0,1,0]
     ],
-    "set": "stop_that_dog"
+    "set": "stop_that_dog",
+    "dumb": true
     },
 
     "stop_that_dog_5_1":
@@ -13413,7 +13414,8 @@
     [1,1,0,0,0,1,0],
     [0,1,0,0,0,2,0]
     ],
-    "set": "stop_that_dog"
+    "set": "stop_that_dog",
+    "dumb": true
     },
 
     "stop_that_dog_5_2":
@@ -13439,7 +13441,8 @@
     [1,1,0,0,0,1,0],
     [0,1,0,0,0,2,0]
     ],
-    "set": "stop_that_dog"
+    "set": "stop_that_dog",
+    "dumb": true
     },
 
     "stop_that_dog_5_3":
@@ -13477,7 +13480,8 @@
     [
     [1,0,0,0,0,0,0]
     ],
-    "set": "stop_that_dog"
+    "set": "stop_that_dog",
+    "dumb": true
     },
 
     "stop_that_dog_6":
