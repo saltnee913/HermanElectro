@@ -1683,6 +1683,8 @@ function P.greenBeggar:providePayment()
 			end
 		end
 	end
+
+	stats.incrementStat('greenBeggarsShot')
 end
 
 P.blueBeggar = P.beggar:new{name = "blueBeggar", sprite = 'GraphicsEli/blueOrb1.png', deadSprite = 'Graphics/bluebeggardead.png', 

@@ -19,6 +19,7 @@ P.statUnlockTriggers = {}
 P.statUnlockTriggers["boxesSawed"] = {[11] = unlocks.playerBoxUnlock}
 P.statUnlockTriggers["totalLosses"] = {[3] = unlocks.frederickUnlock}
 P.statUnlockTriggers["totalWins"] = {[3] = unlocks.dungeonUnlock}
+P.statUnlockTriggers["greenBeggarsShot"] = {[10] = unlocks.luckyPennyUnlock}
 
 P.statUnlockTriggers["HermanWins"] = {[1] = unlocks.boxesUnlock}
 P.statUnlockTriggers["HermanDungeonWins"] = {[1] = unlocks.boxesUnlock}

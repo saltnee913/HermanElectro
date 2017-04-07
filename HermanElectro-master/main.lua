@@ -1001,6 +1001,10 @@ function win()
 		--[[if player.character.name=="Herman" then
 			unlocks.unlockUnlockableRef(unlocks.boxesUnlock, true)
 		end]]
+
+		if stats.tempStatsData['toolsUsed']~=nil and stats.tempStatsData['toolsUsed']==52 then
+			unlocks.unlockUnlockableRef(unlocks.cardUnlock)
+		end
 	end
 end
 
@@ -4419,6 +4423,8 @@ function onToolUse(tool)
 	if tools.card.numHeld>0 then
 		tools.card:playCard()
 	end
+
+	stats.incrementStat('toolsUsed')
 
 	updateTools()
 	checkAllDeath()
