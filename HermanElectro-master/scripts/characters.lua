@@ -377,7 +377,9 @@ function P.lenny:onStartGame()
 end
 
 P.fish = P.character:new{name = "Fish", tallSprite = false, description = "Fish", 
-  life = 100, sprite = 'Graphics/Characters/Fish.png', tint = {0.9,0.9,1}, scale = 1.1*scale}
+  life = 100, sprite = 'Graphics/Characters/Fish.png', tint = {0.9,0.9,1}, scale = 1.1*scale,
+	animation = {'Graphics/Characters/Fish.png','Graphics/Characters/Fish.png','Graphics/Characters/Fish.png','Graphics/Characters/FishMouthClosed.png','Graphics/Characters/FishMouthFullyClosed.png','Graphics/Characters/FishMouthClosed.png', 'Graphics/Characters/Fish.png','Graphics/Characters/Fish.png','Graphics/Characters/Fish.png'},
+  animationLength = 1}
 function P.fish:postMove()
 	self.life = self.life-1
 	if room[player.tileY][player.tileX]~=nil and room[player.tileY][player.tileX]:instanceof(tiles.puddle) then
