@@ -474,7 +474,7 @@ function love.load()
 		setChar = player.character
 	end
 
-	player = { 	baseLuckBonus = 1, dungeonKeysHeld = 0, finalKeysHeld = 0, range = 300, biscuitHeld = false, clonePos = {x = 0, y = 0, z = 0}, dead = false, elevation = 0, moveMode = 0, speed = 50*scale, safeFromAnimals = false, bonusRange = 0, active = true, waitCounter = 0, tileX = 10, tileY = 6, x = (1-1)*scale*tileWidth+wallSprite.width+tileWidth/2*scale-10, 
+	player = { 	baseLuckBonus = 1, dirFacing = 1, dungeonKeysHeld = 0, finalKeysHeld = 0, range = 300, biscuitHeld = false, clonePos = {x = 0, y = 0, z = 0}, dead = false, elevation = 0, moveMode = 0, speed = 50*scale, safeFromAnimals = false, bonusRange = 0, active = true, waitCounter = 0, tileX = 10, tileY = 6, x = (1-1)*scale*tileWidth+wallSprite.width+tileWidth/2*scale-10, 
 			y = (6-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10, prevTileX = 3, prevTileY 	= 10,
 			prevx = (3-1)*scale*tileWidth+wallSprite.width+tileWidth/2*scale-10,
 			prevy = (10-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10,
@@ -702,10 +702,7 @@ function postFloorChange()
 		unlockDoors()
 	end
 
-	player.x = (player.tileX-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
-	player.y = (player.tileY-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
-    myShader:send("player_x", player.x+getTranslation().x*tileWidth*scale+(width2-width)/2)
-    myShader:send("player_y", player.y+getTranslation().y*tileWidth*scale+(height2-height)/2)
+	setPlayerLoc()
 
     updateGameState()
 
@@ -748,10 +745,7 @@ function loadNextLevel(dontChangeTime)
 				player.tileY = i
 				player.tileX = j
 
-				player.x = (player.tileX-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
-				player.y = (player.tileY-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
-			    myShader:send("player_x", player.x+getTranslation().x*tileWidth*scale+(width2-width)/2)
-			    myShader:send("player_y", player.y+getTranslation().y*tileWidth*scale+(height2-height)/2)
+				setPlayerLoc()
 			end
 		end
 	end
@@ -806,10 +800,7 @@ function loadOpeningWorld()
 	updateLight()
 	started = true
 
-	player.x = (player.tileX-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
-	player.y = (player.tileY-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
-    myShader:send("player_x", player.x+getTranslation().x*tileWidth*scale+(width2-width)/2)
-    myShader:send("player_y", player.y+getTranslation().y*tileWidth*scale+(height2-height)/2)
+	setPlayerLoc()
 	
 	--player.character:onBegin()
 	myShader:send("tint_r", player.character.tint[1])
@@ -851,6 +842,7 @@ function startDebug()
 	loadFirstLevel()
 	tools.resetTools()
 	player.character:onBegin()
+	resetTintValues()
 end
 
 function startEditor()
@@ -864,6 +856,13 @@ function startEditor()
 	tools.resetTools()
 	player.character:onBegin()
 	editorMode = true
+	resetTintValues()
+end
+
+function resetTintValues()
+	myShader:send("tint_r", 1)
+	myShader:send("tint_g", 1)
+	myShader:send("tint_b", 1)
 end
 
 function loadFirstLevel()
@@ -2089,7 +2088,7 @@ function love.draw()
 			--player.x = (player.tileX-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
 			--player.y = (player.tileY-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
 			local charSprite = util.getImage(player.character.sprite)
-			love.graphics.draw(charSprite, math.floor(player.x-charSprite:getWidth()*player.character.scale/2), math.floor(player.y-charSprite:getHeight()*player.character.scale-player.elevation*scale), 0, player.character.scale, player.character.scale)
+			love.graphics.draw(charSprite, math.floor(player.x-charSprite:getWidth()*player.character.scale/2), math.floor(player.y-charSprite:getHeight()*player.character.scale-player.elevation*scale), 0, player.dirFacing*player.character.scale, player.character.scale)
 			love.graphics.setShader()
 			love.graphics.print(player.character:getInfoText(), math.floor(player.x-charSprite:getWidth()*player.character.scale/2), math.floor(player.y-charSprite:getHeight()*player.character.scale));
 			love.graphics.setShader(myShader)
@@ -2849,7 +2848,11 @@ function enterRoom(dir)
 
 	postRoomEnter()
 
-	player.x = (player.tileX-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
+	setPlayerLoc()
+end
+
+function setPlayerLoc()
+	player.x = (player.tileX-1/2*(player.dirFacing+1))*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
 	player.y = (player.tileY-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
     myShader:send("player_x", player.x+getTranslation().x*tileWidth*scale+(width2-width)/2)
     myShader:send("player_y", player.y+getTranslation().y*tileWidth*scale+(height2-height)/2)
@@ -3401,11 +3404,8 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
     checkAllDeath()
 
     if player.moveMode==0 then
-		player.x = (player.tileX-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
-		player.y = (player.tileY-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
+		setPlayerLoc()
 	end
-    myShader:send("player_x", player.x+getTranslation().x*tileWidth*scale+(width2-width)/2)
-    myShader:send("player_y", player.y+getTranslation().y*tileWidth*scale+(height2-height)/2)
 
     for i = 1, roomHeight do
     	for j = 1, roomLength do

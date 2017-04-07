@@ -86,6 +86,8 @@ function P.character:onKeyPressed(key)
 			self.sprite = self.sprites[4]
 		end
 	end
+	if key == "d" then player.dirFacing = 1
+	elseif key == "a" then player.dirFacing = -1 end
 	return self:onKeyPressedChar(key)
 end
 function P.character:onKeyPressedChar(key)
