@@ -38,11 +38,12 @@ function P.isCharacterUnlocked(charName)
 end
 
 P.character = Object:new{name = "Name", tallSprite = true, dirFacing = "down", scale = 0, sprite = 'Graphics/Characters/Herman.png',
-  description = "description", startingTools = {0,0,0,0,0,0,0}, scale = 0.25 * width/1200, randomOption = true, forcePowerUpdate = false, tint = {1,1,1}, winUnlocks = {}}
+  description = "description", startingTools = {0,0,0,0,0,0,0}, scale = 0.25 * width/1200, randomOption = true, forcePowerUpdate = false, tint = {1,1,1}, winUnlocks = {},
+  animationTimer = 0, animationLength = 0}
 function P.character:onBegin()
-    myShader:send("tint_r", self.tint[1])
+    --[[myShader:send("tint_r", self.tint[1])
     myShader:send("tint_g", self.tint[2])
-    myShader:send("tint_b", self.tint[3])
+    myShader:send("tint_b", self.tint[3])]]
 	self:setStartingTools()
 	self:onCharLoad()
 end
@@ -85,6 +86,8 @@ function P.character:onKeyPressed(key)
 			self.sprite = self.sprites[4]
 		end
 	end
+	if key == "d" then player.dirFacing = 1
+	elseif key == "a" then player.dirFacing = -1 end
 	return self:onKeyPressedChar(key)
 end
 function P.character:onKeyPressedChar(key)
@@ -118,9 +121,18 @@ end
 function P.character:bypassObstructsMovement(tile)
 	return false
 end
+function P.character:updateAnimation(dt)
+	if self.animation ~= nil then
+		self.animationTimer = self.animationTimer + dt
+		if self.animationTimer > self.animationLength then self.animationTimer = self.animationTimer - self.animationLength end
+		self.sprite = self.animation[math.ceil(#self.animation*self.animationTimer/self.animationLength)]
+	end
+end
 
 P.herman = P.character:new{name = "Herman", description = "The Electrician", 
-  scale = 1.1*scale, sprites = {'Graphics/Characters/Herman.png', 'Graphics/Characters/Herman.png', 'Graphics/Characters/Herman.png', 'Graphics/Characters/Herman.png'}}
+  scale = 1.1*scale, sprites = {'Graphics/Characters/Herman.png', 'Graphics/Characters/Herman.png', 'Graphics/Characters/Herman.png', 'Graphics/Characters/Herman.png'},
+  animation = {'Graphics/Characters/Herman.png','Graphics/Characters/Herman.png','Graphics/Characters/HermanTaller.png','Graphics/Characters/Herman.png'},
+  animationLength = 1}
 function P.herman:onCharLoad()
 	if loadTutorial then return end
 	tools.giveToolsByReference({tools.revive})
@@ -365,7 +377,9 @@ function P.lenny:onStartGame()
 end
 
 P.fish = P.character:new{name = "Fish", tallSprite = false, description = "Fish", 
-  life = 100, sprite = 'Graphics/Characters/Fish.png', tint = {0.9,0.9,1}, scale = 1.1*scale}
+  life = 100, sprite = 'Graphics/Characters/Fish.png', tint = {0.9,0.9,1}, scale = 1.1*scale,
+	animation = {'Graphics/Characters/Fish.png','Graphics/Characters/Fish.png','Graphics/Characters/Fish.png','Graphics/Characters/FishMouthClosed.png','Graphics/Characters/FishMouthFullyClosed.png','Graphics/Characters/FishMouthClosed.png', 'Graphics/Characters/Fish.png','Graphics/Characters/Fish.png','Graphics/Characters/Fish.png'},
+  animationLength = 1}
 function P.fish:postMove()
 	self.life = self.life-1
 	if room[player.tileY][player.tileX]~=nil and room[player.tileY][player.tileX]:instanceof(tiles.puddle) then

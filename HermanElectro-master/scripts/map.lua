@@ -327,7 +327,9 @@ local function flipRoomVertical(roomLayout)
 					local tileInd = math.floor(toRet[i][j][1])
 					local tile = tiles[tileInd]
 					local rot = math.floor(10*(toRet[i][j][1]-tileInd+0.01))
-					toRet[i][j][1] = toRet[i][j][1] + tile.flipDirection(rot,true)/10
+					if tile == nil then toRet[i][j] = 0 else
+						toRet[i][j][1] = toRet[i][j][1] + tile.flipDirection(rot,false)/10
+					end
 					if type(toRet[i][j][2]) == 'number' then
 						local overInd = math.floor(toRet[i][j][2])
 						local overRot = math.floor(10*(toRet[i][j][2]-overInd+0.01))
@@ -360,7 +362,9 @@ local function flipRoomHorizontal(roomLayout)
 					local tileInd = math.floor(toRet[i][j][1])
 					local tile = tiles[tileInd]
 					local rot = math.floor(10*(toRet[i][j][1]-tileInd+0.01))
-					toRet[i][j][1] = toRet[i][j][1] + tile.flipDirection(rot,false)/10
+					if tile == nil then toRet[i][j] = 0 else
+						toRet[i][j][1] = toRet[i][j][1] + tile.flipDirection(rot,false)/10
+					end
 					if type(toRet[i][j][2]) == 'number' then
 						local overInd = math.floor(toRet[i][j][2])
 						local overRot = math.floor(10*(toRet[i][j][2]-overInd+0.01))
@@ -814,9 +818,9 @@ function P.generateMapStandard()
 
 	if map.floorInfo.tint == nil then
 		map.floorInfo.tint = {0,0,0}
-		myShader:send("tint_r", globalTint[1])
-	myShader:send("tint_g", globalTint[2])
-	myShader:send("tint_b", globalTint[3])
+		--[[myShader:send("tint_r", globalTint[1])
+		myShader:send("tint_g", globalTint[2])
+		myShader:send("tint_b", globalTint[3])]]
 	end
 	if map.floorInfo.playerRange == nil then
 		map.floorInfo.playerRange = 200

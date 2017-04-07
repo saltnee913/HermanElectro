@@ -1683,6 +1683,8 @@ function P.greenBeggar:providePayment()
 			end
 		end
 	end
+
+	stats.incrementStat('greenBeggarsShot')
 end
 
 P.blueBeggar = P.beggar:new{name = "blueBeggar", sprite = 'GraphicsEli/blueOrb1.png', deadSprite = 'Graphics/bluebeggardead.png', 
@@ -1773,8 +1775,13 @@ function P.donationMachine:destroy()
 	end
 end
 
-P.entrancePortal = P.tile:new{name = "entrancePortal", sprite = 'Graphics/Tiles/entrancePortal.png'}
+P.entrancePortal = P.tile:new{name = "entrancePortal", sprite = 'Graphics/Tiles/entrancePortal.png', timesEntered = 0}
 function P.entrancePortal:onEnter(player)
+	self.timesEntered = self.timesEntered+1
+	if self.timesEntered>=3 then
+		unlocks.unlockUnlockableRef(unlocks.portalPlacerUnlock)
+	end
+
 	for i = 1, roomHeight do
 		shouldBreak = false
 		for j = 1, roomLength do
@@ -2763,13 +2770,13 @@ end
 P.gameStairs = P.tile:new{name = "gameStairs", sprite = 'KenGraphics/gamestairs.png'}
 function P.gameStairs:onEnter()
 	stairsLocs[1] = {map ={x = mapx, y = mapy}, coords = {x = player.tileX, y = player.tileY}}
-	startGame()
+	beginGameSequence("main")
 end
 
 P.tutStairs = P.tile:new{name = "tutStairs", sprite = 'KenGraphics/tutstairs.png'}
 function P.tutStairs:onEnter()
 	stairsLocs[1] = {map ={x = mapx, y = mapy}, coords = {x = player.tileX, y = player.tileY}}
-	startTutorial()
+	beginGameSequence("tut")
 end
 
 P.debugStairs = P.tile:new{name = "debugStairs", sprite = 'KenGraphics/tutstairs.png'}

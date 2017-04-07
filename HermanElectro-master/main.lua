@@ -243,9 +243,9 @@ function love.load()
 	forcePowerUpdateNext = false
 	myShader = love.graphics.newShader[[
 		extern bool shaderTriggered;
-		extern number tint_r;
-		extern number tint_g;
-		extern number tint_b;
+		extern number tint_r = 0;
+		extern number tint_g = 0;
+		extern number tint_b = 0;
 		extern number floorTint_r;
 		extern number floorTint_g;
 		extern number floorTint_b;
@@ -254,7 +254,7 @@ function love.load()
 		extern vec4 lamps[100];
 		extern number player_range = 300;
 		extern number bonus_range = 0;
-		extern bool b_and_w = false;
+		extern number b_and_w = 0;
 		extern bool createShadows = true;
 
 		vec4 effect( vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords ){
@@ -289,7 +289,7 @@ function love.load()
 				}
             }
 
-            if(totaltint_r>1) totaltint_r=1;
+        	if(totaltint_r>1) totaltint_r=1;
             if(totaltint_g>1) totaltint_g=1;
             if(totaltint_b>1) totaltint_b=1;
 
@@ -297,11 +297,11 @@ function love.load()
             pixel.g = pixel.g*totaltint_g*(1-(floorTint_r+floorTint_b));
             pixel.b = pixel.b*totaltint_b*(1-(floorTint_r+floorTint_g));
             
-            if (b_and_w) {
+            if (b_and_w>0) {
         		float avg = (pixel.r+pixel.g+pixel.b)/3;
-        		pixel.r = avg;
-        		pixel.g = avg;
-        		pixel.b = avg;
+        		pixel.r = avg*b_and_w+pixel.r*(1-b_and_w);
+        		pixel.g = avg*b_and_w+pixel.g*(1-b_and_w);
+        		pixel.b = avg*b_and_w+pixel.b*(1-b_and_w);
             }
 
 			return pixel;
@@ -327,8 +327,13 @@ function love.load()
 		shaderTriggered = true
 		mushroomMode = false
 
+		--should move much of stuff below to separate graphics class
+
 		floorTransition = false
 		floorTransitionInfo = {floor = 0, override = "", moved = false}
+
+		gameTransition = false
+		gameTransitionInfo = {type = "", moved = false}
 
 		globalTint = {0,0,0}
 		globalTintRising = {1,1,1}
@@ -347,7 +352,7 @@ function love.load()
 		white = love.graphics.newImage('Graphics/white.png')
 		linuxTest = love.graphics.newImage('Graphics/linuxTest.png')
 		toolWrapper = love.graphics.newImage('GraphicsEli/marble1.png')
-		titlescreenCounter = 3
+		titlescreenCounter = 5
 		--floortile = love.graphics.newImage('Graphics/floortile.png')
 		--floortile = love.graphics.newImage('Graphics/floortilemost.png')
 		--floortile = love.graphics.newImage('Graphics/floortilenew.png')
@@ -469,7 +474,7 @@ function love.load()
 		setChar = player.character
 	end
 
-	player = { 	baseLuckBonus = 1, dungeonKeysHeld = 0, finalKeysHeld = 0, range = 300, biscuitHeld = false, clonePos = {x = 0, y = 0, z = 0}, dead = false, elevation = 0, moveMode = 0, speed = 50*scale, safeFromAnimals = false, bonusRange = 0, active = true, waitCounter = 0, tileX = 10, tileY = 6, x = (1-1)*scale*tileWidth+wallSprite.width+tileWidth/2*scale-10, 
+	player = { 	baseLuckBonus = 1, dirFacing = 1, dungeonKeysHeld = 0, finalKeysHeld = 0, range = 300, biscuitHeld = false, clonePos = {x = 0, y = 0, z = 0}, dead = false, elevation = 0, moveMode = 0, speed = 50*scale, safeFromAnimals = false, bonusRange = 0, active = true, waitCounter = 0, tileX = 10, tileY = 6, x = (1-1)*scale*tileWidth+wallSprite.width+tileWidth/2*scale-10, 
 			y = (6-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10, prevTileX = 3, prevTileY 	= 10,
 			prevx = (3-1)*scale*tileWidth+wallSprite.width+tileWidth/2*scale-10,
 			prevy = (10-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10,
@@ -523,7 +528,7 @@ function goToMainMenu()
 	saving.endPlayback()
 	--started = false
 	editorMode = false
-	myShader:send("b_and_w", false)
+	myShader:send("b_and_w", 0)
 	loadOpeningWorld()
 	resetPlayer()
 	gamePaused = false
@@ -697,10 +702,7 @@ function postFloorChange()
 		unlockDoors()
 	end
 
-	player.x = (player.tileX-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
-	player.y = (player.tileY-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
-    myShader:send("player_x", player.x+getTranslation().x*tileWidth*scale+(width2-width)/2)
-    myShader:send("player_y", player.y+getTranslation().y*tileWidth*scale+(height2-height)/2)
+	setPlayerLoc()
 
     updateGameState()
 
@@ -742,6 +744,8 @@ function loadNextLevel(dontChangeTime)
 			if room[i][j]~=nil and room[i][j]:instanceof(tiles.upTunnel) then
 				player.tileY = i
 				player.tileX = j
+
+				setPlayerLoc()
 			end
 		end
 	end
@@ -796,10 +800,7 @@ function loadOpeningWorld()
 	updateLight()
 	started = true
 
-	player.x = (player.tileX-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
-	player.y = (player.tileY-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
-    myShader:send("player_x", player.x+getTranslation().x*tileWidth*scale+(width2-width)/2)
-    myShader:send("player_y", player.y+getTranslation().y*tileWidth*scale+(height2-height)/2)
+	setPlayerLoc()
 	
 	--player.character:onBegin()
 	myShader:send("tint_r", player.character.tint[1])
@@ -841,6 +842,7 @@ function startDebug()
 	loadFirstLevel()
 	tools.resetTools()
 	player.character:onBegin()
+	resetTintValues()
 end
 
 function startEditor()
@@ -854,6 +856,13 @@ function startEditor()
 	tools.resetTools()
 	player.character:onBegin()
 	editorMode = true
+	resetTintValues()
+end
+
+function resetTintValues()
+	myShader:send("tint_r", 1)
+	myShader:send("tint_g", 1)
+	myShader:send("tint_b", 1)
 end
 
 function loadFirstLevel()
@@ -992,6 +1001,10 @@ function win()
 		--[[if player.character.name=="Herman" then
 			unlocks.unlockUnlockableRef(unlocks.boxesUnlock, true)
 		end]]
+
+		if stats.tempStatsData['toolsUsed']~=nil and stats.tempStatsData['toolsUsed']==52 then
+			unlocks.unlockUnlockableRef(unlocks.cardUnlock)
+		end
 	end
 end
 
@@ -1695,6 +1708,7 @@ function canBePowered(x,y,dir)
 end
 
 function love.draw()
+	love.graphics.setShader(myShader)
 	myShader:send("shaderTriggered", shaderTriggered)
 	--myShader:send("b_and_w", true)
 	love.graphics.setBackgroundColor(0,0,0)
@@ -1755,7 +1769,6 @@ function love.draw()
 	--love.graphics.draw(rocks, rocksQuad, 0, 0)
 	--love.graphics.draw(rocks, -mapx * width, -mapy * height, 0, 1, 1)
 	local toDrawFloor = nil
-	love.graphics.setShader(myShader)
 
 	if floorIndex<=1 then
 		toDrawFloor = dungeonFloor
@@ -2079,7 +2092,7 @@ function love.draw()
 			--player.x = (player.tileX-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
 			--player.y = (player.tileY-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
 			local charSprite = util.getImage(player.character.sprite)
-			love.graphics.draw(charSprite, math.floor(player.x-charSprite:getWidth()*player.character.scale/2), math.floor(player.y-charSprite:getHeight()*player.character.scale-player.elevation*scale), 0, player.character.scale, player.character.scale)
+			love.graphics.draw(charSprite, math.floor(player.x-charSprite:getWidth()*player.character.scale/2), math.floor(player.y-charSprite:getHeight()*player.character.scale-player.elevation*scale), 0, player.dirFacing*player.character.scale, player.character.scale)
 			love.graphics.setShader()
 			love.graphics.print(player.character:getInfoText(), math.floor(player.x-charSprite:getWidth()*player.character.scale/2), math.floor(player.y-charSprite:getHeight()*player.character.scale));
 			love.graphics.setShader(myShader)
@@ -2164,7 +2177,7 @@ function love.draw()
 		end
 	end
 
-	if floorTransition then return end
+	if floorTransition or gameTransition then return end
 	love.graphics.setShader()
 
 	--[[for i = 1, roomLength do
@@ -2292,7 +2305,7 @@ function love.draw()
 		end
 	end
 
-	if not editorMode then
+	if not editorMode and floorIndex>=1 then
 		love.graphics.setNewFont(fontSize)
 		for i = 0, 6 do
 			love.graphics.setColor(255,255,255)
@@ -2695,6 +2708,11 @@ function beginFloorSequence(nextFloor, floorOverride)
 	floorTransitionInfo = {floor = nextFloor, override = floorOverride, moved = false}
 end
 
+function beginGameSequence(type)
+	gameTransition = true
+	gameTransitionInfo = {gameType = type}
+end
+
 function turnOffMushroomMode()
 	mushroomMode = false
 	myShader:send("createShadows", true)
@@ -2834,7 +2852,11 @@ function enterRoom(dir)
 
 	postRoomEnter()
 
-	player.x = (player.tileX-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
+	setPlayerLoc()
+end
+
+function setPlayerLoc()
+	player.x = (player.tileX-1/2*(player.dirFacing+1))*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
 	player.y = (player.tileY-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
     myShader:send("player_x", player.x+getTranslation().x*tileWidth*scale+(width2-width)/2)
     myShader:send("player_y", player.y+getTranslation().y*tileWidth*scale+(height2-height)/2)
@@ -2921,6 +2943,14 @@ function love.update(dt)
 
 	if (titlescreenCounter>0) then
 		titlescreenCounter = titlescreenCounter-dt
+		if globalTint[1]<1 then
+			for i = 1, 3 do
+				globalTint[i] = globalTint[i]+dt/3
+				myShader:send("tint_r", globalTint[1])
+				myShader:send("tint_g", globalTint[2])
+				myShader:send("tint_b", globalTint[3])
+			end
+		end
 	end
 	if loadTutorial then
 		tutorial.update(dt)
@@ -2957,6 +2987,53 @@ function love.update(dt)
 			end
 		end
 		myShader:send("player_range", player.range)
+	elseif gameTransition then
+		if gameTransitionInfo.moved then
+			--[[for i = 1, 3 do
+				if dt>0.03 then
+					globalTint[i] = globalTint[i]+0.03
+				else
+					globalTint[i] = globalTint[i]+dt
+				end
+				if globalTint[i]>1 then
+					globalTint[i] = 1
+					gameTransitionInfo = {gameType = "", moved = false}
+					gameTransition = false
+				end
+			end
+			myShader:send("tint_r", globalTint[1])
+			myShader:send("tint_g", globalTint[2])
+			myShader:send("tint_b", globalTint[3])]]
+			globalTint = {1,1,1}
+			myShader:send("tint_r", globalTint[1])
+			myShader:send("tint_g", globalTint[2])
+			myShader:send("tint_b", globalTint[3])
+			gameTransitionInfo.gameType = ""
+			gameTransition = false
+		else
+			for i = 1, 3 do
+				globalTint[i] = globalTint[i]-dt
+				if globalTint[i]<0 then
+					globalTint[i] = 0
+					gameTransitionInfo.moved = true
+				end
+			end
+			if gameTransitionInfo.moved then
+				myShader:send("tint_r", globalTint[1])
+				myShader:send("tint_g", globalTint[2])
+				myShader:send("tint_b", globalTint[3])
+				if gameTransitionInfo.gameType == "main" then
+					startGame()
+				elseif gameTransitionInfo.gameType == "tut" then
+					startTutorial()
+				end
+				gameTransitionInfo.gameType = ""
+			else
+				myShader:send("tint_r", globalTint[1])
+				myShader:send("tint_g", globalTint[2])
+				myShader:send("tint_b", globalTint[3])
+			end
+		end
 	end
 
 	text.updateTextTimers(dt)
@@ -3043,6 +3120,7 @@ function love.update(dt)
 			end
 		end
 	end
+	player.character:updateAnimation(dt)
 
 end
 
@@ -3063,10 +3141,17 @@ function seedEnter(text)
 end
 
 function love.keypressed(key, unicode, isRepeat, isPlayback)
-	if floorTransition and not floorTransitionInfo.moved then return end
+	if (floorTransition and not floorTransitionInfo.moved) or 
+		(gameTransition and not gameTransitionInfo.moved) then
+		return
+	end
 
 	if titlescreenCounter>0 then
 		titlescreenCounter = 0
+		globalTint = {1,1,1}
+		myShader:send("tint_r", globalTint[1])
+		myShader:send("tint_g", globalTint[2])
+		myShader:send("tint_b", globalTint[3])
 		return
 	end
 
@@ -3323,11 +3408,8 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
     checkAllDeath()
 
     if player.moveMode==0 then
-		player.x = (player.tileX-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
-		player.y = (player.tileY-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
+		setPlayerLoc()
 	end
-    myShader:send("player_x", player.x+getTranslation().x*tileWidth*scale+(width2-width)/2)
-    myShader:send("player_y", player.y+getTranslation().y*tileWidth*scale+(height2-height)/2)
 
     for i = 1, roomHeight do
     	for j = 1, roomLength do
@@ -4341,6 +4423,8 @@ function onToolUse(tool)
 	if tools.card.numHeld>0 then
 		tools.card:playCard()
 	end
+
+	stats.incrementStat('toolsUsed')
 
 	updateTools()
 	checkAllDeath()

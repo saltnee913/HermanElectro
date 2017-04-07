@@ -63,6 +63,14 @@ function P.giveTools(toolArray)
 			end
 		end
 	end
+
+	if tools.portalPlacer.numHeld>1 then
+		unlocks.unlockUnlockableRef(unlocks.portalPlacerDoubleUnlock)
+	end
+	if tools.opPotion.numHeld>1 then
+		unlocks.unlockUnlockableRef(unlocks.ironManUnlock)
+	end
+
 	--[[if tools.revive.numHeld>=9 then
 		unlocks.unlockUnlockableRef(unlocks.suicideKingUnlock)
 	end]]
@@ -856,14 +864,14 @@ function P.delectrifier:useToolTile(tile)
 		tile.overlay.canBePowered = false
 		if tile.overlay:instanceof(tiles.powerSupply) or tile.overlay:instanceof(tiles.notGate) or tile.overlay:instanceof(tiles.wire) then tile.overlay:destroy() end
 	end
-	if player.character == characters.monk and tile:instanceof(tiles.lamp) then
+	--[[if player.character == characters.monk and tile:instanceof(tiles.lamp) then
 		for i = 1, 3 do
 			player.character.tint[i] = 0
 		end
 	    myShader:send("tint_r", player.character.tint[1])
 	    myShader:send("tint_g", player.character.tint[2])
 	    myShader:send("tint_b", player.character.tint[3])
-	end
+	end]]
 end
 
 P.charger = P.superTool:new{name = 'Energizer', description = "Power to the People", baseRange = 1, image = 'Graphics/charger.png', quality = 4}
@@ -1864,11 +1872,10 @@ function P.revive:checkDeath()
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
 			if room[i][j]~=nil then
-				if not room[i][j]:instanceof(tiles.endTile) and not room[i][j]:instanceof(tiles.tunnel) then
-					room[i][j]=tiles.invisibleTile:new()
-				end
 				if room[i][j]:instanceof(tiles.poweredEnd) then
 					room[i][j]=tiles.endTile:new()
+				elseif not room[i][j]:instanceof(tiles.endTile) and not room[i][j]:instanceof(tiles.tunnel) then
+					room[i][j]=nil
 				end
 			end
 		end
@@ -1886,6 +1893,9 @@ function P.revive:checkDeath()
 	spotlights = {}
 	updateGameState(false)
 	log("Revived!")
+	if player.character:instanceof(characters.herman) then
+		stats.incrementStat("hermanRevivesUsed")
+	end
 
 	return false
 end
@@ -2759,7 +2769,7 @@ end
 P.inflation.usableOnTile = P.inflation.usableOnNothing
 function P.inflation:useToolNothing()
 	self.numHeld = self.numHeld-1
-	tools.coin.numHeld = tools.coin.numHeld*2
+	tools.coin.numHeld = math.ceil(tools.coin.numHeld*1.5)
 end
 P.inflation.useToolTile = P.inflation.useToolNothing
 
@@ -3326,7 +3336,7 @@ function P.boxCloner:useToolTile(tile, tileY, tileX)
 	self.image = self.baseImage
 end
 
-P.tilePusher = P.superTool:new{name = "tilePusher", description = "Pushy, pushy", --[[or "Truly repulsive"]]image = 'Graphics/shovel.png', baseRange = 3, quality = 3}
+P.tilePusher = P.superTool:new{name = "Daily Supplements", description = "Pushy, pushy", --[[or "Truly repulsive"]]image = 'Graphics/shovel.png', baseRange = 3, quality = 3}
 function P.tilePusher:usableOnTile(tile, tileY, tileX)
 	local useLoc = {x = 0, y = 0}
 	if player.tileX==tileX then
@@ -3421,7 +3431,7 @@ end
 P.spinningSword.useToolTile = P.spinningSword.useToolNothing
 
 
-P.ironMan = P.superTool:new{name = "Daily Supplements", description = "Do you even lift?", image = 'Graphics/ironman.png',
+P.ironMan = P.superTool:new{name = "Steroids", description = "Do you even lift?", image = 'Graphics/ironman.png',
 baseRange = 1, quality = 4}
 function P.ironMan:usableOnTile(tile)
 	local tileY
