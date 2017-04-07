@@ -14272,8 +14272,7 @@
     ],
     "itemsNeeded":
     [
-    [0,1,0,0,0,0,0],
-    [0,0,0,0,0,1,0]
+    [0,0,0,0,0,0,0]
     ],
     "set": "bomb_the_snail"
     },
@@ -14302,7 +14301,8 @@
     [0,0,0,0,0,1,0],
     [0,0,0,0,0,0,1]
     ],
-    "set": "bomb_the_snail"
+    "set": "bomb_the_snail",
+    "dumb": true
     },
 
     "one_pit_many_dogs_1":
