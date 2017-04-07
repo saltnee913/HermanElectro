@@ -240,7 +240,22 @@ P.wingsUnlock = P.unlock:new{name = 'Wings', toolIds = {tools.wings}, sprite = t
 P.growthHormonesUnlock = P.unlock:new{name = 'Growth Hormones', toolIds = {tools.growthHormones}, sprite = tools.growthHormones.image}
 P.portalPlacerUnlock = P.unlock:new{name = 'Portal Placer', toolIds = {tools.portalPlacer}, sprite = tools.portalPlacer.image}
 P.portalPlacerDoubleUnlock = P.unlock:new{name = 'Portal Placer Double', toolIds = {tools.portalPlacerDouble}, sprite = tools.portalPlacerDouble.image}
-
+P.heartTransplantUnlock = P.unlock:new{name = 'Heart Transplant', toolIds = {tools.heartTransplant}, sprite = tools.heartTransplant.image}
+P.bucketOfWaterUnlock = P.unlock:new{name = 'Bucket of Water', toolIds = {tools.bucketOfWater}, sprite = tools.bucketOfWater.image}
+P.axeUnlock = P.unlock:new{name = 'axe', toolIds = {tools.axe}, sprite = tools.axe.image}
+P.lubeUnlock = P.unlock:new{name = 'lube', toolIds = {tools.lube}, sprite = tools.lube.image}
+P.knifeUnlock = P.unlock:new{name = 'knife', toolIds = {tools.knife}, sprite = tools.knife.image}
+P.seedsUnlock = P.unlock:new{name = 'seeds', toolIds = {tools.seeds}, sprite = tools.seeds.image}
+P.fishingPoleUnlock = P.unlock:new{name = 'fishingPole', toolIds = {tools.fishingPole}, sprite = tools.fishingPole.image}
+P.amnesiaPillUnlock = P.unlock:new{name = 'amnesiaPill', toolIds = {tools.amnesiaPill}, sprite = tools.amnesiaPill.image}
+P.blankToolUnlock = P.unlock:new{name = 'blankTool', toolIds = {tools.blankTool}, sprite = tools.blankTool.image}
+P.mindfulToolUnlock = P.unlock:new{name = 'mindfulTool', toolIds = {tools.mindfulTool}, sprite = tools.mindfulTool.image}
+P.teleporterUnlock = P.unlock:new{name = 'teleporter', toolIds = {tools.teleporter}, sprite = tools.teleporter.image}
+P.rotaterUnlock = P.unlock:new{name = 'rotater', toolIds = {tools.rotater}, sprite = tools.rotater.image}
+P.boxCutterUnlock = P.unlock:new{name = 'boxCutter', toolIds = {tools.boxCutter}, sprite = tools.boxCutter.image}
+P.laserUnlock = P.unlock:new{name = 'laser', toolIds = {tools.laser}, sprite = tools.laser.image}
+P.ironManUnlock = P.unlock:new{name = 'ironMan', toolIds = {tools.ironMan}, sprite = tools.ironMan.image}
+P.traderUnlock = P.unlock:new{name = 'trader', toolIds = {tools.trader}, sprite = tools.trader.image}
 
 P.roomUnlock = P.unlock:new{name = 'room', roomIds = {"1"}}
 P.beggarPartyUnlock = P.roomUnlock:new{name = 'beggars love you', roomIds = {"beggar_party"}, sprite = tiles.beggar.sprite}
@@ -352,13 +367,27 @@ P[#P+1] = P.robotArmUnlock
 P[#P+1] = P.wingsUnlock
 P[#P+1] = P.portalPlacerUnlock
 P[#P+1] = P.portalPlacerDoubleUnlock
+P[#P+1] = P.heartTransplantUnlock
+P[#P+1] = P.bucketOfWaterUnlock
+P[#P+1] = P.axeUnlock
+P[#P+1] = P.lubeUnlock
+P[#P+1] = P.knifeUnlock
+P[#P+1] = P.seedsUnlock
+P[#P+1] = P.fishingPoleUnlock
+P[#P+1] = P.amnesiaPillUnlock
+P[#P+1] = P.blankToolUnlock
+P[#P+1] = P.mindfulToolUnlock
+P[#P+1] = P.rotaterUnlock
+P[#P+1] = P.teleporterUnlock
+P[#P+1] = P.boxCutterUnlock
+P[#P+1] = P.ironManUnlock
 
 --rooms
 P[#P+1] = P.beggarPartyUnlock --done
 
 --multi unlocks
 P[#P+1] = P.bombsUnlock --done
-P[#P+1] = P.puddleUnlock --done
+--P[#P+1] = P.puddleUnlock --done
 P[#P+1] = P.portalUnlock --done
 
 P[#P+1] = P.dungeonUnlock

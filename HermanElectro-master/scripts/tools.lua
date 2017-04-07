@@ -67,6 +67,9 @@ function P.giveTools(toolArray)
 	if tools.portalPlacer.numHeld>1 then
 		unlocks.unlockUnlockableRef(unlocks.portalPlacerDoubleUnlock)
 	end
+	if tools.opPotion.numHeld>1 then
+		unlocks.unlockUnlockableRef(unlocks.ironManUnlock)
+	end
 
 	--[[if tools.revive.numHeld>=9 then
 		unlocks.unlockUnlockableRef(unlocks.suicideKingUnlock)
@@ -1890,6 +1893,9 @@ function P.revive:checkDeath()
 	spotlights = {}
 	updateGameState(false)
 	log("Revived!")
+	if player.character:instanceof(characters.herman) then
+		stats.incrementStat("hermanRevivesUsed")
+	end
 
 	return false
 end
@@ -2763,7 +2769,7 @@ end
 P.inflation.usableOnTile = P.inflation.usableOnNothing
 function P.inflation:useToolNothing()
 	self.numHeld = self.numHeld-1
-	tools.coin.numHeld = tools.coin.numHeld*2
+	tools.coin.numHeld = math.ceil(tools.coin.numHeld*1.5)
 end
 P.inflation.useToolTile = P.inflation.useToolNothing
 
@@ -3330,7 +3336,7 @@ function P.boxCloner:useToolTile(tile, tileY, tileX)
 	self.image = self.baseImage
 end
 
-P.tilePusher = P.superTool:new{name = "tilePusher", description = "Pushy, pushy", --[[or "Truly repulsive"]]image = 'Graphics/shovel.png', baseRange = 3, quality = 3}
+P.tilePusher = P.superTool:new{name = "Daily Supplements", description = "Pushy, pushy", --[[or "Truly repulsive"]]image = 'Graphics/shovel.png', baseRange = 3, quality = 3}
 function P.tilePusher:usableOnTile(tile, tileY, tileX)
 	local useLoc = {x = 0, y = 0}
 	if player.tileX==tileX then
@@ -3425,7 +3431,7 @@ end
 P.spinningSword.useToolTile = P.spinningSword.useToolNothing
 
 
-P.ironMan = P.superTool:new{name = "Daily Supplements", description = "Do you even lift?", image = 'Graphics/ironman.png',
+P.ironMan = P.superTool:new{name = "Steroids", description = "Do you even lift?", image = 'Graphics/ironman.png',
 baseRange = 1, quality = 4}
 function P.ironMan:usableOnTile(tile)
 	local tileY
