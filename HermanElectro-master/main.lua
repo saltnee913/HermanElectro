@@ -3116,7 +3116,7 @@ function love.update(dt)
 			end
 		end
 	end
-	--player.character:updateAnimation(dt)
+	player.character:updateAnimation(dt)
 
 end
 

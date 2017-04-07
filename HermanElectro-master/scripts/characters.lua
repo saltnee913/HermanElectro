@@ -130,7 +130,9 @@ function P.character:updateAnimation(dt)
 end
 
 P.herman = P.character:new{name = "Herman", description = "The Electrician", 
-  scale = 1.1*scale, sprites = {'Graphics/Characters/Herman.png', 'Graphics/Characters/Herman.png', 'Graphics/Characters/Herman.png', 'Graphics/Characters/Herman.png'}}
+  scale = 1.1*scale, sprites = {'Graphics/Characters/Herman.png', 'Graphics/Characters/Herman.png', 'Graphics/Characters/Herman.png', 'Graphics/Characters/Herman.png'},
+  animation = {'Graphics/Characters/Herman.png','Graphics/Characters/Herman.png','Graphics/Characters/HermanTaller.png','Graphics/Characters/Herman.png'},
+  animationLength = 1}
 function P.herman:onCharLoad()
 	if loadTutorial then return end
 	tools.giveToolsByReference({tools.revive})

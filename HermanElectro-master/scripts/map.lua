@@ -327,7 +327,9 @@ local function flipRoomVertical(roomLayout)
 					local tileInd = math.floor(toRet[i][j][1])
 					local tile = tiles[tileInd]
 					local rot = math.floor(10*(toRet[i][j][1]-tileInd+0.01))
-					toRet[i][j][1] = toRet[i][j][1] + tile.flipDirection(rot,true)/10
+					if tile == nil then toRet[i][j] = 0 else
+						toRet[i][j][1] = toRet[i][j][1] + tile.flipDirection(rot,false)/10
+					end
 					if type(toRet[i][j][2]) == 'number' then
 						local overInd = math.floor(toRet[i][j][2])
 						local overRot = math.floor(10*(toRet[i][j][2]-overInd+0.01))
@@ -360,7 +362,9 @@ local function flipRoomHorizontal(roomLayout)
 					local tileInd = math.floor(toRet[i][j][1])
 					local tile = tiles[tileInd]
 					local rot = math.floor(10*(toRet[i][j][1]-tileInd+0.01))
-					toRet[i][j][1] = toRet[i][j][1] + tile.flipDirection(rot,false)/10
+					if tile == nil then toRet[i][j] = 0 else
+						toRet[i][j][1] = toRet[i][j][1] + tile.flipDirection(rot,false)/10
+					end
 					if type(toRet[i][j][2]) == 'number' then
 						local overInd = math.floor(toRet[i][j][2])
 						local overRot = math.floor(10*(toRet[i][j][2]-overInd+0.01))
