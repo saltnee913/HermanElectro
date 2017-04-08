@@ -112,6 +112,8 @@ function P.incrementStat(stat)
 	if not P.doStatsSave() then
 		return
 	end
+	
+	--room stats data is created here, it's created on the room object itself and thus is different per room
 	if room.roomStatsData == nil then
 		room.roomStatsData = {}
 	end
