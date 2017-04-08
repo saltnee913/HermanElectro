@@ -559,6 +559,9 @@ function P.wireCutters:useToolTile(tile)
 			unlocks.unlockUnlockableRef(unlocks.cornerRotaterUnlock)
 		end
 	end
+	if tile:instanceof(tiles.wire) then
+		stats.incrementStat('wiresCut')
+	end
 
 end
 function P.wireCutters:useToolPushable(pushable)
