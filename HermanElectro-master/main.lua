@@ -968,7 +968,7 @@ function kill(deathSource)
 	end
 	stats.incrementStat(player.character.name..'Losses')
 	stats.incrementStat('totalLosses')
-	myShader:send("b_and_w", not loadTutorial)
+	if player.dead then myShader:send("b_and_w", not loadTutorial) end
 
 	saving.endRecording()
 end
