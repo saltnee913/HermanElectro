@@ -14,6 +14,9 @@ P.losses = {}
 P.statsData = {}
 P.tempStatsData = {} --stats for each run
 
+P.roomUnlockTriggers = {}
+P.roomUnlockTriggers["wiresCut"] = {[3] = unlocks.unbreakableWires}
+
 --these unlock whenever you reach total stats
 P.statUnlockTriggers = {}
 P.statUnlockTriggers["boxesSawed"] = {[11] = unlocks.playerBoxUnlock}
@@ -109,6 +112,20 @@ function P.incrementStat(stat)
 	if not P.doStatsSave() then
 		return
 	end
+	
+	--room stats data is created here, it's created on the room object itself and thus is different per room
+	if room.roomStatsData == nil then
+		room.roomStatsData = {}
+	end
+	if room.roomStatsData[stat] == nil then
+		room.roomStatsData[stat] = 1
+	else
+		room.roomStatsData[stat] = room.roomStatsData[stat]+1
+	end
+	if P.roomUnlockTriggers[stat]~=nil and P.roomUnlockTriggers[stat][room.roomStatsData[stat]] ~= nil then
+		unlocks.unlockUnlockableRef(P.roomUnlockTriggers[stat][room.roomStatsData[stat]])
+	end
+
 	if P.tempStatsData[stat] == nil then
 		P.tempStatsData[stat] = 1
 	else
@@ -117,6 +134,7 @@ function P.incrementStat(stat)
 	if P.tempUnlockTriggers[stat]~=nil and P.tempUnlockTriggers[stat][P.tempStatsData[stat]] ~= nil then
 		unlocks.unlockUnlockableRef(P.tempUnlockTriggers[stat][P.tempStatsData[stat]])
 	end
+
 	if saving.isPlayingBack() then return end
 	if P.statsData[stat] == nil then
 		P.statsData[stat] = 1
