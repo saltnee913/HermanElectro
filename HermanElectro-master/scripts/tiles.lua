@@ -1133,49 +1133,6 @@ end
 
 P.concreteWall = P.wall:new{sawable = false, name = "concreteWall",
 sprite = 'GraphicsColor/concretewall3.png', destroyedSprite = 'Graphics/concretewallbroken.png', sawable = false}
-function P.wall:onLoad()
-	local dungeonChance = util.random(100, 'misc')
-	if dungeonChance==1 then
-		self.hidesDungeon = true
-	end
-end
-function P.concreteWall:destroy()
-	self.blocksProjectiles = false
-	self.blocksVision = false
-	self.sprite = self.destroyedSprite
-	self.destroyed = true
-	self.blocksMovement = false
-	self.canBePowered = false
-	self.dirAccept = {0,0,0,0}
-	self.dirSend = {0,0,0,0}
-	self.overlay = nil
-	self.yOffset = 0
-	if not self.hidesDungeon then
-		local bonusDungeonChance = util.random(100, 'misc')
-		if bonusDungeonChance<getLuckBonus() then
-			self.hidesDungeon = true
-		end
-	end
-	if self.hidesDungeon then
-		for i = 1, roomHeight do
-			for j = 1, roomLength do
-				if room[i][j]==self then
-					room[i][j] = tiles.dungeonEnter:new()
-				end
-			end
-		end
-	end
-	if not self.hidesDungeon and player.attributes.lucky then
-		for i = 1, roomHeight do
-			for j = 1, roomLength do
-				if room[i][j]==self then
-					room[i][j] = tiles.toolTile:new()
-					room[i][j]:absoluteFinalUpdate()
-				end
-			end
-		end
-	end
-end
 
 P.concreteWallConductive = P.concreteWall:new{name = "concreteWallConductive", sprite = 'Graphics3D/concretewallconductive.png', poweredSprite = 'Graphics3D/concretewallconductive.png', canBePowered = true, dirAccept = {1,1,1,1}, dirSend = {1,1,1,1}}
 
