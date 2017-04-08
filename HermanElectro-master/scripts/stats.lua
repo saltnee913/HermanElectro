@@ -24,6 +24,13 @@ P.statUnlockTriggers["totalLosses"] = {[3] = unlocks.frederickUnlock}
 P.statUnlockTriggers["totalWins"] = {[3] = unlocks.dungeonUnlock}
 P.statUnlockTriggers["greenBeggarsShot"] = {[10] = unlocks.luckyPennyUnlock}
 
+P.statUnlockTriggers["conductiveSnailKilled"] = {[1] = unlocks.lennyUnlock}
+P.statUnlockTriggers["glueSnailKilled"] = {[3] = unlocks.glueUnlock}
+P.statUnlockTriggers["pitbullKilled"] = {[30] = unlocks.meatUnlock}
+P.statUnlockTriggers["bombBuddyKilled"] = {[3] = unlocks.explosiveMeatUnlock}
+P.statUnlockTriggers["ratKilled"] = {[1] = unlocks.rottenMeatUnlock}
+P.statUnlockTriggers["catKilled"] = {[1] = unlocks.nineLivesUnlock}
+
 P.statUnlockTriggers["HermanWins"] = {[1] = unlocks.boxesUnlock}
 P.statUnlockTriggers["HermanDungeonWins"] = {[1] = unlocks.boxesUnlock}
 P.statUnlockTriggers["HermanWinsPlus"] = {[1] = unlocks.boxesUnlock}
@@ -80,7 +87,7 @@ P.statUnlockTriggers["FranciscoDungeonWins"] = {[1] = unlocks.inflationUnlock}
 P.statUnlockTriggers["FranciscoReachFloor6"] = {[1] = unlocks.boxesUnlock}
 
 P.statUnlockTriggers["FrederickWins"] = {[1] = unlocks.missileUnlock}
-P.statUnlockTriggers["FrederickWinsPlus"] = {[1] = unlocks.bombBuddyUnlock}
+P.statUnlockTriggers["FrederickWinsPlus"] = {[1] = unlocks.stealthBomberUnlock}
 P.statUnlockTriggers["FrederickDungeonWins"] = {[1] = unlocks.inflationUnlock}
 P.statUnlockTriggers["FrederickReachFloor6"] = {[1] = unlocks.boxesUnlock}
 

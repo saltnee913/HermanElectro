@@ -2556,6 +2556,7 @@ function P.endDungeonEnter:onLoad()
 	local unlocks = require('scripts.unlocks')
 	self.disabled = not unlocks.isDungeonUnlocked()
 	self.isVisible = not self.disabled
+	self.untoolable = self.disabled
 end
 function P.endDungeonEnter:onEnter()
 	if self.disabled then

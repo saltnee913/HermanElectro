@@ -138,7 +138,7 @@ P.frederickUnlock = P.charUnlock:new{name = 'frederick the frog', charIds = {"Fr
 P.franciscoUnlock = P.charUnlock:new{name = 'francisco the cartographer', charIds = {"Francisco"}, sprite = 'Graphics/Characters/Francisco.png'}
 P.rammyUnlock = P.charUnlock:new{name = 'rammy the ram', charIds = {"Rammy"}, sprite = 'Graphics/ram.png'}
 P.aureliusUnlock = P.charUnlock:new{name = 'aurelius the golden', charIds = {"Aurelius"}, sprite = 'Graphics/Characters/Aurelius.png'}
-P.lennyUnlock = P.charUnlock:new{name = 'lenny the ghost snail', charIds = {"Lenny"}, sprite = 'Graphics/lenny.png'}
+P.lennyUnlock = P.charUnlock:new{name = 'lenny the ghost snail', charIds = {"Lenny"}, sprite = 'Graphics/Characters/Lenny.png'}
 P.wizardUnlock = P.charUnlock:new{name = 'giovanni the sorceror', charIds = {"Giovanni"}, sprite = 'Graphics/giovannighost.png'}
 P.xavierUnlock = P.charUnlock:new{name = 'xavier the sock ninja', charIds = {"Xavier"}, sprite = 'Graphics/Characters/Eli.png'}
 P.batteryUnlock = P.charUnlock:new{name = 'bob the battery', charIds = {"Bob"}, sprite = 'Graphics/Characters/Bob.png'}
@@ -260,6 +260,11 @@ P.ironManUnlock = P.unlock:new{name = 'ironMan', toolIds = {tools.ironMan}, spri
 P.traderUnlock = P.unlock:new{name = 'trader', toolIds = {tools.trader}, sprite = tools.trader.image}
 P.cardUnlock = P.unlock:new{name = "Cards", toolIds = {tools.card, tools.deckOfCards}, sprite = tools.card.image}
 P.luckyPennyUnlock = P.unlock:new{name = "Lucky Penny", toolIds = {tools.luckyPenny}, sprite = tools.luckyPenny.image}
+P.stealthBomberUnlock = P.unlock:new{name = "Stealth Bomber", toolIds = {tools.stealthBomber}, sprite = tools.stealthBomber.image}
+P.meatUnlock = P.unlock:new{name = "Mmmm meaty", toolIds = {tools.meat}, sprite = tools.meat.image}
+P.rottenMeatUnlock = P.unlock:new{name = "Mmmm rotten and meaty", toolIds = {tools.rottenMeat}, sprite = tools.rottenMeat.image}
+P.explosiveMeatUnlock = P.unlock:new{name = "Mmmm explosive and meaty", toolIds = {tools.explosiveMeat}, sprite = tools.explosiveMeat.image}
+P.nineLivesUnlock = P.unlock:new{name = "Mmmm more lives", toolIds = {tools.nineLives}, sprite = tools.nineLives.image}
 
 P.roomUnlock = P.unlock:new{name = 'room', roomIds = {"1"}}
 P.beggarPartyUnlock = P.roomUnlock:new{name = 'beggars love you', roomIds = {"beggar_party"}, sprite = tiles.beggar.sprite}
@@ -386,9 +391,15 @@ P[#P+1] = P.mindfulToolUnlock
 P[#P+1] = P.rotaterUnlock
 P[#P+1] = P.teleporterUnlock
 P[#P+1] = P.boxCutterUnlock
+P[#P+1] = P.unlock
 P[#P+1] = P.ironManUnlock
 P[#P+1] = P.cardUnlock
 P[#P+1] = P.luckyPennyUnlock
+P[#P+1] = P.stealthBomberUnlock
+P[#P+1] = P.meatUnlock
+P[#P+1] = P.rottenMeatUnlock
+P[#P+1] = P.explosiveMeatUnlock
+P[#P+1] = P.nineLivesUnlock
 
 --rooms
 P[#P+1] = P.beggarPartyUnlock --done

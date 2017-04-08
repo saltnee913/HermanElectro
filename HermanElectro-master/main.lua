@@ -968,7 +968,7 @@ function kill(deathSource)
 	end
 	stats.incrementStat(player.character.name..'Losses')
 	stats.incrementStat('totalLosses')
-	
+
 	myShader:send("b_and_w", (not loadTutorial) and 1 or 0)
 
 	saving.endRecording()
@@ -4426,6 +4426,25 @@ function onToolUse(tool)
 	end
 
 	stats.incrementStat('toolsUsed')
+	if tool>tools.numNormalTools then
+		local unlockBlank = false
+		local sameTool = 0
+		for i = 1, #mainMap[mapy][mapx].toolsUsed do
+			if mainMap[mapy][mapx].toolsUsed[i]==tool then
+				sameTool = sameTool+1
+			end
+			if mainMap[mapy][mapx].toolsUsed[i]>tools.numNormalTools and mainMap[mapy][mapx].toolsUsed[i]~=tool then
+				unlockBlank = true
+			end
+			if sameTool>=2 then
+				--doesn't work yet b/c what about two-stage tools
+				unlocks.unlockUnlockableRef(unlocks.mindfulToolUnlock)
+			end
+			if unlockBlank then
+				unlocks.unlockUnlockableRef(unlocks.blankToolUnlock)
+			end
+		end
+	end
 
 	updateTools()
 	checkAllDeath()
