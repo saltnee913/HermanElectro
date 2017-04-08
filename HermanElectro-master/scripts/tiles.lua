@@ -1309,6 +1309,7 @@ function P.treasureTile:onEnter()
 	self.isCompleted = true
 	self.isVisible = false
 	self.gone = true
+	stats.incrementStat('treasureTilesReached')
 end
 function P.treasureTile:giveReward()
 	local timesCounter = 0

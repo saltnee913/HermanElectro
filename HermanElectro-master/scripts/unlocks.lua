@@ -174,6 +174,7 @@ P.catUnlock = P.tileUnlock:new{name = "purr", tileIds = {23}, sprite = animalLis
 P.glueSnailUnlock = P.tileUnlock:new{name = "glug", tileIds = {121}, sprite = animalList.glueSnail.sprite}
 P.conductiveSnailUnlock = P.tileUnlock:new{name = "brrr", tileIds = {62}, sprite = animalList.conductiveSnail.sprite}
 P.ratUnlock = P.tileUnlock:new{name = 'eek', tileIds = {196}, sprite = animalList.rat.sprite}
+P.reinforcedGlassUnlock = P.tileUnlock:new{name = 'reinforced', tileIds = {64}, sprite = tiles.reinforcedGlass.sprite}
 
 
 P.untriggeredPowerUnlock = P.tileUnlock:new{name = 'untriggered power supplies', tileIds = {63}, sprite = tiles.untriggeredPowerSupply.sprite}
@@ -265,6 +266,7 @@ P.meatUnlock = P.unlock:new{name = "Mmmm meaty", toolIds = {tools.meat}, sprite 
 P.rottenMeatUnlock = P.unlock:new{name = "Mmmm rotten and meaty", toolIds = {tools.rottenMeat}, sprite = tools.rottenMeat.image}
 P.explosiveMeatUnlock = P.unlock:new{name = "Mmmm explosive and meaty", toolIds = {tools.explosiveMeat}, sprite = tools.explosiveMeat.image}
 P.nineLivesUnlock = P.unlock:new{name = "Mmmm more lives", toolIds = {tools.nineLives}, sprite = tools.nineLives.image}
+P.foresightUnlock = P.unlock:new{name = "Foreskin", toolIds = {tools.foresight}, sprite = tools.foresight.image}
 
 P.roomUnlock = P.unlock:new{name = 'room', roomIds = {"1"}}
 P.beggarPartyUnlock = P.roomUnlock:new{name = 'beggars love you', roomIds = {"beggar_party"}, sprite = tiles.beggar.sprite}
@@ -337,6 +339,7 @@ P[#P+1] = P.fogUnlock --done
 P[#P+1] = P.directionGatesUnlock
 P[#P+1] = P.doorUnlock --done
 P[#P+1] = P.infestedWoodUnlock
+--P[#P+1] = P.reinforcedGlassUnlock
 --P[#P+1] = P.stickyButtonUnlock
 --P[#P+1] = P.stayButtonUnlock
 
@@ -400,6 +403,7 @@ P[#P+1] = P.meatUnlock
 P[#P+1] = P.rottenMeatUnlock
 P[#P+1] = P.explosiveMeatUnlock
 P[#P+1] = P.nineLivesUnlock
+P[#P+1] = P.foresightUnlock
 
 --rooms
 P[#P+1] = P.beggarPartyUnlock --done

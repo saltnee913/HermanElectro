@@ -640,6 +640,9 @@ function P.brick:useToolTile(tile)
 	self.numHeld = self.numHeld - 1
 	if tile:instanceof(tiles.glassWall) or tile:instanceof(tiles.hDoor) or tile:instanceof(tiles.reinforcedGlass) then
 		tile:destroy()
+		if tile:instanceof(tiles.glassWall) or tile:instanceof(tiles.reinforcedGlass) then
+			stats.incrementStats(glassWallsBricked)
+		end
 	else
 		tile:lockInState(true)
 		--unlocks:unlockUnlockableRef(unlocks.stayButtonUnlock)
@@ -4540,7 +4543,7 @@ function P.bombPotion:usableOnNothing()
 end
 function P.bombPotion:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld-1
-	util.createHarmlessExplosion(tileY, tileX)
+	util.createHarmlessExplosion(tileY, tileX, 0)
 end
 function P.bombPotion:useToolNothing(tileY, tileX)
 	self:useToolTile(nil, tileY, tileX)
