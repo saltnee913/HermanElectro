@@ -141,8 +141,7 @@ function P.incrementStat(stat)
 	if P.tempUnlockTriggers[stat]~=nil and P.tempUnlockTriggers[stat][P.tempStatsData[stat]] ~= nil then
 		unlocks.unlockUnlockableRef(P.tempUnlockTriggers[stat][P.tempStatsData[stat]])
 	end
-
-	if saving.isPlayingBack() then return end
+	
 	if P.statsData[stat] == nil then
 		P.statsData[stat] = 1
 	else
