@@ -16713,7 +16713,8 @@
           [
             [0,0,0,1,1,0,0],
             [0,1,0,0,1,0,0]],
-        "set": "cond_box_dog"
+        "set": "cond_box_dog",
+        "dumb": true
       },
 
       "kinda_stupid_1":
