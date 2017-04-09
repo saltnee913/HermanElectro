@@ -16405,7 +16405,8 @@
             [0,0,0,2,0,0,0],
             [1,1,0,0,0,0,0],
             [0,1,1,0,0,0,0]],
-        "set": "dont_destroy_brown"
+        "set": "dont_destroy_brown",
+        "dumb": true
       },
 
       "power_the_and_1":
