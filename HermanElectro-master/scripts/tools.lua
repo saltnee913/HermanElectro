@@ -641,10 +641,13 @@ function P.brick:useToolTile(tile)
 	if tile:instanceof(tiles.glassWall) or tile:instanceof(tiles.hDoor) or tile:instanceof(tiles.reinforcedGlass) then
 		tile:destroy()
 		if tile:instanceof(tiles.glassWall) or tile:instanceof(tiles.reinforcedGlass) then
-			stats.incrementStats(glassWallsBricked)
+			stats.incrementStat('glassWallsBricked')
 		end
 	else
 		tile:lockInState(true)
+		if tile:instanceof(tiles.stayButton) then
+			stats.incrementStat('stayButtonsBricked')
+		end
 		--unlocks:unlockUnlockableRef(unlocks.stayButtonUnlock)
 	end
 end
@@ -714,6 +717,9 @@ function P.sponge:useToolTile(tile, tileY, tileX)
 		else
 			room[tileY][tileX] = tiles.button:new()
 			room[tileY][tileX].bricked = false
+		end
+		if tile:instanceof(tiles.stickyButton) then
+			stats.incrementStat('stickyButtonsSponged')
 		end
 	else
 		room[tileY][tileX] = nil

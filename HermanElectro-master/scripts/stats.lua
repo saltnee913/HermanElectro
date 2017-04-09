@@ -24,6 +24,8 @@ P.statUnlockTriggers["boxesSawed"] = {[11] = unlocks.playerBoxUnlock}
 P.statUnlockTriggers["totalLosses"] = {[3] = unlocks.frederickUnlock}
 P.statUnlockTriggers["totalWins"] = {[3] = unlocks.dungeonUnlock}
 P.statUnlockTriggers["greenBeggarsShot"] = {[10] = unlocks.luckyPennyUnlock}
+P.statUnlockTriggers["stickyButtonsSponged"] = {[30] = unlocks.superStickyButtonUnlock}
+P.statUnlockTriggers["stayButtonsBricked"] = {[30] = unlocks.unbrickableStayButtonUnlock}
 --P.statUnlockTriggers["glassWallsBricked"] = {[30] = unlocks.reinforcedGlassUnlock}
 
 P.statUnlockTriggers["conductiveSnailKilled"] = {[1] = unlocks.lennyUnlock}

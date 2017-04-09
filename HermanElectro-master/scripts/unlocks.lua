@@ -199,6 +199,9 @@ P.doorUnlock = P.tileUnlock:new{name = "door unlock", tileIds = {18}, sprite = t
 --we spelled rotator wrong
 P.cornerRotaterUnlock = P.tileUnlock:new{name = "corner rotators", tileIds = {116}, sprite = tiles.cornerRotater.sprite}
 P.infestedWoodUnlock = P.tileUnlock:new{name = "Infested....", tileIds = {199}, sprite = tiles.infestedWood.sprite}
+P.superStickyButtonUnlock = P.tileUnlock:new{name = "Stickier", tileIds = {115}, sprite = tiles.superStickyButton.sprite}
+P.unbrickableStayButtonUnlock = P.tileUnlock:new{name = "Stay-er", tileIds = {120}, sprite = tiles.unbrickableStayButton.sprite}
+
 
 --unlocks to prevent tiles from appearing
 P.lockedTiles = P.tileUnlock:new{name = 'permanentlyLockedTiles', tileIds = {103,104,105,106,107,108,109,110,111,112,113},hidden = true}
@@ -339,6 +342,8 @@ P[#P+1] = P.fogUnlock --done
 P[#P+1] = P.directionGatesUnlock
 P[#P+1] = P.doorUnlock --done
 P[#P+1] = P.infestedWoodUnlock
+P[#P+1] = P.superStickyButtonUnlock
+P[#P+1] = P.unbrickableStayButtonUnlock
 --P[#P+1] = P.reinforcedGlassUnlock
 --P[#P+1] = P.stickyButtonUnlock
 --P[#P+1] = P.stayButtonUnlock
