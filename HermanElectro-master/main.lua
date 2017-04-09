@@ -4441,8 +4441,9 @@ function onToolUse(tool)
 		if mainMap[mapy][mapx].toolsUsed[i]>tools.numNormalTools and mainMap[mapy][mapx].toolsUsed[i]~=tool then
 			unlockBlank = true
 		end
-
-		basicsUsed[mainMap[mapy][mapx].toolsUsed[i]] = basicsUsed[mainMap[mapy][mapx].toolsUsed[i]]+1
+		if mainMap[mapy][mapx].toolsUsed[i]<=tools.numNormalTools then
+			basicsUsed[mainMap[mapy][mapx].toolsUsed[i]] = basicsUsed[mainMap[mapy][mapx].toolsUsed[i]]+1
+		end
 	end
 
 	if sameTool>=2 then

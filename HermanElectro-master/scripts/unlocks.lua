@@ -270,6 +270,9 @@ P.rottenMeatUnlock = P.unlock:new{name = "Mmmm rotten and meaty", toolIds = {too
 P.explosiveMeatUnlock = P.unlock:new{name = "Mmmm explosive and meaty", toolIds = {tools.explosiveMeat}, sprite = tools.explosiveMeat.image}
 P.nineLivesUnlock = P.unlock:new{name = "Mmmm more lives", toolIds = {tools.nineLives}, sprite = tools.nineLives.image}
 P.foresightUnlock = P.unlock:new{name = "Foreskin", toolIds = {tools.foresight}, sprite = tools.foresight.image}
+P.animalTrainerUnlock = P.unlock:new{name = "Train", toolIds = {tools.animalTrainer}, sprite = tools.animalTrainer.image}
+P.animalEnslaverUnlock = P.unlock:new{name = "Enslave", toolIds = {tools.animalEnslaver}, sprite = tools.animalEnslaver.image}
+
 
 P.roomUnlock = P.unlock:new{name = 'room', roomIds = {"1"}}
 P.beggarPartyUnlock = P.roomUnlock:new{name = 'beggars love you', roomIds = {"beggar_party"}, sprite = tiles.beggar.sprite}
@@ -409,6 +412,8 @@ P[#P+1] = P.rottenMeatUnlock
 P[#P+1] = P.explosiveMeatUnlock
 P[#P+1] = P.nineLivesUnlock
 P[#P+1] = P.foresightUnlock
+P[#P+1] = P.animalTrainerUnlock
+P[#P+1] = P.animalEnslaverUnlock
 
 --rooms
 P[#P+1] = P.beggarPartyUnlock --done
