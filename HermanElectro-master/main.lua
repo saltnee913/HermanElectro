@@ -2306,7 +2306,7 @@ function love.draw()
 		end
 	end
 
-	if not editorMode and floorIndex>=1 then
+	if not editorMode --[[and floorIndex>=1]] then
 		love.graphics.setNewFont(fontSize)
 		for i = 0, 6 do
 			love.graphics.setColor(255,255,255)
@@ -4426,24 +4426,41 @@ function onToolUse(tool)
 	end
 
 	stats.incrementStat('toolsUsed')
-	if tool>tools.numNormalTools then
-		local unlockBlank = false
-		local sameTool = 0
-		for i = 1, #mainMap[mapy][mapx].toolsUsed do
-			if mainMap[mapy][mapx].toolsUsed[i]==tool then
-				sameTool = sameTool+1
-			end
-			if mainMap[mapy][mapx].toolsUsed[i]>tools.numNormalTools and mainMap[mapy][mapx].toolsUsed[i]~=tool then
-				unlockBlank = true
-			end
-			if sameTool>=2 then
-				--doesn't work yet b/c what about two-stage tools
-				unlocks.unlockUnlockableRef(unlocks.mindfulToolUnlock)
-			end
-			if unlockBlank then
-				unlocks.unlockUnlockableRef(unlocks.blankToolUnlock)
-			end
+
+	--unlocks
+	local unlockBlank = false
+	local sameTool = 0
+	local basicsUsed = {}
+	for i = 1, tools.numNormalTools do
+		basicsUsed[i] = 0
+	end
+	for i = 1, #mainMap[mapy][mapx].toolsUsed do
+		if mainMap[mapy][mapx].toolsUsed[i]==tool then
+			sameTool = sameTool+1
 		end
+		if mainMap[mapy][mapx].toolsUsed[i]>tools.numNormalTools and mainMap[mapy][mapx].toolsUsed[i]~=tool then
+			unlockBlank = true
+		end
+		if mainMap[mapy][mapx].toolsUsed[i]<=tools.numNormalTools and mainMap[mapy][mapx].toolsUsed[i]>0 then
+			basicsUsed[mainMap[mapy][mapx].toolsUsed[i]] = basicsUsed[mainMap[mapy][mapx].toolsUsed[i]]+1
+		end
+	end
+
+	if sameTool>=2 then
+		--doesn't work yet b/c what about two-stage tools
+		unlocks.unlockUnlockableRef(unlocks.mindfulToolUnlock)
+	end
+	if unlockBlank then
+		unlocks.unlockUnlockableRef(unlocks.blankToolUnlock)
+	end
+	if basicsUsed[1]>0 and basicsUsed[7]>0 then
+		unlocks.unlockUnlockableRef(unlocks.axeUnlock)
+	end
+	if basicsUsed[4]>0 and basicsUsed[5]>0 then
+		unlocks.unlockUnlockableRef(unlocks.lubeUnlock)
+	end
+	if basicsUsed[3]>0 and basicsUsed[7]>0 then
+		unlocks.unlockUnlockableRef(unlocks.knifeUnlock)
 	end
 
 	updateTools()

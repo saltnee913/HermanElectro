@@ -107,6 +107,7 @@ function P.updateUnlockedSupertools()
 		if unlock.toolIds ~= nil and unlock.unlocked == false then
 			for k = 1, #unlock.toolIds do
 				if unlockedSupertools[unlock.toolIds[k].toolid] ~= nil then
+					print("aaa")
 					unlockedSupertools[unlock.toolIds[k].toolid] = false
 				end
 			end
@@ -114,9 +115,7 @@ function P.updateUnlockedSupertools()
 	end
 end
 function P.getUnlockedSupertools()
-	if unlockedSupertools == nil then
-		P.updateUnlockedSupertools()
-	end
+	P.updateUnlockedSupertools()
 	return unlockedSupertools
 end
 function P.isDungeonUnlocked()
@@ -174,6 +173,7 @@ P.catUnlock = P.tileUnlock:new{name = "purr", tileIds = {23}, sprite = animalLis
 P.glueSnailUnlock = P.tileUnlock:new{name = "glug", tileIds = {121}, sprite = animalList.glueSnail.sprite}
 P.conductiveSnailUnlock = P.tileUnlock:new{name = "brrr", tileIds = {62}, sprite = animalList.conductiveSnail.sprite}
 P.ratUnlock = P.tileUnlock:new{name = 'eek', tileIds = {196}, sprite = animalList.rat.sprite}
+P.reinforcedGlassUnlock = P.tileUnlock:new{name = 'reinforced', tileIds = {64}, sprite = tiles.reinforcedGlass.sprite}
 
 
 P.untriggeredPowerUnlock = P.tileUnlock:new{name = 'untriggered power supplies', tileIds = {63}, sprite = tiles.untriggeredPowerSupply.sprite}
@@ -198,6 +198,9 @@ P.doorUnlock = P.tileUnlock:new{name = "door unlock", tileIds = {18}, sprite = t
 --we spelled rotator wrong
 P.cornerRotaterUnlock = P.tileUnlock:new{name = "corner rotators", tileIds = {116}, sprite = tiles.cornerRotater.sprite}
 P.infestedWoodUnlock = P.tileUnlock:new{name = "Infested....", tileIds = {199}, sprite = tiles.infestedWood.sprite}
+P.superStickyButtonUnlock = P.tileUnlock:new{name = "Stickier", tileIds = {115}, sprite = tiles.superStickyButton.sprite}
+P.unbrickableStayButtonUnlock = P.tileUnlock:new{name = "Stay-er", tileIds = {120}, sprite = tiles.unbrickableStayButton.sprite}
+
 
 --unlocks to prevent tiles from appearing
 P.lockedTiles = P.tileUnlock:new{name = 'permanentlyLockedTiles', tileIds = {103,104,105,106,107,108,109,110,111,112,113},hidden = true}
@@ -265,6 +268,10 @@ P.meatUnlock = P.unlock:new{name = "Mmmm meaty", toolIds = {tools.meat}, sprite 
 P.rottenMeatUnlock = P.unlock:new{name = "Mmmm rotten and meaty", toolIds = {tools.rottenMeat}, sprite = tools.rottenMeat.image}
 P.explosiveMeatUnlock = P.unlock:new{name = "Mmmm explosive and meaty", toolIds = {tools.explosiveMeat}, sprite = tools.explosiveMeat.image}
 P.nineLivesUnlock = P.unlock:new{name = "Mmmm more lives", toolIds = {tools.nineLives}, sprite = tools.nineLives.image}
+P.foresightUnlock = P.unlock:new{name = "Foreskin", toolIds = {tools.foresight}, sprite = tools.foresight.image}
+P.animalTrainerUnlock = P.unlock:new{name = "Train", toolIds = {tools.animalTrainer}, sprite = tools.animalTrainer.image}
+P.animalEnslaverUnlock = P.unlock:new{name = "Enslave", toolIds = {tools.animalEnslaver}, sprite = tools.animalEnslaver.image}
+
 
 P.roomUnlock = P.unlock:new{name = 'room', roomIds = {"1"}}
 P.beggarPartyUnlock = P.roomUnlock:new{name = 'beggars love you', roomIds = {"beggar_party"}, sprite = tiles.beggar.sprite}
@@ -337,6 +344,9 @@ P[#P+1] = P.fogUnlock --done
 P[#P+1] = P.directionGatesUnlock
 P[#P+1] = P.doorUnlock --done
 P[#P+1] = P.infestedWoodUnlock
+P[#P+1] = P.superStickyButtonUnlock
+P[#P+1] = P.unbrickableStayButtonUnlock
+--P[#P+1] = P.reinforcedGlassUnlock
 --P[#P+1] = P.stickyButtonUnlock
 --P[#P+1] = P.stayButtonUnlock
 
@@ -400,6 +410,9 @@ P[#P+1] = P.meatUnlock
 P[#P+1] = P.rottenMeatUnlock
 P[#P+1] = P.explosiveMeatUnlock
 P[#P+1] = P.nineLivesUnlock
+P[#P+1] = P.foresightUnlock
+P[#P+1] = P.animalTrainerUnlock
+P[#P+1] = P.animalEnslaverUnlock
 
 --rooms
 P[#P+1] = P.beggarPartyUnlock --done

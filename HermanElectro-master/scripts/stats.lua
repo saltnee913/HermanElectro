@@ -16,6 +16,7 @@ P.tempStatsData = {} --stats for each run
 
 P.roomUnlockTriggers = {}
 P.roomUnlockTriggers["wiresCut"] = {[3] = unlocks.unbreakableWires}
+P.roomUnlockTriggers["treasureTilesReached"] = {[5] = unlocks.foresightUnlock}
 
 --these unlock whenever you reach total stats
 P.statUnlockTriggers = {}
@@ -23,6 +24,9 @@ P.statUnlockTriggers["boxesSawed"] = {[11] = unlocks.playerBoxUnlock}
 P.statUnlockTriggers["totalLosses"] = {[3] = unlocks.frederickUnlock}
 P.statUnlockTriggers["totalWins"] = {[3] = unlocks.dungeonUnlock}
 P.statUnlockTriggers["greenBeggarsShot"] = {[10] = unlocks.luckyPennyUnlock}
+P.statUnlockTriggers["stickyButtonsSponged"] = {[30] = unlocks.superStickyButtonUnlock}
+P.statUnlockTriggers["stayButtonsBricked"] = {[30] = unlocks.unbrickableStayButtonUnlock}
+--P.statUnlockTriggers["glassWallsBricked"] = {[30] = unlocks.reinforcedGlassUnlock}
 
 P.statUnlockTriggers["conductiveSnailKilled"] = {[1] = unlocks.lennyUnlock}
 P.statUnlockTriggers["glueSnailKilled"] = {[3] = unlocks.glueUnlock}
@@ -53,7 +57,7 @@ P.statUnlockTriggers["XavierReachFloor6"] = {[1] = unlocks.boxesUnlock}
 
 P.statUnlockTriggers["RammyWins"] = {[1] = unlocks.missileUnlock}
 P.statUnlockTriggers["RammyWinsPlus"] = {[1] = unlocks.infestedWoodUnlock}
-P.statUnlockTriggers["RammyDungeonWins"] = {[1] = unlocks.inflationUnlock}
+P.statUnlockTriggers["RammyDungeonWins"] = {[1] = unlocks.ramUnlock}
 P.statUnlockTriggers["RammyReachFloor6"] = {[1] = unlocks.boxesUnlock}
 
 P.statUnlockTriggers["FishWins"] = {[1] = unlocks.bucketOfWaterUnlock}
@@ -61,7 +65,7 @@ P.statUnlockTriggers["FishWinsPlus"] = {[1] = unlocks.bombBuddyUnlock}
 P.statUnlockTriggers["FishDungeonWins"] = {[1] = unlocks.inflationUnlock}
 P.statUnlockTriggers["FishReachFloor6"] = {[1] = unlocks.boxesUnlock}
 
-P.statUnlockTriggers["BobWins"] = {[1] = unlocks.missileUnlock}
+P.statUnlockTriggers["BobWins"] = {[1] = unlocks.poweredEndUnlock}
 P.statUnlockTriggers["BobWinsPlus"] = {[1] = unlocks.bombBuddyUnlock}
 P.statUnlockTriggers["BobDungeonWins"] = {[1] = unlocks.inflationUnlock}
 P.statUnlockTriggers["BobReachFloor6"] = {[1] = unlocks.boxesUnlock}

@@ -640,8 +640,14 @@ function P.brick:useToolTile(tile)
 	self.numHeld = self.numHeld - 1
 	if tile:instanceof(tiles.glassWall) or tile:instanceof(tiles.hDoor) or tile:instanceof(tiles.reinforcedGlass) then
 		tile:destroy()
+		if tile:instanceof(tiles.glassWall) or tile:instanceof(tiles.reinforcedGlass) then
+			stats.incrementStat('glassWallsBricked')
+		end
 	else
 		tile:lockInState(true)
+		if tile:instanceof(tiles.stayButton) then
+			stats.incrementStat('stayButtonsBricked')
+		end
 		--unlocks:unlockUnlockableRef(unlocks.stayButtonUnlock)
 	end
 end
@@ -711,6 +717,9 @@ function P.sponge:useToolTile(tile, tileY, tileX)
 		else
 			room[tileY][tileX] = tiles.button:new()
 			room[tileY][tileX].bricked = false
+		end
+		if tile:instanceof(tiles.stickyButton) then
+			stats.incrementStat('stickyButtonsSponged')
 		end
 	else
 		room[tileY][tileX] = nil
@@ -3136,10 +3145,14 @@ end
 
 P.luckyPenny = P.coin:new{name = "Lucky Penny", description = "May all your wishes come true", quality = 2, image = 'Graphics/Tools/luckyPenny.png'}
 function P.luckyPenny:useToolTile(tile)
-	self.numHeld = self.numHeld-1
 	if tile:instanceof(tiles.puddle) then
+		self.numHeld = self.numHeld-1
 		player.baseLuckBonus = player.baseLuckBonus+3.5
 	else
+		local willLose = util.random(2,'toolDrop')
+		if willLose==2 then
+			self.numHeld = self.numHeld-1
+		end
 		if tile:instanceof(tiles.toolTaxTile) then
 			if tile.tool==tools.brick then
 				unlocks.unlockUnlockableRef(unlocks.luckyBrickUnlock)
@@ -4540,7 +4553,7 @@ function P.bombPotion:usableOnNothing()
 end
 function P.bombPotion:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld-1
-	util.createHarmlessExplosion(tileY, tileX)
+	util.createHarmlessExplosion(tileY, tileX, 0)
 end
 function P.bombPotion:useToolNothing(tileY, tileX)
 	self:useToolTile(nil, tileY, tileX)
@@ -5046,7 +5059,7 @@ P:addTool(P.gasPourerXtreme)
 P:addTool(P.shift) --Lets talk about this one
 P:addTool(P.glitch) --Epic
 P:addTool(P.rottenMeat)
-P:addTool(P.bouncer) --lol
+--P:addTool(P.bouncer) --lol
 P:addTool(P.block) --Hmmm
 P:addTool(P.supertoolDoubler) -- Ehhh lets talk
 
