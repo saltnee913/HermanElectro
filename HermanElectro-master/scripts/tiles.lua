@@ -1620,12 +1620,12 @@ P.greenBeggar = P.beggar:new{name = "greenBeggar", sprite = 'GraphicsEli/greenOr
 function P.greenBeggar:providePayment()
 	local luckyCoin = util.random(100, 'toolDrop')
 	local ttg = tools.coin
-	if luckyCoin<getLuckBonus() then
+	if luckyCoin<=getLuckBonus() then
 		ttg = tools.luckyPenny
 	end
 
 	unlockedSupertools = unlocks.getUnlockedSupertools()
-	if not unlockedSupertools[tools.luckyPenny] or tools.luckyPenny.isDisabled then
+	if not unlockedSupertools[tools.luckyPenny.toolid] or tools.luckyPenny.isDisabled then
 		ttg = tools.coin
 	end
 

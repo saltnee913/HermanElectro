@@ -107,6 +107,7 @@ function P.updateUnlockedSupertools()
 		if unlock.toolIds ~= nil and unlock.unlocked == false then
 			for k = 1, #unlock.toolIds do
 				if unlockedSupertools[unlock.toolIds[k].toolid] ~= nil then
+					print("aaa")
 					unlockedSupertools[unlock.toolIds[k].toolid] = false
 				end
 			end
@@ -114,9 +115,7 @@ function P.updateUnlockedSupertools()
 	end
 end
 function P.getUnlockedSupertools()
-	if unlockedSupertools == nil then
-		P.updateUnlockedSupertools()
-	end
+	P.updateUnlockedSupertools()
 	return unlockedSupertools
 end
 function P.isDungeonUnlocked()

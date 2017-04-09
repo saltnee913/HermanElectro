@@ -2306,7 +2306,7 @@ function love.draw()
 		end
 	end
 
-	if not editorMode and floorIndex>=1 then
+	if not editorMode --[[and floorIndex>=1]] then
 		love.graphics.setNewFont(fontSize)
 		for i = 0, 6 do
 			love.graphics.setColor(255,255,255)
@@ -4441,7 +4441,7 @@ function onToolUse(tool)
 		if mainMap[mapy][mapx].toolsUsed[i]>tools.numNormalTools and mainMap[mapy][mapx].toolsUsed[i]~=tool then
 			unlockBlank = true
 		end
-		if mainMap[mapy][mapx].toolsUsed[i]<=tools.numNormalTools then
+		if mainMap[mapy][mapx].toolsUsed[i]<=tools.numNormalTools and mainMap[mapy][mapx].toolsUsed[i]>0 then
 			basicsUsed[mainMap[mapy][mapx].toolsUsed[i]] = basicsUsed[mainMap[mapy][mapx].toolsUsed[i]]+1
 		end
 	end

@@ -3145,10 +3145,14 @@ end
 
 P.luckyPenny = P.coin:new{name = "Lucky Penny", description = "May all your wishes come true", quality = 2, image = 'Graphics/Tools/luckyPenny.png'}
 function P.luckyPenny:useToolTile(tile)
-	self.numHeld = self.numHeld-1
 	if tile:instanceof(tiles.puddle) then
+		self.numHeld = self.numHeld-1
 		player.baseLuckBonus = player.baseLuckBonus+3.5
 	else
+		local willLose = util.random(2,'toolDrop')
+		if willLose==2 then
+			self.numHeld = self.numHeld-1
+		end
 		if tile:instanceof(tiles.toolTaxTile) then
 			if tile.tool==tools.brick then
 				unlocks.unlockUnlockableRef(unlocks.luckyBrickUnlock)
