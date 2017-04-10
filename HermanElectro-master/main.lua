@@ -623,6 +623,7 @@ function goUpFloor()
 		floorIndex = floorIndex - 1
 		map.floorInfo = mapToLoad.floorInfo
 		mainMap = mapToLoad.map
+		mapHeight = mapToLoad.mapHeight
 
 		mapx = stairsLocs[floorIndex].map.x
 		mapy = stairsLocs[floorIndex].map.y
