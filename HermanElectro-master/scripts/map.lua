@@ -1144,6 +1144,7 @@ function P.generateSixthFloor()
 	blacklist[#blacklist+1] = startRoomID
 	local randomRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.rooms, 'mapGen', blacklist)
 	local randomRoomsArray = removeSets(randomRoomsArray)
+	numRooms = math.min(numRooms, #randomRoomsArray) --hack to make end dungeon not crash (if we don't have enough rooms we can reuse)
 	local randomTreasureRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.treasureRooms, 'mapGen')
 	local randomFinalRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.finalRooms, 'mapGen')
 	local randomDonationRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.donationRooms, 'mapGen')
