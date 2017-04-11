@@ -3150,8 +3150,15 @@ function P.luckyPenny:useToolTile(tile)
 		player.baseLuckBonus = player.baseLuckBonus+3.5
 	else
 		local willLose = util.random(2,'toolDrop')
+
 		if willLose==2 then
-			self.numHeld = self.numHeld-1
+			local changeLose = util.random(50, 'toolDrop')
+			if changeLose<getLuckBonus() then
+				willLose = 1
+			end
+			if willLose==2 then
+				self.numHeld = self.numHeld-1
+			end
 		end
 		if tile:instanceof(tiles.toolTaxTile) then
 			if tile.tool==tools.brick then
