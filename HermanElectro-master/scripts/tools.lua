@@ -63,6 +63,14 @@ function P.giveTools(toolArray)
 			end
 		end
 	end
+
+	if tools.portalPlacer.numHeld>1 then
+		unlocks.unlockUnlockableRef(unlocks.portalPlacerDoubleUnlock)
+	end
+	if tools.opPotion.numHeld>1 then
+		unlocks.unlockUnlockableRef(unlocks.ironManUnlock)
+	end
+
 	--[[if tools.revive.numHeld>=9 then
 		unlocks.unlockUnlockableRef(unlocks.suicideKingUnlock)
 	end]]
@@ -551,6 +559,9 @@ function P.wireCutters:useToolTile(tile)
 			unlocks.unlockUnlockableRef(unlocks.cornerRotaterUnlock)
 		end
 	end
+	if tile:instanceof(tiles.wire) then
+		stats.incrementStat('wiresCut')
+	end
 
 end
 function P.wireCutters:useToolPushable(pushable)
@@ -629,8 +640,14 @@ function P.brick:useToolTile(tile)
 	self.numHeld = self.numHeld - 1
 	if tile:instanceof(tiles.glassWall) or tile:instanceof(tiles.hDoor) or tile:instanceof(tiles.reinforcedGlass) then
 		tile:destroy()
+		if tile:instanceof(tiles.glassWall) or tile:instanceof(tiles.reinforcedGlass) then
+			stats.incrementStat('glassWallsBricked')
+		end
 	else
 		tile:lockInState(true)
+		if tile:instanceof(tiles.stayButton) then
+			stats.incrementStat('stayButtonsBricked')
+		end
 		--unlocks:unlockUnlockableRef(unlocks.stayButtonUnlock)
 	end
 end
@@ -647,11 +664,12 @@ function P.gun:usableOnAnimal(animal)
 	return not animal.dead
 end
 function P.gun:usableOnTile(tile)
-	if tile:instanceof(tiles.wall) and not tile:instanceof(tiles.concreteWall) and not tile:instanceof(tiles.glassWall) and not tile.destroyed then
+	--[[if tile:instanceof(tiles.wall) and not tile:instanceof(tiles.concreteWall) and not tile:instanceof(tiles.glassWall) and not tile.destroyed then
 		if tile.blocksVision then
 			return true
 		end
-	elseif tile:instanceof(tiles.beggar) and tile.alive then
+	end]]
+	if tile:instanceof(tiles.beggar) and tile.alive then
 		return true
 	end
 	return false
@@ -699,6 +717,9 @@ function P.sponge:useToolTile(tile, tileY, tileX)
 		else
 			room[tileY][tileX] = tiles.button:new()
 			room[tileY][tileX].bricked = false
+		end
+		if tile:instanceof(tiles.stickyButton) then
+			stats.incrementStat('stickyButtonsSponged')
 		end
 	else
 		room[tileY][tileX] = nil
@@ -855,14 +876,14 @@ function P.delectrifier:useToolTile(tile)
 		tile.overlay.canBePowered = false
 		if tile.overlay:instanceof(tiles.powerSupply) or tile.overlay:instanceof(tiles.notGate) or tile.overlay:instanceof(tiles.wire) then tile.overlay:destroy() end
 	end
-	if player.character == characters.monk and tile:instanceof(tiles.lamp) then
+	--[[if player.character == characters.monk and tile:instanceof(tiles.lamp) then
 		for i = 1, 3 do
 			player.character.tint[i] = 0
 		end
 	    myShader:send("tint_r", player.character.tint[1])
 	    myShader:send("tint_g", player.character.tint[2])
 	    myShader:send("tint_b", player.character.tint[3])
-	end
+	end]]
 end
 
 P.charger = P.superTool:new{name = 'Energizer', description = "Power to the People", baseRange = 1, image = 'Graphics/charger.png', quality = 4}
@@ -1448,7 +1469,8 @@ function P.laser:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld-1
 end
 
-P.icegun = P.superTool:new{name = "Freeze Ray", description = "Piercing permafrost", baseRange = 100, image = 'Graphics/icegun.png', quality = 2}
+P.icegun = P.superTool:new{name = "Freeze Ray", description = "Piercing permafrost", baseRange = 5,
+image = 'Graphics/icegun.png', quality = 2}
 function P.icegun:usableOnTile()
 	return true
 end
@@ -1461,6 +1483,14 @@ local function iceDogs(tileY, tileX)
 				  (tileY < player.tileY and animals[i].tileY < player.tileY) then 
 					if not animals[i].dead then
 						animals[i].frozen = true
+						local freezeChance = util.random(3, 'misc')
+						if freezeChance == 1 then
+							animals[i]:kill()
+							local toSpawn = pushableList.iceBox:new()
+							toSpawn.tileY = animals[i].tileY
+							toSpawn.tileX = animals[i].tileX
+							pushables[#pushables+1] = toSpawn
+						end
 					end
 				end
 			end
@@ -1472,6 +1502,14 @@ local function iceDogs(tileY, tileX)
 				  (tileX < player.tileX and animals[i].tileX < player.tileX) then
 					if not animals[i].dead then
 						animals[i].frozen = true
+						local freezeChance = util.random(3, 'misc')
+						if freezeChance == 1 then
+							animals[i]:kill()
+							local toSpawn = pushableList.iceBox:new()
+							toSpawn.tileY = animals[i].tileY
+							toSpawn.tileX = animals[i].tileX
+							pushables[#pushables+1] = toSpawn
+						end
 					end
 				end
 			end
@@ -1846,11 +1884,10 @@ function P.revive:checkDeath()
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
 			if room[i][j]~=nil then
-				if not room[i][j]:instanceof(tiles.endTile) and not room[i][j]:instanceof(tiles.tunnel) then
-					room[i][j]=tiles.invisibleTile:new()
-				end
 				if room[i][j]:instanceof(tiles.poweredEnd) then
 					room[i][j]=tiles.endTile:new()
+				elseif not room[i][j]:instanceof(tiles.endTile) and not room[i][j]:instanceof(tiles.tunnel) then
+					room[i][j]=nil
 				end
 			end
 		end
@@ -1862,9 +1899,15 @@ function P.revive:checkDeath()
 	for j = 1, #pushables do
 		pushables[j]:destroy()
 	end
+	for i = 1, #bossList do
+		bossList[i]:kill()
+	end
 	spotlights = {}
 	updateGameState(false)
 	log("Revived!")
+	if player.character:instanceof(characters.herman) then
+		stats.incrementStat("hermanRevivesUsed")
+	end
 
 	return false
 end
@@ -2738,7 +2781,7 @@ end
 P.inflation.usableOnTile = P.inflation.usableOnNothing
 function P.inflation:useToolNothing()
 	self.numHeld = self.numHeld-1
-	tools.coin.numHeld = tools.coin.numHeld*2
+	tools.coin.numHeld = math.ceil(tools.coin.numHeld*1.5)
 end
 P.inflation.useToolTile = P.inflation.useToolNothing
 
@@ -3102,10 +3145,14 @@ end
 
 P.luckyPenny = P.coin:new{name = "Lucky Penny", description = "May all your wishes come true", quality = 2, image = 'Graphics/Tools/luckyPenny.png'}
 function P.luckyPenny:useToolTile(tile)
-	self.numHeld = self.numHeld-1
 	if tile:instanceof(tiles.puddle) then
+		self.numHeld = self.numHeld-1
 		player.baseLuckBonus = player.baseLuckBonus+3.5
 	else
+		local willLose = util.random(2,'toolDrop')
+		if willLose==2 then
+			self.numHeld = self.numHeld-1
+		end
 		if tile:instanceof(tiles.toolTaxTile) then
 			if tile.tool==tools.brick then
 				unlocks.unlockUnlockableRef(unlocks.luckyBrickUnlock)
@@ -3305,7 +3352,7 @@ function P.boxCloner:useToolTile(tile, tileY, tileX)
 	self.image = self.baseImage
 end
 
-P.tilePusher = P.superTool:new{name = "tilePusher", description = "Pushy, pushy", --[[or "Truly repulsive"]]image = 'Graphics/shovel.png', baseRange = 3, quality = 3}
+P.tilePusher = P.superTool:new{name = "Daily Supplements", description = "Pushy, pushy", --[[or "Truly repulsive"]]image = 'Graphics/shovel.png', baseRange = 3, quality = 3}
 function P.tilePusher:usableOnTile(tile, tileY, tileX)
 	local useLoc = {x = 0, y = 0}
 	if player.tileX==tileX then
@@ -3400,7 +3447,7 @@ end
 P.spinningSword.useToolTile = P.spinningSword.useToolNothing
 
 
-P.ironMan = P.superTool:new{name = "Daily Supplements", description = "Do you even lift?", image = 'Graphics/ironman.png',
+P.ironMan = P.superTool:new{name = "Steroids", description = "Do you even lift?", image = 'Graphics/ironman.png',
 baseRange = 1, quality = 4}
 function P.ironMan:usableOnTile(tile)
 	local tileY
@@ -4506,7 +4553,7 @@ function P.bombPotion:usableOnNothing()
 end
 function P.bombPotion:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld-1
-	util.createHarmlessExplosion(tileY, tileX)
+	util.createHarmlessExplosion(tileY, tileX, 0)
 end
 function P.bombPotion:useToolNothing(tileY, tileX)
 	self:useToolTile(nil, tileY, tileX)
@@ -5012,7 +5059,7 @@ P:addTool(P.gasPourerXtreme)
 P:addTool(P.shift) --Lets talk about this one
 P:addTool(P.glitch) --Epic
 P:addTool(P.rottenMeat)
-P:addTool(P.bouncer) --lol
+--P:addTool(P.bouncer) --lol
 P:addTool(P.block) --Hmmm
 P:addTool(P.supertoolDoubler) -- Ehhh lets talk
 

@@ -3,14 +3,121 @@ toolManuel = P
 
 P.opened = false
 
-P.mainScreen = love.graphics.newImage('NewGraphics/MenuTemplateA.png')
-P.manuelTint = love.graphics.newImage('NewGraphics/manuelTint.png')
-P.tabBG = love.graphics.newImage('NewGraphics/manuelTabBG.png')
-P.tabBGSelected = love.graphics.newImage('NewGraphics/manuelTabSelectedBG.png')
+P.mainScreen = 'NewGraphics/MenuTemplateA.png'
+P.manuelTint = 'NewGraphics/manuelTint.png'
+P.tabBG = 'NewGraphics/manuelTabBG.png'
+P.tabBGSelected = 'NewGraphics/manuelTabSelectedBG.png'
 
-P.sawScreens = {love.graphics.newImage('NewGraphics/SawTutA.png')}
-P.ladderScreens = {love.graphics.newImage('NewGraphics/LadderTutA.png'), love.graphics.newImage('NewGraphics/LadderTutB.png')}
-P.wireCutterScreens = {love.graphics.newImage('NewGraphics/WireTutA.png'), love.graphics.newImage('NewGraphics/WireTutB.png')}
+local scale = {x = width/util.getImage(P.mainScreen):getWidth(), y = height/util.getImage(P.mainScreen):getHeight()}
+local function drawHere(image, x, y, rotation)
+	if rotation == nil then rotation = 0 end
+	love.graphics.draw(util.getImage(image), x*scale.x, y*scale.y, rotation, scale.x, scale.y)
+end
+local function drawAtTile(image, tileX, tileY, x, y, yOffset, rotation)
+	if yOffset == nil then yOffset = 0 end
+	drawHere(image, x + tileX*tileWidth, y + tileY*tileHeight + yOffset, rotation)
+end
+local function drawGreen(tileX, tileY, x, y, yOffset)
+	if yOffset == nil then yOffset = 0 end
+	love.graphics.draw(util.getImage(green), (x+tileWidth*tileX)*scale.x, (y+tileHeight*tileY+yOffset)*scale.y, rotation, scale.x, scale.y*(16-yOffset)/16)
+end
+
+P.sawScreens = {
+	function(x, y, scale)
+		drawAtTile(tiles.wall.sprite, 1, 0, x, y, tiles.wall.yOffset)
+		drawAtTile(player.character.sprite, 0, 0, x, y)
+		drawGreen(1, 0, x, y, tiles.wall.yOffset)
+
+		drawAtTile(tiles.wall.destroyedSprite, 8, 0, x, y)
+		drawAtTile(player.character.sprite, 7, 0, x, y)
+	end,
+	function(x, y, scale)
+		drawAtTile(tiles.metalWall.sprite, 1, 0, x, y, tiles.metalWall.yOffset)
+		drawAtTile(player.character.sprite, 0, 0, x, y)
+		drawGreen(1, 0, x, y, tiles.metalWall.yOffset)
+
+		drawAtTile(tiles.metalWall.destroyedSprite, 8, 0, x, y)
+		drawAtTile(player.character.sprite, 7, 0, x, y)
+
+
+		drawAtTile(tiles.powerSupply.sprite, 1, 4, x, y)
+		drawAtTile(tiles.metalWall.poweredSprite, 1, 5, x, y, tiles.metalWall.yOffset)
+		drawAtTile(tiles.verticalWire.poweredSprite, 1, 6, x, y)
+		drawAtTile(player.character.sprite, 0, 5, x, y)
+		drawGreen(1, 5, x, y, tiles.metalWall.yOffset)
+
+		drawAtTile(tiles.powerSupply.sprite, 8, 4, x, y)
+		drawAtTile(tiles.metalWall.destroyedSprite, 8, 5, x, y)
+		drawAtTile(tiles.verticalWire.sprite, 8, 6, x, y)
+		drawAtTile(player.character.sprite, 7, 5, x, y)
+	end,
+	function(x, y, scale)
+		drawAtTile(pushableList.box.sprite, 1, 0, x, y)
+		drawAtTile(player.character.sprite, 0, 0, x, y)
+		drawGreen(1, 0, x, y)
+
+		drawAtTile(player.character.sprite, 7, 0, x, y)
+	end
+}
+
+P.ladderScreens = {
+	function(x, y, scale)
+		drawAtTile(tiles.pit.sprite, 1, 0, x, y)
+		drawAtTile(player.character.sprite, 0, 0, x, y)
+		drawGreen(1, 0, x, y)
+
+		drawAtTile(tiles.pit.destroyedSprite, 8, 0, x, y)
+		drawAtTile(player.character.sprite, 7, 0, x, y)
+
+
+		drawAtTile(tiles.poweredFloor.sprite, 1, 4, x, y)
+		drawAtTile(player.character.sprite, 0, 4, x, y)
+		drawGreen(1, 4, x, y)
+
+		drawAtTile(tiles.poweredFloor.destroyedSprite, 8, 4, x, y)
+		drawAtTile(player.character.sprite, 7, 4, x, y)
+	end,
+	function(x, y, scale)
+		drawAtTile(animalList.pitbull.sprite, 3, 0, x, y)
+		drawAtTile(player.character.sprite, 1, 0, x, y)
+		drawGreen(2, 0, x, y)
+
+		drawAtTile(tiles.ladder.sprite, 9, 0, x, y)
+		drawAtTile(animalList.pitbull.sprite, 10, 0, x, y)
+		drawAtTile(player.character.sprite, 8, 0, x, y)
+
+		drawAtTile(tiles.ladder.sprite, 2, 4, x, y)
+		drawAtTile(animalList.pitbull.sprite, 3, 4, x, y)
+		drawAtTile(player.character.sprite, 0, 4, x, y)
+
+		drawAtTile(tiles.ladder.sprite, 9, 4, x, y)
+		drawAtTile(animalList.pitbull.sprite, 10, 4, x, y)
+		drawAtTile(player.character.sprite, 9, 4, x, y)
+	end
+}
+
+P.wireCutterScreens = {
+	function(x, y, scale)
+		drawAtTile(tiles.verticalWire.sprite, 1, 0, x, y)
+		drawAtTile(player.character.sprite, 0, 0, x, y)
+		drawGreen(1, 0, x, y)
+
+		drawAtTile(tiles.verticalWire.destroyedSprite, 8, 0, x, y)
+		drawAtTile(player.character.sprite, 7, 0, x, y)
+
+
+		drawAtTile(tiles.powerSupply.sprite, 1, 4, x, y)
+		drawAtTile(tiles.verticalWire.poweredSprite, 1, 5, x, y)
+		drawAtTile(tiles.verticalWire.poweredSprite, 1, 6, x, y)
+		drawAtTile(player.character.sprite, 0, 5, x, y)
+		drawGreen(1, 5, x, y)
+
+		drawAtTile(tiles.powerSupply.sprite, 8, 4, x, y)
+		drawAtTile(tiles.verticalWire.destroyedSprite, 8, 5, x, y)
+		drawAtTile(tiles.verticalWire.sprite, 8, 6, x, y)
+		drawAtTile(player.character.sprite, 7, 5, x, y)
+	end
+}
 P.waterScreens = {}
 P.spongeScreens = {}
 P.brickScreens = {}
@@ -22,15 +129,14 @@ P.screenLevel = 1
 
 function P.draw()
 	local screen = P.screens[P.currentScreen][P.screenLevel]
-	local scale = {x = width/P.mainScreen:getWidth(), y = height/P.mainScreen:getHeight()}
-	love.graphics.draw(P.mainScreen, 0, 0, 0, scale.x, scale.y)
-	love.graphics.draw(screen, 22*scale.x, 64*scale.y, 0, scale.x, scale.y)
-	love.graphics.draw(P.manuelTint, (40*P.currentScreen-18)*scale.x, (5)*scale.y, 0, scale.x, scale.y)
+	drawHere(P.mainScreen, 0, 0)
+	screen(30, 70, scale)
+	drawHere(P.manuelTint, 40*P.currentScreen-18, 5)
 	for i = 1, #(P.screens[P.currentScreen]) do
 		if P.screenLevel == i then
-			love.graphics.draw(P.tabBGSelected, 4*scale.x, (40+26*i)*scale.y, 0, scale.x, scale.y)
+			drawHere(P.tabBGSelected, 4, 40+26*i)
 		else
-			love.graphics.draw(P.tabBG, 4*scale.x, (40+26*i)*scale.y, 0, scale.x, scale.y)
+			drawHere(P.tabBG, 4, 40+26*i)
 		end
 	end
 end

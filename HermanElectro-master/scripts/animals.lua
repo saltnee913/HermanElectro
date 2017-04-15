@@ -100,7 +100,7 @@ function P.animal:pushableCheck()
 end
 
 function P.animal:secondaryMove(playerx, playery)
-	if player.attributes.shelled or player.attributes.invisible or player.attributes.timeFrozen then
+	if player.attributes.shelled or player.attributes.invisible or player.attributes.timeFrozen or self.frozen then
 		return
 	end
 	if player.character.name == "Leonard" and player.character.scaryMode == true then
@@ -173,6 +173,11 @@ function P.animal:checkDeath()
 			self:kill()
 		end
 	end
+	for i = 1, #bossList do
+		if bossList[i]:willKillAnimal(self) then
+			self:kill()
+		end
+	end
 end
 function P.animal:hasMoved()
 	return self.prevTileX ~= self.tileX or self.prevTileY ~= self.tileY
@@ -196,6 +201,11 @@ function P.animal:kill()
 			self:dropTool()
 		end
 	end
+
+	stats.incrementStat(self.name..'Killed')
+	stats.incrementStat('animalsKilled')
+end
+function P.animal:specificKill()
 end
 function P.animal:update()
 	--checkBoundaries()
@@ -356,23 +366,6 @@ P.snail = P.animal:new{name = "snail", sprite = 'NewGraphics/snailDesign.png', d
 function P.snail:onNullLeave()
 	return tiles.slime:new()
 end
-function P.snail:kill()
-	if self.dead then return end
-	self.dead = true
-	self.sprite = self.deadSprite
-	if self.canDropTool and not self.willDropTool then
-		local bonusDropChance = util.random(100, 'toolDrop')
-		if bonusDropChance<=getLuckBonus() then
-			self.willDropTool = true
-		end
-	end
-	if self.willDropTool and (room[self.tileY][self.tileX]==nil or room[self.tileY][self.tileX].destroyed
-	or room[self.tileY][self.tileX]:instanceof(tiles.pitbullTile)) then
-		self:dropTool()
-	end
-	unlocks = require('scripts.unlocks')
-	unlocks.unlockUnlockableRef(unlocks.conductiveSnailsUnlock)
-end
 function P.snail:dropTool()
 	if tools.dropTool(tools.shell, self.tileY, self.tileX) then
 		return
@@ -383,44 +376,11 @@ P.conductiveSnail = P.snail:new{name = "conductiveSnail", sprite = 'NewGraphics/
 function P.conductiveSnail:onNullLeave()
 	return tiles.conductiveSlime:new()
 end
-function P.conductiveSnail:kill()
-	if self.dead then return end
-	self.dead = true
-	self.sprite = self.deadSprite
-	if self.canDropTool and not self.willDropTool then
-		local bonusDropChance = util.random(100, 'toolDrop')
-		if bonusDropChance<=getLuckBonus() then
-			self.willDropTool = true
-		end
-	end
-	if self.willDropTool and (room[self.tileY][self.tileX]==nil or room[self.tileY][self.tileX].destroyed
-	or room[self.tileY][self.tileX]:instanceof(tiles.pitbullTile)) then
-		self:dropTool()
-	end
-	unlocks = require('scripts.unlocks')
-	unlocks.unlockUnlockableRef(unlocks.lennyUnlock)
-end
+
 
 P.glueSnail = P.snail:new{name = "glueSnail", sprite = 'Graphics/gluesnail.png'}
 function P.glueSnail:onNullLeave()
 	return tiles.glue:new()
-end
-function P.glueSnail:kill()
-	if self.dead then return end
-	self.dead = true
-	self.sprite = self.deadSprite
-	unlocks.unlockUnlockableRef(unlocks.glueUnlock)
-
-	if self.canDropTool and not self.willDropTool then
-		local bonusDropChance = util.random(100, 'toolDrop')
-		if bonusDropChance<=getLuckBonus() then
-			self.willDropTool = true
-		end
-	end
-	if self.willDropTool and (room[self.tileY][self.tileX]==nil or room[self.tileY][self.tileX].destroyed
-	or room[self.tileY][self.tileX]:instanceof(tiles.pitbullTile)) then
-		self:dropTool()
-	end
 end
 
 P.bat = P.animal:new{flying = true, name = "bat", sprite = 'Graphics/bat.png', deadSprite = 'Graphics/pupdead.png'}

@@ -71,7 +71,7 @@ function P.draw()
 		toDraw = util.getImage(tileSet[i]:getEditorSprite())
 		love.graphics.draw(toDraw, (i-1)*width/50+editor.leftStartDist, height-3.2*width/50+32, 0, (width/50)/(tileWidth)*16/toDraw:getWidth(), (width/50)/(tileWidth)*16/toDraw:getWidth())
 		if tiles[editorAdd]~=nil and tiles[editorAdd].name==tileSet[i].name then
-			love.graphics.draw(green, (i-1)*width/50+editor.leftStartDist, height-3.2*width/50+32, 0, (width/50)/(tileWidth)*16/toDraw:getWidth(), (width/50)/(tileWidth)*16/toDraw:getWidth())
+			love.graphics.draw(util.getImage(green), (i-1)*width/50+editor.leftStartDist, height-3.2*width/50+32, 0, (width/50)/(tileWidth)*16/toDraw:getWidth(), (width/50)/(tileWidth)*16/toDraw:getWidth())
 		end
 	end
 
@@ -237,6 +237,7 @@ function P.keypressed(key, unicode)
     	animals = {}
     	pushables = {}
     	spotlights = {}
+    	bossList = {}
     end
 	if key == "z" and prevRoom~=nil then
     	room = prevRoom
@@ -254,6 +255,7 @@ function P.keypressed(key, unicode)
     	animals = savedAnimals
     elseif key == "l" then
 		P.visionHack = not P.visionHack
+	elseif key == "h" then win()
     elseif key == "=" then
     	--unlock everything
     	for i = 1, #unlocks do

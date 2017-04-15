@@ -46,10 +46,19 @@ function P.spotlight:onPlayer()
 end
 
 function P.spotlight:checkBounds()
-	if self.y<tileToCoords(1,1).y then self.dir=2
-	elseif self.y>tileToCoords(roomHeight, 1).y then self.dir=0
-	elseif self.x<tileToCoords(1,1).x then self.dir=1
-	elseif self.x>tileToCoords(1, roomLength).x then self.dir=3 end
+	if self.y<tileToCoords(1,1).y then
+		self.dir=2
+		self.y = tileToCoords(1,1).y+(tileToCoords(1,1).y-self.y)
+	elseif self.y>tileToCoords(roomHeight, 1).y then
+		self.dir=0
+		self.y = tileToCoords(roomHeight, 1).y-(self.y-tileToCoords(roomHeight,1).y)
+	elseif self.x<tileToCoords(1,1).x then
+		self.dir=1
+		self.x = tileToCoords(1,1).x+(tileToCoords(1,1).x-self.x)
+	elseif self.x>tileToCoords(1, roomLength).x then
+		self.dir=3
+		self.x = tileToCoords(1, roomLength).x-(self.x-tileToCoords(1,roomLength).x)
+	end
 	return true
 end
 

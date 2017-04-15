@@ -282,7 +282,8 @@ function P.loadFloor(inFloorFile)
     myShader:send("floorTint_r", map.floorInfo.tint[1])
     myShader:send("floorTint_g", map.floorInfo.tint[2])
     myShader:send("floorTint_b", map.floorInfo.tint[3])
-    myShader:send("player_range", map.floorInfo.playerRange)
+    --myShader:send("player_range", map.floorInfo.playerRange)
+    --player.range = map.floorInfo.playerRange
     map.flipRooms('rooms')
 end
 
@@ -303,7 +304,8 @@ function P.loadCustomRooms(fileLoc)
     myShader:send("floorTint_r", map.floorInfo.tint[1])
     myShader:send("floorTint_g", map.floorInfo.tint[2])
     myShader:send("floorTint_b", map.floorInfo.tint[3])
-    myShader:send("player_range", map.floorInfo.playerRange)
+    --myShader:send("player_range", map.floorInfo.playerRange)
+    --player.range = map.floorInfo.playerRange
     map.flipRooms('rooms')
 end
 
@@ -325,7 +327,9 @@ local function flipRoomVertical(roomLayout)
 					local tileInd = math.floor(toRet[i][j][1])
 					local tile = tiles[tileInd]
 					local rot = math.floor(10*(toRet[i][j][1]-tileInd+0.01))
-					toRet[i][j][1] = toRet[i][j][1] + tile.flipDirection(rot,true)/10
+					if tile == nil then toRet[i][j] = 0 else
+						toRet[i][j][1] = toRet[i][j][1] + tile.flipDirection(rot,false)/10
+					end
 					if type(toRet[i][j][2]) == 'number' then
 						local overInd = math.floor(toRet[i][j][2])
 						local overRot = math.floor(10*(toRet[i][j][2]-overInd+0.01))
@@ -358,7 +362,9 @@ local function flipRoomHorizontal(roomLayout)
 					local tileInd = math.floor(toRet[i][j][1])
 					local tile = tiles[tileInd]
 					local rot = math.floor(10*(toRet[i][j][1]-tileInd+0.01))
-					toRet[i][j][1] = toRet[i][j][1] + tile.flipDirection(rot,false)/10
+					if tile == nil then toRet[i][j] = 0 else
+						toRet[i][j][1] = toRet[i][j][1] + tile.flipDirection(rot,false)/10
+					end
 					if type(toRet[i][j][2]) == 'number' then
 						local overInd = math.floor(toRet[i][j][2])
 						local overRot = math.floor(10*(toRet[i][j][2]-overInd+0.01))
@@ -812,6 +818,9 @@ function P.generateMapStandard()
 
 	if map.floorInfo.tint == nil then
 		map.floorInfo.tint = {0,0,0}
+		--[[myShader:send("tint_r", globalTint[1])
+		myShader:send("tint_g", globalTint[2])
+		myShader:send("tint_b", globalTint[3])]]
 	end
 	if map.floorInfo.playerRange == nil then
 		map.floorInfo.playerRange = 200
@@ -819,7 +828,8 @@ function P.generateMapStandard()
     myShader:send("floorTint_r", map.floorInfo.tint[1])
     myShader:send("floorTint_g", map.floorInfo.tint[2])
     myShader:send("floorTint_b", map.floorInfo.tint[3])
-    myShader:send("player_range", map.floorInfo.playerRange)
+    --myShader:send("player_range", map.floorInfo.playerRange)
+    --player.range = map.floorInfo.playerRange
 
 	--printMap(newmap)
 	return newmap
@@ -1134,6 +1144,7 @@ function P.generateSixthFloor()
 	blacklist[#blacklist+1] = startRoomID
 	local randomRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.rooms, 'mapGen', blacklist)
 	local randomRoomsArray = removeSets(randomRoomsArray)
+	numRooms = math.min(numRooms, #randomRoomsArray) --hack to make end dungeon not crash (if we don't have enough rooms we can reuse)
 	local randomTreasureRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.treasureRooms, 'mapGen')
 	local randomFinalRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.finalRooms, 'mapGen')
 	local randomDonationRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.donationRooms, 'mapGen')
@@ -1553,7 +1564,8 @@ function P.generateMapFromJSON()
     myShader:send("floorTint_r", map.floorInfo.tint[1])
     myShader:send("floorTint_g", map.floorInfo.tint[2])
     myShader:send("floorTint_b", map.floorInfo.tint[3])
-    myShader:send("player_range", map.floorInfo.playerRange)
+    --myShader:send("player_range", map.floorInfo.playerRange)
+    --player.range = map.floorInfo.playerRange
 	newmap[0] = {}
 	printMap(newmap)
 	return newmap

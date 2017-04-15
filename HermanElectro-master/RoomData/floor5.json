@@ -119,7 +119,7 @@
 	"data":
 	{
 		"requireUnlocks": true,
-		"height": 10,
+		"height": 12,
 		"numRooms": 9,
 		"generateFunction": "generateMapWeighted",
 		"startRoomID": "1",
