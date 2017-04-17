@@ -17152,7 +17152,8 @@
           [
             [0,0,0,1,0,0,0],
             [0,2,0,0,0,0,0]],
-        "set": "two_concrete_boxes_ice"
+        "set": "two_concrete_boxes_ice",
+        "dumb": true
       },
 
       "puddle_and_portal_1":
