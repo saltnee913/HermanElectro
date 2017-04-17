@@ -64,6 +64,7 @@ P.basicTiles[#P.basicTiles+1] = tiles.treasureTile3
 P.basicTiles[#P.basicTiles+1] = tiles.treasureTile4
 
 P.advancedTiles[#P.advancedTiles+1] = tiles.spikes
+P.advancedTiles[#P.advancedTiles+1] = tiles.breakablePit
 P.advancedTiles[#P.advancedTiles+1] = tiles.entrancePortal
 P.advancedTiles[#P.advancedTiles+1] = tiles.exitPortal
 P.advancedTiles[#P.advancedTiles+1] = tiles.crossWire

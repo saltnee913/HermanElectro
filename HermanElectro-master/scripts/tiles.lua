@@ -436,7 +436,7 @@ end
 P.stickyButton.onEnterAnimal = P.stickyButton.onEnter
 P.stickyButton.onLeaveAnimal = P.stickyButton.onLeave
 
-P.stayButton = P.button:new{name = "stayButton", updatePowerOnLeave = true, 
+P.stayButton = P.button:new{name = "stayButton", updatePowerOnLeave = true,
   sprite = 'GraphicsEli/buttonOff3.png', 
   upSprite = 'GraphicsEli/buttonOff3.png', 
   downSprite = 'GraphicsEli/buttonOn3.png', 
@@ -458,14 +458,15 @@ function P.stayButton:onLeave(player)
 		self:updateSprite()
 	end
 	self.justPressed = false
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]==self then
+				self:checkDeadAnimalPresence(i,j)
+			end
+		end
+	end
 end
-function P.stayButton:postPowerUpdate(i,j)
-	if player.character.name == "Orson" and player.character.shifted then return end
-	self.down = false
-	self.dirAccept = {0,0,0,0}
-	self.justPressed = false
-	--updateGameState()
-	self:updateSprite()
+function P.stayButton:checkDeadAnimalPresence(i,j)
 	for k = 1, #animals do
 		if animals[k].dead and not animals[k].pickedUp then
 			if animals[k].tileX == j and animals[k].tileY == i then
@@ -476,6 +477,15 @@ function P.stayButton:postPowerUpdate(i,j)
 			end
 		end
 	end
+end
+function P.stayButton:postPowerUpdate(i,j)
+	if player.character.name == "Orson" and player.character.shifted then return end
+	self.down = false
+	self.dirAccept = {0,0,0,0}
+	self.justPressed = false
+	--updateGameState()
+	self:updateSprite()
+	self:checkDeadAnimalPresence(i,j)
 	for k = 1, #animals do
 		if not animals[k].dead then
 			if animals[k].tileX == j and animals[k].tileY == i then
@@ -1123,49 +1133,6 @@ end
 
 P.concreteWall = P.wall:new{sawable = false, name = "concreteWall",
 sprite = 'GraphicsColor/concretewall3.png', destroyedSprite = 'Graphics/concretewallbroken.png', sawable = false}
-function P.wall:onLoad()
-	local dungeonChance = util.random(100, 'misc')
-	if dungeonChance==1 then
-		self.hidesDungeon = true
-	end
-end
-function P.concreteWall:destroy()
-	self.blocksProjectiles = false
-	self.blocksVision = false
-	self.sprite = self.destroyedSprite
-	self.destroyed = true
-	self.blocksMovement = false
-	self.canBePowered = false
-	self.dirAccept = {0,0,0,0}
-	self.dirSend = {0,0,0,0}
-	self.overlay = nil
-	self.yOffset = 0
-	if not self.hidesDungeon then
-		local bonusDungeonChance = util.random(100, 'misc')
-		if bonusDungeonChance<getLuckBonus() then
-			self.hidesDungeon = true
-		end
-	end
-	if self.hidesDungeon then
-		for i = 1, roomHeight do
-			for j = 1, roomLength do
-				if room[i][j]==self then
-					room[i][j] = tiles.dungeonEnter:new()
-				end
-			end
-		end
-	end
-	if not self.hidesDungeon and player.attributes.lucky then
-		for i = 1, roomHeight do
-			for j = 1, roomLength do
-				if room[i][j]==self then
-					room[i][j] = tiles.toolTile:new()
-					room[i][j]:absoluteFinalUpdate()
-				end
-			end
-		end
-	end
-end
 
 P.concreteWallConductive = P.concreteWall:new{name = "concreteWallConductive", sprite = 'Graphics3D/concretewallconductive.png', poweredSprite = 'Graphics3D/concretewallconductive.png', canBePowered = true, dirAccept = {1,1,1,1}, dirSend = {1,1,1,1}}
 
@@ -1230,12 +1197,14 @@ function P.tunnel:onEnter(player)
 	if floorIndex<2 then
 		return
 	end
-	goDownFloor()
+	--goDownFloor()
+	beginFloorSequence(0, "down")
 end
 
 P.upTunnel = P.tunnel:new{name = "upTunnel", sprite = 'KenGraphics/stairsUp.png'}
 function P.upTunnel:onEnter(player)
-	goUpFloor()
+	--goUpFloor()
+	beginFloorSequence(0, "up")
 end
 function P.upTunnel:onLeave(player)
 	if floorIndex==7 then
@@ -1297,6 +1266,7 @@ function P.treasureTile:onEnter()
 	self.isCompleted = true
 	self.isVisible = false
 	self.gone = true
+	stats.incrementStat('treasureTilesReached')
 end
 function P.treasureTile:giveReward()
 	local timesCounter = 0
@@ -1650,12 +1620,12 @@ P.greenBeggar = P.beggar:new{name = "greenBeggar", sprite = 'GraphicsEli/greenOr
 function P.greenBeggar:providePayment()
 	local luckyCoin = util.random(100, 'toolDrop')
 	local ttg = tools.coin
-	if luckyCoin<getLuckBonus() then
+	if luckyCoin<=getLuckBonus() then
 		ttg = tools.luckyPenny
 	end
 
 	unlockedSupertools = unlocks.getUnlockedSupertools()
-	if not unlockedSupertools[tools.luckyPenny] or tools.luckyPenny.isDisabled then
+	if not unlockedSupertools[tools.luckyPenny.toolid] or tools.luckyPenny.isDisabled then
 		ttg = tools.coin
 	end
 
@@ -1671,6 +1641,8 @@ function P.greenBeggar:providePayment()
 			end
 		end
 	end
+
+	stats.incrementStat('greenBeggarsShot')
 end
 
 P.blueBeggar = P.beggar:new{name = "blueBeggar", sprite = 'GraphicsEli/blueOrb1.png', deadSprite = 'Graphics/bluebeggardead.png', 
@@ -1761,8 +1733,13 @@ function P.donationMachine:destroy()
 	end
 end
 
-P.entrancePortal = P.tile:new{name = "entrancePortal", sprite = 'Graphics/Tiles/entrancePortal.png'}
+P.entrancePortal = P.tile:new{name = "entrancePortal", sprite = 'Graphics/Tiles/entrancePortal.png', timesEntered = 0}
 function P.entrancePortal:onEnter(player)
+	self.timesEntered = self.timesEntered+1
+	if self.timesEntered>=3 then
+		unlocks.unlockUnlockableRef(unlocks.portalPlacerUnlock)
+	end
+
 	for i = 1, roomHeight do
 		shouldBreak = false
 		for j = 1, roomLength do
@@ -2537,6 +2514,7 @@ function P.endDungeonEnter:onLoad()
 	local unlocks = require('scripts.unlocks')
 	self.disabled = not unlocks.isDungeonUnlocked()
 	self.isVisible = not self.disabled
+	self.untoolable = self.disabled
 end
 function P.endDungeonEnter:onEnter()
 	if self.disabled then
@@ -2612,7 +2590,7 @@ function P.finalKeyPowered:onEnter()
 	self.gone = true
 end
 
-P.gameWin = P.tile:new{name = "gameWin"}
+P.gameWin = P.tile:new{name = "gameWin", sprite = 'Graphics/blue.png'}
 function P.gameWin:onEnter()	
 	win()
 end
@@ -2714,6 +2692,10 @@ function P.elevator:postPowerUpdate()
 		self.yOffset = 0
 	end
 end
+function P.elevator:getHeight()
+	if self.powered then return 6
+	else return 0 end
+end
 P.elevator.onEnter = P.wall.onEnter
 P.elevator.onLeave = P.wall.onLeave
 
@@ -2747,13 +2729,13 @@ end
 P.gameStairs = P.tile:new{name = "gameStairs", sprite = 'KenGraphics/gamestairs.png'}
 function P.gameStairs:onEnter()
 	stairsLocs[1] = {map ={x = mapx, y = mapy}, coords = {x = player.tileX, y = player.tileY}}
-	startGame()
+	beginGameSequence("main")
 end
 
 P.tutStairs = P.tile:new{name = "tutStairs", sprite = 'KenGraphics/tutstairs.png'}
 function P.tutStairs:onEnter()
 	stairsLocs[1] = {map ={x = mapx, y = mapy}, coords = {x = player.tileX, y = player.tileY}}
-	startTutorial()
+	beginGameSequence("tut")
 end
 
 P.debugStairs = P.tile:new{name = "debugStairs", sprite = 'KenGraphics/tutstairs.png'}

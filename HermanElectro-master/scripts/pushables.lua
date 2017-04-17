@@ -221,6 +221,11 @@ function P.batteringRam:move(mover)
 	end
 
 	if not (self.prevTileY == self.tileY and self.prevTileX == self.tileX) then
+		if player.tileX == self.tileX and player.tileY == self.tileY then
+			self.tileX = self.prevTileX
+			self.tileY = self.prevTileY
+			return false
+		end
 		if room[self.prevTileY][self.prevTileX]~=nil then
 			room[self.prevTileY][self.prevTileX]:onLeavePushable(self)
 		end
@@ -235,6 +240,7 @@ function P.batteringRam:move(mover)
 	elseif room[self.tileY][self.tileX]~=nil then
 		room[self.tileY][self.tileX]:onStayPushable(self)
 	end
+
 
 	--[[below code allows batteringRam to kill player or animals if pushed on them
 	if player.tileX == self.tileX and player.tileY == self.tileY then

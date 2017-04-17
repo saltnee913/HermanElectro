@@ -59,7 +59,7 @@ function P.saveRecording()
 		return
 	end
 	local recordingToSave = {inputs = input, seed = recordingSeed, character = player.character.name, 
-	  isDead = player.dead, unlocksSave = unlocksSave, saveNumber = saveNumber}
+	  isDead = player.dead, unlocksSave = unlocksSave, saveNumber = saveNumber, stats = stats.statsData}
 	util.writeJSON(P.saveFile, recordingToSave)
 	util.writeJSON(P.replayFile..saveNumber..'.json', recordingToSave, nil, P.replayDir)
 end
@@ -125,6 +125,7 @@ function P.playRecording(recording)
 	currentRecording = recording.inputs
 	currentRecordingIndex = 1
 	recordingGameTime = recording.time
+	stats.statsData = recording.stats
 	local oldSeedOverride = seedOverride
 	seedOverride = recording.seed
 	startGame()
