@@ -916,9 +916,6 @@ function P.vPoweredDoor:updateTile(player)
 		self.sprite = self.openSprite
 	end
 end
-function P.vPoweredDoor:obstructsMovement()
-	return self.blocksMovement
-end
 function P.vPoweredDoor:willKillPlayer(player)
 	return self.blocksMovement
 end
