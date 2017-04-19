@@ -2587,7 +2587,7 @@ function P.finalKeyPowered:onEnter()
 	self.gone = true
 end
 
-P.gameWin = P.tile:new{name = "gameWin", sprite = love.graphics.newImage('Graphics/blue.png')}
+P.gameWin = P.tile:new{name = "gameWin", sprite = 'Graphics/blue.png'}
 function P.gameWin:onEnter()	
 	win()
 end
