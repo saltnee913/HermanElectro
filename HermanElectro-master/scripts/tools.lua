@@ -2538,7 +2538,7 @@ end
 P.sock.usableOnNothing = P.sock.usableOnTile
 function P.sock:useToolTile(tile)
 	self.numHeld = self.numHeld-1
-	player.attributes.sockStep = 1
+	player.attributes.sockStep = true
 	forcePowerUpdateNext = false
 end
 P.sock.useToolNothing = P.sock.useToolTile

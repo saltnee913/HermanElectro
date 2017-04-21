@@ -478,7 +478,7 @@ function love.load()
 			y = (6-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10, prevTileX = 3, prevTileY 	= 10,
 			prevx = (3-1)*scale*tileWidth+wallSprite.width+tileWidth/2*scale-10,
 			prevy = (10-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10,
-			width = 20, height = 20, speed = 250, luckTimer = 0, regularMapLoc = {x = 0, y = 0}, supersHeld = {total = 0}, returnFloorIndex = 0, attributes = {timeFrozen = false, invincibleCounter = 0, shieldCounter = 0, lucky = false, gifted = false, permaMap = false, xrayVision = false, upgradedToolUse = false, fast = {fast = false, fastStep = false}, flying = false, fear = false, shelled = false, tall = false, extendedRange = 0, sockStep = -1, invisible = false}}
+			width = 20, height = 20, speed = 250, luckTimer = 0, regularMapLoc = {x = 0, y = 0}, supersHeld = {total = 0}, returnFloorIndex = 0, attributes = {timeFrozen = false, invincibleCounter = 0, shieldCounter = 0, lucky = false, gifted = false, permaMap = false, xrayVision = false, upgradedToolUse = false, fast = {fast = false, fastStep = false}, flying = false, fear = false, shelled = false, tall = false, extendedRange = 0, sockStep = false, invisible = false}}
 	player.character = setChar
 
 	map.clearBlacklist()
@@ -550,7 +550,7 @@ function resetPlayer()
 	emptyTools()
 	player.attributes.flying = false
 	player.attributes.fear = false
-	player.attributes.sockStep = -1
+	player.attributes.sockStep = false
 	player.attributes.shelled = false
 	player.attributes.invisible = false
 	player.attributes.fast = {fast = false, fastStep = false}
@@ -1143,7 +1143,7 @@ function checkLight(i, j, x, y)
 end
 
 function updatePower()
-	if player.attributes.timeFrozen then return end
+	if player.attributes.timeFrozen or player.attributes.sockStep then return end
 	player.character:onPreUpdatePower()
 	for i = 1, #bossList do
 		bossList[i]:onPreUpdatePower()
@@ -2691,7 +2691,7 @@ end
 function resetPlayerAttributesRoom()
 	player.attributes.flying = false
 	player.attributes.fear = false
-	player.attributes.sockStep = -1
+	player.attributes.sockStep = false
 	player.attributes.shelled = false
 	player.attributes.invisible = false
 	player.attributes.fast = {fast = false, fastStep = false}
@@ -2708,12 +2708,6 @@ function resetPlayerAttributesTool()
 end
 
 function resetPlayerAttributesStep()
-	if player.attributes.sockStep>=0 then
-		player.attributes.sockStep = player.attributes.sockStep-1
-		if player.attributes.sockStep<0 then
-			forcePowerUpdateNext = true
-		end
-	end
 end
 
 function updateAttributesRealtime(dt)
@@ -4084,7 +4078,7 @@ function updateGameState(noPowerUpdate, noLightUpdate)
 		end
 	end
 	checkCurrentTile()
-	if not noPowerUpdate and not globalPowerBlock and player.attributes.sockStep<0 then updatePower() end
+	if not noPowerUpdate and not globalPowerBlock and not player.attributes.sockStep then updatePower() end
 	if not noLightUpdate then
 		updateLight()
 	end
