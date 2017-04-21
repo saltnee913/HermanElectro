@@ -940,7 +940,7 @@ function P.bomb:usableOnNothing()
 	return true
 end
 
-P.flame = P.superTool:new{name = "Blaze", description = "Share the warmth.", baseRange = 1,
+P.flame = P.superTool:new{name = "Flame", description = "Share the warmth.", baseRange = 1,
 image = 'Graphics/Tools/flame.png', quality = 2}
 function P.flame:usableOnTile(tile)
 	--flame cannot burn metal walls
@@ -949,10 +949,19 @@ function P.flame:usableOnTile(tile)
 	end
 	return false
 end
+function P.flame:usableOnPushable(pushable)
+	return pushable:instanceof(pushableList.iceBox)
+end
 function P.flame:useToolTile(tile)
 	self.numHeld = self.numHeld - 1
 	tile.onFire = true
 	self:updateFire()
+end
+function P.flame:useToolPushable(pushable)
+	pushable:destroy()
+	if room[pushable.tileY][pushable.tileX]==nil or room[pushable.tileY][pushable.tileX]:usableOnNothing() then
+		room[pushable.tileY][pushable.tileX] = tiles.puddle:new()
+	end
 end
 function P.flame:updateFire()
 	for i = 1, roomHeight do

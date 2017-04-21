@@ -129,6 +129,7 @@ end
 
 P.unlock = Object:new{name = 'generic', unlocked = false, sprite = tiles.fog.sprite}
 
+P.tutorialBeatenUnlock = P.unlock:new{name = "tutorialBeaten", hidden = true}
 
 P.charUnlock = P.unlock:new{name = 'character', charIds = {"Herman"}}
 P.felixUnlock = P.charUnlock:new{name = 'felix the sharpshooter', charIds = {"Felix"}, sprite = 'Graphics/felix.png'}
@@ -270,6 +271,8 @@ P.nineLivesUnlock = P.unlock:new{name = "Mmmm more lives", toolIds = {tools.nine
 P.foresightUnlock = P.unlock:new{name = "Foreskin", toolIds = {tools.foresight}, sprite = tools.foresight.image}
 P.animalTrainerUnlock = P.unlock:new{name = "Train", toolIds = {tools.animalTrainer}, sprite = tools.animalTrainer.image}
 P.animalEnslaverUnlock = P.unlock:new{name = "Enslave", toolIds = {tools.animalEnslaver}, sprite = tools.animalEnslaver.image}
+P.armageddonUnlock = P.unlock:new{name = "Booooooom!", toolIds = {tools.armageddon}, sprite = tools.armageddon.image}
+P.recycleBinUnlock = P.unlock:new{name = "Recycle!", toolIds = {tools.recycleBin}, sprite = tools.recycleBin.image}
 
 
 P.roomUnlock = P.unlock:new{name = 'room', roomIds = {"1"}}
@@ -412,6 +415,8 @@ P[#P+1] = P.nineLivesUnlock
 P[#P+1] = P.foresightUnlock
 P[#P+1] = P.animalTrainerUnlock
 P[#P+1] = P.animalEnslaverUnlock
+P[#P+1] = P.armageddonUnlock
+P[#P+1] = P.recycleBinUnlock
 
 --rooms
 P[#P+1] = P.beggarPartyUnlock --done
@@ -423,6 +428,7 @@ P[#P+1] = P.portalUnlock --done
 
 P[#P+1] = P.dungeonUnlock
 P.dungeonUnlockId = #P
+P[#P+1] = P.tutorialBeatenUnlock
 
 P[#P+1] = P.lockedTiles
 

@@ -788,6 +788,33 @@ function loadOpeningWorld()
 		player.tileX = stairsLocs[1].coords.x
 		player.tileY = stairsLocs[1].coords.y
 	else
+		--getting initial room, depending on if tutorial has been beaten or not
+		for i = 1, mapHeight do
+			for j = 1, mapHeight do
+				if mainMap[i][j]~=nil and mainMap[i][j].roomid~=nil then
+					local testStartRoomID = mainMap[i][j].roomid
+					if unlocks.tutorialBeatenUnlock.unlocked then
+						if map.getFieldForRoom(testStartRoomID, "isInitial") and
+						map.getFieldForRoom(testStartRoomID, "isInitialAfterTut")~=nil and map.getFieldForRoom(testStartRoomID, "isInitialAfterTut") then
+							mapy = i
+							mapx = j
+						end
+					else
+						if map.getFieldForRoom(testStartRoomID, "isInitial") and
+						map.getFieldForRoom(testStartRoomID, "isInitialBeforeTut")~=nil and map.getFieldForRoom(testStartRoomID, "isInitialBeforeTut") then
+							mapy = i
+							mapx = j
+						end
+					end
+				end
+			end
+		end
+
+		--set room
+		room = mainMap[mapy][mapx].room
+		roomLength = room.length
+		roomHeight = room.height
+
 		--default coordinates
 		player.tileX = math.floor(roomLength/2)
 		player.tileY = roomHeight-3
@@ -4462,6 +4489,10 @@ function onToolUse(tool)
 	end
 	if basicsUsed[3]>0 and basicsUsed[7]>0 then
 		unlocks.unlockUnlockableRef(unlocks.knifeUnlock)
+	end
+
+	if basicsUsed[1]>0 and basicsUsed[2]>0 and basicsUsed[3]>0 and basicsUsed[4]>0 and basicsUsed[6]>0 then
+		unlocks.unlockUnlockableRef(unlocks.recycleBinUnlock)
 	end
 
 	updateTools()
