@@ -492,6 +492,58 @@ function P.rat:dropTool()
 	end
 end
 
+P.babyDragon = P.rat:new{name = "babyDragon", sprite = "Graphics/dragonBaby.png", trained = true, scale = 0.5*scale}
+
+P.dragonFriend = P.babyDragon:new{name = "dragonFriend", sprite = "Graphics/dragonFriend.png", trained = true, scale = 0.5*scale}
+function P.dragonFriend:move()
+	self.prevTileX = self.tileX
+	self.prevTileY = self.tileY
+
+	if player.tileX>player.prevTileX then
+		if self.tileX<roomLength then
+			self.tileX = self.tileX+1
+		else
+			return
+		end
+	elseif player.tileX<player.prevTileX then
+		if self.tileX>1 then
+			self.tileX = self.tileX-1
+		else
+			return
+		end
+	elseif player.tileY>player.prevTileY then
+		if self.tileY<roomHeight then
+			self.tileY = self.tileY+1
+		else
+			return
+		end
+	elseif player.tileY<player.prevTileY then
+		if self.tileY>1 then
+			self.tileY = self.tileY-1
+		else
+			return
+		end
+	else return end
+
+	if room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX]:obstructsMovementAnimal(self) then
+		self.tileY = self.prevTileY
+		self.tileX = self.prevTileX
+		return false
+	elseif room[self.tileY][self.tileX]==nil and math.abs(self.elevation)>3 then
+		self.tileY = self.prevTileY
+		self.tileX = self.prevTileX
+		return false		
+	end
+	if not self:pushableCheck() then
+		self.tileX = self.prevTileX
+		self.tileY = self.prevTileY
+		return false
+	end
+end
+function P.dragonFriend:primaryMove()
+end
+P.dragonFriend.secondaryMove = P.dragonFriend.primaryMove
+
 P.termite = P.animal:new{name = "termite", sprite = 'Graphics/termite.png', waitCounter = 0}
 
 P.twinPitbull = P.pitbull:new{name = "twinPitbull", sprite = 'Graphics/twinpitbull.png'}
@@ -554,5 +606,7 @@ animalList[15] = P.rat
 animalList[16] = P.termite
 animalList[17] = P.twinPitbull
 animalList[18] = P.testChargedBoss
+animalList[19] = P.babyDragon
+animalList[20] = P.dragonFriend
 
 return animalList

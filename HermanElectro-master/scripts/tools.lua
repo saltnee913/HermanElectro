@@ -4357,6 +4357,8 @@ function P.animalEnslaver:useToolNothing(tileY, tileX)
 
 	self.heldAnimal.tileX = tileX
 	self.heldAnimal.tileY = tileY
+	self.heldAnimal.prevTileX = self.heldAnimal.tileX
+	self.heldAnimal.prevTileY = self.heldAnimal.tileY
 	animals[#animals+1] = self.heldAnimal
 	self.heldAnimal = nil
 	self:updateSprite()
@@ -4539,6 +4541,23 @@ function P.explosiveMeat:useToolTile(tile)
 	tile.attractsAnimals = true
 	tile.overlay = tiles.explosiveMeat
 end
+
+P.grenade = P.superTool:new{name = "Grenade", description = "Boom bitches", baseRange = 3,
+  image = 'Graphics/grenade.png', quality = 4}
+function P.grenade:usableOnTile()
+	return true
+end
+function P.grenade:usableOnNothing()
+	return true
+end
+function P.grenade:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
+	util.createHarmlessExplosion(tileY, tileX, 1)
+end
+function P.grenade:useToolNothing(tileY, tileX)
+	self:useToolTile(nil, tileY, tileX)
+end
+
 --[[ideas:
 --animal reroller
 -box reroller
@@ -4559,7 +4578,7 @@ function P.opPotion:useToolTile()
 end
 P.opPotion.useToolNothing = P.opPotion.useToolTile
 
-P.bombPotion = P.superTool:new{name = "Grenade", description = "Extremely flammable", baseRange = 3,
+P.bombPotion = P.superTool:new{name = "Bomb Potion", description = "Extremely flammable", baseRange = 3,
   image = 'Graphics/grenade.png', quality = 4}
 function P.bombPotion:usableOnTile()
 	return true
@@ -4870,6 +4889,204 @@ function P.stopwatch:useToolNothing()
 end
 P.stopwatch.useToolTile = P.stopwatch.useToolNothing
 
+P.fireBreath = P.superTool:new{name = "asdf", description = "Reset, reload, recover", quality = 4,
+image = 'Graphics/Tools/fireBreath.png', isDisabled = true, baseRange = 3}
+function P.fireBreath:usableOnTile(tile, tileY, tileX)
+	local dist = math.abs(player.tileY-tileY)+math.abs(player.tileX-tileX)
+
+	return (P.saw:usableOnTile(tile, tileY, tileX) and dist<=P.saw.baseRange) or
+	(P.ladder:usableOnTile(tile, tileY, tileX) and dist<=P.ladder.baseRange) or 
+	(P.gun:usableOnTile(tile, tileY, tileX) and dist<=P.gun.baseRange)
+end
+function P.fireBreath:usableOnPushable(pushable)
+	local dist = math.abs(player.tileY-tileY)+math.abs(player.tileX-tileX)
+
+	return (P.saw:usableOnPushable(pushable) and dist<=P.saw.baseRange) or
+	(P.ladder:usableOnPushable(pushable) and dist<=P.ladder.baseRange) or 
+	(P.gun:usableOnPushable(pushable) and dist<=P.gun.baseRange)
+end
+function P.fireBreath:usableOnNothing(tileY, tileX)
+	return math.abs(player.tileY-tileY)+math.abs(player.tileX-tileX)<=1
+end
+function P.fireBreath:usableOnAnimal(animal)
+	local dist = math.abs(player.tileY-animal.tileY)+math.abs(player.tileX-animal.tileX)
+
+	return dist<P.gun.baseRange
+end
+function P.fireBreath:useToolTile(tileY, tileX)
+	self.numHeld = self.numHeld-1
+
+	if P.saw:usableOnTile(tileY, tileX) then
+		P.saw:useToolTile(tileY, tileX)
+		P.saw.numHeld = P.saw.numHeld+1
+	elseif P.ladder:usableOnTile(tileY, tileX) then
+		P.ladder:useToolTile(tileY, tileX)
+		P.ladder.numHeld = P.saw.numHeld+1
+	elseif P.gun:usableOnTile(tileY, tileX) then
+		P.gun:useToolTile(tileY, tileX)
+		P.gun.numHeld = P.gun.numHeld+1
+	end
+end
+function P.fireBreath:useToolPushable(pushable)
+	self.numHeld = self.numHeld-1
+
+	P.saw:useToolPushable(pushable)
+	P.saw.numHeld = P.saw.numHeld+1
+end
+function P.fireBreath:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
+
+	P.ladder:useToolNothing(tileY, tileX)
+	P.ladder.numHeld = P.ladder.numHeld+1
+end
+function P.fireBreath:useToolAnimal(animal)
+	self.numHeld = self.numHeld-1
+
+	P.gun:useToolAnimal(animal)
+	P.gun.numHeld = P.gun.numHeld+1
+end
+
+P.claw = P.superTool:new{name = "qwer", description = "Reset, reload, recover", quality = 5,
+image = 'Graphics/Tools/claw.png', isDisabled = true}
+function P.claw:usableOnTile(tile, tileY, tileX)
+	local dist = math.abs(player.tileY-tileY)+math.abs(player.tileX-tileX)
+
+	return (P.wireCutters:usableOnTile(tile, tileY, tileX) and dist<=P.wireCutters.baseRange) or
+	(P.waterBottle:usableOnTile(tile, tileY, tileX) and dist<=P.waterBottle.baseRange) or 
+	(P.sponge:usableOnTile(tile, tileY, tileX) and dist<=P.sponge.baseRange) or
+	(P.brick:usableOnTile(tile, tileY, tileX) and dist<=P.brick.baseRange)
+end
+function P.claw:usableOnPushable(pushable)
+	local dist = math.abs(player.tileY-tileY)+math.abs(player.tileX-tileX)
+
+	return (P.wireCutters:usableOnPushable(pushable) and dist<=P.wireCutters.baseRange) or
+	(P.waterBottle:usableOnPushable(pushable) and dist<=P.waterBottle.baseRange) or 
+	(P.sponge:usableOnPushable(pushable) and dist<=P.sponge.baseRange) or
+	(P.brick:usableOnPushable(pushable) and dist<=P.brick.baseRange)
+end
+function P.claw:usableOnNothing(tileY, tileX)
+	return math.abs(player.tileY-tileY)+math.abs(player.tileX-tileX)<=1
+end
+function P.claw:usableOnAnimal(animal)
+	local dist = math.abs(player.tileY-animal.tileY)+math.abs(player.tileX-animal.tileX)
+
+	return dist<P.brick.baseRange
+end
+function P.claw:useToolTile(tileY, tileX)
+	self.numHeld = self.numHeld-1
+
+	if P.wireCutters:usableOnTile(tileY, tileX) then
+		P.wireCutters:useToolTile(tileY, tileX)
+		P.wireCutters.numHeld = P.saw.numHeld+1
+	elseif P.waterBottle:usableOnTile(tileY, tileX) then
+		P.waterBottle:useToolTile(tileY, tileX)
+		P.waterBottle.numHeld = P.saw.numHeld+1
+	elseif P.sponge:usableOnTile(tileY, tileX) then
+		P.sponge:useToolTile(tileY, tileX)
+		P.sponge.numHeld = P.gun.numHeld+1
+	elseif P.brick:usableOnTile(tileY, tileX) then
+		P.brick:useToolTile(tileY, tileX)
+		P.brick.numHeld = P.gun.numHeld+1
+	end
+end
+function P.claw:useToolPushable(pushable)
+	self.numHeld = self.numHeld-1
+
+	if P.wireCutters:usableOnPushable(pushable) then
+		P.wireCutters:useToolPushable(pushable)
+		P.wireCutters.numHeld = P.saw.numHeld+1
+	elseif P.waterBottle:usableOnPushable(pushable) then
+		P.waterBottle:useToolPushable(pushable)
+		P.waterBottle.numHeld = P.saw.numHeld+1
+	elseif P.sponge:usableOnPushable(pushable) then
+		P.sponge:useToolPushable(pushable)
+		P.sponge.numHeld = P.gun.numHeld+1
+	elseif P.brick:usableOnPushable(pushable) then
+		P.brick:useToolPushable(pushable)
+		P.brick.numHeld = P.gun.numHeld+1
+	end
+end
+function P.claw:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
+
+	P.waterBottle:useToolNothing(tileY, tileX)
+	P.waterBottle.numHeld = P.waterBottle.numHeld+1
+end
+function P.claw:useToolAnimal(animal)
+	self.numHeld = self.numHeld-1
+
+	P.brick:useToolAnimal(animal)
+	P.brick.numHeld = P.brick.numHeld+1
+end
+
+P.wing = P.superTool:new{name = "tttt", description = "Reset, reload, recover", useWithArrowKeys = false, quality = 2,
+image = 'Graphics/Tools/wing.png', isDisabled = true, baseRange = 2}
+function P.wing:usableOnTile(tile)
+	if tile.untoolable then return false end
+	for i = 1, #pushables do
+		if pushables[i].tileX == tile.tileX and pushables[i].tileY == tile.tileY then return false end
+	end
+	return true
+end
+function P.wing:usableOnNothing()
+	return true
+end
+function P.wing:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
+	player.prevTileX = player.tileX
+	player.prevTileY = player.tileY
+	player.tileX = tileX
+	player.tileY = tileY
+	updateElevation()
+	room[tileY][tileX]:onEnter(player)
+	if room[player.prevTileY][player.prevTileX]~=nil then
+		room[player.prevTileY][player.prevTileX]:onLeave(player)
+	end
+end
+function P.wing:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
+	if room[player.prevTileY][player.prevTileX]~=nil then
+		room[player.prevTileY][player.prevTileX]:onLeave(player)
+	end
+	player.prevTileX = player.tileX
+	player.prevTileY = player.tileY
+	player.tileX = tileX
+	player.tileY = tileY
+	updateElevation()
+end
+
+P.dragonEgg = P.superTool:new{name = "Dragon Egg", desciption = "asdwerwa", quality = 3, baseRange = 1,
+image = 'Graphics/Tools/dragonEgg.png', isDisabled = true}
+function P.dragonEgg:usableOnNothing()
+	return true
+end
+function P.dragonEgg:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
+
+	local addAnimal = animalList.babyDragon:new()
+	addAnimal.tileX = tileX
+	addAnimal.tileY = tileY
+	addAnimal.prevTileX = tileX
+	addAnimal.prevTileY = tileY
+	animals[#animals+1] = addAnimal
+end
+
+P.dragonFriend = P.superTool:new{name = "Dragon Egg 2", desciption = "asdwerwa", quality = 3, baseRange = 2,
+image = 'Graphics/Tools/dragonEgg2.png', isDisabled = true}
+function P.dragonFriend:usableOnNothing()
+	return true
+end
+function P.dragonFriend:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
+
+	local addAnimal = animalList.dragonFriend:new()
+	addAnimal.tileX = tileX
+	addAnimal.tileY = tileY
+	addAnimal.prevTileX = tileX
+	addAnimal.prevTileY = tileY
+	animals[#animals+1] = addAnimal
+end
+
 P.numNormalTools = 7
 P.lastToolUsed = 1
 
@@ -5082,14 +5299,21 @@ P:addTool(P.supertoolDoubler) -- Ehhh lets talk
 P:addTool(P.boxDisplacer)
 P:addTool(P.woodenRain)
 
+P:addTool(P.grenade)
 
 
 
 P:addTool(P.opPotion)
-P:addTool(P.bombPotion) --will replace with grenade
+P:addTool(P.bombPotion)
 P:addTool(P.electricPotion)
 P:addTool(P.teleportPotion)
 P:addTool(P.shittyPotion)
+
+P:addTool(P.fireBreath)
+P:addTool(P.claw)
+P:addTool(P.wing)
+P:addTool(P.dragonEgg)
+P:addTool(P.dragonFriend)
 
 P:addTool(P.stopwatch)
 

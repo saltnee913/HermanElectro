@@ -798,6 +798,9 @@ function loadOpeningWorld()
 						map.getFieldForRoom(testStartRoomID, "isInitialAfterTut")~=nil and map.getFieldForRoom(testStartRoomID, "isInitialAfterTut") then
 							mapy = i
 							mapx = j
+
+							--reveal map
+							unlockAllDoors()
 						end
 					else
 						if map.getFieldForRoom(testStartRoomID, "isInitial") and
@@ -2336,26 +2339,28 @@ function love.draw()
 
 	if not editorMode --[[and floorIndex>=1]] then
 		love.graphics.setNewFont(fontSize)
-		for i = 0, 6 do
-			love.graphics.setColor(255,255,255)
-			love.graphics.draw(toolWrapper, i*width/18, 0, 0, (width/18)/16, (width/18)/16)
-			if tool == i+1 then
-				love.graphics.setColor(50, 200, 50)
-				love.graphics.rectangle("fill", i*width/18, 0, width/18, width/18)
+		if not (player.character.canHoldBasics~=nil and not player.character.canHoldBasics) then
+			for i = 0, 6 do
+				love.graphics.setColor(255,255,255)
+				love.graphics.draw(toolWrapper, i*width/18, 0, 0, (width/18)/16, (width/18)/16)
+				if tool == i+1 then
+					love.graphics.setColor(50, 200, 50)
+					love.graphics.rectangle("fill", i*width/18, 0, width/18, width/18)
+				end
+				--love.graphics.rectangle("fill", i*width/18, 0, width/18, width/18)
+				love.graphics.setColor(0,0,0)
+				love.graphics.rectangle("line", i*width/18, 0, width/18, width/18)
+				love.graphics.setColor(255,255,255)
+				local image = util.getImage(tools[i+1].image)
+				love.graphics.draw(image, i*width/18, 0, 0, (width/18)/image:getWidth(), (width/18)/image:getHeight())
+				if tools[i+1].numHeld==0 then
+					love.graphics.draw(gray, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
+				end
+				love.graphics.setColor(0,0,0)
+				love.graphics.print(tools[i+1].numHeld, i*width/18+3, 0)
+				love.graphics.print(i+1, i*width/18+7, (width/18)-20)
+				love.graphics.circle("line", i*width/18+10, (width/18)-15, 9, 50)
 			end
-			--love.graphics.rectangle("fill", i*width/18, 0, width/18, width/18)
-			love.graphics.setColor(0,0,0)
-			love.graphics.rectangle("line", i*width/18, 0, width/18, width/18)
-			love.graphics.setColor(255,255,255)
-			local image = util.getImage(tools[i+1].image)
-			love.graphics.draw(image, i*width/18, 0, 0, (width/18)/image:getWidth(), (width/18)/image:getHeight())
-			if tools[i+1].numHeld==0 then
-				love.graphics.draw(gray, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
-			end
-			love.graphics.setColor(0,0,0)
-			love.graphics.print(tools[i+1].numHeld, i*width/18+3, 0)
-			love.graphics.print(i+1, i*width/18+7, (width/18)-20)
-			love.graphics.circle("line", i*width/18+10, (width/18)-15, 9, 50)
 		end
 		for i = 0, 2 do
 			love.graphics.setColor(255,255,255)
@@ -4208,7 +4213,7 @@ function updateTools()
 	end
 	for i = tools.numNormalTools+1, #tools do
 		if tools[i].numHeld>0 and not (specialTools[1]==i or specialTools[2]==i or specialTools[3]==i) then
-			if specialTools[1]==0 then specialTools[1] = i
+			if specialTools[1]==0 then specialTools[1] = i 
 			elseif specialTools[2]==0 then specialTools[2] = i
 			else specialTools[3] = i end
 		end
@@ -4218,6 +4223,12 @@ function updateTools()
 		unlocks.unlockUnlockableRef(unlocks.fishUnlock)
 	end]]
 
+	player.character:onUpdateTools()
+	for i = 1, #tools do
+		if tools[i].numHeld<0 then
+			tools[i].numHeld = 0
+		end
+	end
 end
 
 function stepTrigger()
@@ -4296,6 +4307,15 @@ function unlockDoors(openLocked)
 			if canUnlock then
 				visibleMap[mapy+i][mapx+j] = 1
 			end
+		end
+	end
+end
+
+function unlockAllDoors()
+	for i = 1, mapHeight do
+		for j = 1, mapHeight do
+			completedRooms[i][j] = 1
+			visibleMap[i][j] = 1
 		end
 	end
 end
@@ -4491,4 +4511,5 @@ function onToolUse(tool)
 
 	updateTools()
 	checkAllDeath()
+	setPlayerLoc()
 end

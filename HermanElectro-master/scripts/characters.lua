@@ -37,9 +37,9 @@ function P.isCharacterUnlocked(charName)
 	return true
 end
 
-P.character = Object:new{name = "Name", tallSprite = true, dirFacing = "down", scale = 0, sprite = 'Graphics/Characters/Herman.png',
+P.character = Object:new{name = "Name", tallSprite = true, dirFacing = "down", scale = 1, sprite = 'Graphics/Characters/Herman.png',
   description = "description", startingTools = {0,0,0,0,0,0,0}, scale = 0.25 * width/1200, randomOption = true, forcePowerUpdate = false, tint = {1,1,1}, winUnlocks = {},
-  animationTimer = 0, animationLength = 0}
+  animationTimer = 0, animationLength = 0, crime = ""}
 function P.character:onBegin()
     --[[myShader:send("tint_r", self.tint[1])
     myShader:send("tint_g", self.tint[2])
@@ -121,6 +121,8 @@ end
 function P.character:bypassObstructsMovement(tile)
 	return false
 end
+function P.character:onUpdateTools()
+end
 function P.character:updateAnimation(dt)
 	if self.animation ~= nil then
 		self.animationTimer = self.animationTimer + dt
@@ -132,14 +134,16 @@ end
 P.herman = P.character:new{name = "Herman", description = "The Electrician", 
   scale = 1.1*scale, sprites = {'Graphics/Characters/Herman.png', 'Graphics/Characters/Herman.png', 'Graphics/Characters/Herman.png', 'Graphics/Characters/Herman.png'},
   animation = {'Graphics/Characters/Herman.png','Graphics/Characters/Herman.png','Graphics/Characters/HermanTaller.png','Graphics/Characters/Herman.png'},
-  animationLength = 1}
+  animationLength = 1,
+  crime = "Life Imprisonment for Attempted Circuit Break"}
 function P.herman:onCharLoad()
 	if loadTutorial then return end
 	tools.giveToolsByReference({tools.revive})
 	myShader:send("player_range", 600)
 end
 
-P.felix = P.character:new{name = "Felix", description = "The Sharpshooter", sprite = 'Graphics/felix.png', startingTools = {0,0,0,0,0,0,1}}
+P.felix = P.character:new{name = "Felix", description = "The Sharpshooter", sprite = 'Graphics/felix.png', startingTools = {0,0,0,0,0,0,1},
+crime = "Ten Years for Pyromanic Episode"}
 function P.felix:onCharLoad()
 	--tools[7] = tools.felixGun
 	--if not tools.felixGun.isGun then
@@ -170,7 +174,8 @@ end
 
 local erikSprite = 'Graphics/Characters/Erik.png'
 P.erik = P.character:new{name = "Erik", tallSprite = false, description = "The Quick",
-  sprite = erikSprite, scale = scale*1.1}
+  sprite = erikSprite, scale = scale*1.1,
+  crime = "Life Imprisonment for Illegal Drug Consumption"}
 function P.erik:onCharLoad()
 	gameTime.timeLeft = 120
 	gameTime.roomTime = 15
@@ -214,7 +219,8 @@ function P.erik:specialLightTest(tileY,tileX)
 end]]
 
 P.gabe = P.character:new{name = "Gabe", tallSprite = false, description = "The Angel",
-	sprite = 'Graphics/gabe.png', realChar = nil, randomOption = false, reset = false}
+	sprite = 'Graphics/gabe.png', realChar = nil, randomOption = false, reset = false,
+	crime = "Free"}
 function P.gabe:onCharLoad()
 	if not self.reset then
 		player.attributes.flying = true
@@ -379,7 +385,8 @@ end
 P.fish = P.character:new{name = "Fish", tallSprite = false, description = "Fish", 
   life = 100, sprite = 'Graphics/Characters/Fish.png', tint = {0.9,0.9,1}, scale = 1.1*scale,
 	animation = {'Graphics/Characters/Fish.png','Graphics/Characters/Fish.png','Graphics/Characters/Fish.png','Graphics/Characters/FishMouthClosed.png','Graphics/Characters/FishMouthFullyClosed.png','Graphics/Characters/FishMouthClosed.png', 'Graphics/Characters/Fish.png','Graphics/Characters/Fish.png','Graphics/Characters/Fish.png'},
-  animationLength = 1}
+  animationLength = 1,
+  crime = "15 Years for Failing to Climb Trees"}
 function P.fish:postMove()
 	self.life = self.life-1
 	if room[player.tileY][player.tileX]~=nil and room[player.tileY][player.tileX]:instanceof(tiles.puddle) then
@@ -497,7 +504,8 @@ P.scientist = P.character:new{name = "Marie", description = "The Scientist",
   sprite = 'Graphics/Characters/Sciencewoman.png', jekyllSprite = 'Graphics/Characters/Sciencewoman.png', hydeSprite = 'Graphics/Characters/MrHyde.png',
   powerSprite = 'Graphics/Characters/ShockedSciencewoman.png', powerHydeSprite = 'Graphics/Characters/ShockedMrHyde.png',
   scale = 1.1*scale, hyde = false, pulsing = false, pulsingTimer = 0, pulsingTime = 2,
-  powered = false, storedTile = nil}
+  powered = false, storedTile = nil,
+  crime = "25 Years for Excessive Experimentation"}
 function P.scientist:onCharLoad()
 	for i = tools.numNormalTools+1, #tools do
 		tools[i].isDisabled = true
@@ -597,6 +605,47 @@ function P.scientist:bypassObstructsMovement(tile)
 	return self.hyde
 end
 
+P.dragon = P.character:new{name = "Dragon", description = "The One-Winged Beast", sprite = 'Graphics/Characters/Arachne.png',
+	scale = 1.1*scale, canHoldBasics = false, crime = "Solitary Confinement -- DO NOT LET OUT"}
+function P.dragon:onCharLoad()
+	for i = tools.numNormalTools+1, #tools do
+		tools[i].isDisabled = true
+	end
+	tools[tools.fireBreath.toolid].isDisabled = false
+	tools[tools.claw.toolid].isDisabled = false
+	tools[tools.wing.toolid].isDisabled = false
+	tools[tools.coin.toolid].isDisabled = false
+	tools[tools.dragonEgg.toolid].isDisabled = false
+	tools[tools.dragonFriend.toolid].isDisabled = false
+end
+function P.dragon:onUpdateTools()
+	--check if any non-acceptable tools
+	local isAcceptable = true
+	for i = 1, tools.numNormalTools do
+		if tools[i].numHeld > 0 then
+			isAcceptable = false
+		end
+	end
+	if isAcceptable then return end
+
+
+	local fireGive = tools.saw.numHeld+tools.ladder.numHeld+tools.gun.numHeld
+	local clawGive = tools.wireCutters.numHeld+tools.waterBottle.numHeld+tools.brick.numHeld+tools.sponge.numHeld
+	--reset tool display
+	tools.toolsShown = {}
+
+	for i = 1, tools.numNormalTools do
+		tools[i].numHeld = 0
+	end
+
+	for i = 1, fireGive do
+		tools.giveToolsByReference({tools.fireBreath})
+	end
+	for i = 1, clawGive do
+		tools.giveToolsByReference({tools.claw})
+	end
+end
+
 P[#P+1] = P.herman
 P[#P+1] = P.francisco
 P[#P+1] = P.aurelius
@@ -610,6 +659,7 @@ P[#P+1] = P.battery
 P[#P+1] = P.erik
 P[#P+1] = P.fish
 P[#P+1] = P.scientist
+P[#P+1] = P.dragon
 
 P[#P+1] = P.gabe
 
