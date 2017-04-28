@@ -2280,7 +2280,17 @@ P.endTilePaid.onStep = P.endTilePaid.postPowerUpdate
 
 P.mushroom = P.tile:new{name = "mushroom", sprite = 'KenGraphics/mushroom.png'}
 function P.mushroom:onEnter()
-	turnOnMushroomMode()
+	if not mushroomMode then
+		turnOnMushroomMode()
+	end
+	local isHeaven = map.getFieldForRoom(mainMap[mapy][mapx].roomid, "heaven")
+	if isHeaven~=nil and isHeaven then
+		unlocks.unlockUnlockableRef(unlocks.gabeUnlock)
+	end
+
+	if floorIndex<=0 then
+		unlocks.unlockUnlockableRef(unlocks.dragonUnlock)
+	end
 end
 
 P.lampTile = P.boxTile:new{name = "lampTile", pushable = pushableList[12], listIndex = 12}
@@ -2437,6 +2447,7 @@ function P.dungeonEnter:onEnter()
 	mapx = 1
 	mapy = mapHeight+1
 	room = mainMap[mapy][mapx].room
+	resetPlayerAttributesRoom()
 	roomHeight = room.height
 	roomLength = room.length
 	createElements()
@@ -2506,6 +2517,92 @@ function P.dungeonExit:onEnter()
 	player.justTeleported = true
 end
 
+P.heavenEnter = P.tile:new{name = "heavenEnter", text = "You need flight to access this area."}
+function P.heavenEnter:onEnter()
+	if not player.attributes.flying and player.character.name~="Dragon" then return end
+	--unlocks.unlockUnlockableRef(unlocks.rammyUnlock, true)
+	player.nonHeavenMapLoc = {x = mapx, y = mapy}
+	mapx = mapHeight+1
+	mapy = mapHeight+1
+	room = mainMap[mapy][mapx].room
+	roomHeight = room.height
+	roomLength = room.length
+	createElements()
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]~=nil and room[i][j]:instanceof(tiles.heavenExit) then
+				player.tileY = i
+				player.tileX = j
+				break
+			end
+		end
+	end
+	player.prevTileX = player.tileX
+	player.prevTileY = player.tileY
+	player.justTeleported = true
+	turnOffMushroomMode()
+end
+function P.heavenEnter:getInfoText()
+	if not player.attributes.flying and player.character.name~="Dragon" then
+		return "You need flight to access this area."
+	else
+		return ""
+	end
+end
+
+P.heavenExit = P.tile:new{name = "heavenEnter"}
+function P.heavenExit:onEnter()
+	mapx = player.nonHeavenMapLoc.x
+	mapy = player.nonHeavenMapLoc.y
+	room = mainMap[mapy][mapx].room
+	roomHeight = room.height
+	roomLength = room.length
+	player.tileX = -1
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]~=nil and room[i][j]:instanceof(tiles.heavenEnter) then
+				player.tileY = i
+				player.tileX = j
+				break
+			end
+		end
+	end
+
+	if player.tileX==-1 then
+		for i = 1, roomHeight do
+			for j = 1, roomLength do
+				if room[i][j]~=nil and room[i][j]:instanceof(tiles.wall) and room[i][j].hidesDungeon then
+					room[i][j]:destroy()
+					player.tileY = i
+					player.tileX = j
+					break
+				end
+			end
+		end
+	end
+
+	if player.tileX==-1 then
+		local dirEnterInfo = map.getFieldForRoom(mainMap[mapy][mapx].roomid, "dirEnter")
+		if dirEnterInfo[1]==1 then
+			player.tileY = 1
+			player.tileX = math.floor(roomLength/2)
+		elseif dirEnterInfo[2]==1 then
+			player.tileY = math.floor(roomHeight/2)
+			player.tileX = roomLength
+		elseif dirEnterInfo[3]==1 then
+			player.tileY = roomHeight
+			player.tileX = math.floor(roomLength/2)
+		elseif dirEnterInfo[4]==1 then
+			player.tileY = math.floor(roomHeight/2)
+			player.tileX = 1
+		end
+	end
+
+	createElements()
+	player.justTeleported = true
+	turnOffMushroomMode()
+end
+
 P.endDungeonEnter = P.tile:new{name = "endDungeonEnter", sprite = 'Graphics/eden.png', disabled = false}
 function P.endDungeonEnter:onLoad()
 	local unlocks = require('scripts.unlocks')
@@ -2519,6 +2616,7 @@ function P.endDungeonEnter:onEnter()
 	end
 	player.returnFloorIndex = floorIndex
 	goToFloor(1)
+	resetPlayerAttributesRoom()
 	if stairsLocs[#stairsLocs].coords.x~=0 then
 		mapx = stairsLocs[#stairsLocs].map.x
 		mapy = stairsLocs[#stairsLocs].map.y
@@ -3190,6 +3288,8 @@ tiles[202] = P.openDungeon
 tiles[203] = P.testChargedBossTile
 tiles[204] = P.bossTile
 tiles[205] = P.mimicTile
+tiles[206] = P.heavenEnter
+tiles[207] = P.heavenExit
 
 
 return tiles

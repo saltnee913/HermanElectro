@@ -478,7 +478,7 @@ function love.load()
 			y = (6-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10, prevTileX = 3, prevTileY 	= 10,
 			prevx = (3-1)*scale*tileWidth+wallSprite.width+tileWidth/2*scale-10,
 			prevy = (10-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10,
-			width = 20, height = 20, speed = 250, luckTimer = 0, regularMapLoc = {x = 0, y = 0}, supersHeld = {total = 0}, returnFloorIndex = 0, attributes = {timeFrozen = false, invincibleCounter = 0, shieldCounter = 0, lucky = false, gifted = false, permaMap = false, xrayVision = false, upgradedToolUse = false, fast = {fast = false, fastStep = false}, flying = false, fear = false, shelled = false, tall = false, extendedRange = 0, sockStep = false, invisible = false}}
+			width = 20, height = 20, speed = 250, luckTimer = 0, regularMapLoc = {x = 0, y = 0}, nonHeavenMapLoc = {x = 0, y = 0}, supersHeld = {total = 0}, returnFloorIndex = 0, attributes = {timeFrozen = false, invincibleCounter = 0, shieldCounter = 0, lucky = false, gifted = false, permaMap = false, xrayVision = false, upgradedToolUse = false, fast = {fast = false, fastStep = false}, flying = false, fear = false, shelled = false, tall = false, extendedRange = 0, sockStep = false, invisible = false}}
 	player.character = setChar
 
 	map.clearBlacklist()
@@ -774,6 +774,7 @@ function startGame()
 	tools.resetTools()
 	--resetPlayer()
 	player.character:onBegin()
+	resetTintValues()
 end
 
 function loadOpeningWorld()
@@ -800,7 +801,7 @@ function loadOpeningWorld()
 							mapx = j
 
 							--reveal map
-							unlockAllDoors()
+							unlockDoorsOpeningWorld()
 						end
 					else
 						if map.getFieldForRoom(testStartRoomID, "isInitial") and
@@ -1014,9 +1015,9 @@ function win()
 			unlocks.unlockUnlockableRef(unlocks.erikUnlock)
 		end
 		--if gabeUnlock then
-		if player.attributes.flying then
+		--[[if player.attributes.flying then
 			unlocks.unlockUnlockableRef(unlocks.gabeUnlock)
-		end
+		end]]
 		
 		won = true
 		if player.dungeonKeysHeld >= 3 then
@@ -1740,7 +1741,6 @@ function canBePowered(x,y,dir)
 end
 
 function love.draw()
-	love.graphics.setShader(myShader)
 	myShader:send("shaderTriggered", shaderTriggered)
 	--myShader:send("b_and_w", true)
 	love.graphics.setBackgroundColor(0,0,0)
@@ -1811,6 +1811,8 @@ function love.draw()
 	if (fto~=nil) then
 		if fto=="dungeon" then
 			toDrawFloor = dungeonFloor
+		elseif fto=="heaven" then
+			toDrawFloor = white
 		end
 	end
 
@@ -1862,7 +1864,7 @@ function love.draw()
 
 	love.graphics.setShader(myShader)
 
-	if floors[floorIndex-1]~=nil then
+	if floors[floorIndex-1]~=nil and fto==nil then
 		--17 pixels from left/right/bottom, 33 from top
 		local floorSprite = floors[floorIndex-1]
 
@@ -1876,7 +1878,7 @@ function love.draw()
 	for j = 1, roomHeight do
 		for i = 1, roomLength do
 
-			if (floors[floorIndex-1]==nil or editorMode) then
+			if (floors[floorIndex-1]==nil or editorMode or fto~=nil) then
 				if floorIndex<=1 then
 					toDrawFloor = dungeonFloor
 				else
@@ -1899,6 +1901,8 @@ function love.draw()
 				if (fto~=nil) then
 					if fto=="dungeon" then
 						toDrawFloor = dungeonFloor
+					elseif fto=="heaven" then
+						toDrawFloor = white
 					end
 				end
 
@@ -2701,6 +2705,8 @@ function resetPlayerAttributesRoom()
 	player.attributes.invisible = false
 	player.attributes.fast = {fast = false, fastStep = false}
 	player.attributes.timeFrozen = false
+
+	turnOffMushroomMode()
 end
 
 function resetPlayerAttributesTool()
@@ -4283,7 +4289,7 @@ end
 
 --unlocks all rooms besides hidden rooms (secret rooms and special dungeons)
 function unlockDoors(openLocked)
-	if player.attributes.xrayVision then
+	if player.attributes.xrayVision or floorIndex<=0 then
 		unlockDoorsPlus()
 		return
 	end
@@ -4319,6 +4325,22 @@ function unlockAllDoors()
 				visibleMap[i][j] = 1
 			end
 		end
+	end
+end
+
+function unlockDoorsOpeningWorld()
+	if unlocks.tutorialBeatenUnlock.unlocked and unlocks.dragonUnlock.unlocked then
+		unlockAllDoors()
+	elseif unlocks.tutorialBeatenUnlock.unlocked then
+		for i = 1, mapHeight do
+			for j = 1, mapHeight do
+				if mainMap[i][j]~=nil and (map.getFieldForRoom(mainMap[i][j].roomid, "hidden")==nil or not map.getFieldForRoom(mainMap[i][j].roomid, "hidden")) then
+					completedRooms[i][j] = 1
+					visibleMap[i][j] = 1
+				end
+			end
+		end
+	--else return
 	end
 end
 

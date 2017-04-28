@@ -1128,6 +1128,14 @@ function P.generateMapWeighted()
 	arr = P.floorInfo.rooms.dungeons
 	roomid = util.chooseRandomKey(arr, 'mapGen')
 	newmap[height+1][1] = {roomid = roomid, room = P.createRoom(roomid, arr), tint = {0,0,0}, dirEnter = arr[roomid].dirEnter, isFinal = false, isInitial = false}
+	
+	--add heaven room
+	if P.floorInfo.rooms.heavenRooms~=nil then
+		arr = P.floorInfo.rooms.heavenRooms
+		roomid = util.chooseRandomKey(arr, 'mapGen')
+		newmap[height+1][height+1] = {roomid = roomid, room = P.createRoom(roomid, arr), tint = {0,0,0}, dirEnter = arr[roomid].dirEnter, isFinal = false, isInitial = false}
+	end
+
 	P.printTileInfo()
 	return newmap
 end

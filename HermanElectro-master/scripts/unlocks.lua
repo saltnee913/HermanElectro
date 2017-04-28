@@ -144,7 +144,7 @@ P.batteryUnlock = P.charUnlock:new{name = 'bob the battery', charIds = {"Bob"}, 
 P.erikUnlock = P.charUnlock:new{name = 'erik the quick', charIds = {"Erik"}, sprite = 'Graphics/Characters/Erik.png'}
 P.fishUnlock = P.charUnlock:new{name = 'fish fish', charIds = {"Fish"}, sprite = 'Graphics/Characters/Fish.png'}
 P.scientistUnlock = P.charUnlock:new{name = 'science bitch', charIds = {"Marie"}, sprite = 'Graphics/Characters/Scienceman.png'}
-
+P.dragonUnlock = P.charUnlock:new{name = "rawr", charIds = {"Dragon"}, sprite = 'Graphics/Characters/Arachne.png'}
 
 P.tileUnlock = P.unlock:new{name = 'tile', tileIds = {1}, sprite = tiles.tile.sprite}
 P.lockedTiles = P.tileUnlock:new{name = 'permanentlyLockedTiles', tileIds = {50}}
@@ -304,6 +304,7 @@ P[#P+1] = P.batteryUnlock
 P[#P+1] = P.erikUnlock
 P[#P+1] = P.fishUnlock
 P[#P+1] = P.scientistUnlock
+P[#P+1] = P.dragonUnlock
 
 --tiles
 P[#P+1] = P.boxesUnlock --done

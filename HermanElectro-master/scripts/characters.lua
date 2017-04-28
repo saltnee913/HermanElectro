@@ -617,6 +617,7 @@ function P.dragon:onCharLoad()
 	tools[tools.coin.toolid].isDisabled = false
 	tools[tools.dragonEgg.toolid].isDisabled = false
 	tools[tools.dragonFriend.toolid].isDisabled = false
+	tools[tools.roomUnlocker.toolid].isDisabled = false
 end
 function P.dragon:onUpdateTools()
 	--check if any non-acceptable tools

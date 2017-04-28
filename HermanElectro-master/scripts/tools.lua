@@ -4890,7 +4890,7 @@ end
 P.stopwatch.useToolTile = P.stopwatch.useToolNothing
 
 P.fireBreath = P.superTool:new{name = "asdf", description = "Reset, reload, recover", quality = 4,
-image = 'Graphics/Tools/fireBreath.png', isDisabled = true, baseRange = 3}
+image = 'Graphics/Tools/fireBreath.png', defaultDisabled = true, baseRange = 3}
 function P.fireBreath:usableOnTile(tile, tileY, tileX)
 	local dist = math.abs(player.tileY-tileY)+math.abs(player.tileX-tileX)
 
@@ -4899,7 +4899,7 @@ function P.fireBreath:usableOnTile(tile, tileY, tileX)
 	(P.gun:usableOnTile(tile, tileY, tileX) and dist<=P.gun.baseRange)
 end
 function P.fireBreath:usableOnPushable(pushable)
-	local dist = math.abs(player.tileY-tileY)+math.abs(player.tileX-tileX)
+	local dist = math.abs(player.tileY-pushable.tileY)+math.abs(player.tileX-pushable.tileX)
 
 	return (P.saw:usableOnPushable(pushable) and dist<=P.saw.baseRange) or
 	(P.ladder:usableOnPushable(pushable) and dist<=P.ladder.baseRange) or 
@@ -4947,7 +4947,7 @@ function P.fireBreath:useToolAnimal(animal)
 end
 
 P.claw = P.superTool:new{name = "qwer", description = "Reset, reload, recover", quality = 5,
-image = 'Graphics/Tools/claw.png', isDisabled = true}
+image = 'Graphics/Tools/claw.png', defaultDisabled = true}
 function P.claw:usableOnTile(tile, tileY, tileX)
 	local dist = math.abs(player.tileY-tileY)+math.abs(player.tileX-tileX)
 
@@ -4957,7 +4957,7 @@ function P.claw:usableOnTile(tile, tileY, tileX)
 	(P.brick:usableOnTile(tile, tileY, tileX) and dist<=P.brick.baseRange)
 end
 function P.claw:usableOnPushable(pushable)
-	local dist = math.abs(player.tileY-tileY)+math.abs(player.tileX-tileX)
+	local dist = math.abs(player.tileY-pushable.tileY)+math.abs(player.tileX-pushable.tileX)
 
 	return (P.wireCutters:usableOnPushable(pushable) and dist<=P.wireCutters.baseRange) or
 	(P.waterBottle:usableOnPushable(pushable) and dist<=P.waterBottle.baseRange) or 
@@ -5020,7 +5020,7 @@ function P.claw:useToolAnimal(animal)
 end
 
 P.wing = P.superTool:new{name = "tttt", description = "Reset, reload, recover", useWithArrowKeys = false, quality = 2,
-image = 'Graphics/Tools/wing.png', isDisabled = true, baseRange = 2}
+image = 'Graphics/Tools/wing.png', defaultDisabled = true, baseRange = 2}
 function P.wing:usableOnTile(tile)
 	if tile.untoolable then return false end
 	for i = 1, #pushables do
@@ -5056,7 +5056,7 @@ function P.wing:useToolNothing(tileY, tileX)
 end
 
 P.dragonEgg = P.superTool:new{name = "Dragon Egg", desciption = "asdwerwa", quality = 3, baseRange = 1,
-image = 'Graphics/Tools/dragonEgg.png', isDisabled = true}
+image = 'Graphics/Tools/dragonEgg.png', defaultDisabled = true}
 function P.dragonEgg:usableOnNothing()
 	return true
 end
@@ -5072,7 +5072,7 @@ function P.dragonEgg:useToolNothing(tileY, tileX)
 end
 
 P.dragonFriend = P.superTool:new{name = "Dragon Egg 2", desciption = "asdwerwa", quality = 3, baseRange = 2,
-image = 'Graphics/Tools/dragonEgg2.png', isDisabled = true}
+image = 'Graphics/Tools/dragonEgg2.png', defaultDisabled = true}
 function P.dragonFriend:usableOnNothing()
 	return true
 end
