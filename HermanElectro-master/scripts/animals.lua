@@ -587,6 +587,48 @@ function P.testChargedBoss:kill()
 	self.conductive = false
 end
 
+P.mimic = P.pitbull:new{name = "mimic", sprite = 'Graphics/Tiles/endTile.png', triggeredSprite = animalList.pitbull.sprite}
+function P.mimic:move(playerx, playery, room, isLit)
+	if player.attributes.shelled or player.attributes.invisible or player.attributes.timeFrozen then
+		return
+	elseif player.attributes.fear then
+		self:afraidPrimaryMove(playerx, playery, room, isLit)
+		return
+	elseif room[playery][playerx]~=nil and room[playery][playerx].scaresAnimals then
+		self:afraidPrimaryMove(playerx, playery, room, isLit)
+		return
+	end
+	if self.dead or (not isLit and not self.triggered) or self.frozen then
+		return
+	end
+
+	if not self.triggered then
+		local distFromPlayer = math.abs(self.tileX-player.tileX)+math.abs(self.tileY-player.tileY)
+		if distFromPlayer<3 then
+			self.triggered = true
+			self:updateSprite()
+		end
+	end
+
+	self.prevTileX = self.tileX
+	self.prevTileY = self.tileY
+	if self.waitCounter>0 then
+		return
+	end
+	
+	if playerx-self.tileX==0 and playery-self.tileY==0 then
+		return
+	end
+
+	if not self:primaryMove(playerx, playery) then
+		self:secondaryMove(playerx, playery)
+	end
+end
+function P.mimic:updateSprite()
+	if self.triggered then
+		self.sprite = self.triggeredSprite
+	end
+end
 
 animalList[1] = P.animal
 animalList[2] = P.pitbull
@@ -608,5 +650,6 @@ animalList[17] = P.twinPitbull
 animalList[18] = P.testChargedBoss
 animalList[19] = P.babyDragon
 animalList[20] = P.dragonFriend
+animalList[21] = P.mimic
 
 return animalList

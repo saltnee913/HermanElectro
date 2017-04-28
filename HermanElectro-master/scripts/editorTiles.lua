@@ -19,6 +19,7 @@ P.animalTiles[#P.animalTiles+1] = tiles.bombBuddyTile
 P.animalTiles[#P.animalTiles+1] = tiles.ratTile
 P.animalTiles[#P.animalTiles+1] = tiles.conductiveSnailTile
 P.animalTiles[#P.animalTiles+1] = tiles.testChargedBossTile
+P.animalTiles[#P.animalTiles+1] = tiles.mimicTile
 
 P.boxTiles[#P.boxTiles+1] = tiles.boxTile
 P.boxTiles[#P.boxTiles+1] = tiles.animalBoxTile

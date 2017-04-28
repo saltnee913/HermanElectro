@@ -4314,8 +4314,10 @@ end
 function unlockAllDoors()
 	for i = 1, mapHeight do
 		for j = 1, mapHeight do
-			completedRooms[i][j] = 1
-			visibleMap[i][j] = 1
+			if mainMap[i][j]~=nil then
+				completedRooms[i][j] = 1
+				visibleMap[i][j] = 1
+			end
 		end
 	end
 end

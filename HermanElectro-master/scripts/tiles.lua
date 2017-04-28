@@ -2945,6 +2945,7 @@ function P.atm:onEnter()
 end
 
 P.ratTile = P.pitbullTile:new{name = "rat", animal = animalList[15], listIndex = 15}
+P.mimicTile = P.pitbullTile:new{name = "mimic", animal = animalList[21], listIndex = 21}
 
 P.iceBoxTile = P.boxTile:new{name = "iceBoxTile", pushable = pushableList[13], listIndex = 13}
 P.recycleBinTile = P.boxTile:new{name = "recycleBinTile", pushable = pushableList[14], listIndex = 14}
@@ -3188,6 +3189,7 @@ tiles[201] = P.replayViewer
 tiles[202] = P.openDungeon
 tiles[203] = P.testChargedBossTile
 tiles[204] = P.bossTile
+tiles[205] = P.mimicTile
 
 
 return tiles
