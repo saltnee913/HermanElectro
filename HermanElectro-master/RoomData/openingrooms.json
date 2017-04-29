@@ -111,7 +111,6 @@
       //[clockwise from top],
     "hasEndTile": true,
     "tint": [0,0,0],
-    "autowin": true,
     "hidden": false
   }
 }

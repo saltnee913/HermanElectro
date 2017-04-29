@@ -842,7 +842,7 @@ function loadOpeningWorld()
 	--remove supers
 	emptyTools()
 
-	unlockDoors()
+	--unlockDoors()
 	updateGameState()
 end
 
@@ -2882,7 +2882,8 @@ function enterRoom(dir)
 	visibleMap[mapy][mapx] = 1
 	keyTimer.timeLeft = keyTimer.suicideDelay
 	updateGameState(false)
-	tutorial.enterRoom()
+	--tutorial.enterRoom()
+	--^^not sure why that was there...?
 
 	postRoomEnter()
 
