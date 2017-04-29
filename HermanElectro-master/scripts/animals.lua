@@ -629,6 +629,28 @@ function P.mimic:updateSprite()
 		self.sprite = self.triggeredSprite
 	end
 end
+function P.mimic:kill()
+	if self.dead then return
+	elseif not self.triggered then return end
+	
+	self.dead = true
+	self.sprite = self.deadSprite
+	if self.canDropTool and not self.willDropTool then
+		local bonusDropChance = util.random(100, 'toolDrop')
+		if bonusDropChance<=getLuckBonus() then
+			self.willDropTool = true
+		end
+	end
+	if self.willDropTool then
+		if(room[self.tileY][self.tileX]==nil or room[self.tileY][self.tileX].destroyed
+		or room[self.tileY][self.tileX]:usableOnNothing() or room[self.tileY][self.tileX].overlay==nil) then
+			self:dropTool()
+		end
+	end
+
+	stats.incrementStat(self.name..'Killed')
+	stats.incrementStat('animalsKilled')
+end
 
 animalList[1] = P.animal
 animalList[2] = P.pitbull
