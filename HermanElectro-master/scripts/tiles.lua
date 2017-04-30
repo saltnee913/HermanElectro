@@ -1087,7 +1087,9 @@ function P.sign:onEnter(player)
 	messageInfo.text = self.text
 end
 function P.sign:onLeave(player)
-	messageInfo.text = nil
+	if room[player.tileY][player.tileX]==nil or room[player.tileY][player.tileX].text==nil then
+		messageInfo.text = nil
+	end
 end
 
 P.rotater = P.button:new{name = "rotater", canBePowered = true, dirAccept = {1,0,1,0}, dirSend = {1,0,1,0}, sprite = 'Graphics/rotater.png', poweredSprite = 'Graphics/rotater.png'}
@@ -2519,7 +2521,9 @@ end
 
 P.heavenEnter = P.tile:new{name = "heavenEnter", text = "You need flight to access this area."}
 function P.heavenEnter:onEnter()
-	if not player.attributes.flying and player.character.name~="Dragon" then return end
+	if not player.attributes.flying and player.character.name~="Dragon" then
+		messageInfo.text = self.text
+	end
 	--unlocks.unlockUnlockableRef(unlocks.rammyUnlock, true)
 	player.nonHeavenMapLoc = {x = mapx, y = mapy}
 	mapx = mapHeight+1
@@ -2542,11 +2546,9 @@ function P.heavenEnter:onEnter()
 	player.justTeleported = true
 	turnOffMushroomMode()
 end
-function P.heavenEnter:getInfoText()
-	if not player.attributes.flying and player.character.name~="Dragon" then
-		return "You need flight to access this area."
-	else
-		return ""
+function P.heavenEnter:onLeave()
+	if room[player.tileY][player.tileX]==nil or room[player.tileY][player.tileX].text==nil then
+		messageInfo.text = nil
 	end
 end
 

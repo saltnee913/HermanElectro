@@ -4913,17 +4913,17 @@ function P.fireBreath:usableOnAnimal(animal)
 
 	return dist<P.gun.baseRange
 end
-function P.fireBreath:useToolTile(tileY, tileX)
+function P.fireBreath:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld-1
 
 	if P.saw:usableOnTile(tileY, tileX) then
-		P.saw:useToolTile(tileY, tileX)
+		P.saw:useToolTile(tile, tileY, tileX)
 		P.saw.numHeld = P.saw.numHeld+1
 	elseif P.ladder:usableOnTile(tileY, tileX) then
-		P.ladder:useToolTile(tileY, tileX)
+		P.ladder:useToolTile(tile, tileY, tileX)
 		P.ladder.numHeld = P.saw.numHeld+1
-	elseif P.gun:usableOnTile(tileY, tileX) then
-		P.gun:useToolTile(tileY, tileX)
+	elseif P.gun:usableOnTile(tile, tileY, tileX) then
+		P.gun:useToolTile(tile, tileY, tileX)
 		P.gun.numHeld = P.gun.numHeld+1
 	end
 end
@@ -4972,20 +4972,20 @@ function P.claw:usableOnAnimal(animal)
 
 	return dist<P.brick.baseRange
 end
-function P.claw:useToolTile(tileY, tileX)
+function P.claw:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld-1
 
 	if P.wireCutters:usableOnTile(tileY, tileX) then
-		P.wireCutters:useToolTile(tileY, tileX)
+		P.wireCutters:useToolTile(tile, tileY, tileX)
 		P.wireCutters.numHeld = P.saw.numHeld+1
 	elseif P.waterBottle:usableOnTile(tileY, tileX) then
-		P.waterBottle:useToolTile(tileY, tileX)
+		P.waterBottle:useToolTile(tile, tileY, tileX)
 		P.waterBottle.numHeld = P.saw.numHeld+1
 	elseif P.sponge:usableOnTile(tileY, tileX) then
-		P.sponge:useToolTile(tileY, tileX)
+		P.sponge:useToolTile(tile, tileY, tileX)
 		P.sponge.numHeld = P.gun.numHeld+1
 	elseif P.brick:usableOnTile(tileY, tileX) then
-		P.brick:useToolTile(tileY, tileX)
+		P.brick:useToolTile(tile, tileY, tileX)
 		P.brick.numHeld = P.gun.numHeld+1
 	end
 end
