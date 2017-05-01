@@ -1,9 +1,9 @@
 {
   	"loadRooms":
   	{
-  		"oldrooms":
+  		"tutrooms":
   		{
-  			"filePath": "RoomData/tut_rooms.json"
+  			"filePath": "RoomData/tut_beginning.json"
   		},
       "rooms":
       {
@@ -14,9 +14,12 @@
   	{
   		"map":
   		[
-        [0,               "unlocks_room",                0],
-        [0,               "start_room",                0],
-        [0,               0,                0],
+
+        ["start_room",               "dragon_room", "extra_end",                "extra_4", 0],
+        ["tut_saw",0,0,"extra_3",0],
+        ["tut_doors",0,0,"extra_2",0],
+        ["tut_button",              "tut_death","tut_start",                "extra_1",0],
+        [0,               0,                0,0,0],
   		],
   		"generateFunction": "generateMapFromJSON",
       "tint": [0,0,0],

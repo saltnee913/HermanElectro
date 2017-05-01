@@ -95,6 +95,21 @@
 				},				
 			}
 		},
+		"heavenRooms":
+		{
+			"filePath": "RoomData/heavenRooms.json",
+			"requirements":
+			{
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
+				},				
+			}
+		},
 		"secretRooms":
 		{
 			"filePath": "RoomData/secretrooms.json",

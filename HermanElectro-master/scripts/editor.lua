@@ -266,9 +266,9 @@ function P.keypressed(key, unicode)
     elseif key == "-" then
    		--lock everything
      	for i = 1, #unlocks do
-    		if not unlocks[i].hidden then
+    		--if not unlocks[i].hidden then
     			unlocks.lockUnlockable(i)
-    		end
+    		--end
     	end
     	stats.statsData = {}
     	stats.writeStats()  		

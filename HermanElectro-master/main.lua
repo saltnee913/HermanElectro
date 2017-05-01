@@ -478,7 +478,7 @@ function love.load()
 			y = (6-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10, prevTileX = 3, prevTileY 	= 10,
 			prevx = (3-1)*scale*tileWidth+wallSprite.width+tileWidth/2*scale-10,
 			prevy = (10-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10,
-			width = 20, height = 20, speed = 250, luckTimer = 0, regularMapLoc = {x = 0, y = 0}, supersHeld = {total = 0}, returnFloorIndex = 0, attributes = {timeFrozen = false, invincibleCounter = 0, shieldCounter = 0, lucky = false, gifted = false, permaMap = false, xrayVision = false, upgradedToolUse = false, fast = {fast = false, fastStep = false}, flying = false, fear = false, shelled = false, tall = false, extendedRange = 0, sockStep = -1, invisible = false}}
+			width = 20, height = 20, speed = 250, luckTimer = 0, regularMapLoc = {x = 0, y = 0}, nonHeavenMapLoc = {x = 0, y = 0}, supersHeld = {total = 0}, returnFloorIndex = 0, attributes = {timeFrozen = false, invincibleCounter = 0, shieldCounter = 0, lucky = false, gifted = false, permaMap = false, xrayVision = false, upgradedToolUse = false, fast = {fast = false, fastStep = false}, flying = false, fear = false, shelled = false, tall = false, extendedRange = 0, sockStep = false, invisible = false}}
 	player.character = setChar
 
 	map.clearBlacklist()
@@ -550,7 +550,7 @@ function resetPlayer()
 	emptyTools()
 	player.attributes.flying = false
 	player.attributes.fear = false
-	player.attributes.sockStep = -1
+	player.attributes.sockStep = false
 	player.attributes.shelled = false
 	player.attributes.invisible = false
 	player.attributes.fast = {fast = false, fastStep = false}
@@ -774,6 +774,7 @@ function startGame()
 	tools.resetTools()
 	--resetPlayer()
 	player.character:onBegin()
+	resetTintValues()
 end
 
 function loadOpeningWorld()
@@ -788,6 +789,36 @@ function loadOpeningWorld()
 		player.tileX = stairsLocs[1].coords.x
 		player.tileY = stairsLocs[1].coords.y
 	else
+		--getting initial room, depending on if tutorial has been beaten or not
+		for i = 1, mapHeight do
+			for j = 1, mapHeight do
+				if mainMap[i][j]~=nil and mainMap[i][j].roomid~=nil then
+					local testStartRoomID = mainMap[i][j].roomid
+					if unlocks.tutorialBeatenUnlock.unlocked then
+						if map.getFieldForRoom(testStartRoomID, "isInitial") and
+						map.getFieldForRoom(testStartRoomID, "isInitialAfterTut")~=nil and map.getFieldForRoom(testStartRoomID, "isInitialAfterTut") then
+							mapy = i
+							mapx = j
+
+							--reveal map
+							unlockDoorsOpeningWorld()
+						end
+					else
+						if map.getFieldForRoom(testStartRoomID, "isInitial") and
+						map.getFieldForRoom(testStartRoomID, "isInitialBeforeTut")~=nil and map.getFieldForRoom(testStartRoomID, "isInitialBeforeTut") then
+							mapy = i
+							mapx = j
+						end
+					end
+				end
+			end
+		end
+
+		--set room
+		room = mainMap[mapy][mapx].room
+		roomLength = room.length
+		roomHeight = room.height
+
 		--default coordinates
 		player.tileX = math.floor(roomLength/2)
 		player.tileY = roomHeight-3
@@ -811,7 +842,7 @@ function loadOpeningWorld()
 	--remove supers
 	emptyTools()
 
-	unlockDoors()
+	--unlockDoors()
 	updateGameState()
 end
 
@@ -984,9 +1015,9 @@ function win()
 			unlocks.unlockUnlockableRef(unlocks.erikUnlock)
 		end
 		--if gabeUnlock then
-		if player.attributes.flying then
+		--[[if player.attributes.flying then
 			unlocks.unlockUnlockableRef(unlocks.gabeUnlock)
-		end
+		end]]
 		
 		won = true
 		if player.dungeonKeysHeld >= 3 then
@@ -1116,7 +1147,7 @@ function checkLight(i, j, x, y)
 end
 
 function updatePower()
-	if player.attributes.timeFrozen then return end
+	if player.attributes.timeFrozen or player.attributes.sockStep then return end
 	player.character:onPreUpdatePower()
 	for i = 1, #bossList do
 		bossList[i]:onPreUpdatePower()
@@ -1710,7 +1741,6 @@ function canBePowered(x,y,dir)
 end
 
 function love.draw()
-	love.graphics.setShader(myShader)
 	myShader:send("shaderTriggered", shaderTriggered)
 	--myShader:send("b_and_w", true)
 	love.graphics.setBackgroundColor(0,0,0)
@@ -1781,6 +1811,8 @@ function love.draw()
 	if (fto~=nil) then
 		if fto=="dungeon" then
 			toDrawFloor = dungeonFloor
+		elseif fto=="heaven" then
+			toDrawFloor = white
 		end
 	end
 
@@ -1832,7 +1864,7 @@ function love.draw()
 
 	love.graphics.setShader(myShader)
 
-	if floors[floorIndex-1]~=nil then
+	if floors[floorIndex-1]~=nil and fto==nil then
 		--17 pixels from left/right/bottom, 33 from top
 		local floorSprite = floors[floorIndex-1]
 
@@ -1846,7 +1878,7 @@ function love.draw()
 	for j = 1, roomHeight do
 		for i = 1, roomLength do
 
-			if (floors[floorIndex-1]==nil or editorMode) then
+			if (floors[floorIndex-1]==nil or editorMode or fto~=nil) then
 				if floorIndex<=1 then
 					toDrawFloor = dungeonFloor
 				else
@@ -1869,6 +1901,8 @@ function love.draw()
 				if (fto~=nil) then
 					if fto=="dungeon" then
 						toDrawFloor = dungeonFloor
+					elseif fto=="heaven" then
+						toDrawFloor = white
 					end
 				end
 
@@ -2309,26 +2343,28 @@ function love.draw()
 
 	if not editorMode --[[and floorIndex>=1]] then
 		love.graphics.setNewFont(fontSize)
-		for i = 0, 6 do
-			love.graphics.setColor(255,255,255)
-			love.graphics.draw(toolWrapper, i*width/18, 0, 0, (width/18)/16, (width/18)/16)
-			if tool == i+1 then
-				love.graphics.setColor(50, 200, 50)
-				love.graphics.rectangle("fill", i*width/18, 0, width/18, width/18)
+		if not (player.character.canHoldBasics~=nil and not player.character.canHoldBasics) then
+			for i = 0, 6 do
+				love.graphics.setColor(255,255,255)
+				love.graphics.draw(toolWrapper, i*width/18, 0, 0, (width/18)/16, (width/18)/16)
+				if tool == i+1 then
+					love.graphics.setColor(50, 200, 50)
+					love.graphics.rectangle("fill", i*width/18, 0, width/18, width/18)
+				end
+				--love.graphics.rectangle("fill", i*width/18, 0, width/18, width/18)
+				love.graphics.setColor(0,0,0)
+				love.graphics.rectangle("line", i*width/18, 0, width/18, width/18)
+				love.graphics.setColor(255,255,255)
+				local image = util.getImage(tools[i+1].image)
+				love.graphics.draw(image, i*width/18, 0, 0, (width/18)/image:getWidth(), (width/18)/image:getHeight())
+				if tools[i+1].numHeld==0 then
+					love.graphics.draw(gray, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
+				end
+				love.graphics.setColor(0,0,0)
+				love.graphics.print(tools[i+1].numHeld, i*width/18+3, 0)
+				love.graphics.print(i+1, i*width/18+7, (width/18)-20)
+				love.graphics.circle("line", i*width/18+10, (width/18)-15, 9, 50)
 			end
-			--love.graphics.rectangle("fill", i*width/18, 0, width/18, width/18)
-			love.graphics.setColor(0,0,0)
-			love.graphics.rectangle("line", i*width/18, 0, width/18, width/18)
-			love.graphics.setColor(255,255,255)
-			local image = util.getImage(tools[i+1].image)
-			love.graphics.draw(image, i*width/18, 0, 0, (width/18)/image:getWidth(), (width/18)/image:getHeight())
-			if tools[i+1].numHeld==0 then
-				love.graphics.draw(gray, i*width/18, 0, 0, (width/18)/32, (width/18)/32)
-			end
-			love.graphics.setColor(0,0,0)
-			love.graphics.print(tools[i+1].numHeld, i*width/18+3, 0)
-			love.graphics.print(i+1, i*width/18+7, (width/18)-20)
-			love.graphics.circle("line", i*width/18+10, (width/18)-15, 9, 50)
 		end
 		for i = 0, 2 do
 			love.graphics.setColor(255,255,255)
@@ -2664,11 +2700,13 @@ end
 function resetPlayerAttributesRoom()
 	player.attributes.flying = false
 	player.attributes.fear = false
-	player.attributes.sockStep = -1
+	player.attributes.sockStep = false
 	player.attributes.shelled = false
 	player.attributes.invisible = false
 	player.attributes.fast = {fast = false, fastStep = false}
 	player.attributes.timeFrozen = false
+
+	turnOffMushroomMode()
 end
 
 function resetPlayerAttributesTool()
@@ -2681,12 +2719,6 @@ function resetPlayerAttributesTool()
 end
 
 function resetPlayerAttributesStep()
-	if player.attributes.sockStep>=0 then
-		player.attributes.sockStep = player.attributes.sockStep-1
-		if player.attributes.sockStep<0 then
-			forcePowerUpdateNext = true
-		end
-	end
 end
 
 function updateAttributesRealtime(dt)
@@ -2850,7 +2882,8 @@ function enterRoom(dir)
 	visibleMap[mapy][mapx] = 1
 	keyTimer.timeLeft = keyTimer.suicideDelay
 	updateGameState(false)
-	tutorial.enterRoom()
+	--tutorial.enterRoom()
+	--^^not sure why that was there...?
 
 	postRoomEnter()
 
@@ -4057,7 +4090,7 @@ function updateGameState(noPowerUpdate, noLightUpdate)
 		end
 	end
 	checkCurrentTile()
-	if not noPowerUpdate and not globalPowerBlock and player.attributes.sockStep<0 then updatePower() end
+	if not noPowerUpdate and not globalPowerBlock and not player.attributes.sockStep then updatePower() end
 	if not noLightUpdate then
 		updateLight()
 	end
@@ -4187,7 +4220,7 @@ function updateTools()
 	end
 	for i = tools.numNormalTools+1, #tools do
 		if tools[i].numHeld>0 and not (specialTools[1]==i or specialTools[2]==i or specialTools[3]==i) then
-			if specialTools[1]==0 then specialTools[1] = i
+			if specialTools[1]==0 then specialTools[1] = i 
 			elseif specialTools[2]==0 then specialTools[2] = i
 			else specialTools[3] = i end
 		end
@@ -4197,6 +4230,12 @@ function updateTools()
 		unlocks.unlockUnlockableRef(unlocks.fishUnlock)
 	end]]
 
+	player.character:onUpdateTools()
+	for i = 1, #tools do
+		if tools[i].numHeld<0 then
+			tools[i].numHeld = 0
+		end
+	end
 end
 
 function stepTrigger()
@@ -4251,7 +4290,7 @@ end
 
 --unlocks all rooms besides hidden rooms (secret rooms and special dungeons)
 function unlockDoors(openLocked)
-	if player.attributes.xrayVision then
+	if player.attributes.xrayVision or floorIndex<=0 then
 		unlockDoorsPlus()
 		return
 	end
@@ -4276,6 +4315,33 @@ function unlockDoors(openLocked)
 				visibleMap[mapy+i][mapx+j] = 1
 			end
 		end
+	end
+end
+
+function unlockAllDoors()
+	for i = 1, mapHeight do
+		for j = 1, mapHeight do
+			if mainMap[i][j]~=nil then
+				completedRooms[i][j] = 1
+				visibleMap[i][j] = 1
+			end
+		end
+	end
+end
+
+function unlockDoorsOpeningWorld()
+	if unlocks.tutorialBeatenUnlock.unlocked and unlocks.dragonUnlock.unlocked then
+		unlockAllDoors()
+	elseif unlocks.tutorialBeatenUnlock.unlocked then
+		for i = 1, mapHeight do
+			for j = 1, mapHeight do
+				if mainMap[i][j]~=nil and (map.getFieldForRoom(mainMap[i][j].roomid, "hidden")==nil or not map.getFieldForRoom(mainMap[i][j].roomid, "hidden")) then
+					completedRooms[i][j] = 1
+					visibleMap[i][j] = 1
+				end
+			end
+		end
+	--else return
 	end
 end
 
@@ -4464,6 +4530,11 @@ function onToolUse(tool)
 		unlocks.unlockUnlockableRef(unlocks.knifeUnlock)
 	end
 
+	if basicsUsed[1]>0 and basicsUsed[2]>0 and basicsUsed[3]>0 and basicsUsed[4]>0 and basicsUsed[6]>0 then
+		unlocks.unlockUnlockableRef(unlocks.recycleBinUnlock)
+	end
+
 	updateTools()
 	checkAllDeath()
+	setPlayerLoc()
 end

@@ -50,7 +50,7 @@ P.statUnlockTriggers["GiovanniWinsPlus"] = {[1] = unlocks.pitbullChangerUnlock}
 P.statUnlockTriggers["GiovanniDungeonWins"] = {[1] = unlocks.pitbullChangerUnlock}
 P.statUnlockTriggers["GiovanniReachFloor6"] = {[1] = unlocks.tileSwapperUnlock}
 
-P.statUnlockTriggers["XavierWins"] = {[1] = unlocks.missileUnlock}
+P.statUnlockTriggers["XavierWins"] = {[1] = unlocks.sockUnlock}
 P.statUnlockTriggers["XavierWinsPlus"] = {[1] = unlocks.bombBuddyUnlock}
 P.statUnlockTriggers["XavierDungeonWins"] = {[1] = unlocks.inflationUnlock}
 P.statUnlockTriggers["XavierReachFloor6"] = {[1] = unlocks.boxesUnlock}

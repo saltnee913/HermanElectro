@@ -85,6 +85,21 @@
 				},				
 			}
 		},
+		"heavenRooms":
+		{
+			"filePath": "RoomData/heavenRooms.json",
+			"requirements":
+			{
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
+				},				
+			}
+		},
 		"dungeons":
 		{
 			"filePath": "RoomData/dungeons.json",

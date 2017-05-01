@@ -352,7 +352,7 @@ P.invisibleBox = P.box:new{name = "invisibleBox", visible = false}
 
 P.lamp = P.conductiveBox:new{name = "lamp", sprite = 'Graphics/lamp.png', poweredSprite = 'Graphics/lamp.png', intensity = 1, charged = true, range = 200}
 
-P.iceBox = P.box:new{name = "icebox", sprite = 'Graphics/icebox.png', forcePower = true}
+P.iceBox = P.box:new{name = "icebox", sprite = 'Graphics/icebox.png', forcePower = true, sawable = false}
 function P.iceBox:onLeaveNothing()
 	room[self.prevTileY][self.prevTileX] = tiles.puddle:new()
 end

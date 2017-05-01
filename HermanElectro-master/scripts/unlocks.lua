@@ -129,6 +129,7 @@ end
 
 P.unlock = Object:new{name = 'generic', unlocked = false, sprite = tiles.fog.sprite}
 
+P.tutorialBeatenUnlock = P.unlock:new{name = "tutorialBeaten", hidden = true}
 
 P.charUnlock = P.unlock:new{name = 'character', charIds = {"Herman"}}
 P.felixUnlock = P.charUnlock:new{name = 'felix the sharpshooter', charIds = {"Felix"}, sprite = 'Graphics/felix.png'}
@@ -143,7 +144,7 @@ P.batteryUnlock = P.charUnlock:new{name = 'bob the battery', charIds = {"Bob"}, 
 P.erikUnlock = P.charUnlock:new{name = 'erik the quick', charIds = {"Erik"}, sprite = 'Graphics/Characters/Erik.png'}
 P.fishUnlock = P.charUnlock:new{name = 'fish fish', charIds = {"Fish"}, sprite = 'Graphics/Characters/Fish.png'}
 P.scientistUnlock = P.charUnlock:new{name = 'science bitch', charIds = {"Marie"}, sprite = 'Graphics/Characters/Scienceman.png'}
-
+P.dragonUnlock = P.charUnlock:new{name = "rawr", charIds = {"Dragon"}, sprite = 'Graphics/Characters/Arachne.png'}
 
 P.tileUnlock = P.unlock:new{name = 'tile', tileIds = {1}, sprite = tiles.tile.sprite}
 P.lockedTiles = P.tileUnlock:new{name = 'permanentlyLockedTiles', tileIds = {50}}
@@ -270,6 +271,9 @@ P.nineLivesUnlock = P.unlock:new{name = "Mmmm more lives", toolIds = {tools.nine
 P.foresightUnlock = P.unlock:new{name = "Foreskin", toolIds = {tools.foresight}, sprite = tools.foresight.image}
 P.animalTrainerUnlock = P.unlock:new{name = "Train", toolIds = {tools.animalTrainer}, sprite = tools.animalTrainer.image}
 P.animalEnslaverUnlock = P.unlock:new{name = "Enslave", toolIds = {tools.animalEnslaver}, sprite = tools.animalEnslaver.image}
+P.armageddonUnlock = P.unlock:new{name = "Booooooom!", toolIds = {tools.armageddon}, sprite = tools.armageddon.image}
+P.recycleBinUnlock = P.unlock:new{name = "Recycle!", toolIds = {tools.recycleBin}, sprite = tools.recycleBin.image}
+P.sockUnlock = P.unlock:new{name = "Sock", toolIds = {tools.sock}, sprite = tools.sock.image}
 
 
 P.roomUnlock = P.unlock:new{name = 'room', roomIds = {"1"}}
@@ -300,6 +304,7 @@ P[#P+1] = P.batteryUnlock
 P[#P+1] = P.erikUnlock
 P[#P+1] = P.fishUnlock
 P[#P+1] = P.scientistUnlock
+P[#P+1] = P.dragonUnlock
 
 --tiles
 P[#P+1] = P.boxesUnlock --done
@@ -412,6 +417,9 @@ P[#P+1] = P.nineLivesUnlock
 P[#P+1] = P.foresightUnlock
 P[#P+1] = P.animalTrainerUnlock
 P[#P+1] = P.animalEnslaverUnlock
+P[#P+1] = P.armageddonUnlock
+P[#P+1] = P.recycleBinUnlock
+P[#P+1] = P.sockUnlock
 
 --rooms
 P[#P+1] = P.beggarPartyUnlock --done
@@ -423,6 +431,7 @@ P[#P+1] = P.portalUnlock --done
 
 P[#P+1] = P.dungeonUnlock
 P.dungeonUnlockId = #P
+P[#P+1] = P.tutorialBeatenUnlock
 
 P[#P+1] = P.lockedTiles
 
