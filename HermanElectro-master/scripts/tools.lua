@@ -4916,12 +4916,12 @@ end
 function P.fireBreath:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld-1
 
-	if P.saw:usableOnTile(tileY, tileX) then
+	if P.saw:usableOnTile(tile, tileY, tileX) then
 		P.saw:useToolTile(tile, tileY, tileX)
 		P.saw.numHeld = P.saw.numHeld+1
-	elseif P.ladder:usableOnTile(tileY, tileX) then
+	elseif P.ladder:usableOnTile(tile, tileY, tileX) then
 		P.ladder:useToolTile(tile, tileY, tileX)
-		P.ladder.numHeld = P.saw.numHeld+1
+		P.ladder.numHeld = P.ladder.numHeld+1
 	elseif P.gun:usableOnTile(tile, tileY, tileX) then
 		P.gun:useToolTile(tile, tileY, tileX)
 		P.gun.numHeld = P.gun.numHeld+1
@@ -4975,18 +4975,18 @@ end
 function P.claw:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld-1
 
-	if P.wireCutters:usableOnTile(tileY, tileX) then
+	if P.wireCutters:usableOnTile(tile, tileY, tileX) then
 		P.wireCutters:useToolTile(tile, tileY, tileX)
-		P.wireCutters.numHeld = P.saw.numHeld+1
-	elseif P.waterBottle:usableOnTile(tileY, tileX) then
+		P.wireCutters.numHeld = P.wireCutters.numHeld+1
+	elseif P.waterBottle:usableOnTile(tile, tileY, tileX) then
 		P.waterBottle:useToolTile(tile, tileY, tileX)
-		P.waterBottle.numHeld = P.saw.numHeld+1
-	elseif P.sponge:usableOnTile(tileY, tileX) then
+		P.waterBottle.numHeld = P.waterBottle.numHeld+1
+	elseif P.sponge:usableOnTile(tile, tileY, tileX) then
 		P.sponge:useToolTile(tile, tileY, tileX)
-		P.sponge.numHeld = P.gun.numHeld+1
-	elseif P.brick:usableOnTile(tileY, tileX) then
+		P.sponge.numHeld = P.sponge.numHeld+1
+	elseif P.brick:usableOnTile(tile, tileY, tileX) then
 		P.brick:useToolTile(tile, tileY, tileX)
-		P.brick.numHeld = P.gun.numHeld+1
+		P.brick.numHeld = P.brick.numHeld+1
 	end
 end
 function P.claw:useToolPushable(pushable)
