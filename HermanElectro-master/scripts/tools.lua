@@ -4914,36 +4914,22 @@ function P.fireBreath:usableOnAnimal(animal)
 	return dist<P.gun.baseRange
 end
 function P.fireBreath:useToolTile(tile, tileY, tileX)
-	self.numHeld = self.numHeld-1
-
 	if P.saw:usableOnTile(tile, tileY, tileX) then
-		P.saw:useToolTile(tile, tileY, tileX)
-		P.saw.numHeld = P.saw.numHeld+1
+		P.saw.useToolTile(self, tile, tileY, tileX)
 	elseif P.ladder:usableOnTile(tile, tileY, tileX) then
-		P.ladder:useToolTile(tile, tileY, tileX)
-		P.ladder.numHeld = P.ladder.numHeld+1
+		P.ladder.useToolTile(self, tile, tileY, tileX)
 	elseif P.gun:usableOnTile(tile, tileY, tileX) then
-		P.gun:useToolTile(tile, tileY, tileX)
-		P.gun.numHeld = P.gun.numHeld+1
+		P.gun.useToolTile(self, tile, tileY, tileX)
 	end
 end
 function P.fireBreath:useToolPushable(pushable)
-	self.numHeld = self.numHeld-1
-
-	P.saw:useToolPushable(pushable)
-	P.saw.numHeld = P.saw.numHeld+1
+	P.saw.useToolPushable(self, pushable)
 end
 function P.fireBreath:useToolNothing(tileY, tileX)
-	self.numHeld = self.numHeld-1
-
-	P.ladder:useToolNothing(tileY, tileX)
-	P.ladder.numHeld = P.ladder.numHeld+1
+	P.ladder.useToolNothing(self, tileY, tileX)
 end
 function P.fireBreath:useToolAnimal(animal)
-	self.numHeld = self.numHeld-1
-
-	P.gun:useToolAnimal(animal)
-	P.gun.numHeld = P.gun.numHeld+1
+	P.gun.useToolAnimal(animal)
 end
 
 P.claw = P.superTool:new{name = "qwer", description = "Reset, reload, recover", quality = 5,
@@ -4973,50 +4959,32 @@ function P.claw:usableOnAnimal(animal)
 	return dist<P.brick.baseRange
 end
 function P.claw:useToolTile(tile, tileY, tileX)
-	self.numHeld = self.numHeld-1
-
 	if P.wireCutters:usableOnTile(tile, tileY, tileX) then
-		P.wireCutters:useToolTile(tile, tileY, tileX)
-		P.wireCutters.numHeld = P.wireCutters.numHeld+1
+		P.wireCutters.useToolTile(self, tile, tileY, tileX)
 	elseif P.waterBottle:usableOnTile(tile, tileY, tileX) then
-		P.waterBottle:useToolTile(tile, tileY, tileX)
-		P.waterBottle.numHeld = P.waterBottle.numHeld+1
+		P.waterBottle.useToolTile(self, tile, tileY, tileX)
 	elseif P.sponge:usableOnTile(tile, tileY, tileX) then
-		P.sponge:useToolTile(tile, tileY, tileX)
-		P.sponge.numHeld = P.sponge.numHeld+1
+		P.sponge.useToolTile(self, tile, tileY, tileX)
 	elseif P.brick:usableOnTile(tile, tileY, tileX) then
-		P.brick:useToolTile(tile, tileY, tileX)
-		P.brick.numHeld = P.brick.numHeld+1
+		P.brick.useToolTile(self, tile, tileY, tileX)
 	end
 end
 function P.claw:useToolPushable(pushable)
-	self.numHeld = self.numHeld-1
-
 	if P.wireCutters:usableOnPushable(pushable) then
-		P.wireCutters:useToolPushable(pushable)
-		P.wireCutters.numHeld = P.saw.numHeld+1
+		P.wireCutters.useToolPushable(self, pushable)
 	elseif P.waterBottle:usableOnPushable(pushable) then
-		P.waterBottle:useToolPushable(pushable)
-		P.waterBottle.numHeld = P.saw.numHeld+1
+		P.waterBottle.useToolPushable(self, pushable)
 	elseif P.sponge:usableOnPushable(pushable) then
-		P.sponge:useToolPushable(pushable)
-		P.sponge.numHeld = P.gun.numHeld+1
+		P.sponge.useToolPushable(self, pushable)
 	elseif P.brick:usableOnPushable(pushable) then
-		P.brick:useToolPushable(pushable)
-		P.brick.numHeld = P.gun.numHeld+1
+		P.brick.useToolPushable(self, pushable)
 	end
 end
 function P.claw:useToolNothing(tileY, tileX)
-	self.numHeld = self.numHeld-1
-
-	P.waterBottle:useToolNothing(tileY, tileX)
-	P.waterBottle.numHeld = P.waterBottle.numHeld+1
+	P.waterBottle.useToolNothing(self, tileY, tileX)
 end
 function P.claw:useToolAnimal(animal)
-	self.numHeld = self.numHeld-1
-
-	P.brick:useToolAnimal(animal)
-	P.brick.numHeld = P.brick.numHeld+1
+	P.brick.useToolAnimal(self, animal)
 end
 
 P.wing = P.superTool:new{name = "tttt", description = "Reset, reload, recover", useWithArrowKeys = false, quality = 2,
