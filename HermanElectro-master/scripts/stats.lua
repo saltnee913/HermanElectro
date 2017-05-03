@@ -81,7 +81,7 @@ P.statUnlockTriggers["ErikDungeonWins"] = {[1] = unlocks.inflationUnlock}
 P.statUnlockTriggers["ErikReachFloor6"] = {[1] = unlocks.boxesUnlock}
 
 P.statUnlockTriggers["MarieWins"] = {[1] = unlocks.growthHormonesUnlock}
-P.statUnlockTriggers["MarieWinsPlus"] = {[1] = unlocks.wingsUnlock}
+P.statUnlockTriggers["MarieWinsPlus"] = {[1] = unlocks.growthHormonesUnlock}
 P.statUnlockTriggers["MarieDungeonWins"] = {[1] = unlocks.robotArmUnlock}
 P.statUnlockTriggers["MarieReachFloor6"] = {[1] = unlocks.robotArmUnlock}
 
@@ -104,6 +104,11 @@ P.statUnlockTriggers["AureliusWins"] = {[1] = unlocks.missileUnlock}
 P.statUnlockTriggers["AureliusWinsPlus"] = {[1] = unlocks.traderUnlock}
 P.statUnlockTriggers["AureliusDungeonWins"] = {[1] = unlocks.inflationUnlock}
 P.statUnlockTriggers["AureliusReachFloor6"] = {[1] = unlocks.boxesUnlock}
+
+P.statUnlockTriggers["GabeWins"] = {[1] = unlocks.wingsUnlock}
+P.statUnlockTriggers["GabeWinsPlus"] = {[1] = unlocks.traderUnlock}
+P.statUnlockTriggers["GabeDungeonWins"] = {[1] = unlocks.inflationUnlock}
+P.statUnlockTriggers["GabeReachFloor6"] = {[1] = unlocks.boxesUnlock}
 
 --these unlock whenever you do this many things in a run
 P.tempUnlockTriggers = {}
