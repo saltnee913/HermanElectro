@@ -575,6 +575,8 @@ function P.wall:obstructsMovement()
 		return false
 	elseif player.character.name==characters.rammy.name and self.name == tiles.wall.name then
 		return false
+	elseif player.attributes.superRammy then
+		return false
 	end
 	return true
 end

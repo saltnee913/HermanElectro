@@ -80,8 +80,16 @@ end
 
 --for basics only
 function P.giveToolsByArray(toolArray)
-	for i = 1, P.numNormalTools do
-		tools[i].numHeld = tools[i].numHeld + toolArray[i]
+	--check for tools that prevent tool drops
+	if tools.demonHoof.numHeld>0 or tools.demonFeather.numHeld>0 then
+		return
+	end
+
+	--passive ability of discountTag
+	for k = 1, tools.discountTag.numHeld+1 do
+		for i = 1, P.numNormalTools do
+			tools[i].numHeld = tools[i].numHeld + toolArray[i]
+		end
 	end
 	P.displayToolsByArray(toolArray)
 	updateTools()
@@ -896,7 +904,7 @@ function P.charger:useToolTile(tile)
 	tile.charged = true
 end
 
-P.visionChanger = P.superTool:new{name = 'Revelations', description = "God's eye view",baseRange = 0, image = 'Graphics/visionChanger.png', quality = 1}
+P.visionChanger = P.superTool:new{name = 'Flashlight', description = "Dispel the phantoms", baseRange = 0, image = 'Graphics/visionChanger.png', quality = 1}
 function P.visionChanger:usableOnTile(tile)
 	return true
 end
@@ -2604,7 +2612,7 @@ function P.wireToButton:useToolTile(tile, tileY, tileX)
 	room[tileY][tileX] = tiles.button:new()
 end
 
-P.foresight = P.superTool:new{name = "foresight", description = "Open the chest", image = 'Graphics/foresight.png', baseRange = 0, quality = 1}
+P.foresight = P.superTool:new{name = "Crystal Ball", description = "See the future", image = 'Graphics/foresight.png', baseRange = 0, quality = 1}
 function P.foresight:usableOnTile(tile)
 	return true
 end
@@ -5055,6 +5063,44 @@ function P.dragonFriend:useToolNothing(tileY, tileX)
 	animals[#animals+1] = addAnimal
 end
 
+P.demonHoof = P.superTool:new{name = "Demon Hoof", baseRange = 1, description = "Strength in sin", quality = 5}
+function P.demonHoof:giveOne()
+	self.numHeld = self.numHeld+1
+	player.attributes.superRammy = true
+	print("you are super")
+end
+function P.demonHoof:usableOnTile(tile)
+	return true
+end
+function P.demonHoof:useToolTile(tile)
+	self.numHeld = self.numHeld-1
+	tile:destroy()
+end
+
+P.demonFeather = P.superTool:new{name = "Demon Feather", baseRange = 1, description = "Flight of the faithless", quality = 5}
+function P.demonFeather:giveOne()
+	self.numHeld = self.numHeld+1
+	player.attributes.flying = true
+end
+function P.demonFeather:usableOnTile(tile)
+	return true
+end
+function P.demonFeather:useToolTile(tile)
+	self.numHeld = self.numHeld-1
+	tile:destroy()
+end
+
+P.discountTag = P.superTool:new{name = "Discount Tag", baseRange = 0, description = "Greed brings rewards", quality = 5}
+function P.discountTag:usableOnNothing()
+	return true
+end
+function P.discountTag:usableOnTile(tile)
+	return true
+end
+function P.discountTag:useToolNothing()
+end
+P.discountTag.useToolTile = P.discountTag.useToolNothing
+
 P.numNormalTools = 7
 P.lastToolUsed = 1
 
@@ -5282,6 +5328,11 @@ P:addTool(P.claw)
 P:addTool(P.wing)
 P:addTool(P.dragonEgg)
 P:addTool(P.dragonFriend)
+
+P:addTool(P.demonFeather)
+P:addTool(P.demonHoof)
+
+P:addTool(P.discountTag)
 
 P:addTool(P.stopwatch)
 
