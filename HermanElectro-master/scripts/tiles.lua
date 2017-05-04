@@ -2325,14 +2325,19 @@ function P.supertoolTile:onLoad()
 		end
 		if self.tool ~= nil then
 			self:updateSprite()
+		else
+			self:selectTool()
 		end
 	end
 end
 function P.supertoolTile:absoluteFinalUpdate()
 	if self.tool==nil then
-		self.tool = tools[tools.chooseSupertool(self.superQuality)]
-		self:updateSprite()
+		self:selectTool()
 	end
+end
+function P.supertoolTile:selectTool()
+	self.tool = tools[tools.chooseSupertool(self.superQuality)]
+	self:updateSprite()
 end
 function P.supertoolTile:updateSprite()
 	if self.tool~=nil then

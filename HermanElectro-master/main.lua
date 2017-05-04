@@ -2970,9 +2970,7 @@ function enterMove()
 end
 
 function preTileEnter(tile)
-			print(tile.name)
 	if player.attributes.superRammy then
-		print(tile.name.."2")
 		if tile:instanceof(tiles.wall) and not tile.destroyed and player.elevation<tile:getHeight()-3 then
 			tile:destroy()
 		end
