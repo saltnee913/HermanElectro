@@ -593,7 +593,6 @@ function P.createRoom(inRoom, arr)
 		end
 	end
 	--if arr[inRoom]==nil then --printinRoom.."isNil") end
-	print(inRoom)
 	local roomToLoad = arr[inRoom].layout
 	roomToLoad = (roomToLoad ~= nil) and roomToLoad 
 		or arr[inRoom].layouts[util.random(#arr[inRoom].layouts, 'mapGen')]
@@ -1093,7 +1092,7 @@ function P.generateMapWeighted()
 	while #secLocs == 0 and numNilAdjacent<4 do
 		for i = 1, height do
 			for j = 1, height do
-				if room[i][j]==nil then
+				if newmap[i][j]==nil then
 					local e = newmap[i+1][j]
 					local b = newmap[i-1][j]
 					local c = newmap[i][j+1]

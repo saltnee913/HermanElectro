@@ -57,7 +57,7 @@
 		},
 		"finalRooms": 
 		{
-			"filePath": "RoomData/finalrooms.json",
+			"filePath": "RoomData/endgamerooms.json",
 			"requirements":
 			{
 				"not":

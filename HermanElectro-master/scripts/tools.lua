@@ -2695,7 +2695,7 @@ function P.tileCloner:nothingIsSomething()
 	return true
 end
 
-P.shopReroller = P.superTool:new{name = "shopReroller", description = "Re-roll rquirements and items.", image = 'Graphics/shopreroller.png', quality = 2}
+P.shopReroller = P.superTool:new{name = "shopReroller", baseRange = 0, description = "Re-roll rquirements and items.", image = 'Graphics/shopreroller.png', quality = 2}
 function P.shopReroller:usableOnTile(tile)
 	return true
 end
@@ -4146,7 +4146,7 @@ P.compass.usableOnTile = P.compass.usableOnNothing
 function P.compass:useToolNothing()
 	self.numHeld = self.numHeld-1
 	player.attributes.permaMap = true
-	tools.map:useToolNothing()
+	tools.map.useToolNothing(self)
 end
 P.compass.useToolTile = P.compass.useToolNothing
 

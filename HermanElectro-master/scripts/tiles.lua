@@ -1206,7 +1206,7 @@ function P.upTunnel:onEnter(player)
 	beginFloorSequence(0, "up")
 end
 function P.upTunnel:onLeave(player)
-	if floorIndex==7 then
+	if floorIndex>=7 then
 		self.done = true
 		self.isCompleted = true
 		self.isVisible = false
