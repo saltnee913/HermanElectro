@@ -439,7 +439,7 @@ function P.xavier:absoluteFinalUpdate()
 	self:updateSprite()
 end
 function P.xavier:updateSprite()
-	if self.sockMode or player.attributes.sockStep>=0 then
+	if self.sockMode or player.attributes.sockStep then
 		self.sprite = self.sockSprite
 	else
 		self.sprite = self.noSockSprite
