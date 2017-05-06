@@ -1774,11 +1774,23 @@ P.swapper = P.superTool:new{name = "Swapper", description = "Lets trade places."
 function P.swapper:usableOnAnimal()
 	return true
 end
+function P.swapper:usableOnPushable()
+	return true
+end
 function P.swapper:useToolAnimal(animal)
 	local tempx = animal.tileX
 	local tempy = animal.tileY
 	animal.tileX = player.tileX
 	animal.tileY = player.tileY
+	player.tileX = tempx
+	player.tileY = tempy
+	self.numHeld = self.numHeld-1
+end
+function P.swapper:useToolPushable(pushable)
+	local tempx = pushable.tileX
+	local tempy = pushable.tileY
+	pushable.tileX = player.tileX
+	pushable.tileY = player.tileY
 	player.tileX = tempx
 	player.tileY = tempy
 	self.numHeld = self.numHeld-1

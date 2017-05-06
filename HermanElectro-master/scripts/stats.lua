@@ -81,7 +81,7 @@ P.statUnlockTriggers["ErikDungeonWins"] = {[1] = unlocks.inflationUnlock}
 P.statUnlockTriggers["ErikReachFloor6"] = {[1] = unlocks.boxesUnlock}
 
 P.statUnlockTriggers["MarieWins"] = {[1] = unlocks.growthHormonesUnlock}
-P.statUnlockTriggers["MarieWinsPlus"] = {[1] = unlocks.growthHormonesUnlock}
+P.statUnlockTriggers["MarieWinsPlus"] = {[1] = unlocks.xrayVisionUnlock}
 P.statUnlockTriggers["MarieDungeonWins"] = {[1] = unlocks.robotArmUnlock}
 P.statUnlockTriggers["MarieReachFloor6"] = {[1] = unlocks.robotArmUnlock}
 

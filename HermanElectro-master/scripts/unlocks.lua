@@ -274,7 +274,7 @@ P.animalEnslaverUnlock = P.unlock:new{name = "Enslave", toolIds = {tools.animalE
 P.armageddonUnlock = P.unlock:new{name = "Booooooom!", toolIds = {tools.armageddon}, sprite = tools.armageddon.image}
 P.recycleBinUnlock = P.unlock:new{name = "Recycle!", toolIds = {tools.recycleBin}, sprite = tools.recycleBin.image}
 P.sockUnlock = P.unlock:new{name = "Sock", toolIds = {tools.sock}, sprite = tools.sock.image}
-
+P.xrayVisionUnlock = P.unlock:new{name = "X-Ray Vision", toolIds = {tools.xrayVision}, sprite = tools.xrayVision.image}
 
 P.roomUnlock = P.unlock:new{name = 'room', roomIds = {"1"}}
 P.beggarPartyUnlock = P.roomUnlock:new{name = 'beggars love you', roomIds = {"beggar_party"}, sprite = tiles.beggar.sprite}
@@ -420,6 +420,7 @@ P[#P+1] = P.animalEnslaverUnlock
 P[#P+1] = P.armageddonUnlock
 P[#P+1] = P.recycleBinUnlock
 P[#P+1] = P.sockUnlock
+P[#P+1] = P.xrayVisionUnlock
 
 --rooms
 P[#P+1] = P.beggarPartyUnlock --done
