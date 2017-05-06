@@ -26,6 +26,8 @@ P.statUnlockTriggers["totalWins"] = {[3] = unlocks.dungeonUnlock}
 P.statUnlockTriggers["greenBeggarsShot"] = {[10] = unlocks.luckyPennyUnlock}
 P.statUnlockTriggers["stickyButtonsSponged"] = {[30] = unlocks.superStickyButtonUnlock}
 P.statUnlockTriggers["stayButtonsBricked"] = {[30] = unlocks.unbrickableStayButtonUnlock}
+P.statUnlockTriggers["animalsBricked"] = {[10] = unlocks.animalTrainerUnlock}
+P.statUnlockTriggers["pitsLaddered"] = {[30] = unlocks.brownPitUnlock}
 --P.statUnlockTriggers["glassWallsBricked"] = {[30] = unlocks.reinforcedGlassUnlock}
 
 P.statUnlockTriggers["conductiveSnailKilled"] = {[1] = unlocks.lennyUnlock}
@@ -47,7 +49,7 @@ P.statUnlockTriggers["FelixReachFloor6"] = {[1] = unlocks.boxesUnlock}
 
 P.statUnlockTriggers["GiovanniWins"] = {[1] = unlocks.pitbullChangerUnlock}
 P.statUnlockTriggers["GiovanniWinsPlus"] = {[1] = unlocks.pitbullChangerUnlock}
-P.statUnlockTriggers["GiovanniDungeonWins"] = {[1] = unlocks.pitbullChangerUnlock}
+P.statUnlockTriggers["GiovanniDungeonWins"] = {[1] = unlocks.swapperUnlock}
 P.statUnlockTriggers["GiovanniReachFloor6"] = {[1] = unlocks.tileSwapperUnlock}
 
 P.statUnlockTriggers["XavierWins"] = {[1] = unlocks.sockUnlock}

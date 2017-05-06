@@ -532,6 +532,7 @@ end
 function P.ladder:useToolTile(tile)
 	self.numHeld = self.numHeld - 1
 	tile:ladder()
+	stats.incrementStat("pitsLaddered")
 end
 function P.ladder:usableOnNothing()
 	return true
@@ -662,6 +663,7 @@ end
 function P.brick:useToolAnimal(animal)
 	self.numHeld = self.numHeld-1
 	animal.waitCounter = animal.waitCounter+1
+	stats.incrementStat("animalsBricked")
 	--[[if animal.waitCounter>=3 then
 		unlocks.unlockUnlockableRef(unlocks.catUnlock)
 	end]]
@@ -2182,6 +2184,7 @@ end
 function P.superBrick:useToolAnimal(animal)
 	self.numHeld = self.numHeld-1
 	animal.waitCounter = animal.waitCounter+2
+	stats.incrementStat("animalsBricked")
 end
 
 P.superWaterBottle = P.waterBottle:new{name = "superWaterBottle", description = "Break the unbreakable",
@@ -3710,6 +3713,7 @@ end
 function P.superLadder:useToolTile(tile)
 	self.numHeld = self.numHeld - 1
 	tile:ladder()
+	stats.incrementStat("pitsLaddered")
 end
 function P.superLadder:usableOnNothing()
 	return true
