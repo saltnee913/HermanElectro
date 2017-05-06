@@ -129,7 +129,7 @@
 	"data":
 	{
 		"requireUnlocks": true,
-		"height": 20,
+		"height": 12,
 		"numRooms": 28,
 		"generateFunction": "generateSixthFloor",
 		"startRoomID": "f6_start",

@@ -4027,7 +4027,7 @@ P.beggarReroller.useToolTile = P.beggarReroller.useToolNothing
 -- Seymour 
 P.xrayVision = P.superTool:new{name = "X-Ray Vision", description = "The bright side of Chernoybl",
 image = 'Graphics/Tools/xrayVision.png',
-baseRange = 0, quality = 3}
+baseRange = 0, quality = 4}
 function P.xrayVision:usableOnNothing()
 	return true
 end
@@ -5124,6 +5124,27 @@ function P.diagonal:useToolTile(tile, tileY, tileX)
 	room[player.tileY][player.tileX]:onEnter(player)
 end
 
+P.megaUnlock = P.superTool:new{name = "Psychic Key", baseRange = 0, description = "When one door closes, they all open",
+quality = 4}
+function P.megaUnlock:usableOnNothing()
+	return true
+end
+P.megaUnlock.usableOnTile = P.megaUnlock.usableOnNothing
+function P.megaUnlock:useToolNothing()
+	for i = 1, mapHeight do
+		for j = 1, mapHeight do
+			if mainMap[i][j]~=nil then
+				local xrayId = mainMap[i][j].roomid
+				if map.getFieldForRoom(xrayId, 'hidden')==nil or not map.getFieldForRoom(xrayId, 'hidden') then
+					visibleMap[i][j] = 1
+					completedRooms[i][j] = 1
+				end
+			end
+		end
+	end
+end
+P.megaUnlock.useToolTile = P.megaUnlock.useToolNothing
+
 P.numNormalTools = 7
 P.lastToolUsed = 1
 
@@ -5360,6 +5381,7 @@ P:addTool(P.discountTag)
 P:addTool(P.stopwatch)
 
 P:addTool(P.diagonal)
+P:addTool(P.megaUnlock)
 
 
 P.resetTools()

@@ -647,8 +647,8 @@ function P.dragon:onUpdateTools()
 	end
 end
 
-P.knight = P.character:new{name = "Knight", description = "The One-Winged Beast", sprite = 'Graphics/Characters/Arachne.png',
-	scale = 1.1*scale, crime = "Solitary Confinement -- DO NOT LET OUT"}
+P.knight = P.character:new{name = "Knight", description = "The Helmeted Hero", sprite = 'Graphics/Characters/Arachne.png',
+	scale = 1.1*scale, crime = "7 Years for Misplaced Chivalry"}
 function P.knight:onCharLoad()
 	if loadTutorial then return end
 	tools.giveToolsByReference({tools.diagonal})
