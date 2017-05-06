@@ -5101,6 +5101,29 @@ function P.discountTag:useToolNothing()
 end
 P.discountTag.useToolTile = P.discountTag.useToolNothing
 
+P.diagonal = P.superTool:new{name = "Diagonal", baseRange = 2, defaultDisabled = true, infiniteUses = true}
+P.diagonal.getToolableTiles = P.tool.getToolableTilesBox
+function P.diagonal:usableOnTile(tile, tileY, tileX)
+	if tile:obstructsMovement() then return false
+	else return tileY~=player.tileY and tileX~=player.tileX end
+end
+function P.diagonal:usableOnNothing(tileY, tileX)
+	return tileY~=player.tileY and tileX~=player.tileX
+end
+function P.diagonal:useToolNothing(tileY, tileX)
+	player.prevTileX = player.tileX
+	player.prevTileY = player.tileY
+	player.tileX = tileX
+	player.tileY = tileY
+end
+function P.diagonal:useToolTile(tile, tileY, tileX)
+	player.prevTileX = player.tileX
+	player.prevTileY = player.tileY
+	player.tileX = tileX
+	player.tileY = tileY
+	room[player.tileY][player.tileX]:onEnter(player)
+end
+
 P.numNormalTools = 7
 P.lastToolUsed = 1
 
@@ -5335,6 +5358,8 @@ P:addTool(P.demonHoof)
 P:addTool(P.discountTag)
 
 P:addTool(P.stopwatch)
+
+P:addTool(P.diagonal)
 
 
 P.resetTools()

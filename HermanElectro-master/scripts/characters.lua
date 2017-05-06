@@ -647,6 +647,14 @@ function P.dragon:onUpdateTools()
 	end
 end
 
+P.knight = P.character:new{name = "Knight", description = "The One-Winged Beast", sprite = 'Graphics/Characters/Arachne.png',
+	scale = 1.1*scale, crime = "Solitary Confinement -- DO NOT LET OUT"}
+function P.knight:onCharLoad()
+	if loadTutorial then return end
+	tools.giveToolsByReference({tools.diagonal})
+	myShader:send("player_range", 600)
+end
+
 P[#P+1] = P.herman
 P[#P+1] = P.francisco
 P[#P+1] = P.aurelius
@@ -661,6 +669,7 @@ P[#P+1] = P.erik
 P[#P+1] = P.fish
 P[#P+1] = P.scientist
 P[#P+1] = P.dragon
+P[#P+1] = P.knight
 
 P[#P+1] = P.gabe
 

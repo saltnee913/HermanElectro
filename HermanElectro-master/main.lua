@@ -2388,7 +2388,9 @@ function love.draw()
 			end
 			love.graphics.setColor(0,0,0)
 			if specialTools[i+1]~=0 then
-				love.graphics.print(tools[specialTools[i+1]].numHeld, (i+13)*width/18+3, 0)
+				if not tools[specialTools[i+1]].infiniteUses then
+					love.graphics.print(tools[specialTools[i+1]].numHeld, (i+13)*width/18+3, 0)
+				end
 				love.graphics.print((i+8)%10, (i+13)*width/18+7, (width/18)-20)
 				love.graphics.circle("line", (i+13)*width/18+10, (width/18)-15, 9, 50)
 			end
