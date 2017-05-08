@@ -8,7 +8,7 @@ local P = {}
 map = P
 
 --Temporary variable, we have to do this a better way later
-P.defaultFloorOrder = {'RoomData/floor1.json', 'RoomData/floor2.json', 'RoomData/floor3.json', 'RoomData/floor4.json', 'RoomData/floor5.json', 'RoomData/floor6.json',
+P.defaultFloorOrder = {'RoomData/floor1.json','RoomData/floor2.json','RoomData/floor3.json','RoomData/floor4.json','RoomData/floor5.json', 'RoomData/floor6.json',
 'RoomData/floor7.json', 'RoomData/floor8.json', 'RoomData/exitDungeonsMap.json'}
 P.floorOrder = P.defaultFloorOrder
 
@@ -1092,7 +1092,7 @@ function P.generateMapWeighted()
 	while #secLocs == 0 and numNilAdjacent<4 do
 		for i = 1, height do
 			for j = 1, height do
-				if room[i][j]==nil then
+				if newmap[i][j]==nil then
 					local e = newmap[i+1][j]
 					local b = newmap[i-1][j]
 					local c = newmap[i][j+1]
@@ -1332,7 +1332,7 @@ function P.generateSixthFloor()
 	while #secLocs == 0 and numNilAdjacent<4 do
 		for i = 1, height do
 			for j = 1, height do
-				if room[i][j]==nil then
+				if newmap[i][j]==nil then
 					local e = newmap[i+1][j]
 					local b = newmap[i-1][j]
 					local c = newmap[i][j+1]

@@ -3,7 +3,7 @@
 	{
 		"rooms": 
 		{
-			"filePath": "RoomData/rooms.json",
+			"filePath": "RoomData/f7rooms.json",
 			"requirements":
 			{
 				"not":
@@ -57,7 +57,7 @@
 		},
 		"finalRooms": 
 		{
-			"filePath": "RoomData/finalrooms.json",
+			"filePath": "RoomData/endgamerooms.json",
 			"requirements":
 			{
 				"not":
@@ -135,7 +135,7 @@
 	{
 		"requireUnlocks": true,
 		"height": 10,
-		"numRooms": 3,
+		"numRooms": 20,
 		"generateFunction": "generateMapWeighted",
 		"startRoomID": "1",
 		//numRoomsToCheck is the amount of rooms to try when deciding a room's roomid, decreasing this increases rng

@@ -80,8 +80,16 @@ end
 
 --for basics only
 function P.giveToolsByArray(toolArray)
-	for i = 1, P.numNormalTools do
-		tools[i].numHeld = tools[i].numHeld + toolArray[i]
+	--check for tools that prevent tool drops
+	if tools.demonHoof.numHeld>0 or tools.demonFeather.numHeld>0 then
+		return
+	end
+
+	--passive ability of discountTag
+	for k = 1, tools.discountTag.numHeld+1 do
+		for i = 1, P.numNormalTools do
+			tools[i].numHeld = tools[i].numHeld + toolArray[i]
+		end
 	end
 	P.displayToolsByArray(toolArray)
 	updateTools()
@@ -896,7 +904,7 @@ function P.charger:useToolTile(tile)
 	tile.charged = true
 end
 
-P.visionChanger = P.superTool:new{name = 'Revelations', description = "God's eye view",baseRange = 0, image = 'Graphics/visionChanger.png', quality = 1}
+P.visionChanger = P.superTool:new{name = 'Flashlight', description = "Dispel the phantoms", baseRange = 0, image = 'Graphics/visionChanger.png', quality = 1}
 function P.visionChanger:usableOnTile(tile)
 	return true
 end
@@ -2604,7 +2612,7 @@ function P.wireToButton:useToolTile(tile, tileY, tileX)
 	room[tileY][tileX] = tiles.button:new()
 end
 
-P.foresight = P.superTool:new{name = "foresight", description = "Open the chest", image = 'Graphics/foresight.png', baseRange = 0, quality = 1}
+P.foresight = P.superTool:new{name = "Crystal Ball", description = "See the future", image = 'Graphics/foresight.png', baseRange = 0, quality = 1}
 function P.foresight:usableOnTile(tile)
 	return true
 end
@@ -2695,7 +2703,7 @@ function P.tileCloner:nothingIsSomething()
 	return true
 end
 
-P.shopReroller = P.superTool:new{name = "shopReroller", description = "Re-roll rquirements and items.", image = 'Graphics/shopreroller.png', quality = 2}
+P.shopReroller = P.superTool:new{name = "shopReroller", baseRange = 0, description = "Re-roll rquirements and items.", image = 'Graphics/shopreroller.png', quality = 2}
 function P.shopReroller:usableOnTile(tile)
 	return true
 end
@@ -4146,7 +4154,7 @@ P.compass.usableOnTile = P.compass.usableOnNothing
 function P.compass:useToolNothing()
 	self.numHeld = self.numHeld-1
 	player.attributes.permaMap = true
-	tools.map:useToolNothing()
+	tools.map.useToolNothing(self)
 end
 P.compass.useToolTile = P.compass.useToolNothing
 
@@ -4914,36 +4922,22 @@ function P.fireBreath:usableOnAnimal(animal)
 	return dist<P.gun.baseRange
 end
 function P.fireBreath:useToolTile(tile, tileY, tileX)
-	self.numHeld = self.numHeld-1
-
-	if P.saw:usableOnTile(tileY, tileX) then
-		P.saw:useToolTile(tile, tileY, tileX)
-		P.saw.numHeld = P.saw.numHeld+1
-	elseif P.ladder:usableOnTile(tileY, tileX) then
-		P.ladder:useToolTile(tile, tileY, tileX)
-		P.ladder.numHeld = P.saw.numHeld+1
+	if P.saw:usableOnTile(tile, tileY, tileX) then
+		P.saw.useToolTile(self, tile, tileY, tileX)
+	elseif P.ladder:usableOnTile(tile, tileY, tileX) then
+		P.ladder.useToolTile(self, tile, tileY, tileX)
 	elseif P.gun:usableOnTile(tile, tileY, tileX) then
-		P.gun:useToolTile(tile, tileY, tileX)
-		P.gun.numHeld = P.gun.numHeld+1
+		P.gun.useToolTile(self, tile, tileY, tileX)
 	end
 end
 function P.fireBreath:useToolPushable(pushable)
-	self.numHeld = self.numHeld-1
-
-	P.saw:useToolPushable(pushable)
-	P.saw.numHeld = P.saw.numHeld+1
+	P.saw.useToolPushable(self, pushable)
 end
 function P.fireBreath:useToolNothing(tileY, tileX)
-	self.numHeld = self.numHeld-1
-
-	P.ladder:useToolNothing(tileY, tileX)
-	P.ladder.numHeld = P.ladder.numHeld+1
+	P.ladder.useToolNothing(self, tileY, tileX)
 end
 function P.fireBreath:useToolAnimal(animal)
-	self.numHeld = self.numHeld-1
-
-	P.gun:useToolAnimal(animal)
-	P.gun.numHeld = P.gun.numHeld+1
+	P.gun.useToolAnimal(animal)
 end
 
 P.claw = P.superTool:new{name = "qwer", description = "Reset, reload, recover", quality = 5,
@@ -4973,50 +4967,32 @@ function P.claw:usableOnAnimal(animal)
 	return dist<P.brick.baseRange
 end
 function P.claw:useToolTile(tile, tileY, tileX)
-	self.numHeld = self.numHeld-1
-
-	if P.wireCutters:usableOnTile(tileY, tileX) then
-		P.wireCutters:useToolTile(tile, tileY, tileX)
-		P.wireCutters.numHeld = P.saw.numHeld+1
-	elseif P.waterBottle:usableOnTile(tileY, tileX) then
-		P.waterBottle:useToolTile(tile, tileY, tileX)
-		P.waterBottle.numHeld = P.saw.numHeld+1
-	elseif P.sponge:usableOnTile(tileY, tileX) then
-		P.sponge:useToolTile(tile, tileY, tileX)
-		P.sponge.numHeld = P.gun.numHeld+1
-	elseif P.brick:usableOnTile(tileY, tileX) then
-		P.brick:useToolTile(tile, tileY, tileX)
-		P.brick.numHeld = P.gun.numHeld+1
+	if P.wireCutters:usableOnTile(tile, tileY, tileX) then
+		P.wireCutters.useToolTile(self, tile, tileY, tileX)
+	elseif P.waterBottle:usableOnTile(tile, tileY, tileX) then
+		P.waterBottle.useToolTile(self, tile, tileY, tileX)
+	elseif P.sponge:usableOnTile(tile, tileY, tileX) then
+		P.sponge.useToolTile(self, tile, tileY, tileX)
+	elseif P.brick:usableOnTile(tile, tileY, tileX) then
+		P.brick.useToolTile(self, tile, tileY, tileX)
 	end
 end
 function P.claw:useToolPushable(pushable)
-	self.numHeld = self.numHeld-1
-
 	if P.wireCutters:usableOnPushable(pushable) then
-		P.wireCutters:useToolPushable(pushable)
-		P.wireCutters.numHeld = P.saw.numHeld+1
+		P.wireCutters.useToolPushable(self, pushable)
 	elseif P.waterBottle:usableOnPushable(pushable) then
-		P.waterBottle:useToolPushable(pushable)
-		P.waterBottle.numHeld = P.saw.numHeld+1
+		P.waterBottle.useToolPushable(self, pushable)
 	elseif P.sponge:usableOnPushable(pushable) then
-		P.sponge:useToolPushable(pushable)
-		P.sponge.numHeld = P.gun.numHeld+1
+		P.sponge.useToolPushable(self, pushable)
 	elseif P.brick:usableOnPushable(pushable) then
-		P.brick:useToolPushable(pushable)
-		P.brick.numHeld = P.gun.numHeld+1
+		P.brick.useToolPushable(self, pushable)
 	end
 end
 function P.claw:useToolNothing(tileY, tileX)
-	self.numHeld = self.numHeld-1
-
-	P.waterBottle:useToolNothing(tileY, tileX)
-	P.waterBottle.numHeld = P.waterBottle.numHeld+1
+	P.waterBottle.useToolNothing(self, tileY, tileX)
 end
 function P.claw:useToolAnimal(animal)
-	self.numHeld = self.numHeld-1
-
-	P.brick:useToolAnimal(animal)
-	P.brick.numHeld = P.brick.numHeld+1
+	P.brick.useToolAnimal(self, animal)
 end
 
 P.wing = P.superTool:new{name = "tttt", description = "Reset, reload, recover", useWithArrowKeys = false, quality = 2,
@@ -5086,6 +5062,44 @@ function P.dragonFriend:useToolNothing(tileY, tileX)
 	addAnimal.prevTileY = tileY
 	animals[#animals+1] = addAnimal
 end
+
+P.demonHoof = P.superTool:new{name = "Demon Hoof", baseRange = 1, description = "Strength in sin", quality = 5}
+function P.demonHoof:giveOne()
+	self.numHeld = self.numHeld+1
+	player.attributes.superRammy = true
+	print("you are super")
+end
+function P.demonHoof:usableOnTile(tile)
+	return true
+end
+function P.demonHoof:useToolTile(tile)
+	self.numHeld = self.numHeld-1
+	tile:destroy()
+end
+
+P.demonFeather = P.superTool:new{name = "Demon Feather", baseRange = 1, description = "Flight of the faithless", quality = 5}
+function P.demonFeather:giveOne()
+	self.numHeld = self.numHeld+1
+	player.attributes.flying = true
+end
+function P.demonFeather:usableOnTile(tile)
+	return true
+end
+function P.demonFeather:useToolTile(tile)
+	self.numHeld = self.numHeld-1
+	tile:destroy()
+end
+
+P.discountTag = P.superTool:new{name = "Discount Tag", baseRange = 0, description = "Greed brings rewards", quality = 5}
+function P.discountTag:usableOnNothing()
+	return true
+end
+function P.discountTag:usableOnTile(tile)
+	return true
+end
+function P.discountTag:useToolNothing()
+end
+P.discountTag.useToolTile = P.discountTag.useToolNothing
 
 P.numNormalTools = 7
 P.lastToolUsed = 1
@@ -5314,6 +5328,11 @@ P:addTool(P.claw)
 P:addTool(P.wing)
 P:addTool(P.dragonEgg)
 P:addTool(P.dragonFriend)
+
+P:addTool(P.demonFeather)
+P:addTool(P.demonHoof)
+
+P:addTool(P.discountTag)
 
 P:addTool(P.stopwatch)
 

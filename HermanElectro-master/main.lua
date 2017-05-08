@@ -478,7 +478,7 @@ function love.load()
 			y = (6-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10, prevTileX = 3, prevTileY 	= 10,
 			prevx = (3-1)*scale*tileWidth+wallSprite.width+tileWidth/2*scale-10,
 			prevy = (10-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10,
-			width = 20, height = 20, speed = 250, luckTimer = 0, regularMapLoc = {x = 0, y = 0}, nonHeavenMapLoc = {x = 0, y = 0}, supersHeld = {total = 0}, returnFloorIndex = 0, attributes = {timeFrozen = false, invincibleCounter = 0, shieldCounter = 0, lucky = false, gifted = false, permaMap = false, xrayVision = false, upgradedToolUse = false, fast = {fast = false, fastStep = false}, flying = false, fear = false, shelled = false, tall = false, extendedRange = 0, sockStep = false, invisible = false}}
+			width = 20, height = 20, speed = 250, luckTimer = 0, regularMapLoc = {x = 0, y = 0}, nonHeavenMapLoc = {x = 0, y = 0}, supersHeld = {total = 0}, returnFloorIndex = 0, attributes = {superRammy = false, timeFrozen = false, invincibleCounter = 0, shieldCounter = 0, lucky = false, gifted = false, permaMap = false, xrayVision = false, upgradedToolUse = false, fast = {fast = false, fastStep = false}, flying = false, fear = false, shelled = false, tall = false, extendedRange = 0, sockStep = false, invisible = false}}
 	player.character = setChar
 
 	map.clearBlacklist()
@@ -2705,6 +2705,14 @@ function resetPlayerAttributesRoom()
 	player.attributes.invisible = false
 	player.attributes.fast = {fast = false, fastStep = false}
 	player.attributes.timeFrozen = false
+	player.attributes.superRammy = false
+
+	if tools.demonFeather.numHeld>0 then
+		player.attributes.flying = true
+	end
+	if tools.demonHoof.numHeld>0 then
+		player.attributes.superRammy = true
+	end
 
 	turnOffMushroomMode()
 end
@@ -2943,6 +2951,7 @@ function enterMove()
 			end
 		else
 			player.character:preTileEnter(room[player.tileY][player.tileX])
+			preTileEnter(room[player.tileY][player.tileX])
 			room[player.tileY][player.tileX]:onEnter(player)
 			if room[player.tileY][player.tileX]~=nil and room[player.tileY][player.tileX].overlay~=nil then
 				room[player.tileY][player.tileX].overlay:onEnter(player)
@@ -2957,6 +2966,14 @@ function enterMove()
 			end
 		end
 		player.character:onTileLeave()
+	end
+end
+
+function preTileEnter(tile)
+	if player.attributes.superRammy then
+		if tile:instanceof(tiles.wall) and not tile.destroyed and player.elevation<tile:getHeight()-3 then
+			tile:destroy()
+		end
 	end
 end
 

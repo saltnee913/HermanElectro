@@ -575,6 +575,8 @@ function P.wall:obstructsMovement()
 		return false
 	elseif player.character.name==characters.rammy.name and self.name == tiles.wall.name then
 		return false
+	elseif player.attributes.superRammy then
+		return false
 	end
 	return true
 end
@@ -1206,7 +1208,7 @@ function P.upTunnel:onEnter(player)
 	beginFloorSequence(0, "up")
 end
 function P.upTunnel:onLeave(player)
-	if floorIndex==7 then
+	if floorIndex>=7 then
 		self.done = true
 		self.isCompleted = true
 		self.isVisible = false
@@ -2323,14 +2325,19 @@ function P.supertoolTile:onLoad()
 		end
 		if self.tool ~= nil then
 			self:updateSprite()
+		else
+			self:selectTool()
 		end
 	end
 end
 function P.supertoolTile:absoluteFinalUpdate()
 	if self.tool==nil then
-		self.tool = tools[tools.chooseSupertool(self.superQuality)]
-		self:updateSprite()
+		self:selectTool()
 	end
+end
+function P.supertoolTile:selectTool()
+	self.tool = tools[tools.chooseSupertool(self.superQuality)]
+	self:updateSprite()
 end
 function P.supertoolTile:updateSprite()
 	if self.tool~=nil then
