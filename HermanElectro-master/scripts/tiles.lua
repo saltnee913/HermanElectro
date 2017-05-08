@@ -2530,6 +2530,7 @@ P.heavenEnter = P.tile:new{name = "heavenEnter", text = "You need flight to acce
 function P.heavenEnter:onEnter()
 	if not player.attributes.flying and player.character.name~="Dragon" then
 		messageInfo.text = self.text
+		return
 	end
 	--unlocks.unlockUnlockableRef(unlocks.rammyUnlock, true)
 	player.nonHeavenMapLoc = {x = mapx, y = mapy}

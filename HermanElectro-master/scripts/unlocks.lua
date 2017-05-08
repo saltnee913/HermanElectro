@@ -174,6 +174,7 @@ P.glueSnailUnlock = P.tileUnlock:new{name = "glug", tileIds = {121}, sprite = an
 P.conductiveSnailUnlock = P.tileUnlock:new{name = "brrr", tileIds = {62}, sprite = animalList.conductiveSnail.sprite}
 P.ratUnlock = P.tileUnlock:new{name = 'eek', tileIds = {196}, sprite = animalList.rat.sprite}
 P.reinforcedGlassUnlock = P.tileUnlock:new{name = 'reinforced', tileIds = {64}, sprite = tiles.reinforcedGlass.sprite}
+P.brownPitUnlock = P.tileUnlock:new{name = 'brownPitUnlock', tileIds = {33}, sprite = tiles.breakablePit.sprite}
 
 
 P.untriggeredPowerUnlock = P.tileUnlock:new{name = 'untriggered power supplies', tileIds = {63}, sprite = tiles.untriggeredPowerSupply.sprite}
@@ -274,7 +275,8 @@ P.animalEnslaverUnlock = P.unlock:new{name = "Enslave", toolIds = {tools.animalE
 P.armageddonUnlock = P.unlock:new{name = "Booooooom!", toolIds = {tools.armageddon}, sprite = tools.armageddon.image}
 P.recycleBinUnlock = P.unlock:new{name = "Recycle!", toolIds = {tools.recycleBin}, sprite = tools.recycleBin.image}
 P.sockUnlock = P.unlock:new{name = "Sock", toolIds = {tools.sock}, sprite = tools.sock.image}
-
+P.xrayVisionUnlock = P.unlock:new{name = "X-Ray Vision", toolIds = {tools.xrayVision}, sprite = tools.xrayVision.image}
+P.swapperUnlock = P.unlock:new{name = "Swapper no swapping", toolIds = {tools.swapper}, sprite = tools.swapper.image}
 
 P.roomUnlock = P.unlock:new{name = 'room', roomIds = {"1"}}
 P.beggarPartyUnlock = P.roomUnlock:new{name = 'beggars love you', roomIds = {"beggar_party"}, sprite = tiles.beggar.sprite}
@@ -322,6 +324,7 @@ P[#P+1] = P.cornerRotaterUnlock
 P[#P+1] = P.portalsUnlock
 P[#P+1] = P.poweredAccelUnlock
 P[#P+1] = P.unbreakableElectricFloorUnlock
+P[#P+1] = P.brownPitUnlock
 
 P[#P+1] = P.catUnlock --done
 P[#P+1] = P.ratUnlock
@@ -420,6 +423,8 @@ P[#P+1] = P.animalEnslaverUnlock
 P[#P+1] = P.armageddonUnlock
 P[#P+1] = P.recycleBinUnlock
 P[#P+1] = P.sockUnlock
+P[#P+1] = P.xrayVisionUnlock
+P[#P+1] = P.swapperUnlock
 
 --rooms
 P[#P+1] = P.beggarPartyUnlock --done

@@ -171,6 +171,7 @@ function P.animal:checkDeath()
 		if animals[i].trained and not animals[i].dead and animals[i]~=self and
 		animals[i].tileX==self.tileX and animals[i].tileY==self.tileY then
 			self:kill()
+			unlocks.unlockUnlockableRef(unlocks.animalEnslaverUnlock)
 		end
 	end
 	for i = 1, #bossList do
