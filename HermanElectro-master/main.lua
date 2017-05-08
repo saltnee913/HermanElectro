@@ -255,6 +255,7 @@ function love.load()
 		extern number player_range = 300;
 		extern number bonus_range = 0;
 		extern number b_and_w = 0;
+		extern bool g_and_w;
 		extern bool createShadows = true;
 
 		vec4 effect( vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords ){
@@ -302,6 +303,12 @@ function love.load()
         		pixel.r = avg*b_and_w+pixel.r*(1-b_and_w);
         		pixel.g = avg*b_and_w+pixel.g*(1-b_and_w);
         		pixel.b = avg*b_and_w+pixel.b*(1-b_and_w);
+            }
+            else if (g_and_w) {
+            	float avg = (pixel.r+pixel.g+pixel.b)/3;
+        		pixel.g = avg;
+        		pixel.b = 0;
+        		pixel.r = 0;
             }
 
 			return pixel;
@@ -2388,7 +2395,9 @@ function love.draw()
 			end
 			love.graphics.setColor(0,0,0)
 			if specialTools[i+1]~=0 then
-				love.graphics.print(tools[specialTools[i+1]].numHeld, (i+13)*width/18+3, 0)
+				if not tools[specialTools[i+1]].infiniteUses then
+					love.graphics.print(tools[specialTools[i+1]].numHeld, (i+13)*width/18+3, 0)
+				end
 				love.graphics.print((i+8)%10, (i+13)*width/18+7, (width/18)-20)
 				love.graphics.circle("line", (i+13)*width/18+10, (width/18)-15, 9, 50)
 			end
@@ -3282,6 +3291,10 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 		else
 			setMusicVolume(1)
 		end
+	end
+
+	if key=="g" then
+		myShader:send("g_and_w", true)
 	end
 
 	if not unlocksScreen.opened and not started then

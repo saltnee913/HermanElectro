@@ -203,7 +203,8 @@
 "itemsNeeded":
         [
           [0,0,0,0,0,0,0]],
-      "itemsGivenOverride": [0,0,0,0,0,0,0]
+      "itemsGivenOverride": [0,0,0,0,0,0,0],
+    "dumb": true
 },
 
 "f10":
@@ -226,7 +227,8 @@
 "itemsNeeded":
         [
           [0,0,0,0,0,0,0]],
-      "itemsGivenOverride": [0,0,0,0,0,0,0]
+      "itemsGivenOverride": [0,0,0,0,0,0,0],
+  "dumb": true
 },
 
 "f11":
@@ -297,7 +299,8 @@
 "itemsNeeded":
         [
           [0,0,0,0,0,0,0]],
-      "itemsGivenOverride": [0,0,0,0,0,0,0]
+      "itemsGivenOverride": [0,0,0,0,0,0,0],
+    "dumb": true
 },
 
 "boss_test":

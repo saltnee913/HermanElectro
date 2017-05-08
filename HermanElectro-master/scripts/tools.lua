@@ -532,6 +532,7 @@ end
 function P.ladder:useToolTile(tile)
 	self.numHeld = self.numHeld - 1
 	tile:ladder()
+	stats.incrementStat("pitsLaddered")
 end
 function P.ladder:usableOnNothing()
 	return true
@@ -662,6 +663,7 @@ end
 function P.brick:useToolAnimal(animal)
 	self.numHeld = self.numHeld-1
 	animal.waitCounter = animal.waitCounter+1
+	stats.incrementStat("animalsBricked")
 	--[[if animal.waitCounter>=3 then
 		unlocks.unlockUnlockableRef(unlocks.catUnlock)
 	end]]
@@ -1774,11 +1776,23 @@ P.swapper = P.superTool:new{name = "Swapper", description = "Lets trade places."
 function P.swapper:usableOnAnimal()
 	return true
 end
+function P.swapper:usableOnPushable()
+	return true
+end
 function P.swapper:useToolAnimal(animal)
 	local tempx = animal.tileX
 	local tempy = animal.tileY
 	animal.tileX = player.tileX
 	animal.tileY = player.tileY
+	player.tileX = tempx
+	player.tileY = tempy
+	self.numHeld = self.numHeld-1
+end
+function P.swapper:useToolPushable(pushable)
+	local tempx = pushable.tileX
+	local tempy = pushable.tileY
+	pushable.tileX = player.tileX
+	pushable.tileY = player.tileY
 	player.tileX = tempx
 	player.tileY = tempy
 	self.numHeld = self.numHeld-1
@@ -2170,6 +2184,7 @@ end
 function P.superBrick:useToolAnimal(animal)
 	self.numHeld = self.numHeld-1
 	animal.waitCounter = animal.waitCounter+2
+	stats.incrementStat("animalsBricked")
 end
 
 P.superWaterBottle = P.waterBottle:new{name = "superWaterBottle", description = "Break the unbreakable",
@@ -3698,6 +3713,7 @@ end
 function P.superLadder:useToolTile(tile)
 	self.numHeld = self.numHeld - 1
 	tile:ladder()
+	stats.incrementStat("pitsLaddered")
 end
 function P.superLadder:usableOnNothing()
 	return true
@@ -4027,7 +4043,7 @@ P.beggarReroller.useToolTile = P.beggarReroller.useToolNothing
 -- Seymour 
 P.xrayVision = P.superTool:new{name = "X-Ray Vision", description = "The bright side of Chernoybl",
 image = 'Graphics/Tools/xrayVision.png',
-baseRange = 0, quality = 3}
+baseRange = 0, quality = 4}
 function P.xrayVision:usableOnNothing()
 	return true
 end
@@ -5101,6 +5117,50 @@ function P.discountTag:useToolNothing()
 end
 P.discountTag.useToolTile = P.discountTag.useToolNothing
 
+P.diagonal = P.superTool:new{name = "Diagonal", baseRange = 2, defaultDisabled = true, infiniteUses = true}
+P.diagonal.getToolableTiles = P.tool.getToolableTilesBox
+function P.diagonal:usableOnTile(tile, tileY, tileX)
+	if tile:obstructsMovement() then return false
+	else return tileY~=player.tileY and tileX~=player.tileX end
+end
+function P.diagonal:usableOnNothing(tileY, tileX)
+	return tileY~=player.tileY and tileX~=player.tileX
+end
+function P.diagonal:useToolNothing(tileY, tileX)
+	player.prevTileX = player.tileX
+	player.prevTileY = player.tileY
+	player.tileX = tileX
+	player.tileY = tileY
+end
+function P.diagonal:useToolTile(tile, tileY, tileX)
+	player.prevTileX = player.tileX
+	player.prevTileY = player.tileY
+	player.tileX = tileX
+	player.tileY = tileY
+	room[player.tileY][player.tileX]:onEnter(player)
+end
+
+P.megaUnlock = P.superTool:new{name = "Psychic Key", baseRange = 0, description = "When one door closes, they all open",
+quality = 4}
+function P.megaUnlock:usableOnNothing()
+	return true
+end
+P.megaUnlock.usableOnTile = P.megaUnlock.usableOnNothing
+function P.megaUnlock:useToolNothing()
+	for i = 1, mapHeight do
+		for j = 1, mapHeight do
+			if mainMap[i][j]~=nil then
+				local xrayId = mainMap[i][j].roomid
+				if map.getFieldForRoom(xrayId, 'hidden')==nil or not map.getFieldForRoom(xrayId, 'hidden') then
+					visibleMap[i][j] = 1
+					completedRooms[i][j] = 1
+				end
+			end
+		end
+	end
+end
+P.megaUnlock.useToolTile = P.megaUnlock.useToolNothing
+
 P.numNormalTools = 7
 P.lastToolUsed = 1
 
@@ -5335,6 +5395,9 @@ P:addTool(P.demonHoof)
 P:addTool(P.discountTag)
 
 P:addTool(P.stopwatch)
+
+P:addTool(P.diagonal)
+P:addTool(P.megaUnlock)
 
 
 P.resetTools()
