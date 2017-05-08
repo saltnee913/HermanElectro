@@ -131,20 +131,20 @@ P.unlock = Object:new{name = 'generic', unlocked = false, sprite = tiles.fog.spr
 
 P.tutorialBeatenUnlock = P.unlock:new{name = "tutorialBeaten", hidden = true}
 
-P.charUnlock = P.unlock:new{name = 'character', charIds = {"Herman"}}
-P.felixUnlock = P.charUnlock:new{name = 'felix the sharpshooter', charIds = {"Felix"}, sprite = 'Graphics/felix.png'}
-P.frederickUnlock = P.charUnlock:new{name = 'frederick the frog', charIds = {"Frederick"}, sprite = 'Graphics/Characters/Frederick.png'}
-P.franciscoUnlock = P.charUnlock:new{name = 'francisco the cartographer', charIds = {"Francisco"}, sprite = 'Graphics/Characters/Francisco.png'}
-P.rammyUnlock = P.charUnlock:new{name = 'rammy the ram', charIds = {"Rammy"}, sprite = 'Graphics/ram.png'}
-P.aureliusUnlock = P.charUnlock:new{name = 'aurelius the golden', charIds = {"Aurelius"}, sprite = 'Graphics/Characters/Aurelius.png'}
-P.lennyUnlock = P.charUnlock:new{name = 'lenny the ghost snail', charIds = {"Lenny"}, sprite = 'Graphics/Characters/Lenny.png'}
-P.wizardUnlock = P.charUnlock:new{name = 'giovanni the sorceror', charIds = {"Giovanni"}, sprite = 'Graphics/giovannighost.png'}
-P.xavierUnlock = P.charUnlock:new{name = 'xavier the sock ninja', charIds = {"Xavier"}, sprite = 'Graphics/Characters/Eli.png'}
-P.batteryUnlock = P.charUnlock:new{name = 'bob the battery', charIds = {"Bob"}, sprite = 'Graphics/Characters/Bob.png'}
-P.erikUnlock = P.charUnlock:new{name = 'erik the quick', charIds = {"Erik"}, sprite = 'Graphics/Characters/Erik.png'}
-P.fishUnlock = P.charUnlock:new{name = 'fish fish', charIds = {"Fish"}, sprite = 'Graphics/Characters/Fish.png'}
+P.charUnlock = P.unlock:new{name = 'Herman Electrogue', charIds = {"Herman"}, desc = ''}
+P.felixUnlock = P.charUnlock:new{name = 'Fantastic Mr. Felix', desc = 'Bombastic', charIds = {"Felix"}, sprite = 'Graphics/felix.png', }
+P.frederickUnlock = P.charUnlock:new{name = 'Voltairs Frog', desc = 'Jumpstart', charIds = {"Frederick"}, sprite = 'Graphics/Characters/Frederick.png'}
+P.franciscoUnlock = P.charUnlock:new{name = 'Franciso Bizzaro', desc = 'Explorer extraordinare', charIds = {"Francisco"}, sprite = 'Graphics/Characters/Francisco.png'}
+P.rammyUnlock = P.charUnlock:new{name = 'Ramesses II Electric Boogaloo', desc ='Form of the ram', charIds = {"Rammy"}, sprite = 'Graphics/ram.png'}
+P.aureliusUnlock = P.charUnlock:new{name = 'Marcus Aurellius', desc ='The golden boy of Rome', charIds = {"Aurelius"}, sprite = 'Graphics/Characters/Aurelius.png'}
+P.lennyUnlock = P.charUnlock:new{name = 'Love for Lenny', desc = 'The Sticky Spector', charIds = {"Lenny"}, sprite = 'Graphics/Characters/Lenny.png'}
+P.wizardUnlock = P.charUnlock:new{name = 'The Good Wizard Giovanni', desc= 'Power would corrupt him if he werent so chill', charIds = {"Giovanni"}, sprite = 'Graphics/giovannighost.png'}
+P.xavierUnlock = P.charUnlock:new{name = 'xavier the sock ninja', desc ='', charIds = {"Xavier"}, sprite = 'Graphics/Characters/Eli.png'}
+P.batteryUnlock = P.charUnlock:new{name = 'Bob of Batty Boy Battery Battalion', desc ='Wants to be an Energizer bunny.', charIds = {"Bob"}, sprite = 'Graphics/Characters/Bob.png'}
+P.erikUnlock = P.charUnlock:new{name = 'Erik ', desc='', charIds = {"Erik"}, sprite = 'Graphics/Characters/Erik.png'}
+P.fishUnlock = P.charUnlock:new{name = 'Fish of the fish farm', desc='Bad at climbing trees', charIds = {"Fish"}, sprite = 'Graphics/Characters/Fish.png'}
 P.scientistUnlock = P.charUnlock:new{name = 'science bitch', charIds = {"Marie"}, sprite = 'Graphics/Characters/Scienceman.png'}
-P.dragonUnlock = P.charUnlock:new{name = "rawr", charIds = {"Dragon"}, sprite = 'Graphics/Characters/Arachne.png'}
+P.dragonUnlock = P.charUnlock:new{name = "Andy", desc='The Dragon', charIds = {"Dragon"}, sprite = 'Graphics/Characters/Arachne.png'}
 
 P.tileUnlock = P.unlock:new{name = 'tile', tileIds = {1}, sprite = tiles.tile.sprite}
 P.lockedTiles = P.tileUnlock:new{name = 'permanentlyLockedTiles', tileIds = {50}}
