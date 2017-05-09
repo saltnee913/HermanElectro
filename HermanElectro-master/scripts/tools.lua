@@ -950,7 +950,7 @@ function P.bomb:usableOnNothing()
 	return true
 end
 
-P.flame = P.superTool:new{name = "Flame", description = "Share the warmth.", baseRange = 1,
+P.flame = P.superTool:new{name = "Flame", description = "Shouldn't be hard to control", baseRange = 1,
 image = 'Graphics/Tools/flame.png', quality = 2} --Was desc: share the warmth
 function P.flame:usableOnTile(tile)
 	--flame cannot burn metal walls
