@@ -1945,8 +1945,8 @@ function P.revive:checkDeath()
 	return false
 end
 
-P.explosiveGun = P.gun:new{name = "Explosive Gun", description = "Boom Boom", baseRange = 5, image = 'Graphics/supergun.png', quality = 2}
-function P.explosiveGun:useToolTile(tile, tileY, tileX)
+P.explosiveGun = P.gun:new{name = "The Bombastic Bullet", description = "Explosive charmisma", baseRange = 5, image = 'Graphics/supergun.png', quality = 2}
+function P.explosiveGun:useToolTile(tile, tileY, tileX)--Destruction at a distance 
 	self.numHeld = self.numHeld-1
 	if tile:instanceof(tiles.beggar) then
 		--unlocks.unlockUnlockableRef(unlocks.beggarPartyUnlock)
@@ -1970,8 +1970,8 @@ function P.explosiveGun:useToolAnimal(animal)
 	room[pY][pX] = nil
 end
 
-P.map = P.superTool:new{name = "Map", description = "You'll find a way", baseRange = 0, image = 'Graphics/Tools/map.png', quality = 1}
-function P.map:usableOnNothing()
+P.map = P.superTool:new{name = "The Map", description = "Prudent planning", baseRange = 0, image = 'Graphics/Tools/map.png', quality = 1}
+function P.map:usableOnNothing() --Was desc You'll find a way , There might still be a way..., Prudent planning
 	return true
 end
 P.map.usableOnTile = P.map.usableOnNothing
@@ -2000,8 +2000,8 @@ function P.map:useToolNothing(tileY, tileX)
 end
 P.map.useToolTile = P.map.useToolNothing
 
-P.buttonFlipper = P.superTool:new{name = "Button Flipper", description = "Click... click-click-click-click", baseRange = 0, image = 'Graphics/buttonflipper.png', quality = 3}
-function P.buttonFlipper:usableOnNothing()
+P.buttonFlipper = P.superTool:new{name = "Button Master", description = "Flip off, flip on", baseRange = 0, image = 'Graphics/buttonflipper.png', quality = 3}
+function P.buttonFlipper:usableOnNothing()--Button Pusher, Button Master: Does more than push, "Click... click-click-click-click",
 	return true
 end
 P.buttonFlipper.usableOnTile = P.buttonFlipper.usableOnNothing
@@ -2023,8 +2023,8 @@ function P.buttonFlipper:useToolNothing(tileY, tileX)
 end
 P.buttonFlipper.useToolTile = P.buttonFlipper.useToolNothing
 
-P.wireBreaker = P.superTool:new{name = "Wire Breaker", description = "Snap... snap-snap-snap-snap", baseRange = 0, image = 'Graphics/wirebreaker.png', quality = 2}
-function P.wireBreaker:usableOnNothing()
+P.wireBreaker = P.superTool:new{name = "The Wireless Revolution", description = "Time to get rid of all these wires", baseRange = 0, image = 'Graphics/wirebreaker.png', quality = 2}
+function P.wireBreaker:usableOnNothing()--Snap... snap-snap-snap-snap, Ultimate disconnect
 	return true
 end
 P.wireBreaker.usableOnTile = P.wireBreaker.usableOnNothing
@@ -2043,8 +2043,8 @@ function P.wireBreaker:useToolNothing(tileY, tileX)
 end
 P.wireBreaker.useToolTile = P.wireBreaker.useToolNothing
 
-P.powerBreaker = P.superTool:new{name = "Power Breaker", description = "Powerless", baseRange = 0, image = 'Graphics/powerbreaker.png', quality = 2}
-function P.powerBreaker:usableOnNothing()
+P.powerBreaker = P.superTool:new{name = "Entropy", description = "Chaotic", baseRange = 0, image = 'Graphics/powerbreaker.png', quality = 2}
+function P.powerBreaker:usableOnNothing() --Was Power Breaker: Powerless
 	return true
 end
 P.powerBreaker.usableOnTile = P.powerBreaker.usableOnNothing
@@ -2060,7 +2060,7 @@ function P.powerBreaker:useToolNothing(tileY, tileX)
 end
 P.powerBreaker.useToolTile = P.powerBreaker.useToolNothing
 
-P.gabeMaker = P.superTool:new{name = "Gabe Maker", description = "Gabriel", baseRange = 0, image = 'Graphics/gabeSmall.png', quality = 5}
+P.gabeMaker = P.superTool:new{name = "Ascend Into Heaven", description = "The eternal sunshine of the immortal soul", baseRange = 0, image = 'Graphics/gabeSmall.png', quality = 5}
 function P.gabeMaker:usableOnNothing()
 	return true
 end
@@ -2073,7 +2073,7 @@ function P.gabeMaker:useToolNothing(tileY, tileX)
 end
 P.gabeMaker.useToolTile = P.gabeMaker.useToolNothing
 
-P.roomUnlocker = P.superTool:new{name = "Room Unlocker", description = "Gatecrashing", baseRange = 0, image = 'Graphics/roomunlocker.png', quality = 2}
+P.roomUnlocker = P.superTool:new{name = "The Magic Word", description = "Gatecrashing", baseRange = 0, image = 'Graphics/roomunlocker.png', quality = 2}
 function P.roomUnlocker:usableOnNothing()
 	return true
 end
