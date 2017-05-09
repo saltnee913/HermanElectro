@@ -836,7 +836,7 @@ function P.giveSupertools(numTools,qualities)
 	P.giveRandomTools(0,numTools,qualities)
 end
 
-P.shovel = P.superTool:new{name = "Shovel", description = "Dig deep", baseRange = 1, --Plumb the depths?
+P.shovel = P.superTool:new{name = "Shovel", description = "Seek treasure", baseRange = 1, --Dig deep? Plumb the depths?
 image = 'Graphics/Tools/shovel.png', quality = 2}
 function P.shovel:usableOnNothing()
 	return true
@@ -940,7 +940,7 @@ end
 P.visionChanger.useToolNothing = P.visionChanger.useToolTile
 
 P.bomb = P.superTool:new{name = "Bomb", description = "3-2-1 BOOM!", baseRange = 1, image = 'Graphics/Tools/bomb.png', quality = 4}
-function P.bomb:useToolNothing(tileY, tileX)
+function P.bomb:useToolNothing(tileY, tileX) --Used to be 3-2-1 BOOM!
 	self.numHeld = self.numHeld - 1
 	t = tiles.bomb:new()
 	t.counter = 3
@@ -1141,7 +1141,7 @@ function P.rotater:useToolTile(tile, tileY, tileX)
 	tile:rotate(1)
 end
 
-P.trap = P.superTool:new{name = "trap", description = "Removed?", baseRange = 1, image = 'Graphics/trap.png', quality = 1}
+P.trap = P.superTool:new{name = "Trap", description = "Removed?", baseRange = 1, image = 'Graphics/trap.png', quality = 1}
 function P.trap:usableOnNothing()
 	return true
 end
@@ -1234,7 +1234,7 @@ function P.glue:useToolNothing(tileY, tileX)
 	room[tileY][tileX] = tiles.glue:new()
 end
 
-P.endFinder = P.superTool:new{name = "endFinder", description = "Removed.",baseRange = 0, image = 'Graphics/endfinder.png', quality = 1}
+P.endFinder = P.superTool:new{name = "End Finder", description = "Removed.",baseRange = 0, image = 'Graphics/endfinder.png', quality = 1}
 function P.endFinder:usableOnNothing()
 	return true
 end
@@ -5300,7 +5300,7 @@ P:addTool(P.portalPlacerDouble)
 P:addTool(P.buttonReroller)
 
 
---Themes Prison + Escape
+--Themes Prison + Escapep
 P:addTool(P.knife) --Knife: They can't stop you
 P:addTool(P.crowbar) --Crowbar: It's on the other side
 P:addTool(P.shovel) --
@@ -5328,9 +5328,9 @@ P:addTool(P.bucketOfWater)
 P:addTool(P.toolIncrementer) 
 P:addTool(P.superLaser) -- Super L.A.S.E.R: The Big Bad Beam
 P:addTool(P.axe) -- Axes are friendly, maybe this won't be an axe
-P:addTool(P.superBrick)
 P:addTool(P.screwdriver) --Keep
 P:addTool(P.stoolPlacer)
+P:addTool(P.superBrick)
 P:addTool(P.superSaw)
 P:addTool(P.superSponge)
 P:addTool(P.luckySaw)
