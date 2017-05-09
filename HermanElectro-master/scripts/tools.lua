@@ -896,8 +896,8 @@ function P.delectrifier:useToolTile(tile)
 	end]]
 end
 
-P.charger = P.superTool:new{name = 'Energizer', description = "Power to the People", baseRange = 1, image = 'Graphics/charger.png', quality = 4}
-function P.charger:usableOnTile(tile)
+P.charger = P.superTool:new{name = 'Energizer', description = "Empowerment", baseRange = 1, image = 'Graphics/charger.png', quality = 4}
+function P.charger:usableOnTile(tile) --Was desc Power to the people aslo considered empower, empowering
 	if tile.canBePowered and not tile.charged then return true end
 	return false
 end
@@ -939,8 +939,8 @@ function P.visionChanger:useToolTile(tile)
 end
 P.visionChanger.useToolNothing = P.visionChanger.useToolTile
 
-P.bomb = P.superTool:new{name = "Bomb", description = "3-2-1 BOOM!", baseRange = 1, image = 'Graphics/Tools/bomb.png', quality = 4}
-function P.bomb:useToolNothing(tileY, tileX) --Used to be 3-2-1 BOOM!
+P.bomb = P.superTool:new{name = "Bomb", description = "ANFO", baseRange = 1, image = 'Graphics/Tools/bomb.png', quality = 4}
+function P.bomb:useToolNothing(tileY, tileX) --Used to be 3-2-1 BOOM! was also "brute force" Considered chemical trivia or thrill text
 	self.numHeld = self.numHeld - 1
 	t = tiles.bomb:new()
 	t.counter = 3
@@ -951,7 +951,7 @@ function P.bomb:usableOnNothing()
 end
 
 P.flame = P.superTool:new{name = "Flame", description = "Share the warmth.", baseRange = 1,
-image = 'Graphics/Tools/flame.png', quality = 2}
+image = 'Graphics/Tools/flame.png', quality = 2} --Was desc: share the warmth
 function P.flame:usableOnTile(tile)
 	--flame cannot burn metal walls
 	if tile:instanceof(tiles.wall) and tile.sawable and not tile:instanceof(tiles.metalWall) and not tile.destroyed then
