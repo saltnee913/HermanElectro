@@ -859,8 +859,8 @@ function P.shovel:useToolTile(tile)
 	end
 end
 
-P.electrifier = P.superTool:new{name = 'Electrifier', description = "Let the love flow.", baseRange = 1, image = 'Graphics/electrifier.png', quality = 3}
-function P.electrifier:usableOnTile(tile)--No longer called moisten
+P.electrifier = P.superTool:new{name = 'Conduit', description = "Make connections", baseRange = 1, image = 'Graphics/electrifier.png', quality = 3}
+function P.electrifier:usableOnTile(tile)--No longer called moisten, old desc: let the love flow
 	if not tile.destroyed and tile:instanceof(tiles.wall) and not tile:instanceof(tiles.metalWall) and not tile.electrified then
 		return true
 	end
@@ -873,7 +873,7 @@ end
 --Low enerrgy precedent?
 --Insulate or Isolate? Insulin?
 P.delectrifier = P.superTool:new{name = 'Insulate', description = "Low energy precedent", baseRange = 1, image = 'Graphics/electrifier2.png', quality = 4}
---You didn't have to cut me off?
+--You didn't have to cut me off?//
 function P.delectrifier:usableOnTile(tile)
 	if tile.canBePowered then return true end
 	return false
