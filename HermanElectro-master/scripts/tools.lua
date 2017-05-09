@@ -872,8 +872,8 @@ function P.electrifier:useToolTile(tile)
 end
 --Low enerrgy precedent?
 --Insulate or Isolate? Insulin?
-P.delectrifier = P.superTool:new{name = 'Insulate', description = "Low energy precedent", baseRange = 1, image = 'Graphics/electrifier2.png', quality = 4}
---You didn't have to cut me off?//
+P.delectrifier = P.superTool:new{name = 'Insulate', description = "Isolate", baseRange = 1, image = 'Graphics/electrifier2.png', quality = 4}
+--You didn't have to cut me off?//		Was insulate, Low energy precendent
 function P.delectrifier:usableOnTile(tile)
 	if tile.canBePowered then return true end
 	return false
