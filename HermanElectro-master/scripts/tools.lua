@@ -1695,7 +1695,7 @@ function P.toolReroller:useToolNothing()
 	self.numHeld = self.numHeld-1
 end
 
-P.roomReroller = P.superTool:new{name = "Room Reroller", description = "Tile transformation", baseRange = 0, image = 'Graphics/roomreroller.png', quality = 5}
+P.roomReroller = P.superTool:new{name = "Contents Randomizer", description = "What it could have been", baseRange = 0, image = 'Graphics/roomreroller.png', quality = 5}
 function P.roomReroller:usableOnNothing()
 	return true
 end
@@ -1737,7 +1737,7 @@ end
 P.roomReroller.useToolTile = P.roomReroller.useToolNothing
 
 
-P.toolDoubler = P.superTool:new{name = "X2", description = "", baseRange = 0, image = 'Graphics/tooldoubler.png', quality = 5}
+P.toolDoubler = P.superTool:new{name = "X2", description = "Xtweem-ly removed", baseRange = 0, image = 'Graphics/tooldoubler.png', quality = 5}
 function P.toolDoubler:usableOnNothing()
 	return true
 end
@@ -1748,8 +1748,8 @@ function P.toolDoubler:useToolNothing()
 	self.numHeld = self.numHeld-1
 end
 
-P.toolIncrementer = P.superTool:new{name = "Seven", description = "+'1-1-1-1-1-1-1'", baseRange = 0, image = 'Graphics/toolincrementer.png', quality = 5}
-function P.toolIncrementer:usableOnNothing()
+P.toolIncrementer = P.superTool:new{name = "Seven", description = "One of each", baseRange = 0, image = 'Graphics/toolincrementer.png', quality = 5}
+function P.toolIncrementer:usableOnNothing() --"Seven", description = "+'1-1-1-1-1-1-1'", 
 	return true
 end
 function P.toolIncrementer:useToolNothing()
@@ -1759,8 +1759,8 @@ function P.toolIncrementer:useToolNothing()
 	self.numHeld = self.numHeld-1
 end
 
-P.wings = P.superTool:new{name = "Wings", description = "His feet never touched the ground.", baseRange = 0, image = 'Graphics/wings.png', quality = 4}
-function P.wings:usableOnNothing()
+P.wings = P.superTool:new{name = "Wings", description = "Ungrounded", baseRange = 0, image = 'Graphics/wings.png', quality = 4}
+function P.wings:usableOnNothing()--His feet never touched the ground.
 	return true
 end
 P.wings.usableOnTile = P.roomReroller.usableOnNothing
@@ -1802,7 +1802,7 @@ end
 P.swapper.getToolableAnimals = P.swapper.getToolableAnimalsBox
 
 
-P.bucketOfWater = P.superTool:new{name = "Bucket Of Water", description = "Bottomless bucket", baseRange = 1,
+P.bucketOfWater = P.superTool:new{name = "Bucket Of Water", description = "Fathomless", baseRange = 1,
 image = 'Graphics/Tools/bucketOfWater.png', quality = 1}
 function P.bucketOfWater:usableOnNothing()
 	return true
