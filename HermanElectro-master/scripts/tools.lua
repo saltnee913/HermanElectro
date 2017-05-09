@@ -1132,8 +1132,8 @@ function P.pitbullChanger:useToolAnimal(animal)
 	end
 end
 
-P.rotater = P.superTool:new{name = "Rotater", description = "Turnt", baseRange = 1, image = 'Graphics/rotatetool.png', quality = 4}
-function P.rotater:usableOnTile(tile)
+P.rotater = P.superTool:new{name = "Rotater", description = "Perpendicular", baseRange = 1, image = 'Graphics/rotatetool.png', quality = 4}
+function P.rotater:usableOnTile(tile) --Was Turnt
 	return true
 end
 function P.rotater:useToolTile(tile, tileY, tileX)
@@ -1141,7 +1141,7 @@ function P.rotater:useToolTile(tile, tileY, tileX)
 	tile:rotate(1)
 end
 
-P.trap = P.superTool:new{name = "Trap", description = "Removed?", baseRange = 1, image = 'Graphics/trap.png', quality = 1}
+P.trap = P.superTool:new{name = "Trap", description = "*Snap*", baseRange = 1, image = 'Graphics/trap.png', quality = 1}
 function P.trap:usableOnNothing()
 	return true
 end
@@ -1170,7 +1170,7 @@ function P.broom:useToolTile(tile, tileY, tileX)
 	room[tileY][tileX]=nil
 end
 
-P.magnet = P.superTool:new{name = "Magnet", description = "F = Q *  vector v cross vector B", baseRange = 5,
+P.magnet = P.superTool:new{name = "Magnet", description = "F = q * vector v cross vector B", baseRange = 5,
 image = 'Graphics/Tools/boxMagnet.png', quality = 1} --Was Pull vs Push
 function P.magnet:usableOnPushable(pushable)
 	return math.abs(player.tileX-pushable.tileX)+math.abs(player.tileY-pushable.tileY)>1
