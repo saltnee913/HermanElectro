@@ -1170,8 +1170,8 @@ function P.broom:useToolTile(tile, tileY, tileX)
 	room[tileY][tileX]=nil
 end
 
-P.magnet = P.superTool:new{name = "Magnet", description = "Pull vs Push", baseRange = 5,
-image = 'Graphics/Tools/boxMagnet.png', quality = 1}
+P.magnet = P.superTool:new{name = "Magnet", description = "F = Q *  vector v cross vector B", baseRange = 5,
+image = 'Graphics/Tools/boxMagnet.png', quality = 1} --Was Pull vs Push
 function P.magnet:usableOnPushable(pushable)
 	return math.abs(player.tileX-pushable.tileX)+math.abs(player.tileY-pushable.tileY)>1
 end
