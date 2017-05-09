@@ -906,8 +906,8 @@ function P.charger:useToolTile(tile)
 	tile.charged = true
 end
 
-P.visionChanger = P.superTool:new{name = 'Flashlight', description = "Dispel the phantoms", baseRange = 0, image = 'Graphics/visionChanger.png', quality = 1}
-function P.visionChanger:usableOnTile(tile)
+P.visionChanger = P.superTool:new{name = 'Flashlight', description = "Dispel the dark", baseRange = 0, image = 'Graphics/visionChanger.png', quality = 1}
+function P.visionChanger:usableOnTile(tile)--Was "Dispel the phantoms"
 	return true
 end
 P.visionChanger.usableOnNothing = P.visionChanger.usableOnTile
@@ -1007,8 +1007,8 @@ function P.unsticker:useToolTile(tile)
 	tile:unstick()
 end
 
-P.crowbar = P.superTool:new{name = "Crowbar", description = "Tool for a prying heart", baseRange = 1, image = 'Graphics/unsticker.png', quality = 4}
-function P.crowbar:usableOnTile(tile)
+P.crowbar = P.superTool:new{name = "Crowbar", description = "It's on the other side.", baseRange = 1, image = 'Graphics/unsticker.png', quality = 4}
+function P.crowbar:usableOnTile(tile) --Tool for a prying heart
 	if tile:instanceof(tiles.vPoweredDoor) or tile:instanceof(tiles.hDoor) and not tile.stopped then return true end
 	return false
 end
@@ -1028,8 +1028,8 @@ function P.doorstop:useToolTile(tile)
 	tile.stopped = true
 end
 
-P.missile = P.superTool:new{name = "Missile", description = "The hand of MF doom",
-useWithArrowKeys = false, baseRange = 10,
+P.missile = P.superTool:new{name = "Missile", description = "Within its reach",
+useWithArrowKeys = false, baseRange = 10, -- Was "The hand of MF doom"
 image = 'Graphics/Tools/missile.png', quality = 4}
 function P.missile:usableOnTile(tile)
 	return not tile.destroyed and (tile:instanceof(tiles.wire) or tile:instanceof(tiles.electricFloor) or tile:instanceof(tiles.wall)) or tile:instanceof(tiles.powerSupply) and not tile.destroyed
@@ -1442,8 +1442,8 @@ function P.superWireCutters:usableOnTile(tile)
 	return self:usableOnNonOverlay(tile) or (tile.overlay~=nil and self:usableOnNonOverlay(tile.overlay))
 end
 
-P.laser = P.superTool:new{name = "L.A.S.E.R.", description = "Piercing shot", baseRange = 100, image = 'Graphics/laser.png', quality = 2}
-function P.laser:usableOnTile()
+P.laser = P.superTool:new{name = "L.A.S.E.R.", description = "Boson Beats", baseRange = 100, image = 'Graphics/laser.png', quality = 2}
+function P.laser:usableOnTile() --Was desc: Piercing shot
 	return true
 end
 P.laser.usableOnNothing = P.laser.usableOnTile
@@ -1488,8 +1488,8 @@ function P.laser:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld-1
 end
 
-P.icegun = P.superTool:new{name = "Freeze Ray", description = "Piercing permafrost", baseRange = 5,
-image = 'Graphics/icegun.png', quality = 2}
+P.icegun = P.superTool:new{name = "The Stop Light", description = "It may never turn green", baseRange = 5,
+image = 'Graphics/icegun.png', quality = 2}	--Was Freeze Ray: Piercing permafrost
 function P.icegun:usableOnTile()
 	return true
 end
@@ -1546,7 +1546,7 @@ function P.icegun:useToolNothing(tileY, tileX)
 end
 
 --should superLaser kill animals? can't decide
-P.superLaser = P.laser:new{name = "SuperLaser", description = "The Big Bad Beam", baseRange = 100, image = 'Graphics/laser.png', quality = 4}
+P.superLaser = P.laser:new{name = "Super L.A.S.E.R", description = "The Big Bad Beam", baseRange = 100, image = 'Graphics/laser.png', quality = 4}
 function P.superLaser:usableOnTile()
 	return true
 end
@@ -2118,7 +2118,7 @@ function P.lube:useToolTile(tile, tileY, tileX)
 	end
 end
 
-P.knife = P.superTool:new{name = "knife", description = "Take the plunge", baseRange = 5,
+P.knife = P.superTool:new{name = "knife", description = "They can't sto you", baseRange = 5,
 image = 'Graphics/Tools/knife.png', quality = 2}
 P.knife.usableOnAnimal = P.gun.usableOnAnimal
 P.knife.usableOnTile = P.wireCutters.usableOnTile
@@ -2394,7 +2394,7 @@ function P.emptyBucket:spreadSubstance(tile, tileY, tileX)
 	end
 end
 
-P.emptyCup = P.emptyBucket:new{name = "emptyCup", image = 'Graphics/Tools/emptyCup.png',
+P.emptyCup = P.emptyBucket:new{name = "emptyCup", description = "It's less than half full", image = 'Graphics/Tools/emptyCup.png',
 imageFull = 'Graphics/Tools/emptyCupWater.png',
 imageEmpty = 'Graphics/Tools/emptyCup.png',
 quality = 2}
@@ -5197,23 +5197,23 @@ P.resetTools()
 
 --Ideas: mushroom concoction (rainbow invincible mode), floor unlocker, ammo pack (3 guns)
 
-P:addTool(P.missile) --Missile: The hand of God
+P:addTool(P.missile) --Missile: Within its reach, The hand of God
 P:addTool(P.laser) --Laser: Boson Beats
-P:addTool(P.explosiveMeat) 
+P:addTool(P.explosiveMeat) --
 P:addTool(P.stealthBomber) 
 P:addTool(P.superGun)
-P:addTool(P.explosiveGun)
-P:addTool(P.ammoPack) 
+P:addTool(P.explosiveGun) --
+P:addTool(P.ammoPack) --The Hoodlum Hookup: Packing Heat  or  
 P:addTool(P.thruCover) --ThruCover: Tactical Strike
 P:addTool(P.iceyShot) --IceyShot: Pretty Cool
-P:addTool(P.icegun) --
+P:addTool(P.icegun) --The Stop Light: It might never turn green
 
 
 
 
 --Themes Drugs
-P:addTool(P.visionChanger) --		Dispel the phantoms, God's Eye View 
-P:addTool(P.gas)
+P:addTool(P.visionChanger) --Flashlight: Dispell the dark, Dispel the phantoms, God's Eye View 
+P:addTool(P.gas) -- or Gas: Don't breathe
 P:addTool(P.wings) --
 P:addTool(P.ironMan)
 P:addTool(P.seeds)
@@ -5232,7 +5232,7 @@ P:addTool(P.mindfulTool)
 P:addTool(P.reactiveShield)
 P:addTool(P.shield)
 P:addTool(P.shrooms)
-P:addTool(P.revive) --Keep
+P:addTool(P.revive) --		Revive: Not yet, Return of the King
 P:addTool(P.nineLives)
 
 --Theme Identity/Memes - Social
@@ -5304,7 +5304,7 @@ P:addTool(P.knife) --Knife: They can't stop you
 P:addTool(P.crowbar) --Crowbar: It's on the other side
 P:addTool(P.shovel) --
 P:addTool(P.map) --
-P:addTool(P.roomUnlocker) --Keep
+P:addTool(P.roomUnlocker) -- :Gate-crashing 
 P:addTool(P.tunneler) --
 P:addTool(P.lamp) --Lamp: Star in a jar
 P:addTool(P.emptyBucket)
@@ -5319,13 +5319,13 @@ P:addTool(P.compass)
 
 
 ---Theme Tools
-P:addTool(P.bomb)
+P:addTool(P.bomb) --
 P:addTool(P.boxCutter)
 P:addTool(P.magnet) --Keep
 P:addTool(P.superWireCutters)
 P:addTool(P.bucketOfWater)
 P:addTool(P.toolIncrementer)
-P:addTool(P.superLaser)
+P:addTool(P.superLaser) -- Super L.A.S.E.R: The Big Bad Beam
 P:addTool(P.axe) 
 P:addTool(P.superBrick)
 P:addTool(P.screwdriver) --Keep
@@ -5347,11 +5347,11 @@ P:addTool(P.meat)
 
 P:addTool(P.spring) --Fix this shit
 
-P:addTool(P.glue)
+P:addTool(P.glue) -- Stay boy, stay! or 
 
 P:addTool(P.ramSpawner) --Keep
 
-P:addTool(P.boxSpawner)
+P:addTool(P.boxSpawner) --Box: Likes to be pushed around or Box: Still likes to be pushed around
 
 
 
@@ -5365,7 +5365,7 @@ P:addTool(P.gasPourer)
 P:addTool(P.gasPourerXtreme)
 
 P:addTool(P.shift) --Lets talk about this one
-P:addTool(P.glitch) --Epic
+P:addTool(P.glitch) -- Glitch: ...what just happened?
 P:addTool(P.rottenMeat)
 --P:addTool(P.bouncer) --lol
 P:addTool(P.block) --Hmmm
