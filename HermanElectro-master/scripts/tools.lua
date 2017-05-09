@@ -1225,8 +1225,8 @@ function P.spring:useToolNothing(tileY, tileX)
 end
 P.spring.getToolableTiles = P.tool.getToolableTilesBox
 
-P.glue = P.superTool:new{name = "Glue", description = "Stay boy, stay!", image = 'Graphics/Tools/glue.png', quality = 2}
-function P.glue:usableOnNothing()
+P.glue = P.superTool:new{name = "Glue", description = "Sticktion", image = 'Graphics/Tools/glue.png', quality = 2}
+function P.glue:usableOnNothing() --Sticktion? was desc: Stay boy, stay!
 	return true
 end
 function P.glue:useToolNothing(tileY, tileX)
@@ -1262,8 +1262,8 @@ function P.lamp:useToolNothing(tileY, tileX)
 	room[tileY][tileX] = tiles.lamp:new()
 end]]
 
-P.boxSpawner = P.superTool:new{name = "The Box", description = "Likes to be pushed around", baseRange = 1, image = 'Graphics/box.png', quality = 2}
-function P.boxSpawner:usableOnNothing(tileY, tileX)
+P.boxSpawner = P.superTool:new{name = "The Box", description = "Still likes to be pushed around", baseRange = 1, image = 'Graphics/box.png', quality = 2}
+function P.boxSpawner:usableOnNothing(tileY, tileX) --Was desc: Likes to be pushed around
 	if tileY==player.tileY and tileX==player.tileX then return false end
 	for i = 1, #animals do
 		if animals[i].tileY==tileY and animals[i].tileX==tileX then return false end
@@ -1310,7 +1310,7 @@ function P.boxSpawner:useToolNothing(tileY, tileX)
 	pushables[#pushables+1] = toSpawn
 end
 
-P.playerBoxSpawner = P.boxSpawner:new{name = "playerBoxSpawner", description = "", image = 'Graphics/playerBox.png', quality = 2}
+P.playerBoxSpawner = P.boxSpawner:new{name = "Player Box Spawner", description = "Special treatment", image = 'Graphics/playerBox.png', quality = 2}
 function P.playerBoxSpawner:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld-1
 	local toSpawn = pushableList[3]:new()
@@ -1326,8 +1326,8 @@ function P.playerBoxSpawner:useToolNothing(tileY, tileX)
 	pushables[#pushables+1] = toSpawn
 end
 
-P.bombBoxSpawner = P.boxSpawner:new{name = "The Package", description  = "", image = 'Graphics/bombBox.png', quality = 3}
-function P.bombBoxSpawner:useToolTile(tile, tileY, tileX)
+P.bombBoxSpawner = P.boxSpawner:new{name = "The Package", description  = "It's fantastic", image = 'Graphics/bombBox.png', quality = 3}
+function P.bombBoxSpawner:useToolTile(tile, tileY, tileX) -- desc?: It's fantastic
 	self.numHeld = self.numHeld-1
 	local toSpawn = pushableList[8]:new()
 	toSpawn.tileY = tileY
@@ -1342,7 +1342,7 @@ function P.bombBoxSpawner:useToolNothing(tileY, tileX)
 	pushables[#pushables+1] = toSpawn
 end
 
-P.jackInTheBoxSpawner = P.boxSpawner:new{name = "JackInTheBoxSpawner", description  = "",image = 'Graphics/jackinthebox.png', quality = 2}
+P.jackInTheBoxSpawner = P.boxSpawner:new{name = "Jack In The Box", description  = "REMOVED",image = 'Graphics/jackinthebox.png', quality = 2}
 function P.jackInTheBoxSpawner:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld-1
 	local toSpawn = pushableList[10]:new()
@@ -1374,7 +1374,7 @@ function P.lamp:useToolTile(tile, tileY, tileX)
 	pushables[#pushables+1] = toSpawn
 end
 
-P.ramSpawner = P.boxSpawner:new{name = "The Ram", description  = "", image = 'Graphics/batteringram.png'}
+P.ramSpawner = P.boxSpawner:new{name = "The Ram", description  = "Knock down that wall", image = 'Graphics/batteringram.png'}
 function P.ramSpawner:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld-1
 	local toSpawn = pushableList[7]:new()
@@ -1390,7 +1390,7 @@ function P.ramSpawner:useToolNothing(tileY, tileX)
 	pushables[#pushables+1] = toSpawn
 end
 
-
+--Removed
 P.gateBreaker = P.superTool:new{name = "Gate Breaker", description = "Fuck logic.", baseRange = 1, image = 'Graphics/shovel.png', quality = 3}
 function P.gateBreaker:usableOnTile(tile)
 	return (tile:instanceof(tiles.gate) or tile:instanceof(tiles.notGate)) and not tile.destroyed
@@ -1400,7 +1400,8 @@ function P.gateBreaker:useToolTile(tile)
 	tile:destroy()
 end
 
-P.conductiveBoxSpawner = P.boxSpawner:new{name = "ConductiveBoxSpawner", description = "", image = 'Graphics/conductiveBox.png', quality = 3}
+--Removed
+P.conductiveBoxSpawner = P.boxSpawner:new{name = "Conductive Box Spawner", description = "", image = 'Graphics/conductiveBox.png', quality = 3}
 function P.conductiveBoxSpawner:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld-1
 	local toSpawn = pushableList[5]:new()
@@ -1416,6 +1417,7 @@ function P.conductiveBoxSpawner:useToolNothing(tileY, tileX)
 	pushables[#pushables+1] = toSpawn
 end
 
+--Removed
 P.boomboxSpawner = P.boxSpawner:new{name = "BoomboxSpawner", description = "Rock n' Roll", image = 'Graphics/boombox.png', quality = 2}
 function P.boomboxSpawner:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld-1
@@ -1432,8 +1434,8 @@ function P.boomboxSpawner:useToolNothing(tileY, tileX)
 	pushables[#pushables+1] = toSpawn
 end
 
-P.superWireCutters = P.wireCutters:new{name = "SuperWireCutters", description = "Sharper wire cutters.",
-image = 'Graphics/wirecutters.png', quality = -1}
+P.superWireCutters = P.wireCutters:new{name = "Sinister Slicers", description = "Cut to shreds", -- Anything more ... you know
+image = 'Graphics/wirecutters.png', quality = -1}-- was "Super Wire Cutters" ... Stone Splitters sounds cool but misleading
 function P.superWireCutters:usableOnNonOverlay(tile)
 	return not tile.destroyed and (tile:instanceof(tiles.wire)
 	or tile:instanceof(tiles.conductiveGlass) or tile:instanceof(tiles.reinforcedConductiveGlass) or tile:instanceof(tiles.electricFloor))
@@ -1636,7 +1638,7 @@ end
 
 
 P.gas = P.superTool:new{name = "Gas", description = "Don't breathe", baseRange = 0, image = 'Graphics/gas.png', quality = 3}
-function P.gas:usableOnNothing()
+function P.gas:usableOnNothing() -- Keep Desc / Flavor?
 	return true
 end
 P.gas.usableOnTile = P.gas.usableOnNothing
@@ -1652,7 +1654,7 @@ P.gas.useToolNothing = P.gas.useToolTile
 P.gas.useToolAnimal = P.gas.useToolTile
 
 
-P.armageddon = P.superTool:new{name = "Master of matter", description = "So very empty...", baseRange = 0, image = 'Graphics/armageddon.png', quality = 4}
+P.armageddon = P.superTool:new{name = "Master of Matter", description = "So very empty...", baseRange = 0, image = 'Graphics/armageddon.png', quality = 4}
 function P.armageddon:usableOnTile()
 	return true
 end
@@ -1677,7 +1679,7 @@ end
 P.armageddon.useToolNothing = P.armageddon.useToolTile
 
 
-P.toolReroller = P.superTool:new{name = "ToolReroller", description = "A shuffle and a draw.", baseRange = 0, image = 'Graphics/toolreroller.png', quality = 2}
+P.toolReroller = P.superTool:new{name = "Tool Reroller", description = "You can't always have the right tools for the job", baseRange = 0, image = 'Graphics/toolreroller.png', quality = 2}
 function P.toolReroller:usableOnNothing()
 	return true
 end
@@ -1693,7 +1695,7 @@ function P.toolReroller:useToolNothing()
 	self.numHeld = self.numHeld-1
 end
 
-P.roomReroller = P.superTool:new{name = "RoomReroller", description = "Tile transformation", baseRange = 0, image = 'Graphics/roomreroller.png', quality = 5}
+P.roomReroller = P.superTool:new{name = "Room Reroller", description = "Tile transformation", baseRange = 0, image = 'Graphics/roomreroller.png', quality = 5}
 function P.roomReroller:usableOnNothing()
 	return true
 end
