@@ -836,7 +836,7 @@ function P.giveSupertools(numTools,qualities)
 	P.giveRandomTools(0,numTools,qualities)
 end
 
-P.shovel = P.superTool:new{name = "Shovel", description = "Dig deep", baseRange = 1,
+P.shovel = P.superTool:new{name = "Shovel", description = "Dig deep", baseRange = 1, --Plumb the depths?
 image = 'Graphics/Tools/shovel.png', quality = 2}
 function P.shovel:usableOnNothing()
 	return true
@@ -859,8 +859,8 @@ function P.shovel:useToolTile(tile)
 	end
 end
 
-P.electrifier = P.superTool:new{name = 'Moisten', description = "Let the love flow.", baseRange = 1, image = 'Graphics/electrifier.png', quality = 3}
-function P.electrifier:usableOnTile(tile)
+P.electrifier = P.superTool:new{name = 'Electrifier', description = "Let the love flow.", baseRange = 1, image = 'Graphics/electrifier.png', quality = 3}
+function P.electrifier:usableOnTile(tile)--No longer called moisten
 	if not tile.destroyed and tile:instanceof(tiles.wall) and not tile:instanceof(tiles.metalWall) and not tile.electrified then
 		return true
 	end
@@ -1070,7 +1070,7 @@ function P.meat:useToolTile(tile)
 end
 
 
-P.rottenMeat = P.superTool:new{name = "Rotten Meat", description = "Disgust",
+P.rottenMeat = P.superTool:new{name = "Rotten Meat", description = "What poor people have to eat",
 image = 'Graphics/Tools/rottenMeat.png', quality = -1, baseRange = 1}
 P.rottenMeat.usableOnNothing = P.meat.usableOnNothing
 function P.rottenMeat:useToolNothing(tileY, tileX)
@@ -2304,8 +2304,8 @@ function P.wireExtender:useToolTile(tile, tileY, tileX)
 
 end
 
-P.coin = P.superTool:new{name = "Coin", description = "All costs must be payed", image = 'Graphics/Tools/coin.png', range = 1, quality = 1}
---Don't pretend things are free --
+P.coin = P.superTool:new{name = "Coin", description = "Nothing is free", image = 'Graphics/Tools/coin.png', range = 1, quality = 1}
+--Don't pretend things are free -- 
 function P.coin:usableOnTile(tile)
 	if tile:instanceof(tiles.toolTaxTile) and not tile.destroyed then
 		return true
@@ -4161,7 +4161,7 @@ function P.buttonReroller:useToolNothing()
 end
 P.buttonReroller.useToolTile = P.buttonReroller.useToolNothing
 
-P.compass = P.superTool:new{name = "The Compass", description = "Follow your heart.", image = 'Graphics/compass.png',
+P.compass = P.superTool:new{name = "The Compass", description = "Follow your youthful heart.", image = 'Graphics/compass.png',
 baseRange = 0, quality = 3}
 function P.compass:usableOnNothing()
 	return true
@@ -4552,7 +4552,7 @@ function P.mindfulTool:getLastTool()
 	return lastToolList
 end
 
-P.explosiveMeat = P.superTool:new{name = "Explosive Meat", description = "A little kick to it", baseRange = 1,
+P.explosiveMeat = P.superTool:new{name = "Explosive Meat", description = "Has a little kick to it", baseRange = 1,
 image = 'Graphics/Tools/explosiveMeat.png', quality = -1}
 P.explosiveMeat.usableOnNothing = P.meat.usableOnNothing
 function P.explosiveMeat:useToolNothing(tileY, tileX)
@@ -5197,28 +5197,29 @@ P.resetTools()
 
 --Ideas: mushroom concoction (rainbow invincible mode), floor unlocker, ammo pack (3 guns)
 
-P:addTool(P.missile)
-P:addTool(P.laser)
-P:addTool(P.explosiveMeat)
-P:addTool(P.stealthBomber)
+P:addTool(P.missile) --Missile: The hand of God
+P:addTool(P.laser) --Laser: Boson Beats
+P:addTool(P.explosiveMeat) 
+P:addTool(P.stealthBomber) 
 P:addTool(P.superGun)
 P:addTool(P.explosiveGun)
-P:addTool(P.ammoPack)
-P:addTool(P.thruCover)
-P:addTool(P.iceyShot) 
-P:addTool(P.icegun) --Cooler than laser
+P:addTool(P.ammoPack) 
+P:addTool(P.thruCover) --ThruCover: Tactical Strike
+P:addTool(P.iceyShot) --IceyShot: Pretty Cool
+P:addTool(P.icegun) --
 
 
 
 
 --Themes Drugs
-P:addTool(P.visionChanger) 
+P:addTool(P.visionChanger) --		Dispel the phantoms, God's Eye View 
 P:addTool(P.gas)
-P:addTool(P.wings)
+P:addTool(P.wings) --
 P:addTool(P.ironMan)
 P:addTool(P.seeds)
-P:addTool(P.salt)--So bad it's good
-P:addTool(P.superWaterBottle)P:addTool(P.foresight)
+P:addTool(P.salt) --
+P:addTool(P.superWaterBottle)
+P:addTool(P.foresight)
 P:addTool(P.growthHormones)
 P:addTool(P.gabeMaker)
 P:addTool(P.flame) --Keep
@@ -5255,7 +5256,7 @@ P:addTool(P.heartTransplant)-- Desc"New memories"
 P:addTool(P.lube)
 P:addTool(P.bombBoxSpawner)-- 
 P:addTool(P.beggarReroller) --Strong keep
-P:addTool(P.iceBox)
+P:addTool(P.iceBox)-- 
 P:addTool(P.armageddon)
 
 
@@ -5299,18 +5300,18 @@ P:addTool(P.buttonReroller)
 
 
 --Themes Prison + Escape
-P:addTool(P.knife)
-P:addTool(P.crowbar) 
-P:addTool(P.shovel)
-P:addTool(P.map)
+P:addTool(P.knife) --Knife: They can't stop you
+P:addTool(P.crowbar) --Crowbar: It's on the other side
+P:addTool(P.shovel) --
+P:addTool(P.map) --
 P:addTool(P.roomUnlocker) --Keep
-P:addTool(P.tunneler)
-P:addTool(P.lamp)
+P:addTool(P.tunneler) --
+P:addTool(P.lamp) --Lamp: Star in a jar
 P:addTool(P.emptyBucket)
-P:addTool(P.emptyCup)
+P:addTool(P.emptyCup) --Empty Cup: It's less than half full
 
 P:addTool(P.animalTrainer)
-P:addTool(P.secretTeleporter)
+P:addTool(P.secretTeleporter)-- :Let me show you something
 P:addTool(P.longLadder)
 P:addTool(P.pickaxe) --Maybe Change, but defnitely keep
 P:addTool(P.towel)
