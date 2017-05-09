@@ -2118,7 +2118,7 @@ function P.lube:useToolTile(tile, tileY, tileX)
 	end
 end
 
-P.knife = P.superTool:new{name = "knife", description = "They can't sto you", baseRange = 5,
+P.knife = P.superTool:new{name = "Knife", description = "They can't stop you", baseRange = 5,
 image = 'Graphics/Tools/knife.png', quality = 2}
 P.knife.usableOnAnimal = P.gun.usableOnAnimal
 P.knife.usableOnTile = P.wireCutters.usableOnTile
