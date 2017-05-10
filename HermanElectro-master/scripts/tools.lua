@@ -1759,8 +1759,8 @@ function P.toolIncrementer:useToolNothing()
 	self.numHeld = self.numHeld-1
 end
 
-P.wings = P.superTool:new{name = "Wings", description = "Ungrounded", baseRange = 0, image = 'Graphics/wings.png', quality = 4}
-function P.wings:usableOnNothing()--His feet never touched the ground.
+P.wings = P.superTool:new{name = "Wings", description = "Float free", baseRange = 0, image = 'Graphics/wings.png', quality = 4}
+function P.wings:usableOnNothing()--His feet never touched the ground. was desc: Ungrounded
 	return true
 end
 P.wings.usableOnTile = P.roomReroller.usableOnNothing
@@ -5217,15 +5217,15 @@ P:addTool(P.icegun) --The Stop Light: It might never turn green
 --Themes Drugs
 P:addTool(P.visionChanger) --Flashlight: Dispell the dark          , Dispel the phantoms, God's Eye View 
 P:addTool(P.gas) -- or Gas: Don't breathe
-P:addTool(P.wings) --
-P:addTool(P.ironMan)
+P:addTool(P.wings) --Float Free or Ugrounded or 
+P:addTool(P.ironMan) 
 P:addTool(P.seeds)
 P:addTool(P.salt) --
 P:addTool(P.superWaterBottle)
 P:addTool(P.foresight)
 P:addTool(P.growthHormones)
 P:addTool(P.gabeMaker)
-P:addTool(P.flame) --Keep
+P:addTool(P.flame) --Shouldn't be hard to control or 
 P:addTool(P.lemonadeCup)
 P:addTool(P.lemonParty)
 P:addTool(P.shell)
@@ -5242,13 +5242,13 @@ P:addTool(P.nineLives)
 P:addTool(P.pitbullChanger)
 P:addTool(P.trap)--
 P:addTool(P.doorstop)
-P:addTool(P.charger)
+P:addTool(P.charger) -- Electrifier: Empowerment or 
 P:addTool(P.recycleBin)
 P:addTool(P.animalEnslaver)
 P:addTool(P.trader)
 P:addTool(P.christmasSurprise)
 P:addTool(P.luckyPenny)
-P:addTool(P.playerBoxSpawner)
+P:addTool(P.playerBoxSpawner) --Player Box: Special treatment
 P:addTool(P.playerCloner)
 P:addTool(P.inflation)--Keep
 P:addTool(P.shopReroller)
@@ -5276,7 +5276,7 @@ P:addTool(P.toolReroller)
 P:addTool(P.boxReroller)
 
 P:addTool(P.teleporter) --Keep
-P:addTool(P.coin) --Keep
+P:addTool(P.coin) --One way to pay or 
 P:addTool(P.deckOfCards)
 P:addTool(P.card)
 P:addTool(P.amnesiaPill)
@@ -5284,15 +5284,15 @@ P:addTool(P.amnesiaPill)
 
 
 --Theme Electricity/Connection
-P:addTool(P.electrifier) --Keep
-P:addTool(P.delectrifier)
-P:addTool(P.rotater)
-P:addTool(P.buttonFlipper)
+P:addTool(P.electrifier) --Conduit: Make connections
+P:addTool(P.delectrifier) -- Insulate: Isolate
+P:addTool(P.rotater) -- Rotator: Perpendicular
+P:addTool(P.buttonFlipper) --Button Master: Flip off, flip on      Does more than push
 
 P:addTool(P.wireBreaker)
 P:addTool(P.powerBreaker)
 P:addTool(P.portalPlacer)
-P:addTool(P.wireExtender)
+P:addTool(P.wireExtender) --Extension cord: Longer is better
 P:addTool(P.wireToButton)--Nice
 P:addTool(P.tileDisplacer)
 P:addTool(P.tileSwapper)--Swapper: Let's trade places
@@ -5305,10 +5305,10 @@ P:addTool(P.buttonReroller)
 --Themes Prison + Escapep
 P:addTool(P.knife) --Knife: They can't stop you
 P:addTool(P.crowbar) --Crowbar: It's on the other side
-P:addTool(P.shovel) --
-P:addTool(P.map) --
-P:addTool(P.roomUnlocker) -- :Gate-crashing 
-P:addTool(P.tunneler) --
+P:addTool(P.shovel) --Shovel: Seek treasure 	or dig deep, or plumb the depths
+P:addTool(P.map) --The Map: Prudent planning
+P:addTool(P.roomUnlocker) -- The Magic Word:Gate-crashing 
+P:addTool(P.tunneler) --Tunneler: 				or Someone get me out of here!
 P:addTool(P.lamp) --Lamp: Star in a jar
 P:addTool(P.emptyBucket)
 P:addTool(P.emptyCup) --Empty Cup: It's less than half full
@@ -5322,12 +5322,12 @@ P:addTool(P.compass)
 
 
 ---Theme Tools
-P:addTool(P.bomb) --
-P:addTool(P.boxCutter)
+P:addTool(P.bomb) -- Bomb: ANFO
+P:addTool(P.boxCutter) --Unboxer: Time to find out what's inside
 P:addTool(P.magnet) --For one of the magnets: F = Q * vector v cross vector B
-P:addTool(P.superWireCutters) 
-P:addTool(P.bucketOfWater) 
-P:addTool(P.toolIncrementer) 
+P:addTool(P.superWireCutters) --Super Wire-cutters: They can't stop you
+P:addTool(P.bucketOfWater)  --Bucket of Water: Fathomless
+P:addTool(P.toolIncrementer) -- Seven: One of each
 P:addTool(P.superLaser) -- Super L.A.S.E.R: The Big Bad Beam
 P:addTool(P.axe) -- Axes are friendly, maybe this won't be an axe
 P:addTool(P.screwdriver) --Keep
@@ -5344,21 +5344,21 @@ P:addTool(P.fishingPole) --
 
 
 --Unique
-P:addTool(P.robotArm) --Keep
+P:addTool(P.robotArm) --Robotic Arm: Reach for the stars
 
-P:addTool(P.meat)
+P:addTool(P.meat)-- Meat: Raw temptation
 
-P:addTool(P.spring) --Fix this shit
+P:addTool(P.spring) --Spring: Up, up in the air I go
 
-P:addTool(P.glue) -- Stay boy, stay! or 
+P:addTool(P.glue) --Glue: Hold it together old pal
 
-P:addTool(P.ramSpawner) --Keep
+P:addTool(P.ramSpawner) --Ram: Knock down that wall
 
-P:addTool(P.boxSpawner) --Box: Likes to be pushed around or Box: Still likes to be pushed around
+P:addTool(P.boxSpawner) --Box: Still likes to be pushed around         or Likes to be pushed around
 
 
 
-P:addTool(P.roomReroller)
+P:addTool(P.roomReroller)-- Contents Randomizer: What it should have been
 
 P:addTool(P.superSnowball) -- Mask - Hypnotoad
 
@@ -5369,9 +5369,9 @@ P:addTool(P.gasPourerXtreme)
 
 P:addTool(P.shift) --Lets talk about this one
 P:addTool(P.glitch) -- Glitch: ...what just happened?
-P:addTool(P.rottenMeat)
+P:addTool(P.rottenMeat) -- Rotten Meat: What poor people have to eat
 --P:addTool(P.bouncer) --lol
-P:addTool(P.block) --Hmmm
+P:addTool(P.block) --Mental Block: 			Poof or ...
 P:addTool(P.supertoolDoubler) -- Ehhh lets talk
 
 P:addTool(P.boxDisplacer)
