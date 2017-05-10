@@ -159,7 +159,7 @@ P.ambiguousGates = P.tileUnlock:new{name = 'ambiguous gates', tileIds = {54,55},
 P.unbreakableEfloorUnlock = P.tileUnlock:new{name = 'ambiguous efloors', tileIds = {114}, sprite = tiles.unbreakableElectricFloor.sprite}
 P.untoolableButtons = P.tileUnlock:new{name = 'untoolable buttons', tileIds = {115,120}, sprite = tiles.unbrickableStayButton.sprite}
 P.mousetrapUnlock = P.tileUnlock:new{name = 'The Mousetrap', tileIds = {38,52}, sprite = tiles.mousetrap.sprite}
-P.breakablePitUnlock = P.tileUnlock:new{name = 'watch where you step', tileIds = {33}, sprite = tiles.breakablePit.sprite}
+--P.breakablePitUnlock = P.tileUnlock:new{name = 'watch where you step', tileIds = {33}, sprite = tiles.breakablePit.sprite}
 P.spikesUnlock = P.tileUnlock:new{name = 'pointy', tileIds = {28}, sprite = tiles.spikes.sprite}
 P.poweredEndUnlock = P.tileUnlock:new{name = 'Ends, electric', tileIds = {37}, sprite = tiles.poweredEnd.sprite}
 P.unbreakableElectricFloorUnlock = P.tileUnlock:new{name = 'unbreakable electric floor', tileIds = {114}, sprite = tiles.unbreakableElectricFloor.sprite}
@@ -168,7 +168,7 @@ P.snailsUnlock = P.tileUnlock:new{name = 'Gastropods!', tileIds = {43,45}, sprit
 P.conductiveSnailsUnlock = P.tileUnlock:new{name = 'Conductive Cream"', tileIds = {61,62}, sprite = animalList.conductiveSnail.sprite}
 P.glueSnailUnlock = P.tileUnlock:new{name = 'Sticky Snails', tileIds = {121}, sprite = animalList.glueSnail.sprite}
 P.bombBuddyUnlock = P.tileUnlock:new{name = "Mr. Bomb Buddy :)", tileIds = {122}, sprite = animalList.bombBuddy.sprite}
-P.termiteUnlock = P.tileUnlock:new{name = "eek! termites!", tileIds = {199}, sprite = animalList.termite.sprite}
+P.termiteUnlock = P.tileUnlock:new{name = "Eek! Termites!", tileIds = {199}, sprite = animalList.termite.sprite}
 P.catUnlock = P.tileUnlock:new{name = "Purr", desc = '', tileIds = {23}, sprite = animalList.cat.sprite}
 P.glueSnailUnlock = P.tileUnlock:new{name = "glue", tileIds = {121}, sprite = animalList.glueSnail.sprite}
 --P.conductiveSnailUnlock = P.tileUnlock:new{name = "Conductive Cream", tileIds = {62}, sprite = animalList.conductiveSnail.sprite}
@@ -259,7 +259,7 @@ P.mindfulToolUnlock = P.unlock:new{name = 'mindfulTool', toolIds = {tools.mindfu
 P.teleporterUnlock = P.unlock:new{name = 'teleporter', toolIds = {tools.teleporter}, sprite = tools.teleporter.image}
 P.rotaterUnlock = P.unlock:new{name = 'rotater', toolIds = {tools.rotater}, sprite = tools.rotater.image}
 P.boxCutterUnlock = P.unlock:new{name = 'boxCutter', toolIds = {tools.boxCutter}, sprite = tools.boxCutter.image}
-P.laserUnlock = P.unlock:new{name = 'Boson Breakthrough', toolIds = {tools.laser}, sprite = tools.laser.image}
+P.laserUnlock = P.unlock:new{name = 'Boson breakthrough', toolIds = {tools.laser}, sprite = tools.laser.image}
 P.ironManUnlock = P.unlock:new{name = 'ironMan', toolIds = {tools.ironMan}, sprite = tools.ironMan.image}
 P.traderUnlock = P.unlock:new{name = 'trader', toolIds = {tools.trader}, sprite = tools.trader.image}
 P.cardUnlock = P.unlock:new{name = "Cards", toolIds = {tools.card, tools.deckOfCards}, sprite = tools.card.image}
@@ -272,7 +272,7 @@ P.nineLivesUnlock = P.unlock:new{name = "Mmmm more lives", toolIds = {tools.nine
 P.foresightUnlock = P.unlock:new{name = "Foreskin", toolIds = {tools.foresight}, sprite = tools.foresight.image}
 P.animalTrainerUnlock = P.unlock:new{name = "Train", toolIds = {tools.animalTrainer}, sprite = tools.animalTrainer.image}
 P.animalEnslaverUnlock = P.unlock:new{name = "Enslave", toolIds = {tools.animalEnslaver}, sprite = tools.animalEnslaver.image}
-P.armageddonUnlock = P.unlock:new{name = "Booooooom!", toolIds = {tools.armageddon}, sprite = tools.armageddon.image}
+P.armageddonUnlock = P.unlock:new{name = "Vanish", toolIds = {tools.armageddon}, sprite = tools.armageddon.image}
 P.recycleBinUnlock = P.unlock:new{name = "Recycle!", toolIds = {tools.recycleBin}, sprite = tools.recycleBin.image}
 P.sockUnlock = P.unlock:new{name = "Sock", toolIds = {tools.sock}, sprite = tools.sock.image}
 P.xrayVisionUnlock = P.unlock:new{name = "X-Ray Vision", toolIds = {tools.xrayVision}, sprite = tools.xrayVision.image}
