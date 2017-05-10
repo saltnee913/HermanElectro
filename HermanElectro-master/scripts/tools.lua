@@ -1225,7 +1225,7 @@ function P.spring:useToolNothing(tileY, tileX)
 end
 P.spring.getToolableTiles = P.tool.getToolableTilesBox
 
-P.glue = P.superTool:new{name = "Glue", description = "", image = 'Graphics/Tools/glue.png', quality = 2}
+P.glue = P.superTool:new{name = "Glue", description = "Hold it together old pal", image = 'Graphics/Tools/glue.png', quality = 2}
 function P.glue:usableOnNothing() --Sticktion? was desc: Stay boy, stay!
 	return true
 end
