@@ -154,7 +154,7 @@ P.poweredAccelUnlock = P.tileUnlock:new{name = 'Powered Acceleration', tileIds =
 P.portalsUnlock = P.tileUnlock:new{name = 'Thinking With Portals', tileIds = {56,57}, sprite = tiles.entrancePortal.sprite}
 
 P.unbreakableWires = P.tileUnlock:new{name = 'unbreakable wires', tileIds = {40,82,83,84,85}, sprite = tiles.unbreakableWire.sprite}
-P.rotatersUnlock = P.tileUnlock:new{name = 'Turn Me', tileIds = {27,116}, sprite = tiles.cornerRotater.sprite}
+P.rotatersUnlock = P.tileUnlock:new{name = 'The Rotator', tileIds = {27,116}, sprite = tiles.cornerRotater.sprite}
 P.ambiguousGates = P.tileUnlock:new{name = 'ambiguous gates', tileIds = {54,55}, sprite = tiles.ambiguousAndGate.sprite}
 P.unbreakableEfloorUnlock = P.tileUnlock:new{name = 'ambiguous efloors', tileIds = {114}, sprite = tiles.unbreakableElectricFloor.sprite}
 P.untoolableButtons = P.tileUnlock:new{name = 'untoolable buttons', tileIds = {115,120}, sprite = tiles.unbrickableStayButton.sprite}
@@ -164,7 +164,7 @@ P.spikesUnlock = P.tileUnlock:new{name = 'pointy', tileIds = {28}, sprite = tile
 P.poweredEndUnlock = P.tileUnlock:new{name = 'Ends, electric', tileIds = {37}, sprite = tiles.poweredEnd.sprite}
 P.unbreakableElectricFloorUnlock = P.tileUnlock:new{name = 'unbreakable electric floor', tileIds = {114}, sprite = tiles.unbreakableElectricFloor.sprite}
 --^@Orson Unlocks
-P.snailsUnlock = P.tileUnlock:new{name = 'Snails!', tileIds = {43,45}, sprite = animalList.snail.sprite}
+P.snailsUnlock = P.tileUnlock:new{name = 'Gastropods!', tileIds = {43,45}, sprite = animalList.snail.sprite}
 P.conductiveSnailsUnlock = P.tileUnlock:new{name = 'Conductive Cream"', tileIds = {61,62}, sprite = animalList.conductiveSnail.sprite}
 P.glueSnailUnlock = P.tileUnlock:new{name = 'Sticky Snails', tileIds = {121}, sprite = animalList.glueSnail.sprite}
 P.bombBuddyUnlock = P.tileUnlock:new{name = "Mr. Bomb Buddy :)", tileIds = {122}, sprite = animalList.bombBuddy.sprite}
@@ -174,7 +174,7 @@ P.glueSnailUnlock = P.tileUnlock:new{name = "glue", tileIds = {121}, sprite = an
 --P.conductiveSnailUnlock = P.tileUnlock:new{name = "Conductive Cream", tileIds = {62}, sprite = animalList.conductiveSnail.sprite}
 P.ratUnlock = P.tileUnlock:new{name = 'eek', tileIds = {196}, sprite = animalList.rat.sprite}
 P.reinforcedGlassUnlock = P.tileUnlock:new{name = 'Reinforcements', tileIds = {64}, sprite = tiles.reinforcedGlass.sprite}
-P.brownPitUnlock = P.tileUnlock:new{name = 'brownPitUnlock', tileIds = {33}, sprite = tiles.breakablePit.sprite}
+P.brownPitUnlock = P.tileUnlock:new{name ='Fallible Flooring', tileIds = {33}, sprite = tiles.breakablePit.sprite}
 
 
 P.untriggeredPowerUnlock = P.tileUnlock:new{name = 'The Sleepy Supply', tileIds = {63}, sprite = tiles.untriggeredPowerSupply.sprite}
@@ -191,7 +191,7 @@ P.iceBoxUnlock = P.tileUnlock:new{name = 'Chill', tileIds = {197}, sprite = push
 P.bombBoxUnlock = P.tileUnlock:new{name = "Boom! Box", tileIds = {87}, sprite = pushables.bombBox.sprite}
 
 P.dirtyGlassUnlock = P.tileUnlock:new{name = 'who leaves all this dust here', tileIds = {72}, sprite = tiles.dustyGlassWall.sprite}
-P.fogUnlock = P.tileUnlock:new{name = "i can't see a thing", tileIds = {81,117}, sprite = tiles.fog.sprite}
+P.fogUnlock = P.tileUnlock:new{name = "Mists of Mystery", tileIds = {81,117}, sprite = tiles.fog.sprite}
 P.directionGatesUnlock = P.tileUnlock:new{name = "erik's shitty direction gates", tileIds = {67,68}, sprite = tiles.motionGate.sprite}
 --P.stickyButtonUnlock = P.tileUnlock:new{name = "sticky buttons", tileIds = {9}, sprite = tiles.stickyButton.sprite}
 --P.stayButtonUnlock = P.tileUnlock:new{name = "stay buttons", tileIds = {10}, sprite = tiles.stayButton.sprite}
@@ -259,7 +259,7 @@ P.mindfulToolUnlock = P.unlock:new{name = 'mindfulTool', toolIds = {tools.mindfu
 P.teleporterUnlock = P.unlock:new{name = 'teleporter', toolIds = {tools.teleporter}, sprite = tools.teleporter.image}
 P.rotaterUnlock = P.unlock:new{name = 'rotater', toolIds = {tools.rotater}, sprite = tools.rotater.image}
 P.boxCutterUnlock = P.unlock:new{name = 'boxCutter', toolIds = {tools.boxCutter}, sprite = tools.boxCutter.image}
-P.laserUnlock = P.unlock:new{name = 'laser', toolIds = {tools.laser}, sprite = tools.laser.image}
+P.laserUnlock = P.unlock:new{name = 'A L.A.S.E.R.', toolIds = {tools.laser}, sprite = tools.laser.image}
 P.ironManUnlock = P.unlock:new{name = 'ironMan', toolIds = {tools.ironMan}, sprite = tools.ironMan.image}
 P.traderUnlock = P.unlock:new{name = 'trader', toolIds = {tools.trader}, sprite = tools.trader.image}
 P.cardUnlock = P.unlock:new{name = "Cards", toolIds = {tools.card, tools.deckOfCards}, sprite = tools.card.image}
