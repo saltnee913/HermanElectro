@@ -230,7 +230,7 @@ P.wireExtenderUnlock = P.unlock:new{name = 'wireExtender', toolIds = {tools.wire
 P.doorstopUnlock = P.unlock:new{name = 'doorstop', toolIds = {tools.doorstop}, sprite = tools.doorstop.image}
 P.gasPourerUnlock = P.unlock:new{name = 'gasPourer', toolIds = {tools.gasPourer}, sprite = tools.gasPourer.image}
 P.gasPourerXtremeUnlock = P.unlock:new{name = 'gasPourerXtreme', toolIds = {tools.gasPourerXtreme}, sprite = tools.gasPourerXtreme.image}
-P.secretTeleporterUnlock = P.unlock:new{name = 'secretTeleporter', toolIds = {tools.secretTeleporter}, sprite = tools.secretTeleporter.image}
+P.secretTeleporterUnlock = P.unlock:new{name = 'Spirited Away', toolIds = {tools.secretTeleporter}, sprite = tools.secretTeleporter.image}
 P.tunnelerUnlock = P.unlock:new{name = 'tunneler', toolIds = {tools.tunneler}, sprite = tools.tunneler.image}
 P.pickaxeUnlock = P.unlock:new{name = 'pickaxe', toolIds = {tools.pickaxe}, sprite = tools.pickaxe.image}
 P.luckySawUnlock = P.unlock:new{name = 'luckySaw', toolIds = {tools.luckySaw}, sprite = tools.luckySaw.image}
@@ -246,7 +246,7 @@ P.wingsUnlock = P.unlock:new{name = 'Wings', toolIds = {tools.wings}, sprite = t
 P.growthHormonesUnlock = P.unlock:new{name = 'Growth Hormones', toolIds = {tools.growthHormones}, sprite = tools.growthHormones.image}
 P.portalPlacerUnlock = P.unlock:new{name = 'Portal Placer', toolIds = {tools.portalPlacer}, sprite = tools.portalPlacer.image}
 P.portalPlacerDoubleUnlock = P.unlock:new{name = 'Portal Placer Double', toolIds = {tools.portalPlacerDouble}, sprite = tools.portalPlacerDouble.image}
-P.heartTransplantUnlock = P.unlock:new{name = 'Heart Transplant', toolIds = {tools.heartTransplant}, sprite = tools.heartTransplant.image}
+P.heartTransplantUnlock = P.unlock:new{name = 'Donor City', toolIds = {tools.heartTransplant}, sprite = tools.heartTransplant.image}
 P.bucketOfWaterUnlock = P.unlock:new{name = 'Bucket of Water', toolIds = {tools.bucketOfWater}, sprite = tools.bucketOfWater.image}
 P.axeUnlock = P.unlock:new{name = 'axe', toolIds = {tools.axe}, sprite = tools.axe.image}
 P.lubeUnlock = P.unlock:new{name = 'lube', toolIds = {tools.lube}, sprite = tools.lube.image}
