@@ -153,7 +153,7 @@ P.acceleratorUnlock = P.tileUnlock:new{name = 'The Accelerator', tileIds = {88},
 P.poweredAccelUnlock = P.tileUnlock:new{name = 'Powered Acceleration', tileIds = {86}, sprite = tiles.accelerator.sprite}
 P.portalsUnlock = P.tileUnlock:new{name = 'Thinking With Portals', tileIds = {56,57}, sprite = tiles.entrancePortal.sprite}
 
-P.unbreakableWires = P.tileUnlock:new{name = 'unbreakable wires', tileIds = {40,82,83,84,85}, sprite = tiles.unbreakableWire.sprite}
+P.unbreakableWires = P.tileUnlock:new{name = 'Hardwired', tileIds = {40,82,83,84,85}, sprite = tiles.unbreakableWire.sprite}
 P.rotatersUnlock = P.tileUnlock:new{name = 'The Rotator', tileIds = {27,116}, sprite = tiles.cornerRotater.sprite}
 P.ambiguousGates = P.tileUnlock:new{name = 'ambiguous gates', tileIds = {54,55}, sprite = tiles.ambiguousAndGate.sprite}
 P.unbreakableEfloorUnlock = P.tileUnlock:new{name = 'ambiguous efloors', tileIds = {114}, sprite = tiles.unbreakableElectricFloor.sprite}
@@ -259,7 +259,7 @@ P.mindfulToolUnlock = P.unlock:new{name = 'mindfulTool', toolIds = {tools.mindfu
 P.teleporterUnlock = P.unlock:new{name = 'teleporter', toolIds = {tools.teleporter}, sprite = tools.teleporter.image}
 P.rotaterUnlock = P.unlock:new{name = 'rotater', toolIds = {tools.rotater}, sprite = tools.rotater.image}
 P.boxCutterUnlock = P.unlock:new{name = 'boxCutter', toolIds = {tools.boxCutter}, sprite = tools.boxCutter.image}
-P.laserUnlock = P.unlock:new{name = 'A L.A.S.E.R.', toolIds = {tools.laser}, sprite = tools.laser.image}
+P.laserUnlock = P.unlock:new{name = 'Boson Breakthrough', toolIds = {tools.laser}, sprite = tools.laser.image}
 P.ironManUnlock = P.unlock:new{name = 'ironMan', toolIds = {tools.ironMan}, sprite = tools.ironMan.image}
 P.traderUnlock = P.unlock:new{name = 'trader', toolIds = {tools.trader}, sprite = tools.trader.image}
 P.cardUnlock = P.unlock:new{name = "Cards", toolIds = {tools.card, tools.deckOfCards}, sprite = tools.card.image}
