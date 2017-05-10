@@ -1748,7 +1748,7 @@ function P.toolDoubler:useToolNothing()
 	self.numHeld = self.numHeld-1
 end
 
-P.toolIncrementer = P.superTool:new{name = "Seven", description = "One of each", baseRange = 0, image = 'Graphics/toolincrementer.png', quality = 5}
+P.toolIncrementer = P.superTool:new{name = "Toolbox", description = "The essentials", baseRange = 0, image = 'Graphics/toolincrementer.png', quality = 5}
 function P.toolIncrementer:usableOnNothing() --"Seven", description = "+'1-1-1-1-1-1-1'", 
 	return true
 end
@@ -5206,7 +5206,7 @@ P:addTool(P.explosiveMeat) --
 P:addTool(P.stealthBomber) 
 P:addTool(P.superGun)
 P:addTool(P.explosiveGun) --
-P:addTool(P.ammoPack) --The Hoodlum Hookup: Packing Heat  or  
+P:addTool(P.ammoPack) --Rapid Reload: Get back on your feet		The Hoodlum Hookup: Packing Heat  or  
 P:addTool(P.thruCover) --ThruCover: Tactical Strike 	            Should we change this one? Yup
 P:addTool(P.iceyShot) --IceyShot: Pretty Cool
 P:addTool(P.icegun) --The Stop Light: It might never turn green
@@ -5304,9 +5304,9 @@ P:addTool(P.buttonReroller)
 
 --Themes Prison + Escapep
 P:addTool(P.knife) --Knife: They can't stop you
-P:addTool(P.crowbar) --Crowbar: It's on the other side
+P:addTool(P.crowbar) --Crowbar: It's on the other side  or Tool for a prying heart
 P:addTool(P.shovel) --Shovel: Seek treasure 	or dig deep, or plumb the depths
-P:addTool(P.map) --The Map: Prudent planning
+P:addTool(P.map) --The Map: Prudent planning 	or There might still be a way	
 P:addTool(P.roomUnlocker) -- The Magic Word:Gate-crashing 
 P:addTool(P.tunneler) --Tunneler: 				or Someone get me out of here!
 P:addTool(P.lamp) --Lamp: Star in a jar
@@ -5328,7 +5328,7 @@ P:addTool(P.magnet) --For one of the magnets: F = Q * vector v cross vector B
 P:addTool(P.superWireCutters) --Super Wire-cutters: They can't stop you
 P:addTool(P.bucketOfWater)  --Bucket of Water: Fathomless
 P:addTool(P.toolIncrementer) -- Seven: One of each
-P:addTool(P.superLaser) -- Super L.A.S.E.R: The Big Bad Beam
+P:addTool(P.superLaser) -- Super L.A.S.E.R.: The Big Bad Beam
 P:addTool(P.axe) -- Axes are friendly, maybe this won't be an axe
 P:addTool(P.screwdriver) --Keep
 P:addTool(P.stoolPlacer)
