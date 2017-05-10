@@ -2043,7 +2043,7 @@ function P.wireBreaker:useToolNothing(tileY, tileX)
 end
 P.wireBreaker.useToolTile = P.wireBreaker.useToolNothing
 
-P.powerBreaker = P.superTool:new{name = "EMP", description = "Great if fighting robots", baseRange = 0, image = 'Graphics/powerbreaker.png', quality = 2}
+P.powerBreaker = P.superTool:new{name = "EMP", description = "Great for fighting robots", baseRange = 0, image = 'Graphics/powerbreaker.png', quality = 2}
 function P.powerBreaker:usableOnNothing() --Was Power Breaker: Powerless
 	return true
 end
@@ -2306,8 +2306,8 @@ function P.wireExtender:useToolTile(tile, tileY, tileX)
 
 end
 
-P.coin = P.superTool:new{name = "Coin", description = "Nothing is free", image = 'Graphics/Tools/coin.png', range = 1, quality = 1}
---Don't pretend things are free -- 
+P.coin = P.superTool:new{name = "Coin", description = "One way to pay", image = 'Graphics/Tools/coin.png', range = 1, quality = 1}
+--Don't pretend things are free --  Nothing is free, One way to pay 
 function P.coin:usableOnTile(tile)
 	if tile:instanceof(tiles.toolTaxTile) and not tile.destroyed then
 		return true
@@ -4489,8 +4489,8 @@ for k, v in pairs(P.tool) do
 	end
 end
 
-P.mindfulTool = P.superTool:new{name = "Mindful Tool", description = "Never forget where you came from.", quality = 3, 
-  image = 'Graphics/Tools/mindfulTool.png', lastTool = tools.saw}--Needs a new desc
+P.mindfulTool = P.superTool:new{name = "Mindful Tool", description = "Repeat the past", quality = 3, 
+  image = 'Graphics/Tools/mindfulTool.png', lastTool = tools.saw}--Needs a new desc was (dumb): "Never forget where you came from." I tried "Repeat the past", still needs work
 for k, v in pairs(P.tool) do
 	if string.find(k, 'getToolable') then
 		P.mindfulTool[k] = function(self)
@@ -4675,7 +4675,7 @@ function P.shittyPotion:useToolTile()
 end
 P.shittyPotion.useToolNothing = P.shittyPotion.useToolTile
 
-P.recycleBin = P.boxSpawner:new{name = "Recycle Bin", description = "Saving Earth, one tool at a time", image = 'Graphics/recyclebin.png', quality = 3}
+P.recycleBin = P.boxSpawner:new{name = "Recycle Bin", description = "Saving the Earth, one tool at a time", image = 'Graphics/recyclebin.png', quality = 3}
 function P.recycleBin:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld-1
 	local toSpawn = pushableList[14]:new()
@@ -4897,8 +4897,8 @@ function P.shrooms:updateSprite()
 	end
 end
 
-P.ammoPack = P.superTool:new{name = "Hoodlum's Hookup", description = "Pack some heat", quality = 3,
-image = 'Graphics/Tools/gun.png'} --Reset, reload, recover, 	get reloaded 	or Hoodlum's Hookup: Pack some heat
+P.ammoPack = P.superTool:new{name = "Rapid Reload", description = "Get back on your feet", quality = 3,
+image = 'Graphics/Tools/gun.png'} --Reset, reload, recover, 	get reloaded 	or Hoodlum's Hookup: Pack some heat Still lAAAAAMe
 function P.ammoPack:giveOne()
 	tools.gun.numHeld = tools.gun.numHeld+3
 end
@@ -5142,7 +5142,7 @@ function P.diagonal:useToolTile(tile, tileY, tileX)
 	room[player.tileY][player.tileX]:onEnter(player)
 end
 
-P.megaUnlock = P.superTool:new{name = "Psychic Key", baseRange = 0, description = "When one door closes, they all open",
+P.megaUnlock = P.superTool:new{name = "Psychic Key", baseRange = 0, description = "When one door closes, they all open", --Ben most are you fucking kidding me
 quality = 4}
 function P.megaUnlock:usableOnNothing()
 	return true
