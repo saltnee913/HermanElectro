@@ -1151,7 +1151,7 @@ function P.trap:useToolNothing(tileY, tileX)
 end
 
 --Change?
-P.boxCutter = P.superTool:new{name = "Unboxer", description = "Open it up", baseRange = 1, image = 'Graphics/boxcutter.png', quality = 3}
+P.boxCutter = P.superTool:new{name = "Unboxer", description = "Time to find out what's inside", baseRange = 1, image = 'Graphics/boxcutter.png', quality = 3}
 function P.boxCutter:usableOnPushable(pushable)--Was desc "There's a present inside!"
 	return true
 end
@@ -1225,7 +1225,7 @@ function P.spring:useToolNothing(tileY, tileX)
 end
 P.spring.getToolableTiles = P.tool.getToolableTilesBox
 
-P.glue = P.superTool:new{name = "Glue", description = "Weak Desc", image = 'Graphics/Tools/glue.png', quality = 2}
+P.glue = P.superTool:new{name = "Glue", description = "", image = 'Graphics/Tools/glue.png', quality = 2}
 function P.glue:usableOnNothing() --Sticktion? was desc: Stay boy, stay!
 	return true
 end
@@ -1434,8 +1434,8 @@ function P.boomboxSpawner:useToolNothing(tileY, tileX)
 	pushables[#pushables+1] = toSpawn
 end
 
-P.superWireCutters = P.wireCutters:new{name = "Sinister Slicers", description = "Cut to shreds", -- Anything more ... you know
-image = 'Graphics/wirecutters.png', quality = -1}-- was "Super Wire Cutters" ... Stone Splitters sounds cool but misleading
+P.superWireCutters = P.wireCutters:new{name = "", description = "Cut to shreds", -- Anything more ... you know
+image = 'Graphics/wirecutters.png', quality = -1}-- was "Super Wire Cutters" ... Stone Splitters sounds cool but misleading.. Arkham's razor, Laser razor, 
 function P.superWireCutters:usableOnNonOverlay(tile)
 	return not tile.destroyed and (tile:instanceof(tiles.wire)
 	or tile:instanceof(tiles.conductiveGlass) or tile:instanceof(tiles.reinforcedConductiveGlass) or tile:instanceof(tiles.electricFloor))
@@ -1695,7 +1695,7 @@ function P.toolReroller:useToolNothing()
 	self.numHeld = self.numHeld-1
 end
 
-P.roomReroller = P.superTool:new{name = "Contents Randomizer", description = "What it could have been", baseRange = 0, image = 'Graphics/roomreroller.png', quality = 5}
+P.roomReroller = P.superTool:new{name = "Contents Randomizer", description = "What it should have been", baseRange = 0, image = 'Graphics/roomreroller.png', quality = 5}
 function P.roomReroller:usableOnNothing()
 	return true
 end
@@ -1945,8 +1945,8 @@ function P.revive:checkDeath()
 	return false
 end
 
-P.explosiveGun = P.gun:new{name = "The Bombastic Bullet", description = "Explosive charmisma", baseRange = 5, image = 'Graphics/supergun.png', quality = 2}
-function P.explosiveGun:useToolTile(tile, tileY, tileX)--Destruction at a distance 
+P.explosiveGun = P.gun:new{name = "The Bombastic Bullet", description = "Ballistic blast", baseRange = 5, image = 'Graphics/supergun.png', quality = 2}
+function P.explosiveGun:useToolTile(tile, tileY, tileX)--Destruction at a distance  --- Terrible
 	self.numHeld = self.numHeld-1
 	if tile:instanceof(tiles.beggar) then
 		--unlocks.unlockUnlockableRef(unlocks.beggarPartyUnlock)
