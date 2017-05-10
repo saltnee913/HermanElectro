@@ -1434,7 +1434,7 @@ function P.boomboxSpawner:useToolNothing(tileY, tileX)
 	pushables[#pushables+1] = toSpawn
 end
 
-P.superWireCutters = P.wireCutters:new{name = "Super Wire-cutters", description = "Cooler cutters", -- Anything more ... you know
+P.superWireCutters = P.wireCutters:new{name = "Super Wire-cutters", description = "A cut above", -- Anything more ... you know
 image = 'Graphics/wirecutters.png', quality = -1}-- was "Super Wire Cutters" ... Stone Splitters sounds cool but misleading.. Arkham's razor, Laser razor, Incsors: Something to chew on
 function P.superWireCutters:usableOnNonOverlay(tile)
 	return not tile.destroyed and (tile:instanceof(tiles.wire)
