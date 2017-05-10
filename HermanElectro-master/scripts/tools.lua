@@ -1679,8 +1679,8 @@ end
 P.armageddon.useToolNothing = P.armageddon.useToolTile
 
 
-P.toolReroller = P.superTool:new{name = "Tool Reroller", description = "You can't always have the right tools for the job", baseRange = 0, image = 'Graphics/toolreroller.png', quality = 2}
-function P.toolReroller:usableOnNothing()
+P.toolReroller = P.superTool:new{name = "Tool Reroller", description = "The right tools for the job", baseRange = 0, image = 'Graphics/toolreroller.png', quality = 2}
+function P.toolReroller:usableOnNothing() -- was desc You can't always have the right tools for the job
 	return true
 end
 function P.toolReroller:useToolNothing()
