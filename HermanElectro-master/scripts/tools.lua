@@ -1327,7 +1327,7 @@ function P.playerBoxSpawner:useToolNothing(tileY, tileX)
 end
 
 P.bombBoxSpawner = P.boxSpawner:new{name = "The Package", description  = "It's fantastic!", image = 'Graphics/bombBox.png', quality = 3}
-function P.bombBoxSpawner:useToolTile(tile, tileY, tileX) -- desc?: It's fantastic
+function P.bombBoxSpawner:useToolTile(tile, tileY, tileX) -- desc?: It's fantastic 		Needs new desc
 	self.numHeld = self.numHeld-1
 	local toSpawn = pushableList[8]:new()
 	toSpawn.tileY = tileY
@@ -3574,7 +3574,7 @@ end
 P.supertoolReroller.useToolTile = P.supertoolReroller.useToolNothing
 
 P.tunneler = P.superTool:new{name = "Tunneler", description = "Someone get me out of here!", image = 'KenGraphics/stairs.png',
-baseRange = 1, quality = 2}
+baseRange = 1, quality = 2} --was desc Someone get me out of here!"
 function P.tunneler:usableOnNothing()
 	return true
 end
@@ -4489,7 +4489,7 @@ for k, v in pairs(P.tool) do
 	end
 end
 
-P.mindfulTool = P.superTool:new{name = "Mindful Tool", description = "Repeat the past", quality = 3, 
+P.mindfulTool = P.superTool:new{name = "Mindful Tool", description = "Revisit the past", quality = 3, 
   image = 'Graphics/Tools/mindfulTool.png', lastTool = tools.saw}--Needs a new desc was (dumb): "Never forget where you came from." I tried "Repeat the past", still needs work
 for k, v in pairs(P.tool) do
 	if string.find(k, 'getToolable') then
