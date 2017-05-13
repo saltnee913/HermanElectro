@@ -304,12 +304,12 @@ function love.load()
         		pixel.g = avg*b_and_w+pixel.g*(1-b_and_w);
         		pixel.b = avg*b_and_w+pixel.b*(1-b_and_w);
             }
-            else if (g_and_w) {
+            /*else if (tint_r!=1 || tint_g!=1 || tint_b!=1) {
             	float avg = (pixel.r+pixel.g+pixel.b)/3;
-        		pixel.g = avg;
-        		pixel.b = 0;
-        		pixel.r = 0;
-            }
+        		pixel.r = avg*tint_r;
+        		pixel.g = avg*tint_g;
+        		pixel.b = avg*tint_b;
+            }*/
 
 			return pixel;
 		}
@@ -2312,7 +2312,11 @@ function love.draw()
 	love.graphics.setNewFont(fontSize)
 
 	if not loadTutorial then
+		if math.floor(gameTime.timeLeft)==315 then
+			love.graphics.setColor(0,150,0)
+		end
 		love.graphics.print(math.floor(gameTime.timeLeft), width/2-10, 20);
+		love.graphics.setColor(0,0,0)
 	end
 
 	--draw minimap
@@ -3149,17 +3153,17 @@ function love.update(dt)
 	updateLamps()
 
 	if mushroomMode then
-		if globalTint[1]<0.2 then
+		if globalTint[1]<0.4 then
 			globalTintRising[1] = 1
 		elseif globalTint[1]>0.8 then
 			globalTintRising[1] = -1
 		end
-		if globalTint[2]<0.2 then
+		if globalTint[2]<0.4 then
 			globalTintRising[2] = 1
 		elseif globalTint[2]>0.8 then
 			globalTintRising[2] = -1
 		end
-		if globalTint[3]<0.2 then
+		if globalTint[3]<0.4 then
 			globalTintRising[3] = 1
 		elseif globalTint[3]>0.8 then
 			globalTintRising[3] = -1
@@ -3338,7 +3342,7 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 			--player.tileY = 1
 			--player.tileX = 1
 		end
-		gameTime.timeLeft = gameTime.timeLeft+20000
+		gameTime.timeLeft = gameTime.timeLeft+100
 	end
 
 	--k ability: open doors with k on supertools

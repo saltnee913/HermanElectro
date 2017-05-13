@@ -1225,7 +1225,7 @@ function P.spring:useToolNothing(tileY, tileX)
 end
 P.spring.getToolableTiles = P.tool.getToolableTilesBox
 
-P.glue = P.superTool:new{name = "Glue", description = "Hold it together old pal", image = 'Graphics/Tools/glue.png', quality = 2}
+P.glue = P.superTool:new{name = "Glue", description = "Hold it together old pal", image = 'Graphics/Tools/glue.png', baseRange = 3, quality = 2}
 function P.glue:usableOnNothing() --Sticktion? was desc: Stay boy, stay!
 	return true
 end
@@ -4904,7 +4904,7 @@ function P.ammoPack:giveOne()
 end
 
 P.stopwatch = P.superTool:new{name = "Stopwatch", description = "Master of time", quality = 2, baseRange = 0,
-image = 'KenGraphics/mushroom.png'}
+image = 'Graphics/Tools/stopwatch.png'}
 function P.stopwatch:usableOnNothing()
 	return true
 end
