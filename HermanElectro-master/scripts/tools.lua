@@ -2912,7 +2912,7 @@ function P.playerCloner:useToolNothing()
 		self.cloneExists = true
 		player.clonePos = {x = player.tileX, y = player.tileY, z = player.elevation}
 		self.image = self.imageClone
-	elseif
+	else
 		self.numHeld = self.numHeld-1
 		self.cloneExists = false
 		player.tileX = player.clonePos.x
