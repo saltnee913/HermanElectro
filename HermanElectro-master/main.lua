@@ -33,7 +33,9 @@ stats = require('scripts.stats')
 text = require('scripts.text')
 saving = require('scripts.saving')
 toolManuel = require('scripts.toolManuel')
+processList = require('scripts.process')
 loadedOnce = false
+
 
 saveDir = 'SaveData'
 
@@ -230,6 +232,7 @@ function love.load()
 	spotlights = {}
 	pushables = {}
 	bossList = {}
+	processes = {}
 	messageInfo = {x = 0, y = 0, text = nil}
 	gabeUnlock = true
 	--width = 16*screenScale
@@ -2135,7 +2138,7 @@ function love.draw()
 			--player.x = (player.tileX-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
 			--player.y = (player.tileY-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
 			local charSprite = util.getImage(player.character.sprite)
-			love.graphics.draw(charSprite, math.floor(player.x-charSprite:getWidth()*player.character.scale/2), math.floor(player.y-charSprite:getHeight()*player.character.scale-player.elevation*scale), 0, player.dirFacing*player.character.scale, player.character.scale)
+			love.graphics.draw(charSprite, math.floor(player.x-charSprite:getWidth()*player.character.scale/2), math.floor(player.y-charSprite:getHeight()*player.character.scale-player.elevation*scale), 0, player.character.scale, player.character.scale)
 			love.graphics.setShader()
 			love.graphics.print(player.character:getInfoText(), math.floor(player.x-charSprite:getWidth()*player.character.scale/2), math.floor(player.y-charSprite:getHeight()*player.character.scale));
 			love.graphics.setShader(myShader)
@@ -2912,7 +2915,7 @@ function enterRoom(dir)
 end
 
 function setPlayerLoc()
-	player.x = (player.tileX-1/2*(player.dirFacing+1))*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
+	player.x = (player.tileX-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
 	player.y = (player.tileY-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
     myShader:send("player_x", player.x+getTranslation().x*tileWidth*scale+(width2-width)/2)
     myShader:send("player_y", player.y+getTranslation().y*tileWidth*scale+(height2-height)/2)
@@ -2994,7 +2997,7 @@ function validSpace()
 	return mapy<=mapHeight and mapx<=mapHeight and mapy>0 and mapx>0
 end
 
-keyTimer = {base = .05, timeLeft = .05, suicideDelay = .5}
+keyTimer = {base = .16, timeLeft = .16, suicideDelay = .5}
 function love.update(dt)
 	if gamePaused then
 		return
@@ -3005,6 +3008,28 @@ function love.update(dt)
 		player.character:update(dt)
 	end
 	updateAttributesRealtime(dt)
+
+	local allProcesses = processes
+	processes = {}
+	for i = 1, #allProcesses do
+		if allProcesses[i].active then
+			processes[#processes+1] = allProcesses[i]
+		end
+	end
+	for i = 1, #processes do
+		processes[i]:run(dt)
+	end
+
+	--smooth motion
+	if love.keyboard.isDown("w") then
+		love.keypressed("w")
+	elseif love.keyboard.isDown("a") then
+		love.keypressed("a")
+	elseif love.keyboard.isDown("s") then
+		love.keypressed("s")
+	elseif love.keyboard.isDown("d") then
+		love.keypressed("d")
+	end
 
 	if (titlescreenCounter>0) then
 		titlescreenCounter = titlescreenCounter-dt
@@ -3206,6 +3231,12 @@ function seedEnter(text)
 end
 
 function love.keypressed(key, unicode, isRepeat, isPlayback)
+	for i = 1, #processes do
+		if processes[i].disableInput and processes[i].active then
+			return
+		end
+	end
+	
 	if (floorTransition and not floorTransitionInfo.moved) or 
 		(gameTransition and not gameTransitionInfo.moved) then
 		return
@@ -3412,7 +3443,8 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
    	
 	if key=="w" or key=="a" or key=="s" or key=="d" then
 		lastMoveKey = key
-		if not processMove(key) then return end
+		if not processMove(key) then return
+		end
 	end
 
 	if key == "1" or key == "2" or key == "3" or key == "4" or key == "5" or key == "6" or key == "7" or key == "8" or key == "9" or key == "0" then
@@ -3477,7 +3509,7 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
     checkAllDeath()
 
     if player.moveMode==0 then
-		setPlayerLoc()
+		--setPlayerLoc()
 	end
 
     for i = 1, roomHeight do
@@ -3676,28 +3708,28 @@ function processMove(key, dt)
 	    	if key == "w" then
 	    		if player.tileY>1 then
 	    			player.tileY = player.tileY-1
-	    			player.y = player.y-tileHeight*scale
+	    			--player.y = player.y-tileHeight*scale
 				elseif player.tileY==1 and (player.tileX==math.floor(roomLength/2) or player.tileX==math.floor(roomLength/2)+1) then
 					enterRoom(0)
 				end
 	    	elseif key == "s" then
 	    		if player.tileY<roomHeight then
 	    			player.tileY = player.tileY+1
-	    			player.y = player.y+tileHeight*scale
+	    			--player.y = player.y+tileHeight*scale
 				elseif player.tileY == roomHeight and (player.tileX==math.floor(roomLength/2) or player.tileX==math.floor(roomLength/2)+1) then
 					enterRoom(2)
 	    		end
 	    	elseif key == "a" then
 	    		if player.tileX>1 then
 	    			player.tileX = player.tileX-1
-	    			player.x = player.x-tileHeight*scale
+	    			--player.x = player.x-tileHeight*scale
 				elseif player.tileX == 1 and (player.tileY==math.floor(roomHeight/2) or player.tileY==math.floor(roomHeight/2)+1) then
 					enterRoom(3)
 	    		end
 	    	elseif key == "d" then
 	    		if player.tileX<roomLength then
 	    			player.tileX = player.tileX+1
-	    			player.x = player.x+tileHeight*scale
+	    			--player.x = player.x+tileHeight*scale
 	    		elseif player.tileX == roomLength and (player.tileY==math.floor(roomHeight/2) or player.tileY==math.floor(roomHeight/2)+1) then
 					enterRoom(1)
 				end
@@ -3709,6 +3741,20 @@ function processMove(key, dt)
 				player.tileX = player.prevTileX
 				player.tileY = player.prevTileY
 			end
+		end
+
+		if playerMoved() then
+			local moveProcess = processList.movePlayer:new()
+		    if key=="w" then
+				moveProcess.direction = 0
+			elseif key=="a"  then
+				moveProcess.direction = 3
+			elseif key=="s" then
+				moveProcess.direction = 2
+			elseif key=="d" then
+				moveProcess.direction = 1
+			end
+			processes[#processes+1] = moveProcess
 		end
 	end
 	if player.waitCounter>0 then
@@ -4570,5 +4616,5 @@ function onToolUse(tool)
 
 	updateTools()
 	checkAllDeath()
-	setPlayerLoc()
+	--setPlayerLoc()
 end
