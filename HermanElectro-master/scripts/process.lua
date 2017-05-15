@@ -58,7 +58,35 @@ function P.moveAnimal:run(dt)
 	end
 end
 
+P.movePushable = P.basicProcess:new{name = "movePushable", direction = 0, active = true, time = nil, disableInput = true,
+pushable = nil}
+function P.movePushable:run(dt)
+	if self.pushable==nil then return end
+
+	if self.time==nil then
+		self.time = keyTimer.base*90
+		self.baseTime = keyTimer.base*90
+	end
+	local moveLength = scale*tileHeight/self.baseTime*math.min(self.time, dt*100)
+	if self.direction == 0 then
+		self.pushable.y = self.pushable.y-moveLength
+	elseif self.direction == 1 then
+		self.pushable.x = self.pushable.x+moveLength
+	elseif self.direction == 2 then
+		self.pushable.y = self.pushable.y+moveLength
+	elseif self.direction == 3 then
+		self.pushable.x = self.pushable.x-moveLength
+	end
+
+	self.time = self.time-dt*100
+	if self.time<=0 then
+		self.active = false
+		self.pushable:setLoc()
+	end
+end
+
 
 process[1] = P.movePlayer
 process[2] = P.moveAnimal
+process[3] = P.movePushable
 return process

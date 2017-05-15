@@ -2070,11 +2070,9 @@ function love.draw()
 
 		for i = 1, #pushables do
 			if pushables[i]~=nil and not pushables[i].destroyed and litTiles[pushables[i].tileY][pushables[i].tileX]==1 and pushables[i].tileY==j and pushables[i].visible then
-		    	pushablex = (pushables[i].tileX-1)*tileHeight*scale+wallSprite.width
-		    	pushabley = (pushables[i].tileY-1)*tileWidth*scale+wallSprite.height-pushables[i].elevation*scale
 		    	if pushables[i].conductive and pushables[i].powered then toDraw = util.getImage(pushables[i].poweredSprite)
 		    	else toDraw = util.getImage(pushables[i].sprite) end
-				love.graphics.draw(toDraw, pushablex, pushabley, 0, scale, scale)
+				love.graphics.draw(toDraw, pushables[i].x, pushables[i].y, 0, scale, scale)
 			end
 		end
 
@@ -2701,6 +2699,8 @@ function createPushables()
 					pushables[index] = pushableToSpawn
 					pushables[index].tileY = i
 					pushables[index].tileX = j
+					pushables[#pushables].y = (i-1)*tileWidth*scale+wallSprite.height
+					pushables[#pushables].x = (j-1)*tileHeight*scale+wallSprite.width
 					pushables[index].prevTileX = pushables[index].tileX
 					pushables[index].prevTileY = pushables[index].tileY
 				end
@@ -3630,6 +3630,20 @@ function processTurn()
 		end
     	postAnimalMovement()
 		for i = 1, #pushables do
+			if pushables[i].prevTileY~=pushables[i].tileY or pushables[i].prevTileX~=pushables[i].tileX then
+				local moveProcess = processList.movePushable:new()
+				moveProcess.pushable = pushables[i]
+			    if pushables[i].tileY<pushables[i].prevTileY then
+					moveProcess.direction = 0
+				elseif pushables[i].tileX<pushables[i].prevTileX  then
+					moveProcess.direction = 3
+				elseif pushables[i].tileY>pushables[i].prevTileY then
+					moveProcess.direction = 2
+				elseif pushables[i].tileX>pushables[i].prevTileX then
+					moveProcess.direction = 1
+				end
+				processes[#processes+1] = moveProcess
+			end
 	    	if room[pushables[i].tileY][pushables[i].tileX]~=nil then
 	    		if room[pushables[i].tileY][pushables[i].tileX].updatePowerOnEnter then
 	    			noPowerUpdate = false
