@@ -6,6 +6,8 @@ process = P
 P.basicProcess = Object:new{name = 'test', active = true, time = nil, disableInput = true}
 function P.basicProcess:run()
 end
+function P.basicProcess:draw()
+end
 
 P.movePlayer = P.basicProcess:new{name = "movePlayer", direction = 0, active = true, time = nil, disableInput = true}
 function P.movePlayer:run(dt)
@@ -85,8 +87,41 @@ function P.movePushable:run(dt)
 	end
 end
 
+P.grenadeThrow = P.basicProcess:new{name = "grenadeThrow", direction = 0, active = true, time = nil, disableInput = true,
+currentLoc = {x = nil, y = nil}, targetLoc = {x = nil, y = nil, tileX = nil, tileY = nil},
+sprite = 'Graphics/grenade.png', speed = 10}
+function P.grenadeThrow:run(dt)
+	local moveLength = scale*tileHeight*dt*self.speed
+	local pastTarget = false
+
+	if self.direction == 0 then
+		self.currentLoc.y = self.currentLoc.y-moveLength
+		if self.currentLoc.y<self.targetLoc.y then pastTarget = true end
+	elseif self.direction == 1 then
+		self.currentLoc.x = self.currentLoc.x+moveLength
+		if self.currentLoc.x>self.targetLoc.x then pastTarget = true end
+	elseif self.direction == 2 then
+		self.currentLoc.y = self.currentLoc.y+moveLength
+		if self.currentLoc.y>self.targetLoc.y then pastTarget = true end
+	elseif self.direction == 3 then
+		self.currentLoc.x = self.currentLoc.x-moveLength
+		if self.currentLoc.x<self.targetLoc.x then pastTarget = true end
+	end
+
+	if pastTarget then
+		self.active = false
+		util.createHarmlessExplosion(self.targetLoc.tileY, self.targetLoc.tileX, 1)
+	end
+end
+
+function P.grenadeThrow:draw()
+	local grenadeSprite = util.getImage(self.sprite)
+	love.graphics.draw(grenadeSprite, self.currentLoc.x, self.currentLoc.y, 0, 0.5*scale, 0.5*scale)
+end
+
 
 process[1] = P.movePlayer
 process[2] = P.moveAnimal
 process[3] = P.movePushable
+process[4] = P.grenadeThrow
 return process

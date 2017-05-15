@@ -4578,7 +4578,22 @@ function P.grenade:usableOnNothing()
 end
 function P.grenade:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld-1
-	util.createHarmlessExplosion(tileY, tileX, 1)
+	--util.createHarmlessExplosion(tileY, tileX, 1)
+	local grenadeProcess = processList.grenadeThrow:new()
+	grenadeProcess.currentLoc = {x = tileToCoords(player.tileY, player.tileX).x, y = tileToCoords(player.tileY, player.tileX).y}
+	grenadeProcess.targetLoc = {tileX = tileX, tileY = tileY, x = tileToCoords(tileY, tileX).x, y = tileToCoords(tileY, tileX).y}
+
+    if tileY<player.tileY then
+		grenadeProcess.direction = 0
+	elseif tileX>player.tileX  then
+		grenadeProcess.direction = 1
+	elseif tileY>player.tileY then
+		grenadeProcess.direction = 2
+	elseif tileX<player.tileX then
+		grenadeProcess.direction = 3
+	end
+	print('aaa')
+	processes[#processes+1] = grenadeProcess
 end
 function P.grenade:useToolNothing(tileY, tileX)
 	self:useToolTile(nil, tileY, tileX)
@@ -4605,7 +4620,7 @@ end
 P.opPotion.useToolNothing = P.opPotion.useToolTile
 
 P.bombPotion = P.superTool:new{name = "Bomb Potion", description = "Extremely flammable", baseRange = 3,
-  image = 'Graphics/grenade.png', quality = 4}
+  image = 'Graphics/grenade.png', quality = 4, defaultDisabled = true}
 function P.bombPotion:usableOnTile()
 	return true
 end

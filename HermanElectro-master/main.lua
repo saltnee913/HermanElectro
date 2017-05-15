@@ -2217,6 +2217,10 @@ function love.draw()
 		end
 	end
 
+	for i = 1, #processes do
+		processes[i]:draw()
+	end
+
 	if floorTransition or gameTransition then return end
 	love.graphics.setShader()
 
