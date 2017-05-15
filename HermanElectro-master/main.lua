@@ -2064,10 +2064,6 @@ function love.draw()
 		for i = 1, #animals do
 			if animals[i]~=nil and litTiles[animals[i].tileY][animals[i].tileX]==1 and not animals[i].pickedUp and animals[i].tileY==j then
 				local animalSprite = util.getImage(animals[i].sprite)
-				animals[i].x = (animals[i].tileX-1)*tileHeight*scale+wallSprite.width
-		    	--animals[i].y = (animals[i].tileY-1)*tileWidth*scale+wallSprite.height-animals[i].elevation*scale
-		    	animals[i].y = (animals[i].tileY)*tileWidth*scale+wallSprite.height-animals[i].elevation*scale
-		    	animals[i].y = animals[i].y-animals[i].scale*animalSprite:getHeight()
 				love.graphics.draw(animalSprite, animals[i].x, animals[i].y, 0, animals[i].scale, animals[i].scale)
 			end
 		end
@@ -3236,7 +3232,7 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 			return
 		end
 	end
-	
+
 	if (floorTransition and not floorTransitionInfo.moved) or 
 		(gameTransition and not gameTransitionInfo.moved) then
 		return
@@ -3562,7 +3558,7 @@ function processTurn()
     	end
     	for k = 1, #animals do
 			local ani = animals[k]
-			if not map.blocksMovementAnimal(ani) then
+			if not map.blocksMovementAnimal(ani) and not ani.dead then
 				local movex = ani.tileX
 				local movey = ani.tileY
 				if player.active then
@@ -3831,9 +3827,25 @@ end
 
 function postAnimalMovement()
 	resolveConflicts()
+
 	for i = 1, #animals do
-		animals[i].x = (animals[i].tileX-1)*tileHeight*scale+wallSprite.width
-		animals[i].y = (animals[i].tileY-1)*tileWidth*scale+wallSprite.height
+		if animals[i]:hasMoved() and not animals[i].dead then
+			local moveProcess = processList.moveAnimal:new()
+			moveProcess.animal = animals[i]
+		    if animals[i].tileY<animals[i].prevTileY then
+				moveProcess.direction = 0
+			elseif animals[i].tileX<animals[i].prevTileX  then
+				moveProcess.direction = 3
+			elseif animals[i].tileY>animals[i].prevTileY then
+				moveProcess.direction = 2
+			elseif animals[i].tileX>animals[i].prevTileX then
+				moveProcess.direction = 1
+			end
+			processes[#processes+1] = moveProcess
+		end
+	end
+
+	for i = 1, #animals do
 		if animals[i]:hasMoved() and not animals[i].dead then
 			if room[animals[i].prevTileY]~=nil and room[animals[i].prevTileY][animals[i].prevTileX]~=nil then
 				room[animals[i].prevTileY][animals[i].prevTileX]:onLeaveAnimal(animals[i])

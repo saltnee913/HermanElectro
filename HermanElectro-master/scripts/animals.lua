@@ -341,6 +341,11 @@ function P.animal:afraidSecondaryMove(playerx, playery)
 
 	return true
 end
+function P.animal:setLoc()
+	self.x = (self.tileX-1)*tileHeight*scale+wallSprite.width
+	self.y = (self.tileY)*tileWidth*scale+wallSprite.height-self.elevation*scale
+	self.y = self.y-self.scale*util.getImage(self.sprite):getHeight()
+end
 
 
 P.pitbull = P.animal:new{name = "pitbull", canDropTool = true}
