@@ -111,6 +111,7 @@ function P.grenadeThrow:run(dt)
 	if pastTarget then
 		self.active = false
 		util.createHarmlessExplosion(self.targetLoc.tileY, self.targetLoc.tileX, 1)
+		updateGameState()
 	end
 end
 

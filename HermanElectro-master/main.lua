@@ -2076,52 +2076,61 @@ function love.draw()
 			end
 		end
 
-
-
-		if tools.toolableAnimals~=nil then
-			for dir = 1, 5 do
-				if tools.toolableAnimals[dir]~=nil then
-					for i = 1, #(tools.toolableAnimals[dir]) do
-						local tx = tools.toolableAnimals[dir][i].tileX
-						local ty = tools.toolableAnimals[dir][i].tileY
-						if ty==j then
-							if dir == 1 or tools.toolableAnimals[1][1] == nil or not (tx == tools.toolableAnimals[1][1].tileX and ty == tools.toolableAnimals[1][1].tileY) then
-								love.graphics.draw(util.getImage(green), (tx-1)*tileWidth*scale+wallSprite.width, (ty-1)*tileHeight*scale+wallSprite.height-tools.toolableAnimals[dir][i].elevation*scale, 0, scale, scale)
+		local drawGreen = true
+		for i = 1, #processes do
+			if process[i]:instanceof(processList.movePlayer) then
+				drawGreen = false
+			end
+		end
+		if love.keyboard.isDown("w") or love.keyboard.isDown("a") or love.keyboard.isDown("s") or love.keyboard.isDown("d") then
+			drawGreen = false
+		end
+		if drawGreen then
+			if tools.toolableAnimals~=nil then
+				for dir = 1, 5 do
+					if tools.toolableAnimals[dir]~=nil then
+						for i = 1, #(tools.toolableAnimals[dir]) do
+							local tx = tools.toolableAnimals[dir][i].tileX
+							local ty = tools.toolableAnimals[dir][i].tileY
+							if ty==j then
+								if dir == 1 or tools.toolableAnimals[1][1] == nil or not (tx == tools.toolableAnimals[1][1].tileX and ty == tools.toolableAnimals[1][1].tileY) then
+									love.graphics.draw(util.getImage(green), (tx-1)*tileWidth*scale+wallSprite.width, (ty-1)*tileHeight*scale+wallSprite.height-tools.toolableAnimals[dir][i].elevation*scale, 0, scale, scale)
+								end
 							end
 						end
 					end
 				end
 			end
-		end
-		if tools.toolablePushables~=nil then
-			for dir = 1, 5 do
-				if tools.toolablePushables[dir]~=nil then
-					for i = 1, #(tools.toolablePushables[dir]) do
-						local tx = tools.toolablePushables[dir][i].tileX
-						local ty = tools.toolablePushables[dir][i].tileY
-						if ty==j then
-							if dir == 1 or tools.toolablePushables[1][1] == nil or not (tx == tools.toolablePushables[1][1].tileX and ty == tools.toolablePushables[1][1].tileY) then
-								love.graphics.draw(util.getImage(green), (tx-1)*tileWidth*scale+wallSprite.width, (ty-1)*tileHeight*scale+wallSprite.height, 0, scale, scale)
+			if tools.toolablePushables~=nil then
+				for dir = 1, 5 do
+					if tools.toolablePushables[dir]~=nil then
+						for i = 1, #(tools.toolablePushables[dir]) do
+							local tx = tools.toolablePushables[dir][i].tileX
+							local ty = tools.toolablePushables[dir][i].tileY
+							if ty==j then
+								if dir == 1 or tools.toolablePushables[1][1] == nil or not (tx == tools.toolablePushables[1][1].tileX and ty == tools.toolablePushables[1][1].tileY) then
+									love.graphics.draw(util.getImage(green), (tx-1)*tileWidth*scale+wallSprite.width, (ty-1)*tileHeight*scale+wallSprite.height, 0, scale, scale)
+								end
 							end
 						end
 					end
 				end
 			end
-		end
-		if tools.toolableTiles~=nil then
-			for dir = 1, 5 do
-				for i = 1, #(tools.toolableTiles[dir]) do
-					local tx = tools.toolableTiles[dir][i].x
-					local ty = tools.toolableTiles[dir][i].y
-					if ty==j then
-						local addY = 0
-						local yScale = scale
-						if room[ty][tx]~=nil and litTiles[ty][tx]~=0 then
-							addY = room[ty][tx]:getYOffset()
-							yScale = scale*(16-addY)/16
-						else addY=0 end
-						if dir == 1 or tools.toolableTiles[1][1] == nil or not (tx == tools.toolableTiles[1][1].x and ty == tools.toolableTiles[1][1].y) then
-							love.graphics.draw(util.getImage(green), (tx-1)*tileWidth*scale+wallSprite.width, (addY+(ty-1)*tileHeight)*scale+wallSprite.height, 0, scale, yScale)
+			if tools.toolableTiles~=nil then
+				for dir = 1, 5 do
+					for i = 1, #(tools.toolableTiles[dir]) do
+						local tx = tools.toolableTiles[dir][i].x
+						local ty = tools.toolableTiles[dir][i].y
+						if ty==j then
+							local addY = 0
+							local yScale = scale
+							if room[ty][tx]~=nil and litTiles[ty][tx]~=0 then
+								addY = room[ty][tx]:getYOffset()
+								yScale = scale*(16-addY)/16
+							else addY=0 end
+							if dir == 1 or tools.toolableTiles[1][1] == nil or not (tx == tools.toolableTiles[1][1].x and ty == tools.toolableTiles[1][1].y) then
+								love.graphics.draw(util.getImage(green), (tx-1)*tileWidth*scale+wallSprite.width, (addY+(ty-1)*tileHeight)*scale+wallSprite.height, 0, scale, yScale)
+							end
 						end
 					end
 				end

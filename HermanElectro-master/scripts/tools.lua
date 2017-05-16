@@ -4568,7 +4568,7 @@ function P.explosiveMeat:useToolTile(tile)
 	tile.overlay = tiles.explosiveMeat
 end
 
-P.grenade = P.superTool:new{name = "Grenade", description = "Boom bitches", baseRange = 3,
+P.grenade = P.superTool:new{name = "Grenade", description = "Boom bitches", baseRange = 5,
   image = 'Graphics/grenade.png', quality = 4}
 function P.grenade:usableOnTile()
 	return true
@@ -4592,7 +4592,7 @@ function P.grenade:useToolTile(tile, tileY, tileX)
 	elseif tileX<player.tileX then
 		grenadeProcess.direction = 3
 	end
-	print('aaa')
+
 	processes[#processes+1] = grenadeProcess
 end
 function P.grenade:useToolNothing(tileY, tileX)
@@ -5220,9 +5220,9 @@ P:addTool(P.explosiveMeat) --
 
 P:addTool(P.stealthBomber) 
 P:addTool(P.superGun)
---P:addTool(P.explosiveGun) --
+P:addTool(P.explosiveGun) --
 P:addTool(P.ammoPack) --Rapid Reload: Get back on your feet		The Hoodlum Hookup: Packing Heat  or  
---P:addTool(P.thruCover) --ThruCover: Tactical Strike 	            Should we change this one? Yup
+P:addTool(P.thruCover) --ThruCover: Tactical Strike 	            Should we change this one? Yup
 --P:addTool(P.iceyShot) --IceyShot: Pretty Cool
 P:addTool(P.icegun) --The Stop Light: It might never turn green
 
