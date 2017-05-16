@@ -3460,9 +3460,17 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 		numPressed = tonumber(key)
 		if numPressed == 0 then numPressed = 10 end
 		if tools[numPressed].numHeld>0 and numPressed<=tools.numNormalTools then
-			tool = numPressed
+			if tool==numPressed then
+				tool = 0
+			else
+				tool = numPressed
+			end
 		elseif numPressed>tools.numNormalTools then
-			tool = specialTools[numPressed-7]
+			if tool == specialTools[numPressed-7] then
+				tool = 0
+			else
+				tool = numPressed
+			end
 		end
 		tools.updateToolableTiles(tool)
     end
@@ -4596,6 +4604,24 @@ function beatRoom(noDrops)
 		dropTools()
 	end
 	player.character:onRoomCompletion()
+end
+
+function onTeleport()
+	turnOffMushroomMode()
+	player.justTeleported = true
+	setPlayerLoc()
+	for i = 1, #animals do
+		animals[i]:setLoc()
+	end
+	for j = 1, #pushables do
+		pushables[i]:setLoc()
+	end
+
+	for i = 1, #processes do
+		if processes[i]:instanceof(processList.movePlayer) then
+			processes[i].active = false
+		end
+	end
 end
 
 function onToolUse(tool)
