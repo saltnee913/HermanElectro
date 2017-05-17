@@ -39,8 +39,8 @@ function P.moveAnimal:run(dt)
 	if self.animal==nil then return end
 
 	if self.time==nil then
-		self.time = keyTimer.base*90
-		self.baseTime = keyTimer.base*90
+		self.time = keyTimer.base*100
+		self.baseTime = keyTimer.base*100
 	end
 	local moveLength = scale*tileHeight/self.baseTime*math.min(self.time, dt*100)
 	if self.direction == 0 then
@@ -66,8 +66,8 @@ function P.movePushable:run(dt)
 	if self.pushable==nil then return end
 
 	if self.time==nil then
-		self.time = keyTimer.base*90
-		self.baseTime = keyTimer.base*90
+		self.time = keyTimer.base*100
+		self.baseTime = keyTimer.base*100
 	end
 	local moveLength = scale*tileHeight/self.baseTime*math.min(self.time, dt*100)
 	if self.direction == 0 then

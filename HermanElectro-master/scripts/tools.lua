@@ -1333,6 +1333,7 @@ function P.boxSpawner:useToolTile(tile, tileY, tileX)
 	if player.character.name == "Tim" then toSpawn = pushableList.giftBox:new() end
 	toSpawn.tileY = tileY
 	toSpawn.tileX = tileX
+	toSpawn:setLoc()
 	pushables[#pushables+1] = toSpawn
 end
 function P.boxSpawner:useToolNothing(tileY, tileX)
@@ -1341,6 +1342,7 @@ function P.boxSpawner:useToolNothing(tileY, tileX)
 	if player.character.name == "Tim" then toSpawn = pushableList.giftBox:new() end
 	toSpawn.tileY = tileY
 	toSpawn.tileX = tileX
+	toSpawn:setLoc()
 	pushables[#pushables+1] = toSpawn
 end
 
@@ -1350,6 +1352,7 @@ function P.playerBoxSpawner:useToolTile(tile, tileY, tileX)
 	local toSpawn = pushableList[3]:new()
 	toSpawn.tileY = tileY
 	toSpawn.tileX = tileX
+	toSpawn:setLoc()
 	pushables[#pushables+1] = toSpawn
 end
 function P.playerBoxSpawner:useToolNothing(tileY, tileX)
@@ -1357,6 +1360,7 @@ function P.playerBoxSpawner:useToolNothing(tileY, tileX)
 	local toSpawn = pushableList[3]:new()
 	toSpawn.tileY = tileY
 	toSpawn.tileX = tileX
+	toSpawn:setLoc()
 	pushables[#pushables+1] = toSpawn
 end
 
@@ -1366,6 +1370,7 @@ function P.bombBoxSpawner:useToolTile(tile, tileY, tileX) -- desc?: It's fantast
 	local toSpawn = pushableList[8]:new()
 	toSpawn.tileY = tileY
 	toSpawn.tileX = tileX
+	toSpawn:setLoc()
 	pushables[#pushables+1] = toSpawn
 end
 function P.bombBoxSpawner:useToolNothing(tileY, tileX)
@@ -1373,6 +1378,7 @@ function P.bombBoxSpawner:useToolNothing(tileY, tileX)
 	local toSpawn = pushableList[8]:new()
 	toSpawn.tileY = tileY
 	toSpawn.tileX = tileX
+	toSpawn:setLoc()
 	pushables[#pushables+1] = toSpawn
 end
 
@@ -1382,6 +1388,7 @@ function P.jackInTheBoxSpawner:useToolTile(tile, tileY, tileX)
 	local toSpawn = pushableList[10]:new()
 	toSpawn.tileY = tileY
 	toSpawn.tileX = tileX
+	toSpawn:setLoc()
 	pushables[#pushables+1] = toSpawn
 end
 function P.jackInTheBoxSpawner:useToolNothing(tileY, tileX)
@@ -1389,6 +1396,7 @@ function P.jackInTheBoxSpawner:useToolNothing(tileY, tileX)
 	local toSpawn = pushableList[10]:new()
 	toSpawn.tileY = tileY
 	toSpawn.tileX = tileX
+	toSpawn:setLoc()
 	pushables[#pushables+1] = toSpawn
 end
 
@@ -1398,6 +1406,7 @@ function P.lamp:useToolNothing(tileY, tileX)
 	local toSpawn = pushableList.lamp:new()
 	toSpawn.tileY = tileY
 	toSpawn.tileX = tileX
+	toSpawn:setLoc()
 	pushables[#pushables+1] = toSpawn
 end
 function P.lamp:useToolTile(tile, tileY, tileX)
@@ -1405,6 +1414,7 @@ function P.lamp:useToolTile(tile, tileY, tileX)
 	local toSpawn = pushableList[7]:new()
 	toSpawn.tileY = tileY
 	toSpawn.tileX = tileX
+	toSpawn:setLoc()
 	pushables[#pushables+1] = toSpawn
 end
 
@@ -1414,6 +1424,7 @@ function P.ramSpawner:useToolTile(tile, tileY, tileX)
 	local toSpawn = pushableList[7]:new()
 	toSpawn.tileY = tileY
 	toSpawn.tileX = tileX
+	toSpawn:setLoc()
 	pushables[#pushables+1] = toSpawn
 end
 function P.ramSpawner:useToolNothing(tileY, tileX)
@@ -1421,6 +1432,7 @@ function P.ramSpawner:useToolNothing(tileY, tileX)
 	local toSpawn = pushableList[7]:new()
 	toSpawn.tileY = tileY
 	toSpawn.tileX = tileX
+	toSpawn:setLoc()
 	pushables[#pushables+1] = toSpawn
 end
 
@@ -1441,6 +1453,7 @@ function P.conductiveBoxSpawner:useToolTile(tile, tileY, tileX)
 	local toSpawn = pushableList[5]:new()
 	toSpawn.tileY = tileY
 	toSpawn.tileX = tileX
+	toSpawn:setLoc()
 	pushables[#pushables+1] = toSpawn
 end
 function P.conductiveBoxSpawner:useToolNothing(tileY, tileX)
@@ -1448,6 +1461,7 @@ function P.conductiveBoxSpawner:useToolNothing(tileY, tileX)
 	local toSpawn = pushableList[5]:new()
 	toSpawn.tileY = tileY
 	toSpawn.tileX = tileX
+	toSpawn:setLoc()
 	pushables[#pushables+1] = toSpawn
 end
 
@@ -1458,6 +1472,7 @@ function P.boomboxSpawner:useToolTile(tile, tileY, tileX)
 	local toSpawn = pushableList[6]:new()
 	toSpawn.tileY = tileY
 	toSpawn.tileX = tileX
+	toSpawn:setLoc()
 	pushables[#pushables+1] = toSpawn
 end
 function P.boomboxSpawner:useToolNothing(tileY, tileX)
@@ -1465,6 +1480,7 @@ function P.boomboxSpawner:useToolNothing(tileY, tileX)
 	local toSpawn = pushableList[6]:new()
 	toSpawn.tileY = tileY
 	toSpawn.tileX = tileX
+	toSpawn:setLoc()
 	pushables[#pushables+1] = toSpawn
 end
 
@@ -3950,6 +3966,7 @@ function P.christmasSurprise:useToolTile(tile, tileY, tileX)
 			pushables[i] = pushableList.giftBox:new()
 			pushables[i].tileY = giftY
 			pushables[i].tileX = giftX	
+			pushables[i]:setLoc()
 		end
 	end
 end
@@ -3966,7 +3983,8 @@ function P.christmasSurprise:useToolNothing(tileY, tileX)
 			local giftX = pushables[i].tileX
 			pushables[i] = pushableList.giftBox:new()
 			pushables[i].tileY = giftY
-			pushables[i].tileX = giftX	
+			pushables[i].tileX = giftX
+			pushables[i]:setLoc()
 		end
 	end
 end
@@ -4739,6 +4757,7 @@ function P.recycleBin:useToolTile(tile, tileY, tileX)
 	local toSpawn = pushableList[14]:new()
 	toSpawn.tileY = tileY
 	toSpawn.tileX = tileX
+	toSpawn:setLoc()
 	pushables[#pushables+1] = toSpawn
 end
 function P.recycleBin:useToolNothing(tileY, tileX)
@@ -4746,6 +4765,7 @@ function P.recycleBin:useToolNothing(tileY, tileX)
 	local toSpawn = pushableList[14]:new()
 	toSpawn.tileY = tileY
 	toSpawn.tileX = tileX
+	toSpawn:setLoc()
 	pushables[#pushables+1] = toSpawn
 end
 
@@ -4755,6 +4775,7 @@ function P.iceBox:useToolTile(tile, tileY, tileX)
 	local toSpawn = pushableList[13]:new()
 	toSpawn.tileY = tileY
 	toSpawn.tileX = tileX
+	toSpawn:setLoc()
 	pushables[#pushables+1] = toSpawn
 end
 function P.iceBox:useToolNothing(tileY, tileX)
@@ -4762,6 +4783,7 @@ function P.iceBox:useToolNothing(tileY, tileX)
 	local toSpawn = pushableList[13]:new()
 	toSpawn.tileY = tileY
 	toSpawn.tileX = tileX
+	toSpawn:setLoc()
 	pushables[#pushables+1] = toSpawn
 end
 
