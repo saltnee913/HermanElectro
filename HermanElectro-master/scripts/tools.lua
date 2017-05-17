@@ -939,9 +939,9 @@ function P.visionChanger:useToolTile(tile)
 end
 P.visionChanger.useToolNothing = P.visionChanger.useToolTile
 
-P.bomb = P.superTool:new{name = "Bomb", description = "ANFO", baseRange = 1, image = 'Graphics/Tools/bomb.png', quality = 4}
+P.bomb = P.superTool:new{name = "Bomb", description = "3-2-1 BOOM!", baseRange = 1, image = 'Graphics/Tools/bomb.png', quality = 4}
 function P.bomb:useToolNothing(tileY, tileX) --Used to be 3-2-1 BOOM! was also "brute force" Considered chemical trivia or thrill text
-	self.numHeld = self.numHeld - 1
+	self.numHeld = self.numHeld - 1 --ANFO
 	t = tiles.bomb:new()
 	t.counter = 3
 	room[tileY][tileX] = t
@@ -1907,7 +1907,7 @@ function P.teleporter:useToolNothing()
 end
 P.teleporter.useToolTile = P.teleporter.useToolNothing
 
-P.revive = P.superTool:new{name = "Revive", description = "Not yet.", baseRange = 0, image = 'Graphics/revive.png', destroyOnRevive = true, quality = 5}
+P.revive = P.superTool:new{name = "Revive", description = "Not dead yet.", baseRange = 0, image = 'Graphics/revive.png', destroyOnRevive = true, quality = 5}
 function P.revive:checkDeath()
 	self.numHeld = self.numHeld-1
 

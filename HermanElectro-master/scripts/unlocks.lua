@@ -170,9 +170,9 @@ P.glueSnailUnlock = P.tileUnlock:new{name = 'Sticky Snails', tileIds = {121}, sp
 P.bombBuddyUnlock = P.tileUnlock:new{name = "Mr. Bomb Buddy :)", tileIds = {122}, sprite = animalList.bombBuddy.sprite}
 P.termiteUnlock = P.tileUnlock:new{name = "Eek! Termites!", tileIds = {199}, sprite = animalList.termite.sprite}
 P.catUnlock = P.tileUnlock:new{name = "Purr", desc = '', tileIds = {23}, sprite = animalList.cat.sprite}
-P.glueSnailUnlock = P.tileUnlock:new{name = "glue", tileIds = {121}, sprite = animalList.glueSnail.sprite}
+--P.glueSnailUnlock = P.tileUnlock:new{name = "glue", tileIds = {121}, sprite = animalList.glueSnail.sprite}
 --P.conductiveSnailUnlock = P.tileUnlock:new{name = "Conductive Cream", tileIds = {62}, sprite = animalList.conductiveSnail.sprite}
-P.ratUnlock = P.tileUnlock:new{name = 'eek', tileIds = {196}, sprite = animalList.rat.sprite}
+P.ratUnlock = P.tileUnlock:new{name = 'Between the walls', tileIds = {196}, sprite = animalList.rat.sprite}
 P.reinforcedGlassUnlock = P.tileUnlock:new{name = 'Reinforcements', tileIds = {64}, sprite = tiles.reinforcedGlass.sprite}
 P.brownPitUnlock = P.tileUnlock:new{name ='Fallible Flooring', tileIds = {33}, sprite = tiles.breakablePit.sprite}
 
@@ -222,7 +222,7 @@ P.toolRerollerUnlock = P.unlock:new{name = "Tool Reroller", toolIds = {tools.too
 P.superToolUnlock = P.unlock:new{name = "Super Supertools", toolIds = {tools.superSaw, tools.longLadder,
 tools.superWireCutters, tools.superWaterBottle, tools.superSponge, tools.superBrick, tools.superGun},
 sprite = tools.superSaw.image}
-P.laptopUnlock = P.unlock:new{name = "Laptop", toolIds = {tools.laptop}, sprite = tools.laptop.image}
+P.laptopUnlock = P.unlock:new{name = "New Hardware", toolIds = {tools.laptop}, sprite = tools.laptop.image}
 P.superLaserUnlock = P.unlock:new{name = "The Big Bad Beam", toolIds = {tools.superLaser}, sprite = tools.superLaser.image}
 --P.laptopUnlock = P.unlock:new{name = 'laptop', toolIds = {tools.laptop}, sprite = tools.laptop.image}
 P.roomRerollerUnlock = P.unlock:new{name = 'roomReroller', toolIds = {tools.roomReroller}, sprite = tools.roomReroller.image}
@@ -238,7 +238,7 @@ P.luckyBrickUnlock = P.unlock:new{name = 'luckyBrick', toolIds = {tools.luckyBri
 P.supertoolDoublerUnlock = P.unlock:new{name = 'supertoolDoubler', toolIds = {tools.supertoolDoubler}, sprite = tools.supertoolDoubler.image}
 P.lemonPartyUnlock = P.unlock:new{name = 'Lemon Party! Woohoo!', toolIds = {tools.lemonParty}, sprite = tools.lemonParty.image}
 P.pitbullChangerUnlock = P.unlock:new{name = 'You found your wand!', toolIds = {tools.pitbullChanger}, sprite = tools.pitbullChanger.image}
-P.inflationUnlock = P.unlock:new{name = 'Deflation, not just for balloons', toolIds = {tools.inflation}, sprite = tools.inflation.image}
+P.inflationUnlock = P.unlock:new{name = 'Deflation: not just for balloons', toolIds = {tools.inflation}, sprite = tools.inflation.image}
 P.tileSwapperUnlock = P.unlock:new{name = 'Tile Swapper', toolIds = {tools.tileSwapper}, sprite = tools.tileSwapper.image}
 P.stopwatchUnlock = P.unlock:new{name = 'Stopwatch', toolIds = {tools.stopwatch}, sprite = tools.stopwatch.image}
 P.robotArmUnlock = P.unlock:new{name = 'Robotic Arm', toolIds = {tools.robotArm}, sprite = tools.robotArm.image}
@@ -246,7 +246,7 @@ P.wingsUnlock = P.unlock:new{name = 'Wings', toolIds = {tools.wings}, sprite = t
 P.growthHormonesUnlock = P.unlock:new{name = 'Growth Hormones', toolIds = {tools.growthHormones}, sprite = tools.growthHormones.image}
 P.portalPlacerUnlock = P.unlock:new{name = 'Portal Placer', toolIds = {tools.portalPlacer}, sprite = tools.portalPlacer.image}
 P.portalPlacerDoubleUnlock = P.unlock:new{name = 'Portal Placer Double', toolIds = {tools.portalPlacerDouble}, sprite = tools.portalPlacerDouble.image}
-P.heartTransplantUnlock = P.unlock:new{name = 'Donor City', toolIds = {tools.heartTransplant}, sprite = tools.heartTransplant.image}
+P.heartTransplantUnlock = P.unlock:new{name = 'Organ Donor', toolIds = {tools.heartTransplant}, sprite = tools.heartTransplant.image}
 P.bucketOfWaterUnlock = P.unlock:new{name = 'Bucket of Water', toolIds = {tools.bucketOfWater}, sprite = tools.bucketOfWater.image}
 P.axeUnlock = P.unlock:new{name = 'axe', toolIds = {tools.axe}, sprite = tools.axe.image}
 P.lubeUnlock = P.unlock:new{name = 'lube', toolIds = {tools.lube}, sprite = tools.lube.image}
