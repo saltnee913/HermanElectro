@@ -12,8 +12,8 @@ end
 P.movePlayer = P.basicProcess:new{name = "movePlayer", direction = 0, active = true, time = nil, disableInput = true}
 function P.movePlayer:run(dt)
 	if self.time==nil then
-		self.time = keyTimer.base*90
-		self.baseTime = keyTimer.base*90
+		self.time = keyTimer.base*100
+		self.baseTime = keyTimer.base*100
 	end
 	local moveLength = scale*tileHeight/self.baseTime*math.min(self.time, dt*100)
 	if self.direction == 0 then
