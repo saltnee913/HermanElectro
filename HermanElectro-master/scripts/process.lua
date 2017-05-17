@@ -156,10 +156,32 @@ function P.bullet:draw()
 	love.graphics.draw(bulletSprite, self.currentLoc.x, self.currentLoc.y, 0, 0.5*scale, 0.5*scale)
 end
 
+P.missile = P.basicProcess:new{name = "missile", active = true, time = nil, disableInput = true,
+sprite = 'Graphics/Tools/missile.png', speed = 8, x = nil, y = nil, targetY = nil, tile = nil}
+function P.missile:run(dt)
+	if self.targetY==nil or self.y == nil then return end
+
+	local moveLength = scale*tileHeight*dt*self.speed
+	self.y = self.y+moveLength
+	if self.y>self.targetY then
+		self.active = false
+		updateGameState()
+		if self.tile~=nil then
+			self.tile:destroy()
+		end
+	end
+end
+
+function P.missile:draw()
+	local missileSprite = util.getImage(self.sprite)
+	love.graphics.draw(missileSprite, self.x, self.y, 0, 0.5*scale, 0.5*scale)
+end
+
 
 process[1] = P.movePlayer
 process[2] = P.moveAnimal
 process[3] = P.movePushable
 process[4] = P.grenadeThrow
 process[5] = P.bullet
+process[6] = P.missile
 return process

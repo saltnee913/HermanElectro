@@ -1064,6 +1064,18 @@ function P.missile:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld-1
 	room[tileY][tileX] = tiles.dungeonEnter:new()
 end
+function P.missile:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
+
+	local missileProcess = processList.missile:new()
+	missileProcess.x = tileToCoords(tileY, tileX).x
+	missileProcess.targetY = tileToCoords(tileY, tileX).y
+	missileProcess.y = missileProcess.targetY-tileUnit*6*scale
+
+    missileProcess.tile = tile
+
+	processes[#processes+1] = missileProcess
+end
 P.missile.getToolableTiles = P.tool.getToolableTilesBox
 P.missile.getToolableAnimals = P.tool.getToolableAnimalsBox
 P.missile.useToolAnimal = P.gun.useToolAnimal
