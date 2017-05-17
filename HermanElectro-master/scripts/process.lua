@@ -120,9 +120,46 @@ function P.grenadeThrow:draw()
 	love.graphics.draw(grenadeSprite, self.currentLoc.x, self.currentLoc.y, 0, 0.5*scale, 0.5*scale)
 end
 
+P.bullet = P.basicProcess:new{name = "bullet", direction = 0, active = true, time = nil, disableInput = true,
+currentLoc = {x = nil, y = nil}, targetLoc = {x = nil, y = nil, tileX = nil, tileY = nil},
+sprite = 'Graphics/bullet.png', speed = 8, animal = nil}
+function P.bullet:run(dt)
+	local moveLength = scale*tileHeight*dt*self.speed
+	local pastTarget = false
+
+	if self.direction == 0 then
+		self.currentLoc.y = self.currentLoc.y-moveLength
+		if self.currentLoc.y<self.targetLoc.y then pastTarget = true end
+	elseif self.direction == 1 then
+		self.currentLoc.x = self.currentLoc.x+moveLength
+		if self.currentLoc.x>self.targetLoc.x then pastTarget = true end
+	elseif self.direction == 2 then
+		self.currentLoc.y = self.currentLoc.y+moveLength
+		if self.currentLoc.y>self.targetLoc.y then pastTarget = true end
+	elseif self.direction == 3 then
+		self.currentLoc.x = self.currentLoc.x-moveLength
+		if self.currentLoc.x<self.targetLoc.x then pastTarget = true end
+	end
+
+	if pastTarget then
+		self.active = false
+		self.animal:kill()
+		if self.animal:instanceof(animalList.bombBuddy) then
+			self.animal:explode()
+		end
+		updateGameState()
+	end
+end
+
+function P.bullet:draw()
+	local bulletSprite = util.getImage(self.sprite)
+	love.graphics.draw(bulletSprite, self.currentLoc.x, self.currentLoc.y, 0, 0.5*scale, 0.5*scale)
+end
+
 
 process[1] = P.movePlayer
 process[2] = P.moveAnimal
 process[3] = P.movePushable
 process[4] = P.grenadeThrow
+process[5] = P.bullet
 return process

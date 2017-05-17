@@ -695,11 +695,31 @@ function P.gun:useToolTile(tile)
 end
 function P.gun:useToolAnimal(animal)
 	self.numHeld = self.numHeld - 1
-	animal:kill()
+	--[[animal:kill()
 	if animal:instanceof(animalList.bombBuddy) then
 		animal:explode()
 	end
-	gabeUnlock = false
+	gabeUnlock = false]]
+
+	local tileY = animal.tileY
+	local tileX = animal.tileX
+
+	local bulletProcess = processList.bullet:new()
+	bulletProcess.currentLoc = {x = tileToCoords(player.tileY, player.tileX).x+tileUnit/2, y = tileToCoords(player.tileY, player.tileX).y+tileUnit/2}
+	bulletProcess.targetLoc = {tileX = tileX, tileY = tileY, x = tileToCoords(tileY, tileX).x, y = tileToCoords(tileY, tileX).y}
+	bulletProcess.animal = animal
+
+    if tileY<player.tileY then
+		bulletProcess.direction = 0
+	elseif tileX>player.tileX  then
+		bulletProcess.direction = 1
+	elseif tileY>player.tileY then
+		bulletProcess.direction = 2
+	elseif tileX<player.tileX then
+		bulletProcess.direction = 3
+	end
+
+	processes[#processes+1] = bulletProcess
 end
 
 P.sponge = P.tool:new{name = "sponge", baseRange = 1, image = 'NewGraphics/sponge copy.png'}
