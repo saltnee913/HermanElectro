@@ -1243,6 +1243,7 @@ function P.spring:useToolTile(tile, tileY, tileX)
 	if room[player.prevTileY][player.prevTileX]~=nil then
 		room[player.prevTileY][player.prevTileX]:onLeave(player)
 	end
+	setPlayerLoc()
 end
 function P.spring:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld-1
@@ -1254,6 +1255,7 @@ function P.spring:useToolNothing(tileY, tileX)
 	player.tileX = tileX
 	player.tileY = tileY
 	updateElevation()
+	setPlayerLoc()
 end
 P.spring.getToolableTiles = P.tool.getToolableTilesBox
 
@@ -1936,6 +1938,7 @@ function P.teleporter:useToolNothing()
 			updateGameState()
 		end
 	end
+	setPlayerLoc()
 end
 P.teleporter.useToolTile = P.teleporter.useToolNothing
 
@@ -3011,6 +3014,7 @@ function P.glitch:useToolNothing(tileY, tileX)
 	player.tileX = tileX
 	player.tileY = tileY
 	globalPowerBlock = true
+	setPlayerLoc()
 end
 function P.glitch:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld-1
@@ -3020,6 +3024,7 @@ function P.glitch:useToolTile(tile, tileY, tileX)
 	player.tileY = tileY
 	globalDeathBlock = true
 	globalPowerBlock = true
+	setPlayerLoc()
 end
 
 P.bouncer = P.superTool:new{name = "Bouncer", description = "This club is for attractive people only.", image = 'Graphics/bouncer.png', baseRange = 1, quality = 1}
@@ -3074,6 +3079,7 @@ function P.bouncer:useToolTile(tile, tileY, tileX)
 	if room[player.prevTileY][player.prevTileX]~=nil then
 		room[player.prevTileY][player.prevTileX]:onLeave(player)
 	end
+	setPlayerLoc()
 end
 
 P.shift = P.superTool:new{name = "Shift", description = "Now slide to the left", image = 'Graphics/shift.png', baseRange = 1, quality = 1}
@@ -3089,6 +3095,7 @@ function P.shift:useToolNothing(tileY, tileX)
 	player.prevTileY = player.tileY
 	player.tileX = tileX
 	player.tileY = tileY
+	setPlayerLoc()
 end
 function P.shift:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld-1
@@ -3097,6 +3104,7 @@ function P.shift:useToolTile(tile, tileY, tileX)
 	player.tileX = tileX
 	player.tileY = tileY
 	room[player.tileY][player.tileX]:onEnter()
+	setPlayerLoc()
 end
 
 P.block = P.superTool:new{name = "Wall Builder", description = "Your default defense mechanism", image = 'Graphics/woodwall.png', baseRange = 1, quality = 2}
@@ -3296,6 +3304,7 @@ function P.stealthBomber:useToolNothing(tileY, tileX)
 		room[player.prevTileY][player.prevTileX]:onLeave(player)
 	end
 	updateElevation()
+	setPlayerLoc()
 end
 function P.stealthBomber:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld-1
@@ -3313,6 +3322,7 @@ function P.stealthBomber:useToolTile(tile, tileY, tileX)
 	if room[player.prevTileY][player.prevTileX]~=nil then
 		room[player.prevTileY][player.prevTileX]:onLeave(player)
 	end
+	setPlayerLoc()
 end
 
 P.seeds = P.superTool:new{name = "Seeds", description = "Go forth and sow your wild oats", baseRange = 1, quality = 2,
@@ -4168,6 +4178,7 @@ function P.secretTeleporter:useToolNothing()
 		keyTimer.timeLeft = keyTimer.suicideDelay
 		updateGameState()
 	end
+	setPlayerLoc()
 end
 P.secretTeleporter.useToolTile = P.secretTeleporter.useToolNothing
 
