@@ -3469,7 +3469,7 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 			if tool == specialTools[numPressed-7] then
 				tool = 0
 			else
-				tool = numPressed
+				tool = specialTools[numPressed-7]
 			end
 		end
 		tools.updateToolableTiles(tool)
@@ -4147,7 +4147,7 @@ function love.mousepressed(x, y, button, istouch, isPlayback)
 			end
 		elseif inventoryX>=13 and inventoryX<=15 then
 			clickActivated = true
-			if specialTools[inventoryX-12]~=0 then
+			if specialTools[inventoryX-12]~=0 and tool~=specialTools[inventoryX-12] then
 				tool = specialTools[inventoryX-12]
 			else tool = 0
 			end
