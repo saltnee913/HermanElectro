@@ -2510,19 +2510,38 @@ function getTranslation()
 	translation.x = translation.x*-1
 	translation.y = translation.y*-1	
 	return translation]]
-	translation = {x = 0, y = 0}
+
+	local translation = {x = 0, y = 0}
+	local prevTranslation = {x = 0, y = 0}
+	local tileLoc = tileToCoordsPlayer(player.tileY, player.tileX)
+
 	if roomLength>regularLength then
 		translation.x = player.tileX-1-regularLength/2
-		if translation.x > roomLength - regularLength then translation.x = roomLength - regularLength end
-		if translation.x < 0 then translation.x = 0 end
+		prevTranslation.x = player.prevTileX-1-regularLength/2
+		if translation.x > roomLength - regularLength then translation.x = roomLength - regularLength
+		elseif translation.x < 0 then translation.x = 0 end
+		if prevTranslation.x > roomLength - regularLength then prevTranslation.x = roomLength - regularLength
+		elseif prevTranslation.x < 0 then prevTranslation.x = 0 end
+
+		if (translation.x~=prevTranslation.x) then
+			--mid-movement translation
+			translation.x = translation.x-(tileLoc.x-player.x)/(tileUnit*scale)
+		end
 	elseif roomLength<regularLength then
 		local lengthDiff = regularLength-roomLength
 		translation.x = -1*math.floor(lengthDiff/2)
 	end
 	if roomHeight>regularHeight then
 		translation.y = player.tileY-1-regularHeight/2
-		if translation.y > roomHeight - regularHeight then translation.y = roomHeight - regularHeight end
-		if translation.y < 0 then translation.y = 0 end
+		prevTranslation.y = player.prevTileY-1-regularHeight/2
+		if translation.y > roomHeight - regularHeight then translation.y = roomHeight - regularHeight
+		elseif translation.y < 0 then translation.y = 0 end
+		if prevTranslation.y > roomHeight - regularHeight then prevTranslation.y = roomHeight - regularHeight
+		elseif prevTranslation.y < 0 then prevTranslation.y = 0 end
+		if (translation.y~=prevTranslation.y) then
+			--mid-movement translation
+			translation.y = translation.y-(tileLoc.y-player.y)/(tileUnit*scale)
+		end
 	elseif roomHeight<regularHeight then
 		local heightDiff = regularHeight-roomHeight
 		translation.y = -1*math.floor(heightDiff/2)
@@ -2622,6 +2641,21 @@ end
 
 function tileToCoordsX(tileX)
 	return (tileX-1)*scale*tileHeight+wallSprite.width
+end
+
+function tileToCoordsPlayer(tileY, tileX)
+	local ret = {x = 0, y = 0}
+	ret.x = tileToCoordsXPlayer(tileX)
+	ret.y = tileToCoordsYPlayer(tileY)
+	return ret
+end
+
+function tileToCoordsYPlayer(tileY)
+	return (tileY-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
+end
+
+function tileToCoordsXPlayer(tileX)
+	return (tileX-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
 end
 
 function coordsToTile(y,x)
@@ -4630,6 +4664,9 @@ function onTeleport()
 			processes[i].active = false
 		end
 	end
+
+	player.prevTileX = player.tileX
+	player.prevTileY = player.tileY
 end
 
 function onToolUse(tool)

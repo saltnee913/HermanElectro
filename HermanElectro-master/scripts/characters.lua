@@ -133,7 +133,7 @@ end
 
 P.herman = P.character:new{name = "Herman", description = "The Electrician", 
   scale = 1.1*scale, sprites = {'Graphics/Characters/Herman.png', 'Graphics/Characters/Herman.png', 'Graphics/Characters/Herman.png', 'Graphics/Characters/Herman.png'},
-  animation = {'Graphics/Characters/Herman.png','Graphics/Characters/Herman.png','Graphics/Characters/HermanTaller.png','Graphics/Characters/Herman.png'},
+  animation = {'Graphics/Characters/Herman.png','Graphics/Characters/Herman.png','Graphics/Characters/Herman.png','Graphics/Characters/Herman.png'},
   animationLength = 1,
   crime = "Life Imprisonment for Attempted Circuit Break"}
 function P.herman:onCharLoad()
