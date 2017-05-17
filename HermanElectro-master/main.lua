@@ -2078,7 +2078,7 @@ function love.draw()
 
 		local drawGreen = true
 		for i = 1, #processes do
-			if process[i]:instanceof(processList.movePlayer) then
+			if processes[i]:instanceof(processList.movePlayer) then
 				drawGreen = false
 			end
 		end
