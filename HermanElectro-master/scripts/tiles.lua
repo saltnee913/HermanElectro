@@ -2471,8 +2471,7 @@ function P.dungeonEnter:onEnter()
 	end
 	player.prevTileX = player.tileX
 	player.prevTileY = player.tileY
-	player.justTeleported = true
-
+	onTeleport()
 end
 P.dungeonExit = P.tile:new{name = "dungeonExit"}
 function P.dungeonExit:onEnter()
@@ -2523,7 +2522,7 @@ function P.dungeonExit:onEnter()
 	end
 
 	createElements()
-	player.justTeleported = true
+	onTeleport()
 end
 
 P.heavenEnter = P.tile:new{name = "heavenEnter", text = "You need flight to access this area."}
@@ -2551,8 +2550,7 @@ function P.heavenEnter:onEnter()
 	end
 	player.prevTileX = player.tileX
 	player.prevTileY = player.tileY
-	player.justTeleported = true
-	turnOffMushroomMode()
+	onTeleport()
 end
 function P.heavenEnter:onLeave()
 	if room[player.tileY][player.tileX]==nil or room[player.tileY][player.tileX].text==nil then
@@ -2609,8 +2607,7 @@ function P.heavenExit:onEnter()
 	end
 
 	createElements()
-	player.justTeleported = true
-	turnOffMushroomMode()
+	onTeleport()
 end
 
 P.endDungeonEnter = P.tile:new{name = "endDungeonEnter", sprite = 'Graphics/eden.png', disabled = false}
@@ -2646,6 +2643,7 @@ function P.endDungeonEnter:onEnter()
 			end
 		end
 	end
+	onTeleport()
 end
 
 P.endDungeonExit = P.tile:new{name = "endDungeonExit", sprite = 'Graphics/edex.png'}
@@ -2660,6 +2658,7 @@ function P.endDungeonExit:onEnter()
 			end
 		end
 	end
+	onTeleport()
 end
 
 

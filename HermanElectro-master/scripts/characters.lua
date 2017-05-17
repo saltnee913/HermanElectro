@@ -133,7 +133,7 @@ end
 
 P.herman = P.character:new{name = "Herman", description = "The Electrician", 
   scale = 1.1*scale, sprites = {'Graphics/Characters/Herman.png', 'Graphics/Characters/Herman.png', 'Graphics/Characters/Herman.png', 'Graphics/Characters/Herman.png'},
-  animation = {'Graphics/Characters/Herman.png','Graphics/Characters/Herman.png','Graphics/Characters/HermanTaller.png','Graphics/Characters/Herman.png'},
+  animation = {'Graphics/Characters/Herman.png','Graphics/Characters/Herman.png','Graphics/Characters/Herman.png','Graphics/Characters/Herman.png'},
   animationLength = 1,
   crime = "Life Imprisonment for Attempted Circuit Break"}
 function P.herman:onCharLoad()
@@ -421,16 +421,16 @@ noSockSprite = 'Graphics/Characters/Eli.png', scale = 1.1*scale}
 function P.xavier:onKeyPressedChar(key)
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
 		self.sockMode = not self.sockMode
-		if player.attributes.sockStep>=0 then
+		if player.attributes.sockStep then
 			self.sockMode = false
 		end
 		if not self.sockMode then
-			player.attributes.sockStep = -1
+			player.attributes.sockStep = false
 			forcePowerUpdateNext = true
 		end
 	end
 	if self.sockMode then
-		player.attributes.sockStep = 1
+		player.attributes.sockStep = true
 	end
 	self:updateSprite()
 	return false
