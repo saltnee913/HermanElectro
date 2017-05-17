@@ -25,6 +25,8 @@ function P.movePlayer:run(dt)
 	elseif self.direction == 3 then
 		player.x = player.x-moveLength
 	end
+	myShader:send("player_x", player.x+getTranslation().x*tileWidth*scale+(width2-width)/2)
+    myShader:send("player_y", player.y+getTranslation().y*tileWidth*scale+(height2-height)/2)
 
 	self.time = self.time-dt*100
 	if self.time<=0 then
