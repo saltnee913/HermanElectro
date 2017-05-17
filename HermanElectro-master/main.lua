@@ -408,7 +408,8 @@ function love.load()
 
 		floors = {}
 		floors[1] = love.graphics.newImage('Graphics/Floors/f1.png')
-		floors[2] = love.graphics.newImage('Graphics/Floors/f6.png')
+		floors[2] = love.graphics.newImage('Graphics/Floors/F2.png')
+		floors[3] = love.graphics.newImage('Graphics/Floors/F3.png')
 		floors[6] = love.graphics.newImage('Graphics/Floors/f6.png')
 
 		secondaryTiles = {}
@@ -2952,6 +2953,13 @@ function postRoomEnter()
 			end
 		end
 	end
+
+	--shut off player move animations
+	for i = 1, #processes do
+		if processes[i]:instanceof(processList.movePlayer) then
+			processes[i].active = false
+		end
+	end
 end
 
 oldTilesOn = {}
@@ -3501,7 +3509,20 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 	end
 	noPowerUpdate = not player.character.forcePowerUpdate
     if (key=="w" or key=="a" or key=="s" or key=="d") and player.moveMode==0 then
-    	processTurn()	
+    	processTurn()
+    	if playerMoved() then
+	    	local moveProcess = processList.movePlayer:new()
+		    if key=="w" then
+				moveProcess.direction = 0
+			elseif key=="a"  then
+				moveProcess.direction = 3
+			elseif key=="s" then
+				moveProcess.direction = 2
+			elseif key=="d" then
+				moveProcess.direction = 1
+			end
+			processes[#processes+1] = moveProcess
+		end
     end
     --Debug console stuff
     if key=='p' then
@@ -3528,6 +3549,7 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
     if player.moveMode==0 then
 		--setPlayerLoc()
 	end
+
 
     for i = 1, roomHeight do
     	for j = 1, roomLength do
@@ -3772,20 +3794,6 @@ function processMove(key, dt)
 				player.tileX = player.prevTileX
 				player.tileY = player.prevTileY
 			end
-		end
-
-		if playerMoved() then
-			local moveProcess = processList.movePlayer:new()
-		    if key=="w" then
-				moveProcess.direction = 0
-			elseif key=="a"  then
-				moveProcess.direction = 3
-			elseif key=="s" then
-				moveProcess.direction = 2
-			elseif key=="d" then
-				moveProcess.direction = 1
-			end
-			processes[#processes+1] = moveProcess
 		end
 	end
 	if player.waitCounter>0 then
