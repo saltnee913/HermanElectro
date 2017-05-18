@@ -1966,7 +1966,7 @@ function love.draw()
 					end
 					if litTiles[j][i]~=0 and room[j][i].overlay ~= nil then
 						local overlay = room[j][i].overlay
-						local toDraw2 = overlay.powered and util.getImage(overlay.poweredSprite) or util.getImage(overlay.sprite)
+						local toDraw2 = overlay.powered and overlay.poweredSprite~=nil and util.getImage(overlay.poweredSprite) or util.getImage(overlay.sprite)
 						local rot2 = overlay.rotation
 						local tempi2 = i
 						local tempj2 = j
@@ -3858,6 +3858,8 @@ function postKeypressReset()
 	if player.attributes.fast.fast then
 		player.attributes.fast.fastStep = not player.attributes.fast.fastStep
 	end
+
+	updateCursor()
 end
 
 function playerMoved()
@@ -4212,6 +4214,8 @@ function love.mousepressed(x, y, button, istouch, isPlayback)
 		end
 		onToolUse(tool)
 	end
+
+	updateCursor()
 	
 	updateGameState(false)
 	checkAllDeath()
@@ -4409,6 +4413,16 @@ function updateTools()
 		if tools[i].numHeld<0 then
 			tools[i].numHeld = 0
 		end
+	end
+end
+
+function updateCursor()
+	if tool==0 then
+		cursor = love.mouse.newCursor('Graphics/herman_small.png', 0, 0)
+		love.mouse.setCursor(cursor)
+	else
+		cursor = love.mouse.newCursor(tools[tool].image, 0, 0)
+		love.mouse.setCursor(cursor)
 	end
 end
 
