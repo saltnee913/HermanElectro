@@ -2066,6 +2066,18 @@ function love.draw()
 			if animals[i]~=nil and litTiles[animals[i].tileY][animals[i].tileX]==1 and not animals[i].pickedUp and animals[i].tileY==j then
 				local animalSprite = util.getImage(animals[i].sprite)
 				love.graphics.draw(animalSprite, animals[i].x, animals[i].y, 0, animals[i].scale, animals[i].scale)
+				if animals[i].waitCounter>0 and not animals[i].dead then
+					for j = 1, animals[i].waitCounter do
+						local waitSprite = util.getImage('Graphics/waitCounterMark.png')
+						local markScale = scale
+						local drawx = animals[i].x+tileUnit/2*scale
+						local drawy = animals[i].y-tileUnit/10*scale-waitSprite:getHeight()*markScale
+
+						drawx = drawx-animals[i].waitCounter/2*markScale*waitSprite:getWidth()+markScale*(j-1)*waitSprite:getWidth()
+
+						love.graphics.draw(waitSprite, drawx, drawy, 0, markScale, markScale)
+					end
+				end
 			end
 		end
 
