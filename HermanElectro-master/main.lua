@@ -704,7 +704,7 @@ function postFloorChange()
 	end
 
 	if player.attributes.permaMap then
-		tools.map:useToolNothing()
+		tools.map.useToolNothing(self)
 	end
 
 	completedRooms[mapy][mapx] = 1

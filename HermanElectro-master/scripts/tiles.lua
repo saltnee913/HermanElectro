@@ -2347,6 +2347,7 @@ function P.supertoolTile:updateSprite()
 end
 function P.supertoolTile:onEnter(entered)
 	if not (player.tileX==entered.tileX and player.tileY==entered.tileY) then return end
+	print('aaa')
 	local stTypesHeld = util.getSupertoolTypesHeld()
 	if stTypesHeld<3 or self.tool.numHeld>0 then
 		tools.giveToolsByReference({self.tool})

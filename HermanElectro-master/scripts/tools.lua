@@ -3276,6 +3276,7 @@ function P.helmet:useToolNothing(tileY, tileX)
 	player.prevTileY = player.tileY
 	player.tileX = tileX
 	player.tileY = tileY
+	setPlayerLoc()
 end
 function P.helmet:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld-1
@@ -3284,6 +3285,7 @@ function P.helmet:useToolTile(tile, tileY, tileX)
 	player.tileX = tileX
 	player.tileY = tileY
 	room[player.tileY][player.tileX]:onEnter(player)
+	setPlayerLoc()
 end
 
 P.stealthBomber = P.superTool:new{name = "Stealth Bomber", description = "Drop 'n' Go", image = 'Graphics/stealthbomber.png', baseRange = 2, quality = 4}
@@ -3958,6 +3960,7 @@ function P.christmasSurprise:useToolTile(tile, tileY, tileX)
 	toSpawn.tileY = tileY
 	toSpawn.tileX = tileX
 	pushables[#pushables+1] = toSpawn
+	toSpawn:setLoc()
 	tools.saw.numHeld = tools.saw.numHeld+1
 	for i = 1, #pushables do
 		if pushables[i].name == "box" then
@@ -3976,6 +3979,7 @@ function P.christmasSurprise:useToolNothing(tileY, tileX)
 	toSpawn.tileY = tileY
 	toSpawn.tileX = tileX
 	pushables[#pushables+1] = toSpawn
+	toSpawn:setLoc()
 	tools.saw.numHeld = tools.saw.numHeld+1
 	for i = 1, #pushables do
 		if pushables[i].name == "box" then
@@ -4734,6 +4738,7 @@ function P.teleportPotion:useToolTile(tile, tileY, tileX)
 	if tile ~= nil then
 		room[tileY][tileX]:onEnter(player)
 	end
+	setPlayerLoc()
 end
 function P.teleportPotion:useToolNothing(tileY, tileX)
 	self:useToolTile(nil, tileY, tileX)
@@ -5213,6 +5218,7 @@ function P.diagonal:useToolNothing(tileY, tileX)
 	player.prevTileY = player.tileY
 	player.tileX = tileX
 	player.tileY = tileY
+	setPlayerLoc()
 end
 function P.diagonal:useToolTile(tile, tileY, tileX)
 	player.prevTileX = player.tileX
@@ -5220,6 +5226,7 @@ function P.diagonal:useToolTile(tile, tileY, tileX)
 	player.tileX = tileX
 	player.tileY = tileY
 	room[player.tileY][player.tileX]:onEnter(player)
+	setPlayerLoc()
 end
 
 P.megaUnlock = P.superTool:new{name = "Psychic Key", baseRange = 0, description = "When one door closes, they all open", --Ben most are you fucking kidding me
