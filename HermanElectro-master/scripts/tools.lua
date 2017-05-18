@@ -1590,7 +1590,7 @@ local function iceDogs(tileY, tileX)
 end
 
 function P.icegun:useToolTile(tile, tileY, tileX)
-	iceDogs(tileY, tileX)
+	--iceDogs(tileY, tileX)
 	self.numHeld = self.numHeld-1
 end
 function P.icegun:useToolNothing(tileY, tileX)
@@ -2551,19 +2551,32 @@ function P.iceyShot:giveOne()
 end
 function P.iceyShot:useToolAnimal(animal)
 	self.numHeld = self.numHeld -1
-	local toAdd = pushableList.iceBox:new()
-	toAdd.tileX = animal.tileX
-	toAdd.prevTileX = animal.tileX
-	toAdd.tileY = animal.tileY
-	toAdd.prevTileY = animal.tileY
-	animal:kill()
-	pushables[#pushables+1] = toAdd
+
+	local tileY = animal.tileY
+	local tileX = animal.tileX
+
+	local bulletProcess = processList.iceBullet:new()
+	bulletProcess.currentLoc = {x = tileToCoords(player.tileY, player.tileX).x+tileUnit/2, y = tileToCoords(player.tileY, player.tileX).y+tileUnit/2}
+	bulletProcess.targetLoc = {tileX = tileX, tileY = tileY, x = tileToCoords(tileY, tileX).x, y = tileToCoords(tileY, tileX).y}
+	bulletProcess.animal = animal
+
+    if tileY<player.tileY then
+		bulletProcess.direction = 0
+	elseif tileX>player.tileX  then
+		bulletProcess.direction = 1
+	elseif tileY>player.tileY then
+		bulletProcess.direction = 2
+	elseif tileX<player.tileX then
+		bulletProcess.direction = 3
+	end
+
+	processes[#processes+1] = bulletProcess
 	--room[y][x] = pushables.iceBox:new()
 	--table.insert(pushables, P.iceBox:new())
 	--pushables[#pushables].tileY = y
 	--pushables[#pushables].tileX = x
 end
-function P.iceyShot:getToolableAnimals()
+--[[function P.iceyShot:getToolableAnimals()
 	local bool = 0
 	if not player.attributes.tall then
 		player.attributes.tall = true
@@ -2576,7 +2589,7 @@ function P.iceyShot:getToolableAnimals()
 		player.attributes.tall = false
 	end
 	return toolableAnimals
-end
+end]]
 
 
 P.gumball = P.superTool:new{name = "A Brown Gumball", description = "Tastes like shadows", quality = -1, baseRange = 0}
@@ -5296,8 +5309,8 @@ P:addTool(P.superGun)
 P:addTool(P.explosiveGun) --
 P:addTool(P.ammoPack) --Rapid Reload: Get back on your feet		The Hoodlum Hookup: Packing Heat  or  
 P:addTool(P.thruCover) --ThruCover: Tactical Strike 	            Should we change this one? Yup
---P:addTool(P.iceyShot) --IceyShot: Pretty Cool
-P:addTool(P.icegun) --The Stop Light: It might never turn green
+P:addTool(P.iceyShot) --IceyShot: Pretty Cool
+--P:addTool(P.icegun) --The Stop Light: It might never turn green
 
 
 

@@ -2347,7 +2347,6 @@ function P.supertoolTile:updateSprite()
 end
 function P.supertoolTile:onEnter(entered)
 	if not (player.tileX==entered.tileX and player.tileY==entered.tileY) then return end
-	print('aaa')
 	local stTypesHeld = util.getSupertoolTypesHeld()
 	if stTypesHeld<3 or self.tool.numHeld>0 then
 		tools.giveToolsByReference({self.tool})
@@ -2777,7 +2776,7 @@ function P.gasPuddle:destroy()
 		for i = 1, roomHeight do
 			for j = 1, roomLength do
 				if room[i][j]==self then
-					self:explode(j,i)
+					self:explode(i,j)
 				end
 			end
 		end

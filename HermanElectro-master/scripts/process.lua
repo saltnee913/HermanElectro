@@ -144,18 +144,33 @@ function P.bullet:run(dt)
 	end
 
 	if pastTarget then
-		self.active = false
-		self.animal:kill()
-		if self.animal:instanceof(animalList.bombBuddy) then
-			self.animal:explode()
-		end
-		updateGameState()
+		self:onEnd()
 	end
 end
-
 function P.bullet:draw()
 	local bulletSprite = util.getImage(self.sprite)
 	love.graphics.draw(bulletSprite, self.currentLoc.x, self.currentLoc.y, 0, 0.5*scale, 0.5*scale)
+end
+function P.bullet:onEnd()
+	self.active = false
+	self.animal:kill()
+	if self.animal:instanceof(animalList.bombBuddy) then
+		self.animal:explode()
+	end
+	updateGameState()
+end
+
+P.iceBullet = P.bullet:new{name = "iceBullet", sprite = 'Graphics/iceBullet.png'}
+function P.iceBullet:onEnd()
+	self.active = false
+	local toAdd = pushableList.iceBox:new()
+	toAdd.tileX = self.animal.tileX
+	toAdd.prevTileX = self.animal.tileX
+	toAdd.tileY = self.animal.tileY
+	toAdd.prevTileY = self.animal.tileY
+	toAdd:setLoc()
+	self.animal:kill()
+	pushables[#pushables+1] = toAdd
 end
 
 P.missile = P.basicProcess:new{name = "missile", active = true, time = nil, disableInput = true,
