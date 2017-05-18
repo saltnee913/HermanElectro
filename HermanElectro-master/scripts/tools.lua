@@ -959,11 +959,8 @@ function P.visionChanger:useToolTile(tile)
 end
 P.visionChanger.useToolNothing = P.visionChanger.useToolTile
 
-<<<<<<< HEAD
 P.bomb = P.superTool:new{name = "Bomb", description = "3-2-1 BOOM!", baseRange = 1, image = 'Graphics/Tools/bomb.png', quality = 4}
-=======
-P.bomb = P.superTool:new{name = "Bomb", description = "The convict's bread and butter", baseRange = 1, image = 'Graphics/Tools/bomb.png', quality = 4}
->>>>>>> origin/master
+--alternate description: "The convict's bread and butter"
 function P.bomb:useToolNothing(tileY, tileX) --Used to be 3-2-1 BOOM! was also "brute force" Considered chemical trivia or thrill text
 	self.numHeld = self.numHeld - 1 --ANFO
 	t = tiles.bomb:new()

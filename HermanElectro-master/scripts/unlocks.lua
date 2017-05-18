@@ -159,7 +159,7 @@ P.ambiguousGates = P.tileUnlock:new{name = 'ambiguous gates', tileIds = {54,55},
 P.unbreakableEfloorUnlock = P.tileUnlock:new{name = 'ambiguous efloors', tileIds = {114}, sprite = tiles.unbreakableElectricFloor.sprite}
 P.untoolableButtons = P.tileUnlock:new{name = 'untoolable buttons', tileIds = {115,120}, sprite = tiles.unbrickableStayButton.sprite}
 P.mousetrapUnlock = P.tileUnlock:new{name = 'The Mousetrap', tileIds = {38,52}, sprite = tiles.mousetrap.sprite}
---P.breakablePitUnlock = P.tileUnlock:new{name = 'watch where you step', tileIds = {33}, sprite = tiles.breakablePit.sprite}
+P.breakablePitUnlock = P.tileUnlock:new{name = 'watch where you step', tileIds = {33}, sprite = tiles.breakablePit.sprite}
 P.spikesUnlock = P.tileUnlock:new{name = 'pointy', tileIds = {28}, sprite = tiles.spikes.sprite}
 P.poweredEndUnlock = P.tileUnlock:new{name = 'Ends, electric', tileIds = {37}, sprite = tiles.poweredEnd.sprite}
 P.unbreakableElectricFloorUnlock = P.tileUnlock:new{name = 'unbreakable electric floor', tileIds = {114}, sprite = tiles.unbreakableElectricFloor.sprite}
