@@ -2066,7 +2066,14 @@ function love.draw()
 			if animals[i]~=nil and litTiles[animals[i].tileY][animals[i].tileX]==1 and not animals[i].pickedUp and animals[i].tileY==j then
 				local animalSprite = util.getImage(animals[i].sprite)
 				love.graphics.draw(animalSprite, animals[i].x, animals[i].y, 0, animals[i].scale, animals[i].scale)
-				if animals[i].waitCounter>0 and not animals[i].dead then
+				if animals[i].frozen and not animals[i].dead then
+					local frozenSprite = util.getImage('Graphics/frozenMark.png')
+					local markScale = scale
+					local drawx = animals[i].x+tileUnit/2*scale-markScale*frozenSprite:getWidth()/2
+					local drawy = animals[i].y-tileUnit/10*scale-frozenSprite:getHeight()*markScale
+					
+					love.graphics.draw(frozenSprite, drawx, drawy, 0, markScale, markScale)
+				elseif animals[i].waitCounter>0 and not animals[i].dead then
 					for j = 1, animals[i].waitCounter do
 						local waitSprite = util.getImage('Graphics/waitCounterMark.png')
 						local markScale = scale
@@ -3925,7 +3932,7 @@ function postAnimalMovement()
 	resolveConflicts()
 
 	for i = 1, #animals do
-		if animals[i]:hasMoved() and not animals[i].dead then
+		if animals[i]:hasMoved() and not animals[i].dead and not animals[i].frozen then
 			local moveProcess = processList.moveAnimal:new()
 			moveProcess.animal = animals[i]
 		    if animals[i].tileY<animals[i].prevTileY then

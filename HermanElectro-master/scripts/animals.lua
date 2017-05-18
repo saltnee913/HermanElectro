@@ -20,6 +20,9 @@ scale = (width - 2*wallSprite.width)/(20.3 * 16)*5/6
 --speed same as player (250)
 P.animal = Object:new{elevation = 0, scale = scale, yOffset = 0, frozen = false, trained = false, conductive = false, pickedUp = false, canDropTool = false, willDropTool = false, flying = false, triggered = false, waitCounter = 1, dead = false, name = "animal", tileX, tileY, prevx, prevy, prevTileX, prevTileY, x, y, speed = 250, width = 16*scale, height = 16*scale, sprite = 'Graphics/pitbull.png', deadSprite = 'Graphics/pitbulldead.png', tilesOn = {}, oldTilesOn = {}}
 function P.animal:move(playerx, playery, room, isLit)
+	if self.dead or (not isLit and not self.triggered) or self.frozen then
+		return
+	end
 	if player.attributes.shelled or player.attributes.invisible or player.attributes.timeFrozen then
 		return
 	elseif player.attributes.fear then
@@ -27,9 +30,6 @@ function P.animal:move(playerx, playery, room, isLit)
 		return
 	elseif room[playery][playerx]~=nil and room[playery][playerx].scaresAnimals then
 		self:afraidPrimaryMove(playerx, playery, room, isLit)
-		return
-	end
-	if self.dead or (not isLit and not self.triggered) or self.frozen then
 		return
 	end
 	self.triggered = true
@@ -502,6 +502,10 @@ P.babyDragon = P.rat:new{name = "babyDragon", sprite = "Graphics/dragonBaby.png"
 
 P.dragonFriend = P.babyDragon:new{name = "dragonFriend", sprite = "Graphics/dragonFriend.png", trained = true, scale = 0.5*scale}
 function P.dragonFriend:move()
+	if self.dead or (not isLit and not self.triggered) or self.frozen then
+		return
+	end
+
 	self.prevTileX = self.tileX
 	self.prevTileY = self.tileY
 
@@ -595,6 +599,9 @@ end
 
 P.mimic = P.pitbull:new{name = "mimic", sprite = 'Graphics/Tiles/endTile.png', triggeredSprite = animalList.pitbull.sprite}
 function P.mimic:move(playerx, playery, room, isLit)
+	if self.dead or (not isLit and not self.triggered) or self.frozen then
+		return
+	end
 	if player.attributes.shelled or player.attributes.invisible or player.attributes.timeFrozen then
 		return
 	elseif player.attributes.fear then
@@ -602,9 +609,6 @@ function P.mimic:move(playerx, playery, room, isLit)
 		return
 	elseif room[playery][playerx]~=nil and room[playery][playerx].scaresAnimals then
 		self:afraidPrimaryMove(playerx, playery, room, isLit)
-		return
-	end
-	if self.dead or (not isLit and not self.triggered) or self.frozen then
 		return
 	end
 
