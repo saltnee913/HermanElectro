@@ -2511,7 +2511,7 @@ function getTranslation()
 	translation.y = translation.y*-1	
 	return translation]]
 
-	local translation = {x = 0, y = 0}
+	local translation = {x = 0, y = 0, xInteger = 0, yInteger = 0}
 	local prevTranslation = {x = 0, y = 0}
 	local tileLoc = tileToCoordsPlayer(player.tileY, player.tileX)
 
@@ -2522,7 +2522,7 @@ function getTranslation()
 		elseif translation.x < 0 then translation.x = 0 end
 		if prevTranslation.x > roomLength - regularLength then prevTranslation.x = roomLength - regularLength
 		elseif prevTranslation.x < 0 then prevTranslation.x = 0 end
-
+		translation.xInteger = translation.x
 		if (translation.x~=prevTranslation.x) then
 			--mid-movement translation
 			translation.x = translation.x-(tileLoc.x-player.x)/(tileUnit*scale)
@@ -2530,6 +2530,7 @@ function getTranslation()
 	elseif roomLength<regularLength then
 		local lengthDiff = regularLength-roomLength
 		translation.x = -1*math.floor(lengthDiff/2)
+		translation.xInteger = translation.x
 	end
 	if roomHeight>regularHeight then
 		translation.y = player.tileY-1-regularHeight/2
@@ -2538,6 +2539,7 @@ function getTranslation()
 		elseif translation.y < 0 then translation.y = 0 end
 		if prevTranslation.y > roomHeight - regularHeight then prevTranslation.y = roomHeight - regularHeight
 		elseif prevTranslation.y < 0 then prevTranslation.y = 0 end
+		translation.yInteger = translation.y
 		if (translation.y~=prevTranslation.y) then
 			--mid-movement translation
 			translation.y = translation.y-(tileLoc.y-player.y)/(tileUnit*scale)
@@ -2545,9 +2547,12 @@ function getTranslation()
 	elseif roomHeight<regularHeight then
 		local heightDiff = regularHeight-roomHeight
 		translation.y = -1*math.floor(heightDiff/2)
+		translation.yInteger = translation.y
 	end
 	translation.x = translation.x*-1
 	translation.y = translation.y*-1
+	translation.xInteger = translation.xInteger*-1
+	translation.yInteger = translation.yInteger*-1
 	return translation
 end
 
@@ -4162,10 +4167,10 @@ function love.mousepressed(x, y, button, istouch, isPlayback)
 	saving.recordMouseInput(x, y, button, istouch, false)
 
 	local bigRoomTranslation = getTranslation()
-	tileLocX = math.ceil((mouseX-wallSprite.width)/(scale*tileWidth))-bigRoomTranslation.x
-	tileLocY = math.ceil((mouseY-wallSprite.height)/(scale*tileHeight))-bigRoomTranslation.y
+	tileLocX = math.ceil((mouseX-wallSprite.width)/(scale*tileWidth))-bigRoomTranslation.xInteger
+	tileLocY = math.ceil((mouseY-wallSprite.height)/(scale*tileHeight))-bigRoomTranslation.yInteger
 	if room[tileLocY+1] ~= nil and room[tileLocY+1][tileLocX] ~= nil then
-		tileLocY = math.ceil((mouseY-wallSprite.height-room[tileLocY+1][tileLocX]:getYOffset()*scale)/(scale*tileHeight))-bigRoomTranslation.y
+		tileLocY = math.ceil((mouseY-wallSprite.height-room[tileLocY+1][tileLocX]:getYOffset()*scale)/(scale*tileHeight))-bigRoomTranslation.yInteger
 	end
 
 	if editorMode then
@@ -4236,10 +4241,10 @@ function love.mousemoved(x, y, dx, dy, isTouch, isPlayback)
 	mouseX = x-(width2-width)/2
 	mouseY = y-(height2-height)/2
 	local bigRoomTranslation = getTranslation()
-	tileLocX = math.ceil((mouseX-wallSprite.width)/(scale*tileWidth))-bigRoomTranslation.x
-	tileLocY = math.ceil((mouseY-wallSprite.height)/(scale*tileHeight))-bigRoomTranslation.y
+	tileLocX = math.ceil((mouseX-wallSprite.width)/(scale*tileWidth))-bigRoomTranslation.xInteger
+	tileLocY = math.ceil((mouseY-wallSprite.height)/(scale*tileHeight))-bigRoomTranslation.yInteger
 	if room ~= nil and room[tileLocY+1] ~= nil and room[tileLocY+1][tileLocX] ~= nil then
-		tileLocY = math.ceil((mouseY-wallSprite.height-room[tileLocY+1][tileLocX]:getYOffset()*scale)/(scale*tileHeight))-bigRoomTranslation.y
+		tileLocY = math.ceil((mouseY-wallSprite.height-room[tileLocY+1][tileLocX]:getYOffset()*scale)/(scale*tileHeight))-bigRoomTranslation.yInteger
 	end
 	if editorMode then
 		editor.mousemoved(x, y, dx, dy)

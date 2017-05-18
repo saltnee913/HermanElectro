@@ -1070,7 +1070,7 @@ function P.missile:useToolTile(tile, tileY, tileX)
 
 	local missileProcess = processList.missile:new()
 	missileProcess.x = tileToCoords(tileY, tileX).x
-	missileProcess.targetY = tileToCoords(tileY, tileX).y
+	missileProcess.targetY = tileToCoords(tileY-0.5, tileX).y
 	missileProcess.y = missileProcess.targetY-tileUnit*6*scale
 
     missileProcess.tile = tile
