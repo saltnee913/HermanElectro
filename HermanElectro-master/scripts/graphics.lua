@@ -180,23 +180,31 @@ function P.draw()
 			if animals[i]~=nil and litTiles[animals[i].tileY][animals[i].tileX]==1 and not animals[i].pickedUp and animals[i].tileY==j then
 				local animalSprite = util.getImage(animals[i].sprite)
 				love.graphics.draw(animalSprite, animals[i].x, animals[i].y, 0, animals[i].scale, animals[i].scale)
-				if animals[i].frozen and not animals[i].dead then
-					local frozenSprite = util.getImage('Graphics/frozenMark.png')
+
+				--overhead marks for animals, frozen or waitCounter or trained 
+				if (not animals[i].dead) and (animals[i].frozen or animals[i].waitCounter>0 or animals[i].trained) then
+					local markSprites = {}
+					if animals[i].frozen then
+						markSprites[#markSprites+1] = util.getImage('Graphics/frozenMark.png')
+					end
+					if animals[i].waitCounter>0 then
+						for i = 1, animals[i].waitCounter do
+							markSprites[#markSprites+1] = util.getImage('Graphics/waitCounterMark.png')
+						end
+					end
+					if animals[i].trained then
+						markSprites[#markSprites+1] = util.getImage('Graphics/trainedMark.png')
+					end
+
 					local markScale = scale
-					local drawx = animals[i].x+tileUnit/2*scale-markScale*frozenSprite:getWidth()/2
-					local drawy = animals[i].y-tileUnit/10*scale-frozenSprite:getHeight()*markScale
+					local drawy = animals[i].y-markSprites[1]:getHeight()*markScale
 					
-					love.graphics.draw(frozenSprite, drawx, drawy, 0, markScale, markScale)
-				elseif animals[i].waitCounter>0 and not animals[i].dead then
-					for j = 1, animals[i].waitCounter do
-						local waitSprite = util.getImage('Graphics/waitCounterMark.png')
-						local markScale = scale
+					for j = 1, #markSprites do
+						local markSprite = markSprites[j]
 						local drawx = animals[i].x+tileUnit/2*scale
-						local drawy = animals[i].y-tileUnit/10*scale-waitSprite:getHeight()*markScale
+						drawx = drawx-#markSprites/2*markScale*markSprite:getWidth()+markScale*(j-1)*markSprite:getWidth()
 
-						drawx = drawx-animals[i].waitCounter/2*markScale*waitSprite:getWidth()+markScale*(j-1)*waitSprite:getWidth()
-
-						love.graphics.draw(waitSprite, drawx, drawy, 0, markScale, markScale)
+						love.graphics.draw(markSprite, drawx, drawy, 0, markScale, markScale)
 					end
 				end
 			end

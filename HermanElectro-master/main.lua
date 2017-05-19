@@ -3398,7 +3398,7 @@ function checkDeath()
 	end
 	checkDeathSpotlights(0)
 	for i = 1, #animals do
-		if animals[i]:willKillPlayer(player) and not player.safeFromAnimals then
+		if animals[i]:willKillPlayer(player) and not player.safeFromAnimals and not animals[i].trained then
 			kill()
 		end
 	end
