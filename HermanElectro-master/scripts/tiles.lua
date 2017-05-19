@@ -3077,6 +3077,7 @@ function P.infestedWood:destroy()
 				animalToAdd.tileY = i
 				animalToAdd.prevTileX = j
 				animalToAdd.prevTileY = i
+				animalToAdd:setLoc()
 				animals[#animals+1] = animalToAdd
 			end
 		end
