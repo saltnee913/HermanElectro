@@ -21,9 +21,9 @@ function P.draw()
 	end
 
 	--love.graphics.translate(width2/2-16*screenScale/2, height2/2-9*screenScale/2)
-	love.graphics.translate((width2-width)/2, (height2-height)/2)
-	local bigRoomTranslation = getTranslation()
-	love.graphics.translate(bigRoomTranslation.x*tileWidth*scale, bigRoomTranslation.y*tileHeight*scale)
+	--love.graphics.translate((width2-width)/2, (height2-height)/2)
+	--local bigRoomTranslation = getTranslation()
+	--love.graphics.translate(bigRoomTranslation.x*tileWidth*scale, bigRoomTranslation.y*tileHeight*scale)
 	--love.graphics.draw(rocks, rocksQuad, 0, 0)
 	--love.graphics.draw(rocks, -mapx * width, -mapy * height, 0, 1, 1)
 	

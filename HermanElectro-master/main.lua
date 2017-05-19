@@ -465,8 +465,7 @@ function love.load()
 		--[[music = love.audio.newSource('Audio/newthemeidk.mp3')
 		music:play()]]
 
-		--bug: this returns 1680 x 1050 for my 2560 x 1080 monitor
-		width2, height2 = love.graphics.getDimensions()
+		width2, height2 = love.window.getDesktopDimensions( 1 )
 		if width2>height2*16/9 then
 			height = height2
 			width = height2*16/9
@@ -474,6 +473,8 @@ function love.load()
 			width = width2
 			height = width2*9/16
 		end
+		flags = {fullscreen = true, centered = true}
+		love.window.setMode(width, height, flags)
 	end
 	--print(love.graphics.getWidth(f1))
 	scale = (width - 2*wallSprite.width)/(20.3 * 16)*5/6
