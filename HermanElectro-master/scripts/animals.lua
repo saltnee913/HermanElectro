@@ -294,7 +294,7 @@ function P.animal:tryMove(diffx, diffy)
 
 	local sameSpotCounter = 0
 	for i = 1, #animals do
-		if animals[i].tileX == self.tileX and animals[i].tileY == self.tileY then
+		if animals[i].tileX == self.tileX and animals[i].tileY == self.tileY and not animals[i].dead then
 			sameSpotCounter = sameSpotCounter+1
 		end
 	end
