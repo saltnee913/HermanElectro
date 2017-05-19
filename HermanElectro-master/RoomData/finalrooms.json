@@ -156,7 +156,8 @@
 "itemsNeeded":
         [
           [0,0,0,0,0,0,0]],
-      "itemsGivenOverride": [0,0,0,0,0,0,0]
+      "itemsGivenOverride": [0,0,0,0,0,0,0],
+  "dumb": true
 },
 
 
