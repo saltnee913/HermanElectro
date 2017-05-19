@@ -465,7 +465,7 @@ function love.load()
 		--[[music = love.audio.newSource('Audio/newthemeidk.mp3')
 		music:play()]]
 
-
+		--bug: this returns 1680 x 1050 for my 2560 x 1080 monitor
 		width2, height2 = love.graphics.getDimensions()
 		if width2>height2*16/9 then
 			height = height2
@@ -2601,6 +2601,8 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 			goToMainMenu()
 		elseif key=="t" then
 			toolManuel.open()
+		elseif key=="q" then
+			love.event.quit()
 		end
 		return
 	end
