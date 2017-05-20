@@ -2927,7 +2927,7 @@ function processTurn()
     	end
     	for k = 1, #animals do
 			local ani = animals[k]
-			if not ani.dead then
+			if not map.blocksMovementAnimal(ani) and not ani.dead then
 				local movex = ani.tileX
 				local movey = ani.tileY
 				if player.active then
