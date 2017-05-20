@@ -26,6 +26,8 @@ P.statUnlockTriggers["totalWins"] = {[3] = unlocks.dungeonUnlock}
 P.statUnlockTriggers["greenBeggarsShot"] = {[10] = unlocks.luckyPennyUnlock}
 P.statUnlockTriggers["stickyButtonsSponged"] = {[30] = unlocks.superStickyButtonUnlock}
 P.statUnlockTriggers["stayButtonsBricked"] = {[30] = unlocks.unbrickableStayButtonUnlock}
+P.statUnlockTriggers["animalsBricked"] = {[10] = unlocks.animalTrainerUnlock}
+P.statUnlockTriggers["pitsLaddered"] = {[30] = unlocks.brownPitUnlock}
 --P.statUnlockTriggers["glassWallsBricked"] = {[30] = unlocks.reinforcedGlassUnlock}
 
 P.statUnlockTriggers["conductiveSnailKilled"] = {[1] = unlocks.lennyUnlock}
@@ -47,10 +49,10 @@ P.statUnlockTriggers["FelixReachFloor6"] = {[1] = unlocks.boxesUnlock}
 
 P.statUnlockTriggers["GiovanniWins"] = {[1] = unlocks.pitbullChangerUnlock}
 P.statUnlockTriggers["GiovanniWinsPlus"] = {[1] = unlocks.pitbullChangerUnlock}
-P.statUnlockTriggers["GiovanniDungeonWins"] = {[1] = unlocks.pitbullChangerUnlock}
+P.statUnlockTriggers["GiovanniDungeonWins"] = {[1] = unlocks.swapperUnlock}
 P.statUnlockTriggers["GiovanniReachFloor6"] = {[1] = unlocks.tileSwapperUnlock}
 
-P.statUnlockTriggers["XavierWins"] = {[1] = unlocks.missileUnlock}
+P.statUnlockTriggers["XavierWins"] = {[1] = unlocks.sockUnlock}
 P.statUnlockTriggers["XavierWinsPlus"] = {[1] = unlocks.bombBuddyUnlock}
 P.statUnlockTriggers["XavierDungeonWins"] = {[1] = unlocks.inflationUnlock}
 P.statUnlockTriggers["XavierReachFloor6"] = {[1] = unlocks.boxesUnlock}
@@ -81,7 +83,7 @@ P.statUnlockTriggers["ErikDungeonWins"] = {[1] = unlocks.inflationUnlock}
 P.statUnlockTriggers["ErikReachFloor6"] = {[1] = unlocks.boxesUnlock}
 
 P.statUnlockTriggers["MarieWins"] = {[1] = unlocks.growthHormonesUnlock}
-P.statUnlockTriggers["MarieWinsPlus"] = {[1] = unlocks.wingsUnlock}
+P.statUnlockTriggers["MarieWinsPlus"] = {[1] = unlocks.xrayVisionUnlock}
 P.statUnlockTriggers["MarieDungeonWins"] = {[1] = unlocks.robotArmUnlock}
 P.statUnlockTriggers["MarieReachFloor6"] = {[1] = unlocks.robotArmUnlock}
 
@@ -104,6 +106,11 @@ P.statUnlockTriggers["AureliusWins"] = {[1] = unlocks.missileUnlock}
 P.statUnlockTriggers["AureliusWinsPlus"] = {[1] = unlocks.traderUnlock}
 P.statUnlockTriggers["AureliusDungeonWins"] = {[1] = unlocks.inflationUnlock}
 P.statUnlockTriggers["AureliusReachFloor6"] = {[1] = unlocks.boxesUnlock}
+
+P.statUnlockTriggers["GabeWins"] = {[1] = unlocks.wingsUnlock}
+P.statUnlockTriggers["GabeWinsPlus"] = {[1] = unlocks.traderUnlock}
+P.statUnlockTriggers["GabeDungeonWins"] = {[1] = unlocks.inflationUnlock}
+P.statUnlockTriggers["GabeReachFloor6"] = {[1] = unlocks.boxesUnlock}
 
 --these unlock whenever you do this many things in a run
 P.tempUnlockTriggers = {}

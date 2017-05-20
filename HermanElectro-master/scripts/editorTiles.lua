@@ -19,6 +19,7 @@ P.animalTiles[#P.animalTiles+1] = tiles.bombBuddyTile
 P.animalTiles[#P.animalTiles+1] = tiles.ratTile
 P.animalTiles[#P.animalTiles+1] = tiles.conductiveSnailTile
 P.animalTiles[#P.animalTiles+1] = tiles.testChargedBossTile
+P.animalTiles[#P.animalTiles+1] = tiles.mimicTile
 
 P.boxTiles[#P.boxTiles+1] = tiles.boxTile
 P.boxTiles[#P.boxTiles+1] = tiles.animalBoxTile
@@ -100,6 +101,9 @@ P.advancedTiles[#P.advancedTiles+1] = tiles.mushroom
 P.advancedTiles[#P.advancedTiles+1] = tiles.endDungeonEnter
 P.advancedTiles[#P.advancedTiles+1] = tiles.powerTriggeredBomb
 P.advancedTiles[#P.advancedTiles+1] = tiles.bossTile
+P.advancedTiles[#P.advancedTiles+1] = tiles.tree
+P.advancedTiles[#P.advancedTiles+1] = tiles.spikes
+P.advancedTiles[#P.advancedTiles+1] = tiles.gasPuddle
 
 P.shopTiles[#P.shopTiles+1] = tiles.toolTaxTile
 P.shopTiles[#P.shopTiles+1] = tiles.toolTile

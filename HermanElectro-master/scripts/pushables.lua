@@ -5,8 +5,13 @@ require('scripts.object')
 local P = {}
 pushableList = P
 
-P.pushable = Object:new{name = "pushable", elevation = 0, forcePower = false, charged = false, aitCounter=0, visible = true, sawable = true, canBeAccelerated = true, conductive = false, prevTileX = 0, prevTileY = 0, tileX = 0, tileY = 0, destroyed = false, sprite = 'Graphics/box.png'}
+P.pushable = Object:new{name = "pushable", elevation = 0, forcePower = false, charged = false, aitCounter=0, visible = true, sawable = true, canBeAccelerated = true,
+conductive = false, prevTileX = 0, prevTileY = 0, tileX = 0, tileY = 0, x = 0, y = 0, destroyed = false, sprite = 'Graphics/box.png'}
 function P.pushable:onStep()
+end
+function P.pushable:setLoc()
+	self.x = (self.tileX-1)*tileHeight*scale+wallSprite.width
+	self.y = (self.tileY-1)*tileWidth*scale+wallSprite.height-self.elevation*scale
 end
 function P.pushable:destroy()
 	self.destroyed = true
@@ -76,6 +81,7 @@ function P.pushable:move(mover)
 		if Object.instanceof(mover,animalList.animal) then
 			unlocks.unlockUnlockableRef(unlocks.animalBoxUnlock)
 		end
+
 		return true
 	elseif room[self.tileY][self.tileX]~=nil then
 		room[self.tileY][self.tileX]:onStayPushable(self)
@@ -352,7 +358,7 @@ P.invisibleBox = P.box:new{name = "invisibleBox", visible = false}
 
 P.lamp = P.conductiveBox:new{name = "lamp", sprite = 'Graphics/lamp.png', poweredSprite = 'Graphics/lamp.png', intensity = 1, charged = true, range = 200}
 
-P.iceBox = P.box:new{name = "icebox", sprite = 'Graphics/icebox.png', forcePower = true}
+P.iceBox = P.box:new{name = "icebox", sprite = 'Graphics/icebox.png', forcePower = true, sawable = false}
 function P.iceBox:onLeaveNothing()
 	room[self.prevTileY][self.prevTileX] = tiles.puddle:new()
 end

@@ -100,6 +100,21 @@
 				},				
 			}
 		},
+		"heavenRooms":
+		{
+			"filePath": "RoomData/heavenRooms.json",
+			"requirements":
+			{
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
+				},				
+			}
+		},
 		"secretRooms":
 		{
 			"filePath": "RoomData/secretrooms.json",
@@ -120,7 +135,7 @@
 	{
 		"requireUnlocks": true,
 		"height": 12,
-		"numRooms": 9,
+		"numRooms": 10,
 		"generateFunction": "generateMapWeighted",
 		"startRoomID": "1",
 		//numRoomsToCheck is the amount of rooms to try when deciding a room's roomid, decreasing this increases rng
@@ -128,7 +143,7 @@
 		"tint": [0,0,0],
 		"playerRange": 300,
 		"numTreasure": 2,
-		"numShop": 1,
+		"numShop": 0,
 		"numDonation": 1
 	}
 }

@@ -8,7 +8,7 @@ local P = {}
 map = P
 
 --Temporary variable, we have to do this a better way later
-P.defaultFloorOrder = {'RoomData/floor1.json', 'RoomData/floor2.json', 'RoomData/floor3.json', 'RoomData/floor4.json', 'RoomData/floor5.json', 'RoomData/floor6.json',
+P.defaultFloorOrder = {'RoomData/floor1.json','RoomData/floor2.json','RoomData/floor3.json','RoomData/floor4.json','RoomData/floor5.json', 'RoomData/floor6.json',
 'RoomData/floor7.json', 'RoomData/floor8.json', 'RoomData/exitDungeonsMap.json'}
 P.floorOrder = P.defaultFloorOrder
 
@@ -251,7 +251,7 @@ function P.loadFloor(inFloorFile)
 				P.floorInfo.roomsArray[#(P.floorInfo.roomsArray)+1] = roomsArray[i]
 			end
 		end
-		--[[print(k..': '..amt)
+		print(k..': '..amt)
 		local toPrint = ""
 		for i = 0, 10 do
 			toPrint = toPrint..i..": "..numToolsArray[i+1]..", "
@@ -262,8 +262,8 @@ function P.loadFloor(inFloorFile)
 		toPrint = ""
 		for i = 1, 7 do
 			toPrint = toPrint..toolWords[i]..": "..toolAppearanceArray[i]..", "
-		end]]
-		--print(toPrint)
+		end
+		print(toPrint)
 		--[[for i = 1, #tilesArr do
 			print(tilesArr[i].name..":")
 			print("Total appearances: "..tilesArr[i].total)
@@ -1092,7 +1092,7 @@ function P.generateMapWeighted()
 	while #secLocs == 0 and numNilAdjacent<4 do
 		for i = 1, height do
 			for j = 1, height do
-				if room[i][j]==nil then
+				if newmap[i][j]==nil then
 					local e = newmap[i+1][j]
 					local b = newmap[i-1][j]
 					local c = newmap[i][j+1]
@@ -1128,6 +1128,14 @@ function P.generateMapWeighted()
 	arr = P.floorInfo.rooms.dungeons
 	roomid = util.chooseRandomKey(arr, 'mapGen')
 	newmap[height+1][1] = {roomid = roomid, room = P.createRoom(roomid, arr), tint = {0,0,0}, dirEnter = arr[roomid].dirEnter, isFinal = false, isInitial = false}
+	
+	--add heaven room
+	if P.floorInfo.rooms.heavenRooms~=nil then
+		arr = P.floorInfo.rooms.heavenRooms
+		roomid = util.chooseRandomKey(arr, 'mapGen')
+		newmap[height+1][height+1] = {roomid = roomid, room = P.createRoom(roomid, arr), tint = {0,0,0}, dirEnter = arr[roomid].dirEnter, isFinal = false, isInitial = false}
+	end
+
 	P.printTileInfo()
 	return newmap
 end
@@ -1324,7 +1332,7 @@ function P.generateSixthFloor()
 	while #secLocs == 0 and numNilAdjacent<4 do
 		for i = 1, height do
 			for j = 1, height do
-				if room[i][j]==nil then
+				if newmap[i][j]==nil then
 					local e = newmap[i+1][j]
 					local b = newmap[i-1][j]
 					local c = newmap[i][j+1]

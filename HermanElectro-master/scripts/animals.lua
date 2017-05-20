@@ -20,6 +20,9 @@ scale = (width - 2*wallSprite.width)/(20.3 * 16)*5/6
 --speed same as player (250)
 P.animal = Object:new{elevation = 0, scale = scale, yOffset = 0, frozen = false, trained = false, conductive = false, pickedUp = false, canDropTool = false, willDropTool = false, flying = false, triggered = false, waitCounter = 1, dead = false, name = "animal", tileX, tileY, prevx, prevy, prevTileX, prevTileY, x, y, speed = 250, width = 16*scale, height = 16*scale, sprite = 'Graphics/pitbull.png', deadSprite = 'Graphics/pitbulldead.png', tilesOn = {}, oldTilesOn = {}}
 function P.animal:move(playerx, playery, room, isLit)
+	if self.dead or (not isLit and not self.triggered) or self.frozen then
+		return
+	end
 	if player.attributes.shelled or player.attributes.invisible or player.attributes.timeFrozen then
 		return
 	elseif player.attributes.fear then
@@ -27,9 +30,6 @@ function P.animal:move(playerx, playery, room, isLit)
 		return
 	elseif room[playery][playerx]~=nil and room[playery][playerx].scaresAnimals then
 		self:afraidPrimaryMove(playerx, playery, room, isLit)
-		return
-	end
-	if self.dead or (not isLit and not self.triggered) or self.frozen then
 		return
 	end
 	self.triggered = true
@@ -171,6 +171,7 @@ function P.animal:checkDeath()
 		if animals[i].trained and not animals[i].dead and animals[i]~=self and
 		animals[i].tileX==self.tileX and animals[i].tileY==self.tileY then
 			self:kill()
+			unlocks.unlockUnlockableRef(unlocks.animalEnslaverUnlock)
 		end
 	end
 	for i = 1, #bossList do
@@ -293,7 +294,7 @@ function P.animal:tryMove(diffx, diffy)
 
 	local sameSpotCounter = 0
 	for i = 1, #animals do
-		if animals[i].tileX == self.tileX and animals[i].tileY == self.tileY then
+		if animals[i].tileX == self.tileX and animals[i].tileY == self.tileY and not animals[i].dead then
 			sameSpotCounter = sameSpotCounter+1
 		end
 	end
@@ -339,6 +340,11 @@ function P.animal:afraidSecondaryMove(playerx, playery)
 	end
 
 	return true
+end
+function P.animal:setLoc()
+	self.x = (self.tileX-1)*tileHeight*scale+wallSprite.width
+	self.y = (self.tileY)*tileWidth*scale+wallSprite.height-self.elevation*scale
+	self.y = self.y-self.scale*util.getImage(self.sprite):getHeight()
 end
 
 
@@ -492,6 +498,62 @@ function P.rat:dropTool()
 	end
 end
 
+P.babyDragon = P.rat:new{name = "babyDragon", sprite = "Graphics/dragonBaby.png", trained = true, scale = 0.5*scale}
+
+P.dragonFriend = P.babyDragon:new{name = "dragonFriend", sprite = "Graphics/dragonFriend.png", trained = true, scale = 0.5*scale}
+function P.dragonFriend:move()
+	if self.dead or (not isLit and not self.triggered) or self.frozen then
+		return
+	end
+
+	self.prevTileX = self.tileX
+	self.prevTileY = self.tileY
+
+	if player.tileX>player.prevTileX then
+		if self.tileX<roomLength then
+			self.tileX = self.tileX+1
+		else
+			return
+		end
+	elseif player.tileX<player.prevTileX then
+		if self.tileX>1 then
+			self.tileX = self.tileX-1
+		else
+			return
+		end
+	elseif player.tileY>player.prevTileY then
+		if self.tileY<roomHeight then
+			self.tileY = self.tileY+1
+		else
+			return
+		end
+	elseif player.tileY<player.prevTileY then
+		if self.tileY>1 then
+			self.tileY = self.tileY-1
+		else
+			return
+		end
+	else return end
+
+	if room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX]:obstructsMovementAnimal(self) then
+		self.tileY = self.prevTileY
+		self.tileX = self.prevTileX
+		return false
+	elseif room[self.tileY][self.tileX]==nil and math.abs(self.elevation)>3 then
+		self.tileY = self.prevTileY
+		self.tileX = self.prevTileX
+		return false		
+	end
+	if not self:pushableCheck() then
+		self.tileX = self.prevTileX
+		self.tileY = self.prevTileY
+		return false
+	end
+end
+function P.dragonFriend:primaryMove()
+end
+P.dragonFriend.secondaryMove = P.dragonFriend.primaryMove
+
 P.termite = P.animal:new{name = "termite", sprite = 'Graphics/termite.png', waitCounter = 0}
 
 P.twinPitbull = P.pitbull:new{name = "twinPitbull", sprite = 'Graphics/twinpitbull.png'}
@@ -535,6 +597,70 @@ function P.testChargedBoss:kill()
 	self.conductive = false
 end
 
+P.mimic = P.pitbull:new{name = "mimic", sprite = 'Graphics/Tiles/endTile.png', triggeredSprite = animalList.pitbull.sprite}
+function P.mimic:move(playerx, playery, room, isLit)
+	if self.dead or (not isLit and not self.triggered) or self.frozen then
+		return
+	end
+	if player.attributes.shelled or player.attributes.invisible or player.attributes.timeFrozen then
+		return
+	elseif player.attributes.fear then
+		self:afraidPrimaryMove(playerx, playery, room, isLit)
+		return
+	elseif room[playery][playerx]~=nil and room[playery][playerx].scaresAnimals then
+		self:afraidPrimaryMove(playerx, playery, room, isLit)
+		return
+	end
+
+	if not self.triggered then
+		local distFromPlayer = math.abs(self.tileX-player.tileX)+math.abs(self.tileY-player.tileY)
+		if distFromPlayer<3 then
+			self.triggered = true
+			self:updateSprite()
+		end
+	end
+
+	self.prevTileX = self.tileX
+	self.prevTileY = self.tileY
+	if self.waitCounter>0 then
+		return
+	end
+	
+	if playerx-self.tileX==0 and playery-self.tileY==0 then
+		return
+	end
+
+	if not self:primaryMove(playerx, playery) then
+		self:secondaryMove(playerx, playery)
+	end
+end
+function P.mimic:updateSprite()
+	if self.triggered then
+		self.sprite = self.triggeredSprite
+	end
+end
+function P.mimic:kill()
+	if self.dead then return
+	elseif not self.triggered then return end
+	
+	self.dead = true
+	self.sprite = self.deadSprite
+	if self.canDropTool and not self.willDropTool then
+		local bonusDropChance = util.random(100, 'toolDrop')
+		if bonusDropChance<=getLuckBonus() then
+			self.willDropTool = true
+		end
+	end
+	if self.willDropTool then
+		if(room[self.tileY][self.tileX]==nil or room[self.tileY][self.tileX].destroyed
+		or room[self.tileY][self.tileX]:usableOnNothing() or room[self.tileY][self.tileX].overlay==nil) then
+			self:dropTool()
+		end
+	end
+
+	stats.incrementStat(self.name..'Killed')
+	stats.incrementStat('animalsKilled')
+end
 
 animalList[1] = P.animal
 animalList[2] = P.pitbull
@@ -554,5 +680,8 @@ animalList[15] = P.rat
 animalList[16] = P.termite
 animalList[17] = P.twinPitbull
 animalList[18] = P.testChargedBoss
+animalList[19] = P.babyDragon
+animalList[20] = P.dragonFriend
+animalList[21] = P.mimic
 
 return animalList

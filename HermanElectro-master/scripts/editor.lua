@@ -266,9 +266,9 @@ function P.keypressed(key, unicode)
     elseif key == "-" then
    		--lock everything
      	for i = 1, #unlocks do
-    		if not unlocks[i].hidden then
+    		--if not unlocks[i].hidden then
     			unlocks.lockUnlockable(i)
-    		end
+    		--end
     	end
     	stats.statsData = {}
     	stats.writeStats()  		
@@ -370,6 +370,8 @@ local function postTileAddCleanup(tempAdd, tileLocY, tileLocX)
 		pushables[#pushables+1] = pushableList[tiles[tempAdd].listIndex]:new()
 		pushables[#pushables].tileX = tileLocX
 		pushables[#pushables].tileY = tileLocY
+		pushables[#pushables].y = (tileLocY-1)*tileWidth*scale+wallSprite.height
+		pushables[#pushables].x = (tileLocX-1)*tileHeight*scale+wallSprite.width
 		pushables[#pushables].prevTileX = pushables[#pushables].tileX
 		pushables[#pushables].prevTileY = pushables[#pushables].tileY
 	end

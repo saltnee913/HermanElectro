@@ -3,7 +3,7 @@
 	{
 		"rooms": 
 		{
-			"filePath": "RoomData/rooms.json",
+			"filePath": "RoomData/f8rooms.json",
 			"requirements":
 			{
 				"not":
@@ -27,7 +27,7 @@
 		},
 		"shops":
 		{
-			"filePath": "RoomData/shops.json",
+			"filePath": "RoomData/f8rooms.json",
 			"requirements":
 			{
 				"not":
@@ -42,7 +42,7 @@
 		},
 		"treasureRooms": 
 		{
-			"filePath": "RoomData/treasurerooms.json",
+			"filePath": "RoomData/f8rooms.json",
 			"requirements":
 			{
 				"not":
@@ -57,7 +57,7 @@
 		},
 		"finalRooms": 
 		{
-			"filePath": "RoomData/finalrooms.json",
+			"filePath": "RoomData/f8rooms.json",
 			"requirements":
 			{
 				"not":
@@ -72,7 +72,7 @@
 		},
 		"donationRooms":
 		{
-			"filePath": "RoomData/donationrooms.json",
+			"filePath": "RoomData/f8rooms.json",
 			"requirements":
 			{
 				"not":
@@ -102,7 +102,7 @@
 		},
 		"secretRooms":
 		{
-			"filePath": "RoomData/secretrooms.json",
+			"filePath": "RoomData/f8secretrooms.json",
 			"requirements":
 			{
 				"not":
@@ -119,10 +119,10 @@
 	"data":
 	{
 		"requireUnlocks": true,
-		"height": 10,
-		"numRooms": 3,
+		"height": 15,
+		"numRooms": 1,
 		"generateFunction": "generateMapWeighted",
-		"startRoomID": "1",
+		"startRoomID": "f8spikes_1",
 		//numRoomsToCheck is the amount of rooms to try when deciding a room's roomid, decreasing this increases rng
 		"numRoomsToCheck": 5,
 		"tint": [0,0,0],
