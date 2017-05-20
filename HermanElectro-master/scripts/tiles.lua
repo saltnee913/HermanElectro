@@ -237,6 +237,7 @@ sprite = 'Graphics/Tiles/wire.png',
 poweredSprite = 'Graphics/Tiles/wirePowered.png'}
 function P.wire:destroy()
 	self.sprite = self.destroyedSprite
+	self.powered = false
 	self.canBePowered = false
 	self.destroyed = true
 	dirAccept = {0,0,0,0}
