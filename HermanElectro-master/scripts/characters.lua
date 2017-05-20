@@ -304,6 +304,7 @@ function P.giovanni:onKeyPressedChar(key)
 		else
 			player.tileX = self.shiftPos.x
 			player.tileY = self.shiftPos.y
+			setPlayerLoc()
 			self.shiftPos = {x = -1, y = -1, z = -1}
 			log("Returned to clone!")
 		end
