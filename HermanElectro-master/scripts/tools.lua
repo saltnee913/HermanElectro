@@ -3810,7 +3810,7 @@ self.numHeld = self.numHeld - 1
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
 			local isValid = true
-			if room[i][j]~=nil then isValid = false
+			if room[i][j]~=nil and not room[i][j]:usableOnNothing() then isValid = false
 			else
 				if player.tileY==i and player.tileX==j then isValid = false end
 				for k = 1, #animals do
