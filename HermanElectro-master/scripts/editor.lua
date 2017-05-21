@@ -260,7 +260,7 @@ function P.keypressed(key, unicode)
     	--unlock everything
     	for i = 1, #unlocks do
     		if not unlocks[i].hidden then
-    			unlocks.unlockUnlockable(i)
+    			unlocks.unlockUnlockable(i,true)
     		end
     	end
     elseif key == "-" then
