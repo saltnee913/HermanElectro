@@ -573,7 +573,15 @@ end
 
 function loadRandoms()
 	local seed
-	if seedOverride == nil then
+
+	if player.character.name == "Random" then
+		local date = os.date("*t")
+		local month = date.month
+		local day = date.day
+
+		seed = month*math.pow(day,5)
+		print(seed)
+	elseif seedOverride == nil then
 		seed = os.time()
 	else
 		seed = tonumber(seedOverride)
