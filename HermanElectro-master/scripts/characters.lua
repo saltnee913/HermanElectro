@@ -142,7 +142,7 @@ function P.herman:onCharLoad()
 	myShader:send("player_range", 600)
 end
 
-P.felix = P.character:new{name = "Felix", description = "The Sharpshooter", sprite = 'Graphics/felix.png', startingTools = {0,0,0,0,0,0,1},
+P.felix = P.character:new{name = "Natasha", description = "The Sharpshooter", sprite = 'Graphics/felix.png', startingTools = {0,0,0,0,0,0,1},
 crime = "Ten Years for Pyromanic Episode"}
 function P.felix:onCharLoad()
 	--tools[7] = tools.felixGun
@@ -173,9 +173,9 @@ function P.most:onCharLoad()
 end
 
 local erikSprite = 'Graphics/Characters/Erik.png'
-P.erik = P.character:new{name = "Erik", tallSprite = false, description = "The Quick",
+P.erik = P.character:new{name = "Erik", tallSprite = false, description = "The Reckless",
   sprite = erikSprite, scale = scale*1.1,
-  crime = "Life Imprisonment for Illegal Drug Consumption"}
+  crime = "Life Imprisonment for Incompetence"}
 function P.erik:onCharLoad()
 	gameTime.timeLeft = 120
 	gameTime.roomTime = 15
@@ -419,9 +419,9 @@ function P.fish:onToolUse()
 	end
 end
 
-P.xavier = P.character:new{name = "Xavier", description = "The Sock Ninja", sockMode = false,
-sprite = 'Graphics/Characters/Eli.png', sockSprite = 'Graphics/Characters/EliSock.png',
-noSockSprite = 'Graphics/Characters/Eli.png', scale = 1.1*scale}
+P.xavier = P.character:new{name = "Gru", description = "Resistance", sockMode = false,
+sprite = 'Graphics/Characters/Xavier.png', sockSprite = 'Graphics/Characters/Xavier.png',
+noSockSprite = 'Graphics/Characters/Xavier.png', scale = 1.1*scale}
 function P.xavier:onKeyPressedChar(key)
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
 		self.sockMode = not self.sockMode
@@ -673,7 +673,7 @@ P[#P+1] = P.erik
 P[#P+1] = P.fish
 P[#P+1] = P.scientist
 P[#P+1] = P.dragon
-P[#P+1] = P.knight
+--P[#P+1] = P.knight
 
 P[#P+1] = P.gabe
 

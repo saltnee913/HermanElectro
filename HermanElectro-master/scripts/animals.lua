@@ -348,7 +348,7 @@ function P.animal:setLoc()
 end
 
 
-P.pitbull = P.animal:new{name = "pitbull", canDropTool = true}
+P.pitbull = P.animal:new{name = "pitbull", canDropTool = true, sprite = 'Graphics/Characters/Guard.png'}
 function P.pitbull:willKillPlayer()
 	return player.tileX == self.tileX and player.tileY == self.tileY and not self.dead
 end

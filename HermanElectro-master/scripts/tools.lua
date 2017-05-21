@@ -5264,6 +5264,18 @@ function P.megaUnlock:useToolNothing()
 end
 P.megaUnlock.useToolTile = P.megaUnlock.useToolNothing
 
+P.medicine = P.superTool:new{name = "Erik's Medicine", baseRange = 0, description = "Just a little more time....",
+quality = 1}
+function P.medicine:usableOnNothing()
+	return true
+end
+P.medicine.usableOnTile = P.medicine.usableOnNothing
+function P.medicine:useToolNothing()
+	gameTime.timeLeft = gameTime.timeLeft+100
+	--should have more functionality as well, so it's not lame
+end
+P.medicine.useToolTile = P.medicine.useToolNothing
+
 P.numNormalTools = 7
 P.lastToolUsed = 1
 
@@ -5503,6 +5515,7 @@ P:addTool(P.stopwatch)
 
 P:addTool(P.diagonal)
 P:addTool(P.megaUnlock)
+P:addTool(P.medicine)
 
 
 P.resetTools()
