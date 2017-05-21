@@ -143,6 +143,18 @@ function P.animal:secondaryMove(playerx, playery)
 	return true
 end
 
+function P.animal:getDrawCoords()
+	local drawx = self:getDrawX()
+	local drawy = self:getDrawY()
+	return {x = drawx, y = drawy}
+end
+function P.animal:getDrawX()
+	return math.floor(self.x-util.getImage(self.sprite):getWidth()/2*self.scale)
+end
+function P.animal:getDrawY()
+	return math.floor(self.y-util.getImage(self.sprite):getHeight()*self.scale-self.elevation*scale)
+end
+
 function P.animal:checkDeath()
 	if self.dead then return end
 	if room[self.tileY]~=nil and room[self.tileY][self.tileX]~=nil then

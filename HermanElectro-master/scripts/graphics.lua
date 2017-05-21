@@ -179,8 +179,9 @@ function P.draw()
 		for i = 1, #animals do
 			if animals[i]~=nil and litTiles[animals[i].tileY][animals[i].tileX]==1 and not animals[i].pickedUp and animals[i].tileY==j then
 				local animalSprite = util.getImage(animals[i].sprite)
-				local drawx = math.floor(animals[i].x-animalSprite:getWidth()/2*animals[i].scale)
-				local drawy = math.floor(animals[i].y-animalSprite:getHeight()*animals[i].scale-animals[i].elevation*scale)
+				local drawCoords = animals[i]:getDrawCoords()
+				local drawx = drawCoords.x
+				local drawy = drawCoords.y
 				
 				love.graphics.draw(animalSprite, drawx, drawy, 0, animals[i].scale, animals[i].scale)
 
@@ -236,11 +237,11 @@ function P.draw()
 				for dir = 1, 5 do
 					if tools.toolableAnimals[dir]~=nil then
 						for i = 1, #(tools.toolableAnimals[dir]) do
-							local tx = tools.toolableAnimals[dir][i].tileX
 							local ty = tools.toolableAnimals[dir][i].tileY
 							if ty==j then
 								if dir == 1 or tools.toolableAnimals[1][1] == nil or not (tx == tools.toolableAnimals[1][1].tileX and ty == tools.toolableAnimals[1][1].tileY) then
-									love.graphics.draw(util.getImage(green), (tx-1)*tileWidth*scale+wallSprite.width, (ty-1)*tileHeight*scale+wallSprite.height-tools.toolableAnimals[dir][i].elevation*scale, 0, scale, scale)
+									local animalScale = tools.toolableAnimals[dir][i].scale
+									love.graphics.draw(util.getImage(green), tools.toolableAnimals[dir][i]:getDrawX(), tools.toolableAnimals[dir][i]:getDrawY(), 0, animalScale, animalScale)
 								end
 							end
 						end
