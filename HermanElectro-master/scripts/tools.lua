@@ -187,7 +187,9 @@ function P.useToolDir(toolid, dir)
 	return false
 end
 
---prioritizes animals
+function P.useToolLoc(mouseY, mouseX, tileY, tileX)
+	return tools.useToolTile(tileY, tileX)
+end
 function P.useToolTile(tileY, tileX)
 	if P.toolableAnimals ~= nil then
 		for dir = 1, 5 do

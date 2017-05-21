@@ -15640,7 +15640,9 @@
     [
     [0,0,0,0,0,0,0]
     ],
-    "dumb":true
+    "flippable": false,
+    "autowin": true,
+    "weight": 0.1
     },
 
     "el_dog_1":

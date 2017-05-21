@@ -1773,43 +1773,7 @@ end
 
 translation = {x = 0, y = 0}
 function getTranslation()
-	--[[translation.x = translation.x*-1
-	translation.y = translation.y*-1	
-	if roomLength>regularLength then
-		--those 3s are hacky af
-		if player.tileX < translation.x - 2 then
-			translation.x = translation.x - regularLength
-		elseif player.tileX > translation.x + regularLength + 3 then
-			translation.x = translation.x + regularLength
-		end
-		if translation.x > roomLength - regularLength then
-			translation.x = roomLength-regularLength
-		elseif translation.x < 0 then
-			translation.x = 0
-		end
-	elseif roomLength<regularLength then
-		local lengthDiff = regularLength-roomLength
-		translation.x = -1*math.floor(lengthDiff/2)
-	end
-	if roomHeight>regularHeight then
-		if player.tileY < translation.y - 2 then
-			translation.y = translation.y - regularHeight
-		elseif player.tileY > translation.y + regularHeight + 3 then
-			translation.y = translation.y + regularHeight
-		end
-		if translation.y > roomHeight - regularHeight then
-			translation.y = roomHeight-regularHeight
-		elseif translation.y < 0 then
-			translation.y = 0
-		end
-	elseif roomHeight<regularHeight then
-		local heightDiff = regularHeight-roomHeight
-		translation.y = -1*math.floor(heightDiff/2)
-	end		
-	translation.x = translation.x*-1
-	translation.y = translation.y*-1	
-	return translation]]
-
+	--xInteger, yInteger ignore actual coords mid-animation
 	local translation = {x = 0, y = 0, xInteger = 0, yInteger = 0}
 	local prevTranslation = {x = 0, y = 0}
 	local tileLoc = tileToCoordsPlayer(player.tileY, player.tileX)
@@ -2766,21 +2730,19 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 				player.prevx = player.x
 				player.prevTileX = player.enterX
 				for i = 1, tools.numNormalTools do
-					if (completedRooms[mapy][mapx] == 1) then
-						player.totalItemsGiven[i] = player.totalItemsGiven[i] - map.getItemsGiven(mainMap[mapy][mapx].roomid)[1][i]
-						player.totalItemsNeeded[i] = player.totalItemsNeeded[i] - map.getItemsNeeded(mainMap[mapy][mapx].roomid)[1][i]
+					local roomItemsGiven = map.getItemsGiven(mainMap[mapy][mapx].roomid)
+					local roomItemsNeeded = map.getItemsNeeded(mainMap[mapy][mapx].roomid)
+					if (completedRooms[mapy][mapx] == 1) and (roomItemsGiven~=nil and roomItemsNeeded~=nil) then
+						player.totalItemsGiven[i] = player.totalItemsGiven[i] - roomItemsGiven[1][i]
+						player.totalItemsNeeded[i] = player.totalItemsNeeded[i] - roomItemsNeeded[1][i]
 					end
 					tools[i].numHeld = player.totalItemsGiven[i] - player.totalItemsNeeded[i]
 					if tools[i].numHeld < 0 then tools[i].numHeld = 0 end
 				end
-				completedRooms[mapy][mapx] = 0
-				for i = 0, mainMap.height do
-					for j = 0, mainMap.height do
-						if completedRooms[i][j] == 0 then
-							hackEnterRoom(mainMap[i][j].roomid, i, j)
-						end
-					end
-				end
+
+				hackEnterRoom(mainMap[mapy][mapx].roomid, i, j)
+
+				setPlayerLoc()
 				myShader:send("b_and_w", 0)
 			else
 				if floorIndex>=5 then
@@ -3464,12 +3426,6 @@ function love.mousepressed(x, y, button, istouch, isPlayback)
 	end
 	mouseDown = true
 
-	if charSelect then
-		selectedBox.y = math.floor(y/(height/3))
-		selectedBox.x = math.floor(x/(width/5))
-		return
-	end
-
 	if gamePaused then
 		return
 	end
@@ -3517,7 +3473,7 @@ function love.mousepressed(x, y, button, istouch, isPlayback)
 	tools.updateToolableTiles(tool)
 
 	local currentTool = 0
-	if not clickActivated and not (tools.useToolTile(tileLocY, tileLocX)) then
+	if not clickActivated and not (tools.useToolLoc(mouseY, mouseX, tileLocY, tileLocX)) then
 		tool = 0
 	elseif not clickActivated then
 		if tool<=tools.numNormalTools then
