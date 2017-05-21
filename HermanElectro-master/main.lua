@@ -840,6 +840,12 @@ function loadOpeningWorld()
 	player.prevTileX = player.tileX
 	player.prevTileY = player.tileY
 
+	--tutorial hacky stuff
+	player.totalItemsGiven = {0,0,0,0,0,0,0}
+	player.totalItemsNeeded = {0,0,0,0,0,0,0}
+	player.enterY = player.tileY
+	player.enterX = player.tileX
+
 	roomHeight = room.height
 	roomLength = room.length
 	updateLight()
@@ -996,7 +1002,7 @@ function loadLevel(floorPath)
 end
 
 function kill(deathSource)
-	if editorMode or globalDeathBlock or floorIndex<1 or player.attributes.invincibleCounter>0 then return end
+	if editorMode or globalDeathBlock or player.attributes.invincibleCounter>0 then return end
 	--[[if validSpace() and completedRooms[mapy][mapx]>0 then
 		unlocks.unlockUnlockableRef(unlocks.portalUnlock)
 	end]]
@@ -1008,7 +1014,7 @@ function kill(deathSource)
 			return
 		end
 	end
-	if not loadTutorial then --hacky hack fix
+	if not loadTutorial and floorIndex>=0 then --hacky hack fix
 		completedRooms[mapy][mapx] = 0 --to stop itemsNeeded tracking, it's a hack!
 	end
 	stats.incrementStat(player.character.name..'Losses')
@@ -2209,7 +2215,7 @@ function enterRoom(dir)
 		completedRooms[mapy][mapx] = 1
 		unlockDoors()
 	end
-	if loadTutorial then
+	if loadTutorial or floorIndex == -1 then
 		player.enterX = player.tileX
 		player.enterY = player.tileY
 	end
@@ -2511,7 +2517,7 @@ function love.update(dt)
 	end
 
 	--game timer
-	if gameTime.timeLeft<=0 and not loadTutorial then
+	if gameTime.timeLeft<=0 and not loadTutorial and floorIndex ~= -1 then
 		kill()
 	end
 	gameTime.totalTime = gameTime.totalTime+dt
@@ -2732,7 +2738,7 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 		mainMap.cheated = true--kind of hacky
 	else
 		if key == 'r' then
-			if loadTutorial then
+			if loadTutorial or floorIndex == -1 then
 				player.dead = false
 				player.y = (player.enterY-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
 				player.tileY = player.enterY
@@ -2758,6 +2764,7 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 						end
 					end
 				end
+				myShader:send("b_and_w", 0)
 			else
 				if floorIndex>=5 then
 					unlocks.unlockUnlockableRef(unlocks.roomRerollerUnlock)
@@ -3388,7 +3395,7 @@ function resolveConflicts()
 end
 
 function checkDeath()
-	if editorMode or floorIndex<1 then
+	if editorMode then
 		return
 	end
 	if room[player.tileY][player.tileX]~=nil then
@@ -3765,7 +3772,7 @@ end
 
 --unlocks all rooms besides hidden rooms (secret rooms and special dungeons)
 function unlockDoors(openLocked)
-	if player.attributes.xrayVision or floorIndex<=0 then
+	if player.attributes.xrayVision or floorIndex == -1 then
 		unlockDoorsPlus()
 		return
 	end
@@ -3857,7 +3864,7 @@ function dropTools()
 	tools.giveRandomTools(tools.roomCompletionBonus.numHeld)
 
 	local dropOverride = map.getFieldForRoom(mainMap[mapy][mapx].roomid, 'itemsGivenOverride')
-	if loadTutorial then
+	if loadTutorial or (floorIndex == -1 and map.getItemsGiven(mainMap[mapy][mapx].roomid) ~= nil) then
 		local toolsToDisplay = {0,0,0,0,0,0,0}
 		for i = 1, tools.numNormalTools do
 			player.totalItemsGiven[i] = player.totalItemsGiven[i] + map.getItemsGiven(mainMap[mapy][mapx].roomid)[1][i]
@@ -3923,7 +3930,7 @@ function dropTools()
 			end
 		end
 		if not done then
-			if floorIndex>=1 then
+			if floorIndex ~= -1 then
 				--bonusTool decides whether or not one more tool will drop from floor
 				local bonusTool = util.random(2, 'toolDrop')
 				bonusTool = bonusTool-1

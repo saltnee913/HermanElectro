@@ -137,7 +137,7 @@ P.herman = P.character:new{name = "Herman", description = "The Electrician",
   animationLength = 1,
   crime = "Life Imprisonment for Attempted Circuit Break"}
 function P.herman:onCharLoad()
-	if loadTutorial then return end
+	if loadTutorial or floorIndex == -1 then return end
 	tools.giveToolsByReference({tools.revive})
 	myShader:send("player_range", 600)
 end
