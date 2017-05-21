@@ -179,7 +179,10 @@ function P.draw()
 		for i = 1, #animals do
 			if animals[i]~=nil and litTiles[animals[i].tileY][animals[i].tileX]==1 and not animals[i].pickedUp and animals[i].tileY==j then
 				local animalSprite = util.getImage(animals[i].sprite)
-				love.graphics.draw(animalSprite, animals[i].x, animals[i].y, 0, animals[i].scale, animals[i].scale)
+				local drawx = math.floor(animals[i].x-animalSprite:getWidth()/2*animals[i].scale)
+				local drawy = math.floor(animals[i].y-animalSprite:getHeight()*animals[i].scale-animals[i].elevation*scale)
+				
+				love.graphics.draw(animalSprite, drawx, drawy, 0, animals[i].scale, animals[i].scale)
 
 				--overhead marks for animals, frozen or waitCounter or trained 
 				if (not animals[i].dead) and (animals[i].frozen or animals[i].waitCounter>0 or animals[i].trained) then
@@ -197,14 +200,15 @@ function P.draw()
 					end
 
 					local markScale = scale
-					local drawy = animals[i].y-markSprites[1]:getHeight()*markScale
 					
 					for j = 1, #markSprites do
 						local markSprite = markSprites[j]
-						local drawx = animals[i].x+tileUnit/2*scale
-						drawx = drawx-#markSprites/2*markScale*markSprite:getWidth()+markScale*(j-1)*markSprite:getWidth()
+						local markx = animals[i].x
+						markx = markx-#markSprites/2*markScale*markSprite:getWidth()+markScale*(j-1)*markSprite:getWidth()
+						local marky = drawy
+						marky = marky-markSprite:getHeight()*markScale
 
-						love.graphics.draw(markSprite, drawx, drawy, 0, markScale, markScale)
+						love.graphics.draw(markSprite, markx, marky, 0, markScale, markScale)
 					end
 				end
 			end

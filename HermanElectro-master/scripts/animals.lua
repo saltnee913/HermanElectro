@@ -18,7 +18,7 @@ scale = (width - 2*wallSprite.width)/(20.3 * 16)*5/6
 --floor = tiles.tile
 
 --speed same as player (250)
-P.animal = Object:new{elevation = 0, scale = scale, yOffset = 0, frozen = false, trained = false, conductive = false, pickedUp = false, canDropTool = false, willDropTool = false, flying = false, triggered = false, waitCounter = 1, dead = false, name = "animal", tileX, tileY, prevx, prevy, prevTileX, prevTileY, x, y, speed = 250, width = 16*scale, height = 16*scale, sprite = 'Graphics/pitbull.png', deadSprite = 'Graphics/pitbulldead.png', tilesOn = {}, oldTilesOn = {}}
+P.animal = Object:new{elevation = 0, scale = 1.1*scale, yOffset = 0, frozen = false, trained = false, conductive = false, pickedUp = false, canDropTool = false, willDropTool = false, flying = false, triggered = false, waitCounter = 1, dead = false, name = "animal", tileX, tileY, prevx, prevy, prevTileX, prevTileY, x, y, speed = 250, width = 16*scale, height = 16*scale, sprite = 'Graphics/pitbull.png', deadSprite = 'Graphics/pitbulldead.png', tilesOn = {}, oldTilesOn = {}}
 function P.animal:move(playerx, playery, room, isLit)
 	if self.dead or (not isLit and not self.triggered) or self.frozen then
 		return
@@ -342,9 +342,13 @@ function P.animal:afraidSecondaryMove(playerx, playery)
 	return true
 end
 function P.animal:setLoc()
-	self.x = (self.tileX-1)*tileHeight*scale+wallSprite.width
-	self.y = (self.tileY)*tileWidth*scale+wallSprite.height-self.elevation*scale
-	self.y = self.y-self.scale*util.getImage(self.sprite):getHeight()
+	--coords represent middle of body x-loc, bottom of feet y-loc
+
+	self.x = (self.tileX-1)*tileUnit*scale+wallSprite.width
+	self.x = self.x+scale*tileUnit/2
+
+	self.y = (self.tileY-1)*tileUnit*scale+wallSprite.height
+	self.y = self.y+scale*(2/3*tileUnit)
 end
 
 

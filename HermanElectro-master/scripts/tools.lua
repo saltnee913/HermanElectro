@@ -5067,6 +5067,9 @@ function P.claw:usableOnTile(tile, tileY, tileX)
 	(P.sponge:usableOnTile(tile, tileY, tileX) and dist<=P.sponge.baseRange) or
 	(P.brick:usableOnTile(tile, tileY, tileX) and dist<=P.brick.baseRange)
 end
+function P.claw:usableOnNonOverlay(tile)
+	return not tile.destroyed and ((tile:instanceof(tiles.wire) and not tile:instanceof(tiles.unbreakableWire)) or (tile:instanceof(tiles.electricFloor) and not tile:instanceof(tiles.unbreakableElectricFloor)))
+end
 function P.claw:usableOnPushable(pushable)
 	local dist = math.abs(player.tileY-pushable.tileY)+math.abs(player.tileX-pushable.tileX)
 

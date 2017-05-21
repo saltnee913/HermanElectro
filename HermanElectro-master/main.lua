@@ -1940,26 +1940,11 @@ function tileToCoords(tileY, tileX)
 end
 
 function tileToCoordsY(tileY)
-	return (tileY-1)*scale*tileHeight+wallSprite.height
+	return (tileY-1)*scale*tileUnit+wallSprite.height
 end
 
 function tileToCoordsX(tileX)
-	return (tileX-1)*scale*tileHeight+wallSprite.width
-end
-
-function tileToCoordsPlayer(tileY, tileX)
-	local ret = {x = 0, y = 0}
-	ret.x = tileToCoordsXPlayer(tileX)
-	ret.y = tileToCoordsYPlayer(tileY)
-	return ret
-end
-
-function tileToCoordsYPlayer(tileY)
-	return (tileY-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
-end
-
-function tileToCoordsXPlayer(tileX)
-	return (tileX-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
+	return (tileX-1)*scale*tileUnit+wallSprite.width
 end
 
 function coordsToTile(y,x)
@@ -2005,12 +1990,11 @@ function createAnimals()
 				if not animalToSpawn.dead then
 					animals[animalCounter] = animalToSpawn
 					if not animalToSpawn.loaded then
-						animalToSpawn.y = (i-1)*tileWidth*scale+wallSprite.height
-						animalToSpawn.x = (j-1)*tileHeight*scale+wallSprite.width
 						animalToSpawn.tileX = j
 						animalToSpawn.tileY = i
 						animalToSpawn.prevTileX = j
 						animalToSpawn.prevTileY = i
+						animalToSpawn:setLoc()
 						local willDropChance = util.random(150,'toolDrop')
 						if willDropChance==1 and animalToSpawn.canDropTool then
 							animalToSpawn.willDropTool = true
@@ -2263,10 +2247,35 @@ function enterRoom(dir)
 end
 
 function setPlayerLoc()
-	player.x = (player.tileX-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
-	player.y = (player.tileY-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
-    myShader:send("player_x", player.x+getTranslation().x*tileWidth*scale+(width2-width)/2)
-    myShader:send("player_y", player.y+getTranslation().y*tileWidth*scale+(height2-height)/2)
+	--player.x is middle of body
+	--player.y is bottom of feet
+	--coords mark where "hitbox" is, not where drawing actually starts
+
+	player.x = (player.tileX-1)*scale*tileUnit+wallSprite.width
+	player.x = player.x+scale*tileHeight/2
+
+	player.y = (player.tileY-1)*scale*tileUnit+wallSprite.height
+	--bottom of feet not actually halfway on tile
+	--looks better this way b/c feet have very slight depth
+	player.y = player.y+scale*(2/3*tileUnit)
+
+    myShader:send("player_x", player.x+getTranslation().x*tileUnit*scale+(width2-width)/2)
+    myShader:send("player_y", player.y+getTranslation().y*tileUnit*scale+(height2-height)/2)
+end
+
+function tileToCoordsPlayer(tileY, tileX)
+	local ret = {x = 0, y = 0}
+	ret.x = tileToCoordsXPlayer(tileX)
+	ret.y = tileToCoordsYPlayer(tileY)
+	return ret
+end
+
+function tileToCoordsYPlayer(tileY)
+	return (tileY-1)*scale*tileUnit+wallSprite.height+scale*(2/3*tileUnit)
+end
+
+function tileToCoordsXPlayer(tileX)
+	return (tileX-1)*scale*tileUnit+wallSprite.width+scale*tileUnit/2
 end
 
 function postRoomEnter()
