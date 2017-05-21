@@ -1386,10 +1386,11 @@ function P.bomb:destroy()
 	self.gone = true
 end
 function P.bomb:explode(x,y)
+	--x is actually y-coord and y is actually x, kinda dumb but whatever
 	if not editorMode and math.abs(player.tileY-x)<2 and math.abs(player.tileX-y)<2 then 
 		kill()
 	end
-	util.createHarmlessExplosion(x,y)
+	util.createHarmfulExplosion(x,y)
 end
 
 P.capacitor = P.conductiveTile:new{name = "capacitor", counter = 3, maxCounter = 3, dirAccept = {1,0,1,0}, sprite = 'Graphics/capacitor.png', poweredSprite = 'Graphics/capacitor.png'}
