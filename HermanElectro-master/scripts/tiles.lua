@@ -1705,7 +1705,7 @@ end
 
 P.ladder = P.tile:new{name = "ladder", sprite = 'Graphics/laddertile.png', blocksAnimalMovement = true}
 function P.ladder:obstructsMovementAnimal(animal)
-	return true
+	return self ~= room[animal.prevTileY][animal.prevTileX]
 end
 
 P.mousetrapOff = P.mousetrap:new{name = "mousetrapOff", safe = true, sprite = 'Graphics/mousetrapsafe.png'}
@@ -2293,8 +2293,8 @@ function P.mushroom:onEnter()
 		unlocks.unlockUnlockableRef(unlocks.gabeUnlock)
 	end
 
-	if floorIndex<=0 then
-		unlocks.unlockUnlockableRef(unlocks.dragonUnlock)
+	if floorIndex == -1 then
+		unlocks.unlockUnlockableRef(unlocks.dragonUnlock, true)
 	end
 end
 

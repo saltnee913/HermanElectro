@@ -137,7 +137,7 @@ P.herman = P.character:new{name = "Herman", description = "The Electrician",
   animationLength = 1,
   crime = "Life Imprisonment for Attempted Circuit Break"}
 function P.herman:onCharLoad()
-	if loadTutorial then return end
+	if loadTutorial or floorIndex == -1 then return end
 	tools.giveToolsByReference({tools.revive})
 	myShader:send("player_range", 600)
 end
@@ -302,10 +302,13 @@ function P.giovanni:onKeyPressedChar(key)
 			self.shiftPos.z = player.elevation
 			log("Clone spawned!")
 		else
+			player.prevTileX = player.tileX
+			player.prevTileY = player.tileY
 			player.tileX = self.shiftPos.x
 			player.tileY = self.shiftPos.y
 			setPlayerLoc()
 			self.shiftPos = {x = -1, y = -1, z = -1}
+			updateGameState(false,false)
 			log("Returned to clone!")
 		end
 	end
