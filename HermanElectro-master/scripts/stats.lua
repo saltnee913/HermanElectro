@@ -123,7 +123,7 @@ function P.resetTempStats()
 end
 
 function P.doStatsSave()
-	return not loadTutorial
+	return not loadTutorial and floorIndex ~= -1
 end
 
 function P.incrementStat(stat)

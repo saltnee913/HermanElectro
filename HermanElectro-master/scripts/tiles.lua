@@ -2293,8 +2293,8 @@ function P.mushroom:onEnter()
 		unlocks.unlockUnlockableRef(unlocks.gabeUnlock)
 	end
 
-	if floorIndex<=0 then
-		unlocks.unlockUnlockableRef(unlocks.dragonUnlock)
+	if floorIndex == -1 then
+		unlocks.unlockUnlockableRef(unlocks.dragonUnlock, true)
 	end
 end
 
