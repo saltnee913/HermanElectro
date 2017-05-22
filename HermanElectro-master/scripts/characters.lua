@@ -420,7 +420,7 @@ function P.fish:onToolUse()
 end
 
 P.xavier = P.character:new{name = "Gru", description = "Resistance", sockMode = false,
-sprite = 'Graphics/Characters/Xavier.png', sockSprite = 'Graphics/Characters/Xavier.png',
+sprite = 'Graphics/Characters/Xavier.png', sockSprite = 'Graphics/Characters/XavierSock.png',
 noSockSprite = 'Graphics/Characters/Xavier.png', scale = 1.1*scale}
 function P.xavier:onKeyPressedChar(key)
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
