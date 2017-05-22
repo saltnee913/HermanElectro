@@ -530,6 +530,11 @@ function setMusicVolume(volume)
 end
 
 function goToMainMenu()
+	if not unlocks.tutorialBeatenUnlock.unlocked then
+		gamePaused = false
+		return
+	end
+
 	if room[player.tileY][player.tileX]~=nil then
 		room[player.tileY][player.tileX]:onLeave()
 	end
