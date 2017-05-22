@@ -23,7 +23,7 @@ function P.draw()
 	--love.graphics.translate(width2/2-16*screenScale/2, height2/2-9*screenScale/2)
 	--love.graphics.translate((width2-width)/2, (height2-height)/2)
 	local bigRoomTranslation = getTranslation()
-	love.graphics.translate(bigRoomTranslation.x*tileWidth*scale, bigRoomTranslation.y*tileHeight*scale)
+	love.graphics.translate(bigRoomTranslation.x*tileUnit*scale, bigRoomTranslation.y*tileUnit*scale)
 	--love.graphics.draw(rocks, rocksQuad, 0, 0)
 	--love.graphics.draw(rocks, -mapx * width, -mapy * height, 0, 1, 1)
 	
@@ -33,10 +33,6 @@ function P.draw()
 
 	for j = 1, roomHeight do
 		for i = 1, roomLength do
-
-			
-
-
 			local isBlack=false
 			
 			if (room[j][i]~=nil or litTiles[j][i]==0) and not (litTiles[j][i]==1 and room[j][i]:instanceof(tiles.invisibleTile)) then
@@ -76,7 +72,7 @@ function P.draw()
 					if litTiles[j][i]==0 then addY = tiles.halfWall:getYOffset() end
 					if not isBlack then
 						love.graphics.draw(toDraw, (tempi-1)*tileWidth*scale+wallSprite.width, (addY+(tempj-1)*tileWidth)*scale+wallSprite.height,
-					  	rot * math.pi / 2, scale*16/toDraw:getWidth(), scale*16/toDraw:getWidth())
+					  	rot * math.pi / 2, scale*tileUnit/toDraw:getWidth(), scale*tileUnit/toDraw:getWidth())
 					end
 					if litTiles[j][i]~=0 and room[j][i].overlay ~= nil then
 						local overlay = room[j][i].overlay
@@ -179,7 +175,11 @@ function P.draw()
 		for i = 1, #animals do
 			if animals[i]~=nil and litTiles[animals[i].tileY][animals[i].tileX]==1 and not animals[i].pickedUp and animals[i].tileY==j then
 				local animalSprite = util.getImage(animals[i].sprite)
-				love.graphics.draw(animalSprite, animals[i].x, animals[i].y, 0, animals[i].scale, animals[i].scale)
+				local drawCoords = animals[i]:getDrawCoords()
+				local drawx = drawCoords.x
+				local drawy = drawCoords.y
+				
+				love.graphics.draw(animalSprite, drawx, drawy, 0, animals[i].scale, animals[i].scale)
 
 				--overhead marks for animals, frozen or waitCounter or trained 
 				if (not animals[i].dead) and (animals[i].frozen or animals[i].waitCounter>0 or animals[i].trained) then
@@ -197,14 +197,15 @@ function P.draw()
 					end
 
 					local markScale = scale
-					local drawy = animals[i].y-markSprites[1]:getHeight()*markScale
 					
 					for j = 1, #markSprites do
 						local markSprite = markSprites[j]
-						local drawx = animals[i].x+tileUnit/2*scale
-						drawx = drawx-#markSprites/2*markScale*markSprite:getWidth()+markScale*(j-1)*markSprite:getWidth()
+						local markx = animals[i].x
+						markx = markx-#markSprites/2*markScale*markSprite:getWidth()+markScale*(j-1)*markSprite:getWidth()
+						local marky = drawy
+						marky = marky-markSprite:getHeight()*markScale
 
-						love.graphics.draw(markSprite, drawx, drawy, 0, markScale, markScale)
+						love.graphics.draw(markSprite, markx, marky, 0, markScale, markScale)
 					end
 				end
 			end
@@ -232,11 +233,11 @@ function P.draw()
 				for dir = 1, 5 do
 					if tools.toolableAnimals[dir]~=nil then
 						for i = 1, #(tools.toolableAnimals[dir]) do
-							local tx = tools.toolableAnimals[dir][i].tileX
 							local ty = tools.toolableAnimals[dir][i].tileY
 							if ty==j then
 								if dir == 1 or tools.toolableAnimals[1][1] == nil or not (tx == tools.toolableAnimals[1][1].tileX and ty == tools.toolableAnimals[1][1].tileY) then
-									love.graphics.draw(util.getImage(green), (tx-1)*tileWidth*scale+wallSprite.width, (ty-1)*tileHeight*scale+wallSprite.height-tools.toolableAnimals[dir][i].elevation*scale, 0, scale, scale)
+									local animalScale = tools.toolableAnimals[dir][i].scale
+									love.graphics.draw(util.getImage(green), tools.toolableAnimals[dir][i]:getDrawX(), tools.toolableAnimals[dir][i]:getDrawY(), 0, animalScale, animalScale)
 								end
 							end
 						end

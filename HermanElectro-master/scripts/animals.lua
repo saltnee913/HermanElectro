@@ -18,7 +18,7 @@ scale = (width - 2*wallSprite.width)/(20.3 * 16)*5/6
 --floor = tiles.tile
 
 --speed same as player (250)
-P.animal = Object:new{elevation = 0, scale = scale, yOffset = 0, frozen = false, trained = false, conductive = false, pickedUp = false, canDropTool = false, willDropTool = false, flying = false, triggered = false, waitCounter = 1, dead = false, name = "animal", tileX, tileY, prevx, prevy, prevTileX, prevTileY, x, y, speed = 250, width = 16*scale, height = 16*scale, sprite = 'Graphics/pitbull.png', deadSprite = 'Graphics/pitbulldead.png', tilesOn = {}, oldTilesOn = {}}
+P.animal = Object:new{elevation = 0, scale = 1.1*scale, yOffset = 0, frozen = false, trained = false, conductive = false, pickedUp = false, canDropTool = false, willDropTool = false, flying = false, triggered = false, waitCounter = 1, dead = false, name = "animal", tileX, tileY, prevx, prevy, prevTileX, prevTileY, x, y, speed = 250, width = 16*scale, height = 16*scale, sprite = 'Graphics/pitbull.png', deadSprite = 'Graphics/pitbulldead.png', tilesOn = {}, oldTilesOn = {}}
 function P.animal:move(playerx, playery, room, isLit)
 	if self.dead or (not isLit and not self.triggered) or self.frozen then
 		return
@@ -141,6 +141,18 @@ function P.animal:secondaryMove(playerx, playery)
 	end
 
 	return true
+end
+
+function P.animal:getDrawCoords()
+	local drawx = self:getDrawX()
+	local drawy = self:getDrawY()
+	return {x = drawx, y = drawy}
+end
+function P.animal:getDrawX()
+	return math.floor(self.x-util.getImage(self.sprite):getWidth()/2*self.scale)
+end
+function P.animal:getDrawY()
+	return math.floor(self.y-util.getImage(self.sprite):getHeight()*self.scale-self.elevation*scale)
 end
 
 function P.animal:checkDeath()
@@ -342,9 +354,13 @@ function P.animal:afraidSecondaryMove(playerx, playery)
 	return true
 end
 function P.animal:setLoc()
-	self.x = (self.tileX-1)*tileHeight*scale+wallSprite.width
-	self.y = (self.tileY)*tileWidth*scale+wallSprite.height-self.elevation*scale
-	self.y = self.y-self.scale*util.getImage(self.sprite):getHeight()
+	--coords represent middle of body x-loc, bottom of feet y-loc
+
+	self.x = (self.tileX-1)*tileUnit*scale+wallSprite.width
+	self.x = self.x+scale*tileUnit/2
+
+	self.y = (self.tileY-1)*tileUnit*scale+wallSprite.height
+	self.y = self.y+scale*(2/3*tileUnit)
 end
 
 
@@ -404,9 +420,7 @@ end
 P.bombBuddy = P.animal:new{name = "bombBuddy", scale = 0.6*scale,
 sprite = 'Graphics/bombBuddyFront.png', deadSprite = 'Graphics/catdead.png', canDropTool = true}
 function P.bombBuddy:explode()
-	room[self.tileY][self.tileX] = tiles.bomb:new()
-	room[self.tileY][self.tileX]:onEnd(self.tileY, self.tileX)
-	room[self.tileY][self.tileX] = nil
+	util.createHarmfulExplosion(self.tileY, self.tileX, 1)
 end
 function P.bombBuddy:dropTool()
 	tools.dropTool(tools.explosiveMeat, self.tileY, self.tileX)

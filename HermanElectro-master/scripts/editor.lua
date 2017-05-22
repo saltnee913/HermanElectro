@@ -362,6 +362,7 @@ local function postTileAddCleanup(tempAdd, tileLocY, tileLocX)
 			animalToSpawn.tileY = tileLocY
 			animalToSpawn.prevTileX = animals[#animals].tileX
 			animalToSpawn.prevTileY = animals[#animals].tileY
+			animalToSpawn:setLoc()
 			animalToSpawn.loaded = true
 		end
 	end
