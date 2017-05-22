@@ -452,6 +452,10 @@ end
 function P.xavier:onRoomEnter()
 	self.sockMode = false
 end
+function P.xavier:onStartGame()
+	self.sockMode = false
+	self:updateSprite()
+end
 
 P.aurelius = P.character:new{name = "Aurelius", description = "The Golden",
 sprite = 'Graphics/Characters/Aurelius.png', scale = 1.1*scale}
