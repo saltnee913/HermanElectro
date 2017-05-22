@@ -10,6 +10,7 @@ fontSize = 12
 debug = true
 loadTutorial = false
 gamePaused = false
+releaseBuild = true
 
 gameSpeed = 1
 
@@ -2695,7 +2696,7 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 		end
 	end
 
-	if key=="e" then
+	if key=="e" and not releaseBuild then
 		editorMode = not editorMode
 		if floorIndex == -1 then
 			--started = false
