@@ -188,31 +188,15 @@ function P.useToolDir(toolid, dir)
 end
 
 function P.useToolLoc(mouseY, mouseX, tileY, tileX)
-	return tools.useToolTile(tileY, tileX)
+	if tools.useToolAnimal(mouseY, mouseX) then
+		return true
+	elseif tools.useToolPushable(mouseY, mouseX, tileY, tileX) then
+		return true
+	else
+		return tools.useToolTile(tileY, tileX)
+	end
 end
 function P.useToolTile(tileY, tileX)
-	if P.toolableAnimals ~= nil then
-		for dir = 1, 5 do
-			for i = 1, #(P.toolableAnimals[dir]) do
-				if P.toolableAnimals[dir][i].tileY == tileY and P.toolableAnimals[dir][i].tileX == tileX then
-					tools[tool]:useToolAnimal(P.toolableAnimals[dir][i])
-					P.addUseStat(tool)
-					return true
-				end
-			end
-		end
-	end
-	if P.toolablePushables ~= nil then
-		for dir = 1, 5 do
-			for i = 1, #(P.toolablePushables[dir]) do
-				if P.toolablePushables[dir][i].tileY == tileY and P.toolablePushables[dir][i].tileX == tileX then
-					tools[tool]:useToolPushable(P.toolablePushables[dir][i])
-					P.addUseStat(tool)
-					return true
-				end
-			end
-		end
-	end
 	if P.toolableTiles ~= nil then
 		for dir = 1, 5 do
 			for i = 1, #(P.toolableTiles[dir]) do
@@ -222,6 +206,39 @@ function P.useToolTile(tileY, tileX)
 					else
 						tools[tool]:useToolTile(room[tileY][tileX], tileY, tileX)
 					end
+					P.addUseStat(tool)
+					return true
+				end
+			end
+		end
+	end
+	return false
+end
+function P.useToolAnimal(mouseY, mouseX)
+	if P.toolableAnimals ~= nil then
+		for dir = 1, 5 do
+			for i = 1, #(P.toolableAnimals[dir]) do
+				local animal = P.toolableAnimals[dir][i]
+				local animalScale = animal.scale
+				local drawx = animal:getDrawX()
+				local drawy = animal:getDrawY()
+				if mouseX>=drawx and mouseX<=drawx+util.getImage(animal.sprite):getWidth()*animalScale
+				and mouseY>=drawy and mouseY<=drawy+util.getImage(animal.sprite):getHeight()*animalScale then
+					tools[tool]:useToolAnimal(P.toolableAnimals[dir][i])
+					P.addUseStat(tool)
+					return true
+				end
+			end
+		end
+	end
+	return false
+end
+function P.useToolPushable(mouseY, mouseX, tileY, tileX)
+	if P.toolablePushables ~= nil then
+		for dir = 1, 5 do
+			for i = 1, #(P.toolablePushables[dir]) do
+				if P.toolablePushables[dir][i].tileY == tileY and P.toolablePushables[dir][i].tileX == tileX then
+					tools[tool]:useToolPushable(P.toolablePushables[dir][i])
 					P.addUseStat(tool)
 					return true
 				end

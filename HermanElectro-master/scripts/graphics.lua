@@ -23,7 +23,7 @@ function P.draw()
 	--love.graphics.translate(width2/2-16*screenScale/2, height2/2-9*screenScale/2)
 	--love.graphics.translate((width2-width)/2, (height2-height)/2)
 	local bigRoomTranslation = getTranslation()
-	love.graphics.translate(bigRoomTranslation.x*tileWidth*scale, bigRoomTranslation.y*tileHeight*scale)
+	love.graphics.translate(bigRoomTranslation.x*tileUnit*scale, bigRoomTranslation.y*tileUnit*scale)
 	--love.graphics.draw(rocks, rocksQuad, 0, 0)
 	--love.graphics.draw(rocks, -mapx * width, -mapy * height, 0, 1, 1)
 	
@@ -33,10 +33,6 @@ function P.draw()
 
 	for j = 1, roomHeight do
 		for i = 1, roomLength do
-
-			
-
-
 			local isBlack=false
 			
 			if (room[j][i]~=nil or litTiles[j][i]==0) and not (litTiles[j][i]==1 and room[j][i]:instanceof(tiles.invisibleTile)) then
@@ -76,7 +72,7 @@ function P.draw()
 					if litTiles[j][i]==0 then addY = tiles.halfWall:getYOffset() end
 					if not isBlack then
 						love.graphics.draw(toDraw, (tempi-1)*tileWidth*scale+wallSprite.width, (addY+(tempj-1)*tileWidth)*scale+wallSprite.height,
-					  	rot * math.pi / 2, scale*16/toDraw:getWidth(), scale*16/toDraw:getWidth())
+					  	rot * math.pi / 2, scale*tileUnit/toDraw:getWidth(), scale*tileUnit/toDraw:getWidth())
 					end
 					if litTiles[j][i]~=0 and room[j][i].overlay ~= nil then
 						local overlay = room[j][i].overlay

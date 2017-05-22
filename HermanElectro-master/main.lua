@@ -3436,10 +3436,10 @@ function love.mousepressed(x, y, button, istouch, isPlayback)
 	saving.recordMouseInput(x, y, button, istouch, false)
 
 	local bigRoomTranslation = getTranslation()
-	tileLocX = math.ceil((mouseX-wallSprite.width)/(scale*tileWidth))-bigRoomTranslation.xInteger
-	tileLocY = math.ceil((mouseY-wallSprite.height)/(scale*tileHeight))-bigRoomTranslation.yInteger
+	tileLocX = math.ceil((mouseX-wallSprite.width)/(scale*tileUnit))-bigRoomTranslation.xInteger
+	tileLocY = math.ceil((mouseY-wallSprite.height)/(scale*tileUnit))-bigRoomTranslation.yInteger
 	if room[tileLocY+1] ~= nil and room[tileLocY+1][tileLocX] ~= nil then
-		tileLocY = math.ceil((mouseY-wallSprite.height-room[tileLocY+1][tileLocX]:getYOffset()*scale)/(scale*tileHeight))-bigRoomTranslation.yInteger
+		tileLocY = math.ceil((mouseY-wallSprite.height-room[tileLocY+1][tileLocX]:getYOffset()*scale)/(scale*tileUnit))-bigRoomTranslation.yInteger
 	end
 
 	if editorMode then
@@ -3447,8 +3447,13 @@ function love.mousepressed(x, y, button, istouch, isPlayback)
 	end
 	--mouseX = x-width2/2+16*screenScale/2
 	--mouseY = y-height2/2+9*screenScale/2
-	mouseX = x-(width2-width)/2
-	mouseY = y-(height2-height)/2
+	
+	--mouseX = x-(width2-width)/2
+	--mouseY = y-(height2-height)/2
+	mouseX = x
+	mouseY = y
+	local bigRoomTranslation = getTranslation()
+	mouseTranslated = {x = mouseX-bigRoomTranslation.x*scale*tileUnit, y = mouseY-bigRoomTranslation.y*scale*tileUnit}
 
 	clickActivated = false
 	if mouseY<width/18 and mouseY>0 then
@@ -3473,7 +3478,7 @@ function love.mousepressed(x, y, button, istouch, isPlayback)
 	tools.updateToolableTiles(tool)
 
 	local currentTool = 0
-	if not clickActivated and not (tools.useToolLoc(mouseY, mouseX, tileLocY, tileLocX)) then
+	if not clickActivated and not (tools.useToolLoc(mouseTranslated.y, mouseTranslated.x, tileLocY, tileLocX)) then
 		tool = 0
 	elseif not clickActivated then
 		if tool<=tools.numNormalTools then
@@ -3509,8 +3514,14 @@ function love.mousemoved(x, y, dx, dy, isTouch, isPlayback)
 	end
 	--mouseX = x-width2/2+16*screenScale/2
 	--mouseY = y-height2/2+9*screenScale/2
-	mouseX = x-(width2-width)/2
-	mouseY = y-(height2-height)/2
+	--mouseX = x-(width2-width)/2
+	--mouseY = y-(height2-height)/2
+	mouseX = x
+	mouseY = y
+	local bigRoomTranslation = getTranslation()
+	mouseTranslated = {x = mouseX-bigRoomTranslation.x*scale*tileUnit, y = mouseY-bigRoomTranslation.y*scale*tileUnit}
+
+
 	local bigRoomTranslation = getTranslation()
 	tileLocX = math.ceil((mouseX-wallSprite.width)/(scale*tileWidth))-bigRoomTranslation.xInteger
 	tileLocY = math.ceil((mouseY-wallSprite.height)/(scale*tileHeight))-bigRoomTranslation.yInteger
@@ -3684,6 +3695,14 @@ function updateTools()
 end
 
 function updateCursor()
+	local cursor
+
+	--code below sets cursor to tile being added in editorMode
+	--removed because it was annoying and sprites were too small
+	--[[if editorMode and editorAdd>0 and editorAdd<#tiles then
+		cursor = love.mouse.newCursor(tiles[editorAdd]:getEditorSprite(), 0, 0)
+		love.mouse.setCursor(cursor)]]
+
 	if tool==0 then
 		cursor = love.mouse.newCursor('Graphics/herman_small.png', 0, 0)
 		love.mouse.setCursor(cursor)
@@ -3955,13 +3974,13 @@ function onTeleport()
 	player.prevTileY = player.tileY
 end
 
-function onToolUse(tool)
+function onToolUse(currentTool)
 	resetPlayerAttributesTool()
-	player.character:onToolUse(tool)
+	player.character:onToolUse(currentTool)
 	if mainMap[mapy][mapx].toolsUsed == nil then
 		mainMap[mapy][mapx].toolsUsed = {}
 	end
-	mainMap[mapy][mapx].toolsUsed[#mainMap[mapy][mapx].toolsUsed+1] = tool
+	mainMap[mapy][mapx].toolsUsed[#mainMap[mapy][mapx].toolsUsed+1] = currentTool
 
 	--deck of cards trigger
 	if tools.card.numHeld>0 then
@@ -3978,10 +3997,10 @@ function onToolUse(tool)
 		basicsUsed[i] = 0
 	end
 	for i = 1, #mainMap[mapy][mapx].toolsUsed do
-		if mainMap[mapy][mapx].toolsUsed[i]==tool then
+		if mainMap[mapy][mapx].toolsUsed[i]==currentTool then
 			sameTool = sameTool+1
 		end
-		if mainMap[mapy][mapx].toolsUsed[i]>tools.numNormalTools and mainMap[mapy][mapx].toolsUsed[i]~=tool then
+		if mainMap[mapy][mapx].toolsUsed[i]>tools.numNormalTools and mainMap[mapy][mapx].toolsUsed[i]~=currentTool then
 			unlockBlank = true
 		end
 		if mainMap[mapy][mapx].toolsUsed[i]<=tools.numNormalTools and mainMap[mapy][mapx].toolsUsed[i]>0 then
@@ -4008,6 +4027,10 @@ function onToolUse(tool)
 
 	if basicsUsed[1]>0 and basicsUsed[2]>0 and basicsUsed[3]>0 and basicsUsed[4]>0 and basicsUsed[6]>0 then
 		unlocks.unlockUnlockableRef(unlocks.recycleBinUnlock)
+	end
+
+	if tools[tool].numHeld<=0 then
+		tool = 0
 	end
 
 	updateTools()
