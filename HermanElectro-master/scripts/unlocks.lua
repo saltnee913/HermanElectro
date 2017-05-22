@@ -132,14 +132,14 @@ P.unlock = Object:new{name = 'generic', unlocked = false, sprite = tiles.fog.spr
 P.tutorialBeatenUnlock = P.unlock:new{name = "tutorialBeaten", hidden = true}
 
 P.charUnlock = P.unlock:new{name = 'Herman Electrogue', charIds = {"Herman"}, desc = ''}
-P.felixUnlock = P.charUnlock:new{name = 'Fantastic Mr. Felix', desc = 'Bombastic', charIds = {"Felix"}, sprite = 'Graphics/felix.png', }
+P.felixUnlock = P.charUnlock:new{name = 'Fantastic Mr. Felix', desc = 'Bombastic', charIds = {"Natasha"}, sprite = 'Graphics/felix.png', }
 P.frederickUnlock = P.charUnlock:new{name = "Voltair's Frog", desc = 'Jumpstart', charIds = {"Frederick"}, sprite = 'Graphics/Characters/Frederick.png'}
 P.franciscoUnlock = P.charUnlock:new{name = 'Francisco the Cartographer', desc = 'A first-rate frontier fellow', charIds = {"Francisco"}, sprite = 'Graphics/Characters/Francisco.png'}
 P.rammyUnlock = P.charUnlock:new{name = 'Ramesses II Electric Boogaloo', desc ='Form of the ram', charIds = {"Rammy"}, sprite = 'Graphics/ram.png'}
 P.aureliusUnlock = P.charUnlock:new{name = "	", desc = '	', charIds = {"Aurelius"}, sprite = 'Graphics/Characters/Aurelius.png'}
 P.lennyUnlock = P.charUnlock:new{name = 'Love for Lenny', desc = 'The Sticky Spector', charIds = {"Lenny"}, sprite = 'Graphics/Characters/Lenny.png'}
 P.wizardUnlock = P.charUnlock:new{name = 'The Good Wizard Giovanni', desc= "Power would corrupt him if he weren't such a homie.", charIds = {"Giovanni"}, sprite = 'Graphics/giovannighost.png'}
-P.xavierUnlock = P.charUnlock:new{name = '	', desc ='	', charIds = {"Xavier"}, sprite = 'Graphics/Characters/Eli.png'}
+P.xavierUnlock = P.charUnlock:new{name = '	', desc ='	', charIds = {"Gru"}, sprite = 'Graphics/Characters/Eli.png'}
 P.batteryUnlock = P.charUnlock:new{name = "	", desc ='	', charIds = {"Bob"}, sprite = 'Graphics/Characters/Bob.png'}
 P.erikUnlock = P.charUnlock:new{name = '	', desc='	', charIds = {"Erik"}, sprite = 'Graphics/Characters/Erik.png'}
 P.fishUnlock = P.charUnlock:new{name = 'Fish of the fish farm', desc='Bad at climbing trees.', charIds = {"Fish"}, sprite = 'Graphics/Characters/Fish.png'}

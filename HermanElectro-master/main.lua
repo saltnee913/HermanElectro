@@ -323,8 +323,8 @@ function love.load()
 		fontFile = 'Resources/upheavtt.ttf'
 		textBackground = love.graphics.newImage('Graphics/textBackground.png')
 
-		cursor = love.mouse.newCursor('Graphics/herman_small.png', 0, 0)
-		love.mouse.setCursor(cursor)
+		--cursor = love.mouse.newCursor('Graphics/herman_small.png', 0, 0)
+		--love.mouse.setCursor(cursor)
 
 		tileUnit = 16
 		love.graphics.setBackgroundColor(0,0,0)
@@ -3705,8 +3705,8 @@ function updateCursor()
 		love.mouse.setCursor(cursor)]]
 
 	if tool==0 then
-		cursor = love.mouse.newCursor('Graphics/herman_small.png', 0, 0)
-		love.mouse.setCursor(cursor)
+		--cursor = love.mouse.newCursor('Graphics/herman_small.png', 0, 0)
+		love.mouse.setCursor()
 	else
 		cursor = love.mouse.newCursor(tools[tool].image, 0, 0)
 		love.mouse.setCursor(cursor)
