@@ -2197,6 +2197,12 @@ function enterRoom(dir)
 		end
 	end
 
+	--check tutorial beaten
+	if map.getFieldForRoom(currentid, "isInitial") and
+	map.getFieldForRoom(currentid, "isInitialAfterTut")~=nil and map.getFieldForRoom(currentid, "isInitialAfterTut") then
+		unlocks.unlockUnlockableRef(unlocks.tutorialBeatenUnlock, true)
+	end
+
 	if room.tint==nil then room.tint = {1,1,1} end
 
 	player.prevTileY = player.tileY
@@ -2724,37 +2730,7 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 		mainMap.cheated = true--kind of hacky
 	else
 		if key == 'r' then
-			if loadTutorial or floorIndex == -1 then
-				player.dead = false
-				player.y = (player.enterY-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
-				player.tileY = player.enterY
-				player.x = (player.enterX-1)*scale*tileWidth+wallSprite.width+tileWidth/2*scale-10
-				player.tileX = player.enterX
-				player.prevy = player.y
-				player.prevTileY = player.enterY
-				player.prevx = player.x
-				player.prevTileX = player.enterX
-				for i = 1, tools.numNormalTools do
-					local roomItemsGiven = map.getItemsGiven(mainMap[mapy][mapx].roomid)
-					local roomItemsNeeded = map.getItemsNeeded(mainMap[mapy][mapx].roomid)
-					if (completedRooms[mapy][mapx] == 1) and (roomItemsGiven~=nil and roomItemsNeeded~=nil) then
-						player.totalItemsGiven[i] = player.totalItemsGiven[i] - roomItemsGiven[1][i]
-						player.totalItemsNeeded[i] = player.totalItemsNeeded[i] - roomItemsNeeded[1][i]
-					end
-					tools[i].numHeld = player.totalItemsGiven[i] - player.totalItemsNeeded[i]
-					if tools[i].numHeld < 0 then tools[i].numHeld = 0 end
-				end
-
-				hackEnterRoom(mainMap[mapy][mapx].roomid, i, j)
-
-				setPlayerLoc()
-				myShader:send("b_and_w", 0)
-			else
-				if floorIndex>=5 then
-					unlocks.unlockUnlockableRef(unlocks.roomRerollerUnlock)
-				end
-				startGame()
-			end
+			restartGame()
 		end
 	end
 	love.keyboard.setKeyRepeat(true)
@@ -2877,6 +2853,42 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
     end
     player.character:absoluteFinalUpdate()
     postKeypressReset()
+end
+
+function restartGame()
+	if loadTutorial or floorIndex == -1 then
+		player.dead = false
+		player.y = (player.enterY-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
+		player.tileY = player.enterY
+		player.x = (player.enterX-1)*scale*tileWidth+wallSprite.width+tileWidth/2*scale-10
+		player.tileX = player.enterX
+		player.prevy = player.y
+		player.prevTileY = player.enterY
+		player.prevx = player.x
+		player.prevTileX = player.enterX
+		for i = 1, tools.numNormalTools do
+			--[[local roomItemsGiven = map.getItemsGiven(mainMap[mapy][mapx].roomid)
+			local roomItemsNeeded = map.getItemsNeeded(mainMap[mapy][mapx].roomid)
+			if (completedRooms[mapy][mapx] == 1) and (roomItemsGiven~=nil and roomItemsNeeded~=nil) then
+				player.totalItemsGiven[i] = player.totalItemsGiven[i] - roomItemsGiven[1][i]
+				player.totalItemsNeeded[i] = player.totalItemsNeeded[i] - roomItemsNeeded[1][i]
+			end]]
+			tools[i].numHeld = player.totalItemsGiven[i] - player.totalItemsNeeded[i]
+			if tools[i].numHeld < 0 then tools[i].numHeld = 0 end
+		end
+
+		if completedRooms[mapy][mapx]~=1 then
+			hackEnterRoom(mainMap[mapy][mapx].roomid, mapy, mapx)
+		end
+
+		setPlayerLoc()
+		myShader:send("b_and_w", 0)
+	else
+		if floorIndex>=5 then
+			unlocks.unlockUnlockableRef(unlocks.roomRerollerUnlock)
+		end
+		startGame()
+	end
 end
 
 function processTurn()
