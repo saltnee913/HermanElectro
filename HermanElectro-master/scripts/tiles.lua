@@ -2846,9 +2846,14 @@ function P.tutStairs:onEnter()
 end
 
 P.debugStairs = P.tile:new{name = "debugStairs", sprite = 'KenGraphics/tutstairs.png'}
+function P.debugStairs:onLoad()
+	self.isVisible = not releaseBuild
+end
 function P.debugStairs:onEnter()
-	stairsLocs[1] = {map ={x = mapx, y = mapy}, coords = {x = player.tileX, y = player.tileY}}
-	startDebug()
+	if self.isVisible then
+		stairsLocs[1] = {map ={x = mapx, y = mapy}, coords = {x = player.tileX, y = player.tileY}}
+		startDebug()
+	end
 end
 
 P.editorStairs = P.tile:new{name = "editorStairs", sprite = 'KenGraphics/greenstairs.png'}
