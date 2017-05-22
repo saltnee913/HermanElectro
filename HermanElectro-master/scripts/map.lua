@@ -251,7 +251,7 @@ function P.loadFloor(inFloorFile)
 				P.floorInfo.roomsArray[#(P.floorInfo.roomsArray)+1] = roomsArray[i]
 			end
 		end
-		print(k..': '..amt)
+		--[[print(k..': '..amt)
 		local toPrint = ""
 		for i = 0, 10 do
 			toPrint = toPrint..i..": "..numToolsArray[i+1]..", "
@@ -264,7 +264,7 @@ function P.loadFloor(inFloorFile)
 			toPrint = toPrint..toolWords[i]..": "..toolAppearanceArray[i]..", "
 		end
 		print(toPrint)
-		--[[for i = 1, #tilesArr do
+		for i = 1, #tilesArr do
 			print(tilesArr[i].name..":")
 			print("Total appearances: "..tilesArr[i].total)
 			print("Rooms appearing in: "..tilesArr[i].rooms)

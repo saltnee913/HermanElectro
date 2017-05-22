@@ -187,30 +187,16 @@ function P.useToolDir(toolid, dir)
 	return false
 end
 
---prioritizes animals
+function P.useToolLoc(mouseY, mouseX, tileY, tileX)
+	if tools.useToolAnimal(mouseY, mouseX) then
+		return true
+	elseif tools.useToolPushable(mouseY, mouseX, tileY, tileX) then
+		return true
+	else
+		return tools.useToolTile(tileY, tileX)
+	end
+end
 function P.useToolTile(tileY, tileX)
-	if P.toolableAnimals ~= nil then
-		for dir = 1, 5 do
-			for i = 1, #(P.toolableAnimals[dir]) do
-				if P.toolableAnimals[dir][i].tileY == tileY and P.toolableAnimals[dir][i].tileX == tileX then
-					tools[tool]:useToolAnimal(P.toolableAnimals[dir][i])
-					P.addUseStat(tool)
-					return true
-				end
-			end
-		end
-	end
-	if P.toolablePushables ~= nil then
-		for dir = 1, 5 do
-			for i = 1, #(P.toolablePushables[dir]) do
-				if P.toolablePushables[dir][i].tileY == tileY and P.toolablePushables[dir][i].tileX == tileX then
-					tools[tool]:useToolPushable(P.toolablePushables[dir][i])
-					P.addUseStat(tool)
-					return true
-				end
-			end
-		end
-	end
 	if P.toolableTiles ~= nil then
 		for dir = 1, 5 do
 			for i = 1, #(P.toolableTiles[dir]) do
@@ -220,6 +206,39 @@ function P.useToolTile(tileY, tileX)
 					else
 						tools[tool]:useToolTile(room[tileY][tileX], tileY, tileX)
 					end
+					P.addUseStat(tool)
+					return true
+				end
+			end
+		end
+	end
+	return false
+end
+function P.useToolAnimal(mouseY, mouseX)
+	if P.toolableAnimals ~= nil then
+		for dir = 1, 5 do
+			for i = 1, #(P.toolableAnimals[dir]) do
+				local animal = P.toolableAnimals[dir][i]
+				local animalScale = animal.scale
+				local drawx = animal:getDrawX()
+				local drawy = animal:getDrawY()
+				if mouseX>=drawx and mouseX<=drawx+util.getImage(animal.sprite):getWidth()*animalScale
+				and mouseY>=drawy and mouseY<=drawy+util.getImage(animal.sprite):getHeight()*animalScale then
+					tools[tool]:useToolAnimal(P.toolableAnimals[dir][i])
+					P.addUseStat(tool)
+					return true
+				end
+			end
+		end
+	end
+	return false
+end
+function P.useToolPushable(mouseY, mouseX, tileY, tileX)
+	if P.toolablePushables ~= nil then
+		for dir = 1, 5 do
+			for i = 1, #(P.toolablePushables[dir]) do
+				if P.toolablePushables[dir][i].tileY == tileY and P.toolablePushables[dir][i].tileX == tileX then
+					tools[tool]:useToolPushable(P.toolablePushables[dir][i])
 					P.addUseStat(tool)
 					return true
 				end
@@ -3810,7 +3829,7 @@ self.numHeld = self.numHeld - 1
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
 			local isValid = true
-			if room[i][j]~=nil then isValid = false
+			if room[i][j]~=nil and not room[i][j]:usableOnNothing() then isValid = false
 			else
 				if player.tileY==i and player.tileX==j then isValid = false end
 				for k = 1, #animals do
@@ -5067,6 +5086,9 @@ function P.claw:usableOnTile(tile, tileY, tileX)
 	(P.sponge:usableOnTile(tile, tileY, tileX) and dist<=P.sponge.baseRange) or
 	(P.brick:usableOnTile(tile, tileY, tileX) and dist<=P.brick.baseRange)
 end
+function P.claw:usableOnNonOverlay(tile)
+	return not tile.destroyed and ((tile:instanceof(tiles.wire) and not tile:instanceof(tiles.unbreakableWire)) or (tile:instanceof(tiles.electricFloor) and not tile:instanceof(tiles.unbreakableElectricFloor)))
+end
 function P.claw:usableOnPushable(pushable)
 	local dist = math.abs(player.tileY-pushable.tileY)+math.abs(player.tileX-pushable.tileX)
 
@@ -5263,6 +5285,18 @@ function P.megaUnlock:useToolNothing()
 	end
 end
 P.megaUnlock.useToolTile = P.megaUnlock.useToolNothing
+
+P.medicine = P.superTool:new{name = "Erik's Medicine", baseRange = 0, description = "Just a little more time....",
+quality = 1}
+function P.medicine:usableOnNothing()
+	return true
+end
+P.medicine.usableOnTile = P.medicine.usableOnNothing
+function P.medicine:useToolNothing()
+	gameTime.timeLeft = gameTime.timeLeft+100
+	--should have more functionality as well, so it's not lame
+end
+P.medicine.useToolTile = P.medicine.useToolNothing
 
 P.numNormalTools = 7
 P.lastToolUsed = 1
@@ -5503,6 +5537,7 @@ P:addTool(P.stopwatch)
 
 P:addTool(P.diagonal)
 P:addTool(P.megaUnlock)
+P:addTool(P.medicine)
 
 
 P.resetTools()

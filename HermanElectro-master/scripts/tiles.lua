@@ -237,6 +237,7 @@ sprite = 'Graphics/Tiles/wire.png',
 poweredSprite = 'Graphics/Tiles/wirePowered.png'}
 function P.wire:destroy()
 	self.sprite = self.destroyedSprite
+	self.powered = false
 	self.canBePowered = false
 	self.destroyed = true
 	dirAccept = {0,0,0,0}
@@ -1385,10 +1386,11 @@ function P.bomb:destroy()
 	self.gone = true
 end
 function P.bomb:explode(x,y)
+	--x is actually y-coord and y is actually x, kinda dumb but whatever
 	if not editorMode and math.abs(player.tileY-x)<2 and math.abs(player.tileX-y)<2 then 
 		kill()
 	end
-	util.createHarmlessExplosion(x,y)
+	util.createHarmfulExplosion(x,y)
 end
 
 P.capacitor = P.conductiveTile:new{name = "capacitor", counter = 3, maxCounter = 3, dirAccept = {1,0,1,0}, sprite = 'Graphics/capacitor.png', poweredSprite = 'Graphics/capacitor.png'}
@@ -1704,7 +1706,7 @@ end
 
 P.ladder = P.tile:new{name = "ladder", sprite = 'Graphics/laddertile.png', blocksAnimalMovement = true}
 function P.ladder:obstructsMovementAnimal(animal)
-	return true
+	return self ~= room[animal.prevTileY][animal.prevTileX]
 end
 
 P.mousetrapOff = P.mousetrap:new{name = "mousetrapOff", safe = true, sprite = 'Graphics/mousetrapsafe.png'}
@@ -2292,8 +2294,8 @@ function P.mushroom:onEnter()
 		unlocks.unlockUnlockableRef(unlocks.gabeUnlock)
 	end
 
-	if floorIndex<=0 then
-		unlocks.unlockUnlockableRef(unlocks.dragonUnlock)
+	if floorIndex == -1 then
+		unlocks.unlockUnlockableRef(unlocks.dragonUnlock, true)
 	end
 end
 
@@ -2832,7 +2834,7 @@ end
 
 P.gameStairs = P.tile:new{name = "gameStairs", sprite = 'KenGraphics/gamestairs.png'}
 function P.gameStairs:onEnter()
-	unlocks.unlockUnlockableRef(unlocks.tutorialBeatenUnlock)
+	unlocks.unlockUnlockableRef(unlocks.tutorialBeatenUnlock, true)
 	stairsLocs[1] = {map ={x = mapx, y = mapy}, coords = {x = player.tileX, y = player.tileY}}
 	beginGameSequence("main")
 end
@@ -2844,9 +2846,14 @@ function P.tutStairs:onEnter()
 end
 
 P.debugStairs = P.tile:new{name = "debugStairs", sprite = 'KenGraphics/tutstairs.png'}
+function P.debugStairs:onLoad()
+	self.isVisible = not releaseBuild
+end
 function P.debugStairs:onEnter()
-	stairsLocs[1] = {map ={x = mapx, y = mapy}, coords = {x = player.tileX, y = player.tileY}}
-	startDebug()
+	if self.isVisible then
+		stairsLocs[1] = {map ={x = mapx, y = mapy}, coords = {x = player.tileX, y = player.tileY}}
+		startDebug()
+	end
 end
 
 P.editorStairs = P.tile:new{name = "editorStairs", sprite = 'KenGraphics/greenstairs.png'}

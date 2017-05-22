@@ -214,25 +214,34 @@ function P.createHarmlessExplosion(y, x, range)
 					--unlocks.unlockUnlockableRef(unlocks.bombBuddyUnlock)
 				end
 			end
-		end
-	end
-	for k = 1, #animals do
-		if not animals[k].dead and math.abs(animals[k].tileY-y)<=2*range and math.abs(animals[k].tileX-x)<=2*range then
-			animals[k]:kill()
-			if animals[k]:instanceof(animalList.bombBuddy) then
-				animals[k]:explode()
+			for k = 1, #animals do
+				if not animals[k].dead and animals[k].tileY==y+i and animals[k].tileX==x+j then
+					animals[k]:kill()
+					if animals[k]:instanceof(animalList.bombBuddy) then
+						animals[k]:explode()
+					end
+				end
 			end
-		end
-	end
-	for k = 1, #pushables do
-		if math.abs(pushables[k].tileY-y)<=2*range and math.abs(pushables[k].tileX-x)<=2*range and not pushables[k].destroyed then
-			pushables[k]:destroy()
-			if pushables[k]:instanceof(pushableList.bombBox) then
-				--unlocks.unlockUnlockableRef(unlocks.bombBuddyUnlock)
+			for k = 1, #pushables do
+				if pushables[k].tileY==y+i and pushables[k].tileX==x+j and (not pushables[k].destroyed) then
+					pushables[k]:destroy()
+				end
 			end
 		end
 	end
 	updatePower()
+end
+
+function P.createHarmfulExplosion(y, x, range)
+	if range==nil then range = 1 end
+
+	--kill player
+	if player.tileY<=y+1 and player.tileX<=x+1 and player.tileX>=y-1 and player.tileX>=x-1 then
+		kill("explosion")
+	end 
+
+	--all other explosion stuff
+	util.createHarmlessExplosion(y,x,range)
 end
 
 return util

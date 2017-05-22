@@ -100,6 +100,25 @@ function P.draw()
 	end]]
 end
 
+function openRoomHack()
+	if nameEnter~=nil then return end
+	roomHack = mainMap[mapy][mapx].roomid .. ''
+	P.stealInput = true
+	log('Room Hack: '..roomHack)
+end
+
+function closeInputSteal()
+	P.stealInput = false
+	if nameEnter ~= nil then
+		log('Saving Cancelled')
+	else
+		log('Room Hack Cancelled')
+	end
+	roomHack = nil
+	nameEnter = nil
+	args = nil
+end
+
 function printRoom()
 	print("\"name\":")
 	print("{")
@@ -223,10 +242,7 @@ function P.keypressed(key, unicode)
 		print(toPrint)
 	end
 	if key=='tab' then
-		if nameEnter~=nil then return end
-		roomHack = mainMap[mapy][mapx].roomid .. ''
-		P.stealInput = true
-		log('Room Hack: '..roomHack)
+		openRoomHack()
 	end
 	if key == 'c' then
 		for i = 1, roomHeight do
@@ -260,7 +276,7 @@ function P.keypressed(key, unicode)
     	--unlock everything
     	for i = 1, #unlocks do
     		if not unlocks[i].hidden then
-    			unlocks.unlockUnlockable(i)
+    			unlocks.unlockUnlockable(i,true)
     		end
     	end
     elseif key == "-" then
@@ -279,15 +295,7 @@ end
 
 function P.inputSteal(key, unicode)
 	if key=='escape' then
-		P.stealInput = false
-		if nameEnter ~= nil then
-			log('Saving Cancelled')
-		else
-			log('Room Hack Cancelled')
-		end
-		roomHack = nil
-		nameEnter = nil
-		args = nil
+		closeInputSteal()
 	end
 	if roomHack~=nil then
 		if key=='backspace' then
@@ -362,6 +370,7 @@ local function postTileAddCleanup(tempAdd, tileLocY, tileLocX)
 			animalToSpawn.tileY = tileLocY
 			animalToSpawn.prevTileX = animals[#animals].tileX
 			animalToSpawn.prevTileY = animals[#animals].tileY
+			animalToSpawn:setLoc()
 			animalToSpawn.loaded = true
 		end
 	end
@@ -409,7 +418,11 @@ function P.mousepressed(x, y, button, istouch)
 			elseif mouseX>editor.leftStartDist+#P.setNames*editor.tabLength then
 				--load
 				if mouseX>width/2+editor.leftStartDist+editor.tabLength+2*tileUnit*scale+5 then
-					print("loading")
+					if roomHack == nil then
+						openRoomHack()
+					else
+						closeInputSteal()
+					end
 				elseif mouseX>width/2+editor.leftStartDist+2*tileUnit*scale+5 then
 					if args==nil then
 						if roomHack~=nil then return end

@@ -10,6 +10,7 @@ fontSize = 12
 debug = true
 loadTutorial = false
 gamePaused = false
+releaseBuild = true
 
 gameSpeed = 1
 
@@ -573,7 +574,15 @@ end
 
 function loadRandoms()
 	local seed
-	if seedOverride == nil then
+
+	if player.character.name == "Random" then
+		local date = os.date("*t")
+		local month = date.month
+		local day = date.day
+
+		seed = month*math.pow(day,5)
+		print(seed)
+	elseif seedOverride == nil then
 		seed = os.time()
 	else
 		seed = tonumber(seedOverride)
@@ -840,6 +849,12 @@ function loadOpeningWorld()
 	player.prevTileX = player.tileX
 	player.prevTileY = player.tileY
 
+	--tutorial hacky stuff
+	player.totalItemsGiven = {0,0,0,0,0,0,0}
+	player.totalItemsNeeded = {0,0,0,0,0,0,0}
+	player.enterY = player.tileY
+	player.enterX = player.tileX
+
 	roomHeight = room.height
 	roomLength = room.length
 	updateLight()
@@ -996,7 +1011,7 @@ function loadLevel(floorPath)
 end
 
 function kill(deathSource)
-	if editorMode or globalDeathBlock or floorIndex<1 or player.attributes.invincibleCounter>0 then return end
+	if editorMode or globalDeathBlock or player.attributes.invincibleCounter>0 then return end
 	--[[if validSpace() and completedRooms[mapy][mapx]>0 then
 		unlocks.unlockUnlockableRef(unlocks.portalUnlock)
 	end]]
@@ -1008,7 +1023,7 @@ function kill(deathSource)
 			return
 		end
 	end
-	if not loadTutorial then --hacky hack fix
+	if not loadTutorial and floorIndex>=0 then --hacky hack fix
 		completedRooms[mapy][mapx] = 0 --to stop itemsNeeded tracking, it's a hack!
 	end
 	stats.incrementStat(player.character.name..'Losses')
@@ -1759,43 +1774,7 @@ end
 
 translation = {x = 0, y = 0}
 function getTranslation()
-	--[[translation.x = translation.x*-1
-	translation.y = translation.y*-1	
-	if roomLength>regularLength then
-		--those 3s are hacky af
-		if player.tileX < translation.x - 2 then
-			translation.x = translation.x - regularLength
-		elseif player.tileX > translation.x + regularLength + 3 then
-			translation.x = translation.x + regularLength
-		end
-		if translation.x > roomLength - regularLength then
-			translation.x = roomLength-regularLength
-		elseif translation.x < 0 then
-			translation.x = 0
-		end
-	elseif roomLength<regularLength then
-		local lengthDiff = regularLength-roomLength
-		translation.x = -1*math.floor(lengthDiff/2)
-	end
-	if roomHeight>regularHeight then
-		if player.tileY < translation.y - 2 then
-			translation.y = translation.y - regularHeight
-		elseif player.tileY > translation.y + regularHeight + 3 then
-			translation.y = translation.y + regularHeight
-		end
-		if translation.y > roomHeight - regularHeight then
-			translation.y = roomHeight-regularHeight
-		elseif translation.y < 0 then
-			translation.y = 0
-		end
-	elseif roomHeight<regularHeight then
-		local heightDiff = regularHeight-roomHeight
-		translation.y = -1*math.floor(heightDiff/2)
-	end		
-	translation.x = translation.x*-1
-	translation.y = translation.y*-1	
-	return translation]]
-
+	--xInteger, yInteger ignore actual coords mid-animation
 	local translation = {x = 0, y = 0, xInteger = 0, yInteger = 0}
 	local prevTranslation = {x = 0, y = 0}
 	local tileLoc = tileToCoordsPlayer(player.tileY, player.tileX)
@@ -1926,26 +1905,11 @@ function tileToCoords(tileY, tileX)
 end
 
 function tileToCoordsY(tileY)
-	return (tileY-1)*scale*tileHeight+wallSprite.height
+	return (tileY-1)*scale*tileUnit+wallSprite.height
 end
 
 function tileToCoordsX(tileX)
-	return (tileX-1)*scale*tileHeight+wallSprite.width
-end
-
-function tileToCoordsPlayer(tileY, tileX)
-	local ret = {x = 0, y = 0}
-	ret.x = tileToCoordsXPlayer(tileX)
-	ret.y = tileToCoordsYPlayer(tileY)
-	return ret
-end
-
-function tileToCoordsYPlayer(tileY)
-	return (tileY-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
-end
-
-function tileToCoordsXPlayer(tileX)
-	return (tileX-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
+	return (tileX-1)*scale*tileUnit+wallSprite.width
 end
 
 function coordsToTile(y,x)
@@ -1991,12 +1955,11 @@ function createAnimals()
 				if not animalToSpawn.dead then
 					animals[animalCounter] = animalToSpawn
 					if not animalToSpawn.loaded then
-						animalToSpawn.y = (i-1)*tileWidth*scale+wallSprite.height
-						animalToSpawn.x = (j-1)*tileHeight*scale+wallSprite.width
 						animalToSpawn.tileX = j
 						animalToSpawn.tileY = i
 						animalToSpawn.prevTileX = j
 						animalToSpawn.prevTileY = i
+						animalToSpawn:setLoc()
 						local willDropChance = util.random(150,'toolDrop')
 						if willDropChance==1 and animalToSpawn.canDropTool then
 							animalToSpawn.willDropTool = true
@@ -2209,7 +2172,7 @@ function enterRoom(dir)
 		completedRooms[mapy][mapx] = 1
 		unlockDoors()
 	end
-	if loadTutorial then
+	if loadTutorial or floorIndex == -1 then
 		player.enterX = player.tileX
 		player.enterY = player.tileY
 	end
@@ -2249,10 +2212,35 @@ function enterRoom(dir)
 end
 
 function setPlayerLoc()
-	player.x = (player.tileX-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
-	player.y = (player.tileY-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
-    myShader:send("player_x", player.x+getTranslation().x*tileWidth*scale+(width2-width)/2)
-    myShader:send("player_y", player.y+getTranslation().y*tileWidth*scale+(height2-height)/2)
+	--player.x is middle of body
+	--player.y is bottom of feet
+	--coords mark where "hitbox" is, not where drawing actually starts
+
+	player.x = (player.tileX-1)*scale*tileUnit+wallSprite.width
+	player.x = player.x+scale*tileHeight/2
+
+	player.y = (player.tileY-1)*scale*tileUnit+wallSprite.height
+	--bottom of feet not actually halfway on tile
+	--looks better this way b/c feet have very slight depth
+	player.y = player.y+scale*(2/3*tileUnit)
+
+    myShader:send("player_x", player.x+getTranslation().x*tileUnit*scale+(width2-width)/2)
+    myShader:send("player_y", player.y+getTranslation().y*tileUnit*scale+(height2-height)/2)
+end
+
+function tileToCoordsPlayer(tileY, tileX)
+	local ret = {x = 0, y = 0}
+	ret.x = tileToCoordsXPlayer(tileX)
+	ret.y = tileToCoordsYPlayer(tileY)
+	return ret
+end
+
+function tileToCoordsYPlayer(tileY)
+	return (tileY-1)*scale*tileUnit+wallSprite.height+scale*(2/3*tileUnit)
+end
+
+function tileToCoordsXPlayer(tileX)
+	return (tileX-1)*scale*tileUnit+wallSprite.width+scale*tileUnit/2
 end
 
 function postRoomEnter()
@@ -2511,7 +2499,7 @@ function love.update(dt)
 	end
 
 	--game timer
-	if gameTime.timeLeft<=0 and not loadTutorial then
+	if gameTime.timeLeft<=0 and not loadTutorial and floorIndex ~= -1 then
 		kill()
 	end
 	gameTime.totalTime = gameTime.totalTime+dt
@@ -2708,7 +2696,7 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 		end
 	end
 
-	if key=="e" then
+	if key=="e" and not releaseBuild then
 		editorMode = not editorMode
 		if floorIndex == -1 then
 			--started = false
@@ -2732,7 +2720,7 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 		mainMap.cheated = true--kind of hacky
 	else
 		if key == 'r' then
-			if loadTutorial then
+			if loadTutorial or floorIndex == -1 then
 				player.dead = false
 				player.y = (player.enterY-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
 				player.tileY = player.enterY
@@ -2743,21 +2731,20 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 				player.prevx = player.x
 				player.prevTileX = player.enterX
 				for i = 1, tools.numNormalTools do
-					if (completedRooms[mapy][mapx] == 1) then
-						player.totalItemsGiven[i] = player.totalItemsGiven[i] - map.getItemsGiven(mainMap[mapy][mapx].roomid)[1][i]
-						player.totalItemsNeeded[i] = player.totalItemsNeeded[i] - map.getItemsNeeded(mainMap[mapy][mapx].roomid)[1][i]
+					local roomItemsGiven = map.getItemsGiven(mainMap[mapy][mapx].roomid)
+					local roomItemsNeeded = map.getItemsNeeded(mainMap[mapy][mapx].roomid)
+					if (completedRooms[mapy][mapx] == 1) and (roomItemsGiven~=nil and roomItemsNeeded~=nil) then
+						player.totalItemsGiven[i] = player.totalItemsGiven[i] - roomItemsGiven[1][i]
+						player.totalItemsNeeded[i] = player.totalItemsNeeded[i] - roomItemsNeeded[1][i]
 					end
 					tools[i].numHeld = player.totalItemsGiven[i] - player.totalItemsNeeded[i]
 					if tools[i].numHeld < 0 then tools[i].numHeld = 0 end
 				end
-				completedRooms[mapy][mapx] = 0
-				for i = 0, mainMap.height do
-					for j = 0, mainMap.height do
-						if completedRooms[i][j] == 0 then
-							hackEnterRoom(mainMap[i][j].roomid, i, j)
-						end
-					end
-				end
+
+				hackEnterRoom(mainMap[mapy][mapx].roomid, i, j)
+
+				setPlayerLoc()
+				myShader:send("b_and_w", 0)
 			else
 				if floorIndex>=5 then
 					unlocks.unlockUnlockableRef(unlocks.roomRerollerUnlock)
@@ -3388,7 +3375,7 @@ function resolveConflicts()
 end
 
 function checkDeath()
-	if editorMode or floorIndex<1 then
+	if editorMode then
 		return
 	end
 	if room[player.tileY][player.tileX]~=nil then
@@ -3440,12 +3427,6 @@ function love.mousepressed(x, y, button, istouch, isPlayback)
 	end
 	mouseDown = true
 
-	if charSelect then
-		selectedBox.y = math.floor(y/(height/3))
-		selectedBox.x = math.floor(x/(width/5))
-		return
-	end
-
 	if gamePaused then
 		return
 	end
@@ -3456,10 +3437,10 @@ function love.mousepressed(x, y, button, istouch, isPlayback)
 	saving.recordMouseInput(x, y, button, istouch, false)
 
 	local bigRoomTranslation = getTranslation()
-	tileLocX = math.ceil((mouseX-wallSprite.width)/(scale*tileWidth))-bigRoomTranslation.xInteger
-	tileLocY = math.ceil((mouseY-wallSprite.height)/(scale*tileHeight))-bigRoomTranslation.yInteger
+	tileLocX = math.ceil((mouseX-wallSprite.width)/(scale*tileUnit))-bigRoomTranslation.xInteger
+	tileLocY = math.ceil((mouseY-wallSprite.height)/(scale*tileUnit))-bigRoomTranslation.yInteger
 	if room[tileLocY+1] ~= nil and room[tileLocY+1][tileLocX] ~= nil then
-		tileLocY = math.ceil((mouseY-wallSprite.height-room[tileLocY+1][tileLocX]:getYOffset()*scale)/(scale*tileHeight))-bigRoomTranslation.yInteger
+		tileLocY = math.ceil((mouseY-wallSprite.height-room[tileLocY+1][tileLocX]:getYOffset()*scale)/(scale*tileUnit))-bigRoomTranslation.yInteger
 	end
 
 	if editorMode then
@@ -3467,8 +3448,13 @@ function love.mousepressed(x, y, button, istouch, isPlayback)
 	end
 	--mouseX = x-width2/2+16*screenScale/2
 	--mouseY = y-height2/2+9*screenScale/2
-	mouseX = x-(width2-width)/2
-	mouseY = y-(height2-height)/2
+	
+	--mouseX = x-(width2-width)/2
+	--mouseY = y-(height2-height)/2
+	mouseX = x
+	mouseY = y
+	local bigRoomTranslation = getTranslation()
+	mouseTranslated = {x = mouseX-bigRoomTranslation.x*scale*tileUnit, y = mouseY-bigRoomTranslation.y*scale*tileUnit}
 
 	clickActivated = false
 	if mouseY<width/18 and mouseY>0 then
@@ -3493,7 +3479,7 @@ function love.mousepressed(x, y, button, istouch, isPlayback)
 	tools.updateToolableTiles(tool)
 
 	local currentTool = 0
-	if not clickActivated and not (tools.useToolTile(tileLocY, tileLocX)) then
+	if not clickActivated and not (tools.useToolLoc(mouseTranslated.y, mouseTranslated.x, tileLocY, tileLocX)) then
 		tool = 0
 	elseif not clickActivated then
 		if tool<=tools.numNormalTools then
@@ -3529,8 +3515,14 @@ function love.mousemoved(x, y, dx, dy, isTouch, isPlayback)
 	end
 	--mouseX = x-width2/2+16*screenScale/2
 	--mouseY = y-height2/2+9*screenScale/2
-	mouseX = x-(width2-width)/2
-	mouseY = y-(height2-height)/2
+	--mouseX = x-(width2-width)/2
+	--mouseY = y-(height2-height)/2
+	mouseX = x
+	mouseY = y
+	local bigRoomTranslation = getTranslation()
+	mouseTranslated = {x = mouseX-bigRoomTranslation.x*scale*tileUnit, y = mouseY-bigRoomTranslation.y*scale*tileUnit}
+
+
 	local bigRoomTranslation = getTranslation()
 	tileLocX = math.ceil((mouseX-wallSprite.width)/(scale*tileWidth))-bigRoomTranslation.xInteger
 	tileLocY = math.ceil((mouseY-wallSprite.height)/(scale*tileHeight))-bigRoomTranslation.yInteger
@@ -3704,6 +3696,14 @@ function updateTools()
 end
 
 function updateCursor()
+	local cursor
+
+	--code below sets cursor to tile being added in editorMode
+	--removed because it was annoying and sprites were too small
+	--[[if editorMode and editorAdd>0 and editorAdd<#tiles then
+		cursor = love.mouse.newCursor(tiles[editorAdd]:getEditorSprite(), 0, 0)
+		love.mouse.setCursor(cursor)]]
+
 	if tool==0 then
 		cursor = love.mouse.newCursor('Graphics/herman_small.png', 0, 0)
 		love.mouse.setCursor(cursor)
@@ -3765,7 +3765,7 @@ end
 
 --unlocks all rooms besides hidden rooms (secret rooms and special dungeons)
 function unlockDoors(openLocked)
-	if player.attributes.xrayVision or floorIndex<=0 then
+	if player.attributes.xrayVision or floorIndex == -1 then
 		unlockDoorsPlus()
 		return
 	end
@@ -3857,7 +3857,7 @@ function dropTools()
 	tools.giveRandomTools(tools.roomCompletionBonus.numHeld)
 
 	local dropOverride = map.getFieldForRoom(mainMap[mapy][mapx].roomid, 'itemsGivenOverride')
-	if loadTutorial then
+	if loadTutorial or (floorIndex == -1 and map.getItemsGiven(mainMap[mapy][mapx].roomid) ~= nil) then
 		local toolsToDisplay = {0,0,0,0,0,0,0}
 		for i = 1, tools.numNormalTools do
 			player.totalItemsGiven[i] = player.totalItemsGiven[i] + map.getItemsGiven(mainMap[mapy][mapx].roomid)[1][i]
@@ -3923,7 +3923,7 @@ function dropTools()
 			end
 		end
 		if not done then
-			if floorIndex>=1 then
+			if floorIndex ~= -1 then
 				--bonusTool decides whether or not one more tool will drop from floor
 				local bonusTool = util.random(2, 'toolDrop')
 				bonusTool = bonusTool-1
@@ -3975,13 +3975,13 @@ function onTeleport()
 	player.prevTileY = player.tileY
 end
 
-function onToolUse(tool)
+function onToolUse(currentTool)
 	resetPlayerAttributesTool()
-	player.character:onToolUse(tool)
+	player.character:onToolUse(currentTool)
 	if mainMap[mapy][mapx].toolsUsed == nil then
 		mainMap[mapy][mapx].toolsUsed = {}
 	end
-	mainMap[mapy][mapx].toolsUsed[#mainMap[mapy][mapx].toolsUsed+1] = tool
+	mainMap[mapy][mapx].toolsUsed[#mainMap[mapy][mapx].toolsUsed+1] = currentTool
 
 	--deck of cards trigger
 	if tools.card.numHeld>0 then
@@ -3998,10 +3998,10 @@ function onToolUse(tool)
 		basicsUsed[i] = 0
 	end
 	for i = 1, #mainMap[mapy][mapx].toolsUsed do
-		if mainMap[mapy][mapx].toolsUsed[i]==tool then
+		if mainMap[mapy][mapx].toolsUsed[i]==currentTool then
 			sameTool = sameTool+1
 		end
-		if mainMap[mapy][mapx].toolsUsed[i]>tools.numNormalTools and mainMap[mapy][mapx].toolsUsed[i]~=tool then
+		if mainMap[mapy][mapx].toolsUsed[i]>tools.numNormalTools and mainMap[mapy][mapx].toolsUsed[i]~=currentTool then
 			unlockBlank = true
 		end
 		if mainMap[mapy][mapx].toolsUsed[i]<=tools.numNormalTools and mainMap[mapy][mapx].toolsUsed[i]>0 then
@@ -4028,6 +4028,10 @@ function onToolUse(tool)
 
 	if basicsUsed[1]>0 and basicsUsed[2]>0 and basicsUsed[3]>0 and basicsUsed[4]>0 and basicsUsed[6]>0 then
 		unlocks.unlockUnlockableRef(unlocks.recycleBinUnlock)
+	end
+
+	if tools[tool]~=nil and tools[tool].numHeld<=0 then
+		tool = 0
 	end
 
 	updateTools()
