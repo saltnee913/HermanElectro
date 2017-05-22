@@ -10,7 +10,7 @@ fontSize = 12
 debug = true
 loadTutorial = false
 gamePaused = false
-releaseBuild = true
+releaseBuild = false
 
 gameSpeed = 1
 
@@ -810,6 +810,10 @@ function loadOpeningWorld()
 		room = mainMap[mapy][mapx].room
 		player.tileX = stairsLocs[1].coords.x
 		player.tileY = stairsLocs[1].coords.y
+
+		if unlocks.tutorialBeatenUnlock.unlocked then
+			unlockDoorsOpeningWorld()	
+		end
 	else
 		--getting initial room, depending on if tutorial has been beaten or not
 		for i = 1, mapHeight do
