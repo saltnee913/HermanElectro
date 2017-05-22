@@ -2834,7 +2834,7 @@ end
 
 P.gameStairs = P.tile:new{name = "gameStairs", sprite = 'KenGraphics/gamestairs.png'}
 function P.gameStairs:onEnter()
-	unlocks.unlockUnlockableRef(unlocks.tutorialBeatenUnlock)
+	unlocks.unlockUnlockableRef(unlocks.tutorialBeatenUnlock, true)
 	stairsLocs[1] = {map ={x = mapx, y = mapy}, coords = {x = player.tileX, y = player.tileY}}
 	beginGameSequence("main")
 end
