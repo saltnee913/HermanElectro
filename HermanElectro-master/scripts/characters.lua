@@ -264,7 +264,6 @@ function P.battery:onKeyPressedChar(key)
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
 		if self.powered then
 			self.powered = false
-			self.sprite = self.offSprite
 			self.forcePowerUpdate = false
 		else
 			self.powered = true
@@ -273,7 +272,15 @@ function P.battery:onKeyPressedChar(key)
 		end
 		return true
 	end
+	self:updateSprite()
 	return false
+end
+function P.battery:updateSprite()
+	if self.powered then
+		self.sprite = self.onSprite
+	else
+		self.sprite = self.offSprite
+	end
 end
 function P.battery:onPreUpdatePower()
 	if self.powered then
@@ -290,6 +297,10 @@ function P.battery:onPostUpdatePower()
 	if self.powered then
 		room[player.tileY][player.tileX] = self.storedTile
 	end
+end
+function P.battery:onStartGame()
+	self.powered = false
+	self:updateSprite()
 end
 
 P.giovanni = P.character:new{name = "Giovanni", description = "The Sorcerer", shiftPos = {x = -1, y = -1, z = -1},
