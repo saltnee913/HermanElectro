@@ -4029,7 +4029,7 @@ function onToolUse(currentTool)
 		unlocks.unlockUnlockableRef(unlocks.recycleBinUnlock)
 	end
 
-	if tools[tool].numHeld<=0 then
+	if tools[tool]~=nil and tools[tool].numHeld<=0 then
 		tool = 0
 	end
 
