@@ -60,7 +60,7 @@ function P.displayUnlock(unlockId)
 end
 
 function P.unlockUnlockable(unlockId, bypassTut)
-	if P[unlockId].unlocked == false and ((bypassTut == true) or not (loadTutorial or floorIndex == -1)) then
+	if P[unlockId].unlocked == false and ((bypassTut == true) or stats.doStatsSave()) then
 		P.displayUnlock(unlockId)
 		P[unlockId].unlocked = true
 		writeUnlocks()
