@@ -341,6 +341,10 @@ function P.textinput(text)
 end
 
 local function postTileAddCleanup(tempAdd, tileLocY, tileLocX)
+	if tiles[tempAdd]~=nil and tiles[tempAdd]==tiles.invisibleTile then
+		room[tileLocY][tileLocX]=nil
+	end
+
 	for i = 1, #animals do
 		if animals[i]~=nil and animals[i].tileX == tileLocX and animals[i].tileY == tileLocY then
 			animals[i] = nil
