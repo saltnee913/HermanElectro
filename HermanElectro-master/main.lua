@@ -2064,6 +2064,8 @@ function postRoomEnter()
 		end
 	end
 
+	player.character:postMove()
+
 	--shut off player move animations
 	for i = 1, #processes do
 		if processes[i]:instanceof(processList.movePlayer) then
