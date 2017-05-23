@@ -253,8 +253,8 @@ function P.drawTileLit(tileY, tileX)
 			local overlay = room[tileY][tileX].overlay
 			local toDraw2 = overlay.powered and overlay.poweredSprite~=nil and util.getImage(overlay.poweredSprite) or util.getImage(overlay.sprite)
 			local rot2 = overlay.rotation
-			local tempi2 = i
-			local tempj2 = j
+			local tempi2 = tileX
+			local tempj2 = tileY
 			local addY2 = overlay:getYOffset() + addY
 			--if addY2~=0 then rot2 = 0 end
 			if rot2 == 1 or rot2 == 2 then
