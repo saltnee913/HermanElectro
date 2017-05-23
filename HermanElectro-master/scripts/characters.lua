@@ -324,6 +324,9 @@ function P.giovanni:onKeyPressedChar(key)
 		end
 	end
 end
+function P.giovanni:resetClone()
+	self.shiftPos = {x = -1, y = -1, z = -1}
+end
 function P.giovanni:onCharLoad()
 	self.shiftPos = {x = -1, y = -1, z = -1}
 end

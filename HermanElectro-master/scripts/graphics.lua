@@ -167,55 +167,16 @@ function P.draw()
 				end
 			end
 		end
-		for i = 1, #bossList do
-			if bossList[i]:getBottomTileY()==j then
-				bossList[i]:drawBoss()
-			end
-		end
+
 		for i = 1, #animals do
 			if animals[i]~=nil and litTiles[animals[i].tileY][animals[i].tileX]==1 and not animals[i].pickedUp and animals[i].tileY==j then
-				local animalSprite = util.getImage(animals[i].sprite)
-				local drawCoords = animals[i]:getDrawCoords()
-				local drawx = drawCoords.x
-				local drawy = drawCoords.y
-				
-				love.graphics.draw(animalSprite, drawx, drawy, 0, animals[i].scale, animals[i].scale)
-
-				--overhead marks for animals, frozen or waitCounter or trained 
-				if (not animals[i].dead) and (animals[i].frozen or animals[i].waitCounter>0 or animals[i].trained) then
-					local markSprites = {}
-					if animals[i].frozen then
-						markSprites[#markSprites+1] = util.getImage('Graphics/frozenMark.png')
-					end
-					if animals[i].waitCounter>0 then
-						for i = 1, animals[i].waitCounter do
-							markSprites[#markSprites+1] = util.getImage('Graphics/waitCounterMark.png')
-						end
-					end
-					if animals[i].trained then
-						markSprites[#markSprites+1] = util.getImage('Graphics/trainedMark.png')
-					end
-
-					local markScale = scale
-					
-					for j = 1, #markSprites do
-						local markSprite = markSprites[j]
-						local markx = animals[i].x
-						markx = markx-#markSprites/2*markScale*markSprite:getWidth()+markScale*(j-1)*markSprite:getWidth()
-						local marky = drawy
-						marky = marky-markSprite:getHeight()*markScale
-
-						love.graphics.draw(markSprite, markx, marky, 0, markScale, markScale)
-					end
-				end
+				graphics.drawAnimal(animals[i])
 			end
 		end
 
 		for i = 1, #pushables do
 			if pushables[i]~=nil and not pushables[i].destroyed and litTiles[pushables[i].tileY][pushables[i].tileX]==1 and pushables[i].tileY==j and pushables[i].visible then
-		    	if pushables[i].conductive and pushables[i].powered then toDraw = util.getImage(pushables[i].poweredSprite)
-		    	else toDraw = util.getImage(pushables[i].sprite) end
-				love.graphics.draw(toDraw, pushables[i].x, pushables[i].y, 0, scale, scale)
+		    	graphics.drawPushable(pushables[i])
 			end
 		end
 
@@ -281,13 +242,7 @@ function P.draw()
 		end
 
 		if player.tileY == j and not player.attributes.invisible then
-			--player.x = (player.tileX-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
-			--player.y = (player.tileY-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
-			local charSprite = util.getImage(player.character.sprite)
-			love.graphics.draw(charSprite, math.floor(player.x-charSprite:getWidth()*player.character.scale/2), math.floor(player.y-charSprite:getHeight()*player.character.scale-player.elevation*scale), 0, player.character.scale, player.character.scale)
-			love.graphics.setShader()
-			love.graphics.print(player.character:getInfoText(), math.floor(player.x-charSprite:getWidth()*player.character.scale/2), math.floor(player.y-charSprite:getHeight()*player.character.scale));
-			love.graphics.setShader(myShader)
+			graphics.drawPlayer()
 		end
 
 		--draw clone stuff
@@ -360,29 +315,8 @@ function P.draw()
 		end
 	end
 
-	--Display unlock screen
-	local unlockDisplayer = unlocks.unlocksDisplay
-	local unlockDisplayNum = 0
-	while(unlockDisplayer ~= nil) do
-		local unlock = unlocks[unlockDisplayer.unlockToShow]
-		local unlockSprite = util.getImage(unlock.sprite)
-		local unlocksFrame = util.getImage(unlocks.frame)
-		local tScale = tileWidth/math.max(unlockSprite:getWidth(), unlockSprite:getHeight())
-		local uScale = width/500
-		local offsetY = (unlocksFrame:getHeight() - unlockSprite:getHeight()*tScale)/2
-		local offsetX = (unlocksFrame:getWidth() - unlockSprite:getWidth()*tScale)/2
-		local unlockNumOffset = unlocksFrame:getHeight()*uScale*unlockDisplayNum
-		love.graphics.draw(unlocksFrame, 0, height-unlocksFrame:getHeight()*uScale-unlockNumOffset, 0, uScale, uScale)
-		love.graphics.draw(unlockSprite, offsetX*uScale, height-(unlockSprite:getHeight()*tScale+offsetY)*uScale-unlockNumOffset, 0, uScale*tScale, uScale*tScale)
-		unlockDisplayer = unlockDisplayer.nextUnlock
-		unlockDisplayNum = unlockDisplayNum + 1
-	end
-	barLength = 200
 	if editorMode then
 		editor.draw()
-	end
-	if loadTutorial then
-		tutorial.draw()
 	end
 	if debugText ~= nil then
 		text.print(debugText, 0, 100, {255,140,0,255}, nil, 22)
@@ -553,6 +487,57 @@ function P.drawMap()
 			end
 		end
 	end
+end
+
+function P.drawPlayer()
+	local charSprite = util.getImage(player.character.sprite)
+	love.graphics.draw(charSprite, math.floor(player.x-charSprite:getWidth()*player.character.scale/2), math.floor(player.y-charSprite:getHeight()*player.character.scale-player.elevation*scale), 0, player.character.scale, player.character.scale)
+	love.graphics.setShader()
+	love.graphics.print(player.character:getInfoText(), math.floor(player.x-charSprite:getWidth()*player.character.scale/2), math.floor(player.y-charSprite:getHeight()*player.character.scale));
+	love.graphics.setShader(myShader)
+end
+
+function P.drawAnimal(animal)
+	local animalSprite = util.getImage(animal.sprite)
+	local drawCoords = animal:getDrawCoords()
+	local drawx = drawCoords.x
+	local drawy = drawCoords.y
+	
+	love.graphics.draw(animalSprite, drawx, drawy, 0, animal.scale, animal.scale)
+
+	--overhead marks for animals, frozen or waitCounter or trained 
+	if (not animal.dead) and (animal.frozen or animal.waitCounter>0 or animal.trained) then
+		local markSprites = {}
+		if animal.frozen then
+			markSprites[#markSprites+1] = util.getImage('Graphics/frozenMark.png')
+		end
+		if animal.waitCounter>0 then
+			for i = 1, animal.waitCounter do
+				markSprites[#markSprites+1] = util.getImage('Graphics/waitCounterMark.png')
+			end
+		end
+		if animal.trained then
+			markSprites[#markSprites+1] = util.getImage('Graphics/trainedMark.png')
+		end
+
+		local markScale = scale
+		
+		for j = 1, #markSprites do
+			local markSprite = markSprites[j]
+			local markx = animal.x
+			markx = markx-#markSprites/2*markScale*markSprite:getWidth()+markScale*(j-1)*markSprite:getWidth()
+			local marky = drawy
+			marky = marky-markSprite:getHeight()*markScale
+
+			love.graphics.draw(markSprite, markx, marky, 0, markScale, markScale)
+		end
+	end
+end
+
+function P.drawPushable(pushable)
+	if pushable.conductive and pushable.powered then toDraw = util.getImage(pushable.poweredSprite)
+	else toDraw = util.getImage(pushable.sprite) end
+	love.graphics.draw(toDraw, pushable.x, pushable.y, 0, scale, scale)
 end
 
 function P.drawWallsAndFloor()

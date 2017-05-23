@@ -879,6 +879,7 @@ function loadOpeningWorld()
 	--remove supers
 	emptyTools()
 
+	postRoomEnter()
 	--unlockDoors()
 	updateGameState()
 end
@@ -2267,6 +2268,9 @@ function postRoomEnter()
 		tools.playerCloner.cloneExists = false
 		player.clonePos = {x = 0, y = 0, z = 0}
 		tools.playerCloner.image = tools.playerCloner.imageNoClone
+	end
+	if player.character.shiftPos~=nil then
+		player.character:resetClone()
 	end
 
 	if player.attributes.gifted then
