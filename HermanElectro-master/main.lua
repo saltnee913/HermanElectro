@@ -2083,6 +2083,31 @@ function enterMove()
 			end
 		end
 	end
+
+	if room[player.tileY][player.tileX]~=nil then
+		if player.prevTileY == player.tileY and player.prevTileX == player.tileX then
+			room[player.tileY][player.tileX]:onStay(player)
+			if room[player.tileY][player.tileX]~=nil and room[player.tileY][player.tileX].overlay~=nil then
+				room[player.tileY][player.tileX].overlay:onStay(player)
+			end
+		else
+			player.character:preTileEnter(room[player.tileY][player.tileX])
+			preTileEnter(room[player.tileY][player.tileX])
+			room[player.tileY][player.tileX]:onEnter(player)
+			if room[player.tileY][player.tileX]~=nil and room[player.tileY][player.tileX].overlay~=nil then
+				room[player.tileY][player.tileX].overlay:onEnter(player)
+			end
+		end
+	end
+	if not (player.prevTileY == player.tileY and player.prevTileX == player.tileX) then
+		if room~=nil and not player.justTeleported and room[player.prevTileY][player.prevTileX]~=nil then
+			room[player.prevTileY][player.prevTileX]:onLeave(player)
+			if room[player.prevTileY][player.prevTileX]~=nil and room[player.prevTileY][player.prevTileX].overlay~=nil then
+				room[player.prevTileY][player.prevTileX].overlay:onLeave(player)
+			end
+		end
+		player.character:onTileLeave()
+	end
 end
 
 function preTileEnter(tile)
@@ -2938,7 +2963,40 @@ function postAnimalMovement()
 		end
 	end
 
+	for i = 1, #animals do
+		if animals[i]:hasMoved() and not animals[i].dead then
+			if room[animals[i].prevTileY]~=nil and room[animals[i].prevTileY][animals[i].prevTileX]~=nil then
+				room[animals[i].prevTileY][animals[i].prevTileX]:onLeaveAnimal(animals[i])
+				if (not animals[i].dead) and room[animals[i].prevTileY][animals[i].prevTileX]~=nil
+				and room[animals[i].prevTileY][animals[i].prevTileX].overlay~=nil then
+					room[animals[i].prevTileY][animals[i].prevTileX].overlay:onLeaveAnimal(animals[i])
+				end
+				if room[animals[i].prevTileY][animals[i].prevTileX]:usableOnNothing() then
+					room[animals[i].prevTileY][animals[i].prevTileX] = animals[i]:onNullLeave(animals[i].prevTileY, animals[i].prevTileX)
+				end
+			else
+				room[animals[i].prevTileY][animals[i].prevTileX] = animals[i]:onNullLeave(animals[i].prevTileY, animals[i].prevTileX)
+			end
+		end
+	end
 	resetAnimals()
+	for i = 1, #animals do
+		if animals[i]:hasMoved() and not animals[i].dead then
+			if room[animals[i].tileY][animals[i].tileX]~=nil then
+				room[animals[i].tileY][animals[i].tileX]:onEnterAnimal(animals[i])
+				if (not animals[i].dead) and room[animals[i].tileY][animals[i].tileX]~=nil
+				and room[animals[i].tileY][animals[i].tileX].overlay~=nil then
+					room[animals[i].tileY][animals[i].tileX].overlay:onEnterAnimal(animals[i])
+				end
+			end
+		elseif room[animals[i].tileY][animals[i].tileX]~=nil then
+			room[animals[i].tileY][animals[i].tileX]:onStayAnimal(animals[i])
+			if (not animals[i].dead) and room[animals[i].tileY][animals[i].tileX]~=nil
+			and room[animals[i].tileY][animals[i].tileX].overlay~=nil then
+				room[animals[i].tileY][animals[i].tileX].overlay:onStayAnimal(animals[i])
+			end
+		end
+	end
 
 	for i = 1, #animals do
 		for j = 1, #pushables do
