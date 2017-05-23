@@ -626,13 +626,6 @@ function P.drawWallsAndFloor()
 					else
 						toDrawFloor = floortiles[floorIndex-1][3]
 					end
-					if (i*i+j*j*j-1)%27==0 then
-						--toDrawFloor = secondaryTiles[floorIndex-1][1]
-					elseif (i*i+j*j*j-1)%29==1 then
-						--toDrawFloor = secondaryTiles[floorIndex-1][2]
-					elseif (i*i+j*j*j-1)%31==2 then
-						--toDrawFloor = secondaryTiles[floorIndex-1][3]
-					end
 				end
 				fto = map.getFieldForRoom(mainMap[mapy][mapx].roomid, "floorTileOverride")
 				if (fto~=nil) then
@@ -649,6 +642,82 @@ function P.drawWallsAndFloor()
 			end
 		end
 	end
+end
+
+function P.createShader()
+	myShader = love.graphics.newShader[[
+	extern bool shaderTriggered;
+	extern number tint_r = 0;
+	extern number tint_g = 0;
+	extern number tint_b = 0;
+	extern number floorTint_r;
+	extern number floorTint_g;
+	extern number floorTint_b;
+	extern number player_x;
+	extern number player_y;
+	extern vec4 lamps[100];
+	extern number player_range = 300;
+	extern number bonus_range = 0;
+	extern number b_and_w = 0;
+	extern bool g_and_w;
+	extern bool createShadows = true;
+
+	vec4 effect( vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords ){
+	  	vec4 pixel = Texel(texture, texture_coords );//This is the current pixel color
+	  	if (!shaderTriggered) return pixel;
+
+  		number xdist = player_x-screen_coords[0];
+		number ydist = player_y-screen_coords[1];
+		number playerDist = sqrt(xdist*xdist+ydist*ydist)/(player_range+bonus_range);
+		if (playerDist<2)
+			playerDist = 1+playerDist*playerDist/4;
+		if (playerDist<0)
+		  	playerDist = 1;
+		number divVal = 100000;
+		if (playerDist<divVal)
+		  	divVal = playerDist;
+		if (!createShadows)
+			divVal = 1;
+		number totaltint_r = tint_r/divVal;
+		number totaltint_g = tint_g/divVal;
+		number totaltint_b = tint_b/divVal;
+
+		//lamps
+		for (int i=0;i<10;i=i+1) {
+			if (lamps[i][0]>=0) {
+				number lampxdist = lamps[i][0]-screen_coords[0];
+				number lampydist = lamps[i][1]-screen_coords[1];
+				number totalLampDist = sqrt(lampxdist*lampxdist+lampydist*lampydist)/lamps[i][3];
+				totaltint_r = totaltint_r+lamps[i][2]/totalLampDist;
+				totaltint_g = totaltint_g+lamps[i][2]/totalLampDist;
+				totaltint_b = totaltint_b+lamps[i][2]/totalLampDist;
+			}
+        }
+
+    	if(totaltint_r>1) totaltint_r=1;
+        if(totaltint_g>1) totaltint_g=1;
+        if(totaltint_b>1) totaltint_b=1;
+
+		pixel.r = pixel.r*totaltint_r*(1-(floorTint_g+floorTint_b));
+        pixel.g = pixel.g*totaltint_g*(1-(floorTint_r+floorTint_b));
+        pixel.b = pixel.b*totaltint_b*(1-(floorTint_r+floorTint_g));
+        
+        if (b_and_w>0) {
+    		float avg = (pixel.r+pixel.g+pixel.b)/3;
+    		pixel.r = avg*b_and_w+pixel.r*(1-b_and_w);
+    		pixel.g = avg*b_and_w+pixel.g*(1-b_and_w);
+    		pixel.b = avg*b_and_w+pixel.b*(1-b_and_w);
+        }
+        /*else if (tint_r!=1 || tint_g!=1 || tint_b!=1) {
+        	float avg = (pixel.r+pixel.g+pixel.b)/3;
+    		pixel.r = avg*tint_r;
+    		pixel.g = avg*tint_g;
+    		pixel.b = avg*tint_b;
+        }*/
+
+		return pixel;
+	}
+	]]
 end
 
 return graphics

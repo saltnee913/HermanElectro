@@ -89,70 +89,6 @@ local function doItemsNeededCalcs()
 end
 
 function love.load()
-	--doItemsNeededCalcs()
-	--[[local json = require('scripts.dkjson')
-	local itemsNeededs = {}
-	local ls = {}
-	ls[1] = {}
-	ls[1][1] = {0,0,0,0,0,3,0}
-	 ls[2] = {}
-	ls[2][1] = {0,1,0,0,0,0,0}
-	ls[2][2] = {0,0,0,1,0,0,0}
-	ls[2][3] = {1,0,0,0,0,0,0}
-	ls[2][4] = {0,0,1,0,0,0,0}
-	ls[2][5] = {0,0,0,0,1,0,0}
-	 ls[3] = {}
-	ls[3][1] = {0,0,0,0,0,0,1}
-	ls[3][2] = {0,0,0,0,0,1,0}
-	ls[3][3] = {1,1,0,0,0,0,0}
-	 ls[4] = {}
-	ls[4][1] = {0,1,0,0,0,1,0}
-	ls[4][2] = {0,1,2,0,0,0,0}
-	ls[4][3] = {0,1,1,1,0,0,0}
-	 ls[5] = {}
-	ls[5][1] = {0,0,1,0,0,0,0}
-	ls[5][2] = {0,0,0,1,0,0,0}
-	 ls[6] = {}
-	ls[6][1] = {0,7,0,0,0,0,0}
-	ls[6][2] = {0,4,0,0,0,1,0}
-	for i1 = 1, 1 do
-		for i2 = 1, 5 do
-			for i3 = 1, 3 do
-				for i4 = 1, 3 do
-					for i5 = 1, 2 do
-						for i6 = 1, 2 do
-							local toAdd = {0,0,0,0,0,0,0}
-							addTo(toAdd, ls[1][i1])
-							addTo(toAdd, ls[2][i2])
-							addTo(toAdd, ls[3][i3])
-							addTo(toAdd, ls[4][i4])
-							addTo(toAdd, ls[5][i5])
-							addTo(toAdd, ls[6][i6])
-							itemsNeededs[#itemsNeededs+1] = toAdd
-						end
-					end
-				end
-			end
-		end
-	end
-	for i = 1, #itemsNeededs do
-		for j = 1, #itemsNeededs do
-			if i ~= j and itemsNeededs[j] ~= nil and itemsNeededs[i] ~= nil then
-				local bad = true
-				for k = 1, 7 do
-					if itemsNeededs[i][k] > itemsNeededs[j][k] then
-						bad = false
-					end
-				end
-				if bad then itemsNeededs[i] = nil end
-			end
-		end
-	end
-	local state = {indent = true}
-	print(json.encode(itemsNeededs, state))
-	game.crash()]]
-
-
 	gamePaused = false
 	gameTime = {timeLeft = 260, toolTime = 0, roomTime = 15, levelTime = 200, donateTime = 20, goesDownInCompleted = false, totalTime = 0}
 
@@ -168,61 +104,13 @@ function love.load()
 	globalPowerBlock = false
 	globalDeathBlock = false
 
-	donations = 0
-
 	roomHeight = 12
 	roomLength = 24
-
-	floorDonations = 0
-	recDonations = 26
 
 	won = false
 
 	unlocks.load()
 	stats.load()
-
-	--[[local json = require('scripts.dkjson')
-	local roomsToFix, roomsArray = util.readJSON('RoomData/tut_rooms.json', true)
-	local outputPrint = {rooms = {}, superFields = roomsToFix.superFields}
-	for k, v in pairs(roomsToFix.rooms) do
-		local layouts = v.layouts and v.layouts or {v.layout}
-		for l = 1, #layouts do
-			local layout = layouts[l]
-			for i = 1, #layout do
-				for j = 1, #layout[i] do
-					
-					local rot = layout[i][j]-math.floor(layout[i][j])
-					local val = layout[i][j]
-					if math.floor(layout[i][j]) == 40 then
-						val = {31, 82}
-					elseif math.floor(layout[i][j]) == 48 then
-						val = {31, 83.1}
-					elseif math.floor(layout[i][j]) == 54 then
-						val = {31, 85.3}
-					elseif math.floor(layout[i][j]) == 55 then
-						val = {31, 84.3}
-					elseif math.floor(layout[i][j]) == 79 then
-						val = {24, 4}
-					elseif math.floor(layout[i][j]) == 80 then
-						val = {64, 4}
-					end
-					if type(val) ~= 'number' then
-						val[2] = val[2] + rot
-						if val[2] > math.floor(val[2]) + 0.3 then
-							val[2] = val[2] - 0.4
-						end
-					end
-					layout[i][j] = val
-				end
-			end
-		end
-	end
-	local state = {indent = true, keyorder = roomsArray}
-	print(json.encode(roomsToFix, state))
-	game.crash()]]
-
-	--1=saw
-	--toolMode = 1
 
 	tool = 0
 	for i = 1, #tools do
@@ -246,79 +134,9 @@ function love.load()
 	love.graphics.setColor(255,255,255)
 	love.graphics.setBackgroundColor(255,255,255)
 	forcePowerUpdateNext = false
-	myShader = love.graphics.newShader[[
-		extern bool shaderTriggered;
-		extern number tint_r = 0;
-		extern number tint_g = 0;
-		extern number tint_b = 0;
-		extern number floorTint_r;
-		extern number floorTint_g;
-		extern number floorTint_b;
-		extern number player_x;
-		extern number player_y;
-		extern vec4 lamps[100];
-		extern number player_range = 300;
-		extern number bonus_range = 0;
-		extern number b_and_w = 0;
-		extern bool g_and_w;
-		extern bool createShadows = true;
 
-		vec4 effect( vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords ){
-		  	vec4 pixel = Texel(texture, texture_coords );//This is the current pixel color
-		  	if (!shaderTriggered) return pixel;
+	graphics.createShader()
 
-	  		number xdist = player_x-screen_coords[0];
-			number ydist = player_y-screen_coords[1];
-			number playerDist = sqrt(xdist*xdist+ydist*ydist)/(player_range+bonus_range);
-			if (playerDist<2)
-				playerDist = 1+playerDist*playerDist/4;
-			if (playerDist<0)
-			  	playerDist = 1;
-			number divVal = 100000;
-			if (playerDist<divVal)
-			  	divVal = playerDist;
-			if (!createShadows)
-				divVal = 1;
-			number totaltint_r = tint_r/divVal;
-			number totaltint_g = tint_g/divVal;
-			number totaltint_b = tint_b/divVal;
-
-			//lamps
-			for (int i=0;i<10;i=i+1) {
-				if (lamps[i][0]>=0) {
-					number lampxdist = lamps[i][0]-screen_coords[0];
-					number lampydist = lamps[i][1]-screen_coords[1];
-					number totalLampDist = sqrt(lampxdist*lampxdist+lampydist*lampydist)/lamps[i][3];
-					totaltint_r = totaltint_r+lamps[i][2]/totalLampDist;
-					totaltint_g = totaltint_g+lamps[i][2]/totalLampDist;
-					totaltint_b = totaltint_b+lamps[i][2]/totalLampDist;
-				}
-            }
-
-        	if(totaltint_r>1) totaltint_r=1;
-            if(totaltint_g>1) totaltint_g=1;
-            if(totaltint_b>1) totaltint_b=1;
-
-    		pixel.r = pixel.r*totaltint_r*(1-(floorTint_g+floorTint_b));
-            pixel.g = pixel.g*totaltint_g*(1-(floorTint_r+floorTint_b));
-            pixel.b = pixel.b*totaltint_b*(1-(floorTint_r+floorTint_g));
-            
-            if (b_and_w>0) {
-        		float avg = (pixel.r+pixel.g+pixel.b)/3;
-        		pixel.r = avg*b_and_w+pixel.r*(1-b_and_w);
-        		pixel.g = avg*b_and_w+pixel.g*(1-b_and_w);
-        		pixel.b = avg*b_and_w+pixel.b*(1-b_and_w);
-            }
-            /*else if (tint_r!=1 || tint_g!=1 || tint_b!=1) {
-            	float avg = (pixel.r+pixel.g+pixel.b)/3;
-        		pixel.r = avg*tint_r;
-        		pixel.g = avg*tint_g;
-        		pixel.b = avg*tint_b;
-            }*/
-
-			return pixel;
-		}
-  	]]
 	if not loadedOnce then
 		fontFile = 'Resources/upheavtt.ttf'
 		textBackground = love.graphics.newImage('Graphics/textBackground.png')
@@ -362,39 +180,10 @@ function love.load()
 		blue = love.graphics.newImage('Graphics/blue.png')
 		gray = love.graphics.newImage('Graphics/gray.png')
 		white = love.graphics.newImage('Graphics/white.png')
-		linuxTest = love.graphics.newImage('Graphics/linuxTest.png')
 		toolWrapper = love.graphics.newImage('GraphicsEli/marble1.png')
 		titlescreenCounter = 5
-		--floortile = love.graphics.newImage('Graphics/floortile.png')
-		--floortile = love.graphics.newImage('Graphics/floortilemost.png')
-		--floortile = love.graphics.newImage('Graphics/floortilenew.png')
-		--floortile = love.graphics.newImage('KenGraphics/darkrock.png')
-		--floortile = love.graphics.newImage('KenGraphics/darkrock.png')
-		--floortile2 = love.graphics.newImage('KenGraphics/darkrock.png')
-		--floortile3 = love.graphics.newImage('KenGraphics/darkrock.png')
-		--[[floortile  = love.graphics.newImage('GraphicsEli/marble1.png')
-		floortile2 = love.graphics.newImage('GraphicsEli/marble2.png')
-		floortile3 = love.graphics.newImage('GraphicsEli/marble3.png')]]
-		--[[floortile = love.graphics.newImage('KenGraphics/grass.png')
-		floortile2 = love.graphics.newImage('KenGraphics/grass.png')
-		floortile3 = love.graphics.newImage('KenGraphics/grass.png')]]
-		--[[floortile = love.graphics.newImage('GraphicsColor/greenfloor.png')
-		floortile2 = love.graphics.newImage('GraphicsColor/greenfloor2.png')
-		floortile3 = love.graphics.newImage('GraphicsColor/greenfloor3.png')]]
-		floortile = love.graphics.newImage('GraphicsBrush/grass1.png')
-		floortile2 = love.graphics.newImage('GraphicsBrush/grass2.png')
-		floortile3 = love.graphics.newImage('GraphicsBrush/grass3.png')
-		grassfloortile = love.graphics.newImage('KenGraphics/grass.png')
-		space = love.graphics.newImage('GraphicsColor/space.png')
+
 		dungeonFloor = love.graphics.newImage('GraphicsEli/gold1.png')
-
-		flowerrock1 = love.graphics.newImage('GraphicsBrush/flowerrocks1.png')
-		flowerrock2 = love.graphics.newImage('GraphicsBrush/flowerrocks2.png')
-		flowerrock3 = love.graphics.newImage('GraphicsBrush/flowerrocks3.png')
-
-		grassrock1 = love.graphics.newImage('GraphicsBrush/grassrocks1.png')
-		grassrock2 = love.graphics.newImage('GraphicsBrush/grassrocks2.png')
-		grassrock3 = love.graphics.newImage('GraphicsBrush/grassrocks3.png')
 
 		floortiles = {}
 		floortiles[5] = {love.graphics.newImage('GraphicsEli/blueLines1.png'),love.graphics.newImage('GraphicsEli/blueLines2.png'),love.graphics.newImage('GraphicsEli/blueLines3.png')}
@@ -413,16 +202,6 @@ function love.load()
 		floors[2] = love.graphics.newImage('Graphics/Floors/F2.png')
 		floors[3] = love.graphics.newImage('Graphics/Floors/F3.png')
 		floors[6] = love.graphics.newImage('Graphics/Floors/f6.png')
-
-		secondaryTiles = {}
-		--secondaryTiles[1] = {flowerrock1, flowerrock2, flowerrock3}
-		secondaryTiles[1] = {grassrock1, grassrock2, grassrock3}
-		secondaryTiles[2] = {flowerrock1, flowerrock2, flowerrock3}
-		secondaryTiles[3] = {flowerrock1, flowerrock2, flowerrock3}
-		secondaryTiles[4] = {flowerrock1, flowerrock2, flowerrock3}
-		secondaryTiles[5] = {flowerrock1, flowerrock2, flowerrock3}
-		secondaryTiles[6] = {flowerrock1, flowerrock2, flowerrock3}
-
 
 		invisibleTile = love.graphics.newImage('Graphics/cavesfloor.png')
 		whitetile = love.graphics.newImage('Graphics/whitetile.png')
@@ -2345,10 +2124,12 @@ end
 
 keyTimer = {base = .16, timeLeft = .16, suicideDelay = .5}
 function love.update(dt)
+	dt = gameSpeed*dt
+
 	if gamePaused then
 		return
 	end
-	dt = gameSpeed*dt
+
 	saving.sendNextInputFromRecording()
 	if player~=nil and player.character~=nil then
 		player.character:update(dt)
@@ -3057,89 +2838,49 @@ function processTurn()
 end
 
 function processMove(key, dt)
-	if player.moveMode==1 and dt~=nil then
-		local proposedStep = {x = 0, y = 0}
-		if key=="w" then proposedStep.y = -1*player.speed*dt
-		elseif key=="a" then proposedStep.x = -1*player.speed*dt
-		elseif key=="s" then proposedStep.y = player.speed*dt
-		elseif key=="d" then proposedStep.x = player.speed*dt end
-
-		local proposedTile = coordsToTile(player.y+proposedStep.y, player.x+proposedStep.x)
-		if proposedTile.x~=player.tileX or proposedTile.y~=player.tileY then
-			if proposedTile.x<1 or proposedTile.x>roomLength
-			or proposedTile.y<1 or proposedTile.y>roomHeight
-			or map.blocksMovement(proposedTile.y, proposedTile.x) then
-				return false
-			elseif room[proposedTile.y][proposedTile.x]==nil and math.abs(player.elevation)>3 then
-				return false
-			elseif room[proposedTile.y][proposedTile.x]~=nil and room[proposedTile.y][proposedTile.x]:obstructsMovement()
-			and not player.character:bypassObstructsMovement(room[proposedTile.y][proposedTile.x]) then
-				return false
-			else
-				player.tileX = proposedTile.x
-				player.tileY = proposedTile.y
-				player.x = player.x+proposedStep.x
-				player.y = player.y+proposedStep.y
-				processTurn()
-				return true
+	player.prevx = player.x
+	player.prevy = player.y
+	player.prevTileX = player.tileX
+	player.prevTileY = player.tileY
+	if not map.blocksMovement(player.tileY, player.tileX) then
+    	if key == "w" then
+    		if player.tileY>1 then
+    			player.tileY = player.tileY-1
+    			--player.y = player.y-tileHeight*scale
+			elseif player.tileY==1 and (player.tileX==math.floor(roomLength/2) or player.tileX==math.floor(roomLength/2)+1) then
+				enterRoom(0)
 			end
-		else
-			player.x = player.x+proposedStep.x
-			player.y = player.y+proposedStep.y
+    	elseif key == "s" then
+    		if player.tileY<roomHeight then
+    			player.tileY = player.tileY+1
+    			--player.y = player.y+tileHeight*scale
+			elseif player.tileY == roomHeight and (player.tileX==math.floor(roomLength/2) or player.tileX==math.floor(roomLength/2)+1) then
+				enterRoom(2)
+    		end
+    	elseif key == "a" then
+    		if player.tileX>1 then
+    			player.tileX = player.tileX-1
+    			--player.x = player.x-tileHeight*scale
+			elseif player.tileX == 1 and (player.tileY==math.floor(roomHeight/2) or player.tileY==math.floor(roomHeight/2)+1) then
+				enterRoom(3)
+    		end
+    	elseif key == "d" then
+    		if player.tileX<roomLength then
+    			player.tileX = player.tileX+1
+    			--player.x = player.x+tileHeight*scale
+    		elseif player.tileX == roomLength and (player.tileY==math.floor(roomHeight/2) or player.tileY==math.floor(roomHeight/2)+1) then
+				enterRoom(1)
+			end
 		end
-		return false
-	elseif player.moveMode==0 and player.waitCounter<=0 then
-		player.prevx = player.x
-		player.prevy = player.y
-		player.prevTileX = player.tileX
-		player.prevTileY = player.tileY
-		if not map.blocksMovement(player.tileY, player.tileX) then
-	    	if key == "w" then
-	    		if player.tileY>1 then
-	    			player.tileY = player.tileY-1
-	    			--player.y = player.y-tileHeight*scale
-				elseif player.tileY==1 and (player.tileX==math.floor(roomLength/2) or player.tileX==math.floor(roomLength/2)+1) then
-					enterRoom(0)
-				end
-	    	elseif key == "s" then
-	    		if player.tileY<roomHeight then
-	    			player.tileY = player.tileY+1
-	    			--player.y = player.y+tileHeight*scale
-				elseif player.tileY == roomHeight and (player.tileX==math.floor(roomLength/2) or player.tileX==math.floor(roomLength/2)+1) then
-					enterRoom(2)
-	    		end
-	    	elseif key == "a" then
-	    		if player.tileX>1 then
-	    			player.tileX = player.tileX-1
-	    			--player.x = player.x-tileHeight*scale
-				elseif player.tileX == 1 and (player.tileY==math.floor(roomHeight/2) or player.tileY==math.floor(roomHeight/2)+1) then
-					enterRoom(3)
-	    		end
-	    	elseif key == "d" then
-	    		if player.tileX<roomLength then
-	    			player.tileX = player.tileX+1
-	    			--player.x = player.x+tileHeight*scale
-	    		elseif player.tileX == roomLength and (player.tileY==math.floor(roomHeight/2) or player.tileY==math.floor(roomHeight/2)+1) then
-					enterRoom(1)
-				end
-			end
-			if room[player.tileY][player.tileX]==nil and math.abs(player.elevation)>3 then
-				player.tileX = player.prevTileX
-				player.tileY = player.prevTileY
-			elseif room[player.tileY][player.tileX]~=nil and room[player.tileY][player.tileX]:obstructsMovement() and not player.character:bypassObstructsMovement(room[player.tileY][player.tileX]) then
-				player.tileX = player.prevTileX
-				player.tileY = player.prevTileY
-			end
+		if room[player.tileY][player.tileX]==nil and math.abs(player.elevation)>3 then
+			player.tileX = player.prevTileX
+			player.tileY = player.prevTileY
+		elseif room[player.tileY][player.tileX]~=nil and room[player.tileY][player.tileX]:obstructsMovement() and not player.character:bypassObstructsMovement(room[player.tileY][player.tileX]) then
+			player.tileX = player.prevTileX
+			player.tileY = player.prevTileY
 		end
 	end
-	if player.waitCounter>0 then
-		player.prevx = player.x
-		player.prevy = player.y
-		player.prevTileX = player.tileX
-		player.prevTileY = player.tileY
-		waitTurn = true
-    	player.waitCounter = player.waitCounter-1
-    end
+	
 	if not playerMoved() then
 		player.character:onFailedMove(key)
 	else
