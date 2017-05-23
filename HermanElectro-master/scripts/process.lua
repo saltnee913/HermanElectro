@@ -12,8 +12,8 @@ end
 P.movePlayer = P.basicProcess:new{name = "movePlayer", direction = 0, active = true, time = nil, disableInput = true}
 function P.movePlayer:run(dt)
 	if self.time==nil then
-		self.time = keyTimer.base*100
 		self.baseTime = keyTimer.base*100
+		self.time = self.baseTime
 	end
 	local moveLength = scale*tileHeight/self.baseTime*math.min(self.time, dt*100)
 	if self.direction == 0 then
@@ -29,9 +29,38 @@ function P.movePlayer:run(dt)
     myShader:send("player_y", player.y+getTranslation().y*tileWidth*scale+(height2-height)/2)
 
 	self.time = self.time-dt*100
+	if self.time<=self.baseTime/2 then
+		self:switchTiles()
+	end
 	if self.time<=0 then
 		self.active = false
 		setPlayerLoc()
+	end
+end
+function P.movePlayer:switchTiles()
+	if room[player.tileY][player.tileX]~=nil then
+		if player.prevTileY == player.tileY and player.prevTileX == player.tileX then
+			room[player.tileY][player.tileX]:onStay(player)
+			if room[player.tileY][player.tileX]~=nil and room[player.tileY][player.tileX].overlay~=nil then
+				room[player.tileY][player.tileX].overlay:onStay(player)
+			end
+		else
+			player.character:preTileEnter(room[player.tileY][player.tileX])
+			preTileEnter(room[player.tileY][player.tileX])
+			room[player.tileY][player.tileX]:onEnter(player)
+			if room[player.tileY][player.tileX]~=nil and room[player.tileY][player.tileX].overlay~=nil then
+				room[player.tileY][player.tileX].overlay:onEnter(player)
+			end
+		end
+	end
+	if not (player.prevTileY == player.tileY and player.prevTileX == player.tileX) then
+		if room~=nil and not player.justTeleported and room[player.prevTileY][player.prevTileX]~=nil then
+			room[player.prevTileY][player.prevTileX]:onLeave(player)
+			if room[player.prevTileY][player.prevTileX]~=nil and room[player.prevTileY][player.prevTileX].overlay~=nil then
+				room[player.prevTileY][player.prevTileX].overlay:onLeave(player)
+			end
+		end
+		player.character:onTileLeave()
 	end
 end
 
@@ -41,8 +70,8 @@ function P.moveAnimal:run(dt)
 	if self.animal==nil then return end
 
 	if self.time==nil then
-		self.time = keyTimer.base*100
 		self.baseTime = keyTimer.base*100
+		self.time = self.baseTime
 	end
 	local moveLength = scale*tileHeight/self.baseTime*math.min(self.time, dt*100)
 	if self.direction == 0 then
@@ -56,9 +85,38 @@ function P.moveAnimal:run(dt)
 	end
 
 	self.time = self.time-dt*100
+
+	if self.time<=self.baseTime/2 then
+		self:switchTiles()
+	end
+
 	if self.time<=0 then
 		self.active = false
 		self.animal:setLoc()
+	end
+end
+function P.moveAnimal:switchTiles()
+	--onEnter stuff
+	if room[self.animal.tileY][self.animal.tileX]~=nil then
+		room[self.animal.tileY][self.animal.tileX]:onEnterAnimal(self.animal)
+		if room[self.animal.tileY][self.animal.tileX]~=nil
+		and room[self.animal.tileY][self.animal.tileX].overlay~=nil then
+			room[self.animal.tileY][self.animal.tileX].overlay:onEnterAnimal(self.animal)
+		end
+	end
+
+	--onLeave stuff
+	if room[self.animal.prevTileY]~=nil and room[self.animal.prevTileY][self.animal.prevTileX]~=nil then
+		room[self.animal.prevTileY][self.animal.prevTileX]:onLeaveAnimal(self.animal)
+		if (not self.animal.dead) and room[self.animal.prevTileY][self.animal.prevTileX]~=nil
+		and room[self.animal.prevTileY][self.animal.prevTileX].overlay~=nil then
+			room[self.animal.prevTileY][self.animal.prevTileX].overlay:onLeaveAnimal(self.animal)
+		end
+		if room[self.animal.prevTileY][self.animal.prevTileX]:usableOnNothing() then
+			room[self.animal.prevTileY][self.animal.prevTileX] = self.animal:onNullLeave(self.animal.prevTileY, self.animal.prevTileX)
+		end
+	else
+		room[self.animal.prevTileY][self.animal.prevTileX] = self.animal:onNullLeave(self.animal.prevTileY, self.animal.prevTileX)
 	end
 end
 
