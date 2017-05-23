@@ -107,6 +107,8 @@ function love.load()
 	roomHeight = 12
 	roomLength = 24
 
+	donations = 0
+
 	won = false
 
 	unlocks.load()
