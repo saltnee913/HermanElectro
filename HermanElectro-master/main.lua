@@ -230,7 +230,6 @@ function love.load()
 	end
 	specialTools = {0,0,0}
 	animals = {}
-	animalCounter = 1 --is this still relevant?
 	spotlights = {}
 	pushables = {}
 	bossList = {}
@@ -240,6 +239,7 @@ function love.load()
 	--width = 16*screenScale
 	--height = 9*screenScale
 	--wallSprite = {width = 78*screenScale/50, height = 72*screenScale/50, heightForHitbox = 62*screenScale/50}
+
 	wallSprite = {width = 187*width/1920, height = 170*height/1080, heightBottom = 150*height/1080}
 	--image = love.graphics.newImage("cake.jpg")
 	love.graphics.setNewFont(fontSize)
@@ -1955,7 +1955,6 @@ function createSpotlights()
 end
 
 function createAnimals()
-	animalCounter = 1
 	if room.animals~=nil then animals = room.animals return end
 	animals = {}
 	for i = 1, roomHeight do
@@ -1963,7 +1962,7 @@ function createAnimals()
 			if room[i]~=nil and room[i][j]~=nil and room[i][j].name~=nil and (room[i][j].animal~=nil) then
 				animalToSpawn = room[i][j].animal
 				if not animalToSpawn.dead then
-					animals[animalCounter] = animalToSpawn
+					animals[#animals+1] = animalToSpawn
 					if not animalToSpawn.loaded then
 						animalToSpawn.tileX = j
 						animalToSpawn.tileY = i
@@ -1976,7 +1975,6 @@ function createAnimals()
 						end
 						animalToSpawn.loaded = true
 					end
-					animalCounter=animalCounter+1
 				end
 			end
 		end

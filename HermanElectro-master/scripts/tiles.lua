@@ -1496,12 +1496,12 @@ function P.doghouse:onStep(x, y)
 	for i = 1, #animals do
 		if animals[i].tileY == x and animals[i].tileX == y then return end
 	end
-	animals[animalCounter] = animalList[2]
-	animals[animalCounter].y = y*floor.sprite:getWidth()*scale+wallSprite.height
-	animals[animalCounter].x = x*floor.sprite:getHeight()*scale+wallSprite.width
-	animals[animalCounter].tileX = y
-	animals[animalCounter].tileY = x
-	animalCounter=animalCounter+1
+	local insertPitbullIndex = #animalCounter+1
+	animals[insertPitbullIndex] = animalList.pitbull:new()
+	animals[insertPitbullIndex].y = y*floor.sprite:getWidth()*scale+wallSprite.height
+	animals[insertPitbullIndex].x = x*floor.sprite:getHeight()*scale+wallSprite.width
+	animals[insertPitbullIndex].tileX = y
+	animals[insertPitbullIndex].tileY = x
 end
 
 P.batTile = P.pitbullTile:new{name = "bat", animal = animalList[6], listIndex = 6}
