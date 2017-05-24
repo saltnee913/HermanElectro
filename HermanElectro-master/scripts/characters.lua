@@ -265,14 +265,15 @@ function P.battery:onKeyPressedChar(key)
 		if self.powered then
 			self.powered = false
 			self.forcePowerUpdate = false
+			self:updateSprite()
 		else
 			self.powered = true
 			self.sprite = self.onSprite
 			self.forcePowerUpdate = true
+			self:updateSprite()
 		end
 		return true
 	end
-	self:updateSprite()
 	return false
 end
 function P.battery:updateSprite()
