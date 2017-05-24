@@ -35,6 +35,21 @@ function P.movePlayer:run(dt)
 	end
 end
 
+P.fadeProcess = P.basicProcess:new{name = "fade"}
+function P.fadeProcess:run(dt)
+	if self.time==nil then
+		self.baseTime = keyTimer.base*100
+		self.time = self.baseTime
+	end
+
+	self.time = self.time-dt*100
+	if self.time<=0 then
+		self.time = 0
+		self.active = false
+	end
+	myShader:send("b_and_w", 1-self.time/self.baseTime)
+end
+
 P.moveAnimal = P.basicProcess:new{name = "moveAnimal", direction = 0, active = true, time = nil, disableInput = true,
 animal = nil}
 function P.moveAnimal:run(dt)
@@ -201,4 +216,5 @@ process[3] = P.movePushable
 process[4] = P.grenadeThrow
 process[5] = P.bullet
 process[6] = P.missile
+process[7] = P.fadeProcess
 return process

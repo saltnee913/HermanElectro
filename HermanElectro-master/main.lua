@@ -802,6 +802,7 @@ function loadLevel(floorPath)
 end
 
 function kill(deathSource)
+	if player.dead then return end
 	if editorMode or globalDeathBlock or player.attributes.invincibleCounter>0 then return end
 	--[[if validSpace() and completedRooms[mapy][mapx]>0 then
 		unlocks.unlockUnlockableRef(unlocks.portalUnlock)
@@ -820,7 +821,10 @@ function kill(deathSource)
 	stats.incrementStat(player.character.name..'Losses')
 	stats.incrementStat('totalLosses')
 
-	myShader:send("b_and_w", (not loadTutorial) and 1 or 0)
+	if player.dead then
+    	local fadeProcess = processList.fadeProcess:new()
+		processes[#processes+1] = fadeProcess
+	end
 
 	saving.endRecording()
 end
