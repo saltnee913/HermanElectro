@@ -1206,7 +1206,9 @@ end
 P.upTunnel = P.tunnel:new{name = "upTunnel", sprite = 'KenGraphics/stairsUp.png'}
 function P.upTunnel:onEnter(player)
 	--goUpFloor()
-	beginFloorSequence(0, "up")
+	if floorIndex ~= 2 or not saving.isPlayingBack() then
+		beginFloorSequence(0, "up")
+	end
 end
 function P.upTunnel:onLeave(player)
 	if floorIndex>=7 then
