@@ -5270,6 +5270,8 @@ function P.megaUnlock:usableOnNothing()
 end
 P.megaUnlock.usableOnTile = P.megaUnlock.usableOnNothing
 function P.megaUnlock:useToolNothing()
+	self.numHeld = self.numHeld-1
+	
 	for i = 1, mapHeight do
 		for j = 1, mapHeight do
 			if mainMap[i][j]~=nil then

@@ -3110,6 +3110,23 @@ end
 
 P.bossTile = P.tile:new{name = 'bossTile', boss = bosses.bobBoss}
 
+P.superChest = P.tile:new{name = "superChest", sprite = 'Graphics/Tiles/superChest.png', supers = {}}
+function P.superChest:onEnter()
+	if self.done then return
+	elseif tools.areSupersFull() then return
+	end
+
+	for i = 1, #self.supers do
+		tools.giveToolsByReference({self.supers[i]})
+	end
+
+	self.done = true
+	self.isCompleted = true
+	self.isVisible = false
+	self.gone = true
+end
+
+
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
 tiles[3] = P.powerSupply
@@ -3317,6 +3334,7 @@ tiles[204] = P.bossTile
 tiles[205] = P.mimicTile
 tiles[206] = P.heavenEnter
 tiles[207] = P.heavenExit
+tiles[208] = P.superChest
 
 
 return tiles
