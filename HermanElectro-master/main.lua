@@ -2200,7 +2200,7 @@ function love.update(dt)
 		else
 			player.range = player.range-300*dt
 			if player.range<0 then
-				myShader:send("player_range", player.range)
+				myShader:send("player_range", 5)
 				if floorTransitionInfo.override=="up" then
 					goUpFloor()
 				elseif floorTransitionInfo.override=="down" then
@@ -2211,7 +2211,7 @@ function love.update(dt)
 				floorTransitionInfo.moved = true
 			end
 		end
-		myShader:send("player_range", player.range)
+		myShader:send("player_range", math.max(player.range,5))
 	elseif gameTransition then
 		if gameTransitionInfo.moved then
 			--[[for i = 1, 3 do

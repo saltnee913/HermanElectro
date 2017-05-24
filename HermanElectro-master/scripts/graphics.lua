@@ -630,11 +630,15 @@ function P.createShader()
 
   		number xdist = player_x-screen_coords[0];
 		number ydist = player_y-screen_coords[1];
-		number playerDist = sqrt(xdist*xdist+ydist*ydist)/(player_range+bonus_range);
-		if (playerDist<2)
-			playerDist = 1+playerDist*playerDist/4;
-		if (playerDist<0)
-		  	playerDist = 1;
+		number playerDist = 100000;
+		if (player_range>0) {
+			playerDist = sqrt(xdist*xdist+ydist*ydist)/(player_range+bonus_range);
+			if (playerDist<2)
+				playerDist = 1+playerDist*playerDist/4;
+			if (playerDist<0)
+			  	playerDist = 1;
+		}
+
 		number divVal = 100000;
 		if (playerDist<divVal)
 		  	divVal = playerDist;
@@ -643,6 +647,7 @@ function P.createShader()
 		number totaltint_r = tint_r/divVal;
 		number totaltint_g = tint_g/divVal;
 		number totaltint_b = tint_b/divVal;
+		
 
 		//lamps
 		for (int i=0;i<10;i=i+1) {
@@ -664,6 +669,12 @@ function P.createShader()
         pixel.g = pixel.g*totaltint_g*(1-(floorTint_r+floorTint_b));
         pixel.b = pixel.b*totaltint_b*(1-(floorTint_r+floorTint_g));
         
+        if (player_range<=0) {
+        	pixel.r = 0;
+        	pixel.g = 0;
+        	pixel.b = 0;
+        }
+
         if (b_and_w>0) {
     		float avg = (pixel.r+pixel.g+pixel.b)/3;
     		pixel.r = avg*b_and_w+pixel.r*(1-b_and_w);
