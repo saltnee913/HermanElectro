@@ -107,7 +107,7 @@ function love.load()
 	roomHeight = 12
 	roomLength = 24
 
-	donations = 0
+	donations = 100
 
 	won = false
 

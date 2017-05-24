@@ -806,7 +806,6 @@ end
 
 
 function P.chooseSupertool(quality)
-	unlocks = require('scripts.unlocks')
 	unlockedSupertools = unlocks.getUnlockedSupertools()
 	if quality == nil then
 		local toolId
@@ -818,6 +817,7 @@ function P.chooseSupertool(quality)
 		local toolId
 		repeat
 			toolId = util.random(#tools-tools.numNormalTools,'toolDrop')+tools.numNormalTools
+			print(toolId)
 		until(unlockedSupertools[toolId] and tools[toolId].quality == quality and not tools[toolId].isDisabled)
 		return toolId
 	end
@@ -3992,8 +3992,8 @@ function P.christmasSurprise:useToolTile(tile, tileY, tileX)
 	local toSpawn = pushableList.giftBox:new()
 	toSpawn.tileY = tileY
 	toSpawn.tileX = tileX
-	pushables[#pushables+1] = toSpawn
 	toSpawn:setLoc()
+	pushables[#pushables+1] = toSpawn
 	tools.saw.numHeld = tools.saw.numHeld+1
 	for i = 1, #pushables do
 		if pushables[i].name == "box" then
