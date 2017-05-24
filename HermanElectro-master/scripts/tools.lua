@@ -351,7 +351,7 @@ function P.tool:getToolableTilesBox()
 			if tileToCheck.x<=0 or tileToCheck.x>roomLength then break end
 			if room[tileToCheck.y]~=nil then
 				local dist = offset.y+offset.x
-				if ((room[tileToCheck.y][tileToCheck.x] == nil or room[tileToCheck.y][tileToCheck.x]:usableOnNothing(tileToCheck.y, tileToCheck.x) and self:usableOnNothing(tileToCheck.y, tileToCheck.x))
+				if ((room[tileToCheck.y][tileToCheck.x] == nil or room[tileToCheck.y][tileToCheck.x]:usableOnNothing(tileToCheck.y, tileToCheck.x)) and self:usableOnNothing(tileToCheck.y, tileToCheck.x))
 				or (room[tileToCheck.y][tileToCheck.x] ~= nil and self:usableOnTile(room[tileToCheck.y][tileToCheck.x], tileToCheck.y, tileToCheck.x) and
 				player.elevation<=room[tileToCheck.y][tileToCheck.x]:getHeight()) then
 					if math.abs(tileToCheck.y-player.tileY)+math.abs(tileToCheck.x-player.tileX)<=self.range then
