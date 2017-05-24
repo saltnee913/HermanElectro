@@ -53,7 +53,8 @@ end
 P.moveAnimal = P.basicProcess:new{name = "moveAnimal", direction = 0, active = true, time = nil, disableInput = true,
 animal = nil}
 function P.moveAnimal:run(dt)
-	if self.animal==nil then return end
+	if self.animal==nil then return
+	elseif self.animal.dead then return end
 
 	if self.time==nil then
 		self.baseTime = keyTimer.base*100

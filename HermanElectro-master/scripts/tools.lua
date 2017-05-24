@@ -817,7 +817,6 @@ function P.chooseSupertool(quality)
 		local toolId
 		repeat
 			toolId = util.random(#tools-tools.numNormalTools,'toolDrop')+tools.numNormalTools
-			print(toolId)
 		until(unlockedSupertools[toolId] and tools[toolId].quality == quality and not tools[toolId].isDisabled)
 		return toolId
 	end
@@ -5206,7 +5205,6 @@ P.demonHoof = P.superTool:new{name = "Demon Hoof", baseRange = 1, description = 
 function P.demonHoof:giveOne()
 	self.numHeld = self.numHeld+1
 	player.attributes.superRammy = true
-	print("you are super")
 end
 function P.demonHoof:usableOnTile(tile)
 	return true
