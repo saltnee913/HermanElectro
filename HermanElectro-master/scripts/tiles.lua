@@ -138,7 +138,7 @@ function P.tile:allowVision()
 	self.blocksVision = false
 end
 function P.tile:usableOnNothing()
-	return self.destroyed and not (tool~=nil and tool~=0 and tools[tool]:nothingIsSomething())
+	return false
 end
 function P.tile:updateToOverlay(dir)
 	if self.overlay == nil then
@@ -230,6 +230,9 @@ function P.powerSupply:destroy()
 	self.dirAccept = {0,0,0,0}
 	self.dirSend = {0,0,0,0}
 end
+function P.powerSupply:usableOnNothing()
+	return self.destroyed and not (tool~=nil and tool~=0 and tools[tool]:nothingIsSomething())
+end
 
 P.wire = P.conductiveTile:new{overlaying = true, powered = false, dirSend = {1,1,1,1}, dirAccept = {1,1,1,1}, canBePowered = true, name = "wire",
 destroyedSprite = 'Graphics/Tiles/wireCut.png', 
@@ -242,6 +245,9 @@ function P.wire:destroy()
 	self.destroyed = true
 	dirAccept = {0,0,0,0}
 	dirSend = {0,0,0,0}
+end
+function P.wire:usableOnNothing()
+	return self.destroyed and not (tool~=nil and tool~=0 and tools[tool]:nothingIsSomething())
 end
 
 P.maskedWire = P.wire:new{name = 'maskedWire', sprite = 'Graphics/maskedWire.png', poweredSprite = 'Graphics/maskedWire.png'}
@@ -563,6 +569,9 @@ function P.wall:onEnter(player)
 	else
 		player.elevation = self:getHeight()
 	end
+end
+function P.wall:usableOnNothing()
+	return self.destroyed and not (tool~=nil and tool~=0 and tools[tool]:nothingIsSomething())
 end
 P.wall.onStay = P.wall.onEnter
 function P.wall:onEnterPushable(pushable)

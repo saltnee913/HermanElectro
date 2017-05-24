@@ -265,14 +265,15 @@ function P.battery:onKeyPressedChar(key)
 		if self.powered then
 			self.powered = false
 			self.forcePowerUpdate = false
+			self:updateSprite()
 		else
 			self.powered = true
 			self.sprite = self.onSprite
 			self.forcePowerUpdate = true
+			self:updateSprite()
 		end
 		return true
 	end
-	self:updateSprite()
 	return false
 end
 function P.battery:updateSprite()
@@ -433,7 +434,7 @@ function P.fish:onToolUse()
 	end
 end
 
-P.xavier = P.character:new{name = "Gru", description = "Resistance", sockMode = false,
+P.xavier = P.character:new{name = "Gru", description = "The Resistance", sockMode = false,
 sprite = 'Graphics/Characters/Xavier.png', sockSprite = 'Graphics/Characters/XavierSock.png',
 noSockSprite = 'Graphics/Characters/Xavier.png', scale = 1.1*scale}
 function P.xavier:onKeyPressedChar(key)

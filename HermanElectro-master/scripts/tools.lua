@@ -351,7 +351,7 @@ function P.tool:getToolableTilesBox()
 			if tileToCheck.x<=0 or tileToCheck.x>roomLength then break end
 			if room[tileToCheck.y]~=nil then
 				local dist = offset.y+offset.x
-				if (room[tileToCheck.y][tileToCheck.x] == nil and self:usableOnNothing(tileToCheck.y, tileToCheck.x))
+				if ((room[tileToCheck.y][tileToCheck.x] == nil or room[tileToCheck.y][tileToCheck.x]:usableOnNothing(tileToCheck.y, tileToCheck.x)) and self:usableOnNothing(tileToCheck.y, tileToCheck.x))
 				or (room[tileToCheck.y][tileToCheck.x] ~= nil and self:usableOnTile(room[tileToCheck.y][tileToCheck.x], tileToCheck.y, tileToCheck.x) and
 				player.elevation<=room[tileToCheck.y][tileToCheck.x]:getHeight()) then
 					if math.abs(tileToCheck.y-player.tileY)+math.abs(tileToCheck.x-player.tileX)<=self.range then
@@ -760,7 +760,7 @@ function P.sponge:useToolTile(tile, tileY, tileX)
 		--unlocks = require('scripts.unlocks')
 		--unlocks.unlockUnlockableRef(unlocks.puddleUnlock)
 		room[tileY][tileX] = nil
-	elseif tile:instanceof(tiles.stickyButton) or tile:instanceof(tiles.button) then
+	elseif tile:instanceof(tiles.button) then
 		if tile:instanceof(tiles.stayButton) then
 			room[tileY][tileX] = tiles.stayButton:new()
 		else
@@ -806,7 +806,6 @@ end
 
 
 function P.chooseSupertool(quality)
-	unlocks = require('scripts.unlocks')
 	unlockedSupertools = unlocks.getUnlockedSupertools()
 	if quality == nil then
 		local toolId
@@ -818,6 +817,7 @@ function P.chooseSupertool(quality)
 		local toolId
 		repeat
 			toolId = util.random(#tools-tools.numNormalTools,'toolDrop')+tools.numNormalTools
+			print(toolId)
 		until(unlockedSupertools[toolId] and tools[toolId].quality == quality and not tools[toolId].isDisabled)
 		return toolId
 	end
@@ -3992,8 +3992,8 @@ function P.christmasSurprise:useToolTile(tile, tileY, tileX)
 	local toSpawn = pushableList.giftBox:new()
 	toSpawn.tileY = tileY
 	toSpawn.tileX = tileX
-	pushables[#pushables+1] = toSpawn
 	toSpawn:setLoc()
+	pushables[#pushables+1] = toSpawn
 	tools.saw.numHeld = tools.saw.numHeld+1
 	for i = 1, #pushables do
 		if pushables[i].name == "box" then

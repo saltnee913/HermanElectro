@@ -107,7 +107,7 @@ function love.load()
 	roomHeight = 12
 	roomLength = 24
 
-	donations = 0
+	donations = 100
 
 	won = false
 
@@ -2063,6 +2063,8 @@ function postRoomEnter()
 			end
 		end
 	end
+
+	player.character:postMove()
 
 	--shut off player move animations
 	for i = 1, #processes do
