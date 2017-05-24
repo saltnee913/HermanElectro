@@ -2435,12 +2435,20 @@ function P.toolTaxTile:updateSprite()
 end
 function P.toolTaxTile:onEnter()
 	if player.elevation>=self:getHeight()-3 then return end
-	if not self.destroyed and self.tool.numHeld>0 then
-		self.tool.numHeld = self.tool.numHeld-1
+	if (not self.destroyed) and self:canBeDestroyed() then
+		if self.tool.numHeld>0 then self.tool.numHeld = self.tool.numHeld-1
+		elseif tools.coin.numHeld>0 then tools.coin:useToolTile(self)
+		elseif tools.luckyPenny.numHeld>0 then tools.luckyPenny:useToolTile(self) end
 		self:destroy()
 	elseif not self.destroyed then
 		P.concreteWall:onEnter(player)
 	end
+end
+function P.toolTaxTile:canBeDestroyed()
+	if self.tool.numHeld>0 then return true
+	elseif tools.coin.numHeld>0 then return true
+	elseif tools.luckyPenny.numHeld>0 then return true end
+	return false
 end
 function P.toolTaxTile:destroy()
 	self.blocksProjectiles = false
@@ -2456,7 +2464,7 @@ end
 function P.toolTaxTile:obstructsMovement()
 	if math.abs(player.elevation-self:getHeight())<=3 then
 		return false
-	elseif not self.destroyed and self.tool.numHeld>0 then
+	elseif (not self.destroyed) and self:canBeDestroyed() then
 		return false
 	end
 	return true
