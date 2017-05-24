@@ -5296,6 +5296,34 @@ function P.medicine:useToolNothing()
 end
 P.medicine.useToolTile = P.medicine.useToolNothing
 
+P.eraser = P.superTool:new{name = "Eraser", baseRange = 1, image = 'Graphics/eraser.png', description = "Create the void", quality = 4}
+function P.eraser:usableOnTile()
+	return true
+end
+function P.eraser:usableOnNothing()
+	return true
+end
+function P.eraser:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
+	room[tileY][tileX] = tiles.pit:new()
+end
+function P.eraser:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
+	room[tileY][tileX] = tiles.pit:new()
+end
+
+P.tpRevive = P.superTool:new{name = "Flashback", description = "Not dead...but afraid", baseRange = 0, image = 'Graphics/tprevive.png', destroyOnRevive = false, quality = 5}
+function P.tpRevive:checkDeath()
+	self.numHeld = self.numHeld-1
+
+	P.teleporter.useToolNothing(self, tileY, tileX)
+
+	updateGameState(false)
+	log("Revived!")
+
+	return false
+end
+
 P.numNormalTools = 7
 P.lastToolUsed = 1
 
@@ -5536,6 +5564,9 @@ P:addTool(P.stopwatch)
 P:addTool(P.diagonal)
 P:addTool(P.megaUnlock)
 P:addTool(P.medicine)
+
+P:addTool(P.eraser)
+P:addTool(P.tpRevive)
 
 
 P.resetTools()
