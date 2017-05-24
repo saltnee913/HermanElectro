@@ -622,7 +622,6 @@ function P.createShader()
 	extern number player_range = 300;
 	extern number bonus_range = 0;
 	extern number b_and_w = 0;
-	extern bool g_and_w;
 	extern bool createShadows = true;
 
 	vec4 effect( vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords ){
