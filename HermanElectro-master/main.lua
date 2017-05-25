@@ -810,7 +810,7 @@ function kill(deathSource)
 	player.dead = true
 	for i = 1, #specialTools do
 		if tools[specialTools[i]]~=nil and tools[specialTools[i]].numHeld>0 and not tools[specialTools[i]]:checkDeath(deathSource) then
-			player.dead = false
+			player.dead = falsek
 			onToolUse(specialTools[i])
 			return
 		end

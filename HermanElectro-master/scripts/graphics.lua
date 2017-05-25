@@ -575,6 +575,52 @@ function P.drawWallsAndFloor()
 
 		love.graphics.draw(floorSprite, wallSprite.width-17*scale, wallSprite.height-33*scale,
 		0, xScale, yScale)
+
+		--temp draw doors
+		if validSpace() then
+			local testRooms = {{-1,0}, {1,0}, {0,-1}, {0,1}}
+			for k = 1, #testRooms do
+				local drawFloorPath = true
+				local xdiff = testRooms[k][1]
+				local ydiff = testRooms[k][2]
+				if not (mapx+xdiff<=#completedRooms[mapy] and mapx+xdiff>0 and mapy+ydiff<=#completedRooms and mapy+ydiff>0) then
+					drawFloorPath = false
+				elseif mainMap[mapy+ydiff][mapx+xdiff]==nil then
+					drawFloorPath = false
+				elseif completedRooms[mapy][mapx]<1 and completedRooms[mapy+ydiff][mapx+xdiff]<1 then
+					drawFloorPath = false
+				elseif visibleMap[mapy+ydiff][mapx+xdiff]<1 then
+					drawFloorPath = false
+				end
+
+				toDrawFloor = dungeonFloor
+
+				if not drawFloorPath then
+					if xdiff==1 and ydiff==0 then
+						local doorSprite = util.getImage('Graphics/doorRight.png')
+						local midy = wallSprite.height+tileUnit*roomHeight/2*scale-doorSprite:getHeight()/2*yScale
+						local xloc = wallSprite.width-17*scale
+						xloc = xloc+floorSprite:getWidth()*xScale
+						xloc = xloc-doorSprite:getWidth()*xScale
+						love.graphics.draw(doorSprite, xloc, midy, 0, xScale, yScale)
+					elseif xdiff==-1 and ydiff==0 then
+						local doorSprite = util.getImage('Graphics/doorLeft.png')
+						local midy = wallSprite.height+tileUnit*roomHeight/2*scale-doorSprite:getHeight()/2*yScale
+						love.graphics.draw(doorSprite, wallSprite.width-17*scale, midy, 0, xScale, yScale)
+					elseif xdiff==0 and ydiff==1 then
+						local doorSprite = util.getImage('Graphics/doorBottom.png')
+						local midx = wallSprite.width+tileUnit*roomLength/2*scale-doorSprite:getWidth()/2*scale
+						local yloc = wallSprite.height-33*scale
+						yloc = yloc+floorSprite:getHeight()*yScale-doorSprite:getHeight()*yScale
+						love.graphics.draw(doorSprite, midx, yloc, 0, xScale, yScale)
+					elseif xdiff==0 and ydiff==-1 then
+						local doorSprite = util.getImage('Graphics/doorFront.png')
+						local midx = wallSprite.width+tileUnit*roomLength/2*scale-doorSprite:getWidth()/2*scale
+						love.graphics.draw(doorSprite, midx, wallSprite.height-33*scale, 0, xScale, yScale)
+					end
+				end
+			end
+		end
 	end
 	if (floors[floorIndex-1]==nil or editorMode or fto~=nil) then
 		for i = 1, roomLength do
