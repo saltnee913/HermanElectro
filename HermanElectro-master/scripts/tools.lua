@@ -351,7 +351,7 @@ function P.tool:getToolableTilesBox()
 			if tileToCheck.x<=0 or tileToCheck.x>roomLength then break end
 			if room[tileToCheck.y]~=nil then
 				local dist = offset.y+offset.x
-				if (room[tileToCheck.y][tileToCheck.x] == nil and self:usableOnNothing(tileToCheck.y, tileToCheck.x))
+				if ((room[tileToCheck.y][tileToCheck.x] == nil or room[tileToCheck.y][tileToCheck.x]:usableOnNothing(tileToCheck.y, tileToCheck.x)) and self:usableOnNothing(tileToCheck.y, tileToCheck.x))
 				or (room[tileToCheck.y][tileToCheck.x] ~= nil and self:usableOnTile(room[tileToCheck.y][tileToCheck.x], tileToCheck.y, tileToCheck.x) and
 				player.elevation<=room[tileToCheck.y][tileToCheck.x]:getHeight()) then
 					if math.abs(tileToCheck.y-player.tileY)+math.abs(tileToCheck.x-player.tileX)<=self.range then
@@ -760,7 +760,7 @@ function P.sponge:useToolTile(tile, tileY, tileX)
 		--unlocks = require('scripts.unlocks')
 		--unlocks.unlockUnlockableRef(unlocks.puddleUnlock)
 		room[tileY][tileX] = nil
-	elseif tile:instanceof(tiles.stickyButton) or tile:instanceof(tiles.button) then
+	elseif tile:instanceof(tiles.button) then
 		if tile:instanceof(tiles.stayButton) then
 			room[tileY][tileX] = tiles.stayButton:new()
 		else
@@ -806,7 +806,6 @@ end
 
 
 function P.chooseSupertool(quality)
-	unlocks = require('scripts.unlocks')
 	unlockedSupertools = unlocks.getUnlockedSupertools()
 	if quality == nil then
 		local toolId
@@ -3992,8 +3991,8 @@ function P.christmasSurprise:useToolTile(tile, tileY, tileX)
 	local toSpawn = pushableList.giftBox:new()
 	toSpawn.tileY = tileY
 	toSpawn.tileX = tileX
-	pushables[#pushables+1] = toSpawn
 	toSpawn:setLoc()
+	pushables[#pushables+1] = toSpawn
 	tools.saw.numHeld = tools.saw.numHeld+1
 	for i = 1, #pushables do
 		if pushables[i].name == "box" then
@@ -5206,7 +5205,6 @@ P.demonHoof = P.superTool:new{name = "Demon Hoof", baseRange = 1, description = 
 function P.demonHoof:giveOne()
 	self.numHeld = self.numHeld+1
 	player.attributes.superRammy = true
-	print("you are super")
 end
 function P.demonHoof:usableOnTile(tile)
 	return true
@@ -5272,6 +5270,8 @@ function P.megaUnlock:usableOnNothing()
 end
 P.megaUnlock.usableOnTile = P.megaUnlock.usableOnNothing
 function P.megaUnlock:useToolNothing()
+	self.numHeld = self.numHeld-1
+	
 	for i = 1, mapHeight do
 		for j = 1, mapHeight do
 			if mainMap[i][j]~=nil then
@@ -5297,6 +5297,34 @@ function P.medicine:useToolNothing()
 	--should have more functionality as well, so it's not lame
 end
 P.medicine.useToolTile = P.medicine.useToolNothing
+
+P.eraser = P.superTool:new{name = "Eraser", baseRange = 1, image = 'Graphics/eraser.png', description = "Create the void", quality = 4}
+function P.eraser:usableOnTile()
+	return true
+end
+function P.eraser:usableOnNothing()
+	return true
+end
+function P.eraser:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld-1
+	room[tileY][tileX] = tiles.pit:new()
+end
+function P.eraser:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
+	room[tileY][tileX] = tiles.pit:new()
+end
+
+P.tpRevive = P.superTool:new{name = "Flashback", description = "Not dead...but afraid", baseRange = 0, image = 'Graphics/tprevive.png', destroyOnRevive = false, quality = 5}
+function P.tpRevive:checkDeath()
+	self.numHeld = self.numHeld-1
+
+	P.teleporter.useToolNothing(self, tileY, tileX)
+
+	updateGameState(false)
+	log("Revived!")
+
+	return false
+end
 
 P.numNormalTools = 7
 P.lastToolUsed = 1
@@ -5538,6 +5566,9 @@ P:addTool(P.stopwatch)
 P:addTool(P.diagonal)
 P:addTool(P.megaUnlock)
 P:addTool(P.medicine)
+
+P:addTool(P.eraser)
+P:addTool(P.tpRevive)
 
 
 P.resetTools()

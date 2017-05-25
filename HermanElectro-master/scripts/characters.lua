@@ -265,14 +265,15 @@ function P.battery:onKeyPressedChar(key)
 		if self.powered then
 			self.powered = false
 			self.forcePowerUpdate = false
+			self:updateSprite()
 		else
 			self.powered = true
 			self.sprite = self.onSprite
 			self.forcePowerUpdate = true
+			self:updateSprite()
 		end
 		return true
 	end
-	self:updateSprite()
 	return false
 end
 function P.battery:updateSprite()
@@ -433,7 +434,7 @@ function P.fish:onToolUse()
 	end
 end
 
-P.xavier = P.character:new{name = "Gru", description = "Resistance", sockMode = false,
+P.xavier = P.character:new{name = "Gru", description = "The Resistance", sockMode = false,
 sprite = 'Graphics/Characters/Xavier.png', sockSprite = 'Graphics/Characters/XavierSock.png',
 noSockSprite = 'Graphics/Characters/Xavier.png', scale = 1.1*scale}
 function P.xavier:onKeyPressedChar(key)
@@ -474,12 +475,37 @@ end
 P.aurelius = P.character:new{name = "Aurelius", description = "The Golden",
 sprite = 'Graphics/Characters/Aurelius.png', scale = 1.1*scale}
 function P.aurelius:onFloorEnter()
-	for i = 1, tools.numNormalTools do
-		for j = 1, tools[i].numHeld do
-			tools.giveToolsByReference{tools.coin}
+	if tools.areSupersFull() and tools.coin.numHeld<=0 then
+		local superChestLoc = self:findChestLoc()
+		local chestTile = tiles.superChest:new()
+		for i = 1, tools.numNormalTools do
+			for j = 1, tools[i].numHeld do
+				chestTile.supers[#chestTile.supers+1] = tools.coin
+			end
+			tools[i].numHeld = 0
 		end
-		tools[i].numHeld = 0
+		if #chestTile.supers>0 then
+			room[superChestLoc.y][superChestLoc.x] = chestTile
+		end
+	else
+		for i = 1, tools.numNormalTools do
+			for j = 1, tools[i].numHeld do
+				tools.giveToolsByReference{tools.coin}
+			end
+			tools[i].numHeld = 0
+		end
 	end
+end
+function P.aurelius:findChestLoc()
+	local chestLoc = {x = 1, y = 1}
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]==nil and math.abs(i-player.tileY)+math.abs(j-player.tileX)<=math.abs(player.tileY-chestLoc.y)+math.abs(player.tileX-chestLoc.x) then
+				chestLoc = {x = j, y = i}
+			end
+		end
+	end
+	return chestLoc
 end
 
 P.witch = P.character:new{name = "Nellie", description = "The Witch", humanLoc = {x = 0, y = 0}, catLoc = {x = 0, y = 0},

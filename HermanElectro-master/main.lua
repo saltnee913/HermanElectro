@@ -107,7 +107,7 @@ function love.load()
 	roomHeight = 12
 	roomLength = 24
 
-	donations = 0
+	donations = 100
 
 	won = false
 
@@ -802,6 +802,7 @@ function loadLevel(floorPath)
 end
 
 function kill(deathSource)
+	if player.dead then return end
 	if editorMode or globalDeathBlock or player.attributes.invincibleCounter>0 then return end
 	--[[if validSpace() and completedRooms[mapy][mapx]>0 then
 		unlocks.unlockUnlockableRef(unlocks.portalUnlock)
@@ -820,7 +821,10 @@ function kill(deathSource)
 	stats.incrementStat(player.character.name..'Losses')
 	stats.incrementStat('totalLosses')
 
-	myShader:send("b_and_w", (not loadTutorial) and 1 or 0)
+	if player.dead then
+    	local fadeProcess = processList.fadeProcess:new()
+		processes[#processes+1] = fadeProcess
+	end
 
 	saving.endRecording()
 end
@@ -2064,6 +2068,8 @@ function postRoomEnter()
 		end
 	end
 
+	player.character:postMove()
+
 	--shut off player move animations
 	for i = 1, #processes do
 		if processes[i]:instanceof(processList.movePlayer) then
@@ -2194,7 +2200,7 @@ function love.update(dt)
 		else
 			player.range = player.range-300*dt
 			if player.range<0 then
-				myShader:send("player_range", player.range)
+				myShader:send("player_range", 5)
 				if floorTransitionInfo.override=="up" then
 					goUpFloor()
 				elseif floorTransitionInfo.override=="down" then
@@ -2205,7 +2211,7 @@ function love.update(dt)
 				floorTransitionInfo.moved = true
 			end
 		end
-		myShader:send("player_range", player.range)
+		myShader:send("player_range", math.max(player.range,5))
 	elseif gameTransition then
 		if gameTransitionInfo.moved then
 			--[[for i = 1, 3 do
