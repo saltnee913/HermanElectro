@@ -165,7 +165,7 @@ function P.felix:onFloorEnter()
 end
 
 P.most = P.character:new{name = "Ben", description = "The Explorer",
-  sprite = 'Graphics/Characters/Ben.png', scale = 0.7 * width/1200, disabled = true}
+  sprite = 'Graphics/Characters/Ben.png', scale = 0.7 * width/1200, disabled = true, crime = "50 years for being a fuckboi"}
 function P.most:onCharLoad()
 	if map.floorOrder == map.defaultFloorOrder then
 		map.floorOrder = {'RoomData/bigfloor.json', 'RoomData/floor6.json'}
