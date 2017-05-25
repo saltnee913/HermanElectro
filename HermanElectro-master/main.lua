@@ -90,7 +90,7 @@ end
 
 function love.load()
 	gamePaused = false
-	gameTime = {timeLeft = 260, toolTime = 0, roomTime = 15, levelTime = 200, donateTime = 20, goesDownInCompleted = false, totalTime = 0}
+	gameTime = {timeLeft = 260, toolTime = 0, roomTime = 30, levelTime = 120, donateTime = 20, goesDownInCompleted = false, totalTime = 0}
 
 	enteringSeed = false
 	seedOverride = nil
@@ -2284,7 +2284,8 @@ function love.update(dt)
 		end
 
 		--game timer
-		if started and validSpace() and (completedRooms[mapy][mapx]~=1 or gameTime.goesDownInCompleted) then
+		if started and validSpace() and (completedRooms[mapy][mapx]~=1 or gameTime.goesDownInCompleted)
+		and (not (floorTransition and not floorTransition.moved)) then
 			gameTime.timeLeft = gameTime.timeLeft-dt
 		end
 	end
