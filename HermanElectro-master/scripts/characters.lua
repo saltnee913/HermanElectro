@@ -142,14 +142,14 @@ function P.herman:onCharLoad()
 	myShader:send("player_range", 600)
 end
 
-P.felix = P.character:new{name = "Natasha", scale = 1.1*scale, description = "The Sharpshooter", sprite = 'Graphics/Characters/Arab.png', startingTools = {0,0,0,0,0,0,1},
+P.felix = P.character:new{name = "Natasha", scale = 1.1*scale, description = "The Sharpshooter", sprite = 'Graphics/felix.png', startingTools = {0,0,0,0,0,0,1},
 crime = "Ten Years for Pyromanic Episode"}
 function P.felix:onCharLoad()
 	--tools[7] = tools.felixGun
 	--if not tools.felixGun.isGun then
 		--tools.felixGun:switchEffects()
 	--end
-	tools.giveToolsByReference({tools.bomb, tools.gun})
+	tools.giveToolsByReference({tools.bomb})
 end
 function P.felix:onKeyPressedChar(key)
 	--log(key)

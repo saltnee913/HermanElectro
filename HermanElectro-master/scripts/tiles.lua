@@ -1792,6 +1792,8 @@ function P.entrancePortal:onEnterAnimal(animal)
 					end
 				end
 				if moveAnimal then
+					animal.prevTileX = animal.tileX
+					animal.prevTileY = animal.tileY
 					animal.tileX = j
 					animal.tileY = i
 				end
