@@ -2285,7 +2285,7 @@ function love.update(dt)
 
 		--game timer
 		if started and validSpace() and (completedRooms[mapy][mapx]~=1 or gameTime.goesDownInCompleted)
-		and (not (floorTransition and not floorTransition.moved)) then
+		and (not (floorTransition and not floorTransitionInfo.moved)) then
 			gameTime.timeLeft = gameTime.timeLeft-dt
 		end
 	end
