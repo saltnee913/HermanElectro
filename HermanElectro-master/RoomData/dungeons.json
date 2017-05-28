@@ -77,6 +77,7 @@
     "hasEndTile": false,
     "autowin": true,
     "floorTileOverride": "dungeon",
-    "hidden": true
+    "hidden": true,
+    "beginner": true
   }
 }

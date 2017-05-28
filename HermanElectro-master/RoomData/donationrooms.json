@@ -249,6 +249,7 @@
     "minimapColor": [0, 200, 200],
     "dirEnter": [1,1,1,1],
     "hasEndTile": false,
-    "hidden": false
+    "hidden": false,
+    "beginner": true
   }
 }

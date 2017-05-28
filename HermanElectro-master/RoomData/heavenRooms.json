@@ -33,6 +33,7 @@
     "autowin": true,
     "floorTileOverride": "heaven",
     "hidden": true,
-    "heaven": true
+    "heaven": true,
+    "beginner": true
   }
 }

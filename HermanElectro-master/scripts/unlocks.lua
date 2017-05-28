@@ -130,6 +130,7 @@ end
 P.unlock = Object:new{name = 'generic', unlocked = false, sprite = tiles.fog.sprite}
 
 P.tutorialBeatenUnlock = P.unlock:new{name = "tutorialBeaten", hidden = true}
+P.mainGameUnlock = P.unlock:new{name = "mainGame", hidden = true}
 
 P.charUnlock = P.unlock:new{name = 'Herman Electrogue', charIds = {"Herman"}, desc = ''}
 P.felixUnlock = P.charUnlock:new{name = 'Fantastic Mr. Felix', desc = 'Bombastic', charIds = {"Natasha"}, sprite = 'Graphics/felix.png', }
@@ -437,6 +438,7 @@ P[#P+1] = P.portalUnlock --done
 P[#P+1] = P.dungeonUnlock
 P.dungeonUnlockId = #P
 P[#P+1] = P.tutorialBeatenUnlock
+P[#P+1] = P.mainGameUnlock
 
 P[#P+1] = P.lockedTiles
 

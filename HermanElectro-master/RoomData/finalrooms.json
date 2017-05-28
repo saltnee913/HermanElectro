@@ -442,6 +442,7 @@
     "autowin": true,
     "minimapColor": [200, 0, 200],
     "dirEnter": [1,1,1,1],
-    "hidden": false
+    "hidden": false,
+    "beginner": true
   }
 }

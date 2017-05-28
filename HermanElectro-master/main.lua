@@ -386,6 +386,10 @@ end
 
 function preFloorChange()
 	saveElements()
+
+	if floorIndex==4 then
+		unlocks.unlockUnlockableRef(unlocks.mainGameUnlock)
+	end
 end
 
 function goDownFloor()
@@ -2893,6 +2897,15 @@ function processMove(key, dt)
 			player.tileY = player.prevTileY
 		end
 	end
+
+	if player.waitCounter>0 then
+		player.prevx = player.x
+		player.prevy = player.y
+		player.prevTileX = player.tileX
+		player.prevTileY = player.tileY
+		waitTurn = true
+    	player.waitCounter = player.waitCounter-1
+    end
 
 	if not playerMoved() then
 		player.character:onFailedMove(key)

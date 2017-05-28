@@ -30,6 +30,7 @@
     "minimapColor": [255,255,102],
     "hasEndTile": false,
     "autowin": true,
-    "floorTileOverride": "dungeon"
+    "floorTileOverride": "dungeon",
+    "beginner": true
   }
 }
