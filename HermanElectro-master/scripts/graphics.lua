@@ -20,6 +20,7 @@ function P.draw()
 		return
 	end
 
+
 	--love.graphics.translate(width2/2-16*screenScale/2, height2/2-9*screenScale/2)
 	--love.graphics.translate((width2-width)/2, (height2-height)/2)
 	local bigRoomTranslation = getTranslation()
@@ -358,6 +359,10 @@ function P.drawUI()
 		love.graphics.setColor(0,0,0,255)
 		love.graphics.print(messageInfo.text, width/2-180, 110)
 		love.graphics.setColor(255,255,255,255)
+	end
+
+	if gamePaused then
+		--graphics.drawPauseMenu()
 	end
 end
 
@@ -737,6 +742,10 @@ function P.createShader()
 		return pixel;
 	}
 	]]
+end
+
+function P.drawPauseMenu()
+	pauseMenu:draw()
 end
 
 return graphics

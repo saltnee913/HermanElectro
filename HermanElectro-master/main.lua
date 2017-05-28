@@ -36,6 +36,7 @@ saving = require('scripts.saving')
 toolManuel = require('scripts.toolManuel')
 processList = require('scripts.process')
 graphics = require('scripts.graphics')
+menus = require('scripts.menu')
 loadedOnce = false
 
 
@@ -103,6 +104,8 @@ function love.load()
 	editorAdd = 0
 	globalPowerBlock = false
 	globalDeathBlock = false
+
+	pauseMenu = menus.pauseMenu:new()
 
 	roomHeight = 12
 	roomLength = 24
@@ -2130,7 +2133,7 @@ function validSpace()
 	return mapy<=mapHeight and mapx<=mapHeight and mapy>0 and mapx>0
 end
 
-keyTimer = {base = .16, timeLeft = .16, suicideDelay = .5}
+keyTimer = {base = .12, timeLeft = .12, suicideDelay = .7}
 function love.update(dt)
 	dt = gameSpeed*dt
 
@@ -2156,13 +2159,13 @@ function love.update(dt)
 	end
 
 	--smooth motion
-	if love.keyboard.isDown("w") then
+	if love.keyboard.isDown("w") and lastMoveKey=="w" then
 		love.keypressed("w")
-	elseif love.keyboard.isDown("a") then
+	elseif love.keyboard.isDown("a") and lastMoveKey=="a" then
 		love.keypressed("a")
-	elseif love.keyboard.isDown("s") then
+	elseif love.keyboard.isDown("s") and lastMoveKey=="s" then
 		love.keypressed("s")
-	elseif love.keyboard.isDown("d") then
+	elseif love.keyboard.isDown("d") and lastMoveKey=="d" then
 		love.keypressed("d")
 	end
 
@@ -2367,6 +2370,11 @@ function seedEnter(text)
 end
 
 function love.keypressed(key, unicode, isRepeat, isPlayback)
+
+	if key=="w" or key=="a" or key=="s" or key=="d" then
+		 lastMoveKey = key
+	end
+
 	for i = 1, #processes do
 		if processes[i].disableInput and processes[i].active then
 			return
@@ -2545,7 +2553,6 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 	end
    	
 	if key=="w" or key=="a" or key=="s" or key=="d" then
-		lastMoveKey = key
 		if not processMove(key) then return
 		end
 	end
@@ -2610,6 +2617,7 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 			processes[#processes+1] = moveProcess
 		end
     end
+    --setPlayerLoc()
     --Debug console stuff
     if key=='p' then
     	local roomid = mainMap[mapy][mapx].roomid
