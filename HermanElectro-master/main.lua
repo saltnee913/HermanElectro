@@ -2133,7 +2133,7 @@ function validSpace()
 	return mapy<=mapHeight and mapx<=mapHeight and mapy>0 and mapx>0
 end
 
-keyTimer = {base = .12, timeLeft = .12, suicideDelay = .7}
+keyTimer = {base = .12, timeLeft = .12, suicideDelay = .65}
 function love.update(dt)
 	dt = gameSpeed*dt
 
