@@ -341,6 +341,10 @@ function P.textinput(text)
 end
 
 local function postTileAddCleanup(tempAdd, tileLocY, tileLocX)
+	if tiles[tempAdd]~=nil and tiles[tempAdd]==tiles.invisibleTile then
+		room[tileLocY][tileLocX]=nil
+	end
+
 	for i = 1, #animals do
 		if animals[i]~=nil and animals[i].tileX == tileLocX and animals[i].tileY == tileLocY then
 			animals[i] = nil
@@ -518,6 +522,8 @@ function P.mousepressed(x, y, button, istouch)
 		end
 
 	elseif tempAdd>0 and tempAdd<=#tiles and tileLocX>=1 and tileLocX<=roomLength and tileLocY>=1 and tileLocY<=roomHeight then
+		tool = 0
+
 		if(room[tileLocY]~=nil and room[tileLocY][tileLocX] ~= nil and room[tileLocY][tileLocX].name == tiles[tempAdd].name) then
 			room[tileLocY][tileLocX]:rotate(1)
 		else

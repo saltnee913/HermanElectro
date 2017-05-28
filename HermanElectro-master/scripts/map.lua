@@ -576,6 +576,12 @@ end
 
 
 function P.roomMeetsRequirements(roomData, requirements)
+	if (not unlocks.mainGameUnlock.unlocked) and floorIndex>0 then
+		if roomData.beginner==nil or not roomData.beginner then
+			return false
+		end
+	end
+
 	if requirements == nil then return true end
 	return requirementsHelper(roomData, 'and', requirements)
 end

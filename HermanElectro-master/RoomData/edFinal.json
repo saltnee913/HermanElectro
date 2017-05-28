@@ -175,6 +175,7 @@
     "minimapColor": [139,69,19],
     "hasEndTile": false,
     "floorTileOverride": "dungeon",
-    "locked": true
+    "locked": true,
+    "beginner": true
   }
 }

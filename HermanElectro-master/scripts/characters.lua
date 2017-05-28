@@ -149,7 +149,7 @@ function P.felix:onCharLoad()
 	--if not tools.felixGun.isGun then
 		--tools.felixGun:switchEffects()
 	--end
-	tools.giveToolsByReference({tools.bomb, tools.gun})
+	tools.giveToolsByReference({tools.bomb})
 end
 function P.felix:onKeyPressedChar(key)
 	--log(key)
@@ -165,7 +165,7 @@ function P.felix:onFloorEnter()
 end
 
 P.most = P.character:new{name = "Ben", description = "The Explorer",
-  sprite = 'Graphics/Characters/Ben.png', scale = 0.7 * width/1200, disabled = true}
+  sprite = 'Graphics/Characters/Ben.png', scale = 0.7 * width/1200, disabled = true, crime = "50 years for being a fuckboi"}
 function P.most:onCharLoad()
 	if map.floorOrder == map.defaultFloorOrder then
 		map.floorOrder = {'RoomData/bigfloor.json', 'RoomData/floor6.json'}
@@ -264,16 +264,24 @@ function P.battery:onKeyPressedChar(key)
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
 		if self.powered then
 			self.powered = false
-			self.sprite = self.offSprite
 			self.forcePowerUpdate = false
+			self:updateSprite()
 		else
 			self.powered = true
 			self.sprite = self.onSprite
 			self.forcePowerUpdate = true
+			self:updateSprite()
 		end
 		return true
 	end
 	return false
+end
+function P.battery:updateSprite()
+	if self.powered then
+		self.sprite = self.onSprite
+	else
+		self.sprite = self.offSprite
+	end
 end
 function P.battery:onPreUpdatePower()
 	if self.powered then
@@ -290,6 +298,10 @@ function P.battery:onPostUpdatePower()
 	if self.powered then
 		room[player.tileY][player.tileX] = self.storedTile
 	end
+end
+function P.battery:onStartGame()
+	self.powered = false
+	self:updateSprite()
 end
 
 P.giovanni = P.character:new{name = "Giovanni", description = "The Sorcerer", shiftPos = {x = -1, y = -1, z = -1},
@@ -312,6 +324,9 @@ function P.giovanni:onKeyPressedChar(key)
 			log("Returned to clone!")
 		end
 	end
+end
+function P.giovanni:resetClone()
+	self.shiftPos = {x = -1, y = -1, z = -1}
 end
 function P.giovanni:onCharLoad()
 	self.shiftPos = {x = -1, y = -1, z = -1}
@@ -419,7 +434,7 @@ function P.fish:onToolUse()
 	end
 end
 
-P.xavier = P.character:new{name = "Gru", description = "Resistance", sockMode = false,
+P.xavier = P.character:new{name = "Gru", description = "The Resistance", sockMode = false,
 sprite = 'Graphics/Characters/Xavier.png', sockSprite = 'Graphics/Characters/XavierSock.png',
 noSockSprite = 'Graphics/Characters/Xavier.png', scale = 1.1*scale}
 function P.xavier:onKeyPressedChar(key)
@@ -452,16 +467,45 @@ end
 function P.xavier:onRoomEnter()
 	self.sockMode = false
 end
+function P.xavier:onStartGame()
+	self.sockMode = false
+	self:updateSprite()
+end
 
 P.aurelius = P.character:new{name = "Aurelius", description = "The Golden",
 sprite = 'Graphics/Characters/Aurelius.png', scale = 1.1*scale}
 function P.aurelius:onFloorEnter()
-	for i = 1, tools.numNormalTools do
-		for j = 1, tools[i].numHeld do
-			tools.giveToolsByReference{tools.coin}
+	if tools.areSupersFull() and tools.coin.numHeld<=0 then
+		local superChestLoc = self:findChestLoc()
+		local chestTile = tiles.superChest:new()
+		for i = 1, tools.numNormalTools do
+			for j = 1, tools[i].numHeld do
+				chestTile.supers[#chestTile.supers+1] = tools.coin
+			end
+			tools[i].numHeld = 0
 		end
-		tools[i].numHeld = 0
+		if #chestTile.supers>0 then
+			room[superChestLoc.y][superChestLoc.x] = chestTile
+		end
+	else
+		for i = 1, tools.numNormalTools do
+			for j = 1, tools[i].numHeld do
+				tools.giveToolsByReference{tools.coin}
+			end
+			tools[i].numHeld = 0
+		end
 	end
+end
+function P.aurelius:findChestLoc()
+	local chestLoc = {x = 1, y = 1}
+	for i = 1, roomHeight do
+		for j = 1, roomLength do
+			if room[i][j]==nil and math.abs(i-player.tileY)+math.abs(j-player.tileX)<=math.abs(player.tileY-chestLoc.y)+math.abs(player.tileX-chestLoc.x) then
+				chestLoc = {x = j, y = i}
+			end
+		end
+	end
+	return chestLoc
 end
 
 P.witch = P.character:new{name = "Nellie", description = "The Witch", humanLoc = {x = 0, y = 0}, catLoc = {x = 0, y = 0},

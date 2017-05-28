@@ -20,6 +20,7 @@ function P.draw()
 		return
 	end
 
+
 	--love.graphics.translate(width2/2-16*screenScale/2, height2/2-9*screenScale/2)
 	--love.graphics.translate((width2-width)/2, (height2-height)/2)
 	local bigRoomTranslation = getTranslation()
@@ -33,189 +34,20 @@ function P.draw()
 
 	for j = 1, roomHeight do
 		for i = 1, roomLength do
-			local isBlack=false
-			
-			if (room[j][i]~=nil or litTiles[j][i]==0) and not (litTiles[j][i]==1 and room[j][i]:instanceof(tiles.invisibleTile)) then
-				if room[j][i]~=nil then room[j][i]:updateSprite() end
-				local rot = 0
-				local tempi = i
-				local tempj = j
-				if j <= table.getn(room) or i <= table.getn(room[0]) then
-					if litTiles[j][i] == 0 then
-						toDraw = black
-						isBlack = true
-					elseif room[j][i]~=nil and (room[j][i].poweredSprite==nil or room[j][i].powered == false or not room[j][i].canBePowered) then
-						toDraw = util.getImage(room[j][i].sprite)
-						rot = room[j][i].rotation
-					elseif room[j][i]~=nil then
-						toDraw = util.getImage(room[j][i].poweredSprite)
-						rot = room[j][i].rotation
-					--else
-						--toDraw = floortile
-					end
-					if room[j][i]~=nil and room[j][i]:getYOffset()~=0 then rot = 0 end
-					if rot == 1 or rot == 2 then
-						tempi = tempi + 1
-					end
-					if rot == 2 or rot == 3 then
-						tempj = tempj + 1
-					end
-				end
-				if litTiles[j][i]==1 and room[j][i]~=nil and (not room[j][i].isVisible) and (not room[j][i]:instanceof(tiles.invisibleTile)) then
-					toDraw = invisibleTile
-				end
-				if (room[j][i]~=nil and toDraw ~= invisibleTile --[[and room[j][i].name~="pitbull" and room[j][i].name~="cat" and room[j][i].name~="pup"]]) or litTiles[j][i]==0 then
-					local addY = 0
-					if room[j][i]~=nil and litTiles[j][i]~=0 then
-						addY = room[j][i]:getYOffset()
-					end
-					if litTiles[j][i]==0 then addY = tiles.halfWall:getYOffset() end
-					if not isBlack then
-						love.graphics.draw(toDraw, (tempi-1)*tileWidth*scale+wallSprite.width, (addY+(tempj-1)*tileWidth)*scale+wallSprite.height,
-					  	rot * math.pi / 2, scale*tileUnit/toDraw:getWidth(), scale*tileUnit/toDraw:getWidth())
-					end
-					if litTiles[j][i]~=0 and room[j][i].overlay ~= nil then
-						local overlay = room[j][i].overlay
-						local toDraw2 = overlay.powered and overlay.poweredSprite~=nil and util.getImage(overlay.poweredSprite) or util.getImage(overlay.sprite)
-						local rot2 = overlay.rotation
-						local tempi2 = i
-						local tempj2 = j
-						local addY2 = overlay:getYOffset() + addY
-						--if addY2~=0 then rot2 = 0 end
-						if rot2 == 1 or rot2 == 2 then
-							tempi2 = tempi2 + 1
-						end
-						if rot2 == 2 or rot2 == 3 then
-							tempj2 = tempj2 + 1
-						end
-						love.graphics.draw(toDraw2, (tempi2-1)*tileWidth*scale+wallSprite.width, (addY2+(tempj2-1)*tileWidth)*scale+wallSprite.height,
-						  rot2 * math.pi / 2, scale*16/toDraw2:getWidth(), scale*16/toDraw2:getWidth())
-						if overlay:instanceof(tiles.wire) and (room[j][i].dirSend[3] == 1 or room[j][i].dirAccept[3] == 1 or (overlay.dirWireHack ~= nil and overlay.dirWireHack[3] == 1)) then
-							local toDraw3
-							if room[j][i].powered and (room[j][i].dirSend[3] == 1 or room[j][i].dirAccept[3] == 1) then
-								toDraw3 = util.getImage(room[j][i].overlay.wireHackOn)
-							else
-								toDraw3 = util.getImage(room[j][i].overlay.wireHackOff)
-							end
-							love.graphics.draw(toDraw3, (tempi-1)*tileWidth*scale+wallSprite.width, (addY+(tempj)*tileWidth)*scale+wallSprite.height,
-							  0, scale*16/toDraw3:getWidth(), -1*addY/toDraw3:getHeight()*(scale*16/toDraw3:getWidth()))
-						end
-					end
-					if room[j][i]~=nil and room[j][i].blueHighlighted then
-						local addY = 0
-						local yScale = scale
-						if room[j][i]~=nil and litTiles[j][i]~=0 then
-							addY = room[j][i]:getYOffset()
-							yScale = scale*(16-addY)/16
-						else addY=0 end
-						love.graphics.draw(blue, (i-1)*tileWidth*scale+wallSprite.width, (addY+(j-1)*tileHeight)*scale+wallSprite.height, 0, scale, yScale)
-					end
-					if room[j][i]~=nil and litTiles[j][i]==1 and room[j][i]:getInfoText()~=nil then
-						love.graphics.setColor(0,0,0)
-						love.graphics.setShader()
-						love.graphics.print(room[j][i]:getInfoText(), (tempi-1)*tileWidth*scale+wallSprite.width, (tempj-1)*tileHeight*scale+wallSprite.height);
-						love.graphics.setShader(myShader)			
-						love.graphics.setColor(255,255,255)
-					end
-				end
+			if litTiles[j][i]>0 then
+				graphics.drawTile(j, i)
 			end
 		end
-		for j = 1, roomHeight do
-			for i = 1, roomLength do
-				local isBlack=false
-			
-				if (room[j][i]~=nil or litTiles[j][i]==0) and not (litTiles[j][i]==1 and room[j][i]:instanceof(tiles.invisibleTile)) then
-					if room[j][i]~=nil then room[j][i]:updateSprite() end
-					local rot = 0
-					local tempi = i
-					local tempj = j
-					if j <= table.getn(room) or i <= table.getn(room[0]) then
-						if litTiles[j][i] == 0 then
-							toDraw = black
-							isBlack = true
-						elseif room[j][i]~=nil and (room[j][i].powered == false or not room[j][i].canBePowered) then
-							toDraw = room[j][i].sprite
-							rot = room[j][i].rotation
-						elseif room[j][i]~=nil then
-							toDraw = room[j][i].poweredSprite
-							rot = room[j][i].rotation
-						--else
-							--toDraw = floortile
-						end
-						if room[j][i]~=nil and room[j][i]:getYOffset()~=0 then rot = 0 end
-						if rot == 1 or rot == 2 then
-							tempi = tempi + 1
-						end
-						if rot == 2 or rot == 3 then
-							tempj = tempj + 1
-						end
-					end
-					if litTiles[j][i]==1 and room[j][i]~=nil and (not room[j][i].isVisible) and (not room[j][i]:instanceof(tiles.invisibleTile)) then
-						toDraw = invisibleTile
-					end
-					if (room[j][i]~=nil --[[and room[j][i].name~="pitbull" and room[j][i].nddddddddddwwame~="cat" and room[j][i].name~="pup"]]) or litTiles[j][i]==0 then
-						local addY = 0
-						if room[j][i]~=nil and litTiles[j][i]~=0 then
-							addY = room[j][i]:getYOffset()
-						end
-						if litTiles[j][i]==0 then addY = tiles.halfWall:getYOffset() end
-						if isBlack then
-							love.graphics.draw(toDraw, (tempi-1)*tileWidth*scale+wallSprite.width-20, (addY+(tempj-1)*tileWidth)*scale+wallSprite.height-30,
-						  	rot * math.pi / 2, scale*24/toDraw:getWidth(), scale*24/toDraw:getWidth())
-						end
-					end
-				end
-			end
-		end
-		for i = 1, #bossList do
-			if bossList[i]:getBottomTileY()==j then
-				bossList[i]:drawBoss()
-			end
-		end
+
 		for i = 1, #animals do
-			if animals[i]~=nil and litTiles[animals[i].tileY][animals[i].tileX]==1 and not animals[i].pickedUp and animals[i].tileY==j then
-				local animalSprite = util.getImage(animals[i].sprite)
-				local drawCoords = animals[i]:getDrawCoords()
-				local drawx = drawCoords.x
-				local drawy = drawCoords.y
-				
-				love.graphics.draw(animalSprite, drawx, drawy, 0, animals[i].scale, animals[i].scale)
-
-				--overhead marks for animals, frozen or waitCounter or trained 
-				if (not animals[i].dead) and (animals[i].frozen or animals[i].waitCounter>0 or animals[i].trained) then
-					local markSprites = {}
-					if animals[i].frozen then
-						markSprites[#markSprites+1] = util.getImage('Graphics/frozenMark.png')
-					end
-					if animals[i].waitCounter>0 then
-						for i = 1, animals[i].waitCounter do
-							markSprites[#markSprites+1] = util.getImage('Graphics/waitCounterMark.png')
-						end
-					end
-					if animals[i].trained then
-						markSprites[#markSprites+1] = util.getImage('Graphics/trainedMark.png')
-					end
-
-					local markScale = scale
-					
-					for j = 1, #markSprites do
-						local markSprite = markSprites[j]
-						local markx = animals[i].x
-						markx = markx-#markSprites/2*markScale*markSprite:getWidth()+markScale*(j-1)*markSprite:getWidth()
-						local marky = drawy
-						marky = marky-markSprite:getHeight()*markScale
-
-						love.graphics.draw(markSprite, markx, marky, 0, markScale, markScale)
-					end
-				end
+			if animals[i]~=nil and litTiles[animals[i].tileY][animals[i].tileX]==1 and not animals[i].pickedUp and coordsToTileY(animals[i].y)==j then
+				graphics.drawAnimal(animals[i])
 			end
 		end
 
 		for i = 1, #pushables do
 			if pushables[i]~=nil and not pushables[i].destroyed and litTiles[pushables[i].tileY][pushables[i].tileX]==1 and pushables[i].tileY==j and pushables[i].visible then
-		    	if pushables[i].conductive and pushables[i].powered then toDraw = util.getImage(pushables[i].poweredSprite)
-		    	else toDraw = util.getImage(pushables[i].sprite) end
-				love.graphics.draw(toDraw, pushables[i].x, pushables[i].y, 0, scale, scale)
+		    	graphics.drawPushable(pushables[i])
 			end
 		end
 
@@ -280,14 +112,8 @@ function P.draw()
 			end
 		end
 
-		if player.tileY == j and not player.attributes.invisible then
-			--player.x = (player.tileX-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
-			--player.y = (player.tileY-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
-			local charSprite = util.getImage(player.character.sprite)
-			love.graphics.draw(charSprite, math.floor(player.x-charSprite:getWidth()*player.character.scale/2), math.floor(player.y-charSprite:getHeight()*player.character.scale-player.elevation*scale), 0, player.character.scale, player.character.scale)
-			love.graphics.setShader()
-			love.graphics.print(player.character:getInfoText(), math.floor(player.x-charSprite:getWidth()*player.character.scale/2), math.floor(player.y-charSprite:getHeight()*player.character.scale));
-			love.graphics.setShader(myShader)
+		if coordsToTileY(player.y) == j and not player.attributes.invisible then
+			graphics.drawPlayer()
 		end
 
 		--draw clone stuff
@@ -328,6 +154,14 @@ function P.draw()
 		--love.graphics.draw(walls, 0, 0, 0, width/walls:getWidth(), height/walls:getHeight())
 	end
 
+	for j = 1, roomHeight do
+		for i = 1, roomLength do
+			if litTiles[j][i]==0 then
+				graphics.drawTile(j, i)
+			end
+		end
+	end
+
 
 	for k = 1, #spotlights do
 		local sl = spotlights[k]
@@ -360,35 +194,99 @@ function P.draw()
 		end
 	end
 
-	--Display unlock screen
-	local unlockDisplayer = unlocks.unlocksDisplay
-	local unlockDisplayNum = 0
-	while(unlockDisplayer ~= nil) do
-		local unlock = unlocks[unlockDisplayer.unlockToShow]
-		local unlockSprite = util.getImage(unlock.sprite)
-		local unlocksFrame = util.getImage(unlocks.frame)
-		local tScale = tileWidth/math.max(unlockSprite:getWidth(), unlockSprite:getHeight())
-		local uScale = width/500
-		local offsetY = (unlocksFrame:getHeight() - unlockSprite:getHeight()*tScale)/2
-		local offsetX = (unlocksFrame:getWidth() - unlockSprite:getWidth()*tScale)/2
-		local unlockNumOffset = unlocksFrame:getHeight()*uScale*unlockDisplayNum
-		love.graphics.draw(unlocksFrame, 0, height-unlocksFrame:getHeight()*uScale-unlockNumOffset, 0, uScale, uScale)
-		love.graphics.draw(unlockSprite, offsetX*uScale, height-(unlockSprite:getHeight()*tScale+offsetY)*uScale-unlockNumOffset, 0, uScale*tScale, uScale*tScale)
-		unlockDisplayer = unlockDisplayer.nextUnlock
-		unlockDisplayNum = unlockDisplayNum + 1
-	end
-	barLength = 200
 	if editorMode then
 		editor.draw()
-	end
-	if loadTutorial then
-		tutorial.draw()
 	end
 	if debugText ~= nil then
 		text.print(debugText, 0, 100, {255,140,0,255}, nil, 22)
 	end
 end
 
+function P.drawTile(tileY, tileX)
+	if (room[tileY][tileX]==nil and litTiles[tileY][tileX]>0) then
+		return
+	elseif litTiles[tileY][tileX]>0 then
+		graphics.drawTileLit(tileY, tileX)
+	else
+		graphics.drawTileDark(tileY, tileX)
+	end
+end
+function P.drawTileLit(tileY, tileX)
+	if room[tileY][tileX]~=nil then room[tileY][tileX]:updateSprite() end
+	local rot = 0
+	local tempi = tileX
+	local tempj = tileY
+	if tileY <= table.getn(room) or tileX <= table.getn(room[0]) then
+		if litTiles[tileY][tileX] == 0 then
+			toDraw = black
+			isBlack = true
+		elseif room[tileY][tileX]~=nil and (room[tileY][tileX].poweredSprite==nil or room[tileY][tileX].powered == false or not room[tileY][tileX].canBePowered) then
+			toDraw = util.getImage(room[tileY][tileX].sprite)
+			rot = room[tileY][tileX].rotation
+		elseif room[tileY][tileX]~=nil then
+			toDraw = util.getImage(room[tileY][tileX].poweredSprite)
+			rot = room[tileY][tileX].rotation
+		--else
+			--toDraw = floortile
+		end
+		if room[tileY][tileX]~=nil and room[tileY][tileX]:getYOffset()~=0 then rot = 0 end
+		if rot == 1 or rot == 2 then
+			tempi = tempi + 1
+		end
+		if rot == 2 or rot == 3 then
+			tempj = tempj + 1
+		end
+	end
+	if litTiles[tileY][tileX]==1 and room[tileY][tileX]~=nil and (not room[tileY][tileX].isVisible) and (not room[tileY][tileX]:instanceof(tiles.invisibleTile)) then
+		toDraw = invisibleTile
+	end
+	if (room[tileY][tileX]~=nil and toDraw ~= invisibleTile --[[and room[tileY][tileX].name~="pitbull" and room[tileY][tileX].name~="cat" and room[tileY][tileX].name~="pup"]]) or litTiles[tileY][tileX]==0 then
+		local addY = 0
+		if room[tileY][tileX]~=nil and litTiles[tileY][tileX]~=0 then
+			addY = room[tileY][tileX]:getYOffset()
+		end
+		if litTiles[tileY][tileX]==0 then addY = tiles.halfWall:getYOffset() end
+		if not isBlack then
+			love.graphics.draw(toDraw, (tempi-1)*tileWidth*scale+wallSprite.width, (addY+(tempj-1)*tileWidth)*scale+wallSprite.height,
+		  	rot * math.pi / 2, scale*tileUnit/toDraw:getWidth(), scale*tileUnit/toDraw:getWidth())
+		end
+		if litTiles[tileY][tileX]~=0 and room[tileY][tileX].overlay ~= nil then
+			local overlay = room[tileY][tileX].overlay
+			local toDraw2 = overlay.powered and overlay.poweredSprite~=nil and util.getImage(overlay.poweredSprite) or util.getImage(overlay.sprite)
+			local rot2 = overlay.rotation
+			local tempi2 = tileX
+			local tempj2 = tileY
+			local addY2 = overlay:getYOffset() + addY
+			--if addY2~=0 then rot2 = 0 end
+			if rot2 == 1 or rot2 == 2 then
+				tempi2 = tempi2 + 1
+			end
+			if rot2 == 2 or rot2 == 3 then
+				tempj2 = tempj2 + 1
+			end
+			love.graphics.draw(toDraw2, (tempi2-1)*tileWidth*scale+wallSprite.width, (addY2+(tempj2-1)*tileWidth)*scale+wallSprite.height,
+			  rot2 * math.pi / 2, scale*16/toDraw2:getWidth(), scale*16/toDraw2:getWidth())
+			if overlay:instanceof(tiles.wire) and (room[tileY][tileX].dirSend[3] == 1 or room[tileY][tileX].dirAccept[3] == 1 or (overlay.dirWireHack ~= nil and overlay.dirWireHack[3] == 1)) then
+				local toDraw3
+				if room[tileY][tileX].powered and (room[tileY][tileX].dirSend[3] == 1 or room[tileY][tileX].dirAccept[3] == 1) then
+					toDraw3 = util.getImage(room[tileY][tileX].overlay.wireHackOn)
+				else
+					toDraw3 = util.getImage(room[tileY][tileX].overlay.wireHackOff)
+				end
+				love.graphics.draw(toDraw3, (tempi-1)*tileWidth*scale+wallSprite.width, (addY+(tempj)*tileWidth)*scale+wallSprite.height,
+				  0, scale*16/toDraw3:getWidth(), -1*addY/toDraw3:getHeight()*(scale*16/toDraw3:getWidth()))
+			end
+		end
+	end
+end
+function P.drawTileDark(tileY, tileX)
+	local drawCoords = tileToCoords(tileY, tileX)
+	local drawx = drawCoords.x-scale*tileUnit/5
+	local drawy = drawCoords.y+scale*tiles.wall:getYOffset()-scale*tileUnit/5
+
+	love.graphics.draw(black, drawx, drawy,
+			  	0, scale*1.4*16/black:getWidth(), scale*1.4*16/black:getHeight())
+end
 
 function P.drawUI()
 	if tools.toolDisplayTimer.timeLeft > 0 or player.luckTimer>0 then
@@ -461,6 +359,10 @@ function P.drawUI()
 		love.graphics.setColor(0,0,0,255)
 		love.graphics.print(messageInfo.text, width/2-180, 110)
 		love.graphics.setColor(255,255,255,255)
+	end
+
+	if gamePaused then
+		--graphics.drawPauseMenu()
 	end
 end
 
@@ -555,6 +457,57 @@ function P.drawMap()
 	end
 end
 
+function P.drawPlayer()
+	local charSprite = util.getImage(player.character.sprite)
+	love.graphics.draw(charSprite, math.floor(player.x-charSprite:getWidth()*player.character.scale/2), math.floor(player.y-charSprite:getHeight()*player.character.scale-player.elevation*scale), 0, player.character.scale, player.character.scale)
+	love.graphics.setShader()
+	love.graphics.print(player.character:getInfoText(), math.floor(player.x-charSprite:getWidth()*player.character.scale/2), math.floor(player.y-charSprite:getHeight()*player.character.scale));
+	love.graphics.setShader(myShader)
+end
+
+function P.drawAnimal(animal)
+	local animalSprite = util.getImage(animal.sprite)
+	local drawCoords = animal:getDrawCoords()
+	local drawx = drawCoords.x
+	local drawy = drawCoords.y
+	
+	love.graphics.draw(animalSprite, drawx, drawy, 0, animal.scale, animal.scale)
+
+	--overhead marks for animals, frozen or waitCounter or trained 
+	if (not animal.dead) and (animal.frozen or animal.waitCounter>0 or animal.trained) then
+		local markSprites = {}
+		if animal.frozen then
+			markSprites[#markSprites+1] = util.getImage('Graphics/frozenMark.png')
+		end
+		if animal.waitCounter>0 then
+			for i = 1, animal.waitCounter do
+				markSprites[#markSprites+1] = util.getImage('Graphics/waitCounterMark.png')
+			end
+		end
+		if animal.trained then
+			markSprites[#markSprites+1] = util.getImage('Graphics/trainedMark.png')
+		end
+
+		local markScale = scale
+		
+		for j = 1, #markSprites do
+			local markSprite = markSprites[j]
+			local markx = animal.x
+			markx = markx-#markSprites/2*markScale*markSprite:getWidth()+markScale*(j-1)*markSprite:getWidth()
+			local marky = drawy
+			marky = marky-markSprite:getHeight()*markScale
+
+			love.graphics.draw(markSprite, markx, marky, 0, markScale, markScale)
+		end
+	end
+end
+
+function P.drawPushable(pushable)
+	if pushable.conductive and pushable.powered then toDraw = util.getImage(pushable.poweredSprite)
+	else toDraw = util.getImage(pushable.sprite) end
+	love.graphics.draw(toDraw, pushable.x, pushable.y, 0, scale, scale)
+end
+
 function P.drawWallsAndFloor()
 	local toDrawFloor = nil
 
@@ -627,6 +580,52 @@ function P.drawWallsAndFloor()
 
 		love.graphics.draw(floorSprite, wallSprite.width-17*scale, wallSprite.height-33*scale,
 		0, xScale, yScale)
+
+		--temp draw doors
+		if validSpace() then
+			local testRooms = {{-1,0}, {1,0}, {0,-1}, {0,1}}
+			for k = 1, #testRooms do
+				local drawFloorPath = true
+				local xdiff = testRooms[k][1]
+				local ydiff = testRooms[k][2]
+				if not (mapx+xdiff<=#completedRooms[mapy] and mapx+xdiff>0 and mapy+ydiff<=#completedRooms and mapy+ydiff>0) then
+					drawFloorPath = false
+				elseif mainMap[mapy+ydiff][mapx+xdiff]==nil then
+					drawFloorPath = false
+				elseif completedRooms[mapy][mapx]<1 and completedRooms[mapy+ydiff][mapx+xdiff]<1 then
+					drawFloorPath = false
+				elseif visibleMap[mapy+ydiff][mapx+xdiff]<1 then
+					drawFloorPath = false
+				end
+
+				toDrawFloor = dungeonFloor
+
+				if not drawFloorPath then
+					if xdiff==1 and ydiff==0 then
+						local doorSprite = util.getImage('Graphics/doorRight.png')
+						local midy = wallSprite.height+tileUnit*roomHeight/2*scale-doorSprite:getHeight()/2*yScale
+						local xloc = wallSprite.width-17*scale
+						xloc = xloc+floorSprite:getWidth()*xScale
+						xloc = xloc-doorSprite:getWidth()*xScale
+						love.graphics.draw(doorSprite, xloc, midy, 0, xScale, yScale)
+					elseif xdiff==-1 and ydiff==0 then
+						local doorSprite = util.getImage('Graphics/doorLeft.png')
+						local midy = wallSprite.height+tileUnit*roomHeight/2*scale-doorSprite:getHeight()/2*yScale
+						love.graphics.draw(doorSprite, wallSprite.width-17*scale, midy, 0, xScale, yScale)
+					elseif xdiff==0 and ydiff==1 then
+						local doorSprite = util.getImage('Graphics/doorBottom.png')
+						local midx = wallSprite.width+tileUnit*roomLength/2*scale-doorSprite:getWidth()/2*scale
+						local yloc = wallSprite.height-33*scale
+						yloc = yloc+floorSprite:getHeight()*yScale-doorSprite:getHeight()*yScale
+						love.graphics.draw(doorSprite, midx, yloc, 0, xScale, yScale)
+					elseif xdiff==0 and ydiff==-1 then
+						local doorSprite = util.getImage('Graphics/doorFront.png')
+						local midx = wallSprite.width+tileUnit*roomLength/2*scale-doorSprite:getWidth()/2*scale
+						love.graphics.draw(doorSprite, midx, wallSprite.height-33*scale, 0, xScale, yScale)
+					end
+				end
+			end
+		end
 	end
 	if (floors[floorIndex-1]==nil or editorMode or fto~=nil) then
 		for i = 1, roomLength do
@@ -640,13 +639,6 @@ function P.drawWallsAndFloor()
 						toDrawFloor = floortiles[floorIndex-1][2]
 					else
 						toDrawFloor = floortiles[floorIndex-1][3]
-					end
-					if (i*i+j*j*j-1)%27==0 then
-						--toDrawFloor = secondaryTiles[floorIndex-1][1]
-					elseif (i*i+j*j*j-1)%29==1 then
-						--toDrawFloor = secondaryTiles[floorIndex-1][2]
-					elseif (i*i+j*j*j-1)%31==2 then
-						--toDrawFloor = secondaryTiles[floorIndex-1][3]
 					end
 				end
 				fto = map.getFieldForRoom(mainMap[mapy][mapx].roomid, "floorTileOverride")
@@ -664,6 +656,96 @@ function P.drawWallsAndFloor()
 			end
 		end
 	end
+end
+
+function P.createShader()
+	myShader = love.graphics.newShader[[
+	extern bool shaderTriggered;
+	extern number tint_r = 0;
+	extern number tint_g = 0;
+	extern number tint_b = 0;
+	extern number floorTint_r;
+	extern number floorTint_g;
+	extern number floorTint_b;
+	extern number player_x;
+	extern number player_y;
+	extern vec4 lamps[100];
+	extern number player_range = 300;
+	extern number bonus_range = 0;
+	extern number b_and_w = 0;
+	extern bool createShadows = true;
+
+	vec4 effect( vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords ){
+	  	vec4 pixel = Texel(texture, texture_coords );//This is the current pixel color
+	  	if (!shaderTriggered) return pixel;
+
+  		number xdist = player_x-screen_coords[0];
+		number ydist = player_y-screen_coords[1];
+		number playerDist = 100000;
+		if (player_range>0) {
+			playerDist = sqrt(xdist*xdist+ydist*ydist)/(player_range+bonus_range);
+			if (playerDist<2)
+				playerDist = 1+playerDist*playerDist/4;
+			if (playerDist<0)
+			  	playerDist = 1;
+		}
+
+		number divVal = 100000;
+		if (playerDist<divVal)
+		  	divVal = playerDist;
+		if (!createShadows)
+			divVal = 1;
+		number totaltint_r = tint_r/divVal;
+		number totaltint_g = tint_g/divVal;
+		number totaltint_b = tint_b/divVal;
+		
+
+		//lamps
+		for (int i=0;i<10;i=i+1) {
+			if (lamps[i][0]>=0) {
+				number lampxdist = lamps[i][0]-screen_coords[0];
+				number lampydist = lamps[i][1]-screen_coords[1];
+				number totalLampDist = sqrt(lampxdist*lampxdist+lampydist*lampydist)/lamps[i][3];
+				totaltint_r = totaltint_r+lamps[i][2]/totalLampDist;
+				totaltint_g = totaltint_g+lamps[i][2]/totalLampDist;
+				totaltint_b = totaltint_b+lamps[i][2]/totalLampDist;
+			}
+        }
+
+    	if(totaltint_r>1) totaltint_r=1;
+        if(totaltint_g>1) totaltint_g=1;
+        if(totaltint_b>1) totaltint_b=1;
+
+		pixel.r = pixel.r*totaltint_r*(1-(floorTint_g+floorTint_b));
+        pixel.g = pixel.g*totaltint_g*(1-(floorTint_r+floorTint_b));
+        pixel.b = pixel.b*totaltint_b*(1-(floorTint_r+floorTint_g));
+        
+        if (player_range<=0) {
+        	pixel.r = 0;
+        	pixel.g = 0;
+        	pixel.b = 0;
+        }
+
+        if (b_and_w>0) {
+    		float avg = (pixel.r+pixel.g+pixel.b)/3;
+    		pixel.r = avg*b_and_w+pixel.r*(1-b_and_w);
+    		pixel.g = avg*b_and_w+pixel.g*(1-b_and_w);
+    		pixel.b = avg*b_and_w+pixel.b*(1-b_and_w);
+        }
+        /*else if (tint_r!=1 || tint_g!=1 || tint_b!=1) {
+        	float avg = (pixel.r+pixel.g+pixel.b)/3;
+    		pixel.r = avg*tint_r;
+    		pixel.g = avg*tint_g;
+    		pixel.b = avg*tint_b;
+        }*/
+
+		return pixel;
+	}
+	]]
+end
+
+function P.drawPauseMenu()
+	pauseMenu:draw()
 end
 
 return graphics

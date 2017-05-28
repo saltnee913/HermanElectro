@@ -138,7 +138,7 @@ function P.tile:allowVision()
 	self.blocksVision = false
 end
 function P.tile:usableOnNothing()
-	return self.destroyed and not (tool~=nil and tool~=0 and tools[tool]:nothingIsSomething())
+	return false
 end
 function P.tile:updateToOverlay(dir)
 	if self.overlay == nil then
@@ -230,6 +230,9 @@ function P.powerSupply:destroy()
 	self.dirAccept = {0,0,0,0}
 	self.dirSend = {0,0,0,0}
 end
+function P.powerSupply:usableOnNothing()
+	return self.destroyed and not (tool~=nil and tool~=0 and tools[tool]:nothingIsSomething())
+end
 
 P.wire = P.conductiveTile:new{overlaying = true, powered = false, dirSend = {1,1,1,1}, dirAccept = {1,1,1,1}, canBePowered = true, name = "wire",
 destroyedSprite = 'Graphics/Tiles/wireCut.png', 
@@ -242,6 +245,9 @@ function P.wire:destroy()
 	self.destroyed = true
 	dirAccept = {0,0,0,0}
 	dirSend = {0,0,0,0}
+end
+function P.wire:usableOnNothing()
+	return self.destroyed and not (tool~=nil and tool~=0 and tools[tool]:nothingIsSomething())
 end
 
 P.maskedWire = P.wire:new{name = 'maskedWire', sprite = 'Graphics/maskedWire.png', poweredSprite = 'Graphics/maskedWire.png'}
@@ -563,6 +569,9 @@ function P.wall:onEnter(player)
 	else
 		player.elevation = self:getHeight()
 	end
+end
+function P.wall:usableOnNothing()
+	return self.destroyed and not (tool~=nil and tool~=0 and tools[tool]:nothingIsSomething())
 end
 P.wall.onStay = P.wall.onEnter
 function P.wall:onEnterPushable(pushable)
@@ -1206,7 +1215,9 @@ end
 P.upTunnel = P.tunnel:new{name = "upTunnel", sprite = 'KenGraphics/stairsUp.png'}
 function P.upTunnel:onEnter(player)
 	--goUpFloor()
-	beginFloorSequence(0, "up")
+	if floorIndex ~= 2 or not saving.isPlayingBack() then
+		beginFloorSequence(0, "up")
+	end
 end
 function P.upTunnel:onLeave(player)
 	if floorIndex>=7 then
@@ -1496,12 +1507,12 @@ function P.doghouse:onStep(x, y)
 	for i = 1, #animals do
 		if animals[i].tileY == x and animals[i].tileX == y then return end
 	end
-	animals[animalCounter] = animalList[2]
-	animals[animalCounter].y = y*floor.sprite:getWidth()*scale+wallSprite.height
-	animals[animalCounter].x = x*floor.sprite:getHeight()*scale+wallSprite.width
-	animals[animalCounter].tileX = y
-	animals[animalCounter].tileY = x
-	animalCounter=animalCounter+1
+	local insertPitbullIndex = #animalCounter+1
+	animals[insertPitbullIndex] = animalList.pitbull:new()
+	animals[insertPitbullIndex].y = y*floor.sprite:getWidth()*scale+wallSprite.height
+	animals[insertPitbullIndex].x = x*floor.sprite:getHeight()*scale+wallSprite.width
+	animals[insertPitbullIndex].tileX = y
+	animals[insertPitbullIndex].tileY = x
 end
 
 P.batTile = P.pitbullTile:new{name = "bat", animal = animalList[6], listIndex = 6}
@@ -1781,6 +1792,8 @@ function P.entrancePortal:onEnterAnimal(animal)
 					end
 				end
 				if moveAnimal then
+					animal.prevTileX = animal.tileX
+					animal.prevTileY = animal.tileY
 					animal.tileX = j
 					animal.tileY = i
 				end
@@ -2424,12 +2437,20 @@ function P.toolTaxTile:updateSprite()
 end
 function P.toolTaxTile:onEnter()
 	if player.elevation>=self:getHeight()-3 then return end
-	if not self.destroyed and self.tool.numHeld>0 then
-		self.tool.numHeld = self.tool.numHeld-1
+	if (not self.destroyed) and self:canBeDestroyed() then
+		if self.tool.numHeld>0 then self.tool.numHeld = self.tool.numHeld-1
+		elseif tools.coin.numHeld>0 then tools.coin:useToolTile(self)
+		elseif tools.luckyPenny.numHeld>0 then tools.luckyPenny:useToolTile(self) end
 		self:destroy()
 	elseif not self.destroyed then
 		P.concreteWall:onEnter(player)
 	end
+end
+function P.toolTaxTile:canBeDestroyed()
+	if self.tool.numHeld>0 then return true
+	elseif tools.coin.numHeld>0 then return true
+	elseif tools.luckyPenny.numHeld>0 then return true end
+	return false
 end
 function P.toolTaxTile:destroy()
 	self.blocksProjectiles = false
@@ -2445,7 +2466,7 @@ end
 function P.toolTaxTile:obstructsMovement()
 	if math.abs(player.elevation-self:getHeight())<=3 then
 		return false
-	elseif not self.destroyed and self.tool.numHeld>0 then
+	elseif (not self.destroyed) and self:canBeDestroyed() then
 		return false
 	end
 	return true
@@ -2834,7 +2855,6 @@ end
 
 P.gameStairs = P.tile:new{name = "gameStairs", sprite = 'KenGraphics/gamestairs.png'}
 function P.gameStairs:onEnter()
-	unlocks.unlockUnlockableRef(unlocks.tutorialBeatenUnlock, true)
 	stairsLocs[1] = {map ={x = mapx, y = mapy}, coords = {x = player.tileX, y = player.tileY}}
 	beginGameSequence("main")
 end
@@ -3100,6 +3120,23 @@ end
 
 P.bossTile = P.tile:new{name = 'bossTile', boss = bosses.bobBoss}
 
+P.superChest = P.tile:new{name = "superChest", sprite = 'Graphics/Tiles/superChest.png', supers = {}}
+function P.superChest:onEnter()
+	if self.done then return
+	elseif tools.areSupersFull() then return
+	end
+
+	for i = 1, #self.supers do
+		tools.giveToolsByReference({self.supers[i]})
+	end
+
+	self.done = true
+	self.isCompleted = true
+	self.isVisible = false
+	self.gone = true
+end
+
+
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
 tiles[3] = P.powerSupply
@@ -3307,6 +3344,7 @@ tiles[204] = P.bossTile
 tiles[205] = P.mimicTile
 tiles[206] = P.heavenEnter
 tiles[207] = P.heavenExit
+tiles[208] = P.superChest
 
 
 return tiles

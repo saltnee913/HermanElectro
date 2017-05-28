@@ -123,6 +123,7 @@ function P.resetTempStats()
 end
 
 function P.doStatsSave()
+	--also add that stats don't save if in daily
 	return not loadTutorial and floorIndex ~= -1 and not editorMode
 end
 
