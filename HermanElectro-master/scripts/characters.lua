@@ -178,10 +178,11 @@ P.erik = P.character:new{name = "Erik", tallSprite = false, description = "The R
   crime = "Life Imprisonment for Incompetence"}
 function P.erik:onCharLoad()
 	gameTime.timeLeft = 120
-	gameTime.roomTime = 15
+	gameTime.roomTime = 20
 	gameTime.levelTime = 0
 	gameTime.goesDownInCompleted = true
-	tools.giveToolsByReference({tools.stopwatch})
+	tools.giveToolsByReference({tools.stopwatch,tools.stopwatch,tools.stopwatch,tools.heartTransplant})
+	
 	--map.floorOrder = {'RoomData/floor1_erik.json', 'RoomData/floor2_erik.json', 'RoomData/floor3_erik.json', 'RoomData/floor6.json'}
 end
 --[[function P.erik:onFailedMove(key)

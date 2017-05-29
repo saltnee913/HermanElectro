@@ -2376,8 +2376,8 @@ function P.wireExtender:useToolTile(tile, tileY, tileX)
 
 end
 
-P.coin = P.superTool:new{name = "Penny", description = "Every millionaire starts somewhere", image = 'Graphics/Tools/coin.png', range = 1, quality = 1}
---Don't pretend things are free --  Nothing is free, One way to pay 
+P.coin = P.superTool:new{name = "Coin", description = "One way to pay", image = 'Graphics/Tools/coin.png', range = 1, quality = 1}
+--Don't pretend things are free --  Nothing is free, One way to pay was Every millionaire starts somewhere
 function P.coin:usableOnTile(tile)
 	if tile:instanceof(tiles.toolTaxTile) and not tile.destroyed then
 		return true
@@ -2563,7 +2563,7 @@ function P.thruCover:getToolableTiles()
 end
 
 
-P.iceyShot = P.gun:new{name= "Ice Gun", description = "Super Cool", image = 'Graphics/icegun.png', quality = 3}
+P.iceyShot = P.gun:new{name= "IceyShot", description = "Super Cool", image = 'Graphics/icegun.png', quality = 3}
 function P.iceyShot:giveOne()
 	self.numHeld =self.numHeld + 3
 end
@@ -5052,9 +5052,7 @@ function P.fireBreath:usableOnNothing(tileY, tileX)
 	return math.abs(player.tileY-tileY)+math.abs(player.tileX-tileX)<=1
 end
 function P.fireBreath:usableOnAnimal(animal)
-	local dist = math.abs(player.tileY-animal.tileY)+math.abs(player.tileX-animal.tileX)
-
-	return dist<P.gun.baseRange
+	return P.gun.usableOnAnimal(self, animal)
 end
 function P.fireBreath:useToolTile(tile, tileY, tileX)
 	if P.saw:usableOnTile(tile, tileY, tileX) then
@@ -5072,7 +5070,7 @@ function P.fireBreath:useToolNothing(tileY, tileX)
 	P.ladder.useToolNothing(self, tileY, tileX)
 end
 function P.fireBreath:useToolAnimal(animal)
-	P.gun.useToolAnimal(animal)
+	P.gun.useToolAnimal(self, animal)
 end
 
 P.claw = P.superTool:new{name = "qwer", description = "Reset, reload, recover", quality = 5,
