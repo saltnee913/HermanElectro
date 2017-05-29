@@ -5052,9 +5052,7 @@ function P.fireBreath:usableOnNothing(tileY, tileX)
 	return math.abs(player.tileY-tileY)+math.abs(player.tileX-tileX)<=1
 end
 function P.fireBreath:usableOnAnimal(animal)
-	local dist = math.abs(player.tileY-animal.tileY)+math.abs(player.tileX-animal.tileX)
-
-	return dist<P.gun.baseRange
+	return P.gun.usableOnAnimal(self, animal)
 end
 function P.fireBreath:useToolTile(tile, tileY, tileX)
 	if P.saw:usableOnTile(tile, tileY, tileX) then
