@@ -18,7 +18,7 @@
 		},
 		"puzzleRooms": 
 		{
-			"filePath": "RoomData/edPuzzle.json",
+			"filePath": "RoomData/rooms.json",
 			"requirements":
 			{
 				"not":
