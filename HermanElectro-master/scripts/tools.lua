@@ -5072,7 +5072,7 @@ function P.fireBreath:useToolNothing(tileY, tileX)
 	P.ladder.useToolNothing(self, tileY, tileX)
 end
 function P.fireBreath:useToolAnimal(animal)
-	P.gun.useToolAnimal(animal)
+	P.gun.useToolAnimal(self, animal)
 end
 
 P.claw = P.superTool:new{name = "qwer", description = "Reset, reload, recover", quality = 5,
