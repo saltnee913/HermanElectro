@@ -2376,8 +2376,8 @@ function P.wireExtender:useToolTile(tile, tileY, tileX)
 
 end
 
-P.coin = P.superTool:new{name = "Penny", description = "Every millionaire starts somewhere", image = 'Graphics/Tools/coin.png', range = 1, quality = 1}
---Don't pretend things are free --  Nothing is free, One way to pay 
+P.coin = P.superTool:new{name = "Coin", description = "One way to pay", image = 'Graphics/Tools/coin.png', range = 1, quality = 1}
+--Don't pretend things are free --  Nothing is free, One way to pay was Every millionaire starts somewhere
 function P.coin:usableOnTile(tile)
 	if tile:instanceof(tiles.toolTaxTile) and not tile.destroyed then
 		return true
@@ -2563,7 +2563,7 @@ function P.thruCover:getToolableTiles()
 end
 
 
-P.iceyShot = P.gun:new{name= "Ice Gun", description = "Super Cool", image = 'Graphics/icegun.png', quality = 3}
+P.iceyShot = P.gun:new{name= "IceyShot", description = "Super Cool", image = 'Graphics/icegun.png', quality = 3}
 function P.iceyShot:giveOne()
 	self.numHeld =self.numHeld + 3
 end
