@@ -2519,7 +2519,6 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 			--player.tileY = 1
 			--player.tileX = 1
 		end
-		gameTime.timeLeft = gameTime.timeLeft+100
 	end
 
 	--k ability: open doors with k on supertools

@@ -290,6 +290,8 @@ function P.keypressed(key, unicode)
     	stats.writeStats()  		
     elseif key == "o" then
     	createElements()
+    elseif key == "t" then
+		gameTime.timeLeft = gameTime.timeLeft+100
     end
 end
 
