@@ -181,7 +181,8 @@ function P.erik:onCharLoad()
 	gameTime.roomTime = 15
 	gameTime.levelTime = 0
 	gameTime.goesDownInCompleted = true
-	tools.giveToolsByReference({tools.stopwatch})
+	tools.giveToolsByReference({tools.stopwatch,tools.stopwatch,tools.stopwatch,tools.heartTransplant})
+	
 	--map.floorOrder = {'RoomData/floor1_erik.json', 'RoomData/floor2_erik.json', 'RoomData/floor3_erik.json', 'RoomData/floor6.json'}
 end
 --[[function P.erik:onFailedMove(key)
