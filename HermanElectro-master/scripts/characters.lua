@@ -287,7 +287,7 @@ end
 function P.battery:onPreUpdatePower()
 	if self.powered then
 		if room[player.tileY][player.tileX] ~= nil then
-			self.storedTile = room[player.tileY][player.tileX]:new()
+			self.storedTile = room[player.tileY][player.tileX]
 			self.storedTile.powered = true
 		else
 			self.storedTile = nil

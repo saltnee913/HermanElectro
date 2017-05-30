@@ -542,6 +542,9 @@ function P.electricFloor:willKillPlayer()
 	return not self.destroyed and self.powered
 end
 P.electricFloor.willKillAnimal = P.electricFloor.willKillPlayer
+function P.electricFloor:usableOnNothing()
+	return self.destroyed
+end
 
 P.poweredFloor = P.conductiveTile:new{name = "poweredFloor", laddered = false, destroyedSprite = 'Graphics/trapdoorwithladder.png', destroyedPoweredSprite = 'Graphics/trapdoorclosedwithladder.png', --[[sprite = 'Graphics/trapdoor.png', poweredSprite = 'Graphics/trapdoorclosed.png']]
 sprite = 'GraphicsBrush/trapdoor.png', poweredSprite = 'GraphicsBrush/trapdoorclosed.png'}

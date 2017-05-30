@@ -366,7 +366,10 @@ end
 P.recycleBin = P.box:new{name = "recycleBin", sprite = 'Graphics/recycleBin.png'}
 function P.recycleBin:onEnterTile()
 	local tile = room[self.tileY][self.tileX]
+
+	local makeNil = false
 	if tile:usableOnNothing() then
+		makeNil = true
 		if tile:instanceof(tiles.wire) then
 			tools.giveToolsByReference({tools.wireCutters})
 		elseif tile:instanceof(tiles.glassWall) then
@@ -375,9 +378,11 @@ function P.recycleBin:onEnterTile()
 			tools.giveToolsByReference({tools.saw})
 		elseif tile:instanceof(tiles.electricFloor) then
 			tools.giveToolsByReference({tools.waterBottle})
+		else
+			makeNil = false
 		end
 	end
-	room[self.tileY][self.tileX] = nil
+	if makeNil then room[self.tileY][self.tileX] = nil end
 end
 
 pushableList[1] = P.pushable

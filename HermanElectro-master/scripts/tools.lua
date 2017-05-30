@@ -4482,6 +4482,7 @@ function P.animalEnslaver:useToolNothing(tileY, tileX)
 	self.heldAnimal.tileY = tileY
 	self.heldAnimal.prevTileX = self.heldAnimal.tileX
 	self.heldAnimal.prevTileY = self.heldAnimal.tileY
+	self.heldAnimal:setLoc()
 	animals[#animals+1] = self.heldAnimal
 	self.heldAnimal = nil
 	self:updateSprite()
@@ -4491,6 +4492,7 @@ function P.animalEnslaver:useToolTile(tile, tileY, tileX)
 
 	self.heldAnimal.tileX = tileX
 	self.heldAnimal.tileY = tileY
+	self.heldAnimal:setLoc()
 	animals[#animals+1] = self.heldAnimal
 	self.heldAnimal = nil
 	self:updateSprite()
