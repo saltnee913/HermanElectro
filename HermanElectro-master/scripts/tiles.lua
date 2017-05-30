@@ -80,6 +80,11 @@ function P.tile:updateSprite()
 end
 function P.tile:postPowerUpdate(i,j)
 end
+function P.tile:onBorderEnter()
+end
+function P.tile:onReachMid()
+end
+
 --guide to elevation:
 --if can block movement, make blocksMovement true
 --if can only block animal movement, make blocksAnimalMovement true
@@ -2945,13 +2950,6 @@ function P.playerTile:updateSprite()
 	end
 end
 function P.playerTile:onEnter(entered)
-	if not (player.tileX==entered.tileX and player.tileY==entered.tileY) then return end
-	if self.character ~= nil then
-		player.character = self.character
-		player.character:onSelect()
-		myShader:send("player_range", 500)
-	end
-	messageInfo.text = self:getCharInfo()
 end
 function P.playerTile:onLeave(player)
 	messageInfo.text = nil
@@ -2967,6 +2965,14 @@ function P.playerTile:getCharInfo()
 end
 function P.playerTile:getYOffset()
 	return -1*tileUnit/2
+end
+function P.playerTile:onReachMid()
+	if self.character ~= nil then
+		player.character = self.character
+		player.character:onSelect()
+		myShader:send("player_range", 500)
+	end
+	messageInfo.text = self:getCharInfo()
 end
 
 P.charTile = P.tile:new{name = "charTile", sprite = 'Graphics/edex.png', character = nil}
@@ -2986,13 +2992,6 @@ function P.charTile:updateSprite()
 	end
 end
 function P.charTile:onEnter(entered)
-	if not (player.tileX==entered.tileX and player.tileY==entered.tileY) then return end
-	if self.character ~= nil then
-		player.character = self.character
-		player.character:onSelect()
-		myShader:send("player_range", 500)
-	end
-	messageInfo.text = self:getCharInfo()
 end
 function P.charTile:onLeave(player)
 	messageInfo.text = nil
@@ -3005,6 +3004,14 @@ function P.charTile:getCharInfo()
 	infoText = infoText.."Escapes: "..stats.getStat(self.character.name..'Wins').."\n"
 	infoText = infoText.."Failures: "..stats.getStat(self.character.name..'Losses')
 	return infoText
+end
+function P.charTile:onReachMid()
+	if self.character ~= nil then
+		player.character = self.character
+		player.character:onSelect()
+		myShader:send("player_range", 500)
+	end
+	messageInfo.text = self:getCharInfo()
 end
 
 P.tree = P.wall:new{name = "tree", sawable = false, level = 0, sprite = 'Graphics/tree0.png',
