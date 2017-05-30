@@ -4857,7 +4857,7 @@ function P.nineLives:updateSprite()
 end
 
 --1 is diamond, 2 is heart, 3 is spade, 4 is club, 5 is joker
-P.card = P.superTool:new{name = "Card", description = "Expanding the deck", quality = 3,
+P.card = P.superTool:new{name = "Card", description = "Expanding the deck", quality = 2,
 image = 'Graphics/deckofcards.png', baseImage = 'Graphics/card.png',
 cardOrder = {},
 spriteOrder = {'Graphics/diamondcard.png', 'Graphics/heartcard.png', 'Graphics/spadecard.png', 'Graphics/clubcard.png', 'Graphics/jokercard.png'}}
@@ -5029,8 +5029,10 @@ function P.stopwatch:usableOnNothing()
 end
 P.stopwatch.usableOnTile = P.stopwatch.usableOnNothing
 function P.stopwatch:useToolNothing()
+	gameTime.timeLeft = gameTime.timeLeft + 10
 	self.numHeld = self.numHeld-1
-	player.attributes.timeFrozen = true
+	player.attributes.clockFrozen = true 
+	--player.attributes.timeFrozen = true
 end
 P.stopwatch.useToolTile = P.stopwatch.useToolNothing
 
@@ -5293,7 +5295,7 @@ function P.medicine:usableOnNothing()
 end
 P.medicine.usableOnTile = P.medicine.usableOnNothing
 function P.medicine:useToolNothing()
-	gameTime.timeLeft = gameTime.timeLeft+100
+	gameTime.timeLeft = gameTime.timeLeft+100 + gameTime.timeLeft/10
 	--should have more functionality as well, so it's not lame
 end
 P.medicine.useToolTile = P.medicine.useToolNothing
