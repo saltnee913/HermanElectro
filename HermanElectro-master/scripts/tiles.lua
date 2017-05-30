@@ -1280,6 +1280,7 @@ function P.treasureTile:onEnter()
 	self.isVisible = false
 	self.gone = true
 	stats.incrementStat('treasureTilesReached')
+	gameTime.timeLeft = gameTime.timeLeft+5
 end
 function P.treasureTile:giveReward()
 	local timesCounter = 0
@@ -1289,6 +1290,7 @@ function P.treasureTile:giveReward()
 	local basicCount = 0
 	local superCount = 0
 	local rand = util.random(1000,'toolDrop')
+
 	--[[if rand<probBasic then
 		basicCount = basicCount+1
 	end
@@ -1873,6 +1875,7 @@ function P.treasureTile2:onEnter()
 	self.isCompleted = true
 	self.isVisible = false
 	self.gone = true
+	gameTime.timeLeft = gameTime.timeLeft+5
 end
 function P.treasureTile2:giveReward()
 	local reward = util.random(1000,'toolDrop')

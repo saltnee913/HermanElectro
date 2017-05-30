@@ -276,7 +276,7 @@ function love.load()
 			y = (6-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10, prevTileX = 3, prevTileY 	= 10,
 			prevx = (3-1)*scale*tileWidth+wallSprite.width+tileWidth/2*scale-10,
 			prevy = (10-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10,
-			width = 20, height = 20, speed = 250, luckTimer = 0, regularMapLoc = {x = 0, y = 0}, nonHeavenMapLoc = {x = 0, y = 0}, supersHeld = {total = 0}, returnFloorIndex = 0, attributes = {superRammy = false, timeFrozen = false, invincibleCounter = 0, shieldCounter = 0, lucky = false, gifted = false, permaMap = false, xrayVision = false, upgradedToolUse = false, fast = {fast = false, fastStep = false}, flying = false, fear = false, shelled = false, tall = false, extendedRange = 0, sockStep = false, invisible = false}}
+			width = 20, height = 20, speed = 250, luckTimer = 0, regularMapLoc = {x = 0, y = 0}, nonHeavenMapLoc = {x = 0, y = 0}, supersHeld = {total = 0}, returnFloorIndex = 0, attributes = {superRammy = false, timeFrozen = false, invincibleCounter = 0, shieldCounter = 0, lucky = false, gifted = false, permaMap = false, xrayVision = false, upgradedToolUse = false, fast = {fast = false, fastStep = false}, flying = false, fear = false, shelled = false, tall = false, extendedRange = 0, sockStep = false, invisible = false, clockFrozen = false}}
 	player.character = setChar
 
 	map.clearBlacklist()
@@ -1819,6 +1819,7 @@ function resetPlayerAttributesRoom()
 	player.attributes.fast = {fast = false, fastStep = false}
 	player.attributes.timeFrozen = false
 	player.attributes.superRammy = false
+	player.attributes.clockFrozen = false
 
 	if tools.demonFeather.numHeld>0 then
 		player.attributes.flying = true
@@ -2141,6 +2142,8 @@ keyTimer = {base = .12, timeLeft = .12, suicideDelay = .65}
 function love.update(dt)
 	dt = gameSpeed*dt
 
+
+
 	if gamePaused then
 		return
 	end
@@ -2291,9 +2294,11 @@ function love.update(dt)
 		end
 
 		--game timer
-		if started and validSpace() and (completedRooms[mapy][mapx]~=1 or gameTime.goesDownInCompleted)
-		and (not (floorTransition and not floorTransitionInfo.moved)) then
+		if not player.attributes.clockFrozen then
+			if started and validSpace() and (completedRooms[mapy][mapx]~=1 or gameTime.goesDownInCompleted)
+			and (not (floorTransition and not floorTransitionInfo.moved)) then
 			gameTime.timeLeft = gameTime.timeLeft-dt
+			end
 		end
 	end
 
