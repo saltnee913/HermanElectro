@@ -1057,7 +1057,7 @@ function P.crowbar:useToolTile(tile)
 	tile.stopped = true
 end
 
-P.doorstop = P.superTool:new{name = "doorstop", description = "Removed.", baseRange = 1, image = 'Graphics/unsticker.png', quality = 2}
+P.doorstop = P.superTool:new{name = "doorstop", description = "Removed.", baseRange = 1, image = 'Graphics/unsticker.png', quality = 1}
 function P.doorstop:usableOnTile(tile)
 	if tile:instanceof(tiles.vPoweredDoor) and (not tile.stopped) and (not tile.blocksMovement) then return true end
 	return false
@@ -1438,7 +1438,7 @@ function P.lamp:useToolTile(tile, tileY, tileX)
 	pushables[#pushables+1] = toSpawn
 end
 
-P.ramSpawner = P.boxSpawner:new{name = "Battering Ram", description  = "Knock down that wall", image = 'Graphics/batteringram.png'}
+P.ramSpawner = P.boxSpawner:new{name = "Battering Ram", description  = "Knock down that wall", image = 'Graphics/batteringram.png', quality = 2}
 function P.ramSpawner:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld-1
 	local toSpawn = pushableList[7]:new()
@@ -1467,7 +1467,7 @@ function P.gateBreaker:useToolTile(tile)
 end
 
 --Removed
-P.conductiveBoxSpawner = P.boxSpawner:new{name = "Conductive Box Spawner", description = "", image = 'Graphics/conductiveBox.png', quality = 3}
+P.conductiveBoxSpawner = P.boxSpawner:new{name = "Conductive Box Spawner", description = "", image = 'Graphics/conductiveBox.png', quality = 1}
 function P.conductiveBoxSpawner:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld-1
 	local toSpawn = pushableList[5]:new()
@@ -1486,7 +1486,7 @@ function P.conductiveBoxSpawner:useToolNothing(tileY, tileX)
 end
 
 --Removed
-P.boomboxSpawner = P.boxSpawner:new{name = "BoomboxSpawner", description = "Rock n' Roll", image = 'Graphics/boombox.png', quality = 2}
+P.boomboxSpawner = P.boxSpawner:new{name = "BoomboxSpawner", description = "Rock n' Roll", image = 'Graphics/boombox.png', quality = 1}
 function P.boomboxSpawner:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld-1
 	local toSpawn = pushableList[6]:new()
@@ -1514,7 +1514,7 @@ function P.superWireCutters:usableOnTile(tile)
 	return self:usableOnNonOverlay(tile) or (tile.overlay~=nil and self:usableOnNonOverlay(tile.overlay))
 end
 
-P.laser = P.superTool:new{name = "L.A.S.E.R.", description = "The damage multiplier", baseRange = 100, image = 'Graphics/laser.png', quality = 2}
+P.laser = P.superTool:new{name = "L.A.S.E.R.", description = "The damage multiplier", baseRange = 100, image = 'Graphics/laser.png', quality = 1}
 function P.laser:usableOnTile() --Was desc: Piercing shot
 	return true
 end
@@ -1707,7 +1707,7 @@ function P.superLaser:useToolNothing(tileY, tileX)
 end
 
 
-P.gas = P.superTool:new{name = "Poison Gas", description = "Chemical Warfare", baseRange = 0, image = 'Graphics/gas.png', quality = 3}
+P.gas = P.superTool:new{name = "Poison Gas", description = "Chemical Warfare", baseRange = 0, image = 'Graphics/gas.png', quality = 2}
 function P.gas:usableOnNothing() -- Keep Desc / Flavor?
 	return true
 end
@@ -2114,7 +2114,7 @@ function P.wireBreaker:useToolNothing(tileY, tileX)
 end
 P.wireBreaker.useToolTile = P.wireBreaker.useToolNothing
 
-P.powerBreaker = P.superTool:new{name = "EMP", description = "Great for fighting robots", baseRange = 0, image = 'Graphics/powerbreaker.png', quality = 2}
+P.powerBreaker = P.superTool:new{name = "EMP", description = "Great for fighting robots", baseRange = 0, image = 'Graphics/powerbreaker.png', quality = 3}
 function P.powerBreaker:usableOnNothing() --Was Power Breaker: Powerless
 	return true
 end
@@ -2162,7 +2162,7 @@ P.axe.usableOnAnimal = P.gun.usableOnAnimal
 P.axe.useToolAnimal = P.gun.useToolAnimal
 P.axe.useToolTile = P.saw.useToolTile
 
-P.lube = P.superTool:new{name = "Lube", description = "Wuba lubba dub dub", baseRange = 1, image = 'Graphics/lube.png', quality = 2}
+P.lube = P.superTool:new{name = "Lube", description = "Wuba lubba dub dub", baseRange = 1, image = 'Graphics/lube.png', quality = 1}
 function P.lube:usableOnTile(tile)
 	if tile:instanceof(tiles.dustyGlassWall) and tile.blocksVision then return true
 	elseif tile:instanceof(tiles.puddle) then return true
@@ -2210,13 +2210,13 @@ function P.snowball:useToolAnimal(animal)
 	animal.waitCounter = animal.waitCounter+1
 end
 
-P.superSnowball = P.snowball:new{name = "Snowball", description = "So very cold",image = 'Graphics/supersnowball.png', quality = 2}
+P.superSnowball = P.snowball:new{name = "Snowball", description = "So very cold",image = 'Graphics/supersnowball.png', quality = 1}
 function P.superSnowball:useToolAnimal(animal)
 	self.numHeld = self.numHeld-1
 	animal.frozen = true
 end
 
-P.snowballGlobal = P.snowball:new{name = "Mask", description = "The demon in the mask", image = 'Graphics/Tools/mask.png', baseRange = 0, quality = 3}
+P.snowballGlobal = P.snowball:new{name = "Mask", description = "The demon in the mask", image = 'Graphics/Tools/mask.png', baseRange = 0, quality = 2}
 --"Even these empathetic dogs can't tell you're afraid"
 function P.snowballGlobal:usableOnNothing()
 	return true
@@ -2629,10 +2629,10 @@ end --PowderMixes change the behaviors of puddles
 ------ 
 
 
-P.robotArm = P.superTool:new{name = "Robotic Arm", description = "Reach for the stars", image = 'Graphics/robotArm.png', quality = 2, baseRange = 0}
+P.robotArm = P.superTool:new{name = "Robotic Arm", description = "Reach for the stars", image = 'Graphics/robotArm.png', quality = 1, baseRange = 0}
 function P.robotArm:usableOnTile(tile)
 	return true
-end
+end 
 P.robotArm.usableOnNothing = P.robotArm.usableOnTile
 function P.robotArm:useToolTile(tile)
 	self.numHeld = self.numHeld-1
@@ -2840,7 +2840,7 @@ function P.ghostStep:useToolTile(tile)
 	updateGameState()
 end
 
-P.stoolPlacer = P.superTool:new{name = "Stool Placer", description = "Wanna get high?", image = 'GraphicsColor/halfwall.png', baseRange = 1, quality = 3}
+P.stoolPlacer = P.superTool:new{name = "Stool Placer", description = "Wanna get high?", image = 'GraphicsColor/halfwall.png', baseRange = 1, quality = 2}
 function P.stoolPlacer:usableOnNothing()
 	return true
 end
@@ -3670,7 +3670,7 @@ end
 P.supertoolReroller.useToolTile = P.supertoolReroller.useToolNothing
 
 P.tunneler = P.superTool:new{name = "Tunneler", description = "Someone get me out of here!", image = 'KenGraphics/stairs.png',
-baseRange = 1, quality = 2} --was desc Someone get me out of here!"
+baseRange = 1, quality = 4} --was desc Someone get me out of here!"
 function P.tunneler:usableOnNothing()
 	return true
 end
@@ -4386,7 +4386,7 @@ function P.tileFlipper:useToolTile(tile, tileY, tileX)
 end
 
 P.animalReroller = P.superTool:new{name = "Animal Reroller", description = "What could go wrong?", image = 'Graphics/toolreroller.png',
-baseRange = 0, quality = 2}
+baseRange = 0, quality = 1}
 function P.animalReroller:usableOnNothing()
 	return true
 end
@@ -4861,7 +4861,7 @@ function P.nineLives:updateSprite()
 end
 
 --1 is diamond, 2 is heart, 3 is spade, 4 is club, 5 is joker
-P.card = P.superTool:new{name = "Card", description = "Expanding the deck", quality = 2,
+P.card = P.superTool:new{name = "Card", description = "Expanding the deck", quality = 3,
 image = 'Graphics/deckofcards.png', baseImage = 'Graphics/card.png',
 cardOrder = {},
 spriteOrder = {'Graphics/diamondcard.png', 'Graphics/heartcard.png', 'Graphics/spadecard.png', 'Graphics/clubcard.png', 'Graphics/jokercard.png'}}
