@@ -80,6 +80,11 @@ function P.tile:updateSprite()
 end
 function P.tile:postPowerUpdate(i,j)
 end
+function P.tile:onBorderEnter()
+end
+function P.tile:onReachMid()
+end
+
 --guide to elevation:
 --if can block movement, make blocksMovement true
 --if can only block animal movement, make blocksAnimalMovement true
@@ -928,8 +933,8 @@ function P.vPoweredDoor:updateTile(player)
 		self.sprite = self.openSprite
 	end
 end
-function P.vPoweredDoor:willKillPlayer(player)
-	return self.blocksMovement
+function P.vPoweredDoor:willKillPlayer()
+	return self.blocksMovement and player.elevation<6
 end
 function P.vPoweredDoor:destroy()
 	self.stopped = true
@@ -2212,7 +2217,7 @@ function P.finalToolsTile:getInfoText()
 end
 
 P.grass = P.tile:new{name = "grass", sprite = 'KenGraphics/grass.png'}
-P.bed = P.tile:new{name = "bed", sprite = 'KenGraphics/bed.png'}
+P.bed = P.concreteWall:new{name = "bed", sprite = 'KenGraphics/bed.png'}
 P.statuebottom = P.tile:new{name = "statuebottom", sprite = 'KenGraphics/statuebottom.png'}
 P.statuetop = P.tile:new{name = "statuetop", sprite = 'KenGraphics/statuetop.png'}
 P.chairfront = P.tile:new{name = "chairfront", sprite = 'KenGraphics/chairfront.png'}
@@ -2938,20 +2943,16 @@ P.playerTile = P.tile:new{name = "playerTransform", character = nil, text = "Her
 function P.playerTile:onLoad()
 	if self.character==nil then
 		self.character = characters.getUnlockedCharacter(self.text)
-		if self.character ~= nil then
-			self.sprite = self.character.sprite
-			self.isVisible = true
-		end
+		self:updateSprite()
+	end
+end
+function P.playerTile:updateSprite()
+	if self.character ~= nil then
+		self.sprite = self.character.sprite
+		self.isVisible = true
 	end
 end
 function P.playerTile:onEnter(entered)
-	if not (player.tileX==entered.tileX and player.tileY==entered.tileY) then return end
-	if self.character ~= nil then
-		player.character = self.character
-		player.character:onSelect()
-		myShader:send("player_range", 500)
-	end
-	messageInfo.text = self:getCharInfo()
 end
 function P.playerTile:onLeave(player)
 	messageInfo.text = nil
@@ -2964,6 +2965,56 @@ function P.playerTile:getCharInfo()
 	infoText = infoText.."Escapes: "..stats.getStat(self.character.name..'Wins').."\n"
 	infoText = infoText.."Failures: "..stats.getStat(self.character.name..'Losses')
 	return infoText
+end
+function P.playerTile:getYOffset()
+	return -1*tileUnit/2
+end
+function P.playerTile:onReachMid()
+	if self.character ~= nil then
+		player.character = self.character
+		player.character:onSelect()
+		myShader:send("player_range", 500)
+	end
+	messageInfo.text = self:getCharInfo()
+end
+
+P.charTile = P.tile:new{name = "charTile", sprite = 'Graphics/edex.png', character = nil}
+function P.charTile:onLoad()
+	if self.character==nil then
+		self.character = characters.getUnlockedCharacter(self.text)
+		self:updateSprite()
+	end
+end
+function P.charTile:updateSprite()
+	if self.character ~= nil then
+		self.isVisible = true
+		local charOverlay = tiles.playerTile:new()
+		charOverlay.character = self.character
+		charOverlay:updateSprite()
+		self.overlay = charOverlay
+	end
+end
+function P.charTile:onEnter(entered)
+end
+function P.charTile:onLeave(player)
+	messageInfo.text = nil
+end
+function P.charTile:getCharInfo()
+	if self.character==nil then return end
+	local infoText = ""
+	infoText = infoText..self.character.name..", "..self.character.description.."\n"
+	infoText = infoText..self.character.crime.."\n\n"
+	infoText = infoText.."Escapes: "..stats.getStat(self.character.name..'Wins').."\n"
+	infoText = infoText.."Failures: "..stats.getStat(self.character.name..'Losses')
+	return infoText
+end
+function P.charTile:onReachMid()
+	if self.character ~= nil then
+		player.character = self.character
+		player.character:onSelect()
+		myShader:send("player_range", 500)
+	end
+	messageInfo.text = self:getCharInfo()
 end
 
 P.tree = P.wall:new{name = "tree", sawable = false, level = 0, sprite = 'Graphics/tree0.png',
@@ -3137,6 +3188,41 @@ function P.superChest:onEnter()
 	self.isCompleted = true
 	self.isVisible = false
 	self.gone = true
+end
+
+P.characterWall = P.reinforcedGlass:new{name = "characterWall", isVisible = false, character = nil, text = "Herman", sprite = tiles.reinforcedGlass.sprite}
+function P.characterWall:onLoad()
+	if self.character==nil then
+		self.character = characters.getUnlockedCharacter(self.text)
+		if self.character ~= nil then
+			local overlayChar = tiles.playerTile:new()
+			overlayChar.character = self.character
+			overlayChar:updateSprite()
+			self.overlay = overlayChar
+			self.isVisible = true
+		end
+	end
+end
+function P.characterWall:onEnter(entered)
+	if not (player.tileX==entered.tileX and player.tileY==entered.tileY) then return end
+	if self.character ~= nil then
+		player.character = self.character
+		player.character:onSelect()
+		myShader:send("player_range", 500)
+		tiles.concreteWall.onEnter(self, player)
+	end
+end
+function P.characterWall:getCharInfo()
+	if self.character==nil then return end
+	local infoText = ""
+	infoText = infoText..self.character.name..", "..self.character.description.."\n"
+	infoText = infoText..self.character.crime.."\n\n"
+	infoText = infoText.."Escapes: "..stats.getStat(self.character.name..'Wins').."\n"
+	infoText = infoText.."Failures: "..stats.getStat(self.character.name..'Losses')
+	return infoText
+end
+function P.characterWall:obstructsMovement()
+	return false
 end
 
 
@@ -3348,6 +3434,8 @@ tiles[205] = P.mimicTile
 tiles[206] = P.heavenEnter
 tiles[207] = P.heavenExit
 tiles[208] = P.superChest
+tiles[209] = P.characterWall
+tiles[210] = P.charTile
 
 
 return tiles

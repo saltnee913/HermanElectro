@@ -9,7 +9,7 @@ end
 function P.basicProcess:draw()
 end
 
-P.movePlayer = P.basicProcess:new{name = "movePlayer", direction = 0, active = true, time = nil, disableInput = true}
+P.movePlayer = P.basicProcess:new{name = "movePlayer", direction = 0, active = true, time = nil, disableInput = true, reachMid = false}
 function P.movePlayer:run(dt)
 	if self.time==nil then
 		self.baseTime = keyTimer.base*100
@@ -29,9 +29,18 @@ function P.movePlayer:run(dt)
     myShader:send("player_y", player.y+getTranslation().y*tileWidth*scale+(height2-height)/2)
 
 	self.time = self.time-dt*100
+
+	if (not self.reachMid) and self.time<self.baseTime/2 then
+		if room[player.tileY][player.tileX]~=nil then
+			room[player.tileY][player.tileX]:onBorderEnter()
+		end
+	end
 	if self.time<=0 then
 		self.active = false
 		setPlayerLoc()
+		if room[player.tileY][player.tileX]~=nil then
+			room[player.tileY][player.tileX]:onReachMid()
+		end
 	end
 end
 

@@ -1192,7 +1192,7 @@ function updatePower()
 								end
 							end
 							powerTestPushable(pY, pX, 0)
-							powerTest(pY, px, 0)
+							powerTest(pY, pX, 0)
 						end
 						pushables[i].powered = true
 					end
@@ -1268,11 +1268,11 @@ function updatePower()
 						if pushables[k].tileY==i and pushables[k].tileX==j-1 and room[i][j].dirAccept[4]==1 then
 							room[i][j].poweredNeighbors[4]=1
 						end
-						if pushables[k].tileY==i+1 and pushables[k].tileX==j and room[i][j].dirAccept[1]==1 then
-							room[i][j].poweredNeighbors[1]=1
-						end
-						if pushables[k].tileY==i-1 and pushables[k].tileX==j and room[i][j].dirAccept[3]==1 then
+						if pushables[k].tileY==i+1 and pushables[k].tileX==j and room[i][j].dirAccept[3]==1 then
 							room[i][j].poweredNeighbors[3]=1
+						end
+						if pushables[k].tileY==i-1 and pushables[k].tileX==j and room[i][j].dirAccept[1]==1 then
+							room[i][j].poweredNeighbors[1]=1
 						end
 					end
 				end
@@ -1439,7 +1439,7 @@ function powerTestPushable(x, y, lastDir)
 
 	if x>1 and room[x-1][y]~=nil and canBePowered(x-1,y,3) then
 		formerPowered = room[x-1][y].powered
-		formerSend = room[x-1][y].dirSende
+		formerSend = room[x-1][y].dirSend
 		formerAccept = room[x-1][y].dirAccept
 		--powered[x-1][y] = 1
 		room[x-1][y].poweredNeighbors[3] = 1
@@ -1905,11 +1905,6 @@ function enterRoom(dir)
 
 	if not validSpace() then return end
 	log("")
-	resetTranslation()
-	resetPlayerAttributesRoom()
-
-	--set pushables of prev. room to pushables array, saving for next entry
-	saveElements()
 
 	local plusOne = true
 
@@ -1939,6 +1934,12 @@ function enterRoom(dir)
 	elseif visibleMap[mapy+mapChange.y][mapx+mapChange.x]<1 then
 		return
 	end
+
+	resetTranslation()
+	resetPlayerAttributesRoom()
+
+	--set pushables of prev. room to pushables array, saving for next entry
+	saveElements()
 
 	mapy = mapy+mapChange.y
 	mapx = mapx+mapChange.x
@@ -2138,7 +2139,7 @@ function validSpace()
 	return mapy<=mapHeight and mapx<=mapHeight and mapy>0 and mapx>0
 end
 
-keyTimer = {base = .12, timeLeft = .12, suicideDelay = .65}
+keyTimer = {base = .14, timeLeft = .14, suicideDelay = .65}
 function love.update(dt)
 	dt = gameSpeed*dt
 
