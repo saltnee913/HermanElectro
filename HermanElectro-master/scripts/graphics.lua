@@ -194,8 +194,29 @@ function P.draw()
 		end
 	end
 
+	--Display unlock screen
+	local unlockDisplayer = unlocks.unlocksDisplay
+	local unlockDisplayNum = 0
+	while(unlockDisplayer ~= nil) do
+		local unlock = unlocks[unlockDisplayer.unlockToShow]
+		local unlockSprite = util.getImage(unlock.sprite)
+		local unlocksFrame = util.getImage(unlocks.frame)
+		local tScale = tileWidth/math.max(unlockSprite:getWidth(), unlockSprite:getHeight())
+		local uScale = width/500
+		local offsetY = (unlocksFrame:getHeight() - unlockSprite:getHeight()*tScale)/2
+		local offsetX = (unlocksFrame:getWidth() - unlockSprite:getWidth()*tScale)/2
+		local unlockNumOffset = unlocksFrame:getHeight()*uScale*unlockDisplayNum
+		love.graphics.draw(unlocksFrame, 0, height-unlocksFrame:getHeight()*uScale-unlockNumOffset, 0, uScale, uScale)
+		love.graphics.draw(unlockSprite, offsetX*uScale, height-(unlockSprite:getHeight()*tScale+offsetY)*uScale-unlockNumOffset, 0, uScale*tScale, uScale*tScale)
+		unlockDisplayer = unlockDisplayer.nextUnlock
+		unlockDisplayNum = unlockDisplayNum + 1
+	end
+	barLength = 200
 	if editorMode then
 		editor.draw()
+	end
+	if loadTutorial then
+		tutorial.draw()
 	end
 	if debugText ~= nil then
 		text.print(debugText, 0, 100, {255,140,0,255}, nil, 22)
