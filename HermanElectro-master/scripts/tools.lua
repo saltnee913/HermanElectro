@@ -5293,6 +5293,7 @@ function P.medicine:usableOnNothing()
 end
 P.medicine.usableOnTile = P.medicine.usableOnNothing
 function P.medicine:useToolNothing()
+	self.numHeld = self.numHeld-1
 	gameTime.timeLeft = gameTime.timeLeft+100 + gameTime.timeLeft/10
 	--should have more functionality as well, so it's not lame
 end
