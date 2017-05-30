@@ -1242,7 +1242,8 @@ end
 
 P.spring = P.superTool:new{name = "Spring", description = "Up, up in the air I go", useWithArrowKeys = false, baseRange = 4, image = 'Graphics/spring.png', quality = 3}
 function P.spring:usableOnTile(tile)
-	if tile.untoolable then return false end
+	if tile.untoolable then return false
+	elseif tile:getHeight()>0 and (not tile.canElevate) then return false end
 	for i = 1, #pushables do
 		if pushables[i].tileX == tile.tileX and pushables[i].tileY == tile.tileY then return false end
 	end
@@ -3054,7 +3055,10 @@ P.glitch = P.superTool:new{name = "Glitch", description = "...what just happened
 function P.glitch:usableOnNothing()
 	return true
 end
-P.glitch.usableOnTile = P.glitch.usableOnNothing
+function P.glitch:usableOnTile(tile, tileY, tileX)
+	if tile:getHeight()>0 and (not tile.canElevate) then return false end
+	return true
+end
 function P.glitch:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld-1
 	player.prevTileX = player.tileX

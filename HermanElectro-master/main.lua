@@ -338,6 +338,7 @@ function goToMainMenu()
 	won = false
 	player.dead = false
 	updateGameState()
+	updateCursor()
 	playMusic(1)
 end
 
