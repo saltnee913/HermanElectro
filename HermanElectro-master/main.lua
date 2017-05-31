@@ -2649,6 +2649,7 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
     updateGameState(noPowerUpdate)
     resetTileStates()
     checkAllDeath()
+    tools.updateToolableTiles(tool)
 
     if player.moveMode==0 then
 		--setPlayerLoc()
@@ -3349,8 +3350,8 @@ function updateGameState(noPowerUpdate, noLightUpdate)
 	end
 	updateTools()
 	if tool ~= 0 and tool ~= nil and tools[tool].numHeld == 0 then tool = 0 end
-	tools.updateToolableTiles(tool)
 	updateElevation()
+	tools.updateToolableTiles(tool)
 	--checkAllDeath()
 end
 
