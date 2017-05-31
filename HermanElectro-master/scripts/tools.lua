@@ -2629,7 +2629,7 @@ end --PowderMixes change the behaviors of puddles
 ------ 
 
 
-P.robotArm = P.superTool:new{name = "Robotic Arm", description = "Reach for the stars", image = 'Graphics/robotArm.png', quality = 1, baseRange = 0}
+P.robotArm = P.superTool:new{name = "Robotic Arm", description = "Reach for the stars", image = 'Graphics/robotArm.png', quality = 2, baseRange = 0}
 function P.robotArm:usableOnTile(tile)
 	return true
 end 
