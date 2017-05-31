@@ -2997,6 +2997,76 @@ function P.playerTile:onReachMid()
 	messageInfo.text = self:getCharInfo()
 end
 
+P.creditsChar = P.tile:new{name = "creditsChar", isVisible = false}
+function P.creditsChar:onLoad()
+	if self.text~=nil and self.dev==nil then
+		self:updateSprite()
+	end
+end
+function P.creditsChar:getDev(name)
+	if name=="Ben" then
+		return 'Graphics/Characters/Ben.png'
+	elseif name=="Erik" then
+		return 'Graphics/Characters/Erik.png'
+	elseif name=="Tony" then
+		return 'Graphics/Characters/Tony.png'
+	elseif name=="Zach" then
+		return 'Graphics/Characters/Zach.png'
+	elseif name=="Eli" then
+		return 'Graphics/Characters/Eli.png'
+	end
+end
+function P.creditsChar:updateSprite()
+	self.sprite = self:getDev(self.text)
+	self.isVisible = true
+end
+function P.creditsChar:getYOffset()
+	return -1*tileUnit/2
+end
+
+P.creditsBase = P.tile:new{name = "creditsBase", isVisible = false, sprite = 'Graphics/edex.png'}
+function P.creditsBase:onLoad()
+	if self.text~=nil then
+		self:updateSprite()
+	end
+end
+function P.creditsBase:updateSprite()
+	self.isVisible = true
+	local charOverlay = tiles.creditsChar:new()
+	charOverlay.text = self.text
+	charOverlay:updateSprite()
+	self.overlay = charOverlay
+end
+function P.creditsBase:onLeave(player)
+	messageInfo.text = nil
+end
+function P.creditsBase:getDevInfo()
+	local infoText = ""
+	infoText = infoText..self.text..", "..self:getDescription(self.text).."\n"
+	infoText = infoText..self:getJob(self.text).."\n\n"
+	return infoText
+end
+function P.creditsBase:getDescription(name)
+	if name=="Ben" then return "The Sexy"
+	elseif name=="Erik" then return "The Fashionable"
+	elseif name=="Eli" then return "The Obese"
+	elseif name=="Tony" then return "The Lazy"
+	elseif name=="Zach" then return "The Git"
+	end
+end
+function P.creditsBase:getJob(name)
+	if name=="Ben" then return "Lead Designer, Developer and Warden"
+	elseif name=="Erik" then return "Content Designer and Chef"
+	elseif name=="Zach" then return "Online Content Manager and Chief Jester/Magician"
+	elseif name=="Tony" then return "Art Director and Janitor"
+	elseif name=="Eli" then return "Programmer and Correctional Officer"
+	end
+end
+function P.creditsBase:onReachMid()
+	messageInfo.text = self:getDevInfo()
+end
+
+
 P.charTile = P.tile:new{name = "charTile", sprite = 'Graphics/edex.png', character = nil}
 function P.charTile:onLoad()
 	if self.character==nil then
@@ -3456,6 +3526,8 @@ tiles[208] = P.superChest
 tiles[209] = P.characterWall
 tiles[210] = P.charTile
 tiles[211] = P.dailyStairs
+tiles[212] = P.creditsChar
+tiles[213] = P.creditsBase
 
 
 return tiles
