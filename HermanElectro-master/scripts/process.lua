@@ -218,6 +218,70 @@ function P.missile:draw()
 	love.graphics.draw(missileSprite, self.x, self.y, 0, 0.5*scale, 0.5*scale)
 end
 
+P.gameTransitionProcess = P.basicProcess:new{name = "gameTransition", moved = false, gameType = "", disableUI = true}
+function P.gameTransitionProcess:run(dt)
+	for i = 1, 3 do
+		globalTint[i] = globalTint[i]-dt
+		if globalTint[i]<0 then
+			globalTint[i] = 0
+			self.moved = true
+		end
+	end
+	if self.moved then
+		globalTint = {1,1,1}
+		myShader:send("tint_r", globalTint[1])
+		myShader:send("tint_g", globalTint[2])
+		myShader:send("tint_b", globalTint[3])
+		self.active = false
+		if self.gameType == "main" then
+			startGame()
+		elseif self.gameType == "tut" then
+			startTutorial()
+		elseif self.gameType=="debug" then
+			startDebug()
+		elseif self.gameType=="editor" then
+			startEditor()
+		elseif self.gameType=="daily" then
+			startDaily()
+		end
+	else
+		myShader:send("tint_r", globalTint[1])
+		myShader:send("tint_g", globalTint[2])
+		myShader:send("tint_b", globalTint[3])
+	end
+end
+
+P.floorTransitionProcess = P.basicProcess:new{name = "floorTransition", override = "", moved = false}
+function P.floorTransitionProcess:run(dt)
+	if self.moved then
+		if player.range<map.floorInfo.playerRange then
+			if dt<0.03 then
+				player.range = player.range+190*dt
+			else player.range = player.range+190*0.3 end
+		else
+			player.range = map.floorInfo.playerRange
+			self.moved = false
+			self.override = false
+			self.active = false
+		end
+	else
+		player.range = player.range-300*dt
+		if player.range<0 then
+			myShader:send("player_range", 5)
+			if self.override=="up" then
+				goUpFloor()
+			elseif self.override=="down" then
+				goDownFloor()
+			else
+				goToFloor(self.floor)
+			end
+			self.moved = true
+			self.disableInput = false
+		end
+	end
+	myShader:send("player_range", math.max(player.range,5))
+end
+
 
 process[1] = P.movePlayer
 process[2] = P.moveAnimal
@@ -226,4 +290,7 @@ process[4] = P.grenadeThrow
 process[5] = P.bullet
 process[6] = P.missile
 process[7] = P.fadeProcess
+process[8] = P.gameTransitionProcess
+process[9] = P.floorTransitionProcess
+
 return process

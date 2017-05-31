@@ -174,7 +174,12 @@ function P.draw()
 		processes[i]:draw()
 	end
 
-	if floorTransition or gameTransition then return end
+	for i = 1, #processes do
+		if processes[i].disableUI then
+			return
+		end
+	end
+	
 	love.graphics.setShader()
 
 	P.drawUI()

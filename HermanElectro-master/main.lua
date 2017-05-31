@@ -364,15 +364,8 @@ end
 
 function loadRandoms()
 	local seed
-
-	if player.character.name == "Random" then
-		local date = os.date("*t")
-		local month = date.month
-		local day = date.day
-
-		seed = month*math.pow(day,5)
-		print(seed)
-	elseif seedOverride == nil then
+		
+	if seedOverride == nil then
 		seed = os.time()
 	else
 		seed = tonumber(seedOverride)
@@ -589,6 +582,31 @@ function startGame()
 	loadFirstLevel()
 	tools.resetTools()
 	--resetPlayer()
+	player.character:onBegin()
+	resetTintValues()
+end
+
+function startDaily()
+	stats.resetTempStats()
+
+	local date = os.date("*t")
+	local month = date.month
+	local day = date.day
+
+	seedOverride = month*math.pow(day,5)
+
+	local seed = loadRandoms()
+	if not saving.isPlayingBack() then
+		stats.incrementStat('runNumber')
+	end
+	saving.createNewRecording(seed)
+	loadTutorial = false
+	map.floorOrder = map.defaultFloorOrder
+	love.load()
+	loadFirstLevel()
+	tools.resetTools()
+	--resetPlayer()
+	player.character = characters[util.random(#characters, 'misc')]
 	player.character:onBegin()
 	resetTintValues()
 end
@@ -2024,14 +2042,9 @@ function setPlayerLoc()
 	--player.x is middle of body
 	--player.y is bottom of feet
 	--coords mark where "hitbox" is, not where drawing actually starts
-
-	player.x = (player.tileX-1)*scale*tileUnit+wallSprite.width
-	player.x = player.x+scale*tileHeight/2
-
-	player.y = (player.tileY-1)*scale*tileUnit+wallSprite.height
-	--bottom of feet not actually halfway on tile
-	--looks better this way b/c feet have very slight depth
-	player.y = player.y+scale*(2/3*tileUnit)
+	local coords = tileToCoordsPlayer(player.tileY, player.tileX)
+	player.x = coords.x
+	player.y = coords.y
 
     myShader:send("player_x", player.x+getTranslation().x*tileUnit*scale+(width2-width)/2)
     myShader:send("player_y", player.y+getTranslation().y*tileUnit*scale+(height2-height)/2)
@@ -2045,6 +2058,8 @@ function tileToCoordsPlayer(tileY, tileX)
 end
 
 function tileToCoordsYPlayer(tileY)
+	--bottom of feet not actually halfway on tile
+	--looks better this way b/c feet have very slight depth
 	return (tileY-1)*scale*tileUnit+wallSprite.height+scale*(2/3*tileUnit)
 end
 
@@ -2196,81 +2211,6 @@ function love.update(dt)
 	if (love.keyboard.isDown("w") or love.keyboard.isDown("a") or
 	love.keyboard.isDown("s") or love.keyboard.isDown("d")) and player.moveMode==1 then
 		processMove(lastMoveKey, dt)
-	end
-
-	if floorTransition then
-		if floorTransitionInfo.moved then
-			if player.range<map.floorInfo.playerRange then
-				if dt<0.03 then
-					player.range = player.range+190*dt
-				else player.range = player.range+190*0.3 end
-			else
-				player.range = map.floorInfo.playerRange
-				floorTransition = false
-				floorTransitionInfo = {floor = 0, override = "", moved = false}
-			end
-		else
-			player.range = player.range-300*dt
-			if player.range<0 then
-				myShader:send("player_range", 5)
-				if floorTransitionInfo.override=="up" then
-					goUpFloor()
-				elseif floorTransitionInfo.override=="down" then
-					goDownFloor()
-				else
-					goToFloor(floorTransitionInfo.floor)
-				end
-				floorTransitionInfo.moved = true
-			end
-		end
-		myShader:send("player_range", math.max(player.range,5))
-	elseif gameTransition then
-		if gameTransitionInfo.moved then
-			--[[for i = 1, 3 do
-				if dt>0.03 then
-					globalTint[i] = globalTint[i]+0.03
-				else
-					globalTint[i] = globalTint[i]+dt
-				end
-				if globalTint[i]>1 then
-					globalTint[i] = 1
-					gameTransitionInfo = {gameType = "", moved = false}
-					gameTransition = false
-				end
-			end
-			myShader:send("tint_r", globalTint[1])
-			myShader:send("tint_g", globalTint[2])
-			myShader:send("tint_b", globalTint[3])]]
-			globalTint = {1,1,1}
-			myShader:send("tint_r", globalTint[1])
-			myShader:send("tint_g", globalTint[2])
-			myShader:send("tint_b", globalTint[3])
-			gameTransitionInfo.gameType = ""
-			gameTransition = false
-		else
-			for i = 1, 3 do
-				globalTint[i] = globalTint[i]-dt
-				if globalTint[i]<0 then
-					globalTint[i] = 0
-					gameTransitionInfo.moved = true
-				end
-			end
-			if gameTransitionInfo.moved then
-				myShader:send("tint_r", globalTint[1])
-				myShader:send("tint_g", globalTint[2])
-				myShader:send("tint_b", globalTint[3])
-				if gameTransitionInfo.gameType == "main" then
-					startGame()
-				elseif gameTransitionInfo.gameType == "tut" then
-					startTutorial()
-				end
-				gameTransitionInfo.gameType = ""
-			else
-				myShader:send("tint_r", globalTint[1])
-				myShader:send("tint_g", globalTint[2])
-				myShader:send("tint_b", globalTint[3])
-			end
-		end
 	end
 
 	text.updateTextTimers(dt)
@@ -2862,47 +2802,55 @@ function processTurn()
 end
 
 function processMove(key, dt)
-	player.prevx = player.x
-	player.prevy = player.y
-	player.prevTileX = player.tileX
-	player.prevTileY = player.tileY
-	if not map.blocksMovement(player.tileY, player.tileX) then
-    	if key == "w" then
-    		if player.tileY>1 then
-    			player.tileY = player.tileY-1
-    			--player.y = player.y-tileHeight*scale
-			elseif player.tileY==1 and (player.tileX==math.floor(roomLength/2) or player.tileX==math.floor(roomLength/2)+1) then
-				enterRoom(0)
+	if player.waitCounter<=0 and not (room[player.tileY][player.tileX]~=nil and
+	room[player.tileY][player.tileX]:sticksPlayer()) then
+		player.prevx = player.x
+		player.prevy = player.y
+		player.prevTileX = player.tileX
+		player.prevTileY = player.tileY
+		if not map.blocksMovement(player.tileY, player.tileX) then
+	    	if key == "w" then
+	    		if player.tileY>1 then
+	    			player.tileY = player.tileY-1
+	    			--player.y = player.y-tileHeight*scale
+				elseif player.tileY==1 and (player.tileX==math.floor(roomLength/2) or player.tileX==math.floor(roomLength/2)+1) then
+					enterRoom(0)
+				end
+	    	elseif key == "s" then
+	    		if player.tileY<roomHeight then
+	    			player.tileY = player.tileY+1
+	    			--player.y = player.y+tileHeight*scale
+				elseif player.tileY == roomHeight and (player.tileX==math.floor(roomLength/2) or player.tileX==math.floor(roomLength/2)+1) then
+					enterRoom(2)
+	    		end
+	    	elseif key == "a" then
+	    		if player.tileX>1 then
+	    			player.tileX = player.tileX-1
+	    			--player.x = player.x-tileHeight*scale
+				elseif player.tileX == 1 and (player.tileY==math.floor(roomHeight/2) or player.tileY==math.floor(roomHeight/2)+1) then
+					enterRoom(3)
+	    		end
+	    	elseif key == "d" then
+	    		if player.tileX<roomLength then
+	    			player.tileX = player.tileX+1
+	    			--player.x = player.x+tileHeight*scale
+	    		elseif player.tileX == roomLength and (player.tileY==math.floor(roomHeight/2) or player.tileY==math.floor(roomHeight/2)+1) then
+					enterRoom(1)
+				end
 			end
-    	elseif key == "s" then
-    		if player.tileY<roomHeight then
-    			player.tileY = player.tileY+1
-    			--player.y = player.y+tileHeight*scale
-			elseif player.tileY == roomHeight and (player.tileX==math.floor(roomLength/2) or player.tileX==math.floor(roomLength/2)+1) then
-				enterRoom(2)
-    		end
-    	elseif key == "a" then
-    		if player.tileX>1 then
-    			player.tileX = player.tileX-1
-    			--player.x = player.x-tileHeight*scale
-			elseif player.tileX == 1 and (player.tileY==math.floor(roomHeight/2) or player.tileY==math.floor(roomHeight/2)+1) then
-				enterRoom(3)
-    		end
-    	elseif key == "d" then
-    		if player.tileX<roomLength then
-    			player.tileX = player.tileX+1
-    			--player.x = player.x+tileHeight*scale
-    		elseif player.tileX == roomLength and (player.tileY==math.floor(roomHeight/2) or player.tileY==math.floor(roomHeight/2)+1) then
-				enterRoom(1)
+			if room[player.tileY][player.tileX]==nil and math.abs(player.elevation)>3 then
+				player.tileX = player.prevTileX
+				player.tileY = player.prevTileY
+			elseif room[player.tileY][player.tileX]~=nil and room[player.tileY][player.tileX]:obstructsMovement() and not player.character:bypassObstructsMovement(room[player.tileY][player.tileX]) then
+				player.tileX = player.prevTileX
+				player.tileY = player.prevTileY
 			end
 		end
-		if room[player.tileY][player.tileX]==nil and math.abs(player.elevation)>3 then
-			player.tileX = player.prevTileX
-			player.tileY = player.prevTileY
-		elseif room[player.tileY][player.tileX]~=nil and room[player.tileY][player.tileX]:obstructsMovement() and not player.character:bypassObstructsMovement(room[player.tileY][player.tileX]) then
-			player.tileX = player.prevTileX
-			player.tileY = player.prevTileY
-		end
+	else
+		player.prevx = player.x
+		player.prevy = player.y
+		player.prevTileX = player.tileX
+		player.prevTileY = player.tileY
 	end
 
 	if player.waitCounter>0 then
@@ -2919,7 +2867,7 @@ function processMove(key, dt)
 	else
 		resetPlayerAttributesStep()
 	end
-	return true
+	return playerMoved()
 end
 
 function postKeypressReset()

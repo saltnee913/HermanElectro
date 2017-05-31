@@ -61,6 +61,9 @@ end
 function P.tile:destroy()
 	self.destroyed = true
 end
+function P.tile:sticksPlayer()
+	return false
+end
 function P.tile:getInfoText()
 	return nil
 end
@@ -1197,18 +1200,8 @@ P.concreteWallConductiveT.updateSprite = P.concreteWallConductiveCorner.updateSp
 
 P.tunnel = P.tile:new{name = "tunnel", toolsNeeded = -1, toolsEntered = 0, sprite = 'KenGraphics/stairs.png'}
 function P.tunnel:onEnter(player)
-	--[[if self.toolsNeeded==0 then loadNextLevel() return end
-	local noNormalTools = true
-	for i = 1, tools.numNormalTools do
-		if tools[i].numHeld>0 then noNormalTools = false end
-	end
-	if noNormalTools then loadNextLevel() end
-	if tool==0 or tool>7 then return end
-	tools[tool].numHeld = tools[tool].numHeld - 1
-	self.toolsNeeded = self.toolsNeeded-1
-	self.toolsEntered = self.toolsEntered+1
-	--donations = donations+math.ceil((7-(floorIndex))/2)
-	floorDonations = floorDonations+1]]
+end
+function P.tunnel:onReachMid()
 	if floorIndex>=9 then
 		return
 		--should do something cool, can add later
@@ -1217,14 +1210,21 @@ function P.tunnel:onEnter(player)
 		return
 	end
 	--goDownFloor()
-	beginFloorSequence(0, "down")
+	--beginFloorSequence(0, "down")
+	local animationProcess = processList.floorTransitionProcess:new()
+	animationProcess.override = "down"
+	processes[#processes+1] = animationProcess
 end
 
 P.upTunnel = P.tunnel:new{name = "upTunnel", sprite = 'KenGraphics/stairsUp.png'}
 function P.upTunnel:onEnter(player)
+end
+function P.upTunnel:onReachMid()
 	--goUpFloor()
 	if floorIndex ~= 2 or not saving.isPlayingBack() then
-		beginFloorSequence(0, "up")
+		local animationProcess = processList.floorTransitionProcess:new()
+		animationProcess.override = "up"
+		processes[#processes+1] = animationProcess
 	end
 end
 function P.upTunnel:onLeave(player)
@@ -2047,15 +2047,17 @@ end
 P.glue = P.tile:new{name = "glue", sprite = 'Graphics/glue.png'}
 function P.glue:onEnter(player)
 	if player.attributes.flying then return end
-	player.waitCounter = player.waitCounter+1
+	--player.waitCounter = player.waitCounter+1
 	if player.character.name == characters.lenny.name then
 		--unlocks = require('scripts.unlocks')
 		--unlocks.unlockUnlockableRef(unlocks.glueSnailUnlock)
 	end
 end
-
+function P.glue:sticksPlayer()
+	return true
+end
 function P.glue:onStay(player)
-	player.waitCounter = player.waitCounter+1
+	--player.waitCounter = player.waitCounter+1
 end
 function P.glue:onEnterAnimal(animal)
 	--[[if animal:instanceof(animalList.snail) then
@@ -2865,9 +2867,19 @@ function P.lemonade:willKillAnimal()
 end
 
 P.gameStairs = P.tile:new{name = "gameStairs", sprite = 'KenGraphics/gamestairs.png'}
-function P.gameStairs:onEnter()
+function P.gameStairs:onReachMid()
 	stairsLocs[1] = {map ={x = mapx, y = mapy}, coords = {x = player.tileX, y = player.tileY}}
-	beginGameSequence("main")
+	local animationProcess = processList.gameTransitionProcess:new()
+	animationProcess.gameType = "main"
+	processes[#processes+1] = animationProcess
+end
+
+P.dailyStairs = P.tile:new{name = "dailyStairs", sprite = 'KenGraphics/gamestairs.png'}
+function P.dailyStairs:onReachMid()
+	stairsLocs[1] = {map ={x = mapx, y = mapy}, coords = {x = player.tileX, y = player.tileY}}
+	local animationProcess = processList.gameTransitionProcess:new()
+	animationProcess.gameType = "daily"
+	processes[#processes+1] = animationProcess
 end
 
 P.tutStairs = P.tile:new{name = "tutStairs", sprite = 'KenGraphics/tutstairs.png'}
@@ -2880,17 +2892,21 @@ P.debugStairs = P.tile:new{name = "debugStairs", sprite = 'KenGraphics/tutstairs
 function P.debugStairs:onLoad()
 	self.isVisible = not releaseBuild
 end
-function P.debugStairs:onEnter()
+function P.debugStairs:onReachMid()
 	if self.isVisible then
 		stairsLocs[1] = {map ={x = mapx, y = mapy}, coords = {x = player.tileX, y = player.tileY}}
-		startDebug()
+		local animationProcess = processList.gameTransitionProcess:new()
+		animationProcess.gameType = "debug"
+		processes[#processes+1] = animationProcess
 	end
 end
 
 P.editorStairs = P.tile:new{name = "editorStairs", sprite = 'KenGraphics/greenstairs.png'}
 function P.editorStairs:onEnter()
 	stairsLocs[1] = {map ={x = mapx, y = mapy}, coords = {x = player.tileX, y = player.tileY}}
-	startEditor()
+	local animationProcess = processList.gameTransitionProcess:new()
+	animationProcess.gameType = "main"
+	processes[#processes+1] = animationProcess
 end
 
 P.saveStairs = P.tile:new{name = "saveStairs", sprite = 'KenGraphics/gamestairs.png', recording = nil}
@@ -3439,6 +3455,7 @@ tiles[207] = P.heavenExit
 tiles[208] = P.superChest
 tiles[209] = P.characterWall
 tiles[210] = P.charTile
+tiles[211] = P.dailyStairs
 
 
 return tiles
