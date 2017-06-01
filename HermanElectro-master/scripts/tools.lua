@@ -5350,8 +5350,30 @@ function P.rewindRevive:checkDeath()
 	return false
 end
 
-P.treasureThief = P.superTool:new{name = "Treasure Snatcher", description = "Steal from anyone", baseRange = 100, image = 'Graphics/laser.png', quality = 1}
-function P.treasureTheif:usableOnTile()
+P.shroomRevive = P.superTool:new{name = "Shroom Transplant", description = "Not dead...but afraid", baseRange = 0, baseImage = 'Graphics/tprevive.png', activeImage = 'KenGraphics/mushroom.png' destroyOnRevive = false, quality = 4}
+function P.shroomRevive:checkDeath()
+	updateGameState(false)
+
+	player.attributes.invincibleCounter = player.attributes.invincibleCounter+10
+	self.active = true
+	turnOnMushroomMode()
+	self:updateSprite()
+
+	self.numHeld = self.numHeld-1
+	log("Revived!")
+ 
+	return false
+end
+function P.shroomRevive:updateSprite()
+	if self.active then
+		self.image = self.activeImage
+	else
+		self.image = self.baseImage
+	end
+end
+
+P.treasureThief = P.superTool:new{name = "Treasure Snatching Beam", description = "Steal from anyone", baseRange = 100, image = 'Graphics/laser.png', quality = 1}
+function P.treasureTheif:usableOnTile() ---Currently does not always grab the closest
 	return true
 end
 P.treasureThief.usableOnNothing = P.treasureTheif.usableOnTile
