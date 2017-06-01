@@ -1580,7 +1580,7 @@ function P.beggar:providePayment()
 	elseif paymentType<0.66 then P.blueBeggar:providePayment()
 	else P.greenBeggar:providePayment() end
 end
-function P.beggar:absoluteFinalUpdate()
+function P.beggar:onLoad()
 	if not (self.name==tiles.beggar.name) then return end
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
@@ -2430,7 +2430,6 @@ P.waterBottleTile = P.toolTile:new{name = "waterBottleTile", toolId = 4, sprite 
 
 
 P.toolTaxTile = P.reinforcedGlass:new{name = "toolTaxTile", dirSend = {0,0,0,0}, sprite = 'Graphics/tooltaxtile.png', tool = nil}
-P.toolTaxTile.absoluteFinalUpdate = P.toolTile.absoluteFinalUpdate
 function P.toolTaxTile:updateSprite()
 	if self.tool == tools.wireCutters then
 		self.overlay = P.wireCuttersTile
@@ -2483,6 +2482,18 @@ function P.toolTaxTile:obstructsMovement()
 		return false
 	end
 	return true
+end
+function P.toolTaxTile:onLoad()
+	if self.tool == nil then
+		self:randomize()
+		self.tool = tools[self.toolId]
+		self:updateSprite()
+	end
+end
+function P.toolTaxTile:randomize()
+	local whichBasic = util.random(tools.numNormalTools, 'toolDrop')
+	self.toolId = whichBasic
+	self.tool = tools[self.toolId]
 end
 
 P.dungeonEnter = P.tile:new{name = "dungeonEnter"}
