@@ -5335,15 +5335,21 @@ end
 
 P.rewindRevive = P.superTool:new{name = "Revert", description = "Not dead...but afraid", baseRange = 0, image = 'Graphics/tprevive.png', destroyOnRevive = false, quality = 4}
 function P.rewindRevive:checkDeath()
-	self.numHeld = self.numHeld-1
+	
 
 	saveStairs.onEnter()
 
 	updateGameState(false)
+	self.numHeld = self.numHeld-1
 	log("Revived!")
-
+ 
 	return false
 end
+
+
+
+--Tools to add: Treasure Snatcher, Shroom Transplant, Source Reviver / Temp-destroyer
+
 
 P.numNormalTools = 7
 P.lastToolUsed = 1
