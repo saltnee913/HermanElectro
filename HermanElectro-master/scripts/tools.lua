@@ -1560,6 +1560,9 @@ function P.laser:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld-1
 end
 
+
+
+
 P.icegun = P.superTool:new{name = "The Stop Light", description = "It may never turn green", baseRange = 5,
 image = 'Graphics/icegun.png', quality = 2}	--Was Freeze Ray: Piercing permafrost
 function P.icegun:usableOnTile()
@@ -1662,6 +1665,7 @@ local function killBlocks(tileY, tileX)
 				pushables[i]:destroy()
 			end
 		end
+
 	end
 end
 function P.superLaser:useToolTile(tile, tileY, tileX)
@@ -5344,6 +5348,48 @@ function P.rewindRevive:checkDeath()
 	log("Revived!")
  
 	return false
+end
+
+P.treasureThief = P.superTool:new{name = "Treasure Snatcher", description = "Steal from anyone", baseRange = 100, image = 'Graphics/laser.png', quality = 1}
+function P.treasureTheif:usableOnTile()
+	return true
+end
+P.treasureThief.usableOnNothing = P.treasureTheif.usableOnTile
+local function grab(tileY, tileX)
+	local dogsKilled = 0
+	if tileX == player.tileX then
+		for i = 1, roomLength do
+			if room[tileY][i]~=nil then
+				if (tileX >= player.tileX and i >= player.tileX) or
+				  (tileX < player.tileX and i < player.tileX) then
+					if (room[i][tileX]:instanceof(tiles.treasureTile))
+					room[i][tileX]:onEnter()
+					return false
+					end
+				end
+			end
+		end
+	else
+		for i = 1, roomHeight do
+			if room[i][tileX]~=nil then
+				if (tileY > player.tileY and i > player.tileY) or
+				  (tileY < player.tileY and i < player.tileY) then
+				  	if (room[i][tileY]:instanceof(tiles.treasureTile))
+					room[i][tileY]:onEnter()
+					return false
+					end
+				end
+			end
+		end
+	end
+end
+function P.treasureThief:useToolTile(tile, tileY, tileX)
+	grab(tileY, tileX)
+	self.numHeld = self.numHeld-1
+end
+function P.TreasureThief:useToolNothing(tileY, tileX)
+	grab(tileY, tileX)
+	self.numHeld = self.numHeld-1
 end
 
 
