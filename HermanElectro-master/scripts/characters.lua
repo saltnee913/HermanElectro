@@ -564,8 +564,8 @@ function P.scientist:onCharLoad()
 	tools[tools.electricPotion.toolid].isDisabled = false
 	tools[tools.teleportPotion.toolid].isDisabled = false
 	tools[tools.shittyPotion.toolid].isDisabled = false
-	self.pulsing = false
 	self.hyde = false
+	self:deelectrify()
 	tools.giveToolsByReference({tools.shittyPotion, tools.teleportPotion, tools.electricPotion})
 end
 function P.scientist:electrify()
