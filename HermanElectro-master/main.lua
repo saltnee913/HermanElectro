@@ -3181,6 +3181,9 @@ function love.mousepressed(x, y, button, istouch, isPlayback)
 	end
 	saving.recordMouseInput(x, y, button, istouch, false)
 
+	mouseX = x
+	mouseY = y
+
 	local bigRoomTranslation = getTranslation()
 	tileLocX = math.ceil((mouseX-wallSprite.width)/(scale*tileUnit))-bigRoomTranslation.xInteger
 	tileLocY = math.ceil((mouseY-wallSprite.height)/(scale*tileUnit))-bigRoomTranslation.yInteger
@@ -3196,8 +3199,7 @@ function love.mousepressed(x, y, button, istouch, isPlayback)
 	
 	--mouseX = x-(width2-width)/2
 	--mouseY = y-(height2-height)/2
-	mouseX = x
-	mouseY = y
+
 	local bigRoomTranslation = getTranslation()
 	mouseTranslated = {x = mouseX-bigRoomTranslation.x*scale*tileUnit, y = mouseY-bigRoomTranslation.y*scale*tileUnit}
 
