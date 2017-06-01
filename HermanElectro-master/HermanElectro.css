@@ -1,3 +1,31 @@
-title {
-	color: navy;
+header {
+	color: orange;
+	position: relative;
+	text-align: center;
+	font-size: 300%;
+}
+body  {
+    background-color: lightblue;
+    margin-right:0; margin-left:0; margin-top:0; margin-bottom:0;
+    display: block;
+}
+img {
+	display: block;
+}
+.left{
+	position: relative;
+	float:left;
+	margin-right:0; margin-left:0; margin-top:0; margin-bottom:0;
+	padding-right: 0; padding-left: 0; padding-top: 0; padding-bottom: 0;
+	border-width: 0;
+	align-content: left;
+
+}
+.right {
+		position: relative;
+		float:right; /*right:50%;*/
+		margin-right:0; margin-left:0; margin-top:0; margin-bottom:0;
+		padding-right: 0; padding-left: 0; padding-top: 0; padding-bottom: 0;
+		border-width: 0;
+		align-content: right;
 }

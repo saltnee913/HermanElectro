@@ -5321,11 +5321,23 @@ function P.eraser:useToolTile(tile, tileY, tileX)
 	room[tileY][tileX] = tiles.pit:new()
 end
 
-P.tpRevive = P.superTool:new{name = "Flashback", description = "Not dead...but afraid", baseRange = 0, image = 'Graphics/tprevive.png', destroyOnRevive = false, quality = 5}
+P.tpRevive = P.superTool:new{name = "Flashback", description = "Not dead...but afraid", baseRange = 0, image = 'Graphics/tprevive.png', destroyOnRevive = false, quality = 4}
 function P.tpRevive:checkDeath()
 	self.numHeld = self.numHeld-1
 
 	P.teleporter.useToolNothing(self, tileY, tileX)
+
+	updateGameState(false)
+	log("Revived!")
+
+	return false
+end
+
+P.rewindRevive = P.superTool:new{name = "Revert", description = "Not dead...but afraid", baseRange = 0, image = 'Graphics/tprevive.png', destroyOnRevive = false, quality = 4}
+function P.tpRevive:checkDeath()
+	self.numHeld = self.numHeld-1
+
+	saveStairs.onEnter()
 
 	updateGameState(false)
 	log("Revived!")
