@@ -5354,7 +5354,7 @@ P.shroomRevive = P.superTool:new{name = "Shroom Transplant", description = "Not 
 function P.shroomRevive:checkDeath()
 	updateGameState(false)
 
-	player.attributes.invincibleCounter = player.attributes.invincibleCounter+10
+	player.attributes.invincibleCounter = player.attributes.invincibleCounter+2
 	self.active = true
 	turnOnMushroomMode()
 	self:updateSprite()
@@ -5664,6 +5664,7 @@ P:addTool(P.eraser)
 P:addTool(P.tpRevive)
 
 P:addTool(P.treasureThief)
+P:addTool(P.shroomRevive)
 
 P.resetTools()
 -- Make a tool based cursor
