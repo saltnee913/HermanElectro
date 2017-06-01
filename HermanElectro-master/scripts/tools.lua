@@ -5641,6 +5641,7 @@ P:addTool(P.medicine)
 P:addTool(P.eraser)
 P:addTool(P.tpRevive)
 
+P:addTool(P.treasureThief)
 
 P.resetTools()
 -- Make a tool based cursor
