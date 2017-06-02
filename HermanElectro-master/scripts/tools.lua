@@ -5692,7 +5692,7 @@ P:addTool(P.medicine)
 P:addTool(P.eraser)
 P:addTool(P.tpRevive)
 
-P:addTool(P.rewindRevive)
+--P:addTool(P.rewindRevive)
 P:addTool(P.treasureThief)
 P:addTool(P.shroomRevive)
 P:addTool(P.roomRestore)
