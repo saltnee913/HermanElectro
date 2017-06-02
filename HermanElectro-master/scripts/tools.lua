@@ -5347,7 +5347,7 @@ P.shroomRevive = P.superTool:new{name = "Shroom Transplant", description = "Not 
 function P.shroomRevive:checkDeath()
 	updateGameState(false)
 
-	player.attributes.invincibleCounter = player.attributes.invincibleCounter+5
+	player.attributes.invincibleCounter = player.attributes.invincibleCounter+4
 	self.active = true
 	turnOnMushroomMode()
 	self:updateSprite()
