@@ -5409,6 +5409,22 @@ function P.treasureThief:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld-1
 end
 
+P.roomRestore = P.superTool:new{name = "Room Restorer", description = "Hard Reboot", quality  = 3, image = 'Graphics/doorwatch.png', baseRange = 0}
+function P.roomRestore:usableOnTile(tile)
+	return true
+end
+P.roomRestore.usableOnNothing = P.roomRestore.usableOnTile
+function P.roomRestore:useToolTile(tile)
+	hackEnterRoom(mainMap[mapy][mapx].roomid, mapy, mapx)
+end
+function P.roomRestore:useToolNothing()
+	hackEnterRoom(mainMap[mapy][mapx].roomid, mapy, mapx)
+end
+
+P.
+
+
+
 P.gumballs = P.superTool:new{name = "Gumball Machine", description = "Insane Flavors", baseRange = 0, image = 'Graphics/card.png', quality = 5}
 function P.gumballs:giveOne()
 	tools.gumball.give(8)
@@ -5429,17 +5445,6 @@ end
 --Tools to add: Treasure Snatcher, Shroom Transplant, P-Source Reviver / Temp-destroyer, gumball machine
 
 
-P.roomRestore = P.superTool:new{name = "Room Restorer", description = "Hard Reboot", quality  = 3, baseRange = 0}
-function P.roomRestore:usableOnTile(tile)
-	return true
-end
-P.roomRestore.usableOnNothing = P.roomRestore.usableOnTile
-function P.roomRestore:useToolTile(tile)
-	hackEnterRoom(mainMap[mapy][mapx].roomid, mapy, mapx)
-end
-function P.roomRestore:useToolNothing()
-	hackEnterRoom(mainMap[mapy][mapx].roomid, mapy, mapx)
-end
 
 
 
