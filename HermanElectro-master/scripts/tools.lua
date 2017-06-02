@@ -5364,7 +5364,7 @@ function P.shroomRevive:updateSprite()
 	end
 end
 
-P.treasureThief = P.superTool:new{name = "Treasure Snatching Beam", description = "Steal from anyone", baseRange = 100, image = 'Graphics/laser.png', quality = 1}
+P.treasureThief = P.superTool:new{name = "Treasure Snatching Beam", description = "Steal from anyone", baseRange = 100, image = 'Graphics/treasurethief.png', quality = 1}
 function P.treasureThief:usableOnTile() ---Currently does not always grab the closest
 	return true
 end
