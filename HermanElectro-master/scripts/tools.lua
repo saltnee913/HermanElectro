@@ -5349,7 +5349,7 @@ P.shroomRevive = P.superTool:new{name = "Shroom Transplant", description = "Not 
 function P.shroomRevive:checkDeath()
 	updateGameState(false)
 
-	player.attributes.invincibleCounter = player.attributes.invincibleCounter+5
+	player.attributes.invincibleCounter = player.attributes.invincibleCounter+4
 	self.active = true
 	turnOnMushroomMode()
 	self:updateSprite()
@@ -5429,6 +5429,25 @@ function P.gumball:useToolTile(tile)
 	--Code to make this temporary
 end
 --Tools to add: Treasure Snatcher, Shroom Transplant, P-Source Reviver / Temp-destroyer, gumball machine
+
+
+P.roomRestore = P.superTool:new{name = "Room Restorer", description = "Hard Reboot", quality  = 3, baseRange = 0}
+function P.roomRestore:usableOnTile(tile)
+	return true
+end
+P.roomRestore.usableOnNothing = P.roomRestore.usableOnTile
+function P.roomRestore:useToolTile(tile)
+	hackEnterRoom(mainMap[mapy][mapx].roomid, mapy, mapx)
+end
+function P.roomRestore:useToolNothing()
+	hackEnterRoom(mainMap[mapy][mapx].roomid, mapy, mapx)
+end
+
+
+
+
+
+
 
 
 P.numNormalTools = 7
@@ -5675,9 +5694,11 @@ P:addTool(P.medicine)
 P:addTool(P.eraser)
 P:addTool(P.tpRevive)
 
-P:addTool(P.rewindRevive)
+--P:addTool(P.rewindRevive)
 P:addTool(P.treasureThief)
 P:addTool(P.shroomRevive)
+P:addTool(P.roomRestore)
+
 
 P.resetTools()
 -- Make a tool based cursor
