@@ -5352,7 +5352,6 @@ function P.shroomRevive:checkDeath()
 	turnOnMushroomMode()
 	self:updateSprite()
 
-	self.numHeld = self.numHeld-1
 	log("Revived!")
  
 	return false
