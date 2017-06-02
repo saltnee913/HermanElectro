@@ -5416,12 +5416,13 @@ end
 P.roomRestore.usableOnNothing = P.roomRestore.usableOnTile
 function P.roomRestore:useToolTile(tile)
 	hackEnterRoom(mainMap[mapy][mapx].roomid, mapy, mapx)
+	self.numHeld = self.numHeld-1
 end
 function P.roomRestore:useToolNothing()
 	hackEnterRoom(mainMap[mapy][mapx].roomid, mapy, mapx)
+	self.numHeld = self.numHeld-1
 end
 
-P.
 
 
 
