@@ -648,7 +648,8 @@ function P.brick:usableOnTile(tile, tileY, tileX)
 	local dist = math.abs(player.tileY - tileY) + math.abs(player.tileX - tileX)
 	if tile.destroyed then return end
 	if not tile.bricked and tile:instanceof(tiles.button) and not tile:instanceof(tiles.superStickyButton)
-		and not tile:instanceof(tiles.unbrickableStayButton) and dist <= 3 then
+		and not tile:instanceof(tiles.unbrickableStayButton) and dist <= 3 and
+		(not(tile:instanceof(tiles.stickyButton) and tile.down)) then
 		return true
 	elseif not tile.destroyed and tile:instanceof(tiles.glassWall) then
 		return true
