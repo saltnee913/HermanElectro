@@ -648,8 +648,7 @@ function P.brick:usableOnTile(tile, tileY, tileX)
 	local dist = math.abs(player.tileY - tileY) + math.abs(player.tileX - tileX)
 	if tile.destroyed then return end
 	if not tile.bricked and tile:instanceof(tiles.button) and not tile:instanceof(tiles.superStickyButton)
-		and not tile:instanceof(tiles.unbrickableStayButton) and dist <= 3 and
-		(not(tile:instanceof(tiles.stickyButton) and tile.down)) then
+		and not tile:instanceof(tiles.unbrickableStayButton) and dist <= 3 then
 		return true
 	elseif not tile.destroyed and tile:instanceof(tiles.glassWall) then
 		return true
@@ -5344,7 +5343,7 @@ function P.rewindRevive:checkDeath()
 	return false
 end
 
-P.shroomRevive = P.superTool:new{name = "Shroom Transplant", description = "Not dead...but wacked", baseRange = 0, baseImage = 'Graphics/tprevive.png', activeImage = 'KenGraphics/mushroom.png', destroyOnRevive = false, quality = 4}
+P.shroomRevive = P.superTool:new{name = "Shroom Transplant", description = "Not dead...but wacked", baseRange = 0, image = 'KenGraphics/mushroom.png', baseImage = 'KenGraphics/mushroom.png', activeImage = 'KenGraphics/mushroom.png', destroyOnRevive = false, quality = 4}
 function P.shroomRevive:checkDeath()
 	updateGameState(false)
 
@@ -5371,28 +5370,28 @@ function P.treasureThief:usableOnTile() ---Currently does not always grab the cl
 	return true
 end
 P.treasureThief.usableOnNothing = P.treasureThief.usableOnTile
-local function grab(tileY, tileX)
+function P.treasureThief:grab(tileY, tileX)
 	local dogsKilled = 0
-	if tileX == player.tileX then
+	if tileY== player.tileY then
 		for i = 1, roomLength do
 			if room[tileY][i]~=nil then
-				if (tileX >= player.tileX and i >= player.tileX) or
+				if (tileX > player.tileX and i > player.tileX) or
 				  (tileX < player.tileX and i < player.tileX) then
-					if (room[i][tileX]:instanceof(tiles.treasureTile)) then
-					room[i][tileX]:onEnter()
-					return false
+					if (room[tileY][i]:instanceof(tiles.treasureTile)) then
+						room[tileY][i]:onEnter()
+						return false
 					end
 				end
 			end
 		end
-	else
+	elseif tileX == player.tileX then
 		for i = 1, roomHeight do
 			if room[i][tileX]~=nil then
 				if (tileY > player.tileY and i > player.tileY) or
 				  (tileY < player.tileY and i < player.tileY) then
-				  	if (room[i][tileY]:instanceof(tiles.treasureTile)) then
-					room[i][tileY]:onEnter()
-					return false
+				  	if (room[i][tileX]:instanceof(tiles.treasureTile)) then
+						room[i][tileX]:onEnter()
+						return false
 					end
 				end
 			end
@@ -5400,7 +5399,7 @@ local function grab(tileY, tileX)
 	end
 end
 function P.treasureThief:useToolTile(tile, tileY, tileX)
-	grab(tileY, tileX)
+	self:grab(tileY, tileX)
 	self.numHeld = self.numHeld-1
 end
 function P.treasureThief:useToolNothing(tileY, tileX)
@@ -5409,7 +5408,7 @@ function P.treasureThief:useToolNothing(tileY, tileX)
 end
 
 P.gumballs = P.superTool:new{name = "Gumball Machine", description = "Insane Flavors", baseRange = 0, image = 'Graphics/card.png', quality = 5}
-function P.thruCover:giveOne()
+function P.gumballs:giveOne()
 	tools.gumball.give(8)
 end
 
@@ -5432,7 +5431,7 @@ P.numNormalTools = 7
 P.lastToolUsed = 1
 
 function P.resetTools()
-	tools[1] = P.saw
+	tools[1] = P.treasureThief
 	tools[2] = P.ladder
 	tools[3] = P.wireCutters
 	tools[4] = P.waterBottle
