@@ -5332,7 +5332,7 @@ function P.tpRevive:checkDeath()
 	return false
 end
 
-P.rewindRevive = P.superTool:new{name = "Revert", description = "Not dead...yet", baseRange = 0, image = 'Graphics/tprevive.png', destroyOnRevive = false, quality = 4}
+P.rewindRevive = P.superTool:new{name = "Revert", description = "Not dead...yet", baseRange = 0, image = 'Graphics/deathWatch.png', destroyOnRevive = false, quality = 4}
 function P.rewindRevive:checkDeath()
 	
 
@@ -5345,7 +5345,7 @@ function P.rewindRevive:checkDeath()
 	return false
 end
 
-P.shroomRevive = P.superTool:new{name = "Shroom Transplant", description = "Not dead...but wacked", baseRange = 0, image = 'KenGraphics/mushroom.png', baseImage = 'KenGraphics/mushroom.png', activeImage = 'KenGraphics/mushroom.png', destroyOnRevive = false, quality = 4}
+P.shroomRevive = P.superTool:new{name = "Shroom Transplant", description = "Not dead...but wacked", baseRange = 0, image = 'Graphics/shroomRevive.png', baseImage = 'KenGraphics/mushroom.png', activeImage = 'KenGraphics/mushroom.png', destroyOnRevive = false, quality = 4}
 function P.shroomRevive:checkDeath()
 	updateGameState(false)
 
