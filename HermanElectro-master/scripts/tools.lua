@@ -5371,29 +5371,32 @@ function P.treasureThief:usableOnTile() ---Currently does not always grab the cl
 end
 P.treasureThief.usableOnNothing = P.treasureThief.usableOnTile
 function P.treasureThief:grab(tileY, tileX)
-	local dogsKilled = 0
-	if tileY== player.tileY then
-		for i = 1, roomLength do
-			if room[tileY][i]~=nil then
-				if (tileX > player.tileX and i > player.tileX) or
-				  (tileX < player.tileX and i < player.tileX) then
-					if (room[tileY][i]:instanceof(tiles.treasureTile)) then
-						room[tileY][i]:onEnter()
-						return false
-					end
-				end
+	local endCoord = 1
+	local stepNum = 1
+	if tileY == player.tileY then
+		if tileX>player.tileX then
+			endCoord = roomLength
+		else
+			stepNum = -1
+		end
+		for i = player.tileX, endCoord, stepNum do
+			if room[tileY][i]~=nil and room[tileY][i]:instanceof(tiles.treasureTile) then
+				room[tileY][i]:onEnter()
+				room[tileY][i] = nil
+				return
 			end
 		end
 	elseif tileX == player.tileX then
-		for i = 1, roomHeight do
-			if room[i][tileX]~=nil then
-				if (tileY > player.tileY and i > player.tileY) or
-				  (tileY < player.tileY and i < player.tileY) then
-				  	if (room[i][tileX]:instanceof(tiles.treasureTile)) then
-						room[i][tileX]:onEnter()
-						return false
-					end
-				end
+		if tileY>player.tileY then
+			endCoord = roomHeight
+		else
+			stepNum = -1
+		end
+		for i = player.tileY, endCoord, stepNum do
+			if room[i][tileX]~=nil and room[i][tileX]:instanceof(tiles.treasureTile) then
+				room[i][tileX]:onEnter()
+				room[i][tileX] = nil
+				return
 			end
 		end
 	end
@@ -5403,7 +5406,7 @@ function P.treasureThief:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld-1
 end
 function P.treasureThief:useToolNothing(tileY, tileX)
-	grab(tileY, tileX)
+	self:grab(tileY, tileX)
 	self.numHeld = self.numHeld-1
 end
 
@@ -5431,7 +5434,7 @@ P.numNormalTools = 7
 P.lastToolUsed = 1
 
 function P.resetTools()
-	tools[1] = P.treasureThief
+	tools[1] = P.saw
 	tools[2] = P.ladder
 	tools[3] = P.wireCutters
 	tools[4] = P.waterBottle
