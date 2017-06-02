@@ -5343,7 +5343,7 @@ function P.rewindRevive:checkDeath()
 	return false
 end
 
-P.shroomRevive = P.superTool:new{name = "Shroom Transplant", description = "Not dead...but wacked", baseRange = 0, baseImage = 'Graphics/tprevive.png', activeImage = 'KenGraphics/mushroom.png', destroyOnRevive = false, quality = 4}
+P.shroomRevive = P.superTool:new{name = "Shroom Transplant", description = "Not dead...but wacked", baseRange = 0, baseImage = 'KenGraphics/mushroom.png', activeImage = 'KenGraphics/mushroom.png', destroyOnRevive = false, quality = 4}
 function P.shroomRevive:checkDeath()
 	updateGameState(false)
 
@@ -5372,26 +5372,26 @@ end
 P.treasureThief.usableOnNothing = P.treasureThief.usableOnTile
 local function grab(tileY, tileX)
 	local dogsKilled = 0
-	if tileX == player.tileX then
+	if tileY== player.tileY then
 		for i = 1, roomLength do
 			if room[tileY][i]~=nil then
-				if (tileX >= player.tileX and i >= player.tileX) or
+				if (tileX > player.tileX and i > player.tileX) or
 				  (tileX < player.tileX and i < player.tileX) then
-					if (room[i][tileX]:instanceof(tiles.treasureTile)) then
-					room[i][tileX]:onEnter()
-					return false
+					if (room[tileY][i]:instanceof(tiles.treasureTile)) then
+						room[tileY][i]:onEnter()
+						return false
 					end
 				end
 			end
 		end
-	else
+	elseif tileX == player.tileX then
 		for i = 1, roomHeight do
 			if room[i][tileX]~=nil then
 				if (tileY > player.tileY and i > player.tileY) or
 				  (tileY < player.tileY and i < player.tileY) then
-				  	if (room[i][tileY]:instanceof(tiles.treasureTile)) then
-					room[i][tileY]:onEnter()
-					return false
+				  	if (room[i][tileX]:instanceof(tiles.treasureTile)) then
+						room[i][tileX]:onEnter()
+						return false
 					end
 				end
 			end
@@ -5431,7 +5431,7 @@ P.numNormalTools = 7
 P.lastToolUsed = 1
 
 function P.resetTools()
-	tools[1] = P.saw
+	tools[1] = P.treasureThief
 	tools[2] = P.ladder
 	tools[3] = P.wireCutters
 	tools[4] = P.waterBottle
