@@ -5269,7 +5269,7 @@ function P.diagonal:useToolTile(tile, tileY, tileX)
 end
 
 P.megaUnlock = P.superTool:new{name = "Psychic Key", baseRange = 0, description = "When one door closes, they all open", --Ben most are you fucking kidding me
-quality = 4}
+quality = 4, image = 'Graphics/psychickey.png'}
 function P.megaUnlock:usableOnNothing()
 	return true
 end
