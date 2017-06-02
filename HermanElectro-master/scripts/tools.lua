@@ -5697,6 +5697,7 @@ P:addTool(P.treasureThief)
 P:addTool(P.shroomRevive)
 P:addTool(P.roomRestore)
 
+
 P.resetTools()
 -- Make a tool based cursor
 
