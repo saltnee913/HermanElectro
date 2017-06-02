@@ -5429,6 +5429,25 @@ end
 --Tools to add: Treasure Snatcher, Shroom Transplant, P-Source Reviver / Temp-destroyer, gumball machine
 
 
+P.roomRestore = P.superTool:new{name = "Room Restorer", description = "Hard Reboot", quality  = 3, baseRange = 0}
+function P.roomRestore:usableOnTile(tile)
+	return true
+end
+P.roomRestore.usableOnNothing = P.roomRestore.usableOnTile
+function P.roomRestore:useToolTile(tile)
+	hackEnterRoom(mainMap[mapy][mapx].roomid, mapy, mapx)
+end
+function P.roomRestore:useToolNothing()
+	hackEnterRoom(mainMap[mapy][mapx].roomid, mapy, mapx)
+end
+
+
+
+
+
+
+
+
 P.numNormalTools = 7
 P.lastToolUsed = 1
 
@@ -5676,6 +5695,7 @@ P:addTool(P.tpRevive)
 P:addTool(P.rewindRevive)
 P:addTool(P.treasureThief)
 P:addTool(P.shroomRevive)
+P:addTool(P.roomRestore)
 
 P.resetTools()
 -- Make a tool based cursor
