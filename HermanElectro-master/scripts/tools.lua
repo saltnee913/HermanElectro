@@ -2614,16 +2614,9 @@ end
 	return toolableAnimals
 end]]
 
+--gumball
 
-P.gumball = P.superTool:new{name = "A Brown Gumball", description = "Tastes like shadows", quality = -1, baseRange = 0}
-function P.gumball:usableOnTile(tile)
-	return true
-end
 
-function P.gumball:useToolTile(tile)
-	player.attributes.invisible = true
-	--Code to make this temporary
-end
 
 P.powderMix = P.superTool:new{name = "Tasty Powder", description = "Add to water", quality = -1, baseRange = 1}
 function P.powderMix:usableOnTile(tile)
@@ -5337,7 +5330,7 @@ function P.tpRevive:checkDeath()
 	return false
 end
 
-P.rewindRevive = P.superTool:new{name = "Revert", description = "Not dead...but afraid", baseRange = 0, image = 'Graphics/tprevive.png', destroyOnRevive = false, quality = 4}
+P.rewindRevive = P.superTool:new{name = "Revert", description = "Not dead...yet", baseRange = 0, image = 'Graphics/tprevive.png', destroyOnRevive = false, quality = 4}
 function P.rewindRevive:checkDeath()
 	
 
@@ -5350,11 +5343,11 @@ function P.rewindRevive:checkDeath()
 	return false
 end
 
-P.shroomRevive = P.superTool:new{name = "Shroom Transplant", description = "Not dead...but afraid", baseRange = 0, baseImage = 'Graphics/tprevive.png', activeImage = 'KenGraphics/mushroom.png' destroyOnRevive = false, quality = 4}
+P.shroomRevive = P.superTool:new{name = "Shroom Transplant", description = "Not dead...but wacked", baseRange = 0, baseImage = 'Graphics/tprevive.png', activeImage = 'KenGraphics/mushroom.png', destroyOnRevive = false, quality = 4}
 function P.shroomRevive:checkDeath()
 	updateGameState(false)
 
-	player.attributes.invincibleCounter = player.attributes.invincibleCounter+2
+	player.attributes.invincibleCounter = player.attributes.invincibleCounter+5
 	self.active = true
 	turnOnMushroomMode()
 	self:updateSprite()
@@ -5373,10 +5366,10 @@ function P.shroomRevive:updateSprite()
 end
 
 P.treasureThief = P.superTool:new{name = "Treasure Snatching Beam", description = "Steal from anyone", baseRange = 100, image = 'Graphics/laser.png', quality = 1}
-function P.treasureTheif:usableOnTile() ---Currently does not always grab the closest
+function P.treasureThief:usableOnTile() ---Currently does not always grab the closest
 	return true
 end
-P.treasureThief.usableOnNothing = P.treasureTheif.usableOnTile
+P.treasureThief.usableOnNothing = P.treasureThief.usableOnTile
 local function grab(tileY, tileX)
 	local dogsKilled = 0
 	if tileX == player.tileX then
@@ -5384,7 +5377,7 @@ local function grab(tileY, tileX)
 			if room[tileY][i]~=nil then
 				if (tileX >= player.tileX and i >= player.tileX) or
 				  (tileX < player.tileX and i < player.tileX) then
-					if (room[i][tileX]:instanceof(tiles.treasureTile))
+					if (room[i][tileX]:instanceof(tiles.treasureTile)) then
 					room[i][tileX]:onEnter()
 					return false
 					end
@@ -5396,7 +5389,7 @@ local function grab(tileY, tileX)
 			if room[i][tileX]~=nil then
 				if (tileY > player.tileY and i > player.tileY) or
 				  (tileY < player.tileY and i < player.tileY) then
-				  	if (room[i][tileY]:instanceof(tiles.treasureTile))
+				  	if (room[i][tileY]:instanceof(tiles.treasureTile)) then
 					room[i][tileY]:onEnter()
 					return false
 					end
@@ -5409,14 +5402,29 @@ function P.treasureThief:useToolTile(tile, tileY, tileX)
 	grab(tileY, tileX)
 	self.numHeld = self.numHeld-1
 end
-function P.TreasureThief:useToolNothing(tileY, tileX)
+function P.treasureThief:useToolNothing(tileY, tileX)
 	grab(tileY, tileX)
 	self.numHeld = self.numHeld-1
 end
 
+P.gumballs = P.superTool:new{name = "Gumball Machine", description = "Insane Flavors", baseRange = 0, image = 'Graphics/card.png', quality = 5}
+function P.thruCover:giveOne()
+	tools.gumball.give(8)
+end
 
 
---Tools to add: Treasure Snatcher, Shroom Transplant, Source Reviver / Temp-destroyer
+P.gumball = P.superTool:new{name = "A Brown Gumball", description = "Tastes like shadows", quality = -1, baseRange = 0}
+function P.gumball:give(num)
+	self.numHeld = self.numHeld+num
+end
+function P.gumball:usableOnTile(tile)
+	return true
+end
+function P.gumball:useToolTile(tile)
+	player.attributes.invisible = true
+	--Code to make this temporary
+end
+--Tools to add: Treasure Snatcher, Shroom Transplant, P-Source Reviver / Temp-destroyer, gumball machine
 
 
 P.numNormalTools = 7
@@ -5663,6 +5671,7 @@ P:addTool(P.medicine)
 P:addTool(P.eraser)
 P:addTool(P.tpRevive)
 
+P:addTool(P.rewindRevive)
 P:addTool(P.treasureThief)
 P:addTool(P.shroomRevive)
 
