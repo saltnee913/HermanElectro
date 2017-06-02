@@ -1874,6 +1874,14 @@ function updateAttributesRealtime(dt)
 				turnOffMushroomMode()
 
 			end
+			if tools.shroomRevive.active then
+				tools.shroomRevive.numHeld = tools.shroomRevive.numHeld-1
+				updateTools()
+				tools.shroomRevive.active = false
+				tools.shroomRevive:updateSprite()
+				turnOffMushroomMode()
+
+			end
 		end
 	end
 end
