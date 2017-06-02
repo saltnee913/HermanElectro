@@ -3,7 +3,7 @@
 	{
 		"rooms": 
 		{
-			"filePath": "RoomData/f7rooms.json",
+			"filePath": "RoomData/f7tut.json",
 			"requirements":
 			{
 				"not":
@@ -135,9 +135,9 @@
 	{
 		"requireUnlocks": true,
 		"height": 10,
-		"numRooms": 20,
+		"numRooms": 3,
 		"generateFunction": "generateMapWeighted",
-		"startRoomID": "1",
+		"startRoomID": "tut_start",
 		//numRoomsToCheck is the amount of rooms to try when deciding a room's roomid, decreasing this increases rng
 		"numRoomsToCheck": 5,
 		"tint": [0,0,0],
