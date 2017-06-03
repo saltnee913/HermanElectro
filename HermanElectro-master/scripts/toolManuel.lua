@@ -116,13 +116,85 @@ P.wireCutterScreens = {
 		drawAtTile(tiles.verticalWire.destroyedSprite, 8, 5, x, y)
 		drawAtTile(tiles.verticalWire.sprite, 8, 6, x, y)
 		drawAtTile(player.character.sprite, 7, 5, x, y)
+	end,
+
+	function(x, y, scale)
+		drawAtTile(tiles.electricFloor.sprite, 1, 0, x, y)
+		drawAtTile(player.character.sprite, 0, 0, x, y)
+		drawGreen(1, 0, x, y)
+
+		drawAtTile(tiles.electricFloor.destroyedSprite, 8, 0, x, y)
+		drawAtTile(player.character.sprite, 7, 0, x, y)
+
+
+		drawAtTile(tiles.powerSupply.sprite, 1, 4, x, y)
+		drawAtTile(tiles.electricFloor.poweredSprite, 1, 5, x, y)
+		drawAtTile(tiles.electricFloor.poweredSprite, 1, 6, x, y)
+		drawAtTile(player.character.sprite, 0, 5, x, y)
+		drawGreen(1, 5, x, y)
+
+		drawAtTile(tiles.powerSupply.sprite, 8, 4, x, y)
+		drawAtTile(tiles.electricFloor.destroyedSprite, 8, 5, x, y)
+		drawAtTile(tiles.electricFloor.sprite, 8, 6, x, y)
+		drawAtTile(player.character.sprite, 7, 5, x, y)
 	end
 }
-P.waterScreens = {}
+P.waterScreens = {
+	function(x, y, scale)
+		drawAtTile(tiles.powerSupply.sprite, 1, 0, x, y)
+		drawAtTile(player.character.sprite, 0, 0, x, y)
+		drawAtTile(tiles.verticalWire.poweredSprite, 1, 1, x, y)
+		drawGreen(1, 0, x, y)
+
+		drawAtTile(tiles.powerSupply.destroyedSprite, 8, 0, x, y)
+		drawAtTile(tiles.verticalWire.sprite, 8, 1, x, y)
+		drawAtTile(player.character.sprite, 7, 0, x, y)
+	end,
+
+	function(x, y, scale)
+		drawAtTile(tiles.electricFloor.sprite, 1, 0, x, y)
+		drawAtTile(player.character.sprite, 0, 0, x, y)
+		drawGreen(1, 0, x, y)
+
+		drawAtTile(tiles.electricFloor.destroyedSprite, 8, 0, x, y)
+		drawAtTile(player.character.sprite, 7, 0, x, y)
+
+
+		drawAtTile(tiles.powerSupply.sprite, 1, 4, x, y)
+		drawAtTile(tiles.electricFloor.poweredSprite, 1, 5, x, y)
+		drawAtTile(tiles.electricFloor.poweredSprite, 1, 6, x, y)
+		drawAtTile(player.character.sprite, 0, 5, x, y)
+		drawGreen(1, 5, x, y)
+
+		drawAtTile(tiles.powerSupply.sprite, 8, 4, x, y)
+		drawAtTile(tiles.electricFloor.destroyedSprite, 8, 5, x, y)
+		drawAtTile(tiles.electricFloor.sprite, 8, 6, x, y)
+		drawAtTile(player.character.sprite, 7, 5, x, y)
+	end,
+
+	function(x, y, scale)
+		drawAtTile(player.character.sprite, 0, 0, x, y)
+		drawGreen(1, 0, x, y)
+
+		drawAtTile(tiles.puddle.sprite, 8, 0, x, y)
+		drawAtTile(player.character.sprite, 7, 0, x, y)
+
+
+		drawAtTile(tiles.powerSupply.sprite, 1, 4, x, y)
+		drawAtTile(tiles.verticalWire.sprite, 1, 6, x, y)
+		drawAtTile(player.character.sprite, 0, 5, x, y)
+		drawGreen(1, 5, x, y)
+
+		drawAtTile(tiles.powerSupply.sprite, 8, 4, x, y)
+		drawAtTile(tiles.puddle.poweredSprite, 8, 5, x, y)
+		drawAtTile(tiles.verticalWire.poweredSprite, 8, 6, x, y)
+		drawAtTile(player.character.sprite, 7, 5, x, y)
+	end
+}
 P.spongeScreens = {}
 P.brickScreens = {}
 P.gunScreens = {}
-P.screens = {P.sawScreens, P.ladderScreens, P.wireCutterScreens}--, P.waterScreens, P.spongeScreens, P.brickScreens, P.gunScreens}
+P.screens = {P.sawScreens, P.ladderScreens, P.wireCutterScreens, P.waterScreens}--, P.spongeScreens, P.brickScreens, P.gunScreens}
 
 P.currentScreen = 1
 P.screenLevel = 1
