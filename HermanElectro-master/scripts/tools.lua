@@ -661,6 +661,12 @@ function P.brick:usableOnTile(tile, tileY, tileX)
 	end
 	return false
 end
+function P.brick:usableOnPushable(pushable)
+	return (not pushable.destroyed) and pushable:instanceof(pushableList.iceBox)
+end
+function P.brick:useToolPushable(pushable)
+	pushable:destroy()
+end
 function P.brick:usableOnAnimal(animal)
 	return not animal.dead
 end
