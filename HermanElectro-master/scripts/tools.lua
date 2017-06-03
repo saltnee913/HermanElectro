@@ -2790,7 +2790,7 @@ function P.tileSwapper:resetTool()
 	self.toSwapCoords = nil
 end
 
-P.tileCloner = P.superTool:new{name = "Tile Cloner", description = "Ctrl-C, Ctrl-V", heldTile = nil, image = 'Graphics/tilecloner.png', baseImage = 'Graphics/tilecloner.png', baseRange = 3, quality = 4}
+P.tileCloner = P.superTool:new{name = "Tile Cloner", description = "Ctrl-C, Ctrl-V", heldTile = nil, image = 'Graphics/tilecloner2.png', baseImage = 'Graphics/tilecloner2.png', baseRange = 3, quality = 4}
 function P.tileCloner:usableOnTile(tile)
 	return self.heldTile==nil
 end
@@ -5278,7 +5278,7 @@ function P.diagonal:useToolTile(tile, tileY, tileX)
 end
 
 P.megaUnlock = P.superTool:new{name = "Psychic Key", baseRange = 0, description = "When one door closes, they all open", --Ben most are you fucking kidding me
-quality = 4, image = 'Graphics/psychickey3 .png'}
+quality = 4, image = 'Graphics/psychickey3.png'}
 function P.megaUnlock:usableOnNothing()
 	return true
 end
