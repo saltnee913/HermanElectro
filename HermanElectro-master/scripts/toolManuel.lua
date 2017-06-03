@@ -191,10 +191,42 @@ P.waterScreens = {
 		drawAtTile(player.character.sprite, 7, 5, x, y)
 	end
 }
-P.spongeScreens = {}
+P.spongeScreens = {
+	function(x, y, scale)
+		drawAtTile(player.character.sprite, 0, 0, x, y)
+		drawAtTile(tiles.puddle.sprite, 1, 0, x, y)
+		drawGreen(1, 0, x, y)
+
+		drawAtTile(player.character.sprite, 7, 0, x, y)
+
+
+		drawAtTile(tiles.powerSupply.sprite, 1, 4, x, y)
+		drawAtTile(tiles.puddle.poweredSprite, 1, 5, x, y)
+		drawAtTile(tiles.verticalWire.poweredSprite, 1, 6, x, y)
+		drawAtTile(player.character.sprite, 0, 5, x, y)
+		drawGreen(1, 5, x, y)
+
+		drawAtTile(tiles.powerSupply.sprite, 8, 4, x, y)
+		drawAtTile(tiles.verticalWire.sprite, 8, 6, x, y)
+		drawAtTile(player.character.sprite, 7, 5, x, y)
+	end,
+
+	function(x, y, scale)
+		drawAtTile(player.character.sprite, 0, 1, x, y)
+		drawAtTile(tiles.powerSupply.sprite, 1, 0, x, y)
+		drawAtTile(tiles.stickyButton.downSprite, 1, 1, x, y)
+		drawAtTile(tiles.verticalWire.poweredSprite, 1, 2, x, y)
+		drawGreen(1, 1, x, y)
+
+		drawAtTile(player.character.sprite, 7, 1, x, y)
+		drawAtTile(tiles.powerSupply.sprite, 8, 0, x, y)
+		drawAtTile(tiles.button.upSprite, 8, 1, x, y)
+		drawAtTile(tiles.verticalWire.poweredSprite, 8, 2, x, y)
+	end
+}
 P.brickScreens = {}
 P.gunScreens = {}
-P.screens = {P.sawScreens, P.ladderScreens, P.wireCutterScreens, P.waterScreens}--, P.spongeScreens, P.brickScreens, P.gunScreens}
+P.screens = {P.sawScreens, P.ladderScreens, P.wireCutterScreens, P.waterScreens, P.spongeScreens}--, P.brickScreens, P.gunScreens}
 
 P.currentScreen = 1
 P.screenLevel = 1
