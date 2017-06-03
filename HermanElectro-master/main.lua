@@ -1372,7 +1372,6 @@ end
 function powerTest(x, y, lastDir)
 	powerCount = powerCount+1
 	if powerCount>3000 then
-		kill()
 		return
 	end
 	--x refers to y-direction and vice versa

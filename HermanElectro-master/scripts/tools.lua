@@ -2701,7 +2701,7 @@ function P.buttonPlacer:useToolNothing(tileY, tileX)
 	room[tileY][tileX] = tiles.button:new()
 end
 
-P.wireToButton = P.superTool:new{name = "Wire to Button", description = "Some things need an off switch", image = 'Graphics/wiretobutton.png', baseRange = 1, quality = 3}
+P.wireToButton = P.superTool:new{name = "Wire to Button", description = "Some things need an off switch", image = 'Graphics/wiretobutton.png', baseRange = 1, quality = 2}
 function P.wireToButton:usableOnTile(tile)
 	return tile:instanceof(tiles.wire)
 end
@@ -4303,6 +4303,7 @@ function P.luckySaw:usableOnTile(tile)
 	return tile:instanceof(tiles.wall) and not tile.destroyed and tile.sawable
 end
 function P.luckySaw:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
 	tile:destroy()
 	room[tileY][tileX] = tiles.toolTile:new()
 	room[tileY][tileX]:absoluteFinalUpdate()
@@ -4924,9 +4925,7 @@ function P.card:getDisplayImage()
 	return self.baseImage
 end
 
-P.deckOfCards = P.superTool:new{name = "Deck of Cards", description = "One hand at a time", image = 'Graphics/deckofcards.png', quality = 5
-
-}
+P.deckOfCards = P.superTool:new{name = "Deck of Cards", description = "One hand at a time", image = 'Graphics/deckofcards.png', quality = 5}
 function P.deckOfCards:giveOne()
 	tools.card:draw(7)
 end
