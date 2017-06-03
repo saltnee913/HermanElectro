@@ -320,7 +320,7 @@ function goToMainMenu()
 	end
 
 	if room[player.tileY][player.tileX]~=nil then
-		room[player.tileY][player.tileX]:onLeave()
+		room[player.tileY][player.tileX]:onLeave(player)
 	end
 
 	if saving.isPlayingBack() and not gamePaused then
@@ -720,6 +720,7 @@ function startDebug()
 	tools.resetTools()
 	player.character:onBegin()
 	resetTintValues()
+	gameTime.timeLeft = 20000
 end
 
 function startEditor()
