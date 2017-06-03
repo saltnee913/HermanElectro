@@ -2427,7 +2427,7 @@ end
 
 function P.emptyBucket:updateSprite()
 	if not self.full then
-		self.sprite = self.imageEmpty
+		self.image = self.imageEmpty
 	elseif self.puddleTile:instanceof(tiles.gasPuddle) then
 		self.image = self.gasImage
 	elseif self.puddleTile:instanceof(tiles.lemonade) then
