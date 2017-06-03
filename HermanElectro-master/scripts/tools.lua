@@ -611,7 +611,7 @@ function P.waterBottle:usableOnTile(tile)
 	end
 	return false
 end
-function P.waterBottle:useToolTile(tile)
+function P.waterBottle:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld-1
 	if tile:instanceof(tiles.tree) then
 		tile.level = tile.level+1
@@ -660,6 +660,12 @@ function P.brick:usableOnTile(tile, tileY, tileX)
 		return true
 	end
 	return false
+end
+function P.brick:usableOnPushable(pushable)
+	return (not pushable.destroyed) and pushable:instanceof(pushableList.iceBox)
+end
+function P.brick:useToolPushable(pushable)
+	pushable:destroy()
 end
 function P.brick:usableOnAnimal(animal)
 	return not animal.dead
@@ -1882,9 +1888,15 @@ image = 'Graphics/Tools/bucketOfWater.png', quality = 1}
 function P.bucketOfWater:usableOnNothing()
 	return true
 end
+function P.bucketOfWater:usableOnTile(tile, tileY, tileX)
+	return P.waterBottle.usableOnTile(self, tile, tileY, tileX)
+end
 function P.bucketOfWater:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld - 1
 	self:spreadWater(tileY, tileX)
+end
+function P.bucketOfWater:useToolTile(tile, tileY, tileX)
+	P.waterBottle.useToolTile(self, tile, tileY, tileX)
 end
 function P.bucketOfWater:spreadWater(tileY, tileX)
 	room[tileY][tileX] = tiles.puddle:new()
@@ -2434,9 +2446,7 @@ function P.emptyBucket:useToolTile(tile, tileY, tileX)
 		self.puddleTile = room[tileY][tileX]
 		room[tileY][tileX] = nil
 	else
-		--P.bucketOfWater:useToolTile(tile, tileY, tileX)
-		--above may cause problem by impacting wrong numHeld
-		--probably doesn't matter because, unless changed, buckets only work on nothing
+		P.bucketOfWater.useToolTile(self, tile, tileY, tileX)
 		self.full = false
 	end
 	self:updateSprite()
@@ -2486,7 +2496,7 @@ function P.emptyCup:useToolNothing(tileY, tileX)
 	self.full = false
 end
 function P.emptyCup:usableOnTile(tile)
-	if self.full then return P.waterBottle:usableOnTile(tile) end
+	if self.full then return P.waterBottle.usableOnTile(self, tile) end
 	if not self.full then return tile:instanceof(tiles.puddle) end
 end
 
@@ -2496,8 +2506,7 @@ function P.emptyCup:useToolTile(tile, tileY, tileX)
 		self.full = true
 		room[tileY][tileX] = nil
 	else
-		self.numHeld = self.numHeld-1
-		P.waterBottle:useToolTile(tile, tileY, tileX)
+		P.waterBottle.useToolTile(self, tile, tileY, tileX)
 		self.image = self.imageEmpty
 		self.full = false
 	end
@@ -2702,7 +2711,7 @@ function P.buttonPlacer:useToolNothing(tileY, tileX)
 	room[tileY][tileX] = tiles.button:new()
 end
 
-P.wireToButton = P.superTool:new{name = "Wire to Button", description = "Some things need an off switch", image = 'Graphics/wiretobutton.png', baseRange = 1, quality = 3}
+P.wireToButton = P.superTool:new{name = "Wire to Button", description = "Some things need an off switch", image = 'Graphics/wiretobutton.png', baseRange = 1, quality = 2}
 function P.wireToButton:usableOnTile(tile)
 	return tile:instanceof(tiles.wire)
 end
@@ -4304,6 +4313,7 @@ function P.luckySaw:usableOnTile(tile)
 	return tile:instanceof(tiles.wall) and not tile.destroyed and tile.sawable
 end
 function P.luckySaw:useToolTile(tile, tileY, tileX)
+	self.numHeld = self.numHeld-1
 	tile:destroy()
 	room[tileY][tileX] = tiles.toolTile:new()
 	room[tileY][tileX]:absoluteFinalUpdate()
@@ -4925,9 +4935,7 @@ function P.card:getDisplayImage()
 	return self.baseImage
 end
 
-P.deckOfCards = P.superTool:new{name = "Deck of Cards", description = "One hand at a time", image = 'Graphics/deckofcards.png', quality = 5
-
-}
+P.deckOfCards = P.superTool:new{name = "Deck of Cards", description = "One hand at a time", image = 'Graphics/deckofcards.png', quality = 5}
 function P.deckOfCards:giveOne()
 	tools.card:draw(7)
 end

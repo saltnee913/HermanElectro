@@ -320,7 +320,7 @@ function goToMainMenu()
 	end
 
 	if room[player.tileY][player.tileX]~=nil then
-		room[player.tileY][player.tileX]:onLeave()
+		room[player.tileY][player.tileX]:onLeave(player)
 	end
 
 	if saving.isPlayingBack() and not gamePaused then
@@ -720,6 +720,7 @@ function startDebug()
 	tools.resetTools()
 	player.character:onBegin()
 	resetTintValues()
+	gameTime.timeLeft = 20000
 end
 
 function startEditor()
@@ -1372,7 +1373,6 @@ end
 function powerTest(x, y, lastDir)
 	powerCount = powerCount+1
 	if powerCount>3000 then
-		kill()
 		return
 	end
 	--x refers to y-direction and vice versa
@@ -3642,14 +3642,8 @@ function dropTools()
 					(dirEnter[2] == 1 and completedRooms[y][x+1]~=nil and completedRooms[y][x+1]==1)) then
 						local id = tostring(mainMap[y][x].roomid)
 						if dropOverride == nil then
-							listOfItemsNeeded = map.getItemsNeeded(mainMap[y][x].roomid)
-							numLists = 0
-							for j = 1, 10 do
-								if listOfItemsNeeded[j]~=nil then
-									numLists = numLists+1
-								end
-							end
-							listChoose = util.random(numLists, 'toolDrop')
+							local listOfItemsNeeded = map.getItemsNeeded(mainMap[y][x].roomid)
+							local listChoose = util.random(#listOfItemsNeeded, 'toolDrop')
 							--[[for i = 1, tools.numNormalTools do
 								if listOfItemsNeeded[listChoose][i] ~= 0 then
 									done = true
@@ -3678,22 +3672,48 @@ function dropTools()
 			end
 		end
 		if not done then
-			if floorIndex ~= -1 then
-				--bonusTool decides whether or not one more tool will drop from floor
-				local bonusTool = util.random(2, 'toolDrop')
-				bonusTool = bonusTool-1
-				bonusTool = bonusTool+tools.completionBonus.numHeld*2
-				tools.giveRandomTools(math.floor((toolMax+toolMin)/2)+bonusTool)
-			end
+			giveToolsFullClear()
 			--[[for i = 1, toolMin+1 do
 				local slot = util.random(tools.numNormalTools, 'toolDrop')
 				tools[slot].numHeld = tools[slot].numHeld+1
 			end]]
-			--tools.giveSupertools(1)w
+			--tools.giveSupertools(1)
 		end
 	else
 		tools.giveToolsByArray(dropOverride)
 	end
+end
+
+function giveToolsFullClear()
+	--[[if floorIndex ~= -1 then
+		--bonusTool decides whether or not one more tool will drop from floor
+		local bonusTool = util.random(2, 'toolDrop')
+		bonusTool = bonusTool-1
+		bonusTool = bonusTool+tools.completionBonus.numHeld*2
+		tools.giveRandomTools(math.floor((toolMax+toolMin)/2)+bonusTool)
+	end]]
+
+	local totalDropNum = math.floor((toolMax+toolMin)/2)
+	local bonusTool = util.random(2, 'toolDrop')-1
+	totalDropNum = totalDropNum+bonusTool
+	print(totalDropNum)
+
+	for i = 1, mapHeight do
+		for j = 1, mapHeight do
+			if mainMap[i][j]~=nil and map.getFieldForRoom(mainMap[i][j].roomid, 'isFinal')~=nil and
+			map.getFieldForRoom(mainMap[i][j].roomid, 'isFinal')~=nil then
+				local listOfItemsNeeded = map.getItemsNeeded(mainMap[i][j].roomid)
+				local listChoose = util.random(#listOfItemsNeeded, 'toolDrop')
+				tools.giveToolsByArray(listOfItemsNeeded[listChoose])
+				for i = 1, tools.numNormalTools do
+					totalDropNum = totalDropNum-listOfItemsNeeded[listChoose][i]
+				end
+			end
+		end
+	end
+	print(totalDropNum.."aaa")
+
+	tools.giveRandomTools(totalDropNum)
 end
 
 function beatRoom(noDrops)

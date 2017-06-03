@@ -1109,7 +1109,7 @@ P.sign = P.tile:new{text = "", name = "sign", sprite = 'KenGraphics/sign.png'}
 function P.sign:onEnter(player)
 	messageInfo.text = self.text
 end
-function P.sign:onLeave(player)
+function P.sign:onLeave()
 	if room[player.tileY][player.tileX]==nil or room[player.tileY][player.tileX].text==nil then
 		messageInfo.text = nil
 	end
