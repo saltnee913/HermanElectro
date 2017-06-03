@@ -611,7 +611,7 @@ function P.waterBottle:usableOnTile(tile)
 	end
 	return false
 end
-function P.waterBottle:useToolTile(tile)
+function P.waterBottle:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld-1
 	if tile:instanceof(tiles.tree) then
 		tile.level = tile.level+1
@@ -1881,9 +1881,15 @@ image = 'Graphics/Tools/bucketOfWater.png', quality = 1}
 function P.bucketOfWater:usableOnNothing()
 	return true
 end
+function P.bucketOfWater:usableOnTile(tile, tileY, tileX)
+	return P.waterBottle.usableOnTile(self, tile, tileY, tileX)
+end
 function P.bucketOfWater:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld - 1
 	self:spreadWater(tileY, tileX)
+end
+function P.bucketOfWater:useToolTile(tile, tileY, tileX)
+	P.waterBottle.useToolTile(self, tile, tileY, tileX)
 end
 function P.bucketOfWater:spreadWater(tileY, tileX)
 	room[tileY][tileX] = tiles.puddle:new()
@@ -2433,9 +2439,7 @@ function P.emptyBucket:useToolTile(tile, tileY, tileX)
 		self.puddleTile = room[tileY][tileX]
 		room[tileY][tileX] = nil
 	else
-		--P.bucketOfWater:useToolTile(tile, tileY, tileX)
-		--above may cause problem by impacting wrong numHeld
-		--probably doesn't matter because, unless changed, buckets only work on nothing
+		P.bucketOfWater.useToolTile(self, tile, tileY, tileX)
 		self.full = false
 	end
 	self:updateSprite()
@@ -2485,7 +2489,7 @@ function P.emptyCup:useToolNothing(tileY, tileX)
 	self.full = false
 end
 function P.emptyCup:usableOnTile(tile)
-	if self.full then return P.waterBottle:usableOnTile(tile) end
+	if self.full then return P.waterBottle.usableOnTile(self, tile) end
 	if not self.full then return tile:instanceof(tiles.puddle) end
 end
 
@@ -2495,8 +2499,7 @@ function P.emptyCup:useToolTile(tile, tileY, tileX)
 		self.full = true
 		room[tileY][tileX] = nil
 	else
-		self.numHeld = self.numHeld-1
-		P.waterBottle:useToolTile(tile, tileY, tileX)
+		P.waterBottle.useToolTile(self, tile, tileY, tileX)
 		self.image = self.imageEmpty
 		self.full = false
 	end
