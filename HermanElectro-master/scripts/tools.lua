@@ -5268,7 +5268,7 @@ function P.diagonal:useToolTile(tile, tileY, tileX)
 end
 
 P.megaUnlock = P.superTool:new{name = "Psychic Key", baseRange = 0, description = "When one door closes, they all open", --Ben most are you fucking kidding me
-quality = 4, image = 'Graphics/psychickey.png'}
+quality = 4}
 function P.megaUnlock:usableOnNothing()
 	return true
 end
@@ -5344,7 +5344,7 @@ function P.rewindRevive:checkDeath()
 	return false
 end
 
-P.shroomRevive = P.superTool:new{name = "Shroom Transplant", description = "Not dead...but wacked", baseRange = 0, image = 'Graphics/shroomrevive2.png', baseImage = 'KenGraphics/mushroom.png', activeImage = 'KenGraphics/mushroom.png', destroyOnRevive = false, quality = 4}
+P.shroomRevive = P.superTool:new{name = "Shroom Transplant", description = "Not dead...but wacked", baseRange = 0, image = 'Graphics/shroomRevive.png', baseImage = 'KenGraphics/mushroom.png', activeImage = 'KenGraphics/mushroom.png', destroyOnRevive = false, quality = 4}
 function P.shroomRevive:checkDeath()
 	updateGameState(false)
 
