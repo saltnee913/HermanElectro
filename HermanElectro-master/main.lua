@@ -3696,7 +3696,6 @@ function giveToolsFullClear()
 	local totalDropNum = math.floor((toolMax+toolMin)/2)
 	local bonusTool = util.random(2, 'toolDrop')-1
 	totalDropNum = totalDropNum+bonusTool
-	print(totalDropNum)
 
 	for i = 1, mapHeight do
 		for j = 1, mapHeight do
@@ -3711,7 +3710,6 @@ function giveToolsFullClear()
 			end
 		end
 	end
-	print(totalDropNum.."aaa")
 
 	tools.giveRandomTools(totalDropNum)
 end

@@ -3479,6 +3479,7 @@ end
 function P.boxCloner:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld-1
 	local boxAdd = deepCopy(self.heldBox)
+	boxAdd:setLoc()
 	table.insert(pushables, boxAdd)
 	pushables[#pushables].tileY = tileY
 	pushables[#pushables].tileX = tileX
@@ -3488,6 +3489,7 @@ end
 function P.boxCloner:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld-1
 	local boxAdd = deepCopy(self.heldBox)
+	boxAdd:setLoc()
 	table.insert(pushables, boxAdd)
 	pushables[#pushables].tileY = tileY
 	pushables[#pushables].tileX = tileX
