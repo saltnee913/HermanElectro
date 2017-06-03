@@ -1655,6 +1655,10 @@ function P.greenBeggar:providePayment()
 
 	if util.getSupertoolTypesHeld()<3 or ttg.numHeld>0 then
 		tools.giveToolsByReference({ttg})
+		local giveAnother = util.random(2, 'toolDrop')-1
+		if giveAnother>0 then
+			tools.giveToolsByReference({ttg})
+		end
 	else
 		for i = 1, roomHeight do
 			for j = 1, roomLength do
