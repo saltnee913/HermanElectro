@@ -903,7 +903,7 @@ function P.shovel:useToolTile(tile)
 	end
 end
 
-P.electrifier = P.superTool:new{name = 'Electrifier', description = "Forming connections", baseRange = 1, image = 'Graphics/electrifier.png', quality = 3}
+P.electrifier = P.superTool:new{name = 'Electrifier', description = "Forming connections", baseRange = 1, image = 'Graphics/conduit.png', quality = 3}
 function P.electrifier:usableOnTile(tile)--No longer called moisten, old desc: let the love flow
 	if not tile.destroyed and tile:instanceof(tiles.wall) and not tile:instanceof(tiles.metalWall) and not tile.electrified then
 		return true
@@ -940,8 +940,9 @@ function P.delectrifier:useToolTile(tile)
 	end]]
 end
 
-P.charger = P.superTool:new{name = 'Battery Pack', description = "Empowerment", baseRange = 1, image = 'Graphics/charger.png', quality = 4}
+P.charger = P.superTool:new{name = 'Battery Pack', description = "Empowerment", baseRange = 1, image = 'Graphics/powerizer.png', quality = 4}
 function P.charger:usableOnTile(tile) --Was desc Power to the people aslo considered empower, empowering
+	--if not tile.destroyed and not tile.charged and 
 	if tile.canBePowered and not tile.charged then return true end
 	return false
 end
@@ -2160,7 +2161,7 @@ function P.gabeMaker:useToolNothing(tileY, tileX)
 end
 P.gabeMaker.useToolTile = P.gabeMaker.useToolNothing
 
-P.roomUnlocker = P.superTool:new{name = "The Magic Word", description = "Gatecrashing", baseRange = 0, image = 'Graphics/roomunlocker.png', quality = 2}
+P.roomUnlocker = P.superTool:new{name = "The Magic Word", description = "Gatecrashing", baseRange = 0, image = 'Graphics/doorkey.png', quality = 2}
 function P.roomUnlocker:usableOnNothing()
 	return true
 end
@@ -2742,7 +2743,7 @@ function P.foresight:useToolTile(tile)
 end
 P.foresight.useToolNothing = P.foresight.useToolTile
 
-P.tileDisplacer = P.superTool:new{name = "Tile Displacer", description = "Ctrl-X, Ctrl-V", heldTile = nil, image = 'Graphics/tiledisplacer.png', baseImage = 'Graphics/tiledisplacer.png', baseRange = 3, quality = 4}
+P.tileDisplacer = P.superTool:new{name = "Tile Displacer", description = "Ctrl-X, Ctrl-V", heldTile = nil, image = 'Graphics/tiledisplacer2.png', baseImage = 'Graphics/tiledisplacer2.png', baseRange = 3, quality = 4}
 function P.tileDisplacer:usableOnTile(tile)
 	return self.heldTile==nil and not tile.untoolable
 end
@@ -2789,7 +2790,7 @@ function P.tileSwapper:resetTool()
 	self.toSwapCoords = nil
 end
 
-P.tileCloner = P.superTool:new{name = "Tile Cloner", description = "Ctrl-C, Ctrl-V", heldTile = nil, image = 'Graphics/tilecloner.png', baseImage = 'Graphics/tilecloner.png', baseRange = 3, quality = 4}
+P.tileCloner = P.superTool:new{name = "Tile Cloner", description = "Ctrl-C, Ctrl-V", heldTile = nil, image = 'Graphics/tilecloner3.png', baseImage = 'Graphics/tilecloner3.png', baseRange = 3, quality = 4}
 function P.tileCloner:usableOnTile(tile)
 	return self.heldTile==nil
 end
@@ -2988,8 +2989,8 @@ function P.towel:useToolTile(tile, tileY, tileX)
 	else return false end
 end
 
-P.playerCloner  = P.superTool:new{name = "Self-Help Manual", description = "Unleash a new you", cloneExists = false, baseRange = 0, image = 'Graphics/playercloner.png',
-imageNoClone = 'Graphics/playercloner.png', imageClone = 'Graphics/playercloner2.png', quality = 3}
+P.playerCloner  = P.superTool:new{name = "Self-Help Manual", description = "Unleash a new you", cloneExists = false, baseRange = 0, image = 'Graphics/playercloner1.2.png',
+imageNoClone = 'Graphics/playercloner1.2.png', imageClone = 'Graphics/playercloner2.2.png', quality = 3}
 function P.playerCloner:usableOnNothing()
 	return true
 end
@@ -3425,7 +3426,7 @@ function P.coffee:useToolNothing()
 end
 P.coffee.useToolTile = P.coffee.useToolNothing
 
-P.boxDisplacer = P.superTool:new{name = "Box Displacer", description = "Cheaper than FedEx", heldBox = nil, image = 'Graphics/tiledisplacer.png', baseImage = 'Graphics/tiledisplacer.png', baseRange = 3, quality = 3}
+P.boxDisplacer = P.superTool:new{name = "Box Displacer", description = "Cheaper than FedEx", heldBox = nil, image = 'Graphics/boxdisplacer2.png', baseImage = 'Graphics/boxdisplacer2.png', baseRange = 3, quality = 3}
 function P.boxDisplacer:usableOnPushable(pushable)
 	return (not pushable.destroyed) and self.heldBox==nil
 end
@@ -3462,7 +3463,7 @@ function P.boxDisplacer:useToolTile(tile, tileY, tileX)
 	self.image = self.baseImage
 end
 
-P.boxCloner = P.superTool:new{name = "Box Cloner", description = "Gain a copy.", heldBox = nil, image = 'Graphics/tilecloner.png', baseImage = 'Graphics/tilecloner.png', baseRange = 3, quality = 4}
+P.boxCloner = P.superTool:new{name = "Box Cloner", description = "Gain a copy.", heldBox = nil, image = 'Graphics/boxcloner2.png', baseImage = 'Graphics/boxcloner2.png', baseRange = 3, quality = 4}
 function P.boxCloner:usableOnPushable(pushable)
 	return (not pushable.destroyed) and self.heldBox==nil
 end
@@ -5279,7 +5280,7 @@ function P.diagonal:useToolTile(tile, tileY, tileX)
 end
 
 P.megaUnlock = P.superTool:new{name = "Psychic Key", baseRange = 0, description = "When one door closes, they all open", --Ben most are you fucking kidding me
-quality = 4, image = 'Graphics/psychickey.png'}
+quality = 4, image = 'Graphics/psychickey3.png'}
 function P.megaUnlock:usableOnNothing()
 	return true
 end
@@ -5355,7 +5356,7 @@ function P.rewindRevive:checkDeath()
 	return false
 end
 
-P.shroomRevive = P.superTool:new{name = "Shroom Transplant", description = "Not dead...but wacked", baseRange = 0, image = 'Graphics/shroomrevive2.png', baseImage = 'KenGraphics/mushroom.png', activeImage = 'KenGraphics/mushroom.png', destroyOnRevive = false, quality = 4}
+P.shroomRevive = P.superTool:new{name = "Shroom Transplant", description = "Not dead...but wacked", baseRange = 0, image = 'Graphics/shroomtransplant.png', baseImage = 'KenGraphics/mushroom.png', activeImage = 'KenGraphics/mushroom.png', destroyOnRevive = false, quality = 4}
 function P.shroomRevive:checkDeath()
 	updateGameState(false)
 
@@ -5376,7 +5377,7 @@ function P.shroomRevive:updateSprite()
 	end
 end
 
-P.treasureThief = P.superTool:new{name = "Treasure Snatching Beam", description = "Steal from anyone", baseRange = 100, image = 'Graphics/treasurethief.png', quality = 1}
+P.treasureThief = P.superTool:new{name = "Treasure Snatching Beam", description = "Steal from anyone", baseRange = 100, image = 'Graphics/treasurethief2.png', quality = 1}
 function P.treasureThief:usableOnTile() ---Currently does not always grab the closest
 	return true
 end
