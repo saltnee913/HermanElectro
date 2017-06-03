@@ -1087,7 +1087,7 @@ function P.generateMapWeighted()
 		blacklist[#blacklist+1] = roomid
 		setBlacklist[#setBlacklist+1] = P.getFieldForRoom(roomid, 'set')
 		usedRooms[#usedRooms+1] = roomid
-		newmap[choice.y][choice.x] = {roomid = roomid, room = P.createRoom(roomid), tint = {0,0,0}, isFinal = false, isInitial = false}
+		newmap[choice.y][choice.x] = {roomid = roomid, room = P.createRoom(roomid), tint = {0,0,0}, isInitial = false}
 	end
 	
 	--add secret room to floor

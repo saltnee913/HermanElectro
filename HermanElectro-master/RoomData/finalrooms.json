@@ -462,6 +462,7 @@
     "minimapColor": [200, 0, 200],
     "dirEnter": [1,1,1,1],
     "hidden": false,
-    "beginner": true
+    "beginner": true,
+    "isFinal": true
   }
 }
