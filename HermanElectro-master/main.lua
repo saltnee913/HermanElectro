@@ -2385,6 +2385,7 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 
 	if toolManuel.opened then
 		toolManuel.keypressed(key, unicode)
+		return
 	elseif gamePaused then
 		if key=="escape" then
 			gamePaused = false
