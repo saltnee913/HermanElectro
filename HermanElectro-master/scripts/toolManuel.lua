@@ -224,9 +224,24 @@ P.spongeScreens = {
 		drawAtTile(tiles.verticalWire.poweredSprite, 8, 2, x, y)
 	end
 }
-P.brickScreens = {}
+P.brickScreens = {
+	function(x, y, scale)
+		drawAtTile(player.character.sprite, 0, 0, x, y)
+		drawAtTile(animalList.pitbull.sprite, 2, 0, x, y)
+		drawGreen(2, 0, x, y)
+
+		drawAtTile(player.character.sprite, 5, 0, x, y)
+		drawAtTile(animalList.pitbull.sprite, 7, 0, x, y)
+		drawHere(animalList.waitSprite, x + 7*tileWidth 
+			+ util.getImage(animalList.pitbull.sprite):getWidth()/2 - util.getImage(animalList.waitSprite):getWidth()/2, 
+			y + 0*tileHeight - util.getImage(animalList.waitSprite):getHeight(), rotation)
+
+		drawAtTile(player.character.sprite, 11, 0, x, y)
+		drawAtTile(animalList.pitbull.sprite, 12, 0, x, y)
+	end
+}
 P.gunScreens = {}
-P.screens = {P.sawScreens, P.ladderScreens, P.wireCutterScreens, P.waterScreens, P.spongeScreens}--, P.brickScreens, P.gunScreens}
+P.screens = {P.sawScreens, P.ladderScreens, P.wireCutterScreens, P.waterScreens, P.spongeScreens, P.brickScreens}--, P.gunScreens}
 
 P.currentScreen = 1
 P.screenLevel = 1
