@@ -503,15 +503,15 @@ function P.drawAnimal(animal)
 	if (not animal.dead) and (animal.frozen or animal.waitCounter>0 or animal.trained) then
 		local markSprites = {}
 		if animal.frozen then
-			markSprites[#markSprites+1] = util.getImage('Graphics/frozenMark.png')
+			markSprites[#markSprites+1] = util.getImage(animalList.frozenSprite)
 		end
 		if animal.waitCounter>0 then
 			for i = 1, animal.waitCounter do
-				markSprites[#markSprites+1] = util.getImage('Graphics/waitCounterMark.png')
+				markSprites[#markSprites+1] = util.getImage(animalList.waitSprite)
 			end
 		end
 		if animal.trained then
-			markSprites[#markSprites+1] = util.getImage('Graphics/trainedMark.png')
+			markSprites[#markSprites+1] = util.getImage(animalList.trainedSprite)
 		end
 
 		local markScale = scale

@@ -654,8 +654,8 @@ function P.brick:usableOnTile(tile, tileY, tileX)
 		return true
 	elseif tile:instanceof(tiles.reinforcedGlass) and tile.cracked then
 		return true
-	elseif tile:instanceof(tiles.hDoor) then
-		return true
+	--[[elseif tile:instanceof(tiles.hDoor) then
+		return true]]
 	elseif tile:instanceof(tiles.mousetrap) and not tile.bricked then
 		return true
 	end

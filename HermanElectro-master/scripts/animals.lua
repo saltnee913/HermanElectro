@@ -17,6 +17,10 @@ wallSprite = {width = 187*width/1920, height = 170*height/1080, heightBottom = 1
 scale = (width - 2*wallSprite.width)/(20.3 * 16)*5/6
 --floor = tiles.tile
 
+P.frozenSprite = 'Graphics/frozenMark.png'
+P.waitSprite = 'Graphics/waitCounterMark.png'
+P.trainedSprite = 'Graphics/trainedMark.png'
+
 --speed same as player (250)
 P.animal = Object:new{elevation = 0, scale = 1.1*scale, yOffset = 0, frozen = false, trained = false, conductive = false, pickedUp = false, canDropTool = false, willDropTool = false, flying = false, triggered = false, waitCounter = 1, dead = false, name = "animal", tileX, tileY, prevx, prevy, prevTileX, prevTileY, x, y, speed = 250, width = 16*scale, height = 16*scale, sprite = 'Graphics/pitbull.png', deadSprite = 'Graphics/pitbulldead.png', tilesOn = {}, oldTilesOn = {}}
 function P.animal:move(playerx, playery, room, isLit)
