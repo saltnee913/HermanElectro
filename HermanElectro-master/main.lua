@@ -58,9 +58,28 @@ local function areItemsSame(a,b)
 	return true
 end
 
+local function areItemsSameFormat2(repeatFormat, oldFormat)
+	local aInOld = {0,0,0,0,0,0,0}
+	for i = 1, #repeatFormat do
+		if repeatFormat[i] > 7 then
+			return false
+		end
+		if repeatFormat[i] ~= 0 then
+			aInOld[repeatFormat[i]] = aInOld[repeatFormat[i]] + 1
+		end
+	end
+	for i = 1, 7 do
+		if aInOld[i] ~= oldFormat[i] then
+			return false
+		end
+	end
+	return true
+end
+
 local function doItemsNeededCalcs()
 	local itemsNeededs = util.readJSON(saveDir..'/'..map.itemsNeededFile)
 	local arr = {}
+	local rooms = util.readJSON('RoomData/rooms.json').rooms
 	for i = 1, #itemsNeededs do
 		local room = itemsNeededs[i][1]
 		local character = itemsNeededs[i][2]
@@ -70,14 +89,23 @@ local function doItemsNeededCalcs()
 			for j = 3, #itemsNeededs do
 				items[#items+1] = itemsNeededs[i][j]
 			end
-			if ar[room] == nil then
-				ar[room] = {}
-			end
 			local new = true
-			for j = 1, #ar[room] do
-				if areItemsSame(ar[room][j],items) then
-					new = false
+			if rooms[room] ~= nil then
+				if ar[room] == nil then
+					ar[room] = {}
 				end
+				for j = 1, #ar[room] do
+					if areItemsSame(ar[room][j],items) then
+						new = false
+					end
+				end
+				local isRepeat = false
+				for k = 1, #rooms[room].itemsNeeded do
+					isRepeat = isRepeat or areItemsSameFormat2(items, rooms[room].itemsNeeded[k])
+				end
+				new = new and not isRepeat
+			else
+				new = false
 			end
 			if new then
 				ar[room][#ar[room]+1] = items
@@ -90,6 +118,7 @@ local function doItemsNeededCalcs()
 end
 
 function love.load()
+	--doItemsNeededCalcs()
 	gamePaused = false
 	gameTime = {timeLeft = 260, toolTime = 0, roomTime = 30, levelTime = 120, donateTime = 20, goesDownInCompleted = false, totalTime = 0}
 
@@ -2356,6 +2385,7 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 
 	if toolManuel.opened then
 		toolManuel.keypressed(key, unicode)
+		return
 	elseif gamePaused then
 		if key=="escape" then
 			gamePaused = false
