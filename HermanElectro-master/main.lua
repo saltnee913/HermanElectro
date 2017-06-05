@@ -837,7 +837,7 @@ function kill(deathSource)
 	player.dead = true
 	for i = 1, #specialTools do
 		if tools[specialTools[i]]~=nil and tools[specialTools[i]].numHeld>0 and not tools[specialTools[i]]:checkDeath(deathSource) then
-			player.dead = falsek
+			player.dead = false
 			onToolUse(specialTools[i])
 			return
 		end
@@ -3760,6 +3760,10 @@ function onToolUse(currentTool)
 	if tools.card.numHeld>0 then
 		tools.card:playCard()
 	end
+ 	
+	if tools.preservatives.numHeld> 0 and currentTool ~= nil and tools[currentTool]:instanceof(superTool) then
+		tools.preservatives:preserve()
+	end
 
 	stats.incrementStat('toolsUsed')
 
@@ -3802,6 +3806,8 @@ function onToolUse(currentTool)
 	if basicsUsed[1]>0 and basicsUsed[2]>0 and basicsUsed[3]>0 and basicsUsed[4]>0 and basicsUsed[6]>0 then
 		unlocks.unlockUnlockableRef(unlocks.recycleBinUnlock)
 	end
+
+
 
 	if tools[tool]~=nil and tools[tool].numHeld<=0 then
 		tool = 0

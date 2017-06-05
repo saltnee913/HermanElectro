@@ -5377,7 +5377,7 @@ function P.shroomRevive:updateSprite()
 	end
 end
 
-P.treasureThief = P.superTool:new{name = "Treasure Snatching Beam", description = "Steal from anyone", baseRange = 100, image = 'Graphics/treasurethief2.png', quality = 1}
+P.treasureThief = P.superTool:new{name = "Treasure Snatching Beam", description = "Steal from anyone", baseRange = 100, image = 'Graphics/treasurethief2.png', quality = 2}
 function P.treasureThief:usableOnTile() ---Currently does not always grab the closest
 	return true
 end
@@ -5456,9 +5456,40 @@ function P.gumball:useToolTile(tile)
 	player.attributes.invisible = true
 	--Code to make this temporary
 end
+
+
+P.repair = P.superTool:new{name = "Duct tape", description = "Fix just about anything", baseRange = 1, quality  = 2}
+function P.repair:usableOnTile(tile)
+	if tile.destroyed then
+		return true
+	end
+end
+function P.repair:useToolTile(tile, tileY, tileX)
+	room[tileY][tileX] = room[tileY][tileX]:new()
+end
+
+P.preservatives = P.superTool:new{name = "Preservatives", description = "Take care of your tools", baseRange = 0, quality = 5}
+function P.preservatives:giveOne()
+	self.numHeld = self.numHeld+2
+end
+function P.preservatives:preserve()
+	if currentTool~=nil then
+		--tools[currentTool]:giveOne()
+		tools.giveToolsByReference({tools[currentTool]})
+		self.numHeld = self.numHeld-1
+	end
+		self.numHeld = self.numHeld-1
+end
+--Consumed in place of other supers
+
+
+
+
 --Tools to add: Treasure Snatcher, Shroom Transplant, P-Source Reviver / Temp-destroyer, gumball machine
-
-
+--What about a tool that gives you a basic next game if you die while holding it?
+--A T0 that gives you an infinite number of the basic you have the least of
+--A trash tier that returns to you the last basic used -- Too strong, doesn't fit a tier
+--A repair tool
 
 
 
@@ -5715,9 +5746,11 @@ P:addTool(P.tpRevive)
 P:addTool(P.treasureThief)
 P:addTool(P.shroomRevive)
 P:addTool(P.roomRestore)
-
+P:addTool(P.repair)
+P:addTool(P.preservatives)
 
 P.resetTools()
+
 -- Make a tool based cursor
 
 -- Add Erik's brilliant card based SUPER PARADIGM!
