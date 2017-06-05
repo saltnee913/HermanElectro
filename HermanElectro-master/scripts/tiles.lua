@@ -2396,6 +2396,12 @@ P.supertoolQ3 = P.supertoolTile:new{name = "supertoolTileQ3", superQuality = 3}
 P.supertoolQ4 = P.supertoolTile:new{name = "supertoolTileQ4", superQuality = 4}
 P.supertoolQ5 = P.supertoolTile:new{name = "supertoolTileQ5", superQuality = 5}
 
+P.dungeonSuper = P.supertoolTile:new{name = "dungeonSuper"}
+function P.supertoolTile:selectTool()
+	local toolOptions = {tools.tunneler, tools.holyShield, tools.mirror}
+	self:updateSprite()
+end
+
 P.toolTile = P.tile:new{name = "toolTile", tool = nil, toolId = -1, dirSend = {0,0,0,0}}
 function P.toolTile:onEnter(entered)
 	if not (player.tileX==entered.tileX and player.tileY==entered.tileY) then return end
@@ -2662,7 +2668,8 @@ function P.heavenExit:onEnter()
 	onTeleport()
 end
 
-P.endDungeonEnter = P.tile:new{name = "endDungeonEnter", sprite = 'Graphics/eden.png', disabled = false}
+P.endDungeonEnter = P.tile:new{name = "endDungeonEnter", sprite = 'KenGraphics/bed.png', disabled = false, yOffset = -6,
+blocksMovement = false}
 function P.endDungeonEnter:onLoad()
 	local unlocks = require('scripts.unlocks')
 	self.disabled = not unlocks.isDungeonUnlocked()
@@ -2673,7 +2680,7 @@ function P.endDungeonEnter:onEnter()
 	if self.disabled then
 		return
 	end
-	player.returnFloorIndex = floorIndex
+	player.returnFloorInfo = {floorIndex = floorIndex, tileY = player.tileY, tileX = player.tileX}
 	goToFloor(1)
 	resetPlayerAttributesRoom()
 	if stairsLocs[#stairsLocs].coords.x~=0 then
@@ -2685,6 +2692,9 @@ function P.endDungeonEnter:onEnter()
 		player.tileX = stairsLocs[#stairsLocs].coords.x
 		player.tileY = stairsLocs[#stairsLocs].coords.y
 	else
+		roomHeight = room.height
+		roomLength = room.length
+		
 		for i = 1, roomHeight do
 			for j = 1, roomLength do
 				if room[i][j]~=nil and room[i][j]:instanceof(tiles.endDungeonExit) then
@@ -2697,10 +2707,20 @@ function P.endDungeonEnter:onEnter()
 	end
 	onTeleport()
 end
+function P.endDungeonEnter:getHeight()
+	return 0
+end
 
-P.endDungeonExit = P.tile:new{name = "endDungeonExit", sprite = 'Graphics/edex.png'}
+P.endDungeonExit = P.tile:new{name = "endDungeonExit", sprite = 'KenGraphics/bed.png', yOffset = -6, blocksMovement = false}
 function P.endDungeonExit:onEnter()
-	goToFloor(player.returnFloorIndex)
+	--NEED THESE LINES FIRST -- otherwise goToFloor may try to updateGameState on invalid tile,
+	--if big room in dungeon
+	player.tileY = player.returnFloorInfo.tileY
+	player.prevTileY = player.tileY
+	player.tileX = player.returnFloorInfo.tileX
+	player.prevTileX = player.tileX
+
+	goToFloor(player.returnFloorInfo.floorIndex)
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
 			if room[i][j]~=nil and room[i][j]:instanceof(tiles.endDungeonEnter) then
@@ -2711,6 +2731,9 @@ function P.endDungeonExit:onEnter()
 		end
 	end
 	onTeleport()
+end
+function P.endDungeonExit:getHeight()
+	return 0
 end
 
 
