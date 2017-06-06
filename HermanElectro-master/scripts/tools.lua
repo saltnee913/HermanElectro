@@ -5508,7 +5508,7 @@ end
 --Consumed in place of other supers
 
 
-P.mutantShield = P.superTool:new{name = "Mutant Carapace", description = "Specialist defence", baseRange = 0, quality = 3, image = "KenGraphics/mushroom.png", local adaptation, local sprite}
+P.mutantShield = P.superTool:new{name = "Mutant Carapace", description = "Specialist defence", baseRange = 0, quality = 3, image = "KenGraphics/mushroom.png", adaptation = nil, sprite = image}
 function P.mutantShield:giveOne()
 	if self.numHeld == 0 then
 		adaptation = nil
@@ -5518,16 +5518,18 @@ end
 function P.mutantShield:checkDeath()
 	sprite = room[player.tileY][player.tileX].sprite
 
-	if room[player.tileY][player.tileX] ~= nil and  room[player.tileY][player.tileX]:willKillPlayer and (self.adaptation == nil or self.adaptation == room[player.tileY][player.tileX].name) then
-		self.adaptation = room[player.tileY][player.tileX].name
+	if room[player.tileY][player.tileX] ~= nil and room[player.tileY][player.tileX]:willKillPlayer() then
+		if self.adaptation == nil or self.adaptation == room[player.tileY][player.tileX].name then
+			self.adaptation = room[player.tileY][player.tileX].name
 
-		room[player.tileY][player.tileX] = nil
+			room[player.tileY][player.tileX] = nil
 
-		return self:fin(sprite)
+			return self:fin(sprite)
+		end
 	end
 
 	for i = 1, #animals do
-		if animals[i].tileY==player.tileY and animals[i].tileX==player.tileXt and animals[i]:willKillPlayer then
+		if animals[i].tileY==player.tileY and animals[i].tileX==player.tileXt and animals[i]:willKillPlayer() then
 			if self.adaptation == nil or adaptation == animals[i].name then
 				self.adaptation = animals[i].name
 
@@ -5561,7 +5563,7 @@ function P.mutantShield:fin(tile)
 	return false
 end
 
-P.superRange = P.superTool:new{name = "Elastification", description = "boost the range of your supertools", baseRange = 0, quality = 0, local power}
+P.superRange = P.superTool:new{name = "Elastification", description = "boost the range of your supertools", baseRange = 0, quality = 0, power = 0}
 
 
 --Tools to add: Treasure Snatcher, Shroom Transplant, P-Source Reviver / Temp-destroyer, gumball machine
