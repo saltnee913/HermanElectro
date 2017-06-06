@@ -5508,8 +5508,7 @@ end
 --Consumed in place of other supers
 
 
-P.mutantShield = P.superTool:new{name = "Mutant Carapace", description = "Specialist defence", baserange = 0, quality = 3, image = "KenGraphics/mushroom.png"}
-local adaptation
+P.mutantShield = P.superTool:new{name = "Mutant Carapace", description = "Specialist defence", baseRange = 0, quality = 3, image = "KenGraphics/mushroom.png", local adaptation, local sprite}
 function P.mutantShield:giveOne()
 	if self.numHeld == 0 then
 		adaptation = nil
@@ -5517,7 +5516,7 @@ function P.mutantShield:giveOne()
 	self.numHeld = self.numHeld + 1
 end
 function P.mutantShield:checkDeath()
-	local sprite = room[player.tileY][player.tileX].sprite
+	sprite = room[player.tileY][player.tileX].sprite
 
 	if room[player.tileY][player.tileX] ~= nil and  room[player.tileY][player.tileX]:willKillPlayer and (self.adaptation == nil or self.adaptation == room[player.tileY][player.tileX].name) then
 		self.adaptation = room[player.tileY][player.tileX].name
@@ -5562,12 +5561,16 @@ function P.mutantShield:fin(tile)
 	return false
 end
 
+P.superRange = P.superTool:new{name = "Elastification", description = "boost the range of your supertools", baseRange = 0, quality = 0, local power}
+
+
 --Tools to add: Treasure Snatcher, Shroom Transplant, P-Source Reviver / Temp-destroyer, gumball machine
 --What about a tool that gives you a basic next game if you die while holding it?
 --A T0 that gives you an infinite number of the basic you have the least of
 --A trash tier that returns to you the last basic used -- Too strong, doesn't fit a tier
 --A repair tool
 
+--Rewind tool is still a cool idea, so is micro-rewind
 
 
 
