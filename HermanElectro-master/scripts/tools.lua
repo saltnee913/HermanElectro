@@ -1052,16 +1052,6 @@ function P.flame:burn(x,y)
 	end
 end
 
-P.unsticker = P.superTool:new{name = "Funsticker", description = "An artifact of the good old pre-sponge days.", baseRange = 1, image = 'Graphics/unsticker.png', quality = 1}
-function P.unsticker:usableOnTile(tile)
-	if tile:instanceof(tiles.stickyButton) and tile.down then return true end
-	return false
-end
-function P.unsticker:useToolTile(tile)
-	self.numHeld = self.numHeld - 1
-	tile:unstick()
-end
-
 P.crowbar = P.superTool:new{name = "Crowbar", description = "A breakout star", baseRange = 1, image = 'Graphics/unsticker.png', quality = 4}
 function P.crowbar:usableOnTile(tile) --Tool for a prying heart
 	if tile:instanceof(tiles.vPoweredDoor) or tile:instanceof(tiles.hDoor) and not tile.stopped then return true end
@@ -5796,9 +5786,6 @@ P.resetTools()
 
 return tools
 
-
---P:addTool(P.unsticker)
- --Keep
 --P:addTool(P.woodGrabber)
 --P:addTool(P.corpseGrabber)
 --P:addTool(P.broom)
