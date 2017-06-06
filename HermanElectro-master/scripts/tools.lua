@@ -5508,7 +5508,7 @@ end
 --Consumed in place of other supers
 
 
-P.mutantShield = P.superTool:new{name = "Mutant Carapace", description = "Specialist defence", baserange = 0, quality = 3}
+P.mutantShield = P.superTool:new{name = "Mutant Carapace", description = "Specialist defence", baserange = 0, quality = 3, image = "KenGraphics/mushroom.png"}
 local adaptation
 function P.mutantShield:giveOne()
 	if self.numHeld == 0 then
@@ -5516,33 +5516,50 @@ function P.mutantShield:giveOne()
 	end
 	self.numHeld = self.numHeld + 1
 end
-function P.mutantShield:shield(tile)
+function P.mutantShield:checkDeath()
+	local sprite = room[player.tileY][player.tileX].sprite
 
-	if adaptation == nil then
-		if tile ~= nil then
-		adaptation = tile 
-		else
-		end
-	end
-	if adaptation == tile then
+	if self.adaptation == nil or self.adaptation == room[player.tileY][player.tileX].name then
+		self.adaptation = room[player.tileY][player.tileX].name
+
 		room[player.tileY][player.tileX] = nil
-		return false
+
+		return self:fin(sprite)
 	end
 
 	for i = 1, #animals do
-		if animals[i].tileY==player.tileY and animals[i].tileX==player.tileX and adaptation = animals[i] then
-			animals[i]:kill()
-			return false
+		if animals[i].tileY==player.tileY and animals[i].tileX==player.tileX then
+			if self.adaptation == nil or adaptation == animals[i].name then
+				self.adaptation = animals[i].name
+
+				animals[i]:kill()
+
+				return self:fin(sprite)
+			end
 		end
 	end
 
 	for i = 1, #spotlights do
-		if spotlights[i]:onPlayer() and spotlights[i] == adaptation then
-			spotlights[i].active = false
-			return false
+		if spotlights[i]:onPlayer() then
+			if self.adaptation == nil or  spotlights[i].name == self.adaptation then
+				self.adaptation = spotlights[i].name
+
+				spotlights[i].active = false
+				
+				return self:fin(sprite)
+			end
 		end
 	end
+	return true
 	
+end
+function P.mutantShield:fin(tile)
+	self.numHeld = self.numHeld - 1
+	self.sprite = sprite
+	if self.numHeld == 0 then
+		self.adaptation = nil
+	end
+	return false
 end
 
 --Tools to add: Treasure Snatcher, Shroom Transplant, P-Source Reviver / Temp-destroyer, gumball machine
@@ -5562,8 +5579,8 @@ P.numNormalTools = 7
 P.lastToolUsed = 1
 
 function P.resetTools()
-	tools[1] = P.saw
-	tools[2] = P.ladder
+	tools[1] = P.mutantShield
+	tools[2] = P.revive
 	tools[3] = P.wireCutters
 	tools[4] = P.waterBottle
 	tools[5] = P.sponge
@@ -5808,6 +5825,7 @@ P:addTool(P.shroomRevive)
 P:addTool(P.roomRestore)
 P:addTool(P.repair)
 P:addTool(P.preservatives)
+P:addTool(P.mutantShield)
 
 P.resetTools()
 
