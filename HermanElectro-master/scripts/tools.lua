@@ -5519,7 +5519,7 @@ end
 function P.mutantShield:checkDeath()
 	local sprite = room[player.tileY][player.tileX].sprite
 
-	if self.adaptation == nil or self.adaptation == room[player.tileY][player.tileX].name then
+	if room[player.tileY][player.tileX] ~= nil and  room[player.tileY][player.tileX]:willKillPlayer and (self.adaptation == nil or self.adaptation == room[player.tileY][player.tileX].name) then
 		self.adaptation = room[player.tileY][player.tileX].name
 
 		room[player.tileY][player.tileX] = nil
@@ -5528,7 +5528,7 @@ function P.mutantShield:checkDeath()
 	end
 
 	for i = 1, #animals do
-		if animals[i].tileY==player.tileY and animals[i].tileX==player.tileX then
+		if animals[i].tileY==player.tileY and animals[i].tileX==player.tileXt and animals[i]:willKillPlayer then
 			if self.adaptation == nil or adaptation == animals[i].name then
 				self.adaptation = animals[i].name
 
@@ -5545,7 +5545,7 @@ function P.mutantShield:checkDeath()
 				self.adaptation = spotlights[i].name
 
 				spotlights[i].active = false
-				
+
 				return self:fin(sprite)
 			end
 		end
