@@ -704,6 +704,11 @@ function P.knight:onCharLoad()
 	myShader:send("player_range", 600)
 end
 
+P.four = P.character:new{name = "Four", description = "2+2 = 4", scale = 1.1*scale}
+function P.four:onCharLoad()
+	filledSlots = {100,0,0,0}
+end
+
 P[#P+1] = P.herman
 P[#P+1] = P.francisco
 P[#P+1] = P.aurelius
@@ -716,6 +721,7 @@ P[#P+1] = P.felix
 P[#P+1] = P.battery
 P[#P+1] = P.erik
 P[#P+1] = P.fish
+P[#P+1] = P.four
 P[#P+1] = P.scientist
 P[#P+1] = P.dragon
 --P[#P+1] = P.knight
