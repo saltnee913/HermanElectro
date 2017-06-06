@@ -5507,8 +5507,41 @@ function P.preservatives:preserve(currentTool)
 end
 --Consumed in place of other supers
 
+P.mutantShield = P.superTool:new{name = "Mutant Carapice", description = "Specialist defence", baserange = 0, quality = 3}
+local adaptation
+function P.mutantShield:giveOne()
+	if self.numHeld == 0 then
+		adaptation = nil
+	end
+	self.numHeld = self.numHeld + 1
+end
+function P.mutantShield:adapt(tile)
+	--Sprite = 
+end
+function P.mutantShield:shield(tile)
 
+	if adaptation == nil then
+		return self:adapt(tile)
+	elseif adaptation == tile then
+		room[player.tileY][player.tileX] = nil
+		return false
+	end
 
+	for i = 1, #animals do
+		if animals[i].tileY==player.tileY and animals[i].tileX==player.tileX and adaptation = animals[i] then
+			animals[i]:kill()
+			return false
+		end
+	end
+
+	for i = 1, #spotlights do
+		if spotlights[i]:onPlayer() and spotlights[i] == adaptation then
+			spotlights[i].active = false
+			return false
+		end
+	end
+	
+end
 
 --Tools to add: Treasure Snatcher, Shroom Transplant, P-Source Reviver / Temp-destroyer, gumball machine
 --What about a tool that gives you a basic next game if you die while holding it?
