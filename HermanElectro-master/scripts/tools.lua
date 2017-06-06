@@ -5507,7 +5507,8 @@ function P.preservatives:preserve(currentTool)
 end
 --Consumed in place of other supers
 
-P.mutantShield = P.superTool:new{name = "Mutant Carapice", description = "Specialist defence", baserange = 0, quality = 3}
+
+P.mutantShield = P.superTool:new{name = "Mutant Carapace", description = "Specialist defence", baserange = 0, quality = 3}
 local adaptation
 function P.mutantShield:giveOne()
 	if self.numHeld == 0 then
@@ -5515,14 +5516,15 @@ function P.mutantShield:giveOne()
 	end
 	self.numHeld = self.numHeld + 1
 end
-function P.mutantShield:adapt(tile)
-	--Sprite = 
-end
 function P.mutantShield:shield(tile)
 
 	if adaptation == nil then
-		return self:adapt(tile)
-	elseif adaptation == tile then
+		if tile ~= nil then
+		adaptation = tile 
+		else
+		end
+	end
+	if adaptation == tile then
 		room[player.tileY][player.tileX] = nil
 		return false
 	end
