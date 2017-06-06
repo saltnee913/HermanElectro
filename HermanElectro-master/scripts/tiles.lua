@@ -2397,7 +2397,7 @@ P.supertoolQ4 = P.supertoolTile:new{name = "supertoolTileQ4", superQuality = 4}
 P.supertoolQ5 = P.supertoolTile:new{name = "supertoolTileQ5", superQuality = 5}
 
 P.dungeonSuper = P.supertoolTile:new{name = "dungeonSuper"}
-function P.supertoolTile:selectTool()
+function P.dungeonSuper:selectTool()
 	local toolOptions = {tools.tunneler, tools.holyShield, tools.mirror}
 	self:updateSprite()
 end

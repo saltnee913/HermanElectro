@@ -3791,8 +3791,8 @@ function onToolUse(currentTool)
 		tools.card:playCard()
 	end
  	
-	if tools.preservatives.numHeld> 0 and currentTool ~= nil and tools[currentTool]:instanceof(superTool) then
-		tools.preservatives:preserve()
+	if tools.preservatives.numHeld> 0 and currentTool ~= nil and tools[currentTool]:instanceof(tools.superTool) then
+		tools.preservatives:preserve(currentTool)
 	end
 
 	stats.incrementStat('toolsUsed')

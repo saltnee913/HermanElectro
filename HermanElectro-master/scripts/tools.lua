@@ -5458,27 +5458,33 @@ function P.gumball:useToolTile(tile)
 end
 
 
-P.repair = P.superTool:new{name = "Duct tape", description = "Fix just about anything", baseRange = 1, quality  = 2}
+P.repair = P.superTool:new{name = "Duct tape", description = "Fix just about anything", baseRange = 1, quality  = 2,
+image = 'KenGraphics/mushroom.png'}
 function P.repair:usableOnTile(tile)
 	if tile.destroyed then
 		return true
 	end
 end
 function P.repair:useToolTile(tile, tileY, tileX)
+	for i = 1, #tiles do
+		if room[tileY][tileX].name==tiles[i].name then
+			room[tileY][tileX] = tiles[i]:new()
+			break
+		end
+	end
 	room[tileY][tileX] = room[tileY][tileX]:new()
+	self.numHeld = self.numHeld-1
+end
+function P.repair:nothingIsSomething()
+	return true
 end
 
-P.preservatives = P.superTool:new{name = "Preservatives", description = "Take care of your tools", baseRange = 0, quality = 5}
-function P.preservatives:giveOne()
-	self.numHeld = self.numHeld+2
-end
-function P.preservatives:preserve()
+P.preservatives = P.superTool:new{name = "Preservatives", description = "Take care of your tools", baseRange = 0, quality = 3}
+function P.preservatives:preserve(currentTool)
 	if currentTool~=nil then
-		--tools[currentTool]:giveOne()
 		tools.giveToolsByReference({tools[currentTool]})
 		self.numHeld = self.numHeld-1
 	end
-		self.numHeld = self.numHeld-1
 end
 --Consumed in place of other supers
 
