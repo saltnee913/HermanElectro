@@ -3801,6 +3801,10 @@ function onToolUse(currentTool)
 	if tools.preservatives.numHeld> 0 and currentTool ~= nil and tools[currentTool]:instanceof(tools.superTool) then
 		tools.preservatives:preserve(currentTool)
 	end
+
+	if tools.superRange.numHeld>0 then
+		tools.superRange:update()
+	end
 	
 
 	stats.incrementStat('toolsUsed')
@@ -3851,9 +3855,7 @@ function onToolUse(currentTool)
 		tool = 0
 	end
 
-	if tools.superRange.numHeld>0 then
-		tools.superRange:update()
-	end
+
 	updateTools()
 	checkAllDeath()
 	--setPlayerLoc()

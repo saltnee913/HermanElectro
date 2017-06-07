@@ -5569,8 +5569,8 @@ function P.superRange:giveOne()
 	self.numHeld = self.numHeld+1
 end
 function P.superRange:update()
-	self.power = self.power + 1
-	baseRange = power
+	self.power = self.power + .10 +self.power/7
+	self.baseRange = self.power
 end
 function P.superRange:usableOnTile(tile)
 	return true
