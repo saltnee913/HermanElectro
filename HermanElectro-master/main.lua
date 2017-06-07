@@ -3805,7 +3805,9 @@ function onToolUse(currentTool)
 	if tools.superRange.numHeld>0 then
 		tools.superRange:update()
 	end
-	
+	if tools.chargedShield.numHeld>0 then
+		tools.chargedShield.charge = tools.chargedShield.charge + 1
+	end
 
 	stats.incrementStat('toolsUsed')
 

@@ -5563,6 +5563,55 @@ function P.mutantShield:fin(tile)
 	return false
 end
 
+
+
+
+
+P.chargedShield = P.superTool:new{name = "Charged Shield", description = "The odds of survival are ever increasing", quality = 3, image = 'Graphics/heart.png', charge = 0}
+function P.chargedShield:giveOne()
+	if self.numHeld >0 then
+		self.charge = self.charge + 2 + self.numHeld*2
+	end
+	self.numHeld = self.numHeld + 1
+end
+function P.chargedShield:checkDeath()
+	self.numHeld = self.numHeld-1
+	while self.charge > 0 do 
+		self.charge = self.charge-1
+		if util.random(20,'toolDrop') == 1 then
+			room[player.tileY][player.tileX] = nil
+		for i = 1, #animals do
+			if animals[i].tileY==player.tileY and animals[i].tileX==player.tileX then
+			animals[i]:kill()
+			end
+		end
+
+		for i = 1, #spotlights do
+			if spotlights[i]:onPlayer() then
+			spotlights[i].active = false
+			end
+		end
+
+		return false
+		end
+	end 
+	return true
+	
+end
+
+
+
+
+
+
+
+----Following are garabage
+
+
+
+
+
+
 P.superRange = P.superTool:new{name = "Elastification", description = "Boost the range of your supertools", baseRange = 0, quality = 1, power = 0, active = 0}
 function P.superRange:giveOne()
 	self.power = 0
@@ -5584,6 +5633,9 @@ function P.superRange:useToolTile(tile)
 end
 P.superRange.useToolNothing = P.superRange.useToolTile
 --Some kind of passive that interacts with supers
+
+
+
 
 
 P.sacrificalPact = P.superTool:new{name = "Sacrificial Pact", description = "Make a trade"}
@@ -5660,8 +5712,8 @@ P.numNormalTools = 7
 P.lastToolUsed = 1
 
 function P.resetTools()
-	tools[1] = P.mutantShield
-	tools[2] = P.superRange
+	tools[1] = P.saw
+	tools[2] = P.ladder
 	tools[3] = P.wireCutters
 	tools[4] = P.waterBottle
 	tools[5] = P.sponge
@@ -5908,6 +5960,7 @@ P:addTool(P.repair)
 P:addTool(P.preservatives)
 P:addTool(P.mutantShield)
 P:addTool(P.superRange)
+P:addTool(P.chargedShield)
 
 P.resetTools()
 
