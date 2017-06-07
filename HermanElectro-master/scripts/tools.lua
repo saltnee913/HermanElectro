@@ -5513,7 +5513,7 @@ function P.mutantShield:giveOne()
 	if self.numHeld == 0 then
 		adaptation = nil
 	end
-	self.numHeld = self.numHeld + 1
+	self.numHeld = self.numHeld + 2
 end
 function P.mutantShield:checkDeath()
 	sprite = room[player.tileY][player.tileX].sprite
@@ -5563,8 +5563,84 @@ function P.mutantShield:fin(tile)
 	return false
 end
 
-P.superRange = P.superTool:new{name = "Elastification", description = "boost the range of your supertools", baseRange = 0, quality = 0, power = 0}
+P.superRange = P.superTool:new{name = "Elastification", description = "Boost the range of your supertools", baseRange = 0, quality = 1, power = 0, active = 0}
+function P.superRange:giveOne()
+	self.power = 0
+	self.numHeld = self.numHeld+1
+end
+function P.superRange:update()
+	self.power = self.power + 1
+	baseRange = power
+end
+function P.superRange:usableOnTile(tile)
+	return true
+end 
+P.superRange.usableOnNothing = P.superRange.usableOnTile
+function P.superRange:useToolTile(tile)
+	self.numHeld = self.numHeld-1
+	player.attributes.extendedRange = player.attributes.extendedRange+self.power
+	self.active = self.power 
+	self.power = 0
+end
+P.superRange.useToolNothing = P.superRange.useToolTile
+--Some kind of passive that interacts with supers
 
+
+P.sacrificalPact = P.superTool:new{name = "Sacrificial Pact", description = "Make a trade"}
+--Two use modes, sacrifice and expend. Sacrifice somehow improves the power
+
+
+
+--Concept
+P.chargedBeam = P.superTool:new{name = "Charged Beam", description = "It grows in strength", baseRange = 0, quality = 3, charge = 0}
+function P.chargedBeam:giveOne()
+	if self.numHeld == 0 then
+		charge = 0
+	end
+	self.numHeld = self.numHeld + 1
+end
+function P.chargedBeam:update()
+	charge = charge + 1
+	baseRange = 2*charge/3
+end
+function P.chargedBeam:destroyTiles(tileY, tileX)
+	local endCoord = 1
+	local stepNum = 1
+	if tileY == player.tileY then
+		if tileX>player.tileX then
+			endCoord = roomLength
+		else
+			stepNum = -1
+		end
+		for i = player.tileX, endCoord, stepNum do
+			if room[tileY][i]~=nil and room[tileY][i]:instanceof(tiles.treasureTile) then
+				room[tileY][i]:onEnter()
+				room[tileY][i] = nil
+				return
+			end
+		end
+	elseif tileX == player.tileX then
+		if tileY>player.tileY then
+			endCoord = roomHeight
+		else
+			stepNum = -1
+		end
+		for i = player.tileY, endCoord, stepNum do
+			if room[i][tileX]~=nil and room[i][tileX]:instanceof(tiles.treasureTile) then
+				room[i][tileX]:onEnter()
+				room[i][tileX] = nil
+				return
+			end
+		end
+	end
+end
+--Charges up with basic use, consumes all charge on use. 
+--Idea: A blast which becomes stronger and bigger and can be launched farther 
+--Idea: A beam which becomes more lasting and penetrating and affecting 
+
+P.protonTorpedo = P.superTool:new{name = "Proton Torpedo", description = "Ever more deadly", baseRange = 0, quality = 4, charge = 0}
+
+---Also, potential related tools would charge up each time you use a basic
 
 --Tools to add: Treasure Snatcher, Shroom Transplant, P-Source Reviver / Temp-destroyer, gumball machine
 --What about a tool that gives you a basic next game if you die while holding it?
@@ -5585,7 +5661,7 @@ P.lastToolUsed = 1
 
 function P.resetTools()
 	tools[1] = P.mutantShield
-	tools[2] = P.revive
+	tools[2] = P.superRange
 	tools[3] = P.wireCutters
 	tools[4] = P.waterBottle
 	tools[5] = P.sponge
@@ -5831,6 +5907,7 @@ P:addTool(P.roomRestore)
 P:addTool(P.repair)
 P:addTool(P.preservatives)
 P:addTool(P.mutantShield)
+P:addTool(P.superRange)
 
 P.resetTools()
 

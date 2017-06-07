@@ -387,7 +387,7 @@ function resetPlayer()
 	player.attributes.shelled = false
 	player.attributes.invisible = false
 	player.attributes.fast = {fast = false, fastStep = false}
-
+	player.attributes.extendedRange = 0
 	player.supersHeld = {total = 0}
 end
 
@@ -1868,6 +1868,9 @@ function resetPlayerAttributesRoom()
 	player.attributes.timeFrozen = false
 	player.attributes.superRammy = false
 	player.attributes.clockFrozen = false
+
+	
+	
 
 	if tools.demonFeather.numHeld>0 then
 		player.attributes.flying = true
@@ -3791,9 +3794,14 @@ function onToolUse(currentTool)
 		tools.card:playCard()
 	end
  	
+ 	if tools.superRange.active > 0 and not currentTool == tools.superRange then
+		player.attributes.extendedRange = player.attributes.extendedRange - tools.superRange.active
+		tools.superRange.active = 0
+	end
 	if tools.preservatives.numHeld> 0 and currentTool ~= nil and tools[currentTool]:instanceof(tools.superTool) then
 		tools.preservatives:preserve(currentTool)
 	end
+	
 
 	stats.incrementStat('toolsUsed')
 
@@ -3843,7 +3851,11 @@ function onToolUse(currentTool)
 		tool = 0
 	end
 
+	if tools.superRange.numHeld>0 then
+		tools.superRange:update()
+	end
 	updateTools()
 	checkAllDeath()
 	--setPlayerLoc()
+
 end
