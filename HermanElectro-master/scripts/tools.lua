@@ -880,6 +880,8 @@ function P.giveSupertools(numTools,qualities)
 	P.giveRandomTools(0,numTools,qualities)
 end
 
+
+--Shovel: creates a pit, you can also dig up mushrooms to get shrooms
 P.shovel = P.superTool:new{name = "Shovel", description = "The world is your sandbox", baseRange = 1, --Dig deep? Plumb the depths?
 image = 'Graphics/Tools/shovel.png', quality = 2}
 function P.shovel:usableOnNothing()
@@ -903,6 +905,8 @@ function P.shovel:useToolTile(tile)
 	end
 end
 
+
+--Electrifier: Makes a tile conductive
 P.electrifier = P.superTool:new{name = 'Electrifier', description = "Forming connections", baseRange = 1, image = 'Graphics/conduit.png', quality = 3}
 function P.electrifier:usableOnTile(tile)--No longer called moisten, old desc: let the love flow
 	if not tile.destroyed and tile:instanceof(tiles.wall) and not tile:instanceof(tiles.metalWall) and not tile.electrified then
@@ -914,8 +918,9 @@ function P.electrifier:useToolTile(tile)
 	self.numHeld = self.numHeld - 1
 	tile:electrify()
 end
---Low enerrgy precedent?
---Insulate or Isolate? Insulin?
+
+
+--Delectrifier: makes a tile no longer conductive
 P.delectrifier = P.superTool:new{name = 'Delectrifier', description = "A clean breakup", baseRange = 1, image = 'Graphics/electrifier2.png', quality = 4}
 --You didn't have to cut me off?//		Was insulate, Low energy precendent
 function P.delectrifier:usableOnTile(tile)
@@ -940,6 +945,8 @@ function P.delectrifier:useToolTile(tile)
 	end]]
 end
 
+
+--Charger: makes a conductive tile into a power supply
 P.charger = P.superTool:new{name = 'Battery Pack', description = "Empowerment", baseRange = 1, image = 'Graphics/powerizer.png', quality = 4}
 function P.charger:usableOnTile(tile) --Was desc Power to the people aslo considered empower, empowering
 	--if not tile.destroyed and not tile.charged and 
@@ -951,6 +958,8 @@ function P.charger:useToolTile(tile)
 	tile.charged = true
 end
 
+
+--Lets you see everywhere in the current room
 P.visionChanger = P.superTool:new{name = 'Flashlight', description = "Dispel the dark", baseRange = 0, image = 'Graphics/visionChanger.png', quality = 1}
 function P.visionChanger:usableOnTile(tile)--Was "Dispel the phantoms"
 	return true
@@ -1043,16 +1052,6 @@ function P.flame:burn(x,y)
 	end
 end
 
-P.unsticker = P.superTool:new{name = "Funsticker", description = "An artifact of the good old pre-sponge days.", baseRange = 1, image = 'Graphics/unsticker.png', quality = 1}
-function P.unsticker:usableOnTile(tile)
-	if tile:instanceof(tiles.stickyButton) and tile.down then return true end
-	return false
-end
-function P.unsticker:useToolTile(tile)
-	self.numHeld = self.numHeld - 1
-	tile:unstick()
-end
-
 P.crowbar = P.superTool:new{name = "Crowbar", description = "A breakout star", baseRange = 1, image = 'Graphics/unsticker.png', quality = 4}
 function P.crowbar:usableOnTile(tile) --Tool for a prying heart
 	if tile:instanceof(tiles.vPoweredDoor) or tile:instanceof(tiles.hDoor) and not tile.stopped then return true end
@@ -1074,6 +1073,8 @@ function P.doorstop:useToolTile(tile)
 	tile.stopped = true
 end
 
+
+--Missile: destroys a single chosen tile within a radius
 P.missile = P.superTool:new{name = "Missile", description = "Targeted destruction",
 useWithArrowKeys = false, baseRange = 10, -- Was "The hand of MF doom"
 image = 'Graphics/Tools/missile.png', quality = 4}
@@ -1511,16 +1512,8 @@ function P.boomboxSpawner:useToolNothing(tileY, tileX)
 	pushables[#pushables+1] = toSpawn
 end
 
-P.superWireCutters = P.wireCutters:new{name = "Super Wire-cutters", description = "They can't stop you", -- Anything more ... you know
-image = 'Graphics/wirecutters.png', quality = -1}-- was "Super Wire Cutters" ... Stone Splitters sounds cool but misleading.. Arkham's razor, Laser razor, Incsors: Something to chew on
-function P.superWireCutters:usableOnNonOverlay(tile) -- "A cut above"
-	return not tile.destroyed and (tile:instanceof(tiles.wire)
-	or tile:instanceof(tiles.conductiveGlass) or tile:instanceof(tiles.reinforcedConductiveGlass) or tile:instanceof(tiles.electricFloor))
-end
-function P.superWireCutters:usableOnTile(tile)
-	return self:usableOnNonOverlay(tile) or (tile.overlay~=nil and self:usableOnNonOverlay(tile.overlay))
-end
 
+--L.A.S.E.R.: kills all dogs in a line
 P.laser = P.superTool:new{name = "L.A.S.E.R.", description = "The damage multiplier", baseRange = 100, image = 'Graphics/laser.png', quality = 1}
 function P.laser:usableOnTile() --Was desc: Piercing shot
 	return true
@@ -1718,6 +1711,7 @@ function P.superLaser:useToolNothing(tileY, tileX)
 end
 
 
+--Gas: kills all animals in the room
 P.gas = P.superTool:new{name = "Poison Gas", description = "Chemical Warfare", baseRange = 0, image = 'Graphics/gas.png', quality = 2}
 function P.gas:usableOnNothing() -- Keep Desc / Flavor?
 	return true
@@ -1840,6 +1834,8 @@ function P.toolIncrementer:useToolNothing()
 	self.numHeld = self.numHeld-1
 end
 
+
+--Wings: using these lets you fly over all ground obstacles
 P.wings = P.superTool:new{name = "Wings", description = "Float free", baseRange = 0, image = 'Graphics/wings.png', quality = 4}
 function P.wings:usableOnNothing()--His feet never touched the ground. was desc: Ungrounded
 	return true
@@ -2033,6 +2029,8 @@ function P.revive:checkDeath()
 	return false
 end
 
+
+--Explosive Gun: gun, but more range and explodes the tile it hits
 P.explosiveGun = P.gun:new{name = "The Bombastic Bullet", description = "Ballistic blast", baseRange = 5, image = 'Graphics/supergun.png', quality = 2}
 function P.explosiveGun:useToolTile(tile, tileY, tileX)--Destruction at a distance  --- Terrible
 	self.numHeld = self.numHeld-1
@@ -2148,6 +2146,8 @@ function P.powerBreaker:useToolNothing(tileY, tileX)
 end
 P.powerBreaker.useToolTile = P.powerBreaker.useToolNothing
 
+
+--Gabe Maker: turns you into gabe and takes away all your basics
 P.gabeMaker = P.superTool:new{name = "Gabriel's Locket", description = "Now I lay me down to sleep", baseRange = 0, image = 'Graphics/gabeSmall.png', quality = 5}
 function P.gabeMaker:usableOnNothing()
 	return true
@@ -2172,6 +2172,8 @@ function P.roomUnlocker:useToolNothing()
 end
 P.roomUnlocker.useToolTile = P.roomUnlocker.useToolNothing
 
+
+--Axe: gun + saw
 P.axe = P.superTool:new{name = "Axe", description = "Throw it or swing it.", baseRange = 5,
 image = 'Graphics/Tools/axe.png', quality = 2}
 P.axe.usableOnTile = P.saw.usableOnTile
@@ -2179,6 +2181,8 @@ P.axe.usableOnAnimal = P.gun.usableOnAnimal
 P.axe.useToolAnimal = P.gun.useToolAnimal
 P.axe.useToolTile = P.saw.useToolTile
 
+
+--Lube: sponge + water bottle
 P.lube = P.superTool:new{name = "Lube", description = "Wuba lubba dub dub", baseRange = 1, image = 'Graphics/lube.png', quality = 1}
 function P.lube:usableOnTile(tile)
 	if tile:instanceof(tiles.dustyGlassWall) and tile.blocksVision then return true
@@ -2208,6 +2212,8 @@ function P.lube:useToolTile(tile, tileY, tileX)
 	end
 end
 
+
+--Knife: gun + wire-cutters
 P.knife = P.superTool:new{name = "Knife", description = "They can't stop you", baseRange = 5,
 image = 'Graphics/Tools/knife.png', quality = 2}
 P.knife.usableOnAnimal = P.gun.usableOnAnimal
@@ -2249,62 +2255,6 @@ function P.snowballGlobal:useToolNothing()
 end
 P.snowballGlobal.useToolTile = P.snowballGlobal.useToolNothing
 
-P.superBrick = P.brick:new{name = "Super Brick", description = "Brick the unbrickable",
-image = 'Graphics/superbrick.png', baseRange = 5, quality = -1}
-function P.superBrick:usableOnTile(tile)
-	if not tile.bricked and tile:instanceof(tiles.button) then
-		return true
-	end
-	if not tile.destroyed and (tile:instanceof(tiles.glassWall) or tile:instanceof(tiles.reinforcedGlass)) then
-		return true
-	end
-	if tile:instanceof(tiles.mousetrap) and not tile.bricked then
-		return true
-	end
-	return false
-end
-function P.superBrick:useToolTile(tile)
-	self.numHeld = self.numHeld - 1
-	if tile:instanceof(tiles.glassWall) or tile:instanceof(tiles.reinforcedGlass) then
-		tile:destroy()
-	else
-		tile:lockInState(true)
-	end
-end
-function P.superBrick:useToolAnimal(animal)
-	self.numHeld = self.numHeld-1
-	animal.waitCounter = animal.waitCounter+2
-	stats.incrementStat("animalsBricked")
-end
-
-P.superWaterBottle = P.waterBottle:new{name = "Super Waterbottle", description = "Break the unbreakable",
-image = 'Graphics/superwaterbottle.png', baseRange = 3, quality = -1}
-function P.superWaterBottle:usableOnTile(tile)
-	if not tile.destroyed and ((tile:instanceof(tiles.powerSupply) and not tile:instanceof(tiles.notGate)) or (tile:instanceof(tiles.electricFloor)) or tile:instanceof(tiles.untriggeredPowerSupply)) then
-		return true
-	end
-	return false
-end
-function P.superWaterBottle:useToolTile(tile)
-	self.numHeld = self.numHeld-1
-	if not tile.destroyed then
-		tile:destroy()
-	end
-end
-function P.superWaterBottle:usableOnNothing()
-	return true
-end
-function P.superWaterBottle:useToolNothing(tileY, tileX)
-	self.numHeld = self.numHeld - 1
-	if room[tileY][tileX]~=nil then
-		local t = room[tileY][tileX]
-		if t:instanceof(tiles.wire) or t:instanceof(tiles.electricFloor) then
-			unlocks.unlockUnlockableRef(unlocks.wireExtenderUnlock)
-		end
-	end
-	room[tileY][tileX] = tiles.puddle:new()
-end
-
 P.portalPlacer = P.superTool:new{name = "Portal Gun", description = "Thinking with portals is more fun", image = 'Graphics/entrancePortal.png', baseRange = 1, quality = 1}
 function P.portalPlacer:usableOnNothing()
 	return true
@@ -2325,6 +2275,8 @@ end
 P.suicideKing.usableOnTile = P.suicideKing.usableOnNothing
 P.suicideKing.useToolTile = P.suicideKing.useToolNothing
 
+
+--Screwdriver: destroys spikes
 P.screwdriver = P.superTool:new{name = "Screwdriver", description = "Remove those spikey plates", image = 'Graphics/screwdriver.png', baseRange = 1, quality = 2}
 function P.screwdriver:usableOnTile(tile)
 	return tile:instanceof(tiles.spikes)
@@ -2524,6 +2476,8 @@ function P.mask:useToolTile(tile)
 end
 P.mask.useToolNothing = P.mask.useToolTile
 
+
+--Growth Hormones: Let's you use tools over walls, needs art
 P.growthHormones = P.superTool:new{name = "Growth Hormones", description = "Growing up", image = 'Graphics/growthHormones.png', baseRange = 0, quality = 2}
 function P.growthHormones:usableOnTile(tile) --Might need a different name
 	return true
@@ -2541,9 +2495,7 @@ end
 P.growthHormones.useToolNothing = P.growthHormones.useToolTile
 
 
-
-
------- Some EK tools with special refill mechanics
+--ThruCover Ammo: gives three thrucover guns on pickup, these can shoot through walls
 P.thruCover = P.gun:new{name= "ThruCover Ammo", description = "Tactical Strike", image = 'Graphics/gun.png', quality = 3}
 function P.thruCover:giveOne()
 	self.numHeld =self.numHeld + 2
@@ -2578,6 +2530,7 @@ function P.thruCover:getToolableTiles()
 end
 
 
+--IceyShot: Gives three ice guns which turn animals to iceboxes
 P.iceyShot = P.gun:new{name= "IceyShot", description = "Super Cool", image = 'Graphics/icegun.png', quality = 3}
 function P.iceyShot:giveOne()
 	self.numHeld =self.numHeld + 3
@@ -2720,6 +2673,8 @@ function P.wireToButton:useToolTile(tile, tileY, tileX)
 	room[tileY][tileX] = tiles.button:new()
 end
 
+
+--Foresight: let's you see what's in treasure tiles
 P.foresight = P.superTool:new{name = "Crystal Ball", description = "See the future", image = 'Graphics/foresight.png', baseRange = 0, quality = 1}
 function P.foresight:usableOnTile(tile)
 	return true
@@ -3015,6 +2970,8 @@ function P.playerCloner:useToolNothing()
 end
 P.playerCloner.useToolTile = P.playerCloner.useToolNothing
 
+
+--Salt: kills a snail, if thrown backwards the snail drops something
 P.salt = P.superTool:new{name = "Salt", description = "The deadliest weapon...don't spill!",
 image = 'Graphics/Tools/salt.png', baseRange = 2, quality = 1}
 function P.salt:usableOnAnimal(animal)
@@ -3331,6 +3288,8 @@ function P.helmet:useToolTile(tile, tileY, tileX)
 	setPlayerLoc()
 end
 
+
+--Stealth Bomber: Teleports you forward and bombs the tiles in between
 P.stealthBomber = P.superTool:new{name = "Stealth Bomber", description = "Drop 'n' Go", image = 'Graphics/stealthbomber.png', baseRange = 2, quality = 4}
 P.stealthBomber.getToolableTiles = P.tool.getToolableTilesBox
 function P.stealthBomber:usableOnNothing(tileY, tileX)
@@ -3386,6 +3345,8 @@ function P.stealthBomber:useToolTile(tile, tileY, tileX)
 	setPlayerLoc()
 end
 
+
+--Seeds: creates seeds which grow into a tree when watered
 P.seeds = P.superTool:new{name = "Seeds", description = "Go forth and sow your wild oats", baseRange = 1, quality = 2,
 image = 'Graphics/Tools/seeds.png'}
 function P.seeds:usableOnNothing()
@@ -3593,6 +3554,7 @@ end
 P.spinningSword.useToolTile = P.spinningSword.useToolNothing
 
 
+--Steroids: Moves all tiles in the row
 P.ironMan = P.superTool:new{name = "Steroids", description = "Do you even lift?", image = 'Graphics/ironman.png',
 baseRange = 1, quality = 4}
 function P.ironMan:usableOnTile(tile)
@@ -3688,16 +3650,32 @@ function P.tunneler:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld - 1
 end
 
-P.longLadder = P.superTool:new{name = "Zach's Ladder", description = "For getting really high", image = 'Graphics/ladder.png',
+
+--Super Saw: cuts down concrete
+P.superSaw = P.superTool:new{name = "Super Saw", description = "I came, I sawed, I conquered", image = 'Graphics/saw.png',
 baseRange = 1, quality = -1}
-P.longLadder.usableOnNothing = P.ladder.usableOnNothing
-P.longLadder.useToolNothing = P.ladder.useToolNothing
-P.longLadder.usableOnTile = P.ladder.usableOnTile
-function P.longLadder:useToolTile(tile, tileY, tileX)
+function P.superSaw:usableOnPushable()
+	return true
+end
+function P.superSaw:usableOnTile(tile)
+	return tile:instanceof(tiles.wall) and tile:getHeight()>0 and not tile:instanceof(tiles.reinforcedGlass) and not tile:instanceof(tiles.glassWall)
+end
+function P.superSaw:useToolPushable(pushable)
+	pushable:destroy()
+end
+
+
+--Super Ladder: spreads ladders
+P.superLadder = P.superTool:new{name = "Super Ladder", description = "OH MY GOD, IT'S SPREADING", image = 'Graphics/ladder.png',
+baseRange = 1, quality = -1}
+P.superLadder.usableOnNothing = P.ladder.usableOnNothing
+P.superLadder.useToolNothing = P.ladder.useToolNothing
+P.superLadder.usableOnTile = P.ladder.usableOnTile
+function P.superLadder:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld - 1
 	self:spreadLadders(tileY, tileX)
 end
-function P.longLadder:spreadLadders(tileY, tileX)
+function P.superLadder:spreadLadders(tileY, tileX)
 	room[tileY][tileX]:ladder()
 	if tileY>1 then
 		if room[tileY-1][tileX]~=nil and self:usableOnTile(room[tileY-1][tileX]) then
@@ -3721,19 +3699,51 @@ function P.longLadder:spreadLadders(tileY, tileX)
 	end
 end
 
-P.superSaw = P.superTool:new{name = "Super Saw", description = "I came, I sawed, I conquered", image = 'Graphics/saw.png',
-baseRange = 1, quality = -1}
-function P.superSaw:usableOnPushable()
-	return true
+
+--Super Wire-cutters: can cut blue wires
+P.superWireCutters = P.wireCutters:new{name = "Super Wire-cutters", description = "They can't stop you", -- Anything more ... you know
+image = 'Graphics/wirecutters.png', quality = -1}-- was "Super Wire Cutters" ... Stone Splitters sounds cool but misleading.. Arkham's razor, Laser razor, Incsors: Something to chew on
+function P.superWireCutters:usableOnNonOverlay(tile) -- "A cut above"
+	return not tile.destroyed and (tile:instanceof(tiles.wire)
+	or tile:instanceof(tiles.conductiveGlass) or tile:instanceof(tiles.reinforcedConductiveGlass) or tile:instanceof(tiles.electricFloor))
 end
-function P.superSaw:usableOnTile(tile)
-	return tile:instanceof(tiles.wall) and tile:getHeight()>0 and not tile:instanceof(tiles.reinforcedGlass) and not tile:instanceof(tiles.glassWall)
-end
-function P.superSaw:useToolPushable(pushable)
-	pushable:destroy()
+function P.superWireCutters:usableOnTile(tile)
+	return self:usableOnNonOverlay(tile) or (tile.overlay~=nil and self:usableOnNonOverlay(tile.overlay))
 end
 
-P.superSponge = P.superTool:new{name = "Super Sponge", description = "", image = 'NewGraphics/sponge copy.png',
+
+--Super Water Bottle: works on unbreakable efloors
+P.superWaterBottle = P.waterBottle:new{name = "Super Waterbottle", description = "Break the unbreakable",
+image = 'Graphics/superwaterbottle.png', baseRange = 3, quality = -1}
+function P.superWaterBottle:usableOnTile(tile)
+	if not tile.destroyed and ((tile:instanceof(tiles.powerSupply) and not tile:instanceof(tiles.notGate)) or (tile:instanceof(tiles.electricFloor)) or tile:instanceof(tiles.untriggeredPowerSupply)) then
+		return true
+	end
+	return false
+end
+function P.superWaterBottle:useToolTile(tile)
+	self.numHeld = self.numHeld-1
+	if not tile.destroyed then
+		tile:destroy()
+	end
+end
+function P.superWaterBottle:usableOnNothing()
+	return true
+end
+function P.superWaterBottle:useToolNothing(tileY, tileX)
+	self.numHeld = self.numHeld - 1
+	if room[tileY][tileX]~=nil then
+		local t = room[tileY][tileX]
+		if t:instanceof(tiles.wire) or t:instanceof(tiles.electricFloor) then
+			unlocks.unlockUnlockableRef(unlocks.wireExtenderUnlock)
+		end
+	end
+	room[tileY][tileX] = tiles.puddle:new()
+end
+
+
+--Super Sponge: spreads sponge effect
+P.superSponge = P.superTool:new{name = "Super Sponge", description = "Clean everything", image = 'NewGraphics/sponge copy.png',
 baseRange = 1, quality = -1}
 function P.superSponge:usableOnTile(tile)
 	if tile:instanceof(tiles.dustyGlassWall) and tile.blocksVision then
@@ -3774,7 +3784,38 @@ function P.superSponge:spreadSponge(tileY, tileX)
 	end
 end
 
---gun, but radial and works on concrete
+
+--Super Brick: can break reinforced glass and double stuns animals
+P.superBrick = P.brick:new{name = "Super Brick", description = "Brick the unbrickable",
+image = 'Graphics/superbrick.png', baseRange = 5, quality = -1}
+function P.superBrick:usableOnTile(tile)
+	if not tile.bricked and tile:instanceof(tiles.button) then
+		return true
+	end
+	if not tile.destroyed and (tile:instanceof(tiles.glassWall) or tile:instanceof(tiles.reinforcedGlass)) then
+		return true
+	end
+	if tile:instanceof(tiles.mousetrap) and not tile.bricked then
+		return true
+	end
+	return false
+end
+function P.superBrick:useToolTile(tile)
+	self.numHeld = self.numHeld - 1
+	if tile:instanceof(tiles.glassWall) or tile:instanceof(tiles.reinforcedGlass) then
+		tile:destroy()
+	else
+		tile:lockInState(true)
+	end
+end
+function P.superBrick:useToolAnimal(animal)
+	self.numHeld = self.numHeld-1
+	animal.waitCounter = animal.waitCounter+2
+	stats.incrementStat("animalsBricked")
+end
+
+
+--Super Gun: gun, but radial and works on concrete
 P.superGun = P.superTool:new{name = "Super Gun", description = "", baseRange = 5,
 image = 'Graphics/supergun.png', quality = -1}
 P.superGun.getToolableTiles = P.tool.getToolableTilesBox
@@ -3802,32 +3843,6 @@ end
 function P.superGun:useToolAnimal(animal)
 	self.numHeld = self.numHeld - 1
 	animal:kill()
-end
-
---same as ladder but more range; used primarily for tool upgrades
-P.superLadder = P.superTool:new{name = "SUper Ladder", description = "", image = 'Graphics/ladder.png',
-baseRange = 6, quality = -1}
-function P.superLadder:usableOnTile(tile)
-	if not tile.laddered then
-		if tile:instanceof(tiles.breakablePit) and tile.strength == 0 then
-			return true
-		elseif tile:instanceof(tiles.poweredFloor) or tile:instanceof(tiles.pit) then
-			return true
-		end
-	end
-	return false
-end
-function P.superLadder:useToolTile(tile)
-	self.numHeld = self.numHeld - 1
-	tile:ladder()
-	stats.incrementStat("pitsLaddered")
-end
-function P.superLadder:usableOnNothing()
-	return true
-end
-function P.superLadder:useToolNothing(tileY, tileX)
-	self.numHeld = self.numHeld - 1
-	room[tileY][tileX] = tiles.ladder:new()
 end
 
 P.woodenRain = P.superTool:new{name = "Wooden Rain", description = "It's raining wood", image = 'Graphics/ladder.png',
@@ -4667,6 +4682,8 @@ function P.mindfulTool:getLastTool()
 	return lastToolList
 end
 
+
+--Explosive Meat: attracts dogs then explodes
 P.explosiveMeat = P.superTool:new{name = "Explosive Meat", description = "It has a little kick to it", baseRange = 1,
 image = 'Graphics/Tools/explosiveMeat.png', quality = -1}
 P.explosiveMeat.usableOnNothing = P.meat.usableOnNothing
@@ -5030,6 +5047,8 @@ function P.shrooms:updateSprite()
 	end
 end
 
+
+--Ammo Pack: gives three guns on pickup
 P.ammoPack = P.superTool:new{name = "Ammo Pack", description = "Get back on your feet", quality = 3,
 image = 'Graphics/Tools/gun.png'} --Reset, reload, recover, 	get reloaded 	or Hoodlum's Hookup: Pack some heat Still lAAAAAMe
 function P.ammoPack:giveOne()
@@ -5489,7 +5508,191 @@ end
 --Consumed in place of other supers
 
 
+P.mutantShield = P.superTool:new{name = "Mutant Carapace", description = "Specialist defence", baseRange = 0, quality = 3, image = "KenGraphics/mushroom.png", adaptation = nil, sprite = image}
+function P.mutantShield:giveOne()
+	if self.numHeld == 0 then
+		adaptation = nil
+	end
+	self.numHeld = self.numHeld + 2
+end
+function P.mutantShield:checkDeath()
+	sprite = room[player.tileY][player.tileX].sprite
 
+	if room[player.tileY][player.tileX] ~= nil and room[player.tileY][player.tileX]:willKillPlayer() then
+		if self.adaptation == nil or self.adaptation == room[player.tileY][player.tileX].name then
+			self.adaptation = room[player.tileY][player.tileX].name
+
+			room[player.tileY][player.tileX] = nil
+
+			return self:fin(sprite)
+		end
+	end
+
+	for i = 1, #animals do
+		if animals[i].tileY==player.tileY and animals[i].tileX==player.tileXt and animals[i]:willKillPlayer() then
+			if self.adaptation == nil or adaptation == animals[i].name then
+				self.adaptation = animals[i].name
+
+				animals[i]:kill()
+
+				return self:fin(sprite)
+			end
+		end
+	end
+
+	for i = 1, #spotlights do
+		if spotlights[i]:onPlayer() then
+			if self.adaptation == nil or  spotlights[i].name == self.adaptation then
+				self.adaptation = spotlights[i].name
+
+				spotlights[i].active = false
+
+				return self:fin(sprite)
+			end
+		end
+	end
+	return true
+	
+end
+function P.mutantShield:fin(tile)
+	self.numHeld = self.numHeld - 1
+	self.sprite = sprite
+	if self.numHeld == 0 then
+		self.adaptation = nil
+	end
+	return false
+end
+
+
+
+
+
+P.chargedShield = P.superTool:new{name = "Charged Shield", description = "The odds of survival are ever increasing", quality = 3, image = 'Graphics/heart.png', charge = 0}
+function P.chargedShield:giveOne()
+	if self.numHeld >0 then
+		self.charge = self.charge + 2 + self.numHeld*2
+	end
+	self.numHeld = self.numHeld + 1
+end
+function P.chargedShield:checkDeath()
+	self.numHeld = self.numHeld-1
+	while self.charge > 0 do 
+		self.charge = self.charge-1
+		if util.random(20,'toolDrop') == 1 then
+			room[player.tileY][player.tileX] = nil
+		for i = 1, #animals do
+			if animals[i].tileY==player.tileY and animals[i].tileX==player.tileX then
+			animals[i]:kill()
+			end
+		end
+
+		for i = 1, #spotlights do
+			if spotlights[i]:onPlayer() then
+			spotlights[i].active = false
+			end
+		end
+
+		return false
+		end
+	end 
+	return true
+	
+end
+
+
+
+
+
+
+
+----Following are garabage
+
+
+
+
+
+
+P.superRange = P.superTool:new{name = "Elastification", description = "Boost the range of your supertools", baseRange = 0, quality = 1, power = 0, active = 0}
+function P.superRange:giveOne()
+	self.power = 0
+	self.numHeld = self.numHeld+1
+end
+function P.superRange:update()
+	self.power = self.power + .10 +self.power/7
+	self.baseRange = self.power
+end
+function P.superRange:usableOnTile(tile)
+	return true
+end 
+P.superRange.usableOnNothing = P.superRange.usableOnTile
+function P.superRange:useToolTile(tile)
+	self.numHeld = self.numHeld-1
+	player.attributes.extendedRange = player.attributes.extendedRange+self.power
+	self.active = self.power 
+	self.power = 0
+end
+P.superRange.useToolNothing = P.superRange.useToolTile
+--Some kind of passive that interacts with supers
+
+
+
+
+
+P.sacrificalPact = P.superTool:new{name = "Sacrificial Pact", description = "Make a trade"}
+--Two use modes, sacrifice and expend. Sacrifice somehow improves the power
+
+
+
+--Concept
+P.chargedBeam = P.superTool:new{name = "Charged Beam", description = "It grows in strength", baseRange = 0, quality = 3, charge = 0}
+function P.chargedBeam:giveOne()
+	if self.numHeld == 0 then
+		charge = 0
+	end
+	self.numHeld = self.numHeld + 1
+end
+function P.chargedBeam:update()
+	charge = charge + 1
+	baseRange = 2*charge/3
+end
+function P.chargedBeam:destroyTiles(tileY, tileX)
+	local endCoord = 1
+	local stepNum = 1
+	if tileY == player.tileY then
+		if tileX>player.tileX then
+			endCoord = roomLength
+		else
+			stepNum = -1
+		end
+		for i = player.tileX, endCoord, stepNum do
+			if room[tileY][i]~=nil and room[tileY][i]:instanceof(tiles.treasureTile) then
+				room[tileY][i]:onEnter()
+				room[tileY][i] = nil
+				return
+			end
+		end
+	elseif tileX == player.tileX then
+		if tileY>player.tileY then
+			endCoord = roomHeight
+		else
+			stepNum = -1
+		end
+		for i = player.tileY, endCoord, stepNum do
+			if room[i][tileX]~=nil and room[i][tileX]:instanceof(tiles.treasureTile) then
+				room[i][tileX]:onEnter()
+				room[i][tileX] = nil
+				return
+			end
+		end
+	end
+end
+--Charges up with basic use, consumes all charge on use. 
+--Idea: A blast which becomes stronger and bigger and can be launched farther 
+--Idea: A beam which becomes more lasting and penetrating and affecting 
+
+P.protonTorpedo = P.superTool:new{name = "Proton Torpedo", description = "Ever more deadly", baseRange = 0, quality = 4, charge = 0}
+
+---Also, potential related tools would charge up each time you use a basic
 
 --Tools to add: Treasure Snatcher, Shroom Transplant, P-Source Reviver / Temp-destroyer, gumball machine
 --What about a tool that gives you a basic next game if you die while holding it?
@@ -5497,6 +5700,7 @@ end
 --A trash tier that returns to you the last basic used -- Too strong, doesn't fit a tier
 --A repair tool
 
+--Rewind tool is still a cool idea, so is micro-rewind
 
 
 
@@ -5656,7 +5860,7 @@ P:addTool(P.emptyCup) --Empty Cup: It's less than half full
 
 P:addTool(P.animalTrainer)
 P:addTool(P.secretTeleporter)-- :Let me show you something
-P:addTool(P.longLadder)
+P:addTool(P.superLadder)
 P:addTool(P.pickaxe) --Maybe Change, but defnitely keep
 P:addTool(P.towel)
 P:addTool(P.compass)
@@ -5754,6 +5958,9 @@ P:addTool(P.shroomRevive)
 P:addTool(P.roomRestore)
 P:addTool(P.repair)
 P:addTool(P.preservatives)
+P:addTool(P.mutantShield)
+P:addTool(P.superRange)
+P:addTool(P.chargedShield)
 
 P.resetTools()
 
@@ -5767,9 +5974,6 @@ P.resetTools()
 
 return tools
 
-
---P:addTool(P.unsticker)
- --Keep
 --P:addTool(P.woodGrabber)
 --P:addTool(P.corpseGrabber)
 --P:addTool(P.broom)

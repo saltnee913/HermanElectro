@@ -1636,7 +1636,7 @@ function P.redBeggar:providePayment()
 	end
 end
 function P.redBeggar:getSuperDrops()
-	return {tools.superSaw, tools.longLadder, tools.superWaterBottle, tools.superWireCutters, tools.superSponge,
+	return {tools.superSaw, tools.superLadder, tools.superWaterBottle, tools.superWireCutters, tools.superSponge,
 	tools.superGun, tools.superBrick}
 end
 
