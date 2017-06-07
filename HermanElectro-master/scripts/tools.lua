@@ -3557,12 +3557,12 @@ function P.portalPlacerDouble:usableOnNothing()
 end
 function P.portalPlacerDouble:useToolNothing(tileY, tileX)
 	if self.stage == 1 then
-		room[tileY][tileX] = tiles.entrancePortal2:new()
+		room[tileY][tileX] = tiles.exitPortal2:new()
 		self.image = self.secondImage
 		self.stage = 2
 	else
 		self.numHeld = self.numHeld-1
-		room[tileY][tileX] = tiles.exitPortal2:new()
+		room[tileY][tileX] = tiles.entrancePortal2:new()
 		self.image = self.baseImage
 		self.stage = 1
 	end

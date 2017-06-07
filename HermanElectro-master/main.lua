@@ -487,7 +487,6 @@ function goUpFloor()
 end
 function goToFloor(floorNum)
 	preFloorChange()
-
 	local stairsLocsIndex = floorIndex
 	if floorIndex==1 then
 		stairsLocsIndex = #stairsLocs
@@ -511,6 +510,7 @@ function goToFloor(floorNum)
 		completedRooms[mapy][mapx] = 1
 		unlockDoors()
 	end
+	createElements()
 	postFloorChange()
 end
 
@@ -3327,6 +3327,10 @@ function updateGameState(noPowerUpdate, noLightUpdate)
 				if room[i][j].onLoad ~= nil and room[i][j].loaded == nil then
 					room[i][j]:onLoad()
 					room[i][j].loaded = true
+				end
+				if room[i][j].overlay~=nil and room[i][j].overlay.onLoad ~= nil and room[i][j].overlay.loaded == nil then
+					room[i][j].overlay:onLoad()
+					room[i][j].overlay.loaded = true
 				end
 			end
 		end

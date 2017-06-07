@@ -4460,6 +4460,7 @@
       // [saws, ladders, wireCutters, waterBottles, sponges, bricks, guns]
       [0,0,0,0,0,3,0],
       [2,0,0,0,0,2,0],
+      [0,0,0,1,0,1,0]
   ],
   "set": "loads_of_stay_buttons"
   },

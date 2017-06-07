@@ -1432,6 +1432,26 @@ function P.generateEndDungeon()
 	return newmap
 end
 
+function P.generateBigDungeon()
+	local randomStartRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.bigRooms, 'mapGen')
+	local startRoomID = randomStartRoomsArray[1]
+
+	local height = P.floorInfo.height
+	local numRooms = P.floorInfo.numRooms
+	local newmap = MapInfo:new{height = height, numRooms = numRooms}
+	for i = 0, height+1 do
+		newmap[i] = {}
+	end
+
+	local startx = math.floor(height/2)
+	local starty = math.floor(height/2)
+	newmap[starty][startx] = {roomid = startRoomID, room = P.createRoom(startRoomID), isFinal = false, isInitial = true, isCompleted = false}
+	newmap.initialY = starty
+	newmap.initialX = startx
+	
+	return newmap
+end
+
 function P.generateOneFloor()
 	local height = P.floorInfo.height
 	local numRooms = P.floorInfo.numRooms

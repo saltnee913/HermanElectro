@@ -31,6 +31,21 @@
 				},				
 			}
 		},
+		"bigRooms": 
+		{
+			"filePath": "RoomData/dungeonBigRooms.json",
+			"requirements":
+			{
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
+				},				
+			}
+		},
 		"shops":
 		{
 			"filePath": "RoomData/shops.json",
@@ -82,7 +97,7 @@
 		"requireUnlocks": true,
 		"height": 4,
 		"numRooms": 3,
-		"generateFunction": "generateEndDungeon",
+		"generateFunction": "generateBigDungeon",
 		"startRoomID": "1",
 		//numRoomsToCheck is the amount of rooms to try when deciding a room's roomid, decreasing this increases rng
 		"numRoomsToCheck": 5,
