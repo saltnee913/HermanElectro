@@ -108,6 +108,9 @@ P.advancedTiles[#P.advancedTiles+1] = tiles.bed
 P.advancedTiles[#P.advancedTiles+1] = tiles.characterWall
 P.advancedTiles[#P.advancedTiles+1] = tiles.dungeonKeyGate
 P.advancedTiles[#P.advancedTiles+1] = tiles.dungeonSuper
+P.advancedTiles[#P.advancedTiles+1] = tiles.movingSpike
+P.advancedTiles[#P.advancedTiles+1] = tiles.movingSpikeFast
+P.advancedTiles[#P.advancedTiles+1] = tiles.movingSpikeSlow
 
 P.shopTiles[#P.shopTiles+1] = tiles.toolTaxTile
 P.shopTiles[#P.shopTiles+1] = tiles.toolTile

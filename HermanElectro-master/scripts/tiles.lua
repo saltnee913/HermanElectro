@@ -3373,6 +3373,40 @@ function P.characterWall:obstructsMovement()
 	return false
 end
 
+P.movingSpike = P.tile:new{name = "movingSpike1", maxTime = 150, currentTime = 0, deadly = false,
+sprite = 'GraphicsTony/Spikes0.png', safeSprite = 'GraphicsTony/Spikes0.png', deadlySprite = 'GraphicsTony/Spikes2.png'}
+function P.movingSpike:realtimeUpdate(dt, i, j)
+	self.currentTime = self.currentTime+dt*100
+	if self.currentTime>self.maxTime then
+		self.currentTime = 0
+	end
+	self:updateDeadly()
+	self:updateSprite()
+	if player.tileY==i and player.tileX==j and self.deadly then
+		kill()
+	end
+end
+function P.movingSpike:updateDeadly()
+	if self.currentTime>2*self.maxTime/3 then
+		self.deadly = true
+	else
+		self.deadly = false
+	end
+end
+function P.movingSpike:willKillPlayer()
+	return self.deadly
+end
+function P.movingSpike:updateSprite()
+	if self.deadly then
+		self.sprite = self.deadlySprite
+	else
+		self.sprite = self.safeSprite
+	end
+end
+
+P.movingSpikeFast = P.movingSpike:new{name = "movingSpike2", maxTime = 100}
+P.movingSpikeSlow = P.movingSpike:new{name = "movingSpike3", maxTime = 200}
+
 
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
@@ -3588,6 +3622,9 @@ tiles[211] = P.dailyStairs
 tiles[212] = P.creditsChar
 tiles[213] = P.creditsBase
 tiles[214] = P.dungeonSuper
+tiles[215] = P.movingSpike
+tiles[216] = P.movingSpikeFast
+tiles[217] = P.movingSpikeSlow
 
 
 return tiles
