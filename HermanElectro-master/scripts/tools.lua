@@ -4749,7 +4749,7 @@ function P.opPotion:useToolTile()
 end
 P.opPotion.useToolNothing = P.opPotion.useToolTile
 
-P.bombPotion = P.superTool:new{name = "Bomb Potion", description = "Extremely flammable", baseRange = 3, cost  = 6
+P.bombPotion = P.superTool:new{name = "Bomb Potion", description = "Extremely flammable", baseRange = 3, cost  = 6,
   image = 'Graphics/grenade.png', quality = 4, defaultDisabled = true}
 function P.bombPotion:usableOnTile()
 	return true
@@ -4959,7 +4959,7 @@ function P.deckOfCards:giveOne()
 	tools.card:draw(7)
 end
 
-P.amnesiaPill = P.superTool:new{name = "Herman's Amnesia Pill", description = "Goes great with roofies!", quality = 5, baseRange = 0, cost = 8
+P.amnesiaPill = P.superTool:new{name = "Herman's Amnesia Pill", description = "Goes great with roofies!", quality = 5, baseRange = 0, cost = 8,
 image = 'Graphics/amnesiapill.png'}	-- Groundhog's Day? 
 function P.amnesiaPill:usableOnNothing()
 	--on floors 1-6
@@ -5026,7 +5026,7 @@ function P.reactiveShield:checkDeath(deathSource)
 	return true
 end
 
-P.shrooms = P.superTool:new{name = "Mushroom Conconction", description = "Get weird", quality = 3, cost = 3
+P.shrooms = P.superTool:new{name = "Mushroom Conconction", description = "Get weird", quality = 3, cost = 3,
 image = 'KenGraphics/mushroom.png', baseRange = 0, baseImage = 'KenGraphics/mushroom.png', activeImage = 'Graphics/shieldactive.png', active = false}
 function P.shrooms:usableOnNothing()
 	return not self.active
@@ -5475,7 +5475,7 @@ end
 
 
 P.repair = P.superTool:new{name = "Duct tape", description = "Fix just about anything", baseRange = 1, quality  = 2,
-image = 'KenGraphics/mushroom.png'}
+image = 'Graphics/tape.png'}
 function P.repair:usableOnTile(tile)
 	if tile.destroyed then
 		return true
@@ -5574,11 +5574,14 @@ function P.chargedShield:giveOne()
 	self.numHeld = self.numHeld + 1
 
 end
-function P.useToolNothing()
+function P.usableOnTile()
+	return true
+end
+function P.useToolTile()
 	self.numHeld = self.numHeld - 1
 	self.charge = self.charge + 10
 end
-P.chargedShield.useToolTile() = P.chargedShield.useToolNothing()
+--P.chargedShield.useToolNothing() = P.chargedShield.useToolTile()
 function P.chargedShield:checkDeath()
 	
 	while self.charge > 0 do 

@@ -3847,7 +3847,7 @@ function onToolUse(currentTool)
 	if basicsUsed[4]>0 and basicsUsed[5]>0 then
 		unlocks.unlockUnlockableRef(unlocks.lubeUnlock)
 	end
-	if basicsUsed[3]>0 and basicsUsed[7]>0 then
+	if basicsUsed[3]>0 and basicsUsed[7]>0 then 
 		unlocks.unlockUnlockableRef(unlocks.knifeUnlock)
 	end
 
