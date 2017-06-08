@@ -2398,7 +2398,8 @@ P.supertoolQ5 = P.supertoolTile:new{name = "supertoolTileQ5", superQuality = 5}
 
 P.dungeonSuper = P.supertoolTile:new{name = "dungeonSuper"}
 function P.dungeonSuper:selectTool()
-	local toolOptions = {tools.tunneler, tools.holyShield, tools.mirror}
+	local toolOptions = {tools.tunneler, tools.shield, tools.reactiveShield}
+	self.tool = toolOptions[util.random(#toolOptions, 'toolDrop')]
 	self:updateSprite()
 end
 
@@ -2680,7 +2681,8 @@ function P.endDungeonEnter:onEnter()
 	if self.disabled then
 		return
 	end
-	player.returnFloorInfo = {floorIndex = floorIndex, tileY = player.tileY, tileX = player.tileX}
+	local fiReturn = floorIndex
+	player.returnFloorInfo = {floorIndex = fiReturn, tileY = player.tileY, tileX = player.tileX}
 	goToFloor(1)
 	resetPlayerAttributesRoom()
 	if stairsLocs[#stairsLocs].coords.x~=0 then
@@ -2713,6 +2715,8 @@ end
 
 P.endDungeonExit = P.tile:new{name = "endDungeonExit", sprite = 'KenGraphics/bed.png', yOffset = -6, blocksMovement = false}
 function P.endDungeonExit:onEnter()
+	local futureStairsLocsCoords = {x = player.tileX, y = player.tileY}
+
 	--NEED THESE LINES FIRST -- otherwise goToFloor may try to updateGameState on invalid tile,
 	--if big room in dungeon
 	player.tileY = player.returnFloorInfo.tileY
@@ -2721,6 +2725,9 @@ function P.endDungeonExit:onEnter()
 	player.prevTileX = player.tileX
 
 	goToFloor(player.returnFloorInfo.floorIndex)
+
+	stairsLocs[#stairsLocs].coords = futureStairsLocsCoords
+
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
 			if room[i][j]~=nil and room[i][j]:instanceof(tiles.endDungeonEnter) then
@@ -3567,6 +3574,7 @@ tiles[210] = P.charTile
 tiles[211] = P.dailyStairs
 tiles[212] = P.creditsChar
 tiles[213] = P.creditsBase
+tiles[214] = P.dungeonSuper
 
 
 return tiles
