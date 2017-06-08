@@ -5495,7 +5495,7 @@ function P.repair:nothingIsSomething()
 	return true
 end
 
-P.preservatives = P.superTool:new{name = "Preservatives", description = "Take care of your tools", baseRange = 0, quality = 3}
+P.preservatives = P.superTool:new{name = "Preservatives", description = "Take care of your tools", baseRange = 0, quality = 3, cost = 3}
 function P.preservatives:preserve(currentTool)
 	if currentTool~=nil then
 		tools.giveToolsByReference({tools[currentTool]})
@@ -5505,7 +5505,7 @@ end
 --Consumed in place of other supers
 
 
-P.mutantShield = P.superTool:new{name = "Mutant Carapace", description = "Specialist defence", baseRange = 0, quality = 3, image = "KenGraphics/mushroom.png", adaptation = nil, sprite = image}
+P.mutantShield = P.superTool:new{name = "Mutant Carapace", description = "Specialist defence", baseRange = 0, quality = 3, cost = 3, image = "Graphics/MutantShield0.png", adaptation = nil, sprite = image}
 function P.mutantShield:giveOne()
 	if self.numHeld == 0 then
 		adaptation = nil
@@ -5564,7 +5564,7 @@ end
 
 
 
-P.chargedShield = P.superTool:new{name = "Charged Shield", description = "The odds of survival are ever increasing", quality = 3, image = 'Graphics/heart.png', charge = 0, baseRange = 0}
+P.chargedShield = P.superTool:new{name = "Charged Shield", description = "The odds of survival are ever increasing", quality = 3, image = 'Graphics/heart.png', charge = 0, baseRange = 0, cost = 3}
 function P.chargedShield:giveOne()
 	if self.numHeld >0 then
 		self.charge = self.charge + 2 + self.numHeld*2
