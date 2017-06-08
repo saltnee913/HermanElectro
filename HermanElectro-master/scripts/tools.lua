@@ -5574,10 +5574,10 @@ function P.chargedShield:giveOne()
 	self.numHeld = self.numHeld + 1
 
 end
-function P.usableOnTile()
+function P.chargedShield:usableOnTile()
 	return true
 end
-function P.useToolTile()
+function P.chargedShield:useToolTile()
 	self.numHeld = self.numHeld - 1
 	self.charge = self.charge + 10
 end
