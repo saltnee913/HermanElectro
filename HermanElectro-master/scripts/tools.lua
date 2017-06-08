@@ -5567,15 +5567,23 @@ end
 
 
 
-P.chargedShield = P.superTool:new{name = "Charged Shield", description = "The odds of survival are ever increasing", quality = 3, image = 'Graphics/heart.png', charge = 0}
+P.chargedShield = P.superTool:new{name = "Charged Shield", description = "The odds of survival are ever increasing", quality = 3, image = 'Graphics/heart.png', charge = 0, baseRange = 0}
 function P.chargedShield:giveOne()
 	if self.numHeld >0 then
 		self.charge = self.charge + 2 + self.numHeld*2
+	else
+		self.charge = 0
 	end
 	self.numHeld = self.numHeld + 1
+
 end
+function P.useToolNothing()
+	self.numHeld = self.numHeld - 1
+	self.charge = self.charge + 10
+end
+P.chargedShield.useToolTile() = P.chargedShield.useToolNothing()
 function P.chargedShield:checkDeath()
-	self.numHeld = self.numHeld-1
+	
 	while self.charge > 0 do 
 		self.charge = self.charge-1
 		if util.random(20,'toolDrop') == 1 then
@@ -5595,6 +5603,8 @@ function P.chargedShield:checkDeath()
 		return false
 		end
 	end 
+	self.numHeld = self.numHeld-1
+	self.charge = 5
 	return true
 	
 end
