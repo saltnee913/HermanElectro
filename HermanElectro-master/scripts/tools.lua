@@ -5495,7 +5495,7 @@ function P.repair:nothingIsSomething()
 	return true
 end
 
-P.preservatives = P.superTool:new{name = "Preservatives", description = "Take care of your tools", baseRange = 0, quality = 3, cost = 3}
+P.preservatives = P.superTool:new{name = "Preservatives", description = "Take care of your tools", baseRange = 0, quality = 3, cost = 3, image = "Graphics/preservatives.png"}
 function P.preservatives:preserve(currentTool)
 	if currentTool~=nil then
 		tools.giveToolsByReference({tools[currentTool]})
@@ -5569,7 +5569,7 @@ function P.chargedShield:giveOne()
 	if self.numHeld >0 then
 		self.charge = self.charge + 2 + self.numHeld*2
 	else
-		self.charge = 0
+		self.charge = 0 
 	end
 	self.numHeld = self.numHeld + 1
 
@@ -5619,7 +5619,7 @@ end
 
 
 
-P.superRange = P.superTool:new{name = "Elastification", description = "Boost the range of your supertools", baseRange = 0, quality = 1, power = 0, active = 0}
+P.superRange = P.superTool:new{name = "Elastification", description = "Boost the range of your supertools", baseRange = 0, quality = 1, power = 0, active = 0, image = "Graphics/superRange.png"}
 function P.superRange:giveOne()
 	self.power = 0
 	self.numHeld = self.numHeld+1
