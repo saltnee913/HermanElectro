@@ -2457,6 +2457,11 @@ function P.toolTaxTile:updateSprite()
 		self.overlay = P.waterBottleTile
 	elseif self.tool == tools.brick then
 		self.overlay = P.brickTile
+	elseif self.tool~=nil then
+		local overlayTool = tiles.supertoolTile:new()
+		overlayTool.tool = self.tool
+		overlayTool:updateSprite()
+		self.overlay = overlayTool
 	end
 end
 function P.toolTaxTile:onEnter()
@@ -2498,14 +2503,22 @@ end
 function P.toolTaxTile:onLoad()
 	if self.tool == nil then
 		self:randomize()
-		self.tool = tools[self.toolId]
 		self:updateSprite()
 	end
 end
 function P.toolTaxTile:randomize()
-	local whichBasic = util.random(tools.numNormalTools, 'toolDrop')
-	self.toolId = whichBasic
-	self.tool = tools[self.toolId]
+	if player.character.name~="Dragon" then
+		local whichBasic = util.random(tools.numNormalTools, 'toolDrop')
+		self.toolId = whichBasic
+		self.tool = tools[self.toolId]
+	else
+		local whichBasic = util.random(2, 'toolDrop')
+		if whichBasic==1 then
+			self.tool = tools.claw
+		else
+			self.tool = tools.fireBreath
+		end
+	end
 end
 
 P.dungeonEnter = P.tile:new{name = "dungeonEnter"}
