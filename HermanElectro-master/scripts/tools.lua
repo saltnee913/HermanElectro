@@ -4373,7 +4373,7 @@ end
 P.luckyCharm.useToolTile = P.luckyCharm.useToolNothing
 
 P.trader = P.superTool:new{name = "Trader", description = "",
-image = 'Graphics/trader.png', quality = 4, baseRange = 0}
+image = 'Graphics/trader.png', quality = 4, baseRange = 0, cost = 3}
 function P.trader:usableOnNothing()
 	return true
 end
@@ -4411,7 +4411,7 @@ function P.tileFlipper:useToolTile(tile, tileY, tileX)
 end
 
 P.animalReroller = P.superTool:new{name = "Animal Reroller", description = "What could go wrong?", image = 'Graphics/toolreroller.png',
-baseRange = 0, quality = 1}
+baseRange = 0, quality = 1, cost  = 1}
 function P.animalReroller:usableOnNothing()
 	return true
 end
@@ -4434,7 +4434,7 @@ function P.animalReroller:getAnimalList()
 			animalList.snail, animalList.glueSnail, animalList.conductiveSnail, animalList.conductiveDog}
 end
 
-P.boxReroller = P.superTool:new{name = "Box Reroller", description = "",
+P.boxReroller = P.superTool:new{name = "Box Reroller", description = "", cost = .5,
 image = 'Graphics/roomreroller.png',
 baseRange = 0, quality = 1}
 function P.boxReroller:usableOnNothing()
@@ -4461,7 +4461,7 @@ function P.boxReroller:getBoxList()
 			pushableList.bombBox}
 end
 
-P.animalTrainer = P.superTool:new{name = "Animal Trainer", image = 'Graphics/whip.png',
+P.animalTrainer = P.superTool:new{name = "Animal Trainer", image = 'Graphics/whip.png', cost = .5,
 quality = 1, baseRange = 3}
 function P.animalTrainer:usableOnAnimal()
 	return true
@@ -4471,7 +4471,7 @@ function P.animalTrainer:useToolAnimal(animal)
 	animal.trained = true
 end
 
-P.animalEnslaver = P.superTool:new{name = "Creature Command", description = "They'll let you take control", heldAnimal = nil, image = 'Graphics/whip.png',
+P.animalEnslaver = P.superTool:new{name = "Creature Command", description = "They'll let you take control", heldAnimal = nil, image = 'Graphics/whip.png', cost = 1,
 baseImage = 'Graphics/whip.png',
 quality = 2, baseRange = 3}
 function P.animalEnslaver:usableOnAnimal()
@@ -4560,7 +4560,7 @@ end
 P.roomCompletionBonus.usableOnTile = P.roomCompletionBonus.usableOnNothing
 P.roomCompletionBonus.useToolTile = P.roomCompletionBonus.useToolNothing
 
-P.fishingPole = P.superTool:new{name = "Fishing Pole", description = "Find the treasures that lie beneath", quality = 2, baseRange = 5,
+P.fishingPole = P.superTool:new{name = "Fishing Pole", description = "Find the treasures that lie beneath", quality = 2, baseRange = 5, cost = 1,
 image = 'Graphics/Tools/boxMagnet.png'}
 function P.fishingPole:usableOnTile(tile)
 	return tile:instanceof(tiles.puddle)
@@ -4571,7 +4571,7 @@ function P.fishingPole:useToolTile(tile, tileY, tileX)
 	tools.giveRandomTools(1)
 end
 
-P.blankTool = P.superTool:new{name = "Blank Tool", description = "Just as good", quality = 3, 
+P.blankTool = P.superTool:new{name = "Blank Tool", description = "Just as good", quality = 3, cost = 5,
   image = 'Graphics/Tools/blankTool.png'}--Um, the desc here does not work...
 for k, v in pairs(P.tool) do
 	if string.find(k, 'getToolable') then
@@ -4617,7 +4617,7 @@ for k, v in pairs(P.tool) do
 	end
 end
 
-P.mindfulTool = P.superTool:new{name = "Mindful Tool", description = "Revisit the past", quality = 3, 
+P.mindfulTool = P.superTool:new{name = "Mindful Tool", description = "Revisit the past", quality = 3, cost = 5,
   image = 'Graphics/Tools/mindfulTool.png', lastTool = tools.saw}--Needs a new desc was (dumb): "Never forget where you came from." I tried "Repeat the past", still needs work
 for k, v in pairs(P.tool) do
 	if string.find(k, 'getToolable') then
@@ -4699,7 +4699,7 @@ function P.explosiveMeat:useToolTile(tile)
 end
 
 P.grenade = P.superTool:new{name = "Grenade", description = "Boom bitches", baseRange = 5,
-  image = 'Graphics/grenade.png', quality = 4}
+  image = 'Graphics/grenade.png', quality = 4, cost = 6}
 function P.grenade:usableOnTile()
 	return true
 end
@@ -4738,7 +4738,7 @@ end
 ]]
 --POTIONS
 P.opPotion = P.superTool:new{name = "Crazy Serum", description = "Too good.", baseRange = 0,
-  image = 'Graphics/Tools/opPotion.png', quality = 5, defaultDisabled = true}
+  image = 'Graphics/Tools/opPotion.png', quality = 5, defaultDisabled = true, cost = 7}
 function P.opPotion:usableOnNothing()
 	return true
 end
@@ -4749,7 +4749,7 @@ function P.opPotion:useToolTile()
 end
 P.opPotion.useToolNothing = P.opPotion.useToolTile
 
-P.bombPotion = P.superTool:new{name = "Bomb Potion", description = "Extremely flammable", baseRange = 3,
+P.bombPotion = P.superTool:new{name = "Bomb Potion", description = "Extremely flammable", baseRange = 3, cost  = 6
   image = 'Graphics/grenade.png', quality = 4, defaultDisabled = true}
 function P.bombPotion:usableOnTile()
 	return true
@@ -4766,7 +4766,7 @@ function P.bombPotion:useToolNothing(tileY, tileX)
 end
 
 P.electricPotion = P.superTool:new{name = "Electric Potion", description = "Tesla would be proud",
-  image = 'Graphics/Tools/electricPotion.png', quality = 3, baseRange = 0, defaultDisabled = true}
+  image = 'Graphics/Tools/electricPotion.png', quality = 3, baseRange = 0, defaultDisabled = true, cost = 3}
 function P.electricPotion:usableOnNothing()
 	return true
 end
@@ -4777,7 +4777,7 @@ function P.electricPotion:useToolTile()
 end
 P.electricPotion.useToolNothing = P.electricPotion.useToolTile
 
-P.teleportPotion = P.superTool:new{name = "Teleport Potion", decription = "Where did I go?", baseRange = 3,
+P.teleportPotion = P.superTool:new{name = "Teleport Potion", decription = "Where did I go?", baseRange = 3, cost = 1,
   image = 'Graphics/Tools/teleportPotion.png', quality = 2, defaultDisabled = true}
 function P.teleportPotion:usableOnTile(tile, tileY, tileX)
 	for i = 1, #pushables do
@@ -4821,7 +4821,7 @@ function P.shittyPotion:useToolTile()
 end
 P.shittyPotion.useToolNothing = P.shittyPotion.useToolTile
 
-P.recycleBin = P.boxSpawner:new{name = "Recycle Bin", description = "Saving the Earth, one tool at a time", image = 'Graphics/recyclebin.png', quality = 3}
+P.recycleBin = P.boxSpawner:new{name = "Recycle Bin", description = "Saving the Earth, one tool at a time", image = 'Graphics/recyclebin.png', quality = 3, cost  = 3}
 function P.recycleBin:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld-1
 	local toSpawn = pushableList[14]:new()
@@ -4839,7 +4839,7 @@ function P.recycleBin:useToolNothing(tileY, tileX)
 	pushables[#pushables+1] = toSpawn
 end
 
-P.iceBox = P.boxSpawner:new{name = "Ice Box", description = "Brrrrrrrrrr", image = 'Graphics/icebox.png', quality = 3}
+P.iceBox = P.boxSpawner:new{name = "Ice Box", description = "Brrrrrrrrrr", image = 'Graphics/icebox.png', quality = 3, cost  = 2}
 function P.iceBox:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld-1
 	local toSpawn = pushableList[13]:new()
@@ -4888,7 +4888,7 @@ function P.nineLives:updateSprite()
 end
 
 --1 is diamond, 2 is heart, 3 is spade, 4 is club, 5 is joker
-P.card = P.superTool:new{name = "Card", description = "Expanding the deck", quality = 3,
+P.card = P.superTool:new{name = "Card", description = "Expanding the deck", quality = 3, cost = 2,
 image = 'Graphics/deckofcards.png', baseImage = 'Graphics/card.png',
 cardOrder = {},
 spriteOrder = {'Graphics/diamondcard.png', 'Graphics/heartcard.png', 'Graphics/spadecard.png', 'Graphics/clubcard.png', 'Graphics/jokercard.png'}}
@@ -4954,12 +4954,12 @@ function P.card:getDisplayImage()
 	return self.baseImage
 end
 
-P.deckOfCards = P.superTool:new{name = "Deck of Cards", description = "One hand at a time", image = 'Graphics/deckofcards.png', quality = 5}
+P.deckOfCards = P.superTool:new{name = "Deck of Cards", description = "One hand at a time", image = 'Graphics/deckofcards.png', quality = 5, cost = 8}
 function P.deckOfCards:giveOne()
 	tools.card:draw(7)
 end
 
-P.amnesiaPill = P.superTool:new{name = "Herman's Amnesia Pill", description = "Goes great with roofies!", quality = 5, baseRange = 0,
+P.amnesiaPill = P.superTool:new{name = "Herman's Amnesia Pill", description = "Goes great with roofies!", quality = 5, baseRange = 0, cost = 8
 image = 'Graphics/amnesiapill.png'}	-- Groundhog's Day? 
 function P.amnesiaPill:usableOnNothing()
 	--on floors 1-6
@@ -4976,7 +4976,7 @@ function P.amnesiaPill:useToolNothing()
 end
 P.amnesiaPill.useToolTile = P.amnesiaPill.useToolNothing
 
-P.heartTransplant = P.superTool:new{name = "Heart Transplant", description = "Another shot at life", quality = 3,
+P.heartTransplant = P.superTool:new{name = "Heart Transplant", description = "Another shot at life", quality = 3, cost = 3,
 image = 'Graphics/heart.png'}
 function P.heartTransplant:checkDeath()
 	self.numHeld = self.numHeld-1
@@ -5026,7 +5026,7 @@ function P.reactiveShield:checkDeath(deathSource)
 	return true
 end
 
-P.shrooms = P.superTool:new{name = "Mushroom Conconction", description = "Get weird", quality = 3,
+P.shrooms = P.superTool:new{name = "Mushroom Conconction", description = "Get weird", quality = 3, cost = 3
 image = 'KenGraphics/mushroom.png', baseRange = 0, baseImage = 'KenGraphics/mushroom.png', activeImage = 'Graphics/shieldactive.png', active = false}
 function P.shrooms:usableOnNothing()
 	return not self.active
@@ -5049,14 +5049,13 @@ end
 
 
 --Ammo Pack: gives three guns on pickup
-P.ammoPack = P.superTool:new{name = "Ammo Pack", description = "Get back on your feet", quality = 3,
+P.ammoPack = P.superTool:new{name = "Ammo Pack", description = "Get back on your feet", quality = 3, cost = 3,
 image = 'Graphics/Tools/gun.png'} --Reset, reload, recover, 	get reloaded 	or Hoodlum's Hookup: Pack some heat Still lAAAAAMe
 function P.ammoPack:giveOne()
 	tools.gun.numHeld = tools.gun.numHeld+3
 end
 
-P.stopwatch = P.superTool:new{name = "Stopwatch", description = "Master of time", quality = 2, baseRange = 0,
-image = 'Graphics/Tools/stopwatch.png'}
+P.stopwatch = P.superTool:new{name = "Stopwatch", description = "Master of time", quality = 2, baseRange = 0, image = 'Graphics/Tools/stopwatch.png', cost = 1}
 function P.stopwatch:usableOnNothing()
 	return true
 end
@@ -5204,8 +5203,7 @@ function P.wing:useToolNothing(tileY, tileX)
 	updateElevation()
 end
 
-P.dragonEgg = P.superTool:new{name = "Dragon Egg", desciption = "asdwerwa", quality = 3, baseRange = 1,
-image = 'Graphics/Tools/dragonEgg.png', defaultDisabled = true}
+P.dragonEgg = P.superTool:new{name = "Dragon Egg", desciption = "asdwerwa", quality = 3, baseRange = 1, image = 'Graphics/Tools/dragonEgg.png', defaultDisabled = true}
 function P.dragonEgg:usableOnNothing()
 	return true
 end
@@ -5220,8 +5218,7 @@ function P.dragonEgg:useToolNothing(tileY, tileX)
 	animals[#animals+1] = addAnimal
 end
 
-P.dragonFriend = P.superTool:new{name = "Dragon Egg 2", desciption = "asdwerwa", quality = 3, baseRange = 2,
-image = 'Graphics/Tools/dragonEgg2.png', defaultDisabled = true}
+P.dragonFriend = P.superTool:new{name = "Dragon Egg 2", desciption = "asdwerwa", quality = 3, baseRange = 2, image = 'Graphics/Tools/dragonEgg2.png', defaultDisabled = true}
 function P.dragonFriend:usableOnNothing()
 	return true
 end
@@ -5299,7 +5296,7 @@ function P.diagonal:useToolTile(tile, tileY, tileX)
 end
 
 P.megaUnlock = P.superTool:new{name = "Psychic Key", baseRange = 0, description = "When one door closes, they all open", --Ben most are you fucking kidding me
-quality = 4, image = 'Graphics/psychickey3.png'}
+quality = 4, image = 'Graphics/psychickey3.png', cost  = 5}
 function P.megaUnlock:usableOnNothing()
 	return true
 end
@@ -5322,7 +5319,7 @@ end
 P.megaUnlock.useToolTile = P.megaUnlock.useToolNothing
 
 P.medicine = P.superTool:new{name = "Erik's Medicine", baseRange = 0, description = "Just a little more time....",
-quality = 1}
+quality = 1, cost = 1}
 function P.medicine:usableOnNothing()
 	return true
 end
@@ -5334,7 +5331,7 @@ function P.medicine:useToolNothing()
 end
 P.medicine.useToolTile = P.medicine.useToolNothing
 
-P.eraser = P.superTool:new{name = "Eraser", baseRange = 1, image = 'Graphics/eraser.png', description = "Create the void", quality = 4}
+P.eraser = P.superTool:new{name = "Eraser", baseRange = 1, image = 'Graphics/eraser.png', description = "Create the void", quality = 4, cost = 5}
 function P.eraser:usableOnTile()
 	return true
 end
@@ -5350,7 +5347,7 @@ function P.eraser:useToolTile(tile, tileY, tileX)
 	room[tileY][tileX] = tiles.pit:new()
 end
 
-P.tpRevive = P.superTool:new{name = "Flashback", description = "Not dead...but afraid", baseRange = 0, image = 'Graphics/tprevive.png', destroyOnRevive = false, quality = 4}
+P.tpRevive = P.superTool:new{name = "Flashback", description = "Not dead...but afraid", baseRange = 0, image = 'Graphics/tprevive.png', destroyOnRevive = false, quality = 4, cost = 3}
 function P.tpRevive:checkDeath()
 	self.numHeld = self.numHeld-1
 
@@ -5362,7 +5359,7 @@ function P.tpRevive:checkDeath()
 	return false
 end
 
-P.rewindRevive = P.superTool:new{name = "Revert", description = "Not dead...yet", baseRange = 0, image = 'Graphics/deathWatch.png', destroyOnRevive = false, quality = 4}
+P.rewindRevive = P.superTool:new{name = "Revert", description = "Not dead...yet", baseRange = 0, image = 'Graphics/deathWatch.png', destroyOnRevive = false, quality = 4, cost = 3}
 function P.rewindRevive:checkDeath()
 	
 
@@ -5375,7 +5372,7 @@ function P.rewindRevive:checkDeath()
 	return false
 end
 
-P.shroomRevive = P.superTool:new{name = "Shroom Transplant", description = "Not dead...but wacked", baseRange = 0, image = 'Graphics/shroomtransplant.png', baseImage = 'KenGraphics/mushroom.png', activeImage = 'KenGraphics/mushroom.png', destroyOnRevive = false, quality = 4}
+P.shroomRevive = P.superTool:new{name = "Shroom Transplant", description = "Not dead...but wacked", baseRange = 0, image = 'Graphics/shroomtransplant.png', baseImage = 'KenGraphics/mushroom.png', activeImage = 'KenGraphics/mushroom.png', destroyOnRevive = false, quality = 4, cost = 4}
 function P.shroomRevive:checkDeath()
 	updateGameState(false)
 
