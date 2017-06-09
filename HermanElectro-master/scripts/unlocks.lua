@@ -221,7 +221,7 @@ P.superGunUnlock = P.unlock:new{name = "super gun!", toolIds = {tools.superGun},
 P.screwdriverUnlock = P.unlock:new{name = "screwdriver", toolIds = {tools.screwdriver}, sprite = tools.screwdriver.image}
 P.toolIncrementerUnlock = P.unlock:new{name = "A Toolbox", toolIds = {tools.toolIncrementer}, sprite = tools.toolIncrementer.image}
 P.toolRerollerUnlock = P.unlock:new{name = "Tool Reroller", toolIds = {tools.toolReroller}, sprite = tools.toolReroller.image}
-P.superToolUnlock = P.unlock:new{name = "Super Supertools", toolIds = {tools.superSaw, tools.longLadder,
+P.superToolUnlock = P.unlock:new{name = "Super Supertools", toolIds = {tools.superSaw, tools.superLadder,
 tools.superWireCutters, tools.superWaterBottle, tools.superSponge, tools.superBrick, tools.superGun},
 sprite = tools.superSaw.image}
 P.laptopUnlock = P.unlock:new{name = "New Hardware", toolIds = {tools.laptop}, sprite = tools.laptop.image}
