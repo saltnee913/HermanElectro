@@ -2398,7 +2398,7 @@ P.supertoolQ5 = P.supertoolTile:new{name = "supertoolTileQ5", superQuality = 5}
 
 P.dungeonSuper = P.supertoolTile:new{name = "dungeonSuper"}
 function P.dungeonSuper:selectTool()
-	local toolOptions = {tools.tunneler, tools.shield, tools.reactiveShield}
+	local toolOptions = {tools.tunneler, tools.shield, tools.shield, tools.shield}
 	self.tool = toolOptions[util.random(#toolOptions, 'toolDrop')]
 	self:updateSprite()
 end
@@ -2964,7 +2964,7 @@ P.editorStairs = P.tile:new{name = "editorStairs", sprite = 'KenGraphics/greenst
 function P.editorStairs:onEnter()
 	stairsLocs[1] = {map ={x = mapx, y = mapy}, coords = {x = player.tileX, y = player.tileY}}
 	local animationProcess = processList.gameTransitionProcess:new()
-	animationProcess.gameType = "main"
+	animationProcess.gameType = "editor"
 	processes[#processes+1] = animationProcess
 end
 
@@ -3374,7 +3374,12 @@ function P.characterWall:obstructsMovement()
 end
 
 P.movingSpike = P.tile:new{name = "movingSpike1", maxTime = 150, currentTime = 0, deadly = false,
-sprite = 'GraphicsTony/Spikes0.png', safeSprite = 'GraphicsTony/Spikes0.png', deadlySprite = 'GraphicsTony/Spikes2.png'}
+sprite = 'GraphicsTony/Spikes0.png', safeSprite = 'GraphicsTony/Spikes0.png', deadlySprite = 'GraphicsTony/Spikes2Blue.png'}
+function P.movingSpike:onLoad()
+	if self.text~=nil and tonumber(self.text)~=nil then
+		self.currentTime = tonumber(self.text)
+	end
+end
 function P.movingSpike:realtimeUpdate(dt, i, j)
 	self.currentTime = self.currentTime+dt*100
 	if self.currentTime>self.maxTime then
@@ -3382,7 +3387,7 @@ function P.movingSpike:realtimeUpdate(dt, i, j)
 	end
 	self:updateDeadly()
 	self:updateSprite()
-	if player.tileY==i and player.tileX==j and self.deadly then
+	if player.tileY==i and player.tileX==j and self:willKillPlayer() then
 		kill()
 	end
 end
@@ -3394,6 +3399,9 @@ function P.movingSpike:updateDeadly()
 	end
 end
 function P.movingSpike:willKillPlayer()
+	if player.attributes.shieldCounter>0 then
+		return false
+	end
 	return self.deadly
 end
 function P.movingSpike:updateSprite()
@@ -3404,8 +3412,8 @@ function P.movingSpike:updateSprite()
 	end
 end
 
-P.movingSpikeFast = P.movingSpike:new{name = "movingSpike2", maxTime = 100}
-P.movingSpikeSlow = P.movingSpike:new{name = "movingSpike3", maxTime = 200}
+P.movingSpikeFast = P.movingSpike:new{name = "movingSpike2", maxTime = 100, safeSprite = 'GraphicsTony/Spikes0.png', deadlySprite = 'GraphicsTony/Spikes2Red.png'}
+P.movingSpikeSlow = P.movingSpike:new{name = "movingSpike3", maxTime = 200, safeSprite = 'GraphicsTony/Spikes0.png', deadlySprite = 'GraphicsTony/Spikes2Green.png'}
 
 
 tiles[1] = P.invisibleTile

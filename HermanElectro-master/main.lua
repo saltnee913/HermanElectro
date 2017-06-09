@@ -2336,7 +2336,9 @@ function love.update(dt)
 		for j = 1, roomLength do
 			if room~=nil and room[i][j]~=nil then
 				room[i][j]:realtimeUpdate(dt, i, j)
-				room[i][j]:updateAnimation(dt)
+				if room[i][j]~=nil then
+					room[i][j]:updateAnimation(dt)
+				end
 			end
 		end
 	end
@@ -3755,7 +3757,7 @@ function beatRoom(noDrops)
 	saving.saveRecording()
 	spotlights = {}
 	if noDrops == nil then noDrops = false end
-	if floorIndex>6 then noDrops = true end
+	--if floorIndex>6 then noDrops = true end
 	gameTime.timeLeft = gameTime.timeLeft+gameTime.roomTime
 	unlockDoors()
 	if not noDrops then
