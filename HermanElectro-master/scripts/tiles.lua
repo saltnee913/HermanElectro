@@ -3390,6 +3390,11 @@ function P.movingSpike:realtimeUpdate(dt, i, j)
 	if player.tileY==i and player.tileX==j and self:willKillPlayer() then
 		kill()
 	end
+	for k = 1, #animals do
+		if animals[k].tileY==i and animals[k].tileX==j and self:willKillPlayer() then
+			animals[k]:kill()
+		end
+	end
 end
 function P.movingSpike:updateDeadly()
 	if self.currentTime>2*self.maxTime/3 then

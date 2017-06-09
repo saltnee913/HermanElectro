@@ -70,6 +70,13 @@
 			"requirements": {
 
 			}
+		},
+		"spikesRooms":
+		{
+			"filePath": "RoomData/f6spikesrooms.json",
+			"requirements": {
+
+			}
 		}
 	},
 	"data":
