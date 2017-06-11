@@ -5315,7 +5315,7 @@ function P.megaUnlock:useToolNothing()
 end
 P.megaUnlock.useToolTile = P.megaUnlock.useToolNothing
 
-P.medicine = P.superTool:new{name = "Erik's Medicine", baseRange = 0, description = "Just a little more time....", image = "Erik's Medicine",
+P.medicine = P.superTool:new{name = "Erik's Medicine", baseRange = 0, description = "Just a little more time....", image = "Graphics/eriksmedicine.png",
 quality = 1, cost = 1}
 function P.medicine:usableOnNothing()
 	return true
