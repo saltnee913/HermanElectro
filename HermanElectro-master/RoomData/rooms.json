@@ -13320,7 +13320,8 @@
         [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
       "itemsNeeded":[
           [0,0,0,3,0,0,1]],
-      "set": "bomb_the_corner"
+      "set": "bomb_the_corner",
+      "toCheck": true
     },
 
     "dog_chain_push":
