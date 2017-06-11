@@ -2527,7 +2527,7 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 	if player.character:onKeyPressed(key) then
 		updateGameState(false)
 	end
-	
+
 	for i = 1, #processes do
 		if processes[i].disableInput and processes[i].active then
 			return
@@ -3776,7 +3776,7 @@ function onTeleport()
 		animals[i]:setLoc()
 	end
 	for j = 1, #pushables do
-		pushables[i]:setLoc()
+		pushables[j]:setLoc()
 	end
 
 	for i = 1, #processes do
