@@ -5318,7 +5318,7 @@ function P.megaUnlock:useToolNothing()
 end
 P.megaUnlock.useToolTile = P.megaUnlock.useToolNothing
 
-P.medicine = P.superTool:new{name = "Erik's Medicine", baseRange = 0, description = "Just a little more time....",
+P.medicine = P.superTool:new{name = "Erik's Medicine", baseRange = 0, description = "Just a little more time....", image = "Erik's Medicine",
 quality = 1, cost = 1}
 function P.medicine:usableOnNothing()
 	return true
@@ -5495,7 +5495,7 @@ function P.repair:nothingIsSomething()
 	return true
 end
 
-P.preservatives = P.superTool:new{name = "Preservatives", description = "Take care of your tools", baseRange = 0, quality = 3, cost = 3, image = "Graphics/preservatives.png"}
+P.preservatives = P.superTool:new{name = "Preservatives", description = "Take care of your super tools", baseRange = 0, quality = 3, cost = 3, image = "Graphics/preservatives.png"}
 function P.preservatives:preserve(currentTool)
 	if currentTool~=nil then
 		tools.giveToolsByReference({tools[currentTool]})
@@ -5564,7 +5564,7 @@ end
 
 
 
-P.chargedShield = P.superTool:new{name = "Charged Shield", description = "The odds of survival are ever increasing", quality = 3, image = 'Graphics/heart.png', charge = 0, baseRange = 0, cost = 3}
+P.chargedShield = P.superTool:new{name = "Charged Shield", description = "The odds of survival are ever increasing", quality = 3, image = 'Graphics/RiskyRevive.png', charge = 0, baseRange = 0, cost = 3}
 function P.chargedShield:giveOne()
 	if self.numHeld >0 then
 		self.charge = self.charge + 2 + self.numHeld*2
@@ -5700,7 +5700,9 @@ end
 --Idea: A blast which becomes stronger and bigger and can be launched farther 
 --Idea: A beam which becomes more lasting and penetrating and affecting 
 
-P.protonTorpedo = P.superTool:new{name = "Proton Torpedo", description = "Ever more deadly", baseRange = 0, quality = 4, charge = 0}
+P.solarBattery = P.superTool:new{}
+P.repairKit = P.superTool:new{}
+
 
 ---Also, potential related tools would charge up each time you use a basic
 
