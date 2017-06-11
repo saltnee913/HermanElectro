@@ -5564,7 +5564,7 @@ end
 
 
 
-P.chargedShield = P.superTool:new{name = "Charged Shield", description = "The odds of survival are ever increasing", quality = 3, image = 'Graphics/heart.png', charge = 0, baseRange = 0, cost = 3}
+P.chargedShield = P.superTool:new{name = "Charged Shield", description = "The odds of survival are ever increasing", quality = 3, image = 'Graphics/RiskyRevive.png', charge = 0, baseRange = 0, cost = 3}
 function P.chargedShield:giveOne()
 	if self.numHeld >0 then
 		self.charge = self.charge + 2 + self.numHeld*2
