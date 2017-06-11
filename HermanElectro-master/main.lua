@@ -2368,12 +2368,6 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 		 lastMoveKey = key
 	end
 
-	for i = 1, #processes do
-		if processes[i].disableInput and processes[i].active then
-			return
-		end
-	end
-
 	if (floorTransition and not floorTransitionInfo.moved) or 
 		(gameTransition and not gameTransitionInfo.moved) then
 		return
@@ -2529,6 +2523,17 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 	end
 	love.keyboard.setKeyRepeat(true)
     -- ignore non-printable characters (see http://www.ascii-code.com/)
+
+	if player.character:onKeyPressed(key) then
+		updateGameState(false)
+	end
+	
+	for i = 1, #processes do
+		if processes[i].disableInput and processes[i].active then
+			return
+		end
+	end
+
     if player.dead and (key == "w" or key == "a" or key == "s" or key == "d") then
     	return
     end
@@ -2541,9 +2546,6 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 	saving.recordKeyPressed(key, unicode, isRepeat)
 
 	waitTurn = false
-	if player.character:onKeyPressed(key) then
-		updateGameState(false)
-	end
    	
 	if key=="w" or key=="a" or key=="s" or key=="d" then
 		if not processMove(key) then return
