@@ -2531,10 +2531,7 @@ end
 
 
 --IceyShot: Gives three ice guns which turn animals to iceboxes
-P.iceyShot = P.gun:new{name= "IceyShot", description = "Super Cool", image = 'Graphics/icegun.png', quality = 3}
-function P.iceyShot:giveOne()
-	self.numHeld =self.numHeld + 3
-end
+P.iceyShot = P.gun:new{name= "IceyShot", description = "Super Cool", image = 'Graphics/icegun.png', quality = 1}
 function P.iceyShot:useToolAnimal(animal)
 	self.numHeld = self.numHeld -1
 
