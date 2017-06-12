@@ -16,7 +16,7 @@ roomsDesigned = 0
 
 P.visionHack = false
 
-P.setNames = {"Basic", "Animal", "Box", "Shop", "Advanced"}
+P.setNames = {"Basic", "Animal", "Box", "Shop", "Late Game", "Advanced"}
 local function getTileSet()
 	if editor.tab==1 then
 		return editorTiles.basicTiles
@@ -27,6 +27,8 @@ local function getTileSet()
 	elseif editor.tab==4 then
 		return editorTiles.shopTiles
 	elseif editor.tab==5 then
+		return editorTiles.lateGameTiles
+	elseif editor.tab==6 then
 		return editorTiles.advancedTiles
 	end
 end
