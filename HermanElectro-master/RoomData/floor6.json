@@ -132,7 +132,7 @@
 		"height": 12,
 		"numRooms":8,
 		"generateFunction": "generateMapWeighted",
-		"startRoomID": "f6_start",
+		"startRoomID": "spikes_start",
 		//numRoomsToCheck is the amount of rooms to try when deciding a room's roomid, decreasing this increases rng
 		"numRoomsToCheck": 3,
 		"finalFloor": true,

@@ -1,7 +1,7 @@
 {
   "rooms":
   {
-    "f6_start":
+    "spikes_start":
     {
       "layout":
         [
@@ -133,7 +133,7 @@
     "dirEnter": [1,1,1,1],
     "hasEndTile": true,
     "autowin": false,
-    "startRoomID": "f6_start",
+    "startRoomID": "spikes_start",
     "flippable": false,
     "spikeUpTime": 50,
     "spikeDownTime": 100
