@@ -58,9 +58,28 @@ local function areItemsSame(a,b)
 	return true
 end
 
+local function areItemsSameFormat2(repeatFormat, oldFormat)
+	local aInOld = {0,0,0,0,0,0,0}
+	for i = 1, #repeatFormat do
+		if repeatFormat[i] > 7 then
+			return false
+		end
+		if repeatFormat[i] ~= 0 then
+			aInOld[repeatFormat[i]] = aInOld[repeatFormat[i]] + 1
+		end
+	end
+	for i = 1, 7 do
+		if aInOld[i] ~= oldFormat[i] then
+			return false
+		end
+	end
+	return true
+end
+
 local function doItemsNeededCalcs()
 	local itemsNeededs = util.readJSON(saveDir..'/'..map.itemsNeededFile)
 	local arr = {}
+	local rooms = util.readJSON('RoomData/rooms.json').rooms
 	for i = 1, #itemsNeededs do
 		local room = itemsNeededs[i][1]
 		local character = itemsNeededs[i][2]
@@ -70,14 +89,23 @@ local function doItemsNeededCalcs()
 			for j = 3, #itemsNeededs do
 				items[#items+1] = itemsNeededs[i][j]
 			end
-			if ar[room] == nil then
-				ar[room] = {}
-			end
 			local new = true
-			for j = 1, #ar[room] do
-				if areItemsSame(ar[room][j],items) then
-					new = false
+			if rooms[room] ~= nil then
+				if ar[room] == nil then
+					ar[room] = {}
 				end
+				for j = 1, #ar[room] do
+					if areItemsSame(ar[room][j],items) then
+						new = false
+					end
+				end
+				local isRepeat = false
+				for k = 1, #rooms[room].itemsNeeded do
+					isRepeat = isRepeat or areItemsSameFormat2(items, rooms[room].itemsNeeded[k])
+				end
+				new = new and not isRepeat
+			else
+				new = false
 			end
 			if new then
 				ar[room][#ar[room]+1] = items
@@ -90,6 +118,7 @@ local function doItemsNeededCalcs()
 end
 
 function love.load()
+	--doItemsNeededCalcs()
 	gamePaused = false
 	gameTime = {timeLeft = 260, toolTime = 0, roomTime = 30, levelTime = 120, donateTime = 20, goesDownInCompleted = false, totalTime = 0}
 
@@ -276,7 +305,7 @@ function love.load()
 			y = (6-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10, prevTileX = 3, prevTileY 	= 10,
 			prevx = (3-1)*scale*tileWidth+wallSprite.width+tileWidth/2*scale-10,
 			prevy = (10-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10,
-			width = 20, height = 20, speed = 250, luckTimer = 0, regularMapLoc = {x = 0, y = 0}, nonHeavenMapLoc = {x = 0, y = 0}, supersHeld = {total = 0}, returnFloorIndex = 0, attributes = {superRammy = false, timeFrozen = false, invincibleCounter = 0, shieldCounter = 0, lucky = false, gifted = false, permaMap = false, xrayVision = false, upgradedToolUse = false, fast = {fast = false, fastStep = false}, flying = false, fear = false, shelled = false, tall = false, extendedRange = 0, sockStep = false, invisible = false}}
+			width = 20, height = 20, speed = 250, luckTimer = 0, regularMapLoc = {x = 0, y = 0}, nonHeavenMapLoc = {x = 0, y = 0}, supersHeld = {total = 0}, returnFloorInfo = {floorIndex = 0, tileX = 0, tileY = 0}, attributes = {superRammy = false, timeFrozen = false, invincibleCounter = 0, shieldCounter = 0, lucky = false, gifted = false, permaMap = false, xrayVision = false, upgradedToolUse = false, fast = {fast = false, fastStep = false}, flying = false, fear = false, shelled = false, tall = false, extendedRange = 0, sockStep = false, invisible = false, clockFrozen = false}}
 	player.character = setChar
 
 	map.clearBlacklist()
@@ -320,7 +349,7 @@ function goToMainMenu()
 	end
 
 	if room[player.tileY][player.tileX]~=nil then
-		room[player.tileY][player.tileX]:onLeave()
+		room[player.tileY][player.tileX]:onLeave(player)
 	end
 
 	if saving.isPlayingBack() and not gamePaused then
@@ -338,6 +367,7 @@ function goToMainMenu()
 	won = false
 	player.dead = false
 	updateGameState()
+	updateCursor()
 	playMusic(1)
 end
 
@@ -357,21 +387,14 @@ function resetPlayer()
 	player.attributes.shelled = false
 	player.attributes.invisible = false
 	player.attributes.fast = {fast = false, fastStep = false}
-
+	player.attributes.extendedRange = 0
 	player.supersHeld = {total = 0}
 end
 
 function loadRandoms()
 	local seed
-
-	if player.character.name == "Random" then
-		local date = os.date("*t")
-		local month = date.month
-		local day = date.day
-
-		seed = month*math.pow(day,5)
-		print(seed)
-	elseif seedOverride == nil then
+		
+	if seedOverride == nil then
 		seed = os.time()
 	else
 		seed = tonumber(seedOverride)
@@ -464,7 +487,6 @@ function goUpFloor()
 end
 function goToFloor(floorNum)
 	preFloorChange()
-
 	local stairsLocsIndex = floorIndex
 	if floorIndex==1 then
 		stairsLocsIndex = #stairsLocs
@@ -488,6 +510,7 @@ function goToFloor(floorNum)
 		completedRooms[mapy][mapx] = 1
 		unlockDoors()
 	end
+	createElements()
 	postFloorChange()
 end
 
@@ -588,6 +611,31 @@ function startGame()
 	loadFirstLevel()
 	tools.resetTools()
 	--resetPlayer()
+	player.character:onBegin()
+	resetTintValues()
+end
+
+function startDaily()
+	stats.resetTempStats()
+
+	local date = os.date("*t")
+	local month = date.month
+	local day = date.day
+
+	seedOverride = month*math.pow(day,5)
+
+	local seed = loadRandoms()
+	if not saving.isPlayingBack() then
+		stats.incrementStat('runNumber')
+	end
+	saving.createNewRecording(seed)
+	loadTutorial = false
+	map.floorOrder = map.defaultFloorOrder
+	love.load()
+	loadFirstLevel()
+	tools.resetTools()
+	--resetPlayer()
+	player.character = characters[util.random(#characters, 'misc')]
 	player.character:onBegin()
 	resetTintValues()
 end
@@ -701,6 +749,7 @@ function startDebug()
 	tools.resetTools()
 	player.character:onBegin()
 	resetTintValues()
+	gameTime.timeLeft = 20000
 end
 
 function startEditor()
@@ -817,7 +866,7 @@ function kill(deathSource)
 	player.dead = true
 	for i = 1, #specialTools do
 		if tools[specialTools[i]]~=nil and tools[specialTools[i]].numHeld>0 and not tools[specialTools[i]]:checkDeath(deathSource) then
-			player.dead = falsek
+			player.dead = false
 			onToolUse(specialTools[i])
 			return
 		end
@@ -1192,7 +1241,7 @@ function updatePower()
 								end
 							end
 							powerTestPushable(pY, pX, 0)
-							powerTest(pY, px, 0)
+							powerTest(pY, pX, 0)
 						end
 						pushables[i].powered = true
 					end
@@ -1268,11 +1317,11 @@ function updatePower()
 						if pushables[k].tileY==i and pushables[k].tileX==j-1 and room[i][j].dirAccept[4]==1 then
 							room[i][j].poweredNeighbors[4]=1
 						end
-						if pushables[k].tileY==i+1 and pushables[k].tileX==j and room[i][j].dirAccept[1]==1 then
-							room[i][j].poweredNeighbors[1]=1
-						end
-						if pushables[k].tileY==i-1 and pushables[k].tileX==j and room[i][j].dirAccept[3]==1 then
+						if pushables[k].tileY==i+1 and pushables[k].tileX==j and room[i][j].dirAccept[3]==1 then
 							room[i][j].poweredNeighbors[3]=1
+						end
+						if pushables[k].tileY==i-1 and pushables[k].tileX==j and room[i][j].dirAccept[1]==1 then
+							room[i][j].poweredNeighbors[1]=1
 						end
 					end
 				end
@@ -1353,7 +1402,6 @@ end
 function powerTest(x, y, lastDir)
 	powerCount = powerCount+1
 	if powerCount>3000 then
-		kill()
 		return
 	end
 	--x refers to y-direction and vice versa
@@ -1439,7 +1487,7 @@ function powerTestPushable(x, y, lastDir)
 
 	if x>1 and room[x-1][y]~=nil and canBePowered(x-1,y,3) then
 		formerPowered = room[x-1][y].powered
-		formerSend = room[x-1][y].dirSende
+		formerSend = room[x-1][y].dirSend
 		formerAccept = room[x-1][y].dirAccept
 		--powered[x-1][y] = 1
 		room[x-1][y].poweredNeighbors[3] = 1
@@ -1819,6 +1867,10 @@ function resetPlayerAttributesRoom()
 	player.attributes.fast = {fast = false, fastStep = false}
 	player.attributes.timeFrozen = false
 	player.attributes.superRammy = false
+	player.attributes.clockFrozen = false
+
+	
+	
 
 	if tools.demonFeather.numHeld>0 then
 		player.attributes.flying = true
@@ -1851,6 +1903,14 @@ function updateAttributesRealtime(dt)
 				updateTools()
 				tools.shrooms.active = false
 				tools.shrooms:updateSprite()
+				turnOffMushroomMode()
+
+			end
+			if tools.shroomRevive.active then
+				tools.shroomRevive.numHeld = tools.shroomRevive.numHeld-1
+				updateTools()
+				tools.shroomRevive.active = false
+				tools.shroomRevive:updateSprite()
 				turnOffMushroomMode()
 
 			end
@@ -1904,11 +1964,6 @@ function enterRoom(dir)
 
 	if not validSpace() then return end
 	log("")
-	resetTranslation()
-	resetPlayerAttributesRoom()
-
-	--set pushables of prev. room to pushables array, saving for next entry
-	saveElements()
 
 	local plusOne = true
 
@@ -1938,6 +1993,12 @@ function enterRoom(dir)
 	elseif visibleMap[mapy+mapChange.y][mapx+mapChange.x]<1 then
 		return
 	end
+
+	resetTranslation()
+	resetPlayerAttributesRoom()
+
+	--set pushables of prev. room to pushables array, saving for next entry
+	saveElements()
 
 	mapy = mapy+mapChange.y
 	mapx = mapx+mapChange.x
@@ -2021,14 +2082,9 @@ function setPlayerLoc()
 	--player.x is middle of body
 	--player.y is bottom of feet
 	--coords mark where "hitbox" is, not where drawing actually starts
-
-	player.x = (player.tileX-1)*scale*tileUnit+wallSprite.width
-	player.x = player.x+scale*tileHeight/2
-
-	player.y = (player.tileY-1)*scale*tileUnit+wallSprite.height
-	--bottom of feet not actually halfway on tile
-	--looks better this way b/c feet have very slight depth
-	player.y = player.y+scale*(2/3*tileUnit)
+	local coords = tileToCoordsPlayer(player.tileY, player.tileX)
+	player.x = coords.x
+	player.y = coords.y
 
     myShader:send("player_x", player.x+getTranslation().x*tileUnit*scale+(width2-width)/2)
     myShader:send("player_y", player.y+getTranslation().y*tileUnit*scale+(height2-height)/2)
@@ -2042,6 +2098,8 @@ function tileToCoordsPlayer(tileY, tileX)
 end
 
 function tileToCoordsYPlayer(tileY)
+	--bottom of feet not actually halfway on tile
+	--looks better this way b/c feet have very slight depth
 	return (tileY-1)*scale*tileUnit+wallSprite.height+scale*(2/3*tileUnit)
 end
 
@@ -2137,9 +2195,11 @@ function validSpace()
 	return mapy<=mapHeight and mapx<=mapHeight and mapy>0 and mapx>0
 end
 
-keyTimer = {base = .12, timeLeft = .12, suicideDelay = .65}
+keyTimer = {base = .14, timeLeft = .14, suicideDelay = .65}
 function love.update(dt)
 	dt = gameSpeed*dt
+
+
 
 	if gamePaused then
 		return
@@ -2193,81 +2253,6 @@ function love.update(dt)
 		processMove(lastMoveKey, dt)
 	end
 
-	if floorTransition then
-		if floorTransitionInfo.moved then
-			if player.range<map.floorInfo.playerRange then
-				if dt<0.03 then
-					player.range = player.range+190*dt
-				else player.range = player.range+190*0.3 end
-			else
-				player.range = map.floorInfo.playerRange
-				floorTransition = false
-				floorTransitionInfo = {floor = 0, override = "", moved = false}
-			end
-		else
-			player.range = player.range-300*dt
-			if player.range<0 then
-				myShader:send("player_range", 5)
-				if floorTransitionInfo.override=="up" then
-					goUpFloor()
-				elseif floorTransitionInfo.override=="down" then
-					goDownFloor()
-				else
-					goToFloor(floorTransitionInfo.floor)
-				end
-				floorTransitionInfo.moved = true
-			end
-		end
-		myShader:send("player_range", math.max(player.range,5))
-	elseif gameTransition then
-		if gameTransitionInfo.moved then
-			--[[for i = 1, 3 do
-				if dt>0.03 then
-					globalTint[i] = globalTint[i]+0.03
-				else
-					globalTint[i] = globalTint[i]+dt
-				end
-				if globalTint[i]>1 then
-					globalTint[i] = 1
-					gameTransitionInfo = {gameType = "", moved = false}
-					gameTransition = false
-				end
-			end
-			myShader:send("tint_r", globalTint[1])
-			myShader:send("tint_g", globalTint[2])
-			myShader:send("tint_b", globalTint[3])]]
-			globalTint = {1,1,1}
-			myShader:send("tint_r", globalTint[1])
-			myShader:send("tint_g", globalTint[2])
-			myShader:send("tint_b", globalTint[3])
-			gameTransitionInfo.gameType = ""
-			gameTransition = false
-		else
-			for i = 1, 3 do
-				globalTint[i] = globalTint[i]-dt
-				if globalTint[i]<0 then
-					globalTint[i] = 0
-					gameTransitionInfo.moved = true
-				end
-			end
-			if gameTransitionInfo.moved then
-				myShader:send("tint_r", globalTint[1])
-				myShader:send("tint_g", globalTint[2])
-				myShader:send("tint_b", globalTint[3])
-				if gameTransitionInfo.gameType == "main" then
-					startGame()
-				elseif gameTransitionInfo.gameType == "tut" then
-					startTutorial()
-				end
-				gameTransitionInfo.gameType = ""
-			else
-				myShader:send("tint_r", globalTint[1])
-				myShader:send("tint_g", globalTint[2])
-				myShader:send("tint_b", globalTint[3])
-			end
-		end
-	end
-
 	text.updateTextTimers(dt)
 
 	--[[to check for removed spotlights
@@ -2291,9 +2276,11 @@ function love.update(dt)
 		end
 
 		--game timer
-		if started and validSpace() and (completedRooms[mapy][mapx]~=1 or gameTime.goesDownInCompleted)
-		and (not (floorTransition and not floorTransitionInfo.moved)) then
+		if not player.attributes.clockFrozen then
+			if started and validSpace() and (completedRooms[mapy][mapx]~=1 or gameTime.goesDownInCompleted)
+			and (not (floorTransition and not floorTransitionInfo.moved)) then
 			gameTime.timeLeft = gameTime.timeLeft-dt
+			end
 		end
 	end
 
@@ -2349,7 +2336,9 @@ function love.update(dt)
 		for j = 1, roomLength do
 			if room~=nil and room[i][j]~=nil then
 				room[i][j]:realtimeUpdate(dt, i, j)
-				room[i][j]:updateAnimation(dt)
+				if room[i][j]~=nil then
+					room[i][j]:updateAnimation(dt)
+				end
 			end
 		end
 	end
@@ -2379,12 +2368,6 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 		 lastMoveKey = key
 	end
 
-	for i = 1, #processes do
-		if processes[i].disableInput and processes[i].active then
-			return
-		end
-	end
-
 	if (floorTransition and not floorTransitionInfo.moved) or 
 		(gameTransition and not gameTransitionInfo.moved) then
 		return
@@ -2401,6 +2384,7 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 
 	if toolManuel.opened then
 		toolManuel.keypressed(key, unicode)
+		return
 	elseif gamePaused then
 		if key=="escape" then
 			gamePaused = false
@@ -2519,7 +2503,6 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 			--player.tileY = 1
 			--player.tileX = 1
 		end
-		gameTime.timeLeft = gameTime.timeLeft+100
 	end
 
 	--k ability: open doors with k on supertools
@@ -2540,6 +2523,17 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 	end
 	love.keyboard.setKeyRepeat(true)
     -- ignore non-printable characters (see http://www.ascii-code.com/)
+
+	if player.character:onKeyPressed(key) then
+		updateGameState(false)
+	end
+
+	for i = 1, #processes do
+		if processes[i].disableInput and processes[i].active then
+			return
+		end
+	end
+
     if player.dead and (key == "w" or key == "a" or key == "s" or key == "d") then
     	return
     end
@@ -2552,9 +2546,6 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 	saving.recordKeyPressed(key, unicode, isRepeat)
 
 	waitTurn = false
-	if player.character:onKeyPressed(key) then
-		updateGameState(false)
-	end
    	
 	if key=="w" or key=="a" or key=="s" or key=="d" then
 		if not processMove(key) then return
@@ -2643,6 +2634,7 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
     updateGameState(noPowerUpdate)
     resetTileStates()
     checkAllDeath()
+    tools.updateToolableTiles(tool)
 
     if player.moveMode==0 then
 		--setPlayerLoc()
@@ -2855,47 +2847,55 @@ function processTurn()
 end
 
 function processMove(key, dt)
-	player.prevx = player.x
-	player.prevy = player.y
-	player.prevTileX = player.tileX
-	player.prevTileY = player.tileY
-	if not map.blocksMovement(player.tileY, player.tileX) then
-    	if key == "w" then
-    		if player.tileY>1 then
-    			player.tileY = player.tileY-1
-    			--player.y = player.y-tileHeight*scale
-			elseif player.tileY==1 and (player.tileX==math.floor(roomLength/2) or player.tileX==math.floor(roomLength/2)+1) then
-				enterRoom(0)
+	if player.waitCounter<=0 and not (room[player.tileY][player.tileX]~=nil and
+	room[player.tileY][player.tileX]:sticksPlayer()) then
+		player.prevx = player.x
+		player.prevy = player.y
+		player.prevTileX = player.tileX
+		player.prevTileY = player.tileY
+		if not map.blocksMovement(player.tileY, player.tileX) then
+	    	if key == "w" then
+	    		if player.tileY>1 then
+	    			player.tileY = player.tileY-1
+	    			--player.y = player.y-tileHeight*scale
+				elseif player.tileY==1 and (player.tileX==math.floor(roomLength/2) or player.tileX==math.floor(roomLength/2)+1) then
+					enterRoom(0)
+				end
+	    	elseif key == "s" then
+	    		if player.tileY<roomHeight then
+	    			player.tileY = player.tileY+1
+	    			--player.y = player.y+tileHeight*scale
+				elseif player.tileY == roomHeight and (player.tileX==math.floor(roomLength/2) or player.tileX==math.floor(roomLength/2)+1) then
+					enterRoom(2)
+	    		end
+	    	elseif key == "a" then
+	    		if player.tileX>1 then
+	    			player.tileX = player.tileX-1
+	    			--player.x = player.x-tileHeight*scale
+				elseif player.tileX == 1 and (player.tileY==math.floor(roomHeight/2) or player.tileY==math.floor(roomHeight/2)+1) then
+					enterRoom(3)
+	    		end
+	    	elseif key == "d" then
+	    		if player.tileX<roomLength then
+	    			player.tileX = player.tileX+1
+	    			--player.x = player.x+tileHeight*scale
+	    		elseif player.tileX == roomLength and (player.tileY==math.floor(roomHeight/2) or player.tileY==math.floor(roomHeight/2)+1) then
+					enterRoom(1)
+				end
 			end
-    	elseif key == "s" then
-    		if player.tileY<roomHeight then
-    			player.tileY = player.tileY+1
-    			--player.y = player.y+tileHeight*scale
-			elseif player.tileY == roomHeight and (player.tileX==math.floor(roomLength/2) or player.tileX==math.floor(roomLength/2)+1) then
-				enterRoom(2)
-    		end
-    	elseif key == "a" then
-    		if player.tileX>1 then
-    			player.tileX = player.tileX-1
-    			--player.x = player.x-tileHeight*scale
-			elseif player.tileX == 1 and (player.tileY==math.floor(roomHeight/2) or player.tileY==math.floor(roomHeight/2)+1) then
-				enterRoom(3)
-    		end
-    	elseif key == "d" then
-    		if player.tileX<roomLength then
-    			player.tileX = player.tileX+1
-    			--player.x = player.x+tileHeight*scale
-    		elseif player.tileX == roomLength and (player.tileY==math.floor(roomHeight/2) or player.tileY==math.floor(roomHeight/2)+1) then
-				enterRoom(1)
+			if room[player.tileY][player.tileX]==nil and math.abs(player.elevation)>3 then
+				player.tileX = player.prevTileX
+				player.tileY = player.prevTileY
+			elseif room[player.tileY][player.tileX]~=nil and room[player.tileY][player.tileX]:obstructsMovement() and not player.character:bypassObstructsMovement(room[player.tileY][player.tileX]) then
+				player.tileX = player.prevTileX
+				player.tileY = player.prevTileY
 			end
 		end
-		if room[player.tileY][player.tileX]==nil and math.abs(player.elevation)>3 then
-			player.tileX = player.prevTileX
-			player.tileY = player.prevTileY
-		elseif room[player.tileY][player.tileX]~=nil and room[player.tileY][player.tileX]:obstructsMovement() and not player.character:bypassObstructsMovement(room[player.tileY][player.tileX]) then
-			player.tileX = player.prevTileX
-			player.tileY = player.prevTileY
-		end
+	else
+		player.prevx = player.x
+		player.prevy = player.y
+		player.prevTileX = player.tileX
+		player.prevTileY = player.tileY
 	end
 
 	if player.waitCounter>0 then
@@ -2912,7 +2912,7 @@ function processMove(key, dt)
 	else
 		resetPlayerAttributesStep()
 	end
-	return true
+	return playerMoved()
 end
 
 function postKeypressReset()
@@ -3226,6 +3226,9 @@ function love.mousepressed(x, y, button, istouch, isPlayback)
 	end
 	saving.recordMouseInput(x, y, button, istouch, false)
 
+	mouseX = x
+	mouseY = y
+
 	local bigRoomTranslation = getTranslation()
 	tileLocX = math.ceil((mouseX-wallSprite.width)/(scale*tileUnit))-bigRoomTranslation.xInteger
 	tileLocY = math.ceil((mouseY-wallSprite.height)/(scale*tileUnit))-bigRoomTranslation.yInteger
@@ -3241,8 +3244,7 @@ function love.mousepressed(x, y, button, istouch, isPlayback)
 	
 	--mouseX = x-(width2-width)/2
 	--mouseY = y-(height2-height)/2
-	mouseX = x
-	mouseY = y
+
 	local bigRoomTranslation = getTranslation()
 	mouseTranslated = {x = mouseX-bigRoomTranslation.x*scale*tileUnit, y = mouseY-bigRoomTranslation.y*scale*tileUnit}
 
@@ -3333,6 +3335,10 @@ function updateGameState(noPowerUpdate, noLightUpdate)
 					room[i][j]:onLoad()
 					room[i][j].loaded = true
 				end
+				if room[i][j].overlay~=nil and room[i][j].overlay.onLoad ~= nil and room[i][j].overlay.loaded == nil then
+					room[i][j].overlay:onLoad()
+					room[i][j].overlay.loaded = true
+				end
 			end
 		end
 	end
@@ -3343,8 +3349,8 @@ function updateGameState(noPowerUpdate, noLightUpdate)
 	end
 	updateTools()
 	if tool ~= 0 and tool ~= nil and tools[tool].numHeld == 0 then tool = 0 end
-	tools.updateToolableTiles(tool)
 	updateElevation()
+	tools.updateToolableTiles(tool)
 	--checkAllDeath()
 end
 
@@ -3517,7 +3523,7 @@ function stepTrigger()
 				elseif room[i][j].overlay~=nil and room[i][j].overlay.gone then
 					if room[i][j].canBePowered then updatePowerAfter = true end
 					room[i][j].overlay:onEnd(i, j)
-					room[i][j].overlay = nil					
+					room[i][j].overlay = nil				
 				end
 			end
 		end
@@ -3677,14 +3683,8 @@ function dropTools()
 					(dirEnter[2] == 1 and completedRooms[y][x+1]~=nil and completedRooms[y][x+1]==1)) then
 						local id = tostring(mainMap[y][x].roomid)
 						if dropOverride == nil then
-							listOfItemsNeeded = map.getItemsNeeded(mainMap[y][x].roomid)
-							numLists = 0
-							for j = 1, 10 do
-								if listOfItemsNeeded[j]~=nil then
-									numLists = numLists+1
-								end
-							end
-							listChoose = util.random(numLists, 'toolDrop')
+							local listOfItemsNeeded = map.getItemsNeeded(mainMap[y][x].roomid)
+							local listChoose = util.random(#listOfItemsNeeded, 'toolDrop')
 							--[[for i = 1, tools.numNormalTools do
 								if listOfItemsNeeded[listChoose][i] ~= 0 then
 									done = true
@@ -3713,29 +3713,53 @@ function dropTools()
 			end
 		end
 		if not done then
-			if floorIndex ~= -1 then
-				--bonusTool decides whether or not one more tool will drop from floor
-				local bonusTool = util.random(2, 'toolDrop')
-				bonusTool = bonusTool-1
-				bonusTool = bonusTool+tools.completionBonus.numHeld*2
-				tools.giveRandomTools(math.floor((toolMax+toolMin)/2)+bonusTool)
-			end
+			giveToolsFullClear()
 			--[[for i = 1, toolMin+1 do
 				local slot = util.random(tools.numNormalTools, 'toolDrop')
 				tools[slot].numHeld = tools[slot].numHeld+1
 			end]]
-			--tools.giveSupertools(1)w
+			--tools.giveSupertools(1)
 		end
 	else
 		tools.giveToolsByArray(dropOverride)
 	end
 end
 
+function giveToolsFullClear()
+	--[[if floorIndex ~= -1 then
+		--bonusTool decides whether or not one more tool will drop from floor
+		local bonusTool = util.random(2, 'toolDrop')
+		bonusTool = bonusTool-1
+		bonusTool = bonusTool+tools.completionBonus.numHeld*2
+		tools.giveRandomTools(math.floor((toolMax+toolMin)/2)+bonusTool)
+	end]]
+
+	local totalDropNum = math.floor((toolMax+toolMin)/2)
+	local bonusTool = util.random(2, 'toolDrop')-1
+	totalDropNum = totalDropNum+bonusTool
+
+	for i = 1, mapHeight do
+		for j = 1, mapHeight do
+			if mainMap[i][j]~=nil and map.getFieldForRoom(mainMap[i][j].roomid, 'isFinal')~=nil and
+			map.getFieldForRoom(mainMap[i][j].roomid, 'isFinal')~=nil then
+				local listOfItemsNeeded = map.getItemsNeeded(mainMap[i][j].roomid)
+				local listChoose = util.random(#listOfItemsNeeded, 'toolDrop')
+				tools.giveToolsByArray(listOfItemsNeeded[listChoose])
+				for i = 1, tools.numNormalTools do
+					totalDropNum = totalDropNum-listOfItemsNeeded[listChoose][i]
+				end
+			end
+		end
+	end
+
+	tools.giveRandomTools(totalDropNum)
+end
+
 function beatRoom(noDrops)
 	saving.saveRecording()
 	spotlights = {}
 	if noDrops == nil then noDrops = false end
-	if floorIndex>6 then noDrops = true end
+	--if floorIndex>6 then noDrops = true end
 	gameTime.timeLeft = gameTime.timeLeft+gameTime.roomTime
 	unlockDoors()
 	if not noDrops then
@@ -3752,7 +3776,7 @@ function onTeleport()
 		animals[i]:setLoc()
 	end
 	for j = 1, #pushables do
-		pushables[i]:setLoc()
+		pushables[j]:setLoc()
 	end
 
 	for i = 1, #processes do
@@ -3776,6 +3800,21 @@ function onToolUse(currentTool)
 	--deck of cards trigger
 	if tools.card.numHeld>0 then
 		tools.card:playCard()
+	end
+ 	
+ 	if tools.superRange.active > 0 and not currentTool == tools.superRange then
+		player.attributes.extendedRange = player.attributes.extendedRange - tools.superRange.active
+		tools.superRange.active = 0
+	end
+	if tools.preservatives.numHeld> 0 and currentTool ~= nil and tools[currentTool]:instanceof(tools.superTool) then
+		tools.preservatives:preserve(currentTool)
+	end
+
+	if tools.superRange.numHeld>0 then
+		tools.superRange:update()
+	end
+	if tools.chargedShield.numHeld>0 then
+		tools.chargedShield.charge = tools.chargedShield.charge + 1
 	end
 
 	stats.incrementStat('toolsUsed')
@@ -3812,7 +3851,7 @@ function onToolUse(currentTool)
 	if basicsUsed[4]>0 and basicsUsed[5]>0 then
 		unlocks.unlockUnlockableRef(unlocks.lubeUnlock)
 	end
-	if basicsUsed[3]>0 and basicsUsed[7]>0 then
+	if basicsUsed[3]>0 and basicsUsed[7]>0 then 
 		unlocks.unlockUnlockableRef(unlocks.knifeUnlock)
 	end
 
@@ -3820,11 +3859,15 @@ function onToolUse(currentTool)
 		unlocks.unlockUnlockableRef(unlocks.recycleBinUnlock)
 	end
 
+
+
 	if tools[tool]~=nil and tools[tool].numHeld<=0 then
 		tool = 0
 	end
 
+
 	updateTools()
 	checkAllDeath()
 	--setPlayerLoc()
+
 end

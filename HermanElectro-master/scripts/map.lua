@@ -948,7 +948,6 @@ function P.generateMapWeighted()
 		newmap[i] = {}
 	end
 	local roomsArray = P.floorInfo.rooms.rooms
-	blacklist[#blacklist+1] = startRoomID
 	local randomRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.rooms, 'mapGen', blacklist)
 	local randomRoomsArray = removeSets(randomRoomsArray)
 	local randomTreasureRoomsArray, treasureRoomWeights = getRandomRoomArrays(P.floorInfo.rooms.treasureRooms, 'mapGen')
@@ -957,6 +956,7 @@ function P.generateMapWeighted()
 	local randomShopsArray, shopWeights = getRandomRoomArrays(P.floorInfo.rooms.shops, 'mapGen')
 	--create first room
 	local startRoomID = P.floorInfo.startRoomID
+	blacklist[#blacklist+1] = startRoomID
 	newmap[math.floor(height/2)][math.floor(height/2)] = {roomid = startRoomID, room = P.createRoom(startRoomID, roomsArray), isFinal = false, isInitial = true, isCompleted = false}
 	newmap.initialY = math.floor(height/2)
 	newmap.initialX = math.floor(height/2)
@@ -1087,7 +1087,7 @@ function P.generateMapWeighted()
 		blacklist[#blacklist+1] = roomid
 		setBlacklist[#setBlacklist+1] = P.getFieldForRoom(roomid, 'set')
 		usedRooms[#usedRooms+1] = roomid
-		newmap[choice.y][choice.x] = {roomid = roomid, room = P.createRoom(roomid), tint = {0,0,0}, isFinal = false, isInitial = false}
+		newmap[choice.y][choice.x] = {roomid = roomid, room = P.createRoom(roomid), tint = {0,0,0}, isInitial = false}
 	end
 	
 	--add secret room to floor
@@ -1429,6 +1429,26 @@ function P.generateEndDungeon()
 	newmap[starty+1][startx] = {roomid = puzzleRoom3, room = P.createRoom(puzzleRoom3), isFinal = false, isInitial = false}
 	local finalRoom = randomFinalRoomsArray[util.chooseWeightedRandom(finalRoomWeights, 'mapGen')]
 	newmap[starty-1][startx] = {roomid = finalRoom, room = P.createRoom(finalRoom), isFinal = false, isInitial = false}
+	return newmap
+end
+
+function P.generateBigDungeon()
+	local randomStartRoomsArray = util.createRandomKeyArray(P.floorInfo.rooms.bigRooms, 'mapGen')
+	local startRoomID = randomStartRoomsArray[1]
+
+	local height = P.floorInfo.height
+	local numRooms = P.floorInfo.numRooms
+	local newmap = MapInfo:new{height = height, numRooms = numRooms}
+	for i = 0, height+1 do
+		newmap[i] = {}
+	end
+
+	local startx = math.floor(height/2)
+	local starty = math.floor(height/2)
+	newmap[starty][startx] = {roomid = startRoomID, room = P.createRoom(startRoomID), isFinal = false, isInitial = true, isCompleted = false}
+	newmap.initialY = starty
+	newmap.initialX = startx
+	
 	return newmap
 end
 

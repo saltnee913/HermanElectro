@@ -61,6 +61,9 @@ end
 function P.tile:destroy()
 	self.destroyed = true
 end
+function P.tile:sticksPlayer()
+	return false
+end
 function P.tile:getInfoText()
 	return nil
 end
@@ -80,6 +83,11 @@ function P.tile:updateSprite()
 end
 function P.tile:postPowerUpdate(i,j)
 end
+function P.tile:onBorderEnter()
+end
+function P.tile:onReachMid()
+end
+
 --guide to elevation:
 --if can block movement, make blocksMovement true
 --if can only block animal movement, make blocksAnimalMovement true
@@ -537,6 +545,9 @@ function P.electricFloor:willKillPlayer()
 	return not self.destroyed and self.powered
 end
 P.electricFloor.willKillAnimal = P.electricFloor.willKillPlayer
+function P.electricFloor:usableOnNothing()
+	return self.destroyed
+end
 
 P.poweredFloor = P.conductiveTile:new{name = "poweredFloor", laddered = false, destroyedSprite = 'Graphics/trapdoorwithladder.png', destroyedPoweredSprite = 'Graphics/trapdoorclosedwithladder.png', --[[sprite = 'Graphics/trapdoor.png', poweredSprite = 'Graphics/trapdoorclosed.png']]
 sprite = 'GraphicsBrush/trapdoor.png', poweredSprite = 'GraphicsBrush/trapdoorclosed.png'}
@@ -852,6 +863,7 @@ function P.hDoor:onEnter(player)
 	self.sprite = self.openSprite
 	self.blocksVision = false
 	self.blocksMovement = false
+	self.blocksProjectiles = false
 end
 function P.hDoor:getHeight()
 	return 6
@@ -928,8 +940,8 @@ function P.vPoweredDoor:updateTile(player)
 		self.sprite = self.openSprite
 	end
 end
-function P.vPoweredDoor:willKillPlayer(player)
-	return self.blocksMovement
+function P.vPoweredDoor:willKillPlayer()
+	return self.blocksMovement and player.elevation<6
 end
 function P.vPoweredDoor:destroy()
 	self.stopped = true
@@ -1098,7 +1110,7 @@ P.sign = P.tile:new{text = "", name = "sign", sprite = 'KenGraphics/sign.png'}
 function P.sign:onEnter(player)
 	messageInfo.text = self.text
 end
-function P.sign:onLeave(player)
+function P.sign:onLeave()
 	if room[player.tileY][player.tileX]==nil or room[player.tileY][player.tileX].text==nil then
 		messageInfo.text = nil
 	end
@@ -1189,18 +1201,8 @@ P.concreteWallConductiveT.updateSprite = P.concreteWallConductiveCorner.updateSp
 
 P.tunnel = P.tile:new{name = "tunnel", toolsNeeded = -1, toolsEntered = 0, sprite = 'KenGraphics/stairs.png'}
 function P.tunnel:onEnter(player)
-	--[[if self.toolsNeeded==0 then loadNextLevel() return end
-	local noNormalTools = true
-	for i = 1, tools.numNormalTools do
-		if tools[i].numHeld>0 then noNormalTools = false end
-	end
-	if noNormalTools then loadNextLevel() end
-	if tool==0 or tool>7 then return end
-	tools[tool].numHeld = tools[tool].numHeld - 1
-	self.toolsNeeded = self.toolsNeeded-1
-	self.toolsEntered = self.toolsEntered+1
-	--donations = donations+math.ceil((7-(floorIndex))/2)
-	floorDonations = floorDonations+1]]
+end
+function P.tunnel:onReachMid()
 	if floorIndex>=9 then
 		return
 		--should do something cool, can add later
@@ -1209,14 +1211,21 @@ function P.tunnel:onEnter(player)
 		return
 	end
 	--goDownFloor()
-	beginFloorSequence(0, "down")
+	--beginFloorSequence(0, "down")
+	local animationProcess = processList.floorTransitionProcess:new()
+	animationProcess.override = "down"
+	processes[#processes+1] = animationProcess
 end
 
 P.upTunnel = P.tunnel:new{name = "upTunnel", sprite = 'KenGraphics/stairsUp.png'}
 function P.upTunnel:onEnter(player)
+end
+function P.upTunnel:onReachMid()
 	--goUpFloor()
 	if floorIndex ~= 2 or not saving.isPlayingBack() then
-		beginFloorSequence(0, "up")
+		local animationProcess = processList.floorTransitionProcess:new()
+		animationProcess.override = "up"
+		processes[#processes+1] = animationProcess
 	end
 end
 function P.upTunnel:onLeave(player)
@@ -1280,6 +1289,7 @@ function P.treasureTile:onEnter()
 	self.isVisible = false
 	self.gone = true
 	stats.incrementStat('treasureTilesReached')
+	gameTime.timeLeft = gameTime.timeLeft+5
 end
 function P.treasureTile:giveReward()
 	local timesCounter = 0
@@ -1289,6 +1299,7 @@ function P.treasureTile:giveReward()
 	local basicCount = 0
 	local superCount = 0
 	local rand = util.random(1000,'toolDrop')
+
 	--[[if rand<probBasic then
 		basicCount = basicCount+1
 	end
@@ -1570,7 +1581,7 @@ function P.beggar:providePayment()
 	elseif paymentType<0.66 then P.blueBeggar:providePayment()
 	else P.greenBeggar:providePayment() end
 end
-function P.beggar:absoluteFinalUpdate()
+function P.beggar:onLoad()
 	if not (self.name==tiles.beggar.name) then return end
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
@@ -1625,7 +1636,7 @@ function P.redBeggar:providePayment()
 	end
 end
 function P.redBeggar:getSuperDrops()
-	return {tools.superSaw, tools.longLadder, tools.superWaterBottle, tools.superWireCutters, tools.superSponge,
+	return {tools.superSaw, tools.superLadder, tools.superWaterBottle, tools.superWireCutters, tools.superSponge,
 	tools.superGun, tools.superBrick}
 end
 
@@ -1645,6 +1656,10 @@ function P.greenBeggar:providePayment()
 
 	if util.getSupertoolTypesHeld()<3 or ttg.numHeld>0 then
 		tools.giveToolsByReference({ttg})
+		local giveAnother = util.random(2, 'toolDrop')-1
+		if giveAnother>0 then
+			tools.giveToolsByReference({ttg})
+		end
 	else
 		for i = 1, roomHeight do
 			for j = 1, roomLength do
@@ -1873,6 +1888,7 @@ function P.treasureTile2:onEnter()
 	self.isCompleted = true
 	self.isVisible = false
 	self.gone = true
+	gameTime.timeLeft = gameTime.timeLeft+5
 end
 function P.treasureTile2:giveReward()
 	local reward = util.random(1000,'toolDrop')
@@ -2036,15 +2052,17 @@ end
 P.glue = P.tile:new{name = "glue", sprite = 'Graphics/glue.png'}
 function P.glue:onEnter(player)
 	if player.attributes.flying then return end
-	player.waitCounter = player.waitCounter+1
+	--player.waitCounter = player.waitCounter+1
 	if player.character.name == characters.lenny.name then
 		--unlocks = require('scripts.unlocks')
 		--unlocks.unlockUnlockableRef(unlocks.glueSnailUnlock)
 	end
 end
-
+function P.glue:sticksPlayer()
+	return true
+end
 function P.glue:onStay(player)
-	player.waitCounter = player.waitCounter+1
+	--player.waitCounter = player.waitCounter+1
 end
 function P.glue:onEnterAnimal(animal)
 	--[[if animal:instanceof(animalList.snail) then
@@ -2209,7 +2227,7 @@ function P.finalToolsTile:getInfoText()
 end
 
 P.grass = P.tile:new{name = "grass", sprite = 'KenGraphics/grass.png'}
-P.bed = P.tile:new{name = "bed", sprite = 'KenGraphics/bed.png'}
+P.bed = P.concreteWall:new{name = "bed", sprite = 'KenGraphics/bed.png'}
 P.statuebottom = P.tile:new{name = "statuebottom", sprite = 'KenGraphics/statuebottom.png'}
 P.statuetop = P.tile:new{name = "statuetop", sprite = 'KenGraphics/statuetop.png'}
 P.chairfront = P.tile:new{name = "chairfront", sprite = 'KenGraphics/chairfront.png'}
@@ -2378,6 +2396,13 @@ P.supertoolQ3 = P.supertoolTile:new{name = "supertoolTileQ3", superQuality = 3}
 P.supertoolQ4 = P.supertoolTile:new{name = "supertoolTileQ4", superQuality = 4}
 P.supertoolQ5 = P.supertoolTile:new{name = "supertoolTileQ5", superQuality = 5}
 
+P.dungeonSuper = P.supertoolTile:new{name = "dungeonSuper"}
+function P.dungeonSuper:selectTool()
+	local toolOptions = {tools.tunneler, tools.shield, tools.shield, tools.shield}
+	self.tool = toolOptions[util.random(#toolOptions, 'toolDrop')]
+	self:updateSprite()
+end
+
 P.toolTile = P.tile:new{name = "toolTile", tool = nil, toolId = -1, dirSend = {0,0,0,0}}
 function P.toolTile:onEnter(entered)
 	if not (player.tileX==entered.tileX and player.tileY==entered.tileY) then return end
@@ -2417,7 +2442,6 @@ P.waterBottleTile = P.toolTile:new{name = "waterBottleTile", toolId = 4, sprite 
 
 
 P.toolTaxTile = P.reinforcedGlass:new{name = "toolTaxTile", dirSend = {0,0,0,0}, sprite = 'Graphics/tooltaxtile.png', tool = nil}
-P.toolTaxTile.absoluteFinalUpdate = P.toolTile.absoluteFinalUpdate
 function P.toolTaxTile:updateSprite()
 	if self.tool == tools.wireCutters then
 		self.overlay = P.wireCuttersTile
@@ -2433,6 +2457,11 @@ function P.toolTaxTile:updateSprite()
 		self.overlay = P.waterBottleTile
 	elseif self.tool == tools.brick then
 		self.overlay = P.brickTile
+	elseif self.tool~=nil then
+		local overlayTool = tiles.supertoolTile:new()
+		overlayTool.tool = self.tool
+		overlayTool:updateSprite()
+		self.overlay = overlayTool
 	end
 end
 function P.toolTaxTile:onEnter()
@@ -2470,6 +2499,26 @@ function P.toolTaxTile:obstructsMovement()
 		return false
 	end
 	return true
+end
+function P.toolTaxTile:onLoad()
+	if self.tool == nil then
+		self:randomize()
+		self:updateSprite()
+	end
+end
+function P.toolTaxTile:randomize()
+	if player.character.name~="Dragon" then
+		local whichBasic = util.random(tools.numNormalTools, 'toolDrop')
+		self.toolId = whichBasic
+		self.tool = tools[self.toolId]
+	else
+		local whichBasic = util.random(2, 'toolDrop')
+		if whichBasic==1 then
+			self.tool = tools.claw
+		else
+			self.tool = tools.fireBreath
+		end
+	end
 end
 
 P.dungeonEnter = P.tile:new{name = "dungeonEnter"}
@@ -2633,7 +2682,8 @@ function P.heavenExit:onEnter()
 	onTeleport()
 end
 
-P.endDungeonEnter = P.tile:new{name = "endDungeonEnter", sprite = 'Graphics/eden.png', disabled = false}
+P.endDungeonEnter = P.tile:new{name = "endDungeonEnter", sprite = 'KenGraphics/bed.png', disabled = false, yOffset = -6,
+blocksMovement = false}
 function P.endDungeonEnter:onLoad()
 	local unlocks = require('scripts.unlocks')
 	self.disabled = not unlocks.isDungeonUnlocked()
@@ -2644,7 +2694,8 @@ function P.endDungeonEnter:onEnter()
 	if self.disabled then
 		return
 	end
-	player.returnFloorIndex = floorIndex
+	local fiReturn = floorIndex
+	player.returnFloorInfo = {floorIndex = fiReturn, tileY = player.tileY, tileX = player.tileX}
 	goToFloor(1)
 	resetPlayerAttributesRoom()
 	if stairsLocs[#stairsLocs].coords.x~=0 then
@@ -2656,6 +2707,9 @@ function P.endDungeonEnter:onEnter()
 		player.tileX = stairsLocs[#stairsLocs].coords.x
 		player.tileY = stairsLocs[#stairsLocs].coords.y
 	else
+		roomHeight = room.height
+		roomLength = room.length
+		
 		for i = 1, roomHeight do
 			for j = 1, roomLength do
 				if room[i][j]~=nil and room[i][j]:instanceof(tiles.endDungeonExit) then
@@ -2668,10 +2722,25 @@ function P.endDungeonEnter:onEnter()
 	end
 	onTeleport()
 end
+function P.endDungeonEnter:getHeight()
+	return 0
+end
 
-P.endDungeonExit = P.tile:new{name = "endDungeonExit", sprite = 'Graphics/edex.png'}
+P.endDungeonExit = P.tile:new{name = "endDungeonExit", sprite = 'KenGraphics/bed.png', yOffset = -6, blocksMovement = false}
 function P.endDungeonExit:onEnter()
-	goToFloor(player.returnFloorIndex)
+	local futureStairsLocsCoords = {x = player.tileX, y = player.tileY}
+
+	--NEED THESE LINES FIRST -- otherwise goToFloor may try to updateGameState on invalid tile,
+	--if big room in dungeon
+	player.tileY = player.returnFloorInfo.tileY
+	player.prevTileY = player.tileY
+	player.tileX = player.returnFloorInfo.tileX
+	player.prevTileX = player.tileX
+
+	goToFloor(player.returnFloorInfo.floorIndex)
+
+	stairsLocs[#stairsLocs].coords = futureStairsLocsCoords
+
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
 			if room[i][j]~=nil and room[i][j]:instanceof(tiles.endDungeonEnter) then
@@ -2682,6 +2751,9 @@ function P.endDungeonExit:onEnter()
 		end
 	end
 	onTeleport()
+end
+function P.endDungeonExit:getHeight()
+	return 0
 end
 
 
@@ -2854,9 +2926,19 @@ function P.lemonade:willKillAnimal()
 end
 
 P.gameStairs = P.tile:new{name = "gameStairs", sprite = 'KenGraphics/gamestairs.png'}
-function P.gameStairs:onEnter()
+function P.gameStairs:onReachMid()
 	stairsLocs[1] = {map ={x = mapx, y = mapy}, coords = {x = player.tileX, y = player.tileY}}
-	beginGameSequence("main")
+	local animationProcess = processList.gameTransitionProcess:new()
+	animationProcess.gameType = "main"
+	processes[#processes+1] = animationProcess
+end
+
+P.dailyStairs = P.tile:new{name = "dailyStairs", sprite = 'KenGraphics/gamestairs.png'}
+function P.dailyStairs:onReachMid()
+	stairsLocs[1] = {map ={x = mapx, y = mapy}, coords = {x = player.tileX, y = player.tileY}}
+	local animationProcess = processList.gameTransitionProcess:new()
+	animationProcess.gameType = "daily"
+	processes[#processes+1] = animationProcess
 end
 
 P.tutStairs = P.tile:new{name = "tutStairs", sprite = 'KenGraphics/tutstairs.png'}
@@ -2869,17 +2951,21 @@ P.debugStairs = P.tile:new{name = "debugStairs", sprite = 'KenGraphics/tutstairs
 function P.debugStairs:onLoad()
 	self.isVisible = not releaseBuild
 end
-function P.debugStairs:onEnter()
+function P.debugStairs:onReachMid()
 	if self.isVisible then
 		stairsLocs[1] = {map ={x = mapx, y = mapy}, coords = {x = player.tileX, y = player.tileY}}
-		startDebug()
+		local animationProcess = processList.gameTransitionProcess:new()
+		animationProcess.gameType = "debug"
+		processes[#processes+1] = animationProcess
 	end
 end
 
 P.editorStairs = P.tile:new{name = "editorStairs", sprite = 'KenGraphics/greenstairs.png'}
 function P.editorStairs:onEnter()
 	stairsLocs[1] = {map ={x = mapx, y = mapy}, coords = {x = player.tileX, y = player.tileY}}
-	startEditor()
+	local animationProcess = processList.gameTransitionProcess:new()
+	animationProcess.gameType = "editor"
+	processes[#processes+1] = animationProcess
 end
 
 P.saveStairs = P.tile:new{name = "saveStairs", sprite = 'KenGraphics/gamestairs.png', recording = nil}
@@ -2935,20 +3021,16 @@ P.playerTile = P.tile:new{name = "playerTransform", character = nil, text = "Her
 function P.playerTile:onLoad()
 	if self.character==nil then
 		self.character = characters.getUnlockedCharacter(self.text)
-		if self.character ~= nil then
-			self.sprite = self.character.sprite
-			self.isVisible = true
-		end
+		self:updateSprite()
+	end
+end
+function P.playerTile:updateSprite()
+	if self.character ~= nil then
+		self.sprite = self.character.sprite
+		self.isVisible = true
 	end
 end
 function P.playerTile:onEnter(entered)
-	if not (player.tileX==entered.tileX and player.tileY==entered.tileY) then return end
-	if self.character ~= nil then
-		player.character = self.character
-		player.character:onSelect()
-		myShader:send("player_range", 500)
-	end
-	messageInfo.text = self:getCharInfo()
 end
 function P.playerTile:onLeave(player)
 	messageInfo.text = nil
@@ -2961,6 +3043,126 @@ function P.playerTile:getCharInfo()
 	infoText = infoText.."Escapes: "..stats.getStat(self.character.name..'Wins').."\n"
 	infoText = infoText.."Failures: "..stats.getStat(self.character.name..'Losses')
 	return infoText
+end
+function P.playerTile:getYOffset()
+	return -1*tileUnit/2
+end
+function P.playerTile:onReachMid()
+	if self.character ~= nil then
+		player.character = self.character
+		player.character:onSelect()
+		myShader:send("player_range", 500)
+	end
+	messageInfo.text = self:getCharInfo()
+end
+
+P.creditsChar = P.tile:new{name = "creditsChar", isVisible = false}
+function P.creditsChar:onLoad()
+	if self.text~=nil and self.dev==nil then
+		self:updateSprite()
+	end
+end
+function P.creditsChar:getDev(name)
+	if name=="Ben" then
+		return 'Graphics/Characters/Ben.png'
+	elseif name=="Erik" then
+		return 'Graphics/Characters/Erik.png'
+	elseif name=="Tony" then
+		return 'Graphics/Characters/Tony.png'
+	elseif name=="Zach" then
+		return 'Graphics/Characters/Zach.png'
+	elseif name=="Eli" then
+		return 'Graphics/Characters/Eli.png'
+	end
+end
+function P.creditsChar:updateSprite()
+	self.sprite = self:getDev(self.text)
+	self.isVisible = true
+end
+function P.creditsChar:getYOffset()
+	return -1*tileUnit/2
+end
+
+P.creditsBase = P.tile:new{name = "creditsBase", isVisible = false, sprite = 'Graphics/edex.png'}
+function P.creditsBase:onLoad()
+	if self.text~=nil then
+		self:updateSprite()
+	end
+end
+function P.creditsBase:updateSprite()
+	self.isVisible = true
+	local charOverlay = tiles.creditsChar:new()
+	charOverlay.text = self.text
+	charOverlay:updateSprite()
+	self.overlay = charOverlay
+end
+function P.creditsBase:onLeave(player)
+	messageInfo.text = nil
+end
+function P.creditsBase:getDevInfo()
+	local infoText = ""
+	infoText = infoText..self.text..", "..self:getDescription(self.text).."\n"
+	infoText = infoText..self:getJob(self.text).."\n\n"
+	return infoText
+end
+function P.creditsBase:getDescription(name)
+	if name=="Ben" then return "The Sexy"
+	elseif name=="Erik" then return "The Fashionable"
+	elseif name=="Eli" then return "The Obese"
+	elseif name=="Tony" then return "The Lazy"
+	elseif name=="Zach" then return "The Git"
+	end
+end
+function P.creditsBase:getJob(name)
+	if name=="Ben" then return "Lead Designer, Developer and Warden"
+	elseif name=="Erik" then return "Content Designer and Chef"
+	elseif name=="Zach" then return "Online Content Manager and Chief Jester/Magician"
+	elseif name=="Tony" then return "Art Director and Janitor"
+	elseif name=="Eli" then return "Programmer and Correctional Officer"
+	end
+end
+function P.creditsBase:onReachMid()
+	messageInfo.text = self:getDevInfo()
+end
+
+
+P.charTile = P.tile:new{name = "charTile", sprite = 'Graphics/edex.png', character = nil}
+function P.charTile:onLoad()
+	if self.character==nil then
+		self.character = characters.getUnlockedCharacter(self.text)
+		self:updateSprite()
+	end
+end
+function P.charTile:updateSprite()
+	if self.character ~= nil then
+		self.isVisible = true
+		local charOverlay = tiles.playerTile:new()
+		charOverlay.character = self.character
+		charOverlay:updateSprite()
+		self.overlay = charOverlay
+	end
+end
+function P.charTile:onEnter(entered)
+end
+function P.charTile:onLeave(player)
+	messageInfo.text = nil
+end
+function P.charTile:getCharInfo()
+	if self.character==nil then return end
+	local infoText = ""
+	infoText = infoText..self.character.name..", "..self.character.description.."\n"
+	infoText = infoText..self.character.crime.."\n\n"
+	infoText = infoText.."Escapes: "..stats.getStat(self.character.name..'Wins').."\n"
+	infoText = infoText.."Failures: "..stats.getStat(self.character.name..'Losses')
+	return infoText
+end
+function P.charTile:onReachMid()
+	if self.character ~= nil then
+		player.character = self.character
+		player.character:onSelect()
+		myShader:send("player_range", 500)
+	end
+	messageInfo.text = self:getCharInfo()
 end
 
 P.tree = P.wall:new{name = "tree", sawable = false, level = 0, sprite = 'Graphics/tree0.png',
@@ -3134,6 +3336,98 @@ function P.superChest:onEnter()
 	self.isCompleted = true
 	self.isVisible = false
 	self.gone = true
+end
+
+P.characterWall = P.reinforcedGlass:new{name = "characterWall", isVisible = false, character = nil, text = "Herman", sprite = tiles.reinforcedGlass.sprite}
+function P.characterWall:onLoad()
+	if self.character==nil then
+		self.character = characters.getUnlockedCharacter(self.text)
+		if self.character ~= nil then
+			local overlayChar = tiles.playerTile:new()
+			overlayChar.character = self.character
+			overlayChar:updateSprite()
+			self.overlay = overlayChar
+			self.isVisible = true
+		end
+	end
+end
+function P.characterWall:onEnter(entered)
+	if not (player.tileX==entered.tileX and player.tileY==entered.tileY) then return end
+	if self.character ~= nil then
+		player.character = self.character
+		player.character:onSelect()
+		myShader:send("player_range", 500)
+		tiles.concreteWall.onEnter(self, player)
+	end
+end
+function P.characterWall:getCharInfo()
+	if self.character==nil then return end
+	local infoText = ""
+	infoText = infoText..self.character.name..", "..self.character.description.."\n"
+	infoText = infoText..self.character.crime.."\n\n"
+	infoText = infoText.."Escapes: "..stats.getStat(self.character.name..'Wins').."\n"
+	infoText = infoText.."Failures: "..stats.getStat(self.character.name..'Losses')
+	return infoText
+end
+function P.characterWall:obstructsMovement()
+	return false
+end
+
+P.movingSpike = P.tile:new{name = "movingSpike1", downTime = 100, upTime = 50, currentTime = 0, deadly = false,
+sprite = 'GraphicsTony/Spikes0.png', safeSprite = 'GraphicsTony/Spikes0.png', deadlySprite = 'GraphicsTony/Spikes2Blue.png'}
+function P.movingSpike:onLoad()
+	if self.text~=nil and tonumber(self.text)~=nil then
+		self.currentTime = tonumber(self.text)
+	end
+end
+function P.movingSpike:realtimeUpdate(dt, i, j)
+	self.currentTime = self.currentTime+dt*100
+	if self.currentTime>self.downTime + self.upTime then
+		self.currentTime = 0
+	end
+	self:updateDeadly()
+	self:updateSprite()
+	if player.tileY==i and player.tileX==j and self:willKillPlayer() then
+		kill()
+	end
+	for k = 1, #animals do
+		if animals[k].tileY==i and animals[k].tileX==j and self:willKillPlayer() then
+			animals[k]:kill()
+		end
+	end
+end
+function P.movingSpike:updateDeadly()
+	if self.currentTime>self.downTime then
+		self.deadly = true
+	else
+		self.deadly = false
+	end
+end
+function P.movingSpike:willKillPlayer()
+	if player.attributes.shieldCounter>0 then
+		return false
+	end
+	return self.deadly
+end
+function P.movingSpike:updateSprite()
+	if self.deadly then
+		self.sprite = self.deadlySprite
+	else
+		self.sprite = self.safeSprite
+	end
+end
+
+P.movingSpikeFast = P.movingSpike:new{name = "movingSpike2", downTime = 66, upTime = 33, safeSprite = 'GraphicsTony/Spikes0.png', deadlySprite = 'GraphicsTony/Spikes2Red.png'}
+P.movingSpikeSlow = P.movingSpike:new{name = "movingSpike3", downTime = 133, upTime = 66, safeSprite = 'GraphicsTony/Spikes0.png', deadlySprite = 'GraphicsTony/Spikes2Green.png'}
+
+P.movingSpikeCustom = P.movingSpike:new{name = "movingSpikeCustom", deadlySprite = 'GraphicsTony/Spikes2.png'}
+function P.movingSpikeCustom:onLoad()
+	P.movingSpike.onLoad(self)
+	local roomid = mainMap[mapy][mapx].roomid
+	local roomUpTime = map.getFieldForRoom(roomid, "spikeUpTime")
+	local roomDownTime = map.getFieldForRoom(roomid, "spikeDownTime")
+	self.upTime = roomUpTime ~= nil and roomUpTime or self.upTime
+	self.downTime = roomDownTime ~= nil and roomDownTime or self.downTime
 end
 
 
@@ -3345,6 +3639,16 @@ tiles[205] = P.mimicTile
 tiles[206] = P.heavenEnter
 tiles[207] = P.heavenExit
 tiles[208] = P.superChest
+tiles[209] = P.characterWall
+tiles[210] = P.charTile
+tiles[211] = P.dailyStairs
+tiles[212] = P.creditsChar
+tiles[213] = P.creditsBase
+tiles[214] = P.dungeonSuper
+tiles[215] = P.movingSpike
+tiles[216] = P.movingSpikeFast
+tiles[217] = P.movingSpikeSlow
+tiles[218] = P.movingSpikeCustom
 
 
 return tiles

@@ -174,7 +174,12 @@ function P.draw()
 		processes[i]:draw()
 	end
 
-	if floorTransition or gameTransition then return end
+	for i = 1, #processes do
+		if processes[i].disableUI then
+			return
+		end
+	end
+	
 	love.graphics.setShader()
 
 	P.drawUI()
@@ -194,8 +199,29 @@ function P.draw()
 		end
 	end
 
+	--Display unlock screen
+	local unlockDisplayer = unlocks.unlocksDisplay
+	local unlockDisplayNum = 0
+	while(unlockDisplayer ~= nil) do
+		local unlock = unlocks[unlockDisplayer.unlockToShow]
+		local unlockSprite = util.getImage(unlock.sprite)
+		local unlocksFrame = util.getImage(unlocks.frame)
+		local tScale = tileWidth/math.max(unlockSprite:getWidth(), unlockSprite:getHeight())
+		local uScale = width/500
+		local offsetY = (unlocksFrame:getHeight() - unlockSprite:getHeight()*tScale)/2
+		local offsetX = (unlocksFrame:getWidth() - unlockSprite:getWidth()*tScale)/2
+		local unlockNumOffset = unlocksFrame:getHeight()*uScale*unlockDisplayNum
+		love.graphics.draw(unlocksFrame, 0, height-unlocksFrame:getHeight()*uScale-unlockNumOffset, 0, uScale, uScale)
+		love.graphics.draw(unlockSprite, offsetX*uScale, height-(unlockSprite:getHeight()*tScale+offsetY)*uScale-unlockNumOffset, 0, uScale*tScale, uScale*tScale)
+		unlockDisplayer = unlockDisplayer.nextUnlock
+		unlockDisplayNum = unlockDisplayNum + 1
+	end
+	barLength = 200
 	if editorMode then
 		editor.draw()
+	end
+	if loadTutorial then
+		tutorial.draw()
 	end
 	if debugText ~= nil then
 		text.print(debugText, 0, 100, {255,140,0,255}, nil, 22)
@@ -477,15 +503,15 @@ function P.drawAnimal(animal)
 	if (not animal.dead) and (animal.frozen or animal.waitCounter>0 or animal.trained) then
 		local markSprites = {}
 		if animal.frozen then
-			markSprites[#markSprites+1] = util.getImage('Graphics/frozenMark.png')
+			markSprites[#markSprites+1] = util.getImage(animalList.frozenSprite)
 		end
 		if animal.waitCounter>0 then
 			for i = 1, animal.waitCounter do
-				markSprites[#markSprites+1] = util.getImage('Graphics/waitCounterMark.png')
+				markSprites[#markSprites+1] = util.getImage(animalList.waitSprite)
 			end
 		end
 		if animal.trained then
-			markSprites[#markSprites+1] = util.getImage('Graphics/trainedMark.png')
+			markSprites[#markSprites+1] = util.getImage(animalList.trainedSprite)
 		end
 
 		local markScale = scale

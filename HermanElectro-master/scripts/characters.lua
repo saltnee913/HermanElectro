@@ -39,11 +39,13 @@ end
 
 P.character = Object:new{name = "Name", tallSprite = true, dirFacing = "down", scale = 1, sprite = 'Graphics/Characters/Herman.png',
   description = "description", startingTools = {0,0,0,0,0,0,0}, scale = 0.25 * width/1200, randomOption = true, forcePowerUpdate = false, tint = {1,1,1}, winUnlocks = {},
-  animationTimer = 0, animationLength = 0, crime = ""}
+  animationTimer = 0, animationLength = 0, crime = "",
+  f7File = "RoomData/floor7Felix.json"}
 function P.character:onBegin()
     --[[myShader:send("tint_r", self.tint[1])
     myShader:send("tint_g", self.tint[2])
     myShader:send("tint_b", self.tint[3])]]
+    map.defaultFloorOrder[7] = self.f7File
 	self:setStartingTools()
 	self:onCharLoad()
 end
@@ -178,10 +180,11 @@ P.erik = P.character:new{name = "Erik", tallSprite = false, description = "The R
   crime = "Life Imprisonment for Incompetence"}
 function P.erik:onCharLoad()
 	gameTime.timeLeft = 120
-	gameTime.roomTime = 15
-	gameTime.levelTime = 0
+	gameTime.roomTime = 20
+	gameTime.levelTime = 10
 	gameTime.goesDownInCompleted = true
-	tools.giveToolsByReference({tools.stopwatch})
+	tools.giveToolsByReference({tools.stopwatch,tools.stopwatch,tools.stopwatch,tools.heartTransplant})
+	
 	--map.floorOrder = {'RoomData/floor1_erik.json', 'RoomData/floor2_erik.json', 'RoomData/floor3_erik.json', 'RoomData/floor6.json'}
 end
 --[[function P.erik:onFailedMove(key)
@@ -241,7 +244,10 @@ P.rammy = P.character:new{name = "Rammy", tallSprite = false, description = "The
 
 function P.rammy:preTileEnter(tile)
 	if tile.name == tiles.wall.name and not tile.destroyed and player.elevation<tile:getHeight()-3 then
+		local needToUGS = false
+		if tile.overlay~=nil then needToUGS = true end
 		tile:destroy()
+		if needToUGS then updateGameState() end
 	end
 end
 
@@ -286,7 +292,7 @@ end
 function P.battery:onPreUpdatePower()
 	if self.powered then
 		if room[player.tileY][player.tileX] ~= nil then
-			self.storedTile = room[player.tileY][player.tileX]:new()
+			self.storedTile = room[player.tileY][player.tileX]
 			self.storedTile.powered = true
 		else
 			self.storedTile = nil
@@ -563,8 +569,8 @@ function P.scientist:onCharLoad()
 	tools[tools.electricPotion.toolid].isDisabled = false
 	tools[tools.teleportPotion.toolid].isDisabled = false
 	tools[tools.shittyPotion.toolid].isDisabled = false
-	self.pulsing = false
 	self.hyde = false
+	self:deelectrify()
 	tools.giveToolsByReference({tools.shittyPotion, tools.teleportPotion, tools.electricPotion})
 end
 function P.scientist:electrify()
@@ -703,6 +709,11 @@ function P.knight:onCharLoad()
 	myShader:send("player_range", 600)
 end
 
+P.four = P.character:new{name = "Four", description = "2+2 = 4", scale = 1.1*scale}
+function P.four:onCharLoad()
+	filledSlots = {100,0,0,0}
+end
+
 P[#P+1] = P.herman
 P[#P+1] = P.francisco
 P[#P+1] = P.aurelius
@@ -715,6 +726,7 @@ P[#P+1] = P.felix
 P[#P+1] = P.battery
 P[#P+1] = P.erik
 P[#P+1] = P.fish
+P[#P+1] = P.four
 P[#P+1] = P.scientist
 P[#P+1] = P.dragon
 --P[#P+1] = P.knight

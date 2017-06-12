@@ -3,7 +3,7 @@
 	{
 		"rooms": 
 		{
-			"filePath": "RoomData/endpuzzles.json",
+			"filePath": "RoomData/f6spikesrooms.json",
 			"requirements":
 			{
 				"not":
@@ -130,8 +130,8 @@
 	{
 		"requireUnlocks": true,
 		"height": 12,
-		"numRooms": 28,
-		"generateFunction": "generateSixthFloor",
+		"numRooms":8,
+		"generateFunction": "generateMapWeighted",
 		"startRoomID": "f6_start",
 		//numRoomsToCheck is the amount of rooms to try when deciding a room's roomid, decreasing this increases rng
 		"numRoomsToCheck": 3,

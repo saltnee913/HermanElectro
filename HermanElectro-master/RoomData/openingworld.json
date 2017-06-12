@@ -14,7 +14,7 @@
   	{
   		"map":
   		[
-
+        ["credits_room", 0, 0, 0, 0],
         ["start_room",     "dragon_room", "extra_end", "extra_4",        0],
         ["tut_not_2",      0,             0,           "extra_3",        0],
         ["tut_and_2",      0,             0,           "extra_2",        0],
