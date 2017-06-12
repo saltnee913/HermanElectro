@@ -3373,7 +3373,7 @@ function P.characterWall:obstructsMovement()
 	return false
 end
 
-P.movingSpike = P.tile:new{name = "movingSpike1", maxTime = 150, currentTime = 0, deadly = false,
+P.movingSpike = P.tile:new{name = "movingSpike1", downTime = 100, upTime = 50, currentTime = 0, deadly = false,
 sprite = 'GraphicsTony/Spikes0.png', safeSprite = 'GraphicsTony/Spikes0.png', deadlySprite = 'GraphicsTony/Spikes2Blue.png'}
 function P.movingSpike:onLoad()
 	if self.text~=nil and tonumber(self.text)~=nil then
@@ -3382,7 +3382,7 @@ function P.movingSpike:onLoad()
 end
 function P.movingSpike:realtimeUpdate(dt, i, j)
 	self.currentTime = self.currentTime+dt*100
-	if self.currentTime>self.maxTime then
+	if self.currentTime>self.downTime + self.upTime then
 		self.currentTime = 0
 	end
 	self:updateDeadly()
@@ -3397,7 +3397,7 @@ function P.movingSpike:realtimeUpdate(dt, i, j)
 	end
 end
 function P.movingSpike:updateDeadly()
-	if self.currentTime>2*self.maxTime/3 then
+	if self.currentTime>self.downTime then
 		self.deadly = true
 	else
 		self.deadly = false
@@ -3417,8 +3417,18 @@ function P.movingSpike:updateSprite()
 	end
 end
 
-P.movingSpikeFast = P.movingSpike:new{name = "movingSpike2", maxTime = 100, safeSprite = 'GraphicsTony/Spikes0.png', deadlySprite = 'GraphicsTony/Spikes2Red.png'}
-P.movingSpikeSlow = P.movingSpike:new{name = "movingSpike3", maxTime = 200, safeSprite = 'GraphicsTony/Spikes0.png', deadlySprite = 'GraphicsTony/Spikes2Green.png'}
+P.movingSpikeFast = P.movingSpike:new{name = "movingSpike2", downTime = 66, upTime = 33, safeSprite = 'GraphicsTony/Spikes0.png', deadlySprite = 'GraphicsTony/Spikes2Red.png'}
+P.movingSpikeSlow = P.movingSpike:new{name = "movingSpike3", downTime = 133, upTime = 66, safeSprite = 'GraphicsTony/Spikes0.png', deadlySprite = 'GraphicsTony/Spikes2Green.png'}
+
+P.movingSpikeCustom = P.movingSpike:new{name = "movingSpikeCustom", deadlySprite = 'GraphicsTony/Spikes2.png'}
+function P.movingSpikeCustom:onLoad()
+	P.movingSpike.onLoad(self)
+	local roomid = mainMap[mapy][mapx].roomid
+	local roomUpTime = map.getFieldForRoom(roomid, "spikeUpTime")
+	local roomDownTime = map.getFieldForRoom(roomid, "spikeDownTime")
+	self.upTime = roomUpTime ~= nil and roomUpTime or self.upTime
+	self.downTime = roomDownTime ~= nil and roomDownTime or self.downTime
+end
 
 
 tiles[1] = P.invisibleTile
@@ -3638,6 +3648,7 @@ tiles[214] = P.dungeonSuper
 tiles[215] = P.movingSpike
 tiles[216] = P.movingSpikeFast
 tiles[217] = P.movingSpikeSlow
+tiles[218] = P.movingSpikeCustom
 
 
 return tiles
