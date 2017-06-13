@@ -658,6 +658,22 @@ end
 function P.scientist:bypassObstructsMovement(tile)
 	return self.hyde
 end
+function P.scientist:giveTreasureRewardOverride(treasureTile)
+	local reward = util.random(1000, 'toolDrop')
+	local quality = 1
+	if reward < 50 then
+		quality = 1
+	elseif reward < 420 then
+		quality = 2
+	elseif reward < 890 then
+		quality = 3
+	elseif reward < 990 then
+		quality = 4
+	elseif reward < 1000 then
+		quality = 5
+	end
+	tools.giveRandomTools(1,1,{quality})
+end
 
 P.dragon = P.character:new{name = "Dragon", description = "The One-Winged Beast", sprite = 'Graphics/Characters/Arachne.png',
 	scale = 1.1*scale, canHoldBasics = false, crime = "Solitary Confinement -- DO NOT LET OUT"}
