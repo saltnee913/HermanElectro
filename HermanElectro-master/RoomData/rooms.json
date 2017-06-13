@@ -1556,11 +1556,11 @@
           [0,0,1,0,0,0,0],
           [0,0,0,1,0,0,0],
           [1,0,0,0,0,0,0],
-          [0,1,0,0,0,0,0],
-          [0,0,0,0,0,1,0]],
+          [0,1,0,0,0,0,0]],
       "dirEnter": [1,1,0,1],
       "set": "many_solutions_many_tools",
-      "beginner": true
+      "beginner": true,
+      "toCheck": true
     },
 
     "most_1":
