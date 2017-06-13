@@ -144,7 +144,7 @@ function P.herman:onCharLoad()
 	myShader:send("player_range", 600)
 end
 
-P.felix = P.character:new{name = "Natasha", scale = 1.1*scale, description = "The Sharpshooter", sprite = 'Graphics/felix.png', startingTools = {0,0,0,0,0,0,1},
+P.felix = P.character:new{name = "Natasha", scale = 1.1*scale, description = "The Sharpshooter", sprite = 'Graphics/Characters/Sydney.png', startingTools = {0,0,0,0,0,0,1},
 crime = "Ten Years for Pyromanic Episode"}
 function P.felix:onCharLoad()
 	--tools[7] = tools.felixGun
@@ -557,7 +557,7 @@ end
 P.scientist = P.character:new{name = "Marie", description = "The Scientist", 
   sprite = 'Graphics/Characters/Sciencewoman.png', jekyllSprite = 'Graphics/Characters/Sciencewoman.png', hydeSprite = 'Graphics/Characters/MrHyde.png',
   powerSprite = 'Graphics/Characters/ShockedSciencewoman.png', powerHydeSprite = 'Graphics/Characters/ShockedMrHyde.png',
-  scale = 1.1*scale, hyde = false, pulsing = false, pulsingTimer = 0, pulsingTime = 2,
+  scale = 1.1*scale, hyde = false, pulsing = false, pulsingTimer = 0, pulsingTime = 3,
   powered = false, storedTile = nil,
   crime = "25 Years for Excessive Experimentation"}
 function P.scientist:onCharLoad()
@@ -657,6 +657,22 @@ function P.scientist:onRoomEnter()
 end
 function P.scientist:bypassObstructsMovement(tile)
 	return self.hyde
+end
+function P.scientist:giveTreasureRewardOverride(treasureTile)
+	local reward = util.random(1000, 'toolDrop')
+	local quality = 1
+	if reward < 50 then
+		quality = 1
+	elseif reward < 420 then
+		quality = 2
+	elseif reward < 890 then
+		quality = 3
+	elseif reward < 990 then
+		quality = 4
+	elseif reward < 1000 then
+		quality = 5
+	end
+	tools.giveRandomTools(1,1,{quality})
 end
 
 P.dragon = P.character:new{name = "Dragon", description = "The One-Winged Beast", sprite = 'Graphics/Characters/Arachne.png',

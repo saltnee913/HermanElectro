@@ -2139,7 +2139,7 @@ P.powerBreaker.useToolTile = P.powerBreaker.useToolNothing
 
 
 --Gabe Maker: turns you into gabe and takes away all your basics
-P.gabeMaker = P.superTool:new{name = "Gabriel's Locket", description = "Now I lay me down to sleep", baseRange = 0, image = 'Graphics/gabeSmall.png', quality = 5, cost = 9}
+P.gabeMaker = P.superTool:new{name = "Gabriel's Locket", description = "The wings of an angel, at the cost of all tools", baseRange = 0, image = 'Graphics/gabeSmall.png', quality = 5, cost = 9}
 function P.gabeMaker:usableOnNothing()
 	return true
 end

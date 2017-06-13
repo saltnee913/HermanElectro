@@ -2394,7 +2394,7 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 		elseif key=="t" then
 			toolManuel.open()
 		elseif key=="q" then
-			love.event.quit()
+			--love.event.quit()
 		end
 		return
 	end
@@ -3170,7 +3170,7 @@ function checkDeath()
 	end
 	if room[player.tileY][player.tileX]~=nil then
 		t = room[player.tileY][player.tileX]
-		if t:willKillPlayer() and not player.attributes.flying then
+		if t:willKillPlayer() and t:getHeight()<6 and not player.attributes.flying then
 			kill()
 		end
 	end
@@ -3778,6 +3778,8 @@ function onTeleport()
 	for j = 1, #pushables do
 		pushables[j]:setLoc()
 	end
+
+	player.character:onRoomEnter()
 
 	for i = 1, #processes do
 		if processes[i]:instanceof(processList.movePlayer) then
