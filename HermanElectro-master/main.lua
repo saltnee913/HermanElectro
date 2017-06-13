@@ -2664,20 +2664,21 @@ function restartGame()
 		player.prevx = player.x
 		player.prevTileX = player.enterX
 		for i = 1, tools.numNormalTools do
-			--[[local roomItemsGiven = map.getItemsGiven(mainMap[mapy][mapx].roomid)
-			local roomItemsNeeded = map.getItemsNeeded(mainMap[mapy][mapx].roomid)
-			if (completedRooms[mapy][mapx] == 1) and (roomItemsGiven~=nil and roomItemsNeeded~=nil) then
-				player.totalItemsGiven[i] = player.totalItemsGiven[i] - roomItemsGiven[1][i]
-				player.totalItemsNeeded[i] = player.totalItemsNeeded[i] - roomItemsNeeded[1][i]
-			end]]
+			if (completedRooms[mapy][mapx] == 1) then
+				player.totalItemsGiven[i] = player.totalItemsGiven[i] - map.getItemsGiven(mainMap[mapy][mapx].roomid)[1][i]
+				player.totalItemsNeeded[i] = player.totalItemsNeeded[i] - map.getItemsNeeded(mainMap[mapy][mapx].roomid)[1][i]
+			end
 			tools[i].numHeld = player.totalItemsGiven[i] - player.totalItemsNeeded[i]
 			if tools[i].numHeld < 0 then tools[i].numHeld = 0 end
 		end
-
-		if completedRooms[mapy][mapx]~=1 then
-			hackEnterRoom(mainMap[mapy][mapx].roomid, mapy, mapx)
+		completedRooms[mapy][mapx] = 0
+		for i = 0, mainMap.height do
+			for j = 0, mainMap.height do
+				if completedRooms[i][j] == 0 then
+					hackEnterRoom(mainMap[i][j].roomid, i, j)
+				end
+			end
 		end
-
 		setPlayerLoc()
 		myShader:send("b_and_w", 0)
 	else

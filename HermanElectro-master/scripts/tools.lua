@@ -4312,7 +4312,7 @@ end
 P.santasHat.useToolTile = P.santasHat.useToolNothing
 
 P.luckySaw = P.superTool:new{name = "Lucky Saw", description = "Knock on wood",
-image = 'Graphics/goldensaw2.png',
+image = 'Graphics/Tools/goldensaw2.png',
 baseRange = 1, quality = 2}
 function P.luckySaw:usableOnTile(tile)
 	return tile:instanceof(tiles.wall) and not tile.destroyed and tile.sawable
