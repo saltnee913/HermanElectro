@@ -1009,7 +1009,7 @@ P.flame = P.superTool:new{name = "Match", description = "Watch the world burn", 
 image = 'Graphics/Tools/flame.png', quality = 2} --Was desc: share the warmth
 function P.flame:usableOnTile(tile)
 	--flame cannot burn metal walls
-	if tile:instanceof(tiles.wall) and tile.sawable and not tile:instanceof(tiles.metalWall) and not tile.destroyed then
+	if tile:instanceof(tiles.wall) and tile.sawable and (not tile:instanceof(tiles.metalWall)) and (not tile.destroyed) then
 		return true
 	end
 	return false
@@ -1017,24 +1017,15 @@ end
 function P.flame:usableOnPushable(pushable)
 	return pushable:instanceof(pushableList.iceBox)
 end
-function P.flame:useToolTile(tile)
+function P.flame:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld - 1
 	tile.onFire = true
-	self:updateFire()
+	self:burn(tileY, tileX)
 end
 function P.flame:useToolPushable(pushable)
 	pushable:destroy()
 	if room[pushable.tileY][pushable.tileX]==nil or room[pushable.tileY][pushable.tileX]:usableOnNothing() then
 		room[pushable.tileY][pushable.tileX] = tiles.puddle:new()
-	end
-end
-function P.flame:updateFire()
-	for i = 1, roomHeight do
-		for j = 1, roomLength do
-			if room[i][j]~=nil and room[i][j]:instanceof(tiles.wall) and room[i][j].onFire then
-				self:burn(i,j)
-			end
-		end
 	end
 end
 function P.flame:burn(x,y)
@@ -1044,7 +1035,7 @@ function P.flame:burn(x,y)
 	room[x][y]:destroy()
 	for i = -1, 1 do
 		for j = -1, 1 do
-			if room[x+i]~=nil and room[x+i][y+j]~=nil and tools.flame:usableOnTile(room[x+i][y+j]) and not room[x+i][y+j].onFire then
+			if room[x+i]~=nil and room[x+i][y+j]~=nil and tools.flame:usableOnTile(room[x+i][y+j]) and (not room[x+i][y+j].onFire) then
 				room[x+i][y+j].onFire = true
 				self:burn(x+i, y+j)
 			end
@@ -5315,7 +5306,7 @@ function P.megaUnlock:useToolNothing()
 end
 P.megaUnlock.useToolTile = P.megaUnlock.useToolNothing
 
-P.medicine = P.superTool:new{name = "Erik's Medicine", baseRange = 0, description = "Just a little more time....", image = "Erik's Medicine",
+P.medicine = P.superTool:new{name = "Erik's Medicine", baseRange = 0, description = "Just a little more time....", image = "Graphics/eriksmedicine.png",
 quality = 1, cost = 1}
 function P.medicine:usableOnNothing()
 	return true
