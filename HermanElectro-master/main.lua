@@ -2394,7 +2394,7 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 		elseif key=="t" then
 			toolManuel.open()
 		elseif key=="q" then
-			love.event.quit()
+			--love.event.quit()
 		end
 		return
 	end
