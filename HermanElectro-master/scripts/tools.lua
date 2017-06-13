@@ -3842,7 +3842,7 @@ function P.superGun:useToolAnimal(animal)
 	animal:kill()
 end
 
-P.woodenRain = P.superTool:new{name = "Wooden Rain", description = "It's raining wood", image = 'Graphics/ladder.png',
+P.woodenRain = P.superTool:new{name = "Wooden Rain", description = "It's raining wood", image = 'Graphics/woodenrain2.png',
 baseRange = 0, quality = 2, cost  = 1}
 function P.woodenRain:usableOnNothing()
 	return true
