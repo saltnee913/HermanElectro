@@ -1891,6 +1891,10 @@ function P.treasureTile2:onEnter()
 	gameTime.timeLeft = gameTime.timeLeft+5
 end
 function P.treasureTile2:giveReward()
+	if player.character.giveTreasureRewardOverride ~= nil then
+		player.character:giveTreasureRewardOverride(self)
+		return
+	end
 	local reward = util.random(1000,'toolDrop')
 	if reward<775 then
 		tools.giveRandomTools(1)
