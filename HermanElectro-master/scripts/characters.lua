@@ -557,7 +557,7 @@ end
 P.scientist = P.character:new{name = "Marie", description = "The Scientist", 
   sprite = 'Graphics/Characters/Sciencewoman.png', jekyllSprite = 'Graphics/Characters/Sciencewoman.png', hydeSprite = 'Graphics/Characters/MrHyde.png',
   powerSprite = 'Graphics/Characters/ShockedSciencewoman.png', powerHydeSprite = 'Graphics/Characters/ShockedMrHyde.png',
-  scale = 1.1*scale, hyde = false, pulsing = false, pulsingTimer = 0, pulsingTime = 2,
+  scale = 1.1*scale, hyde = false, pulsing = false, pulsingTimer = 0, pulsingTime = 3,
   powered = false, storedTile = nil,
   crime = "25 Years for Excessive Experimentation"}
 function P.scientist:onCharLoad()
