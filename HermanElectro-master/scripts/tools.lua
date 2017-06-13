@@ -4333,7 +4333,7 @@ function P.saw:useToolPushable(pushable)
 end
 
 P.luckyBrick = P.superTool:new{name = "Lucky Brick", description = "Knock on...glass?",
-image = 'Graphics/brick.png',
+image = 'Graphics/goldenbrick.png',
 baseRange = 3, quality = 2}
 P.luckyBrick.usableOnTile = P.brick.usableOnTile
 function P.luckyBrick:useToolTile(tile, tileY, tileX)
