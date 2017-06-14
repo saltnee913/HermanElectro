@@ -21,7 +21,7 @@ P.roomUnlockTriggers["treasureTilesReached"] = {[5] = unlocks.foresightUnlock}
 --these unlock whenever you reach total stats
 P.statUnlockTriggers = {}
 P.statUnlockTriggers["boxesSawed"] = {[11] = unlocks.playerBoxUnlock}
-P.statUnlockTriggers["totalLosses"] = {[3] = unlocks.frederickUnlock}
+P.statUnlockTriggers["totalLosses"] = {[3] = unlocks.rammyUnlock}
 P.statUnlockTriggers["totalWins"] = {[3] = unlocks.dungeonUnlock}
 P.statUnlockTriggers["greenBeggarsShot"] = {[10] = unlocks.luckyPennyUnlock}
 P.statUnlockTriggers["stickyButtonsSponged"] = {[30] = unlocks.superStickyButtonUnlock}

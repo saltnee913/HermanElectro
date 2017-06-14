@@ -490,7 +490,7 @@ end
 function P.blocksMovementAnimal(animal)
 	local tileY = animal.tileY
 	local tileX = animal.tileX
-	if room[tileY] ~= nil and room[tileY][tileX] ~= nil and room[tileY][tileX]:obstructsMovementAnimal(animal) then
+	if room[tileY] ~= nil and room[tileY][tileX] ~= nil and room[tileY][tileX]:obstructsMovementAnimal(animal, true) then
 		return true
 	elseif room[tileY]~=nil and room[tileY][tileX]==nil and math.abs(animal.elevation)>3 then
 		return true

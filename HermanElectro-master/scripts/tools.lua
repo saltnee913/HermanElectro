@@ -1009,7 +1009,7 @@ P.flame = P.superTool:new{name = "Match", description = "Watch the world burn", 
 image = 'Graphics/Tools/flame.png', quality = 2} --Was desc: share the warmth
 function P.flame:usableOnTile(tile)
 	--flame cannot burn metal walls
-	if tile:instanceof(tiles.wall) and tile.sawable and not tile:instanceof(tiles.metalWall) and not tile.destroyed then
+	if tile:instanceof(tiles.wall) and tile.sawable and (not tile:instanceof(tiles.metalWall)) and (not tile.destroyed) then
 		return true
 	end
 	return false
@@ -1017,24 +1017,15 @@ end
 function P.flame:usableOnPushable(pushable)
 	return pushable:instanceof(pushableList.iceBox)
 end
-function P.flame:useToolTile(tile)
+function P.flame:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld - 1
 	tile.onFire = true
-	self:updateFire()
+	self:burn(tileY, tileX)
 end
 function P.flame:useToolPushable(pushable)
 	pushable:destroy()
 	if room[pushable.tileY][pushable.tileX]==nil or room[pushable.tileY][pushable.tileX]:usableOnNothing() then
 		room[pushable.tileY][pushable.tileX] = tiles.puddle:new()
-	end
-end
-function P.flame:updateFire()
-	for i = 1, roomHeight do
-		for j = 1, roomLength do
-			if room[i][j]~=nil and room[i][j]:instanceof(tiles.wall) and room[i][j].onFire then
-				self:burn(i,j)
-			end
-		end
 	end
 end
 function P.flame:burn(x,y)
@@ -1044,7 +1035,7 @@ function P.flame:burn(x,y)
 	room[x][y]:destroy()
 	for i = -1, 1 do
 		for j = -1, 1 do
-			if room[x+i]~=nil and room[x+i][y+j]~=nil and tools.flame:usableOnTile(room[x+i][y+j]) and not room[x+i][y+j].onFire then
+			if room[x+i]~=nil and room[x+i][y+j]~=nil and tools.flame:usableOnTile(room[x+i][y+j]) and (not room[x+i][y+j].onFire) then
 				room[x+i][y+j].onFire = true
 				self:burn(x+i, y+j)
 			end
@@ -1754,7 +1745,7 @@ end
 P.armageddon.useToolNothing = P.armageddon.useToolTile
 
 
-P.toolReroller = P.superTool:new{name = "Tool Reroller", description = "The right tools for the job", baseRange = 0, image = 'Graphics/toolreroller.png', quality = 2}
+P.toolReroller = P.superTool:new{name = "Tool Reroller", description = "The right tools for the job", baseRange = 0, image = 'Graphics/toolreroller2.png', quality = 2}
 function P.toolReroller:usableOnNothing() -- was desc You can't always have the right tools for the job
 	return true
 end
@@ -2148,7 +2139,7 @@ P.powerBreaker.useToolTile = P.powerBreaker.useToolNothing
 
 
 --Gabe Maker: turns you into gabe and takes away all your basics
-P.gabeMaker = P.superTool:new{name = "Gabriel's Locket", description = "Now I lay me down to sleep", baseRange = 0, image = 'Graphics/gabeSmall.png', quality = 5, cost = 9}
+P.gabeMaker = P.superTool:new{name = "Gabriel's Locket", description = "The wings of an angel, at the cost of all tools", baseRange = 0, image = 'Graphics/gabeSmall.png', quality = 5, cost = 9}
 function P.gabeMaker:usableOnNothing()
 	return true
 end
@@ -3842,7 +3833,7 @@ function P.superGun:useToolAnimal(animal)
 	animal:kill()
 end
 
-P.woodenRain = P.superTool:new{name = "Wooden Rain", description = "It's raining wood", image = 'Graphics/ladder.png',
+P.woodenRain = P.superTool:new{name = "Wooden Rain", description = "It's raining wood", image = 'Graphics/woodenrain2.png',
 baseRange = 0, quality = 2, cost  = 1}
 function P.woodenRain:usableOnNothing()
 	return true
@@ -4321,7 +4312,7 @@ end
 P.santasHat.useToolTile = P.santasHat.useToolNothing
 
 P.luckySaw = P.superTool:new{name = "Lucky Saw", description = "Knock on wood",
-image = 'Graphics/saw.png',
+image = 'Graphics/Tools/goldensaw2.png',
 baseRange = 1, quality = 2}
 function P.luckySaw:usableOnTile(tile)
 	return tile:instanceof(tiles.wall) and not tile.destroyed and tile.sawable
@@ -4342,7 +4333,7 @@ function P.saw:useToolPushable(pushable)
 end
 
 P.luckyBrick = P.superTool:new{name = "Lucky Brick", description = "Knock on...glass?",
-image = 'Graphics/brick.png',
+image = 'Graphics/goldenbrick.png',
 baseRange = 3, quality = 2}
 P.luckyBrick.usableOnTile = P.brick.usableOnTile
 function P.luckyBrick:useToolTile(tile, tileY, tileX)
@@ -4407,7 +4398,7 @@ function P.tileFlipper:useToolTile(tile, tileY, tileX)
 	end
 end
 
-P.animalReroller = P.superTool:new{name = "Animal Reroller", description = "What could go wrong?", image = 'Graphics/toolreroller.png',
+P.animalReroller = P.superTool:new{name = "Animal Reroller", description = "What could go wrong?", image = 'Graphics/animalreroller.png',
 baseRange = 0, quality = 1, cost  = 1}
 function P.animalReroller:usableOnNothing()
 	return true
@@ -4432,7 +4423,7 @@ function P.animalReroller:getAnimalList()
 end
 
 P.boxReroller = P.superTool:new{name = "Box Reroller", description = "", cost = .5,
-image = 'Graphics/roomreroller.png',
+image = 'Graphics/boxreroller2.png',
 baseRange = 0, quality = 1}
 function P.boxReroller:usableOnNothing()
 	return true

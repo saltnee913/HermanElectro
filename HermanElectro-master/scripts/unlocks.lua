@@ -47,6 +47,9 @@ local function writeUnlocks()
 end
 
 function P.displayUnlock(unlockId)
+	if P[unlockId].hidden then
+		return
+	end
 	local newUnlockDisplay = unlockDisplay:new{unlockToShow = unlockId}
 	if P.unlocksDisplay == nil then
 		P.unlocksDisplay = newUnlockDisplay
