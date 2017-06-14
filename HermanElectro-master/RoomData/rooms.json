@@ -19486,7 +19486,8 @@
           [0,0,1,0,0,0,0],
           [0,0,0,1,0,0,0],
           [0,0,0,0,0,1,0]],
-      "set": "glue_snails_in_a_line"
+      "set": "glue_snails_in_a_line",
+      "dumb": true
     },
 
       "ben_not_erik":
