@@ -15,6 +15,15 @@ local function drawHere(image, x, y, rotation)
 end
 local function drawAtTile(image, tileX, tileY, x, y, yOffset, rotation)
 	if yOffset == nil then yOffset = 0 end
+	if rotation ~= nil then
+		if rotation == 1 or rotation == 2 then
+			tileX = tileX + 1
+		end
+		if rotation == 2 or rotation == 3 then
+			tileY = tileY + 1
+		end
+		rotation = rotation*math.pi/2
+	end
 	drawHere(image, x + tileX*tileWidth, y + tileY*tileHeight + yOffset, rotation)
 end
 local function drawGreen(tileX, tileY, x, y, yOffset)
@@ -250,6 +259,45 @@ P.brickScreens = {
 		drawAtTile(player.character.sprite, 7, 0, x, y)
 	end,
 
+	--bricking buttons
+	function(x, y, scale)
+		--normal button
+		drawAtTile(tiles.button.upSprite, 3, 0, x, y, tiles.mousetrap.yOffset)
+		drawAtTile(tiles.powerSupply.sprite, 4, 0, x, y)
+		drawAtTile(tiles.verticalWire.sprite, 2, 0, x, y, tiles.verticalWire.yOffset, 1)
+		drawAtTile(player.character.sprite, 0, 0, x, y)
+		drawGreen(3, 0, x, y, tiles.button.yOffset)
+
+		drawAtTile(tiles.powerSupply.sprite, 11, 0, x, y)
+		drawAtTile(tiles.button.brickedSprite, 10, 0, x, y)
+		drawAtTile(tiles.verticalWire.poweredSprite, 9, 0, x, y, tiles.verticalWire.yOffset, 1)
+		drawAtTile(player.character.sprite, 7, 0, x, y)
+
+		--stay button
+		drawAtTile(tiles.stayButton.upSprite, 3, 2, x, y, tiles.stayButton.yOffset)
+		drawAtTile(tiles.powerSupply.sprite, 4, 2, x, y)
+		drawAtTile(tiles.verticalWire.sprite, 2, 2, x, y, tiles.verticalWire.yOffset, 1)
+		drawAtTile(player.character.sprite, 0, 2, x, y)
+		drawGreen(3, 2, x, y, tiles.stayButton.yOffset)
+
+		drawAtTile(tiles.powerSupply.sprite, 11, 2, x, y)
+		drawAtTile(tiles.stayButton.brickedSprite, 10, 2, x, y)
+		drawAtTile(tiles.verticalWire.poweredSprite, 9, 2, x, y, tiles.verticalWire.yOffset, 1)
+		drawAtTile(player.character.sprite, 7, 2, x, y)
+
+		--sticky button
+		drawAtTile(tiles.stickyButton.upSprite, 3, 4, x, y, tiles.stickyButton.yOffset)
+		drawAtTile(tiles.powerSupply.sprite, 4, 4, x, y)
+		drawAtTile(tiles.verticalWire.sprite, 2, 4, x, y, tiles.verticalWire.yOffset, 1)
+		drawAtTile(player.character.sprite, 0, 4, x, y)
+		drawGreen(3, 4, x, y, tiles.stickyButton.yOffset)
+
+		drawAtTile(tiles.powerSupply.sprite, 11, 4, x, y)
+		drawAtTile(tiles.stickyButton.brickedSprite, 10, 4, x, y)
+		drawAtTile(tiles.verticalWire.poweredSprite, 9, 4, x, y, tiles.verticalWire.yOffset, 1)
+		drawAtTile(player.character.sprite, 7, 4, x, y)
+	end,
+
 	--mousetrap
 	function(x, y, scale)
 		--deadly mousetrap
@@ -280,7 +328,7 @@ P.brickScreens = {
 		drawAtTile(animalList.pitbull.sprite, 7, 0, x, y)
 		drawHere(animalList.waitSprite, x + 7*tileWidth 
 			+ util.getImage(animalList.pitbull.sprite):getWidth()/2 - util.getImage(animalList.waitSprite):getWidth()/2, 
-			y + 0*tileHeight - util.getImage(animalList.waitSprite):getHeight(), rotation)
+			y + 0*tileHeight - util.getImage(animalList.waitSprite):getHeight())
 
 		drawAtTile(player.character.sprite, 11, 0, x, y)
 		drawAtTile(animalList.pitbull.sprite, 12, 0, x, y)
@@ -294,7 +342,7 @@ P.brickScreens = {
 		drawAtTile(animalList.cat.sprite, 7, 2, x, y)
 		drawHere(animalList.waitSprite, x + 7*tileWidth 
 			+ util.getImage(animalList.cat.sprite):getWidth()/2 - util.getImage(animalList.waitSprite):getWidth()/2, 
-			y + 2*tileHeight - util.getImage(animalList.waitSprite):getHeight(), rotation)
+			y + 2*tileHeight - util.getImage(animalList.waitSprite):getHeight())
 
 		drawAtTile(player.character.sprite, 11, 2, x, y)
 		drawAtTile(animalList.cat.sprite, 12, 2, x, y)
@@ -308,7 +356,7 @@ P.brickScreens = {
 		drawAtTile(animalList.glueSnail.sprite, 7, 4, x, y)
 		drawHere(animalList.waitSprite, x + 7*tileWidth 
 			+ util.getImage(animalList.glueSnail.sprite):getWidth()/2 - util.getImage(animalList.waitSprite):getWidth()/2, 
-			y + 4*tileHeight - util.getImage(animalList.waitSprite):getHeight(), rotation)
+			y + 4*tileHeight - util.getImage(animalList.waitSprite):getHeight())
 
 		drawAtTile(player.character.sprite, 11, 4, x, y)
 		drawAtTile(animalList.glueSnail.sprite, 12, 4, x, y)
