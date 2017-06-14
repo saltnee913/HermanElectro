@@ -947,7 +947,7 @@ end
 
 
 --Charger: makes a conductive tile into a power supply
-P.charger = P.superTool:new{name = 'Battery Pack', description = "Empowerment", baseRange = 1, image = 'Graphics/powerizer.png', quality = 4, cost = 5}
+P.charger = P.superTool:new{name = 'Battery Pack', description = "Empowerment", baseRange = 1, image = 'Graphics/battery.png', quality = 4, cost = 5}
 function P.charger:usableOnTile(tile) --Was desc Power to the people aslo considered empower, empowering
 	--if not tile.destroyed and not tile.charged and 
 	if tile.canBePowered and not tile.charged then return true end
@@ -960,7 +960,7 @@ end
 
 
 --Lets you see everywhere in the current room
-P.visionChanger = P.superTool:new{name = 'Flashlight', description = "Dispel the dark", baseRange = 0, image = 'Graphics/visionChanger.png', quality = 1}
+P.visionChanger = P.superTool:new{name = 'Flashlight', description = "Dispel the dark", baseRange = 0, image = 'Graphics/flashlight.png', quality = 1}
 function P.visionChanger:usableOnTile(tile)--Was "Dispel the phantoms"
 	return true
 end
