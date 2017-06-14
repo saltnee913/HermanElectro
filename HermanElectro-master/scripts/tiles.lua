@@ -3386,6 +3386,9 @@ sprite = 'GraphicsTony/Spikes0.png', safeSprite = 'GraphicsTony/Spikes0.png', de
 function P.movingSpike:onLoad()
 	if self.text~=nil and tonumber(self.text)~=nil then
 		self.currentTime = tonumber(self.text)
+		while self.currentTime>self.downTime+self.upTime do
+			self.currentTime = self.currentTime-(self.downTime+self.upTime)
+		end
 	end
 end
 function P.movingSpike:realtimeUpdate(dt, i, j)
