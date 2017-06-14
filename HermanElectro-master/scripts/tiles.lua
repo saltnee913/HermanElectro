@@ -93,9 +93,9 @@ end
 --if can only block animal movement, make blocksAnimalMovement true
 --obstructsMovement() is for ACTUALLY blocking player movement (in new elevation system)
 --obstructsMovementAnimal() is for ACTUALLY blocking animal movement
---map has blocksMovementAnimal() function as well
+--map has blocksMovementAnimal() function as well, isPreMove is true there
 --pretty confusing, even I am a bit confused
-function P.tile:obstructsMovementAnimal(animal)
+function P.tile:obstructsMovementAnimal(animal, isPreMove)
 	if animal.flying then
 		return false
 	else
@@ -1731,8 +1731,12 @@ function P.goldBeggar:providePayment()
 end
 
 P.ladder = P.tile:new{name = "ladder", sprite = 'Graphics/laddertile.png', blocksAnimalMovement = true}
-function P.ladder:obstructsMovementAnimal(animal)
-	return self ~= room[animal.prevTileY][animal.prevTileX]
+function P.ladder:obstructsMovementAnimal(animal, isPreMove)
+	if isPreMove then
+		return self ~= room[animal.tileY][animal.tileX]
+	else
+		return self ~= room[animal.prevTileY][animal.prevTileX]
+	end
 end
 
 P.mousetrapOff = P.mousetrap:new{name = "mousetrapOff", safe = true, sprite = 'Graphics/mousetrapsafe.png'}
