@@ -1745,7 +1745,7 @@ end
 P.armageddon.useToolNothing = P.armageddon.useToolTile
 
 
-P.toolReroller = P.superTool:new{name = "Tool Reroller", description = "The right tools for the job", baseRange = 0, image = 'Graphics/toolreroller.png', quality = 2}
+P.toolReroller = P.superTool:new{name = "Tool Reroller", description = "The right tools for the job", baseRange = 0, image = 'Graphics/toolreroller2.png', quality = 2}
 function P.toolReroller:usableOnNothing() -- was desc You can't always have the right tools for the job
 	return true
 end
@@ -4398,7 +4398,7 @@ function P.tileFlipper:useToolTile(tile, tileY, tileX)
 	end
 end
 
-P.animalReroller = P.superTool:new{name = "Animal Reroller", description = "What could go wrong?", image = 'Graphics/toolreroller.png',
+P.animalReroller = P.superTool:new{name = "Animal Reroller", description = "What could go wrong?", image = 'Graphics/animalreroller.png',
 baseRange = 0, quality = 1, cost  = 1}
 function P.animalReroller:usableOnNothing()
 	return true
@@ -4423,7 +4423,7 @@ function P.animalReroller:getAnimalList()
 end
 
 P.boxReroller = P.superTool:new{name = "Box Reroller", description = "", cost = .5,
-image = 'Graphics/roomreroller.png',
+image = 'Graphics/boxreroller2.png',
 baseRange = 0, quality = 1}
 function P.boxReroller:usableOnNothing()
 	return true
