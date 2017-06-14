@@ -4423,7 +4423,7 @@ function P.animalReroller:getAnimalList()
 end
 
 P.boxReroller = P.superTool:new{name = "Box Reroller", description = "", cost = .5,
-image = 'Graphics/roomreroller.png',
+image = 'Graphics/boxreroller2.png',
 baseRange = 0, quality = 1}
 function P.boxReroller:usableOnNothing()
 	return true
