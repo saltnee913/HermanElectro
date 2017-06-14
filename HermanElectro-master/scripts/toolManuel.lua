@@ -226,6 +226,14 @@ P.spongeScreens = {
 }
 P.brickScreens = {
 	function(x, y, scale)
+		drawAtTile(tiles.glassWall.sprite, 3, 0, x, y, tiles.glassWall.yOffset)
+		drawAtTile(player.character.sprite, 0, 0, x, y)
+		drawGreen(3, 0, x, y, tiles.glassWall.yOffset)
+
+		drawAtTile(tiles.glassWall.destroyedSprite, 10, 0, x, y)
+		drawAtTile(player.character.sprite, 7, 0, x, y)
+	end,
+	function(x, y, scale)
 		--guard
 		drawAtTile(player.character.sprite, 0, 0, x, y)
 		drawAtTile(animalList.pitbull.sprite, 2, 0, x, y)
