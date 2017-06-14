@@ -226,6 +226,7 @@ P.spongeScreens = {
 }
 P.brickScreens = {
 	function(x, y, scale)
+		--guard
 		drawAtTile(player.character.sprite, 0, 0, x, y)
 		drawAtTile(animalList.pitbull.sprite, 2, 0, x, y)
 		drawGreen(2, 0, x, y)
@@ -238,6 +239,34 @@ P.brickScreens = {
 
 		drawAtTile(player.character.sprite, 11, 0, x, y)
 		drawAtTile(animalList.pitbull.sprite, 12, 0, x, y)
+
+		--cat
+		drawAtTile(player.character.sprite, 0, 2, x, y)
+		drawAtTile(animalList.cat.sprite, 2, 2, x, y)
+		drawGreen(2, 2, x, y)
+
+		drawAtTile(player.character.sprite, 5, 2, x, y)
+		drawAtTile(animalList.cat.sprite, 7, 2, x, y)
+		drawHere(animalList.waitSprite, x + 7*tileWidth 
+			+ util.getImage(animalList.cat.sprite):getWidth()/2 - util.getImage(animalList.waitSprite):getWidth()/2, 
+			y + 2*tileHeight - util.getImage(animalList.waitSprite):getHeight(), rotation)
+
+		drawAtTile(player.character.sprite, 11, 2, x, y)
+		drawAtTile(animalList.cat.sprite, 12, 2, x, y)
+
+		--snail
+		drawAtTile(player.character.sprite, 0, 4, x, y)
+		drawAtTile(animalList.glueSnail.sprite, 2, 4, x, y)
+		drawGreen(2, 4, x, y)
+
+		drawAtTile(player.character.sprite, 5, 4, x, y)
+		drawAtTile(animalList.glueSnail.sprite, 7, 4, x, y)
+		drawHere(animalList.waitSprite, x + 7*tileWidth 
+			+ util.getImage(animalList.glueSnail.sprite):getWidth()/2 - util.getImage(animalList.waitSprite):getWidth()/2, 
+			y + 4*tileHeight - util.getImage(animalList.waitSprite):getHeight(), rotation)
+
+		drawAtTile(player.character.sprite, 11, 4, x, y)
+		drawAtTile(animalList.glueSnail.sprite, 12, 4, x, y)
 	end
 }
 P.gunScreens = {}
