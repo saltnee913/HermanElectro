@@ -109,7 +109,7 @@ P.ladderScreens = {
 
 		drawAtTile(tiles.ladder.sprite, 9, 4, x, y)
 		drawAtTile(animalList.pitbull.sprite, 10, 4, x, y)
-		drawAtTile(player.character.sprite, 9, 4, x, y)
+		drawAtTile(player.character.sprite, 8, 4, x, y)
 	end
 }
 
