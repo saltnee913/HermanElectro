@@ -4449,7 +4449,7 @@ function P.boxReroller:getBoxList()
 			pushableList.bombBox}
 end
 
-P.animalTrainer = P.superTool:new{name = "Animal Trainer", image = 'Graphics/whip.png', cost = .5,
+P.animalTrainer = P.superTool:new{name = "Animal Trainer", image = 'Graphics/whip3.png', cost = .5,
 quality = 1, baseRange = 3}
 function P.animalTrainer:usableOnAnimal()
 	return true
@@ -4459,7 +4459,7 @@ function P.animalTrainer:useToolAnimal(animal)
 	animal.trained = true
 end
 
-P.animalEnslaver = P.superTool:new{name = "Creature Command", description = "They'll let you take control", heldAnimal = nil, image = 'Graphics/whip2.png', cost = 1,
+P.animalEnslaver = P.superTool:new{name = "Creature Command", description = "They'll let you take control", heldAnimal = nil, image = 'Graphics/mindcontrol.png', cost = 1,
 baseImage = 'Graphics/whip.png',
 quality = 2, baseRange = 3}
 function P.animalEnslaver:usableOnAnimal()
