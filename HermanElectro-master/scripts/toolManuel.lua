@@ -23,6 +23,7 @@ local function drawGreen(tileX, tileY, x, y, yOffset)
 end
 
 P.sawScreens = {
+	--destroying walls
 	function(x, y, scale)
 		drawAtTile(tiles.wall.sprite, 1, 0, x, y, tiles.wall.yOffset)
 		drawAtTile(player.character.sprite, 0, 0, x, y)
@@ -31,6 +32,8 @@ P.sawScreens = {
 		drawAtTile(tiles.wall.destroyedSprite, 8, 0, x, y)
 		drawAtTile(player.character.sprite, 7, 0, x, y)
 	end,
+
+	--destroying metal walls
 	function(x, y, scale)
 		drawAtTile(tiles.metalWall.sprite, 1, 0, x, y, tiles.metalWall.yOffset)
 		drawAtTile(player.character.sprite, 0, 0, x, y)
@@ -51,6 +54,8 @@ P.sawScreens = {
 		drawAtTile(tiles.verticalWire.sprite, 8, 6, x, y)
 		drawAtTile(player.character.sprite, 7, 5, x, y)
 	end,
+
+	--destroying boxes
 	function(x, y, scale)
 		drawAtTile(pushableList.box.sprite, 1, 0, x, y)
 		drawAtTile(player.character.sprite, 0, 0, x, y)
@@ -61,6 +66,7 @@ P.sawScreens = {
 }
 
 P.ladderScreens = {
+	--laddering pits
 	function(x, y, scale)
 		drawAtTile(tiles.pit.sprite, 1, 0, x, y)
 		drawAtTile(player.character.sprite, 0, 0, x, y)
@@ -77,6 +83,8 @@ P.ladderScreens = {
 		drawAtTile(tiles.poweredFloor.destroyedSprite, 8, 4, x, y)
 		drawAtTile(player.character.sprite, 7, 4, x, y)
 	end,
+
+	--blocking animals
 	function(x, y, scale)
 		drawAtTile(animalList.pitbull.sprite, 3, 0, x, y)
 		drawAtTile(player.character.sprite, 1, 0, x, y)
@@ -97,6 +105,7 @@ P.ladderScreens = {
 }
 
 P.wireCutterScreens = {
+	--cutting wires
 	function(x, y, scale)
 		drawAtTile(tiles.verticalWire.sprite, 1, 0, x, y)
 		drawAtTile(player.character.sprite, 0, 0, x, y)
@@ -118,6 +127,7 @@ P.wireCutterScreens = {
 		drawAtTile(player.character.sprite, 7, 5, x, y)
 	end,
 
+	--destroying electric floors
 	function(x, y, scale)
 		drawAtTile(tiles.electricFloor.sprite, 1, 0, x, y)
 		drawAtTile(player.character.sprite, 0, 0, x, y)
@@ -140,6 +150,7 @@ P.wireCutterScreens = {
 	end
 }
 P.waterScreens = {
+	--destroying power supplies
 	function(x, y, scale)
 		drawAtTile(tiles.powerSupply.sprite, 1, 0, x, y)
 		drawAtTile(player.character.sprite, 0, 0, x, y)
@@ -151,6 +162,7 @@ P.waterScreens = {
 		drawAtTile(player.character.sprite, 7, 0, x, y)
 	end,
 
+	--destroying electric floors
 	function(x, y, scale)
 		drawAtTile(tiles.electricFloor.sprite, 1, 0, x, y)
 		drawAtTile(player.character.sprite, 0, 0, x, y)
@@ -172,6 +184,7 @@ P.waterScreens = {
 		drawAtTile(player.character.sprite, 7, 5, x, y)
 	end,
 
+	--making puddles
 	function(x, y, scale)
 		drawAtTile(player.character.sprite, 0, 0, x, y)
 		drawGreen(1, 0, x, y)
@@ -192,6 +205,7 @@ P.waterScreens = {
 	end
 }
 P.spongeScreens = {
+	--cleaning puddles
 	function(x, y, scale)
 		drawAtTile(player.character.sprite, 0, 0, x, y)
 		drawAtTile(tiles.puddle.sprite, 1, 0, x, y)
@@ -211,6 +225,7 @@ P.spongeScreens = {
 		drawAtTile(player.character.sprite, 7, 5, x, y)
 	end,
 
+	--unsticking buttons
 	function(x, y, scale)
 		drawAtTile(player.character.sprite, 0, 1, x, y)
 		drawAtTile(tiles.powerSupply.sprite, 1, 0, x, y)
@@ -225,6 +240,7 @@ P.spongeScreens = {
 	end
 }
 P.brickScreens = {
+	--glass wall
 	function(x, y, scale)
 		drawAtTile(tiles.glassWall.sprite, 3, 0, x, y, tiles.glassWall.yOffset)
 		drawAtTile(player.character.sprite, 0, 0, x, y)
@@ -233,6 +249,27 @@ P.brickScreens = {
 		drawAtTile(tiles.glassWall.destroyedSprite, 10, 0, x, y)
 		drawAtTile(player.character.sprite, 7, 0, x, y)
 	end,
+
+	--mousetrap
+	function(x, y, scale)
+		--deadly mousetrap
+		drawAtTile(tiles.mousetrap.deadlySprite, 3, 0, x, y, tiles.mousetrap.yOffset)
+		drawAtTile(player.character.sprite, 0, 0, x, y)
+		drawGreen(3, 0, x, y, tiles.mousetrap.yOffset)
+
+		drawAtTile(tiles.mousetrap.brickedSprite, 10, 0, x, y)
+		drawAtTile(player.character.sprite, 7, 0, x, y)
+
+		--safe mousetrap
+		drawAtTile(tiles.mousetrap.safeSprite, 3, 4, x, y, tiles.mousetrap.yOffset)
+		drawAtTile(player.character.sprite, 0, 4, x, y)
+		drawGreen(3, 4, x, y, tiles.mousetrap.yOffset)
+
+		drawAtTile(tiles.mousetrap.brickedSprite, 10, 4, x, y)
+		drawAtTile(player.character.sprite, 7, 4, x, y)
+	end,
+
+	--stunning animals
 	function(x, y, scale)
 		--guard
 		drawAtTile(player.character.sprite, 0, 0, x, y)
