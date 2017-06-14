@@ -57,7 +57,7 @@
 		},
 		"finalRooms": 
 		{
-			"filePath": "RoomData/finalroomscost2.json",
+			"filePath": "RoomData/finalrooms.json",
 			"requirements":
 			{
 				"not":
