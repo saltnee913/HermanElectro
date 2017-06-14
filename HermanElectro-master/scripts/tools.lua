@@ -4549,7 +4549,7 @@ P.roomCompletionBonus.usableOnTile = P.roomCompletionBonus.usableOnNothing
 P.roomCompletionBonus.useToolTile = P.roomCompletionBonus.useToolNothing
 
 P.fishingPole = P.superTool:new{name = "Fishing Pole", description = "Find the treasures that lie beneath", quality = 2, baseRange = 5, cost = 1,
-image = 'Graphics/Tools/boxMagnet.png'}
+image = 'Graphics/Tools/fishingrod.png'}
 function P.fishingPole:usableOnTile(tile)
 	return tile:instanceof(tiles.puddle)
 end
