@@ -4422,7 +4422,7 @@ function P.animalReroller:getAnimalList()
 			animalList.snail, animalList.glueSnail, animalList.conductiveSnail, animalList.conductiveDog}
 end
 
-P.boxReroller = P.superTool:new{name = "Box Reroller", description = "", cost = .5,
+P.boxReroller = P.superTool:new{name = "Box Reroller", description = "Nuff Said", cost = .5,
 image = 'Graphics/boxreroller2.png',
 baseRange = 0, quality = 1}
 function P.boxReroller:usableOnNothing()
@@ -4459,7 +4459,7 @@ function P.animalTrainer:useToolAnimal(animal)
 	animal.trained = true
 end
 
-P.animalEnslaver = P.superTool:new{name = "Creature Command", description = "They'll let you take control", heldAnimal = nil, image = 'Graphics/whip.png', cost = 1,
+P.animalEnslaver = P.superTool:new{name = "Creature Command", description = "They'll let you take control", heldAnimal = nil, image = 'Graphics/whip2.png', cost = 1,
 baseImage = 'Graphics/whip.png',
 quality = 2, baseRange = 3}
 function P.animalEnslaver:usableOnAnimal()
