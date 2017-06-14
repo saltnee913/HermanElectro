@@ -3398,7 +3398,9 @@ function P.movingSpike:realtimeUpdate(dt, i, j)
 	end
 	self:updateDeadly()
 	self:updateSprite()
-	if player.tileY==i and player.tileX==j and self:willKillPlayer() then
+
+	local playerTileCoords = coordsToTile(player.y, player.x)
+	if playerTileCoords.y==i and playerTileCoords.x==j and self:willKillPlayer() then
 		kill()
 	end
 	for k = 1, #animals do

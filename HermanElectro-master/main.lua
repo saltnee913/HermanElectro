@@ -1766,7 +1766,6 @@ function coordsToTile(y,x)
 	local ret = {x = 0, y = 0}
 	ret.x = coordsToTileX(x)
 	ret.y = coordsToTileY(y)
-	log(ret.x.."   "..ret.y)
 	return ret
 end
 
