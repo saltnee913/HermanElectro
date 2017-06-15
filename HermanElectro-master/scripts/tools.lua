@@ -947,7 +947,7 @@ end
 
 
 --Charger: makes a conductive tile into a power supply
-P.charger = P.superTool:new{name = 'Battery Pack', description = "Empowerment", baseRange = 1, image = 'Graphics/powerizer.png', quality = 4, cost = 5}
+P.charger = P.superTool:new{name = 'Battery Pack', description = "Empowerment", baseRange = 1, image = 'Graphics/battery.png', quality = 4, cost = 5}
 function P.charger:usableOnTile(tile) --Was desc Power to the people aslo considered empower, empowering
 	--if not tile.destroyed and not tile.charged and 
 	if tile.canBePowered and not tile.charged then return true end
@@ -960,7 +960,7 @@ end
 
 
 --Lets you see everywhere in the current room
-P.visionChanger = P.superTool:new{name = 'Flashlight', description = "Dispel the dark", baseRange = 0, image = 'Graphics/visionChanger.png', quality = 1}
+P.visionChanger = P.superTool:new{name = 'Flashlight', description = "Dispel the dark", baseRange = 0, image = 'Graphics/flashlight.png', quality = 1}
 function P.visionChanger:usableOnTile(tile)--Was "Dispel the phantoms"
 	return true
 end
@@ -1054,7 +1054,7 @@ function P.crowbar:useToolTile(tile)
 	tile.stopped = true
 end
 
-P.doorstop = P.superTool:new{name = "doorstop", description = "Removed.", baseRange = 1, image = 'Graphics/unsticker.png', quality = 1}
+P.doorstop = P.superTool:new{name = "doorstop", description = "Removed.", baseRange = 1, image = 'Graphics/doorstop.png', quality = 1}
 function P.doorstop:usableOnTile(tile)
 	if tile:instanceof(tiles.vPoweredDoor) and (not tile.stopped) and (not tile.blocksMovement) then return true end
 	return false
@@ -3278,7 +3278,7 @@ end
 
 
 --Stealth Bomber: Teleports you forward and bombs the tiles in between
-P.stealthBomber = P.superTool:new{name = "Stealth Bomber", description = "Drop 'n' Go", image = 'Graphics/stealthbomber.png', baseRange = 2, quality = 4, cost = 6}
+P.stealthBomber = P.superTool:new{name = "Stealth Bomber", description = "Drop 'n' Go", image = 'Graphics/stealthbomber2.png', baseRange = 2, quality = 4, cost = 6}
 P.stealthBomber.getToolableTiles = P.tool.getToolableTilesBox
 function P.stealthBomber:usableOnNothing(tileY, tileX)
 	for i = 1, #pushables do
@@ -3543,7 +3543,7 @@ P.spinningSword.useToolTile = P.spinningSword.useToolNothing
 
 
 --Steroids: Moves all tiles in the row
-P.ironMan = P.superTool:new{name = "Steroids", description = "Do you even lift?", image = 'Graphics/ironman.png',
+P.ironMan = P.superTool:new{name = "Steroids", description = "Do you even lift?", image = 'Graphics/ironman2.png',
 baseRange = 1, quality = 4, cost  = 5}
 function P.ironMan:usableOnTile(tile)
 	local tileY
@@ -3640,7 +3640,7 @@ end
 
 
 --Super Saw: cuts down concrete
-P.superSaw = P.superTool:new{name = "Super Saw", description = "I came, I sawed, I conquered", image = 'Graphics/saw.png',
+P.superSaw = P.superTool:new{name = "Super Saw", description = "I came, I sawed, I conquered", image = 'Graphics/supersaw.png',
 baseRange = 1, quality = -1}
 function P.superSaw:usableOnPushable()
 	return true
@@ -3654,7 +3654,7 @@ end
 
 
 --Super Ladder: spreads ladders
-P.superLadder = P.superTool:new{name = "Super Ladder", description = "OH MY GOD, IT'S SPREADING", image = 'Graphics/ladder.png',
+P.superLadder = P.superTool:new{name = "Super Ladder", description = "OH MY GOD, IT'S SPREADING", image = 'Graphics/superladder.png',
 baseRange = 1, quality = -1}
 P.superLadder.usableOnNothing = P.ladder.usableOnNothing
 P.superLadder.useToolNothing = P.ladder.useToolNothing
@@ -3690,7 +3690,7 @@ end
 
 --Super Wire-cutters: can cut blue wires
 P.superWireCutters = P.wireCutters:new{name = "Super Wire-cutters", description = "They can't stop you", -- Anything more ... you know
-image = 'Graphics/wirecutters.png', quality = -1}-- was "Super Wire Cutters" ... Stone Splitters sounds cool but misleading.. Arkham's razor, Laser razor, Incsors: Something to chew on
+image = 'Graphics/superwirecutters.png', quality = -1}-- was "Super Wire Cutters" ... Stone Splitters sounds cool but misleading.. Arkham's razor, Laser razor, Incsors: Something to chew on
 function P.superWireCutters:usableOnNonOverlay(tile) -- "A cut above"
 	return not tile.destroyed and (tile:instanceof(tiles.wire)
 	or tile:instanceof(tiles.conductiveGlass) or tile:instanceof(tiles.reinforcedConductiveGlass) or tile:instanceof(tiles.electricFloor))
@@ -3702,7 +3702,7 @@ end
 
 --Super Water Bottle: works on unbreakable efloors
 P.superWaterBottle = P.waterBottle:new{name = "Super Waterbottle", description = "Break the unbreakable",
-image = 'Graphics/superwaterbottle.png', baseRange = 3, quality = -1}
+image = 'Graphics/superwaterbottle2.png', baseRange = 3, quality = -1}
 function P.superWaterBottle:usableOnTile(tile)
 	if not tile.destroyed and ((tile:instanceof(tiles.powerSupply) and not tile:instanceof(tiles.notGate)) or (tile:instanceof(tiles.electricFloor)) or tile:instanceof(tiles.untriggeredPowerSupply)) then
 		return true
@@ -3731,7 +3731,7 @@ end
 
 
 --Super Sponge: spreads sponge effect
-P.superSponge = P.superTool:new{name = "Super Sponge", description = "Clean everything", image = 'NewGraphics/sponge copy.png',
+P.superSponge = P.superTool:new{name = "Super Sponge", description = "Clean everything", image = 'NewGraphics/supersponge.png',
 baseRange = 1, quality = -1}
 function P.superSponge:usableOnTile(tile)
 	if tile:instanceof(tiles.dustyGlassWall) and tile.blocksVision then
@@ -3775,7 +3775,7 @@ end
 
 --Super Brick: can break reinforced glass and double stuns animals
 P.superBrick = P.brick:new{name = "Super Brick", description = "Brick the unbrickable",
-image = 'Graphics/superbrick.png', baseRange = 5, quality = -1}
+image = 'Graphics/superbrick2.png', baseRange = 5, quality = -1}
 function P.superBrick:usableOnTile(tile)
 	if not tile.bricked and tile:instanceof(tiles.button) then
 		return true
@@ -3805,7 +3805,7 @@ end
 
 --Super Gun: gun, but radial and works on concrete
 P.superGun = P.superTool:new{name = "Super Gun", description = "", baseRange = 5,
-image = 'Graphics/supergun.png', quality = -1}
+image = 'Graphics/supergun2.png', quality = -1}
 P.superGun.getToolableTiles = P.tool.getToolableTilesBox
 P.superGun.getToolableAnimals = P.tool.getToolableAnimalsBox
 function P.superGun:usableOnTile(tile)
@@ -4041,7 +4041,7 @@ function P.christmasSurprise:useToolNothing(tileY, tileX)
 	end
 end
 
-P.ironWoman = P.superTool:new{name = "Iron Woman", description = "Closer....", image = 'Graphics/ironman.png',
+P.ironWoman = P.superTool:new{name = "Iron Woman", description = "Closer....", image = 'Graphics/ironwoman.png',
 baseRange = 3, quality = 4, cost = 4}
 P.ironWoman.usableOnTile = P.tileMagnet.usableOnTile
 function P.ironWoman:useToolTile(tile, tileY, tileX)
@@ -4122,7 +4122,7 @@ end
 P.wallReroller.useToolTile = P.wallReroller.useToolNothing
 
 --selects beggars from: red, green, blue, black, white, gold
-P.beggarReroller = P.superTool:new{name = "Beggar Reroller", description = "Changing hats", image = 'Graphics/beggar.png',
+P.beggarReroller = P.superTool:new{name = "Beggar Reroller", description = "Changing hats", image = 'Graphics/beggarreroller.png',
 baseRange = 0, quality = 1, cost = 1}
 function P.beggarReroller:usableOnNothing()
 	return true
@@ -4252,7 +4252,7 @@ function P.secretTeleporter:useToolNothing()
 end
 P.secretTeleporter.useToolTile = P.secretTeleporter.useToolNothing
 
-P.buttonReroller = P.superTool:new{name = "Button Reroller", description = "Rolled", image = 'Graphics/button.png',
+P.buttonReroller = P.superTool:new{name = "Button Reroller", description = "Rolled", image = 'Graphics/buttonreroller.png',
 baseRange = 0, quality = 1, cost = 1}
 function P.buttonReroller:usableOnNothing()
 	return true
@@ -4422,7 +4422,7 @@ function P.animalReroller:getAnimalList()
 			animalList.snail, animalList.glueSnail, animalList.conductiveSnail, animalList.conductiveDog}
 end
 
-P.boxReroller = P.superTool:new{name = "Box Reroller", description = "", cost = .5,
+P.boxReroller = P.superTool:new{name = "Box Reroller", description = "Nuff Said", cost = .5,
 image = 'Graphics/boxreroller2.png',
 baseRange = 0, quality = 1}
 function P.boxReroller:usableOnNothing()
@@ -4449,7 +4449,7 @@ function P.boxReroller:getBoxList()
 			pushableList.bombBox}
 end
 
-P.animalTrainer = P.superTool:new{name = "Animal Trainer", image = 'Graphics/whip.png', cost = .5,
+P.animalTrainer = P.superTool:new{name = "Animal Trainer", image = 'Graphics/whip3.png', cost = .5,
 quality = 1, baseRange = 3}
 function P.animalTrainer:usableOnAnimal()
 	return true
@@ -4459,7 +4459,7 @@ function P.animalTrainer:useToolAnimal(animal)
 	animal.trained = true
 end
 
-P.animalEnslaver = P.superTool:new{name = "Creature Command", description = "They'll let you take control", heldAnimal = nil, image = 'Graphics/whip.png', cost = 1,
+P.animalEnslaver = P.superTool:new{name = "Creature Command", description = "They'll let you take control", heldAnimal = nil, image = 'Graphics/mindcontrol.png', cost = 1,
 baseImage = 'Graphics/whip.png',
 quality = 2, baseRange = 3}
 function P.animalEnslaver:usableOnAnimal()
@@ -4549,7 +4549,7 @@ P.roomCompletionBonus.usableOnTile = P.roomCompletionBonus.usableOnNothing
 P.roomCompletionBonus.useToolTile = P.roomCompletionBonus.useToolNothing
 
 P.fishingPole = P.superTool:new{name = "Fishing Pole", description = "Find the treasures that lie beneath", quality = 2, baseRange = 5, cost = 1,
-image = 'Graphics/Tools/boxMagnet.png'}
+image = 'Graphics/Tools/fishingrod.png'}
 function P.fishingPole:usableOnTile(tile)
 	return tile:instanceof(tiles.puddle)
 end
