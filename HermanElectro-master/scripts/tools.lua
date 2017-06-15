@@ -3543,7 +3543,7 @@ P.spinningSword.useToolTile = P.spinningSword.useToolNothing
 
 
 --Steroids: Moves all tiles in the row
-P.ironMan = P.superTool:new{name = "Steroids", description = "Do you even lift?", image = 'Graphics/ironman.png',
+P.ironMan = P.superTool:new{name = "Steroids", description = "Do you even lift?", image = 'Graphics/ironman2.png',
 baseRange = 1, quality = 4, cost  = 5}
 function P.ironMan:usableOnTile(tile)
 	local tileY
@@ -4041,7 +4041,7 @@ function P.christmasSurprise:useToolNothing(tileY, tileX)
 	end
 end
 
-P.ironWoman = P.superTool:new{name = "Iron Woman", description = "Closer....", image = 'Graphics/ironman.png',
+P.ironWoman = P.superTool:new{name = "Iron Woman", description = "Closer....", image = 'Graphics/ironwoman.png',
 baseRange = 3, quality = 4, cost = 4}
 P.ironWoman.usableOnTile = P.tileMagnet.usableOnTile
 function P.ironWoman:useToolTile(tile, tileY, tileX)
