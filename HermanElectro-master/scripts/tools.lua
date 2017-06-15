@@ -3805,7 +3805,7 @@ end
 
 --Super Gun: gun, but radial and works on concrete
 P.superGun = P.superTool:new{name = "Super Gun", description = "", baseRange = 5,
-image = 'Graphics/supergun.png', quality = -1}
+image = 'Graphics/supergun2.png', quality = -1}
 P.superGun.getToolableTiles = P.tool.getToolableTilesBox
 P.superGun.getToolableAnimals = P.tool.getToolableAnimalsBox
 function P.superGun:usableOnTile(tile)
