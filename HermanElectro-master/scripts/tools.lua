@@ -4122,7 +4122,7 @@ end
 P.wallReroller.useToolTile = P.wallReroller.useToolNothing
 
 --selects beggars from: red, green, blue, black, white, gold
-P.beggarReroller = P.superTool:new{name = "Beggar Reroller", description = "Changing hats", image = 'Graphics/beggar.png',
+P.beggarReroller = P.superTool:new{name = "Beggar Reroller", description = "Changing hats", image = 'Graphics/beggarreroller.png',
 baseRange = 0, quality = 1, cost = 1}
 function P.beggarReroller:usableOnNothing()
 	return true
@@ -4252,7 +4252,7 @@ function P.secretTeleporter:useToolNothing()
 end
 P.secretTeleporter.useToolTile = P.secretTeleporter.useToolNothing
 
-P.buttonReroller = P.superTool:new{name = "Button Reroller", description = "Rolled", image = 'Graphics/button.png',
+P.buttonReroller = P.superTool:new{name = "Button Reroller", description = "Rolled", image = 'Graphics/buttonreroller.png',
 baseRange = 0, quality = 1, cost = 1}
 function P.buttonReroller:usableOnNothing()
 	return true
