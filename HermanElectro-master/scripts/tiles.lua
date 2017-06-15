@@ -1606,8 +1606,8 @@ function P.redBeggar:providePayment()
 	redTools = redTools+getLuckBonus()/100
 	local ttg = 0
 	if redTools<0.50 then ttg = 1
-	elseif redTools<0.95 then ttg = 2
-	elseif redTools<0.99 then ttg = 3 end
+	elseif redTools<0.935 then ttg = 2
+	elseif redTools<0.975 then ttg = 3 end
 	
 	if ttg>0 then
 		tools.giveRandomTools(ttg)
