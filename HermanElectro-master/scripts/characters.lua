@@ -426,7 +426,7 @@ function P.fish:onCharLoad()
 	self.life = 100
 end
 function P.fish:onFloorEnter()
-	tools.giveToolsByReference({tools.waterBottle, tools.waterBottle, tools.waterBottle, tools.bucketOfWater, tools.bucketOfWater, tools.bucketOfWater, tools.bucketOfWater, tools.bucketOfWater})
+	tools.giveToolsByReference({tools.waterBottle, tools.waterBottle, tools.waterBottle})
 end
 function P.fish:getInfoText()
 	return self.life
