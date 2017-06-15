@@ -3640,7 +3640,7 @@ end
 
 
 --Super Saw: cuts down concrete
-P.superSaw = P.superTool:new{name = "Super Saw", description = "I came, I sawed, I conquered", image = 'Graphics/saw.png',
+P.superSaw = P.superTool:new{name = "Super Saw", description = "I came, I sawed, I conquered", image = 'Graphics/supersaw.png',
 baseRange = 1, quality = -1}
 function P.superSaw:usableOnPushable()
 	return true
@@ -3654,7 +3654,7 @@ end
 
 
 --Super Ladder: spreads ladders
-P.superLadder = P.superTool:new{name = "Super Ladder", description = "OH MY GOD, IT'S SPREADING", image = 'Graphics/ladder.png',
+P.superLadder = P.superTool:new{name = "Super Ladder", description = "OH MY GOD, IT'S SPREADING", image = 'Graphics/superladder.png',
 baseRange = 1, quality = -1}
 P.superLadder.usableOnNothing = P.ladder.usableOnNothing
 P.superLadder.useToolNothing = P.ladder.useToolNothing
@@ -3690,7 +3690,7 @@ end
 
 --Super Wire-cutters: can cut blue wires
 P.superWireCutters = P.wireCutters:new{name = "Super Wire-cutters", description = "They can't stop you", -- Anything more ... you know
-image = 'Graphics/wirecutters.png', quality = -1}-- was "Super Wire Cutters" ... Stone Splitters sounds cool but misleading.. Arkham's razor, Laser razor, Incsors: Something to chew on
+image = 'Graphics/superwirecutters.png', quality = -1}-- was "Super Wire Cutters" ... Stone Splitters sounds cool but misleading.. Arkham's razor, Laser razor, Incsors: Something to chew on
 function P.superWireCutters:usableOnNonOverlay(tile) -- "A cut above"
 	return not tile.destroyed and (tile:instanceof(tiles.wire)
 	or tile:instanceof(tiles.conductiveGlass) or tile:instanceof(tiles.reinforcedConductiveGlass) or tile:instanceof(tiles.electricFloor))
@@ -3702,7 +3702,7 @@ end
 
 --Super Water Bottle: works on unbreakable efloors
 P.superWaterBottle = P.waterBottle:new{name = "Super Waterbottle", description = "Break the unbreakable",
-image = 'Graphics/superwaterbottle.png', baseRange = 3, quality = -1}
+image = 'Graphics/superwaterbottle2.png', baseRange = 3, quality = -1}
 function P.superWaterBottle:usableOnTile(tile)
 	if not tile.destroyed and ((tile:instanceof(tiles.powerSupply) and not tile:instanceof(tiles.notGate)) or (tile:instanceof(tiles.electricFloor)) or tile:instanceof(tiles.untriggeredPowerSupply)) then
 		return true
@@ -3731,7 +3731,7 @@ end
 
 
 --Super Sponge: spreads sponge effect
-P.superSponge = P.superTool:new{name = "Super Sponge", description = "Clean everything", image = 'NewGraphics/sponge copy.png',
+P.superSponge = P.superTool:new{name = "Super Sponge", description = "Clean everything", image = 'NewGraphics/supersponge.png',
 baseRange = 1, quality = -1}
 function P.superSponge:usableOnTile(tile)
 	if tile:instanceof(tiles.dustyGlassWall) and tile.blocksVision then
@@ -3775,7 +3775,7 @@ end
 
 --Super Brick: can break reinforced glass and double stuns animals
 P.superBrick = P.brick:new{name = "Super Brick", description = "Brick the unbrickable",
-image = 'Graphics/superbrick.png', baseRange = 5, quality = -1}
+image = 'Graphics/superbrick2.png', baseRange = 5, quality = -1}
 function P.superBrick:usableOnTile(tile)
 	if not tile.bricked and tile:instanceof(tiles.button) then
 		return true
