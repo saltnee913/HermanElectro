@@ -1622,7 +1622,7 @@ function P.redBeggar:providePayment()
 		return
 	end
 
-	if util.getSupertoolTypesHeld()<3 or superDrop.numHeld>0 then
+	if util.getSupertoolTypesHeld()<player.character.superSlots or superDrop.numHeld>0 then
 		tools.giveToolsByReference({superDrop})
 	else
 		for i = 1, roomHeight do
@@ -1654,7 +1654,7 @@ function P.greenBeggar:providePayment()
 		ttg = tools.coin
 	end
 
-	if util.getSupertoolTypesHeld()<3 or ttg.numHeld>0 then
+	if util.getSupertoolTypesHeld()<player.character.superSlots or ttg.numHeld>0 then
 		tools.giveToolsByReference({ttg})
 		local giveAnother = util.random(2, 'toolDrop')-1
 		if giveAnother>0 then
@@ -2389,7 +2389,7 @@ end
 function P.supertoolTile:onEnter(entered)
 	if not (player.tileX==entered.tileX and player.tileY==entered.tileY) then return end
 	local stTypesHeld = util.getSupertoolTypesHeld()
-	if stTypesHeld<3 or self.tool.numHeld>0 then
+	if stTypesHeld<player.character.superSlots or self.tool.numHeld>0 then
 		tools.giveToolsByReference({self.tool})
 		if self.tool==tools.axe then
 			unlocks.unlockUnlockableRef(unlocks.pickaxeUnlock)

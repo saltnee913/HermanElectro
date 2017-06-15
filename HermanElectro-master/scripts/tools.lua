@@ -44,7 +44,7 @@ function P.areSupersFull()
 			superCount = superCount + 1
 		end
 	end
-	return (superCount >= 3)
+	return (superCount >= player.character.superSlots)
 end
 
 function P.giveTools(toolArray)
@@ -853,7 +853,10 @@ end
 function P.getSupertools(numTools,qualities)
 	if numTools == nil then numTools = 1 end
 	local toolsToGive = {}
-	local filledSlots = {0,0,0}
+	local filledSlots = {}
+	for i = 1, player.character.superSlots do
+		filledSlots[i] = 0
+	end
 	local slot = 1
 	for i = tools.numNormalTools + 1, #tools do
 		if tools[i].numHeld>0 then
@@ -862,7 +865,7 @@ function P.getSupertools(numTools,qualities)
 		end
 	end
 	for superToolNumber = 1, numTools do
-		local slotToPlace = util.random(3, 'toolDrop')
+		local slotToPlace = util.random(player.character.superSlots, 'toolDrop')
 		if filledSlots[slotToPlace] ~= 0 then
 			toolsToGive[#toolsToGive + 1] = filledSlots[slotToPlace]
 		else
@@ -1745,7 +1748,7 @@ end
 P.armageddon.useToolNothing = P.armageddon.useToolTile
 
 
-P.toolReroller = P.superTool:new{name = "Tool Reroller", description = "The right tools for the job", baseRange = 0, image = 'Graphics/toolreroller2.png', quality = 2}
+P.toolReroller = P.superTool:new{name = "Tool Reroller", description = "The right tools for the job", baseRange = 0, image = 'Graphics/toolreroller3.png', quality = 2}
 function P.toolReroller:usableOnNothing() -- was desc You can't always have the right tools for the job
 	return true
 end
@@ -3919,7 +3922,10 @@ function P.tempUpgrade:useToolNothing()
 	else tool = 0
 	end
 
-	specialTools = {0,0,0}
+	specialTools = {}
+	for i = 1, player.character.superSlots do
+		specialTools[i] = 0
+	end
 	updateTools()
 end
 P.tempUpgrade.useToolTile = P.tempUpgrade.useToolNothing
@@ -3994,7 +4000,10 @@ function P.permaUpgrade:useToolNothing()
 	else tool = 0
 	end
 
-	specialTools = {0,0,0}
+	specialTools = {}
+	for i = 1, player.character.superSlots do
+		specialTools[i] = 0
+	end
 	updateTools()
 end
 P.permaUpgrade.useToolTile = P.permaUpgrade.useToolNothing
@@ -4413,6 +4422,7 @@ function P.animalReroller:useToolNothing()
 		local newAni = arList[aniChoice]:new()
 		newAni.tileX = animals[i].tileX
 		newAni.tileY = animals[i].tileY
+		newAni:setLoc()
 		animals[i] = newAni
 	end
 end

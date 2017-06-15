@@ -11977,9 +11977,10 @@
     ],
     "itemsNeeded":
     [
-    [0,0,0,0,0,0,0]
+    [0,1,0,0,0,0,0]
     ],
-    "set": "dog_herder"
+    "set": "dog_herder",
+    "toCheck": true
     },
 
     "symbiosis_1":

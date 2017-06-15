@@ -38,7 +38,7 @@ function P.isCharacterUnlocked(charName)
 end
 
 P.character = Object:new{name = "Name", tallSprite = true, dirFacing = "down", scale = 1, sprite = 'Graphics/Characters/Herman.png',
-  description = "description", startingTools = {0,0,0,0,0,0,0}, scale = 0.25 * width/1200, randomOption = true, forcePowerUpdate = false, tint = {1,1,1}, winUnlocks = {},
+  description = "description", startingTools = {0,0,0,0,0,0,0}, superSlots = 3, scale = 0.25 * width/1200, randomOption = true, forcePowerUpdate = false, tint = {1,1,1}, winUnlocks = {},
   animationTimer = 0, animationLength = 0, crime = "",
   f7File = "RoomData/floor7Felix.json"}
 function P.character:onBegin()
@@ -725,9 +725,13 @@ function P.knight:onCharLoad()
 	myShader:send("player_range", 600)
 end
 
-P.four = P.character:new{name = "Four", description = "2+2 = 4", scale = 1.1*scale}
+P.four = P.character:new{name = "Fourier", description = "2+2 = 4", scale = 1.1*scale, superSlots = 4,
+sprite = 'Graphics/Characters/Tony.png'}
+function P.four:onSelect()
+	specialTools = {0,0,0,0}
+end
 function P.four:onCharLoad()
-	filledSlots = {100,0,0,0}
+	tools.giveToolsByReference({tools.mindfulTool})
 end
 
 P[#P+1] = P.herman
@@ -745,7 +749,7 @@ P[#P+1] = P.fish
 P[#P+1] = P.four
 P[#P+1] = P.scientist
 P[#P+1] = P.dragon
---P[#P+1] = P.knight
+P[#P+1] = P.four
 
 P[#P+1] = P.gabe
 

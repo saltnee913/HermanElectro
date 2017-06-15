@@ -417,33 +417,39 @@ function P.drawToolUI()
 			love.graphics.circle("line", i*width/18+10, (width/18)-15, 9, 50)
 		end
 	end
-	for i = 0, 2 do
+	for i = 0, player.character.superSlots-1 do
+		local superXTrans = -1*width/18*(player.character.superSlots-3)
+
 		love.graphics.setColor(255,255,255)
-		love.graphics.draw(toolWrapper, (i+13)*width/18, 0, 0, (width/18)/16, (width/18)/16)
+		love.graphics.draw(toolWrapper, (i+13)*width/18+superXTrans, 0, 0, (width/18)/16, (width/18)/16)
 		if tool == specialTools[i+1] and tool~=0 then
 			love.graphics.setColor(50, 200, 50)
-			love.graphics.rectangle("fill", (i+13)*width/18, 0, width/18, width/18)
+			love.graphics.rectangle("fill", (i+13)*width/18+superXTrans, 0, width/18, width/18)
 		end
 		--love.graphics.rectangle("fill", (i+13)*width/18, 0, width/18, width/18)
 		love.graphics.setColor(0,0,0)
-		love.graphics.rectangle("line", (i+13)*width/18, 0, width/18, width/18)
+		love.graphics.rectangle("line", (i+13)*width/18+superXTrans, 0, width/18, width/18)
 		love.graphics.setColor(255,255,255)
 		if specialTools~=nil and specialTools[i+1]~=0 then
 			local toolImage = util.getImage(tools[specialTools[i+1]].image)
 			local tiWidth = toolImage:getWidth()
 			local tiHeight = toolImage:getHeight()
-			love.graphics.draw(toolImage, (i+13)*width/18, 0, 0, (width/18)/tiWidth, (width/18)/tiHeight)
+			love.graphics.draw(toolImage, (i+13)*width/18+superXTrans, 0, 0, (width/18)/tiWidth, (width/18)/tiHeight)
 		end
 		if specialTools[i+1]==0 then
-			love.graphics.draw(gray, (i+13)*width/18, 0, 0, (width/18)/32, (width/18)/32)
+			love.graphics.draw(gray, (i+13)*width/18+superXTrans, 0, 0, (width/18)/32, (width/18)/32)
 		end
 		love.graphics.setColor(0,0,0)
 		if specialTools[i+1]~=0 then
 			if not tools[specialTools[i+1]].infiniteUses then
-				love.graphics.print(tools[specialTools[i+1]].numHeld, (i+13)*width/18+3, 0)
+				love.graphics.print(tools[specialTools[i+1]].numHeld, (i+13)*width/18+3+superXTrans, 0)
 			end
-			love.graphics.print((i+8)%10, (i+13)*width/18+7, (width/18)-20)
-			love.graphics.circle("line", (i+13)*width/18+10, (width/18)-15, 9, 50)
+			local printText = (i+8)%10
+			if i==3 then
+				printText="-"
+			end
+			love.graphics.print(printText, (i+13)*width/18+7+superXTrans, (width/18)-20)
+			love.graphics.circle("line", (i+13)*width/18+10+superXTrans, (width/18)-15, 9, 50)
 		end
 	end
 end

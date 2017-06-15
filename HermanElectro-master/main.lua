@@ -150,7 +150,7 @@ function love.load()
 	for i = 1, #tools do
 		tools[i].numHeld = 0
 	end
-	specialTools = {0,0,0}
+
 	animals = {}
 	spotlights = {}
 	pushables = {}
@@ -307,6 +307,11 @@ function love.load()
 			prevy = (10-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10,
 			width = 20, height = 20, speed = 250, luckTimer = 0, regularMapLoc = {x = 0, y = 0}, nonHeavenMapLoc = {x = 0, y = 0}, supersHeld = {total = 0}, returnFloorInfo = {floorIndex = 0, tileX = 0, tileY = 0}, attributes = {superRammy = false, timeFrozen = false, invincibleCounter = 0, shieldCounter = 0, lucky = false, gifted = false, permaMap = false, xrayVision = false, upgradedToolUse = false, fast = {fast = false, fastStep = false}, flying = false, fear = false, shelled = false, tall = false, extendedRange = 0, sockStep = false, invisible = false, clockFrozen = false}}
 	player.character = setChar
+
+	specialTools = {}
+	for i = 1, player.character.superSlots do
+		specialTools[i] = 0
+	end
 
 	map.clearBlacklist()
 
@@ -531,7 +536,7 @@ function postFloorChange()
 	end
 
 	if player.attributes.permaMap then
-		tools.map.useToolNothing(self)
+		--tools.map.useToolNothing(self)
 	end
 
 	completedRooms[mapy][mapx] = 1
@@ -2361,6 +2366,17 @@ function seedEnter(text)
 	end
 end
 
+function isToolSelectKey(key)
+	if key=="1" or key=="2" or key=="3" or key=="4" or key=="5" or key=="6" or key=="7" or
+	key=="8" or key=="9" or key=="0" then
+		return true
+	elseif key=="-" then
+		return true
+	end
+
+	return false
+end
+
 function love.keypressed(key, unicode, isRepeat, isPlayback)
 
 	if key=="w" or key=="a" or key=="s" or key=="d" then
@@ -2551,10 +2567,13 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 		end
 	end
 
-	if key == "1" or key == "2" or key == "3" or key == "4" or key == "5" or key == "6" or key == "7" or key == "8" or key == "9" or key == "0" then
-		numPressed = tonumber(key)
+	if isToolSelectKey(key) then
+		numPressed = nil
+		if key=="-" then numPressed = 11
+		else numPressed = tonumber(key) end
 		if numPressed == 0 then numPressed = 10 end
-		if tools[numPressed].numHeld>0 and numPressed<=tools.numNormalTools then
+
+		if numPressed<=tools.numNormalTools and tools[numPressed].numHeld>0 then
 			if tool==numPressed then
 				tool = 0
 			else
@@ -3170,7 +3189,7 @@ function checkDeath()
 	end
 	if room[player.tileY][player.tileX]~=nil then
 		t = room[player.tileY][player.tileX]
-		if t:willKillPlayer() and t:getHeight()<6 and not player.attributes.flying then
+		if t:willKillPlayer() --[[and t:getHeight()<6]] and not (t:getHeight()<6 and player.attributes.flying) then
 			kill()
 		end
 	end
@@ -3248,9 +3267,12 @@ function love.mousepressed(x, y, button, istouch, isPlayback)
 	local bigRoomTranslation = getTranslation()
 	mouseTranslated = {x = mouseX-bigRoomTranslation.x*scale*tileUnit, y = mouseY-bigRoomTranslation.y*scale*tileUnit}
 
-	clickActivated = false
+	local clickActivated = false
 	if mouseY<width/18 and mouseY>0 then
 		inventoryX = math.floor(mouseX/(width/18))
+		if inventoryX>=tools.numNormalTools and player.character.superSlots>3 then
+			inventoryX = inventoryX+(player.character.superSlots-3)
+		end
 		--print(inventoryX)
 		if inventoryX>-1 and inventoryX<tools.numNormalTools then
 			clickActivated = true
@@ -3259,7 +3281,7 @@ function love.mousepressed(x, y, button, istouch, isPlayback)
 			elseif tools[inventoryX+1].numHeld>0 then
 				tool=inventoryX+1
 			end
-		elseif inventoryX>=13 and inventoryX<=15 then
+		elseif inventoryX>=13 and inventoryX<=13+(player.character.superSlots-1) then
 			clickActivated = true
 			if specialTools[inventoryX-12]~=0 and tool~=specialTools[inventoryX-12] then
 				tool = specialTools[inventoryX-12]
@@ -3455,27 +3477,39 @@ function updateTools()
 	end
 
 	local unlockDoubler = true
-	for i = 1, 3 do
+	for i = 1, player.character.superSlots do
 		if specialTools[i]==0 or tools[specialTools[i]].numHeld<2 then
 			unlockDoubler = false
 		end
 	end
 	if unlockDoubler then unlocks.unlockUnlockableRef(unlocks.supertoolDoublerUnlock) end
 
-	for i = 1, 3 do
+	for i = 1, player.character.superSlots do
 		if specialTools[i]~=0 and tools[specialTools[i]].numHeld==0 then
-			specialTools[3]=0
-			for j = i, 2 do
+			specialTools[player.character.superSlots]=0
+			for j = i, player.character.superSlots-1 do
 				specialTools[j] = specialTools[j+1]
 				specialTools[j+1]=0
 			end
 		end
 	end
 	for i = tools.numNormalTools+1, #tools do
-		if tools[i].numHeld>0 and not (specialTools[1]==i or specialTools[2]==i or specialTools[3]==i) then
-			if specialTools[1]==0 then specialTools[1] = i 
-			elseif specialTools[2]==0 then specialTools[2] = i
-			else specialTools[3] = i end
+		if tools[i].numHeld>0 then
+			local needToAdd = true
+			for j = 1, player.character.superSlots do
+				if specialTools[j]==i then
+					needToAdd = false
+				end
+			end
+
+			if needToAdd then
+				for j = 1, player.character.superSlots do
+					if specialTools[j]==0 then
+						specialTools[j] = i
+						break
+					end
+				end
+			end
 		end
 	end
 
