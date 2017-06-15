@@ -3643,7 +3643,7 @@ end
 
 
 --Super Saw: cuts down concrete
-P.superSaw = P.superTool:new{name = "Super Saw", description = "I came, I sawed, I conquered", image = 'Graphics/supersaw.png',
+P.superSaw = P.superTool:new{name = "Super Saw", description = "I came, I sawed, I conquered", image = 'Graphics/Tools/supersaw.png',
 baseRange = 1, quality = -1}
 function P.superSaw:usableOnPushable()
 	return true
