@@ -2697,7 +2697,7 @@ function restartGame()
 				end
 			end
 		end
-		setPlayerLoc()
+		
 		myShader:send("b_and_w", 0)
 	else
 		if floorIndex>=5 then
