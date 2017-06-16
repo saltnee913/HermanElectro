@@ -1998,6 +1998,22 @@ function enterRoom(dir)
 		return
 	end
 
+	--tutorial stuff below
+	--marks room as fully beaten, so you can't, for example, die in dog room after reaching end tile
+	--and still beat it
+	if loadTutorial or floorIndex==-1 then
+		if completedRooms[mapy][mapx]==1 and
+		(mainMap[mapy][mapx].leftCompleted==nil or not mainMap[mapy][mapx].leftCompleted) then
+			if map.getItemsGiven(mainMap[mapy][mapx].roomid)~=nil then
+				for i = 1, tools.numNormalTools do
+					player.totalItemsGiven[i] = player.totalItemsGiven[i] + map.getItemsGiven(mainMap[mapy][mapx].roomid)[1][i]
+					player.totalItemsNeeded[i] = player.totalItemsNeeded[i] + map.getItemsNeeded(mainMap[mapy][mapx].roomid)[1][i]
+				end
+			end
+			mainMap[mapy][mapx].leftCompleted = true
+		end
+	end
+
 	resetTranslation()
 	resetPlayerAttributesRoom()
 
@@ -2682,22 +2698,25 @@ function restartGame()
 		player.prevx = player.x
 		player.prevTileX = player.enterX
 		for i = 1, tools.numNormalTools do
-			if (completedRooms[mapy][mapx] == 1) then
-				player.totalItemsGiven[i] = player.totalItemsGiven[i] - map.getItemsGiven(mainMap[mapy][mapx].roomid)[1][i]
-				player.totalItemsNeeded[i] = player.totalItemsNeeded[i] - map.getItemsNeeded(mainMap[mapy][mapx].roomid)[1][i]
-			end
 			tools[i].numHeld = player.totalItemsGiven[i] - player.totalItemsNeeded[i]
 			if tools[i].numHeld < 0 then tools[i].numHeld = 0 end
 		end
-		completedRooms[mapy][mapx] = 0
+
+
 		for i = 0, mainMap.height do
 			for j = 0, mainMap.height do
-				if completedRooms[i][j] == 0 then
+				if mainMap[i][j]~=nil and (completedRooms[i][j]~=1 or 
+				not (mainMap[i][j].leftCompleted~=nil and mainMap[i][j].leftCompleted)) then
 					hackEnterRoom(mainMap[i][j].roomid, i, j)
 				end
 			end
 		end
+		if completedRooms[mapy][mapx]~=1 or 
+		not (mainMap[mapy][mapx].leftCompleted~=nil and mainMap[mapy][mapx].leftCompleted) then		
+ 			hackEnterRoom(mainMap[mapy][mapx].roomid, mapy, mapx)		
+ 		end
 		
+		setPlayerLoc()
 		myShader:send("b_and_w", 0)
 	else
 		if floorIndex>=5 then
@@ -3689,11 +3708,13 @@ function dropTools()
 	local dropOverride = map.getFieldForRoom(mainMap[mapy][mapx].roomid, 'itemsGivenOverride')
 	if loadTutorial or (floorIndex == -1 and map.getItemsGiven(mainMap[mapy][mapx].roomid) ~= nil) then
 		local toolsToDisplay = {0,0,0,0,0,0,0}
+		local futureTotalItemsGiven = {0,0,0,0,0,0,0}
+		local futureTotalItemsNeeded ={0,0,0,0,0,0,0}
 		for i = 1, tools.numNormalTools do
-			player.totalItemsGiven[i] = player.totalItemsGiven[i] + map.getItemsGiven(mainMap[mapy][mapx].roomid)[1][i]
-			player.totalItemsNeeded[i] = player.totalItemsNeeded[i] + map.getItemsNeeded(mainMap[mapy][mapx].roomid)[1][i]
-			toolsToDisplay[i] = player.totalItemsGiven[i] - player.totalItemsNeeded[i] - tools[i].numHeld
-			tools[i].numHeld = player.totalItemsGiven[i] - player.totalItemsNeeded[i]
+			futureTotalItemsGiven[i] = player.totalItemsGiven[i] + map.getItemsGiven(mainMap[mapy][mapx].roomid)[1][i]
+			futureTotalItemsNeeded[i] = player.totalItemsNeeded[i] + map.getItemsNeeded(mainMap[mapy][mapx].roomid)[1][i]
+			toolsToDisplay[i] = futureTotalItemsGiven[i] - futureTotalItemsNeeded[i] - tools[i].numHeld
+			tools[i].numHeld = futureTotalItemsGiven[i] - futureTotalItemsNeeded[i]
 			if tools[i].numHeld < 0 then tools[i].numHeld = 0 end
 		end
 		tools.displayToolsByArray(toolsToDisplay)
