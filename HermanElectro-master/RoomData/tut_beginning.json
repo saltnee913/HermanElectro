@@ -23,7 +23,8 @@
         [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
         [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
       "isInitial": true,
-      "isInitialBeforeTut": true
+      "isInitialBeforeTut": true,
+      "dirEnter": [0,0,0,0]
     },
 
     "tut_start_2":

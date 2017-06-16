@@ -2684,6 +2684,7 @@ function restartGame()
 				end
 			end
 		end
+		map.setVisibleMapTutorial()
 		setPlayerLoc()
 		myShader:send("b_and_w", 0)
 	else
@@ -3787,6 +3788,10 @@ function beatRoom(noDrops)
 		dropTools()
 	end
 	player.character:onRoomCompletion()
+
+	if floorIndex == -1 then
+		map.setVisibleMapTutorial()
+	end
 end
 
 function onTeleport()

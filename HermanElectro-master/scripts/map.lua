@@ -505,6 +505,51 @@ function P.isDoorOpen(currMapY, currMapX, dir)
 	return true
 end
 
+function P.setVisibleMapTutorial()
+	for i = 1, mapHeight do
+		for j = 1, mapHeight do
+			if mainMap[i][j]~=nil then
+				visibleMap[i][j] = 0
+			end
+		end
+	end
+	roomsToCheck = {}
+	roomsToCheck[1] = {x = mapx, y = mapy}
+	local dirEnter = map.getFieldForRoom(mainMap[mapy][mapx].roomid, 'dirEnter')
+	for i = 1, #dirEnter do
+		if completedRooms[mapy][mapx] == 1 or dirEnter[i] == 1 then
+			local offset = util.getOffsetByDir(i)
+			roomsToCheck[#roomsToCheck+1] = {x = mapx + offset.x, y = mapy + offset.y}
+		end
+	end
+	checkedRooms = {}
+	while #roomsToCheck ~= 0 do
+		local newRoomsToCheck = {}
+		for i = 1, #roomsToCheck do
+			local roomX = roomsToCheck[i].x
+			local roomY = roomsToCheck[i].y
+			if checkedRooms[roomY] == nil then
+				checkedRooms[roomY] = {}
+			end
+			checkedRooms[roomY][roomX] = true
+			if mainMap[roomY] ~= nil and mainMap[roomY][roomX] ~= nil then
+				visibleMap[roomY][roomX] = 1
+				if completedRooms[roomY][roomX] == 1 then
+					for dir = 1, 4 do
+						local offset = util.getOffsetByDir(dir)
+						local newRoomX = roomX + offset.x
+						local newRoomY = roomY + offset.y
+						if checkedRooms[newRoomY] == nil or checkedRooms[newRoomY][newRoomX] ~= true then
+							newRoomsToCheck[#newRoomsToCheck+1] = {x = newRoomX, y = newRoomY}
+						end
+					end
+				end
+			end
+		end
+		roomsToCheck = newRoomsToCheck
+	end
+end
+
 function P.blocksMovement(tileY, tileX)
 	return room[tileY] ~= nil and room[tileY][tileX] ~= nil and room[tileY][tileX]:obstructsMovement()
 end
