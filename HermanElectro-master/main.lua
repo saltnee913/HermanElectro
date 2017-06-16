@@ -1982,7 +1982,6 @@ function enterRoom(dir)
 
 	local mapChange = util.getOffsetByDir(dir+1)
 	if not map.isDoorOpen(mapy, mapx, dir+1) then
-		log(dir+1)
 		return
 	end
 
