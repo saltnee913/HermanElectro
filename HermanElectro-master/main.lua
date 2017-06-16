@@ -2701,6 +2701,7 @@ function restartGame()
 			tools[i].numHeld = player.totalItemsGiven[i] - player.totalItemsNeeded[i]
 			if tools[i].numHeld < 0 then tools[i].numHeld = 0 end
 		end
+		tools.toolsShown = {}
 
 
 		for i = 0, mainMap.height do
