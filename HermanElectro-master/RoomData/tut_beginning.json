@@ -459,7 +459,8 @@
           [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
       "itemsNeeded":[
           [0,0,0,0,0,0,0]],
-        "hidden": true
+        "hidden": true,
+        "dirEnter": [0,0,0,1]
     },
 
     "extra_2":
@@ -479,7 +480,8 @@
             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
         "itemsNeeded":[
             [0,0,0,0,0,0,0]],
-        "hidden": true
+        "hidden": true,
+        "dirEnter": [0,0,1,0]
       },
 
       "extra_3":
@@ -499,7 +501,8 @@
             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
         "itemsNeeded":[
             [0,0,0,0,0,0,0]],
-        "hidden": true
+        "hidden": true,
+        "dirEnter": [0,0,1,0]
       },
 
       "extra_4":
@@ -519,7 +522,8 @@
             [0,0,0,0,0,0,0,0,0,0,10,10,3,10,10,0,0,0,0,0,0,0,0,0]],
         "itemsNeeded":[
             [0,0,0,0,0,0,0]],
-        "hidden": true
+        "hidden": true,
+        "dirEnter": [0,0,1,0]
       },
 
       "extra_end":
@@ -539,7 +543,8 @@
         [0,0,[26,"EDAATR TKHWE IMTUISNHHLRIOGOMHST\n1213010211031201"],0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
         "itemsNeeded":[
             [0,0,0,0,0,0,0]],
-        "hidden": true
+        "hidden": true,
+        "dirEnter": [0,1,0,0]
       },
 
       "dragon_room":
@@ -560,7 +565,8 @@
         "itemsNeeded":[
             [0,0,0,0,0,0,0]],
         "hidden": true,
-        "autowin": true
+        "autowin": true,
+        "dirEnter": [0,1,0,0]
       },
 
   },

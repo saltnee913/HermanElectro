@@ -519,7 +519,19 @@ function P.setVisibleMapTutorial()
 	for i = 1, #dirEnter do
 		if completedRooms[mapy][mapx] == 1 or dirEnter[i] == 1 then
 			local offset = util.getOffsetByDir(i)
-			roomsToCheck[#roomsToCheck+1] = {x = mapx + offset.x, y = mapy + offset.y}
+			local newy = mapy+offset.y
+			local newx = mapx+offset.x
+			if mainMap[newy] ~= nil and mainMap[newy][newx] ~= nil then
+				local hidden = map.getFieldForRoom(mainMap[newy][newx].roomid, 'hidden')
+				local newDirEnter = map.getFieldForRoom(mainMap[newy][newx].roomid, 'dirEnter')
+					local tempDir = i+2
+					if tempDir > 4 then
+						tempDir = tempDir - 4
+					end
+				if (not hidden or newDirEnter[tempDir] == 1 or completedRooms[newy][newx] == 1) then
+					roomsToCheck[#roomsToCheck+1] = {x = newx, y = newy}
+				end
+			end
 		end
 	end
 	checkedRooms = {}
@@ -533,17 +545,24 @@ function P.setVisibleMapTutorial()
 			end
 			checkedRooms[roomY][roomX] = true
 			if mainMap[roomY] ~= nil and mainMap[roomY][roomX] ~= nil then
-				local hidden = map.getFieldForRoom(mainMap[roomY][roomX].roomid, 'hidden')
-				if not hidden or completedRooms[roomY][roomX] == 1 then
-					visibleMap[roomY][roomX] = 1
-					if completedRooms[roomY][roomX] == 1 then
-						for dir = 1, 4 do
-							local offset = util.getOffsetByDir(dir)
-							local newRoomX = roomX + offset.x
-							local newRoomY = roomY + offset.y
-							if (checkedRooms[newRoomY] == nil or checkedRooms[newRoomY][newRoomX] ~= true) then
-								newRoomsToCheck[#newRoomsToCheck+1] = {x = newRoomX, y = newRoomY}
-							end
+				visibleMap[roomY][roomX] = 1
+				if completedRooms[roomY][roomX] == 1 then
+					for dir = 1, 4 do
+						local offset = util.getOffsetByDir(dir)
+						local newRoomX = roomX + offset.x
+						local newRoomY = roomY + offset.y
+						local hidden = false
+						local newDirEnter = {1,1,1,1}
+						local tempDir = dir+2
+						if tempDir > 4 then
+							tempDir = tempDir - 4
+						end
+						if mainMap[newRoomY] ~= nil and mainMap[newRoomY][newRoomX] ~= nil then
+							hidden = map.getFieldForRoom(mainMap[newRoomY][newRoomX].roomid, 'hidden') == true
+							newDirEnter = map.getFieldForRoom(mainMap[newRoomY][newRoomX].roomid, 'dirEnter')
+						end
+						if (not hidden or newDirEnter[tempDir] == 1) and (checkedRooms[newRoomY] == nil or checkedRooms[newRoomY][newRoomX] ~= true) then
+							newRoomsToCheck[#newRoomsToCheck+1] = {x = newRoomX, y = newRoomY}
 						end
 					end
 				end
