@@ -2659,34 +2659,38 @@ end
 
 function restartGame()
 	if loadTutorial or floorIndex == -1 then
-		player.dead = false
-		player.y = (player.enterY-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
-		player.tileY = player.enterY
-		player.x = (player.enterX-1)*scale*tileWidth+wallSprite.width+tileWidth/2*scale-10
-		player.tileX = player.enterX
-		player.prevy = player.y
-		player.prevTileY = player.enterY
-		player.prevx = player.x
-		player.prevTileX = player.enterX
-		for i = 1, tools.numNormalTools do
-			if (completedRooms[mapy][mapx] == 1) then
-				player.totalItemsGiven[i] = player.totalItemsGiven[i] - map.getItemsGiven(mainMap[mapy][mapx].roomid)[1][i]
-				player.totalItemsNeeded[i] = player.totalItemsNeeded[i] - map.getItemsNeeded(mainMap[mapy][mapx].roomid)[1][i]
+		local itemsGiven = map.getItemsGiven(mainMap[mapy][mapx].roomid)
+		local itemsNeeded = map.getItemsNeeded(mainMap[mapy][mapx].roomid)
+		if itemsGiven ~= nil then
+			player.dead = false
+			player.y = (player.enterY-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
+			player.tileY = player.enterY
+			player.x = (player.enterX-1)*scale*tileWidth+wallSprite.width+tileWidth/2*scale-10
+			player.tileX = player.enterX
+			player.prevy = player.y
+			player.prevTileY = player.enterY
+			player.prevx = player.x
+			player.prevTileX = player.enterX
+			for i = 1, tools.numNormalTools do
+				if (completedRooms[mapy][mapx] == 1) then
+					player.totalItemsGiven[i] = player.totalItemsGiven[i] - map.getItemsGiven(mainMap[mapy][mapx].roomid)[1][i]
+					player.totalItemsNeeded[i] = player.totalItemsNeeded[i] - map.getItemsNeeded(mainMap[mapy][mapx].roomid)[1][i]
+				end
+				tools[i].numHeld = player.totalItemsGiven[i] - player.totalItemsNeeded[i]
+				if tools[i].numHeld < 0 then tools[i].numHeld = 0 end
 			end
-			tools[i].numHeld = player.totalItemsGiven[i] - player.totalItemsNeeded[i]
-			if tools[i].numHeld < 0 then tools[i].numHeld = 0 end
-		end
-		completedRooms[mapy][mapx] = 0
-		for i = 0, mainMap.height do
-			for j = 0, mainMap.height do
-				if completedRooms[i][j] == 0 then
-					hackEnterRoom(mainMap[i][j].roomid, i, j)
+			completedRooms[mapy][mapx] = 0
+			for i = 0, mainMap.height do
+				for j = 0, mainMap.height do
+					if completedRooms[i][j] == 0 then
+						hackEnterRoom(mainMap[i][j].roomid, i, j)
+					end
 				end
 			end
+			map.setVisibleMapTutorial()
+			setPlayerLoc()
+			myShader:send("b_and_w", 0)
 		end
-		map.setVisibleMapTutorial()
-		setPlayerLoc()
-		myShader:send("b_and_w", 0)
 	else
 		if floorIndex>=5 then
 			unlocks.unlockUnlockableRef(unlocks.roomRerollerUnlock)
