@@ -484,6 +484,27 @@ function P.filterRoomSetByUnlocks(arr)
 	end
 end
 
+function P.isDoorOpen(currMapY, currMapX, dir)
+	local mapChange = util.getOffsetByDir(dir)
+	if currMapY+mapChange.y<0 or currMapY+mapChange.y>mapHeight+1 or currMapX+mapChange.x<0 or currMapX+mapChange.x>mapHeight+1 then
+		return false
+	elseif (completedRooms[currMapY+mapChange.y] == nil or completedRooms[currMapY+mapChange.y][currMapX+mapChange.x] == nil) then
+		return false
+	elseif completedRooms[currMapY][currMapX]<1 and completedRooms[currMapY+mapChange.y][currMapX+mapChange.x]<1 then
+		return false
+	elseif mainMap[currMapY+mapChange.y][currMapX+mapChange.x]==nil then
+		return false
+	elseif visibleMap[currMapY+mapChange.y][currMapX+mapChange.x]<1 then
+		return false
+	elseif floorIndex == -1 then
+		local dirEnter = map.getFieldForRoom(mainMap[currMapY][currMapX].roomid, 'dirEnter')
+		if completedRooms[currMapY][currMapX]<1 and dirEnter[dir] ~= 1 then
+			return false
+		end
+	end
+	return true
+end
+
 function P.blocksMovement(tileY, tileX)
 	return room[tileY] ~= nil and room[tileY][tileX] ~= nil and room[tileY][tileX]:obstructsMovement()
 end

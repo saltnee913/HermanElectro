@@ -1980,21 +1980,9 @@ function enterRoom(dir)
 	prevMapY = mapy
 	prevRoom = room
 
-	local mapChange = {x = 0, y = 0}
-	if dir==0 then mapChange.y = -1
-	elseif dir==1 then mapChange.x = 1
-	elseif dir==2 then mapChange.y = 1
-	elseif dir==3 then mapChange.x = -1
-	end
-
-	--checks conditions that prevent room entry
-	if mapy+mapChange.y<0 or mapy+mapChange.y>mapHeight+1 or mapx+mapChange.x<0 or mapx+mapChange.x>mapHeight+1 then
-		return
-	elseif completedRooms[mapy][mapx]<1 and completedRooms[mapy+mapChange.y][mapx+mapChange.x]<1 then
-		return
-	elseif mainMap[mapy+mapChange.y][mapx+mapChange.x]==nil then
-		return
-	elseif visibleMap[mapy+mapChange.y][mapx+mapChange.x]<1 then
+	local mapChange = util.getOffsetByDir(dir+1)
+	if not map.isDoorOpen(mapy, mapx, dir+1) then
+		log(dir+1)
 		return
 	end
 
@@ -2697,7 +2685,7 @@ function restartGame()
 				end
 			end
 		end
-		
+		setPlayerLoc()
 		myShader:send("b_and_w", 0)
 	else
 		if floorIndex>=5 then

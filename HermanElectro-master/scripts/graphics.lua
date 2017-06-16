@@ -558,20 +558,12 @@ function P.drawWallsAndFloor()
 	end
 
 	if validSpace() then
-		local testRooms = {{-1,0}, {1,0}, {0,-1}, {0,1}}
-		for k = 1, #testRooms do
+		for dir = 1, 4 do
 			local drawFloorPath = true
-			local xdiff = testRooms[k][1]
-			local ydiff = testRooms[k][2]
-			if not (mapx+xdiff<=#completedRooms[mapy] and mapx+xdiff>0 and mapy+ydiff<=#completedRooms and mapy+ydiff>0) then
-				drawFloorPath = false
-			elseif mainMap[mapy+ydiff][mapx+xdiff]==nil then
-				drawFloorPath = false
-			elseif completedRooms[mapy][mapx]<1 and completedRooms[mapy+ydiff][mapx+xdiff]<1 then
-				drawFloorPath = false
-			elseif visibleMap[mapy+ydiff][mapx+xdiff]<1 then
-				drawFloorPath = false
-			end
+			local mapChange = util.getOffsetByDir(dir)
+			local xdiff = mapChange.x
+			local ydiff = mapChange.y
+			drawFloorPath = drawFloorPath and map.isDoorOpen(mapy, mapx, dir)
 
 			toDrawFloor = dungeonFloor
 
@@ -615,20 +607,12 @@ function P.drawWallsAndFloor()
 
 		--temp draw doors
 		if validSpace() then
-			local testRooms = {{-1,0}, {1,0}, {0,-1}, {0,1}}
-			for k = 1, #testRooms do
+			for dir = 1, 4 do
 				local drawFloorPath = true
-				local xdiff = testRooms[k][1]
-				local ydiff = testRooms[k][2]
-				if not (mapx+xdiff<=#completedRooms[mapy] and mapx+xdiff>0 and mapy+ydiff<=#completedRooms and mapy+ydiff>0) then
-					drawFloorPath = false
-				elseif mainMap[mapy+ydiff][mapx+xdiff]==nil then
-					drawFloorPath = false
-				elseif completedRooms[mapy][mapx]<1 and completedRooms[mapy+ydiff][mapx+xdiff]<1 then
-					drawFloorPath = false
-				elseif visibleMap[mapy+ydiff][mapx+xdiff]<1 then
-					drawFloorPath = false
-				end
+				local mapChange = util.getOffsetByDir(dir)
+				local xdiff = mapChange.x
+				local ydiff = mapChange.y
+				drawFloorPath = drawFloorPath and map.isDoorOpen(mapy, mapx, dir)
 
 				toDrawFloor = dungeonFloor
 
