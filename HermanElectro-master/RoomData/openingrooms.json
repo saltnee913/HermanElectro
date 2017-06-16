@@ -81,7 +81,8 @@
     [0,0,0,0,0,0,0]
     ],
     "isInitial": true,
-    "isInitialAfterTut": true
+    "isInitialAfterTut": true,
+    "autowin": true
     },
 
     "credits_room":
@@ -102,7 +103,8 @@
     [0,0,0,0,0,0,0]
     ],
     "isInitial": true,
-    "isInitialAfterTut": true
+    "isInitialAfterTut": true,
+    "autowin": true
     },
 
     "start_room_new":
@@ -143,7 +145,8 @@
           [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
       "itemsNeeded":
         [
-          [0,0,0,0,0,0,0]]
+          [0,0,0,0,0,0,0]],
+      "autowin": true
     }
 
   },

@@ -533,14 +533,17 @@ function P.setVisibleMapTutorial()
 			end
 			checkedRooms[roomY][roomX] = true
 			if mainMap[roomY] ~= nil and mainMap[roomY][roomX] ~= nil then
-				visibleMap[roomY][roomX] = 1
-				if completedRooms[roomY][roomX] == 1 then
-					for dir = 1, 4 do
-						local offset = util.getOffsetByDir(dir)
-						local newRoomX = roomX + offset.x
-						local newRoomY = roomY + offset.y
-						if checkedRooms[newRoomY] == nil or checkedRooms[newRoomY][newRoomX] ~= true then
-							newRoomsToCheck[#newRoomsToCheck+1] = {x = newRoomX, y = newRoomY}
+				local hidden = map.getFieldForRoom(mainMap[roomY][roomX].roomid, 'hidden')
+				if not hidden or completedRooms[roomY][roomX] == 1 then
+					visibleMap[roomY][roomX] = 1
+					if completedRooms[roomY][roomX] == 1 then
+						for dir = 1, 4 do
+							local offset = util.getOffsetByDir(dir)
+							local newRoomX = roomX + offset.x
+							local newRoomY = roomY + offset.y
+							if (checkedRooms[newRoomY] == nil or checkedRooms[newRoomY][newRoomX] ~= true) then
+								newRoomsToCheck[#newRoomsToCheck+1] = {x = newRoomX, y = newRoomY}
+							end
 						end
 					end
 				end

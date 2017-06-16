@@ -3587,8 +3587,12 @@ end
 
 --unlocks all rooms besides hidden rooms (secret rooms and special dungeons)
 function unlockDoors(openLocked)
+
 	if player.attributes.xrayVision or floorIndex == -1 then
 		unlockDoorsPlus()
+		if floorIndex == -1 then
+			map.setVisibleMapTutorial()
+		end
 		return
 	end
 
