@@ -731,7 +731,7 @@ function P.four:onSelect()
 	specialTools = {0,0,0,0}
 end
 function P.four:onCharLoad()
-	tools.giveToolsByReference({tools.mindfulTool})
+	tools.giveToolsByReference({tools.supertoolReroller})
 end
 
 P[#P+1] = P.herman
