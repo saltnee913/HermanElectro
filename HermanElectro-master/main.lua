@@ -1985,6 +1985,22 @@ function enterRoom(dir)
 		return
 	end
 
+	--tutorial stuff below
+	--marks room as fully beaten, so you can't, for example, die in dog room after reaching end tile
+	--and still beat it
+	if loadTutorial or floorIndex==-1 then
+		if completedRooms[mapy][mapx]==1 and
+		(mainMap[mapy][mapx].leftCompleted==nil or not mainMap[mapy][mapx].leftCompleted) then
+			if map.getItemsGiven(mainMap[mapy][mapx].roomid)~=nil then
+				for i = 1, tools.numNormalTools do
+					player.totalItemsGiven[i] = player.totalItemsGiven[i] + map.getItemsGiven(mainMap[mapy][mapx].roomid)[1][i]
+					player.totalItemsNeeded[i] = player.totalItemsNeeded[i] + map.getItemsNeeded(mainMap[mapy][mapx].roomid)[1][i]
+				end
+			end
+			mainMap[mapy][mapx].leftCompleted = true
+		end
+	end
+
 	resetTranslation()
 	resetPlayerAttributesRoom()
 
@@ -3685,11 +3701,13 @@ function dropTools()
 	local dropOverride = map.getFieldForRoom(mainMap[mapy][mapx].roomid, 'itemsGivenOverride')
 	if loadTutorial or (floorIndex == -1 and map.getItemsGiven(mainMap[mapy][mapx].roomid) ~= nil) then
 		local toolsToDisplay = {0,0,0,0,0,0,0}
+		local futureTotalItemsGiven = {0,0,0,0,0,0,0}
+		local futureTotalItemsNeeded ={0,0,0,0,0,0,0}
 		for i = 1, tools.numNormalTools do
-			player.totalItemsGiven[i] = player.totalItemsGiven[i] + map.getItemsGiven(mainMap[mapy][mapx].roomid)[1][i]
-			player.totalItemsNeeded[i] = player.totalItemsNeeded[i] + map.getItemsNeeded(mainMap[mapy][mapx].roomid)[1][i]
-			toolsToDisplay[i] = player.totalItemsGiven[i] - player.totalItemsNeeded[i] - tools[i].numHeld
-			tools[i].numHeld = player.totalItemsGiven[i] - player.totalItemsNeeded[i]
+			futureTotalItemsGiven[i] = player.totalItemsGiven[i] + map.getItemsGiven(mainMap[mapy][mapx].roomid)[1][i]
+			futureTotalItemsNeeded[i] = player.totalItemsNeeded[i] + map.getItemsNeeded(mainMap[mapy][mapx].roomid)[1][i]
+			toolsToDisplay[i] = futureTotalItemsGiven[i] - futureTotalItemsNeeded[i] - tools[i].numHeld
+			tools[i].numHeld = futureTotalItemsGiven[i] - futureTotalItemsNeeded[i]
 			if tools[i].numHeld < 0 then tools[i].numHeld = 0 end
 		end
 		tools.displayToolsByArray(toolsToDisplay)
