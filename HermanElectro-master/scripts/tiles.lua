@@ -1679,7 +1679,7 @@ P.blueBeggar = P.beggar:new{name = "blueBeggar", sprite = 'GraphicsEli/blueOrb1.
 function P.blueBeggar:providePayment()
 	local quality = util.random('toolDrop')
 	quality = quality+getLuckBonus()/100
-	if quality < 0.075 then
+	if quality < 0.2 then
 		quality = 1
 	elseif quality < 0.6 then
 		quality = 2
