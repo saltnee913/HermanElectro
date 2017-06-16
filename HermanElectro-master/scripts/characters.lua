@@ -734,6 +734,11 @@ function P.four:onCharLoad()
 	tools.giveToolsByReference({tools.supertoolReroller})
 end
 
+P.eden = P.character:new{name = "Eden", description = "The Zany", scale = 1.1*scale, sprite = 'Graphics/Characters/Zach.png'}
+function P.eden:onCharLoad()
+	tools.giveSupertools(1)
+end
+
 P[#P+1] = P.herman
 P[#P+1] = P.francisco
 P[#P+1] = P.aurelius
@@ -750,6 +755,7 @@ P[#P+1] = P.four
 P[#P+1] = P.scientist
 P[#P+1] = P.dragon
 P[#P+1] = P.four
+P[#P+1] = P.eden
 
 P[#P+1] = P.gabe
 
