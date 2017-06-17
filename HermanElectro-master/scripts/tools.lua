@@ -3734,7 +3734,7 @@ end
 
 
 --Super Sponge: spreads sponge effect
-P.superSponge = P.superTool:new{name = "Super Sponge", description = "Clean everything", image = 'NewGraphics/supersponge.png',
+P.superSponge = P.superTool:new{name = "Super Sponge", description = "Clean everything", image = 'Graphics/supersponge.png',
 baseRange = 1, quality = -1}
 function P.superSponge:usableOnTile(tile)
 	if tile:instanceof(tiles.dustyGlassWall) and tile.blocksVision then
@@ -5475,11 +5475,11 @@ end
 P.repair = P.superTool:new{name = "Duct tape", description = "Fix just about anything", baseRange = 1, quality  = 2,
 image = 'Graphics/tape.png'}
 function P.repair:usableOnTile(tile)
-	if tile.destroyed then
-		return true
-	end
+	return true
 end
 function P.repair:useToolTile(tile, tileY, tileX)
+	local prevRotation = tile.rotation
+
 	for i = 1, #tiles do
 		if room[tileY][tileX].name==tiles[i].name then
 			room[tileY][tileX] = tiles[i]:new()
@@ -5487,6 +5487,8 @@ function P.repair:useToolTile(tile, tileY, tileX)
 		end
 	end
 	room[tileY][tileX] = room[tileY][tileX]:new()
+	room[tileY][tileX]:rotate(prevRotation)
+
 	self.numHeld = self.numHeld-1
 end
 function P.repair:nothingIsSomething()
