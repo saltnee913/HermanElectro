@@ -2034,21 +2034,10 @@ function enterRoom(dir)
 		if plusOne then player.tileY = math.floor(roomHeight/2)+1
 		else player.tileY = math.floor(roomHeight/2) end
 	end
-	
-	currentid = tostring(mainMap[mapy][mapx].roomid)
-	if map.getFieldForRoom(currentid, 'autowin') then
-		completedRooms[mapy][mapx] = 1
-		unlockDoors()
-	end
-	if loadTutorial or floorIndex == -1 then
-		player.enterX = player.tileX
-		player.enterY = player.tileY
-	end
 
 	if (prevMapX~=mapx or prevMapY~=mapy) or dir == -1 then
 		createElements()
 	end
-
 	--check if box blocking doorway
 	for i = 1, #pushables do
 		if not pushables[i].destroyed and pushables[i].tileY == player.tileY and pushables[i].tileX == player.tileX then
@@ -2057,8 +2046,19 @@ function enterRoom(dir)
 			player.tileY = player.prevTileY
 			mapx = prevMapX
 			mapy = prevMapY
+			createElements()
 			break
 		end
+	end
+
+	currentid = tostring(mainMap[mapy][mapx].roomid)
+	if map.getFieldForRoom(currentid, 'autowin') then
+		completedRooms[mapy][mapx] = 1
+		unlockDoors()
+	end
+	if loadTutorial or floorIndex == -1 then
+		player.enterX = player.tileX
+		player.enterY = player.tileY
 	end
 
 	--check tutorial beaten
