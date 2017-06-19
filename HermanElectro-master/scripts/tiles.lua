@@ -3444,6 +3444,94 @@ function P.movingSpikeCustom:onLoad()
 	self.downTime = roomDownTime ~= nil and roomDownTime or self.downTime
 end
 
+P.laserBlock = P.tile:new{name = "laserBlock", sprite = 'Graphics/laserBlock.png',
+active = true, deadSprite = 'Graphics/deadLaserBlock.png', blastCounter = 0.3,
+maxBlastCounter=0.3, triggered = false}
+function P.laserBlock:onStep(thisY, thisX)
+	if not self.active then return end
+
+	local whichDirPointing = self:cfr(1)
+	if player.tileX==thisX then
+		if whichDirPointing==1 and thisY>=player.tileY then
+			self:trigger()
+		elseif whichDirPointing==3 and thisY<=player.tileY then
+			self:trigger()
+		end
+	elseif player.tileY==thisY then
+		if whichDirPointing==2 and thisX<=player.tileX then
+			self:trigger()
+		elseif whichDirPointing==4 and thisX>=player.tileX then
+			self:trigger()
+		end
+	end
+end
+function P.laserBlock:trigger()
+	self.triggered = true
+end
+function P.laserBlock:realtimeUpdate(dt, thisY, thisX)
+	if self.triggered then
+		self.blastCounter = self.blastCounter-dt
+		if self.blastCounter<=0 then
+			self:fire(thisY, thisX)
+			self.triggered = false
+		end
+	end
+end
+function P.laserBlock:fire(thisY, thisX)
+	local whichDirPointing = self:cfr(1)
+	local diffx = 0
+	local diffy = 0
+	if whichDirPointing==1 then diffy=-1
+	elseif whichDirPointing==2 then diffx=1
+	elseif whichDirPointing==3 then diffy=1
+	elseif whichDirPointing==4 then diffx=-1 end
+
+	for i = 1, math.max(roomLength, roomHeight) do
+		if 0<thisX+diffx*i and thisX+diffx*i<=roomLength and
+		0<thisY+diffy*i and thisY+diffy*i<roomHeight then
+			local tileToDestroy = room[thisY+diffy*i][thisX+diffx*i]
+			if tileToDestroy~=nil then
+				room[thisY+diffy*i][thisX+diffx*i]:destroy()
+			end
+		else
+			break
+		end
+	end
+
+	self.active = false
+	self:updateSprite()
+end
+function P.laserBlock:updateSprite()
+	if not self.active then
+		self.sprite = self.deadSprite
+	end
+end
+
+P.notGate = P.powerSupply:new{overlaying = false, name = "notGate", dirSend = {1,0,0,0}, dirAccept = {1,1,1,1},
+sprite = 'Graphics/Tiles/notGateDead.png',
+poweredSprite = 'Graphics/Tiles/notGate.png',
+destroyedSprite = 'Graphics/Tiles/notGateDestroyed.png'}
+function P.notGate:updateTile(dir)
+	if self.destroyed then
+		self.powered = false
+		return
+	end
+	if self.poweredNeighbors[self:cfr(3)] == 0 then
+	--if self.poweredNeighbors[2] == 0 and self.poweredNeighbors[4] == 0 then
+		self.powered = true
+		self.dirSend = shiftArray({1,0,0,0}, self.rotation)
+	else
+		self.powered = false
+		self.dirSend = {0,0,0,0}
+	end
+end
+function P.notGate:destroy()
+	self.destroyed = true
+	self.powered = false
+	self.sprite = self.destroyedSprite
+end
+P.notGate.flipDirection = P.tWire.flipDirection
+
 
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
@@ -3664,6 +3752,7 @@ tiles[216] = P.movingSpikeFast
 tiles[217] = P.movingSpikeSlow
 tiles[218] = P.movingSpikeCustom
 tiles[219] = P.robotGuardTile
+tiles[220] = P.laserBlock
 
 
 return tiles
