@@ -3510,6 +3510,7 @@ function P.laserBlock:fire(thisY, thisX)
 	end
 
 	self.active = false
+	updateGameState()
 	self:updateSprite()
 end
 function P.laserBlock:updateSprite()
