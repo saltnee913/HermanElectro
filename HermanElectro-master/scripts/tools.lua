@@ -1120,6 +1120,9 @@ function P.meat:useToolTile(tile)
 	self.numHeld = self.numHeld - 1
 	tile.attractsAnimals = true
 	tile.overlay = tiles.meat
+	if tile:instanceof(tiles.button) then
+		tile:lockInState(true)
+	end
 end
 
 
@@ -1135,6 +1138,9 @@ function P.rottenMeat:useToolTile(tile)
 	self.numHeld = self.numHeld - 1
 	tile.scaresAnimals = true
 	tile.overlay = tiles.rottenMeat
+	if tile:instanceof(tiles.button) then
+		tile:lockInState(true)
+	end
 end
 
 P.corpseGrabber = P.superTool:new{name = "corpseGrabber", description = "Removed.", baseRange = 1, image = 'Graphics/corpseGrabber.png', quality = 3}
@@ -4694,6 +4700,9 @@ function P.explosiveMeat:useToolTile(tile)
 	self.numHeld = self.numHeld - 1
 	tile.attractsAnimals = true
 	tile.overlay = tiles.explosiveMeat
+	if tile:instanceof(tiles.button) then
+		tile:lockInState(true)
+	end
 end
 
 P.grenade = P.superTool:new{name = "Grenade", description = "Boom bitches", baseRange = 5,

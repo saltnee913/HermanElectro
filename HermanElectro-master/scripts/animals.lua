@@ -22,7 +22,9 @@ P.waitSprite = 'Graphics/waitCounterMark.png'
 P.trainedSprite = 'Graphics/trainedMark.png'
 
 --speed same as player (250)
-P.animal = Object:new{elevation = 0, scale = 1.1*scale, yOffset = 0, frozen = false, trained = false, conductive = false, pickedUp = false, canDropTool = false, willDropTool = false, flying = false, triggered = false, waitCounter = 1, dead = false, name = "animal", tileX, tileY, prevx, prevy, prevTileX, prevTileY, x, y, speed = 250, width = 16*scale, height = 16*scale, sprite = 'Graphics/pitbull.png', deadSprite = 'Graphics/pitbulldead.png', tilesOn = {}, oldTilesOn = {}}
+P.animal = Object:new{elevation = 0, scale = 1.1*scale, yOffset = 0, movesInTurn = true, frozen = false, trained = false, conductive = false,
+pickedUp = false, canDropTool = false, willDropTool = false, flying = false, triggered = false, waitCounter = 1, dead = false, name = "animal",
+tileX, tileY, prevx, prevy, prevTileX, prevTileY, x, y, speed = 250, width = 16*scale, height = 16*scale, sprite = 'Graphics/pitbull.png', deadSprite = 'Graphics/pitbulldead.png', tilesOn = {}, oldTilesOn = {}}
 function P.animal:move(playerx, playery, room, isLit)
 	if self.dead or (not isLit and not self.triggered) or self.frozen then
 		return
@@ -680,6 +682,95 @@ function P.mimic:kill()
 	stats.incrementStat('animalsKilled')
 end
 
+P.robotGuard = P.pitbull:new{name = "robotGuard", sprite = 'Graphics/Characters/RobotGuard.png',
+movesInTurn = false, timeLeft = 0, waitCounter = 0}
+function P.robotGuard:update(dt)
+	if self.dead then return end
+
+	if self.baseTime==nil then
+		self.baseTime = keyTimer.base
+	end
+
+	if self.timeLeft>0 then
+		self.timeLeft = self.timeLeft-dt
+	end
+	if self.timeLeft<=0 then
+		self.timeLeft = self.baseTime
+		self:attemptMove()
+	end
+
+	self:checkKill()
+end
+
+function P.robotGuard:checkKill()
+	if coordsToTile(self.y, self.x).y==coordsToTile(player.y, player.x).y and
+	coordsToTile(self.y, self.x).x==coordsToTile(player.y, player.x).x then
+		kill('robotGuard')
+	end
+end
+
+function P.robotGuard:attemptMove()
+	if self:canSeePlayer() then
+		self:initiateMove(player.tileX, player.tileY, room, true)
+
+		local onTileCount = 0
+		for i = 1, #animals do
+			if animals[i].tileY==self.tileY and animals[i].tileX==self.tileX and not animals[i].dead then
+				onTileCount = onTileCount+1
+			end
+		end
+		if onTileCount>=2 then
+			self.tileY = self.prevTileY
+			self.tileX = self.prevTileX
+		end
+
+		if self:hasMoved() and not self.dead and not self.frozen then
+			local moveProcess = processList.moveAnimal:new()
+			moveProcess.animal = self
+		    if self.tileY<self.prevTileY then
+				moveProcess.direction = 0
+			elseif self.tileX<self.prevTileX  then
+				moveProcess.direction = 3
+			elseif self.tileY>self.prevTileY then
+				moveProcess.direction = 2
+			elseif self.tileX>self.prevTileX then
+				moveProcess.direction = 1
+			end
+			processes[#processes+1] = moveProcess
+		else
+			self.prevTileX = self.tileX
+			self.prevTiley = self.tileY
+		end
+	else
+		self.prevTileX = self.tileX
+		self.prevTileY = self.tileY
+	end
+end
+function P.robotGuard:canSeePlayer()
+	--move up line btw. guard and player, see if anything blocking vision
+	local playerTileInfo = tileToCoordsPlayer(player.tileY, player.tileX)
+	local xdiff = playerTileInfo.x-self.x
+	local ydiff = playerTileInfo.y-self.y
+	local len = math.sqrt(xdiff*xdiff+ydiff*ydiff)
+
+	for i = 1, len/10 do
+		local coordx = self.x+xdiff*(10*i/len)
+		local coordy = self.y+ydiff*(10*i/len)
+
+		local tileInfo = coordsToTile(coordy, coordx)
+		if room[tileInfo.y][tileInfo.x]~=nil and room[tileInfo.y][tileInfo.x]:obstructsVision() then
+			return false
+		end
+	end
+
+	return true
+end
+P.robotGuard.initiateMove = P.pitbull.move
+
+--disable regular movement; can move ONLY from self:attemptMove
+function P.robotGuard:move()
+end
+
 animalList[1] = P.animal
 animalList[2] = P.pitbull
 animalList[3] = P.pup
@@ -701,5 +792,6 @@ animalList[18] = P.testChargedBoss
 animalList[19] = P.babyDragon
 animalList[20] = P.dragonFriend
 animalList[21] = P.mimic
+animalList[22] = P.robotGuard
 
 return animalList
