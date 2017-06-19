@@ -3493,6 +3493,17 @@ function P.laserBlock:fire(thisY, thisX)
 			if tileToDestroy~=nil then
 				room[thisY+diffy*i][thisX+diffx*i]:destroy()
 			end
+			for j = 1, #animals do
+				if animals[j].tileX==thisX+diffx*i and animals[j].tileY==thisY+diffy*i then
+					animals[j]:kill()
+					if animals[j]:instanceof(animalList.bombBuddy) then
+						animals[j]:explode()
+					end
+				end
+			end
+			if player.tileX==thisX+diffx*i and player.tileY==thisY+diffy*i then
+				kill('laserBlock')
+			end
 		else
 			break
 		end
