@@ -77,6 +77,13 @@
 			"requirements": {
 
 			}
+		},
+		"mediumRooms":
+		{
+			"filePath": "RoomData/mediumRooms.json",
+			"requirements": {
+				
+			}
 		}
 	},
 	"data":

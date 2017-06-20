@@ -1027,10 +1027,10 @@ P.endTile = P.tile:new{name = "endTile", canBePowered = false, dirAccept = {0,0,
   sprite = 'Graphics/Tiles/endTile.png', done = false, enterCheckWin = true}
 function P.endTile:onEnter(player)
 	if map.floorInfo.finalFloor == true then
-		if roomHeight>12 and not editorMode then
+		--[[if roomHeight>12 and not editorMode then
 			win()
 			return
-		end
+		end]]
 	elseif validSpace() and mainMap[mapy][mapx].roomid == "final_2" then
 		win()
 		--unlocks.unlockUnlockableRef(unlocks.stickyButtonUnlock)

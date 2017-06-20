@@ -235,7 +235,7 @@ function love.load()
 		floors[1] = love.graphics.newImage('Graphics/Floors/f1.png')
 		floors[2] = love.graphics.newImage('Graphics/Floors/F2.png')
 		floors[3] = love.graphics.newImage('Graphics/Floors/F3.png')
-		floors[6] = love.graphics.newImage('Graphics/Floors/f6.png')
+		--floors[6] = love.graphics.newImage('Graphics/Floors/f6.png')
 
 		invisibleTile = love.graphics.newImage('Graphics/cavesfloor.png')
 		whitetile = love.graphics.newImage('Graphics/whitetile.png')

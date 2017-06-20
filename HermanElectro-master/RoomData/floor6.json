@@ -3,7 +3,7 @@
 	{
 		"rooms": 
 		{
-			"filePath": "RoomData/f6spikesrooms.json",
+			"filePath": "RoomData/mediumRooms.json",
 			"requirements":
 			{
 				"not":
@@ -132,7 +132,7 @@
 		"height": 12,
 		"numRooms":8,
 		"generateFunction": "generateMapWeighted",
-		"startRoomID": "spikes_start",
+		"startRoomID": "f6_start",
 		//numRoomsToCheck is the amount of rooms to try when deciding a room's roomid, decreasing this increases rng
 		"numRoomsToCheck": 3,
 		"finalFloor": true,
