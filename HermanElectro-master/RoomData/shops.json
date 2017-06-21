@@ -605,6 +605,7 @@
     "minimapColor": [139,69,19],
     "hasEndTile": false,
     "autowin": true,
-    "beginner": true
+    "beginner": true,
+    "tag": "shop"
   }
 }

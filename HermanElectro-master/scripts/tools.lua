@@ -751,7 +751,7 @@ P.sponge = P.tool:new{name = "sponge", baseRange = 1, image = 'NewGraphics/spong
 function P.sponge:usableOnTile(tile)
 	if tile:instanceof(tiles.dustyGlassWall) and tile.blocksVision then
 		return true
-	elseif tile:instanceof(tiles.puddle) then return true
+	elseif (tile:instanceof(tiles.puddle) and not tile.frozen) then return true
 	elseif (tile:instanceof(tiles.stickyButton) and not tile:instanceof(tiles.superStickyButton)) or (tile:instanceof(tiles.button) and tile.bricked) then return true
 	elseif tile:instanceof(tiles.glue) then return true
 	elseif tile:instanceof(tiles.slime) or tile:instanceof(tiles.conductiveSlime) then return true end
@@ -2449,7 +2449,7 @@ function P.emptyCup:useToolNothing(tileY, tileX)
 end
 function P.emptyCup:usableOnTile(tile)
 	if self.full then return P.waterBottle.usableOnTile(self, tile) end
-	if not self.full then return tile:instanceof(tiles.puddle) end
+	if not self.full then return (tile:instanceof(tiles.puddle) and not tile.frozen) end
 end
 
 function P.emptyCup:useToolTile(tile, tileY, tileX)
@@ -3751,7 +3751,7 @@ baseRange = 1, quality = -1}
 function P.superSponge:usableOnTile(tile)
 	if tile:instanceof(tiles.dustyGlassWall) and tile.blocksVision then
 		return true
-	elseif tile:instanceof(tiles.puddle) then return true
+	elseif (tile:instanceof(tiles.puddle) and not tile.frozen) then return true
 	elseif tile:instanceof(tiles.stickyButton) or (tile:instanceof(tiles.button) and tile.bricked) then return true
 	elseif tile:instanceof(tiles.glue) then return true
 	elseif tile:instanceof(tiles.slime) or tile:instanceof(tiles.conductiveSlime) then return true end
