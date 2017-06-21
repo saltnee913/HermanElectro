@@ -2559,6 +2559,12 @@ function P.iceyShot:useToolAnimal(animal)
 	--pushables[#pushables].tileY = y
 	--pushables[#pushables].tileX = x
 end
+function P.iceyShot:usableOnTile(tile)
+	return tile:instanceof(tiles.puddle)
+end
+function P.iceyShot:useToolTile(tile)
+	tile:freeze()
+end
 --[[function P.iceyShot:getToolableAnimals()
 	local bool = 0
 	if not player.attributes.tall then

@@ -2028,11 +2028,16 @@ P.motionGate2 = P.motionGate:new{name = "gate2", dirSend = {1,1,1,1}}
 P.playerBoxTile = P.boxTile:new{name = "playerBoxTile", pushable = pushableList[3], listIndex = 3}
 P.animalBoxTile = P.boxTile:new{name = "animalBoxTile", pushable = pushableList[4], listIndex = 4}
 
-P.puddle = P.conductiveTile:new{name = "puddle", sprite = 'Graphics/puddle.png', poweredSprite = 'Graphics/puddlelectrified.png'}
+P.puddle = P.conductiveTile:new{name = "puddle", sprite = 'Graphics/puddle.png',
+poweredSprite = 'Graphics/puddlelectrified.png', frozenSprite = 'Graphics/puddlefrozen.png'}
 function P.puddle:willKillPlayer()
 	return not self.destroyed and self.powered
 end
 function P.puddle:destroy()
+end
+function P.puddle:freeze()
+	self.canBePowered = false
+	self.sprite = self.frozenSprite
 end
 P.puddle.willKillAnimal = P.puddle.willKillPlayer
 
