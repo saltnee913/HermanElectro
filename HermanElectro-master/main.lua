@@ -640,7 +640,7 @@ function startDaily()
 	loadFirstLevel()
 	tools.resetTools()
 	--resetPlayer()
-	player.character = characters[util.random(#characters, 'misc')]
+	player.character = characters.random
 	player.character:onBegin()
 	resetTintValues()
 end

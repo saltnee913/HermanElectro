@@ -357,6 +357,7 @@ function P.random:onBegin()
 		charSlot = util.random(#charsToSelect-1, 'misc')
 	end
 	player.character = charsToSelect[charSlot]:new()
+			print(player.character.name)
 	player.character:onBegin()
 end
 
@@ -813,7 +814,7 @@ P[#P+1] = P.scientist
 P[#P+1] = P.dragon
 P[#P+1] = P.four
 P[#P+1] = P.eden
-P[#P+1] = P.tempus
+--P[#P+1] = P.tempus
 
 P[#P+1] = P.gabe
 
