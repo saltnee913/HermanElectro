@@ -73,10 +73,6 @@ function P.pushable:move(mover)
 		else
 			self:onLeaveNothing()
 		end
-		if room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX]:willDestroyPushable() then
-			self.destroyed = true
-			room[self.tileY][self.tileX]:destroyPushable()
-		end
 		self.canBeAccelerated = false
 		if Object.instanceof(mover,animalList.animal) then
 			unlocks.unlockUnlockableRef(unlocks.animalBoxUnlock)
@@ -130,10 +126,6 @@ function P.pushable:moveNoMover()
 	if not (self.prevTileY == self.tileY and self.prevTileX == self.tileX) then
 		if room[self.prevTileY][self.prevTileX]~=nil then
 			room[self.prevTileY][self.prevTileX]:onLeavePushable(self)
-		end
-		if room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX]:willDestroyPushable() then
-			self.destroyed = true
-			room[self.tileY][self.tileX]:destroyPushable()
 		end
 		return true
 	elseif room[self.tileY][self.tileX]~=nil then
@@ -235,10 +227,6 @@ function P.batteringRam:move(mover)
 		if room[self.prevTileY][self.prevTileX]~=nil then
 			room[self.prevTileY][self.prevTileX]:onLeavePushable(self)
 		end
-		if room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX]:willDestroyPushable() then
-			self.destroyed = true
-			room[self.tileY][self.tileX]:destroyPushable()
-		end
 		if Object.instanceof(mover,animalList.animal) then
 			unlocks.unlockUnlockableRef(unlocks.animalBoxUnlock)
 		end
@@ -290,10 +278,6 @@ function P.batteringRam:moveNoMover()
 	if not (self.prevTileY == self.tileY and self.prevTileX == self.tileX) then
 		if room[self.prevTileY][self.prevTileX]~=nil then
 			room[self.prevTileY][self.prevTileX]:onLeavePushable(self)
-		end
-		if room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX]:willDestroyPushable() then
-			self.destroyed = true
-			room[self.tileY][self.tileX]:destroyPushable()
 		end
 		return true
 	elseif room[self.tileY][self.tileX]~=nil then
