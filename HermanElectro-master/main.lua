@@ -3438,6 +3438,7 @@ end
 
 function checkCurrentTile()
 	checkPickups()
+	checkWin()
 end
 
 function checkPickups()

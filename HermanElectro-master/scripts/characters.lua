@@ -278,6 +278,7 @@ function P.battery:onKeyPressedChar(key)
 			self.forcePowerUpdate = true
 			self:updateSprite()
 		end
+		checkCurrentTile()
 		return true
 	end
 	return false
