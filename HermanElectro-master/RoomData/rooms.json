@@ -15487,7 +15487,8 @@
     [
       [1,0,0,0,0,0,0]
     ],
-    "set": "inner_wiring"
+    "set": "inner_wiring",
+    "toCheck": true
     },
 
     "inner_wiring_2":
