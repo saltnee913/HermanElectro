@@ -1532,7 +1532,7 @@ P.batTile = P.pitbullTile:new{name = "bat", animal = animalList[6], listIndex = 
 P.meat = P.tile:new{name = "meat", sprite = 'Graphics/Tiles/meat.png', attractsAnimals = true}
 P.rottenMeat = P.tile:new{name = "rottenMeat", sprite = 'Graphics/Tiles/rottenMeat.png', scaresAnimals = true}
 
-P.explosiveMeat = P.tile:new{name = "explosiveMeat", sprite = 'Graphics/Tiles/explosiveMeat.png'}
+P.explosiveMeat = P.tile:new{name = "explosiveMeat", sprite = 'Graphics/Tiles/explosiveMeat.png', attractsAnimal = true}
 function P.explosiveMeat:onEnterAnimal()
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
