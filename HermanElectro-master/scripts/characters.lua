@@ -738,7 +738,10 @@ end
 
 P.eden = P.character:new{name = "Eden", description = "The Zany", scale = 1.1*scale, sprite = 'Graphics/Characters/Zach.png'}
 function P.eden:onCharLoad()
-	tools.giveSupertools(1)
+	for i = 1, 3 do
+		local superIQuality = tools.chooseSupertool(i)
+		tools.giveToolsByReference({tools[superIQuality]})
+	end
 end
 
 P.tempus = P.character:new{name = "Tempus", description = "The Time Master", scale = 1.1*scale,
