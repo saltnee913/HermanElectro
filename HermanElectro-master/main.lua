@@ -2703,6 +2703,11 @@ function restartGame()
 		not (mainMap[mapy][mapx].leftCompleted~=nil and mainMap[mapy][mapx].leftCompleted) then		
  			hackEnterRoom(mainMap[mapy][mapx].roomid, mapy, mapx)		
  		end
+
+ 		if completedRooms[mapy][mapx]==1 and
+ 		(mainMap[mapy][mapx].leftCompleted==nil or not mainMap[mapy][mapx].leftCompleted) then
+ 			completedRooms[mapy][mapx] = 0
+ 		end
 		
 		setPlayerLoc()
 		myShader:send("b_and_w", 0)
