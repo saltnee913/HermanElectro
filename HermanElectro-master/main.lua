@@ -2083,6 +2083,7 @@ function enterRoom(dir)
 	postRoomEnter()
 
 	setPlayerLoc()
+	checkCurrentTile()
 end
 
 function setPlayerLoc()
