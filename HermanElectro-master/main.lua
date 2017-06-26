@@ -1489,6 +1489,20 @@ function powerTestPushable(x, y, lastDir)
 		kill()
 		return
 	end
+
+	--power tile directly below
+	if room[x][y]~=nil then
+		formerPowered = room[x][y].powered
+		formerSend = room[x][y].dirSend
+		formerAccept = room[x][y].dirAccept
+		--powered[x-1][y] = 1
+		room[x][y].poweredNeighbors = {1,1,1,1}
+		room[x][y]:updateTileAndOverlay(0)
+		if room[x][y].powered ~= formerPowered or room[x][y].dirSend ~= formerSend or room[x][y].dirAccept ~= formerAccept then
+			powerTestSpecial(x,y,0)
+		end
+	end
+
 	--x refers to y-direction and vice versa
 	--1 for up, 2 for right, 3 for down, 4 for left
 
