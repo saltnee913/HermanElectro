@@ -1389,6 +1389,10 @@ function P.mousetrap:lockInState(state)
 	self.triggered = false
 	self:updateSprite()
 end
+function P.mousetrap:destroy()
+	--needs to be diff. from bricking the mosutrap later; for now, same
+	self:lockInState(true)
+end
 
 P.bomb = P.tile:new{name = "bomb", triggered = true, counter = 3, sprite = 'Graphics/Tiles/bomb3.png', sprite2 = 'Graphics/Tiles/bomb2.png', sprite1 = 'Graphics/Tiles/bomb1.png'}
 function P.bomb:onStep(x, y)
@@ -2404,6 +2408,11 @@ function P.supertoolTile:onEnter(entered)
 		self.isVisible = false
 		self.gone = true
 	end
+end
+function P.supertoolTile:getInfoText()
+	if self.tool~=nil then
+		return self.tool.name
+	else return nil end
 end
 P.supertoolQ1 = P.supertoolTile:new{name = "supertoolTileQ1", superQuality = 1}
 P.supertoolQ2 = P.supertoolTile:new{name = "supertoolTileQ2", superQuality = 2}

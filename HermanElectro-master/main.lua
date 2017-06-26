@@ -1,6 +1,8 @@
 love.graphics.setDefaultFilter( "nearest" )
 io.stdout:setvbuf("no")
 
+globalCounter = 0
+
 roomHeight = 12
 roomLength = 24
 screenScale = 70
@@ -2207,7 +2209,7 @@ keyTimer = {base = .14, timeLeft = .14, suicideDelay = .65}
 function love.update(dt)
 	dt = gameSpeed*dt
 
-
+	globalCounter = globalCounter+dt
 
 	if gamePaused then
 		return

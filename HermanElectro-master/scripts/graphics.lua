@@ -493,6 +493,7 @@ function P.drawPlayer()
 	local charSprite = util.getImage(player.character.sprite)
 	love.graphics.draw(charSprite, math.floor(player.x-charSprite:getWidth()*player.character.scale/2), math.floor(player.y-charSprite:getHeight()*player.character.scale-player.elevation*scale), 0, player.character.scale, player.character.scale)
 	love.graphics.setShader()
+	love.graphics.setNewFont(fontSize)
 	love.graphics.print(player.character:getInfoText(), math.floor(player.x-charSprite:getWidth()*player.character.scale/2), math.floor(player.y-charSprite:getHeight()*player.character.scale));
 	love.graphics.setShader(myShader)
 end
