@@ -1,7 +1,7 @@
 {
   "rooms":
   {
-    "f6_start":
+    "f6_start_2":
     {
       "layout":
         [
@@ -20,7 +20,8 @@
       "itemsNeeded":
         [
           [0,0,0,0,0,0,0]],
-      "flippable": false
+      "flippable": false,
+      "isInitial": true
     },
 
     "f6_template":
@@ -142,7 +143,7 @@
     "dirEnter": [1,1,1,1],
     "hasEndTile": true,
     "autowin": false,
-    "startRoomID": "f6_start",
+    "startRoomID": "f6_start_2",
     "flippable": false,
     "spikeUpTime": 50,
     "spikeDownTime": 100
