@@ -751,7 +751,7 @@ P.sponge = P.tool:new{name = "sponge", baseRange = 1, image = 'NewGraphics/spong
 function P.sponge:usableOnTile(tile)
 	if tile:instanceof(tiles.dustyGlassWall) and tile.blocksVision then
 		return true
-	elseif tile:instanceof(tiles.puddle) then return true
+	elseif (tile:instanceof(tiles.puddle) and not tile.frozen) then return true
 	elseif (tile:instanceof(tiles.stickyButton) and not tile:instanceof(tiles.superStickyButton)) or (tile:instanceof(tiles.button) and tile.bricked) then return true
 	elseif tile:instanceof(tiles.glue) then return true
 	elseif tile:instanceof(tiles.slime) or tile:instanceof(tiles.conductiveSlime) then return true end
@@ -1120,6 +1120,9 @@ function P.meat:useToolTile(tile)
 	self.numHeld = self.numHeld - 1
 	tile.attractsAnimals = true
 	tile.overlay = tiles.meat
+	if tile:instanceof(tiles.button) then
+		tile:lockInState(true)
+	end
 end
 
 
@@ -1135,6 +1138,9 @@ function P.rottenMeat:useToolTile(tile)
 	self.numHeld = self.numHeld - 1
 	tile.scaresAnimals = true
 	tile.overlay = tiles.rottenMeat
+	if tile:instanceof(tiles.button) then
+		tile:lockInState(true)
+	end
 end
 
 P.corpseGrabber = P.superTool:new{name = "corpseGrabber", description = "Removed.", baseRange = 1, image = 'Graphics/corpseGrabber.png', quality = 3}
@@ -2443,7 +2449,7 @@ function P.emptyCup:useToolNothing(tileY, tileX)
 end
 function P.emptyCup:usableOnTile(tile)
 	if self.full then return P.waterBottle.usableOnTile(self, tile) end
-	if not self.full then return tile:instanceof(tiles.puddle) end
+	if not self.full then return (tile:instanceof(tiles.puddle) and not tile.frozen) end
 end
 
 function P.emptyCup:useToolTile(tile, tileY, tileX)
@@ -2552,6 +2558,12 @@ function P.iceyShot:useToolAnimal(animal)
 	--table.insert(pushables, P.iceBox:new())
 	--pushables[#pushables].tileY = y
 	--pushables[#pushables].tileX = x
+end
+function P.iceyShot:usableOnTile(tile)
+	return tile:instanceof(tiles.puddle)
+end
+function P.iceyShot:useToolTile(tile)
+	tile:freeze()
 end
 --[[function P.iceyShot:getToolableAnimals()
 	local bool = 0
@@ -3415,7 +3427,7 @@ function P.boxDisplacer:useToolTile(tile, tileY, tileX)
 	self.image = self.baseImage
 end
 
-P.boxCloner = P.superTool:new{name = "Box Cloner", description = "Gain a copy.", heldBox = nil, image = 'Graphics/boxcloner2.png', baseImage = 'Graphics/boxcloner2.png', baseRange = 3, quality = 4, cost = 4}
+P.boxCloner = P.superTool:new{name = "Box Cloner", description = "Gain a copy.", heldBox = nil, image = 'Graphics/boxcloner2.png', baseImage = 'Graphics/boxcloner2.png', baseRange = 3, quality = 2, cost = 4}
 function P.boxCloner:usableOnPushable(pushable)
 	return (not pushable.destroyed) and self.heldBox==nil
 end
@@ -3739,7 +3751,7 @@ baseRange = 1, quality = -1}
 function P.superSponge:usableOnTile(tile)
 	if tile:instanceof(tiles.dustyGlassWall) and tile.blocksVision then
 		return true
-	elseif tile:instanceof(tiles.puddle) then return true
+	elseif (tile:instanceof(tiles.puddle) and not tile.frozen) then return true
 	elseif tile:instanceof(tiles.stickyButton) or (tile:instanceof(tiles.button) and tile.bricked) then return true
 	elseif tile:instanceof(tiles.glue) then return true
 	elseif tile:instanceof(tiles.slime) or tile:instanceof(tiles.conductiveSlime) then return true end
@@ -4694,6 +4706,9 @@ function P.explosiveMeat:useToolTile(tile)
 	self.numHeld = self.numHeld - 1
 	tile.attractsAnimals = true
 	tile.overlay = tiles.explosiveMeat
+	if tile:instanceof(tiles.button) then
+		tile:lockInState(true)
+	end
 end
 
 P.grenade = P.superTool:new{name = "Grenade", description = "Boom bitches", baseRange = 5,

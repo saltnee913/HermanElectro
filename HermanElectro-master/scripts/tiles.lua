@@ -1027,10 +1027,10 @@ P.endTile = P.tile:new{name = "endTile", canBePowered = false, dirAccept = {0,0,
   sprite = 'Graphics/Tiles/endTile.png', done = false, enterCheckWin = true}
 function P.endTile:onEnter(player)
 	if map.floorInfo.finalFloor == true then
-		if roomHeight>12 and not editorMode then
+		--[[if roomHeight>12 and not editorMode then
 			win()
 			return
-		end
+		end]]
 	elseif validSpace() and mainMap[mapy][mapx].roomid == "final_2" then
 		win()
 		--unlocks.unlockUnlockableRef(unlocks.stickyButtonUnlock)
@@ -1079,6 +1079,7 @@ P.catTile = P.pitbullTile:new{name = "cat", animal = animalList[4], listIndex = 
 P.ramTile = P.pitbullTile:new{name = "ram", animal = animalList[14], listIndex = 14}
 P.twinPitbullTile = P.pitbullTile:new{name = "twinPitbull", animal = animalList[17], listIndex = 17}
 P.testChargedBossTile = P.pitbullTile:new{name = "testChargedBoss", animal = animalList[18], listIndex = 18}
+P.robotGuardTile = P.pitbullTile:new{name = "robotGuardTile", animal = animalList[22], listIndex = 22}
 
 P.spotlightTile = P.tile:new{name = "spotlight", spotlight = spotlightList.spotlight,
 baseTime = 3600, currTime = 0,
@@ -1388,6 +1389,10 @@ function P.mousetrap:lockInState(state)
 	self.triggered = false
 	self:updateSprite()
 end
+function P.mousetrap:destroy()
+	--needs to be diff. from bricking the mosutrap later; for now, same
+	self:lockInState(true)
+end
 
 P.bomb = P.tile:new{name = "bomb", triggered = true, counter = 3, sprite = 'Graphics/Tiles/bomb3.png', sprite2 = 'Graphics/Tiles/bomb2.png', sprite1 = 'Graphics/Tiles/bomb1.png'}
 function P.bomb:onStep(x, y)
@@ -1531,7 +1536,7 @@ P.batTile = P.pitbullTile:new{name = "bat", animal = animalList[6], listIndex = 
 P.meat = P.tile:new{name = "meat", sprite = 'Graphics/Tiles/meat.png', attractsAnimals = true}
 P.rottenMeat = P.tile:new{name = "rottenMeat", sprite = 'Graphics/Tiles/rottenMeat.png', scaresAnimals = true}
 
-P.explosiveMeat = P.tile:new{name = "explosiveMeat", sprite = 'Graphics/Tiles/explosiveMeat.png'}
+P.explosiveMeat = P.tile:new{name = "explosiveMeat", sprite = 'Graphics/Tiles/explosiveMeat.png', attractsAnimal = true}
 function P.explosiveMeat:onEnterAnimal()
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
@@ -2027,11 +2032,17 @@ P.motionGate2 = P.motionGate:new{name = "gate2", dirSend = {1,1,1,1}}
 P.playerBoxTile = P.boxTile:new{name = "playerBoxTile", pushable = pushableList[3], listIndex = 3}
 P.animalBoxTile = P.boxTile:new{name = "animalBoxTile", pushable = pushableList[4], listIndex = 4}
 
-P.puddle = P.conductiveTile:new{name = "puddle", sprite = 'Graphics/puddle.png', poweredSprite = 'Graphics/puddlelectrified.png'}
+P.puddle = P.conductiveTile:new{name = "puddle", frozen = false, sprite = 'Graphics/puddle.png',
+poweredSprite = 'Graphics/puddlelectrified.png', frozenSprite = 'Graphics/puddlefrozen.png'}
 function P.puddle:willKillPlayer()
 	return not self.destroyed and self.powered
 end
 function P.puddle:destroy()
+end
+function P.puddle:freeze()
+	self.canBePowered = false
+	self.frozen = true
+	self.sprite = self.frozenSprite
 end
 P.puddle.willKillAnimal = P.puddle.willKillPlayer
 
@@ -2398,6 +2409,11 @@ function P.supertoolTile:onEnter(entered)
 		self.gone = true
 	end
 end
+function P.supertoolTile:getInfoText()
+	if self.tool~=nil then
+		return self.tool.name
+	else return nil end
+end
 P.supertoolQ1 = P.supertoolTile:new{name = "supertoolTileQ1", superQuality = 1}
 P.supertoolQ2 = P.supertoolTile:new{name = "supertoolTileQ2", superQuality = 2}
 P.supertoolQ3 = P.supertoolTile:new{name = "supertoolTileQ3", superQuality = 3}
@@ -2406,7 +2422,7 @@ P.supertoolQ5 = P.supertoolTile:new{name = "supertoolTileQ5", superQuality = 5}
 
 P.dungeonSuper = P.supertoolTile:new{name = "dungeonSuper"}
 function P.dungeonSuper:selectTool()
-	local toolOptions = {tools.tunneler, tools.shield, tools.shield, tools.shield}
+	local toolOptions = {tools.tunneler, tools.roomUnlocker, tools.roomUnlocker, tools.roomUnlocker}
 	self.tool = toolOptions[util.random(#toolOptions, 'toolDrop')]
 	self:updateSprite()
 end
@@ -3443,6 +3459,106 @@ function P.movingSpikeCustom:onLoad()
 	self.downTime = roomDownTime ~= nil and roomDownTime or self.downTime
 end
 
+P.laserBlock = P.tile:new{name = "laserBlock", sprite = 'Graphics/laserBlock.png',
+active = true, deadSprite = 'Graphics/deadLaserBlock.png', blastCounter = 0.3,
+maxBlastCounter=0.3, triggered = false}
+function P.laserBlock:onStep(thisY, thisX)
+	if not self.active then return end
+
+	local whichDirPointing = self:cfr(1)
+	if player.tileX==thisX then
+		if whichDirPointing==1 and thisY>=player.tileY then
+			self:trigger()
+		elseif whichDirPointing==3 and thisY<=player.tileY then
+			self:trigger()
+		end
+	elseif player.tileY==thisY then
+		if whichDirPointing==2 and thisX<=player.tileX then
+			self:trigger()
+		elseif whichDirPointing==4 and thisX>=player.tileX then
+			self:trigger()
+		end
+	end
+end
+function P.laserBlock:trigger()
+	self.triggered = true
+end
+function P.laserBlock:realtimeUpdate(dt, thisY, thisX)
+	if self.triggered then
+		self.blastCounter = self.blastCounter-dt
+		if self.blastCounter<=0 then
+			self:fire(thisY, thisX)
+			self.triggered = false
+		end
+	end
+end
+function P.laserBlock:fire(thisY, thisX)
+	local whichDirPointing = self:cfr(1)
+	local diffx = 0
+	local diffy = 0
+	if whichDirPointing==1 then diffy=-1
+	elseif whichDirPointing==2 then diffx=1
+	elseif whichDirPointing==3 then diffy=1
+	elseif whichDirPointing==4 then diffx=-1 end
+
+	for i = 1, math.max(roomLength, roomHeight) do
+		if 0<thisX+diffx*i and thisX+diffx*i<=roomLength and
+		0<thisY+diffy*i and thisY+diffy*i<roomHeight then
+			local tileToDestroy = room[thisY+diffy*i][thisX+diffx*i]
+			if tileToDestroy~=nil then
+				room[thisY+diffy*i][thisX+diffx*i]:destroy()
+			end
+			for j = 1, #animals do
+				if animals[j].tileX==thisX+diffx*i and animals[j].tileY==thisY+diffy*i then
+					animals[j]:kill()
+					if animals[j]:instanceof(animalList.bombBuddy) then
+						animals[j]:explode()
+					end
+				end
+			end
+			if player.tileX==thisX+diffx*i and player.tileY==thisY+diffy*i then
+				kill('laserBlock')
+			end
+		else
+			break
+		end
+	end
+
+	self.active = false
+	updateGameState()
+	self:updateSprite()
+end
+function P.laserBlock:updateSprite()
+	if not self.active then
+		self.sprite = self.deadSprite
+	end
+end
+
+P.notGate = P.powerSupply:new{overlaying = false, name = "notGate", dirSend = {1,0,0,0}, dirAccept = {1,1,1,1},
+sprite = 'Graphics/Tiles/notGateDead.png',
+poweredSprite = 'Graphics/Tiles/notGate.png',
+destroyedSprite = 'Graphics/Tiles/notGateDestroyed.png'}
+function P.notGate:updateTile(dir)
+	if self.destroyed then
+		self.powered = false
+		return
+	end
+	if self.poweredNeighbors[self:cfr(3)] == 0 then
+	--if self.poweredNeighbors[2] == 0 and self.poweredNeighbors[4] == 0 then
+		self.powered = true
+		self.dirSend = shiftArray({1,0,0,0}, self.rotation)
+	else
+		self.powered = false
+		self.dirSend = {0,0,0,0}
+	end
+end
+function P.notGate:destroy()
+	self.destroyed = true
+	self.powered = false
+	self.sprite = self.destroyedSprite
+end
+P.notGate.flipDirection = P.tWire.flipDirection
+
 
 tiles[1] = P.invisibleTile
 tiles[2] = P.conductiveTile
@@ -3662,6 +3778,8 @@ tiles[215] = P.movingSpike
 tiles[216] = P.movingSpikeFast
 tiles[217] = P.movingSpikeSlow
 tiles[218] = P.movingSpikeCustom
+tiles[219] = P.robotGuardTile
+tiles[220] = P.laserBlock
 
 
 return tiles

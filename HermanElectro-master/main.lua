@@ -1,6 +1,8 @@
 love.graphics.setDefaultFilter( "nearest" )
 io.stdout:setvbuf("no")
 
+globalCounter = 0
+
 roomHeight = 12
 roomLength = 24
 screenScale = 70
@@ -235,7 +237,7 @@ function love.load()
 		floors[1] = love.graphics.newImage('Graphics/Floors/f1.png')
 		floors[2] = love.graphics.newImage('Graphics/Floors/F2.png')
 		floors[3] = love.graphics.newImage('Graphics/Floors/F3.png')
-		floors[6] = love.graphics.newImage('Graphics/Floors/f6.png')
+		--floors[6] = love.graphics.newImage('Graphics/Floors/f6.png')
 
 		invisibleTile = love.graphics.newImage('Graphics/cavesfloor.png')
 		whitetile = love.graphics.newImage('Graphics/whitetile.png')
@@ -640,7 +642,7 @@ function startDaily()
 	loadFirstLevel()
 	tools.resetTools()
 	--resetPlayer()
-	player.character = characters[util.random(#characters, 'misc')]
+	player.character = characters.random
 	player.character:onBegin()
 	resetTintValues()
 end
@@ -1487,6 +1489,20 @@ function powerTestPushable(x, y, lastDir)
 		kill()
 		return
 	end
+
+	--power tile directly below
+	if room[x][y]~=nil then
+		formerPowered = room[x][y].powered
+		formerSend = room[x][y].dirSend
+		formerAccept = room[x][y].dirAccept
+		--powered[x-1][y] = 1
+		room[x][y].poweredNeighbors = {1,1,1,1}
+		room[x][y]:updateTileAndOverlay(0)
+		if room[x][y].powered ~= formerPowered or room[x][y].dirSend ~= formerSend or room[x][y].dirAccept ~= formerAccept then
+			powerTestSpecial(x,y,0)
+		end
+	end
+
 	--x refers to y-direction and vice versa
 	--1 for up, 2 for right, 3 for down, 4 for left
 
@@ -2083,6 +2099,7 @@ function enterRoom(dir)
 	postRoomEnter()
 
 	setPlayerLoc()
+	checkCurrentTile()
 end
 
 function setPlayerLoc()
@@ -2206,7 +2223,7 @@ keyTimer = {base = .14, timeLeft = .14, suicideDelay = .65}
 function love.update(dt)
 	dt = gameSpeed*dt
 
-
+	globalCounter = globalCounter+dt
 
 	if gamePaused then
 		return
@@ -2675,38 +2692,42 @@ end
 
 function restartGame()
 	if loadTutorial or floorIndex == -1 then
-		local itemsGiven = map.getItemsGiven(mainMap[mapy][mapx].roomid)
-		local itemsNeeded = map.getItemsNeeded(mainMap[mapy][mapx].roomid)
-		if itemsGiven ~= nil then
-			player.dead = false
-			player.y = (player.enterY-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
-			player.tileY = player.enterY
-			player.x = (player.enterX-1)*scale*tileWidth+wallSprite.width+tileWidth/2*scale-10
-			player.tileX = player.enterX
-			player.prevy = player.y
-			player.prevTileY = player.enterY
-			player.prevx = player.x
-			player.prevTileX = player.enterX
-			for i = 1, tools.numNormalTools do
-				if (completedRooms[mapy][mapx] == 1) then
-					player.totalItemsGiven[i] = player.totalItemsGiven[i] - map.getItemsGiven(mainMap[mapy][mapx].roomid)[1][i]
-					player.totalItemsNeeded[i] = player.totalItemsNeeded[i] - map.getItemsNeeded(mainMap[mapy][mapx].roomid)[1][i]
-				end
-				tools[i].numHeld = player.totalItemsGiven[i] - player.totalItemsNeeded[i]
-				if tools[i].numHeld < 0 then tools[i].numHeld = 0 end
-			end
-			completedRooms[mapy][mapx] = 0
-			for i = 0, mainMap.height do
-				for j = 0, mainMap.height do
-					if completedRooms[i][j] == 0 then
-						hackEnterRoom(mainMap[i][j].roomid, i, j)
-					end
-				end
-			end
-			map.setVisibleMapTutorial()
-			setPlayerLoc()
-			myShader:send("b_and_w", 0)
+		player.dead = false
+		player.y = (player.enterY-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
+		player.tileY = player.enterY
+		player.x = (player.enterX-1)*scale*tileWidth+wallSprite.width+tileWidth/2*scale-10
+		player.tileX = player.enterX
+		player.prevy = player.y
+		player.prevTileY = player.enterY
+		player.prevx = player.x
+		player.prevTileX = player.enterX
+		for i = 1, tools.numNormalTools do
+			tools[i].numHeld = player.totalItemsGiven[i] - player.totalItemsNeeded[i]
+			if tools[i].numHeld < 0 then tools[i].numHeld = 0 end
 		end
+		tools.toolsShown = {}
+
+
+		for i = 0, mainMap.height do
+			for j = 0, mainMap.height do
+				if mainMap[i][j]~=nil and (completedRooms[i][j]~=1 or 
+				not (mainMap[i][j].leftCompleted~=nil and mainMap[i][j].leftCompleted)) then
+					hackEnterRoom(mainMap[i][j].roomid, i, j)
+				end
+			end
+		end
+		if completedRooms[mapy][mapx]~=1 or 
+		not (mainMap[mapy][mapx].leftCompleted~=nil and mainMap[mapy][mapx].leftCompleted) then		
+ 			hackEnterRoom(mainMap[mapy][mapx].roomid, mapy, mapx)		
+ 		end
+
+ 		if completedRooms[mapy][mapx]==1 and
+ 		(mainMap[mapy][mapx].leftCompleted==nil or not mainMap[mapy][mapx].leftCompleted) then
+ 			completedRooms[mapy][mapx] = 0
+ 		end
+		
+		setPlayerLoc()
+		myShader:send("b_and_w", 0)
 	else
 		if floorIndex>=5 then
 			unlocks.unlockUnlockableRef(unlocks.roomRerollerUnlock)
@@ -3004,7 +3025,8 @@ function postAnimalMovement()
 	resolveConflicts()
 
 	for i = 1, #animals do
-		if animals[i]:hasMoved() and not animals[i].dead and not animals[i].frozen then
+		if animals[i]:hasMoved() and not animals[i].dead and not animals[i].frozen and
+		animals[i].movesInTurn then
 			local moveProcess = processList.moveAnimal:new()
 			moveProcess.animal = animals[i]
 		    if animals[i].tileY<animals[i].prevTileY then
@@ -3101,7 +3123,8 @@ function resolveConflicts()
 		--code below semi-fixes animal "bouncing" -- kind of hacky
 		if firstRun then
 			for i = 1, #animals do
-				if animals[i].tileX==animals[i].prevTileX and animals[i].tileY==animals[i].prevTileY then
+				if animals[i].tileX==animals[i].prevTileX and animals[i].tileY==animals[i].prevTileY
+				and animals[i].movesInTurn then
 					animals[i]:checkDeath()
 					tryMove = true
 					if animals[i].dead or not animals[i].triggered then
@@ -3437,6 +3460,7 @@ end
 
 function checkCurrentTile()
 	checkPickups()
+	checkWin()
 end
 
 function checkPickups()
@@ -3781,7 +3805,10 @@ function giveToolsFullClear()
 		bonusTool = bonusTool+tools.completionBonus.numHeld*2
 		tools.giveRandomTools(math.floor((toolMax+toolMin)/2)+bonusTool)
 	end]]
-
+	if toolMax==nil or toolMin==nil then
+		toolMax = 1
+		toolMin = 1
+	end
 	local totalDropNum = math.floor((toolMax+toolMin)/2)
 	local bonusTool = util.random(2, 'toolDrop')-1
 	totalDropNum = totalDropNum+bonusTool
@@ -3817,6 +3844,12 @@ function beatRoom(noDrops)
 
 	if floorIndex == -1 then
 		map.setVisibleMapTutorial()
+	end
+
+	for i = 1, #animals do
+		if animals[i]:instanceof(animalList.robotGuard) then
+			animals[i]:kill()
+		end
 	end
 end
 

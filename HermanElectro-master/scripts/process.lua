@@ -59,7 +59,7 @@ function P.fadeProcess:run(dt)
 	myShader:send("b_and_w", 1-self.time/self.baseTime)
 end
 
-P.moveAnimal = P.basicProcess:new{name = "moveAnimal", direction = 0, active = true, time = nil, disableInput = true,
+P.moveAnimal = P.basicProcess:new{name = "moveAnimal", direction = 0, active = true, time = nil, disableInput = false,
 animal = nil}
 function P.moveAnimal:run(dt)
 	if self.animal==nil then return end

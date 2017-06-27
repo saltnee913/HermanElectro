@@ -114,6 +114,8 @@ P.lateGameTiles[#P.lateGameTiles+1] = tiles.dungeonKey
 P.lateGameTiles[#P.lateGameTiles+1] = tiles.spotlightTile
 P.lateGameTiles[#P.lateGameTiles+1] = tiles.slowSpotlightTile
 P.lateGameTiles[#P.lateGameTiles+1] = tiles.fastSpotlightTile
+P.lateGameTiles[#P.lateGameTiles+1] = tiles.robotGuardTile
+P.lateGameTiles[#P.lateGameTiles+1] = tiles.laserBlock
 
 P.shopTiles[#P.shopTiles+1] = tiles.toolTaxTile
 P.shopTiles[#P.shopTiles+1] = tiles.toolTile
