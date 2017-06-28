@@ -1081,6 +1081,7 @@ P.twinPitbullTile = P.pitbullTile:new{name = "twinPitbull", animal = animalList[
 P.testChargedBossTile = P.pitbullTile:new{name = "testChargedBoss", animal = animalList[18], listIndex = 18}
 P.robotGuardTile = P.pitbullTile:new{name = "robotGuardTile", animal = animalList[22], listIndex = 22}
 P.shopkeeperTile = P.pitbullTile:new{name = "shopkeeperTile", animal = animalList[23], listIndex = 23}
+P.baseBossTile = P.pitbullTile:new{name = "baseBossTile", animal = animalList[24], listIndex = 24}
 
 P.spotlightTile = P.tile:new{name = "spotlight", spotlight = spotlightList.spotlight,
 baseTime = 3600, currTime = 0,
@@ -3782,6 +3783,7 @@ tiles[218] = P.movingSpikeCustom
 tiles[219] = P.robotGuardTile
 tiles[220] = P.laserBlock
 tiles[221] = P.shopkeeperTile
+tiles[222] = P.baseBossTile
 
 
 return tiles
