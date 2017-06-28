@@ -35,19 +35,19 @@ function P.draw()
 	for j = 1, roomHeight do
 		for i = 1, roomLength do
 			if litTiles[j][i]>0 then
-				graphics.drawTile(j, i)
+				graphicsManager.drawTile(j, i)
 			end
 		end
 
 		for i = 1, #animals do
 			if animals[i]~=nil and litTiles[animals[i].tileY][animals[i].tileX]==1 and not animals[i].pickedUp and coordsToTileY(animals[i].y)==j then
-				graphics.drawAnimal(animals[i])
+				graphicsManager.drawAnimal(animals[i])
 			end
 		end
 
 		for i = 1, #pushables do
 			if pushables[i]~=nil and not pushables[i].destroyed and litTiles[pushables[i].tileY][pushables[i].tileX]==1 and pushables[i].tileY==j and pushables[i].visible then
-		    	graphics.drawPushable(pushables[i])
+		    	graphicsManager.drawPushable(pushables[i])
 			end
 		end
 
@@ -113,7 +113,7 @@ function P.draw()
 		end
 
 		if coordsToTileY(player.y) == j and not player.attributes.invisible then
-			graphics.drawPlayer()
+			graphicsManager.drawPlayer()
 		end
 
 		--draw clone stuff
@@ -157,7 +157,7 @@ function P.draw()
 	for j = 1, roomHeight do
 		for i = 1, roomLength do
 			if litTiles[j][i]==0 then
-				graphics.drawTile(j, i)
+				graphicsManager.drawTile(j, i)
 			end
 		end
 	end
@@ -232,9 +232,9 @@ function P.drawTile(tileY, tileX)
 	if (room[tileY][tileX]==nil and litTiles[tileY][tileX]>0) then
 		return
 	elseif litTiles[tileY][tileX]>0 then
-		graphics.drawTileLit(tileY, tileX)
+		graphicsManager.drawTileLit(tileY, tileX)
 	else
-		graphics.drawTileDark(tileY, tileX)
+		graphicsManager.drawTileDark(tileY, tileX)
 	end
 end
 function P.drawTileLit(tileY, tileX)
@@ -388,7 +388,7 @@ function P.drawUI()
 	end
 
 	if gamePaused then
-		--graphics.drawPauseMenu()
+		--graphicsManager.drawPauseMenu()
 	end
 end
 
@@ -533,6 +533,17 @@ function P.drawAnimal(animal)
 			love.graphics.draw(markSprite, markx, marky, 0, markScale, markScale)
 		end
 	end
+	love.graphics.draw(animalSprite, drawx, drawy, 0, animal.scale, animal.scale)
+	if (not animal.dead) and animal:getText()~=nil and math.abs(player.tileX-animal.tileX)+math.abs(player.tileY-animal.tileY)<=animal.textDist then
+		love.graphics.setShader()
+		love.graphics.setNewFont(fontSize)
+		love.graphics.rectangle("fill", drawx+animalSprite:getWidth()/2*scale-tileUnit*2*scale, drawy-1.8*tileUnit*scale, tileUnit*4*scale, tileUnit*1.5*scale)
+		love.graphics.setColor(0,0,0,255)
+		love.graphics.print(animal:getText(), drawx+animalSprite:getWidth()/2*scale-tileUnit*2*scale, drawy-1.8*tileUnit*scale)
+		love.graphics.setColor(255,255,255,255)
+		love.graphics.setShader(myShader)
+	end
+
 end
 
 function P.drawPushable(pushable)
