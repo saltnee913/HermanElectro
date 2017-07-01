@@ -1036,7 +1036,10 @@ function P.endTile:onEnter(player)
 		--unlocks.unlockUnlockableRef(unlocks.stickyButtonUnlock)
 	end
 	if self.done then return end
-	beatRoom()
+
+	local noDrops = false
+	if floorIndex==7 then noDrops = true end
+	beatRoom(noDrops)
 	self.done = true
 	self.isCompleted = true
 	self.isVisible = false
@@ -1232,7 +1235,7 @@ function P.upTunnel:onReachMid()
 	end
 end
 function P.upTunnel:onLeave(player)
-	if floorIndex>=7 then
+	if floorIndex>7 then
 		self.done = true
 		self.isCompleted = true
 		self.isVisible = false

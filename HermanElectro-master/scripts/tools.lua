@@ -424,7 +424,7 @@ function P.tool:getToolableAnimals()
 					end
 				end
 			end
-			if not isBlocked and litTiles[closestAnimals[dir].ani.tileY][closestAnimals[dir].ani.tileX]~=0 then
+			if not isBlocked and closestAnimals[dir].ani~=nil and litTiles[closestAnimals[dir].ani.tileY][closestAnimals[dir].ani.tileX]~=0 then
 				usableAnimals[dir][#(usableAnimals[dir]) + 1] = closestAnimals[dir].ani
 			end
 		end
