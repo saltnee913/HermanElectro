@@ -170,7 +170,7 @@ P.conductiveBox = P.box:new{name = "conductiveBox", powered = false, poweredLast
 
 P.boombox = P.box:new{name = "boombox", sprite = 'Graphics/boombox.png', sawable = false}
 
-P.batteringRam = P.box:new{name = "batteringRam", sprite = 'Graphics/batteringram.png'}
+P.batteringRam = P.box:new{name = "batteringRam", sprite = 'Graphics/batteringram.png', forcePower = true}
 function P.batteringRam:move(mover)
 	if self.destroyed then
 		return true

@@ -2868,9 +2868,6 @@ function processTurn()
 	    			noPowerUpdate = false
 	    		end
 	    	end
-	    	if pushables[i].conductive and (pushables[i].tileY~=pushables[i].prevTileY or pushables[i].tileX~=pushables[i].prevTileX) then
-	    		noPowerUpdate = false
-	    	end
 	    	if pushables[i].prevTileY~=nil and pushables[i].prevTileX~=nil and 
 	    	room[pushables[i].prevTileY]~=nil and room[pushables[i].prevTileY][pushables[i].prevTileX]~=nil then
 	    		if room[pushables[i].prevTileY][pushables[i].prevTileX].updatePowerOnLeave then
