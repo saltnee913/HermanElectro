@@ -5575,7 +5575,7 @@ function P.mutantShield:fin(tile)
 	return false
 end
 
-P.randomizer = P.superTool:new{name = "Randomizer", description = "Bing bing bong bong, randomized", baseRange = 1, quality = -1, cost = 3, image = "Graphics/randomizer.png",
+P.randomizer = P.superTool:new{name = "Randomizer", description = "Bing bing bong bong, randomized", baseRange = 3, quality = -1, cost = 3, image = "Graphics/randomizer.png",
 infiniteUses = true}
 function P.randomizer:usableOnTile(tile)
 	if tile:instanceof(tiles.wall) then return true
@@ -5599,11 +5599,18 @@ function P.randomizer:useToolTile(tile, tileY, tileX)
 
 	--select which tile to use, then set
 	local whichTile = util.random(#tilesArr,'misc')
+	while (tilesArr[whichTile].name == tile.name) do
+		whichTile = util.random(#tilesArr,'misc')
+	end
 	room[tileY][tileX] = tilesArr[whichTile]:new()
 end
 function P.randomizer:useToolAnimal(animal)
 	local animalArr = self:getAnimalList()
 	local whichAni = util.random(#animalArr, 'misc')
+	while (animalArr[whichAni].name == animal.name) do
+		whichAni = util.random(#animalArr, 'misc')
+	end
+
 	for i = 1, #animals do
 		if animals[i]==animal then
 			local newAni = animalArr[whichAni]:new()
@@ -5618,6 +5625,10 @@ end
 function P.randomizer:useToolPushable(pushable)
 	local pushableArr = self:getPushableList()
 	local whichPushable = util.random(#pushableArr, 'misc')
+	while (pushableArr[whichPushable].name == pushable.name) do
+		whichPushable = util.random(#pushableArr, 'misc')
+	end
+
 	for i = 1, #pushables do
 		if pushables[i]==pushable then
 			local newPush = pushableArr[whichPushable]:new()
