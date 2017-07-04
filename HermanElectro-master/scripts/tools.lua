@@ -4117,7 +4117,7 @@ function P.wallReroller:useToolNothing()
 	for i = 1, roomHeight do
 		for j = 1, roomLength do
 			if room[i][j]~=nil and room[i][j]:instanceof(tiles.wall) and not room[i][j]:instanceof(tiles.tree) then
-				local newWall = util.random(9,'mapGen')
+				local newWall = util.random(8,'mapGen')
 				if newWall==1 then
 					room[i][j] = tiles.wall:new()
 				elseif newWall==2 then
@@ -4134,8 +4134,6 @@ function P.wallReroller:useToolNothing()
 					room[i][j] = tiles.halfWall:new()
 				elseif newWall==8 then
 					room[i][j] = tiles.toolTaxTile:new()
-				elseif newWall==9 then
-					room[i][j] = tiles.dustyGlassWall:new()
 				end
 			end
 		end
@@ -4290,7 +4288,7 @@ function P.buttonReroller:useToolNothing()
 		for j = 1, roomLength do
 			if room[i][j]~=nil and room[i][j]:instanceof(tiles.button) then
 				local tilesArr = self:getButtonsList()
-				local whichTile = util.random(#tilesArr,'mapGen')
+				local whichTile = util.random(#tilesArr,'misc')
 				room[i][j] = tilesArr[whichTile]:new()
 			end
 		end
@@ -4461,6 +4459,7 @@ function P.boxReroller:useToolNothing()
 		local newPush = brList[pushChoice]:new()
 		newPush.tileX = pushables[i].tileX
 		newPush.tileY = pushables[i].tileY
+		newPush:setLoc()
 		pushables[i] = newPush
 	end
 end
@@ -5576,8 +5575,78 @@ function P.mutantShield:fin(tile)
 	return false
 end
 
+P.randomizer = P.superTool:new{name = "Randomizer", description = "Bing bing bong bong, randomized", baseRange = 1, quality = -1, cost = 3, image = "Graphics/randomizer.png",
+infiniteUses = true}
+function P.randomizer:usableOnTile(tile)
+	if tile:instanceof(tiles.wall) then return true
+	elseif tile:instanceof(tiles.button) then return true
+	end
+end
+function P.randomizer:usableOnAnimal(animal)
+	return true
+end
+function P.randomizer:usableOnPushable(pushable)
+	return true
+end
+function P.randomizer:useToolTile(tile, tileY, tileX)
+	--set array of potential random tile choices
+	local tilesArr
+	if tile:instanceof(tiles.button) then
+		tilesArr = self:getButtonsList()
+	elseif tile:instanceof(tiles.wall) then
+		tilesArr = self:getWallList()
+	end
 
+	--select which tile to use, then set
+	local whichTile = util.random(#tilesArr,'misc')
+	room[tileY][tileX] = tilesArr[whichTile]:new()
+end
+function P.randomizer:useToolAnimal(animal)
+	local animalArr = self:getAnimalList()
+	local whichAni = util.random(#animalArr, 'misc')
+	for i = 1, #animals do
+		if animals[i]==animal then
+			local newAni = animalArr[whichAni]:new()
+			newAni.tileX = animals[i].tileX
+			newAni.tileY = animals[i].tileY
+			newAni:setLoc()
+			animals[i] = newAni
+			return
+		end
+	end
+end
+function P.randomizer:useToolPushable(pushable)
+	local pushableArr = self:getPushableList()
+	local whichPushable = util.random(#pushableArr, 'misc')
+	for i = 1, #pushables do
+		if pushables[i]==pushable then
+			local newPush = pushableArr[whichPushable]:new()
+			newPush.tileX = pushables[i].tileX
+			newPush.tileY = pushables[i].tileY
+			newPush:setLoc()
+			pushables[i] = newPush
+			return
+		end
+	end
+end
 
+function P.randomizer:getButtonsList()
+	return {tiles.button, tiles.stayButton, tiles.stickyButton}
+end
+function P.randomizer:getWallList()
+	return {tiles.wall, tiles.metalWall, tiles.glassWall, tiles.concreteWall, tiles.reinforcedGlass,
+	tiles.halfWall, tiles.tallWall, tiles.toolTaxTile}
+end
+function P.randomizer:getAnimalList()
+	return {animalList.pitbull, animalList.cat, animalList.bombBuddy,
+			animalList.snail, animalList.glueSnail, animalList.conductiveSnail}
+end
+function P.randomizer:getPushableList()
+	return {pushableList.box, pushableList.conductiveBox, pushableList.lamp,
+			pushableList.batteringRam, pushableList.boombox,
+			pushableList.jackInTheBox, pushableList.playerBox, pushableList.animalBox,
+			pushableList.bombBox}
+end
 
 
 P.chargedShield = P.superTool:new{name = "Charged Shield", description = "The odds of survival are ever increasing", quality = 3, image = 'Graphics/RiskyRevive.png', charge = 0, baseRange = 0, cost = 3}
@@ -5989,6 +6058,9 @@ P:addTool(P.preservatives)
 P:addTool(P.mutantShield)
 P:addTool(P.superRange)
 P:addTool(P.chargedShield)
+
+--infiniteUse special char tools
+P:addTool(P.randomizer)
 
 P.resetTools()
 
