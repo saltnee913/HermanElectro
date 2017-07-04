@@ -19538,8 +19538,10 @@
           [0,0,0,0,0,0,0,0,0,31,31,31,31,31,31,0,0,0,0,0,0,0,0,0],
           [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
       "itemsNeeded":[
-          [0,0,0,1,0,0,0]],
-      "set": "conductive_box_or_snail"
+          [0,0,0,1,0,0,0],
+          [0,0,0,0,0,1,0]],
+      "set": "conductive_box_or_snail",
+      "toCheck": true//just added brick solution, probably a saw solution exists as well
     },
 
     "spacy_cats":
