@@ -3836,7 +3836,8 @@ function beatRoom(noDrops)
 	saving.saveRecording()
 	spotlights = {}
 	if noDrops == nil then noDrops = false end
-	--if floorIndex>6 then noDrops = true end
+
+--if floorIndex>6 then noDrops = true end
 	gameTime.timeLeft = gameTime.timeLeft+gameTime.roomTime
 	unlockDoors()
 	if not noDrops then

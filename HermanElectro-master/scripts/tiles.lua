@@ -1038,7 +1038,7 @@ function P.endTile:onEnter(player)
 	if self.done then return end
 
 	local noDrops = false
-	if floorIndex==7 then noDrops = true end
+	--if floorIndex==7 then noDrops = true end
 	beatRoom(noDrops)
 	self.done = true
 	self.isCompleted = true

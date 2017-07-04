@@ -2969,6 +2969,7 @@ function P.playerCloner:useToolNothing()
 		player.elevation = player.clonePos.z
 		player.clonePos = {x = 0, y = 0, z = 0}
 		self.image = self.imageNoClone
+		setPlayerLoc()
 	end
 end
 P.playerCloner.useToolTile = P.playerCloner.useToolNothing
