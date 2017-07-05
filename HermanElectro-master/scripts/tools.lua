@@ -5589,7 +5589,6 @@ function P.randomizer:usableOnPushable(pushable)
 	return true
 end
 function P.randomizer:useToolTile(tile, tileY, tileX)
-	self.numHeld = self.numHeld - 1
 	--set array of potential random tile choices
 	local tilesArr
 	if tile:instanceof(tiles.button) then
@@ -5606,7 +5605,6 @@ function P.randomizer:useToolTile(tile, tileY, tileX)
 	room[tileY][tileX] = tilesArr[whichTile]:new()
 end
 function P.randomizer:useToolAnimal(animal)
-	self.numHeld = self.numHeld - 1
 	local animalArr = self:getAnimalList()
 	local whichAni = util.random(#animalArr, 'misc')
 	while (animalArr[whichAni].name == animal.name) do
@@ -5625,7 +5623,6 @@ function P.randomizer:useToolAnimal(animal)
 	end
 end
 function P.randomizer:useToolPushable(pushable)
-	self.numHeld = self.numHeld - 1
 	local pushableArr = self:getPushableList()
 	local whichPushable = util.random(#pushableArr, 'misc')
 	while (pushableArr[whichPushable].name == pushable.name) do
