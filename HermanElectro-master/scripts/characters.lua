@@ -357,6 +357,7 @@ function P.random:onBegin()
 		charSlot = util.random(#charsToSelect-1, 'misc')
 	end
 	player.character = charsToSelect[charSlot]:new()
+	print(player.character.name)
 	player.character:onBegin()
 end
 
@@ -732,6 +733,7 @@ function P.four:onSelect()
 	specialTools = {0,0,0,0}
 end
 function P.four:onCharLoad()
+	self:onSelect()
 	tools.giveToolsByReference({tools.supertoolReroller})
 end
 
@@ -741,7 +743,6 @@ function P.eden:onCharLoad()
 		local superIQuality = tools.chooseSupertool(i)
 		tools.giveToolsByReference({tools[superIQuality]})
 	end
-	tools.resetTools()
 end
 
 P.tempus = P.character:new{name = "Tempus", description = "The Time Master", scale = 1.1*scale,
