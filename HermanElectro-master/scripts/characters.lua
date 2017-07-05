@@ -357,7 +357,6 @@ function P.random:onBegin()
 		charSlot = util.random(#charsToSelect-1, 'misc')
 	end
 	player.character = charsToSelect[charSlot]:new()
-	print(player.character.name)
 	player.character:onBegin()
 end
 
