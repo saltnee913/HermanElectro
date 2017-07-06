@@ -38,7 +38,7 @@ function P.isCharacterUnlocked(charName)
 end
 
 P.character = Object:new{name = "Name", tallSprite = true, dirFacing = "down", scale = 1, sprite = 'Graphics/Characters/Herman.png',
-  description = "description", startingTools = {0,0,0,0,0,0,0}, scale = 0.25 * width/1200, randomOption = true, forcePowerUpdate = false, tint = {1,1,1}, winUnlocks = {},
+  description = "description", startingTools = {0,0,0,0,0,0,0}, superSlots = 3, scale = 0.25 * width/1200, randomOption = true, forcePowerUpdate = false, tint = {1,1,1}, winUnlocks = {},
   animationTimer = 0, animationLength = 0, crime = "",
   f7File = "RoomData/floor7Felix.json"}
 function P.character:onBegin()
@@ -278,6 +278,7 @@ function P.battery:onKeyPressedChar(key)
 			self.forcePowerUpdate = true
 			self:updateSprite()
 		end
+		checkCurrentTile()
 		return true
 	end
 	return false
@@ -426,7 +427,7 @@ function P.fish:onCharLoad()
 	self.life = 100
 end
 function P.fish:onFloorEnter()
-	tools.giveToolsByReference({tools.waterBottle, tools.waterBottle, tools.waterBottle, tools.bucketOfWater, tools.bucketOfWater, tools.bucketOfWater, tools.bucketOfWater, tools.bucketOfWater})
+	tools.giveToolsByReference({tools.waterBottle, tools.waterBottle, tools.waterBottle})
 end
 function P.fish:getInfoText()
 	return self.life
@@ -725,9 +726,78 @@ function P.knight:onCharLoad()
 	myShader:send("player_range", 600)
 end
 
-P.four = P.character:new{name = "Four", description = "2+2 = 4", scale = 1.1*scale}
+P.four = P.character:new{name = "Fourier", description = "2+2 = 4", scale = 1.1*scale, superSlots = 4,
+sprite = 'Graphics/Characters/Tony.png'}
+function P.four:onSelect()
+	specialTools = {0,0,0,0}
+end
 function P.four:onCharLoad()
-	filledSlots = {100,0,0,0}
+	self:onSelect()
+	tools.giveToolsByReference({tools.supertoolReroller})
+end
+
+P.eden = P.character:new{name = "Eden", description = "The Zany", scale = 1.1*scale, sprite = 'Graphics/Characters/Zach.png'}
+function P.eden:onCharLoad()
+	for i = 1, 3 do
+		local superIQuality = tools.chooseSupertool(i)
+		tools.giveToolsByReference({tools[superIQuality]})
+	end
+end
+
+P.tempus = P.character:new{name = "Tempus", description = "The Time Master", scale = 1.1*scale,
+sprite = 'Graphics/Characters/Ben.png',
+pastSelves = {}, pastRooms = {}}
+function P.tempus:postMove()
+	self:addSelvesAndRooms()
+end
+function P.tempus:onToolUse()
+	self:addSelvesAndRooms()
+end
+function P.tempus:addSelvesAndRooms()
+	if #self.pastSelves>=3 then
+		for i = 2, #self.pastSelves do
+			self.pastSelves[i-1] = self.pastSelves[i]
+		end
+		self.pastSelves[#self.pastSelves] = nil
+	end
+	self.pastSelves[#self.pastSelves+1] = player
+
+	if #self.pastRooms>=3 then
+		for i = 2, #self.pastRooms do
+			self.pastRooms[i-1] = self.pastRooms[i]
+		end
+	end
+	self.pastRooms[#self.pastRooms+1] = room
+end
+function P.tempus:onKeyPressedChar(key)
+	if key == 'rshift' or key == 'lshift' or key == 'shift' then
+		if #self.pastSelves>=2 and #self.pastRooms>=2 then
+			print(#self.pastSelves.."   "..#self.pastRooms.."   "..player.tileX.."  "..player.tileY)
+			player = self.pastSelves[#self.pastSelves-1]
+			print(self.pastSelves[#self.pastSelves-1].tileX)
+			room = self.pastRooms[#self.pastRooms-1]
+			self:subtractSelvesAndRooms()
+			setPlayerLoc()
+			print(player.tileX.."  "..player.tileY)
+			return true
+		end
+	end
+	return false
+end
+function P.tempus:subtractSelvesAndRooms()
+	for i = 1, #self.pastSelves-1 do
+		self.pastSelves[i] = self.pastSelves[i+1]
+	end
+	self.pastSelves[#self.pastSelves] = nil
+
+	for i = 1, #self.pastRooms-1 do
+		self.pastRooms[i] = self.pastRooms[i+1]
+	end
+	self.pastRooms[#self.pastRooms] = nil
+end
+function P.tempus:onRoomEnter()
+	self.pastSelves = {player}
+	self.pastRooms = {room}
 end
 
 P[#P+1] = P.herman
@@ -745,7 +815,9 @@ P[#P+1] = P.fish
 P[#P+1] = P.four
 P[#P+1] = P.scientist
 P[#P+1] = P.dragon
---P[#P+1] = P.knight
+P[#P+1] = P.four
+P[#P+1] = P.eden
+--P[#P+1] = P.tempus
 
 P[#P+1] = P.gabe
 

@@ -35,19 +35,19 @@ function P.draw()
 	for j = 1, roomHeight do
 		for i = 1, roomLength do
 			if litTiles[j][i]>0 then
-				graphics.drawTile(j, i)
+				graphicsManager.drawTile(j, i)
 			end
 		end
 
 		for i = 1, #animals do
 			if animals[i]~=nil and litTiles[animals[i].tileY][animals[i].tileX]==1 and not animals[i].pickedUp and coordsToTileY(animals[i].y)==j then
-				graphics.drawAnimal(animals[i])
+				graphicsManager.drawAnimal(animals[i])
 			end
 		end
 
 		for i = 1, #pushables do
 			if pushables[i]~=nil and not pushables[i].destroyed and litTiles[pushables[i].tileY][pushables[i].tileX]==1 and pushables[i].tileY==j and pushables[i].visible then
-		    	graphics.drawPushable(pushables[i])
+		    	graphicsManager.drawPushable(pushables[i])
 			end
 		end
 
@@ -113,7 +113,7 @@ function P.draw()
 		end
 
 		if coordsToTileY(player.y) == j and not player.attributes.invisible then
-			graphics.drawPlayer()
+			graphicsManager.drawPlayer()
 		end
 
 		--draw clone stuff
@@ -157,7 +157,7 @@ function P.draw()
 	for j = 1, roomHeight do
 		for i = 1, roomLength do
 			if litTiles[j][i]==0 then
-				graphics.drawTile(j, i)
+				graphicsManager.drawTile(j, i)
 			end
 		end
 	end
@@ -232,9 +232,9 @@ function P.drawTile(tileY, tileX)
 	if (room[tileY][tileX]==nil and litTiles[tileY][tileX]>0) then
 		return
 	elseif litTiles[tileY][tileX]>0 then
-		graphics.drawTileLit(tileY, tileX)
+		graphicsManager.drawTileLit(tileY, tileX)
 	else
-		graphics.drawTileDark(tileY, tileX)
+		graphicsManager.drawTileDark(tileY, tileX)
 	end
 end
 function P.drawTileLit(tileY, tileX)
@@ -388,7 +388,7 @@ function P.drawUI()
 	end
 
 	if gamePaused then
-		--graphics.drawPauseMenu()
+		--graphicsManager.drawPauseMenu()
 	end
 end
 
@@ -417,33 +417,39 @@ function P.drawToolUI()
 			love.graphics.circle("line", i*width/18+10, (width/18)-15, 9, 50)
 		end
 	end
-	for i = 0, 2 do
+	for i = 0, player.character.superSlots-1 do
+		local superXTrans = -1*width/18*(player.character.superSlots-3)
+
 		love.graphics.setColor(255,255,255)
-		love.graphics.draw(toolWrapper, (i+13)*width/18, 0, 0, (width/18)/16, (width/18)/16)
+		love.graphics.draw(toolWrapper, (i+13)*width/18+superXTrans, 0, 0, (width/18)/16, (width/18)/16)
 		if tool == specialTools[i+1] and tool~=0 then
 			love.graphics.setColor(50, 200, 50)
-			love.graphics.rectangle("fill", (i+13)*width/18, 0, width/18, width/18)
+			love.graphics.rectangle("fill", (i+13)*width/18+superXTrans, 0, width/18, width/18)
 		end
 		--love.graphics.rectangle("fill", (i+13)*width/18, 0, width/18, width/18)
 		love.graphics.setColor(0,0,0)
-		love.graphics.rectangle("line", (i+13)*width/18, 0, width/18, width/18)
+		love.graphics.rectangle("line", (i+13)*width/18+superXTrans, 0, width/18, width/18)
 		love.graphics.setColor(255,255,255)
 		if specialTools~=nil and specialTools[i+1]~=0 then
 			local toolImage = util.getImage(tools[specialTools[i+1]].image)
 			local tiWidth = toolImage:getWidth()
 			local tiHeight = toolImage:getHeight()
-			love.graphics.draw(toolImage, (i+13)*width/18, 0, 0, (width/18)/tiWidth, (width/18)/tiHeight)
+			love.graphics.draw(toolImage, (i+13)*width/18+superXTrans, 0, 0, (width/18)/tiWidth, (width/18)/tiHeight)
 		end
 		if specialTools[i+1]==0 then
-			love.graphics.draw(gray, (i+13)*width/18, 0, 0, (width/18)/32, (width/18)/32)
+			love.graphics.draw(gray, (i+13)*width/18+superXTrans, 0, 0, (width/18)/32, (width/18)/32)
 		end
 		love.graphics.setColor(0,0,0)
 		if specialTools[i+1]~=0 then
 			if not tools[specialTools[i+1]].infiniteUses then
-				love.graphics.print(tools[specialTools[i+1]].numHeld, (i+13)*width/18+3, 0)
+				love.graphics.print(tools[specialTools[i+1]].numHeld, (i+13)*width/18+3+superXTrans, 0)
 			end
-			love.graphics.print((i+8)%10, (i+13)*width/18+7, (width/18)-20)
-			love.graphics.circle("line", (i+13)*width/18+10, (width/18)-15, 9, 50)
+			local printText = (i+8)%10
+			if i==3 then
+				printText="-"
+			end
+			love.graphics.print(printText, (i+13)*width/18+7+superXTrans, (width/18)-20)
+			love.graphics.circle("line", (i+13)*width/18+10+superXTrans, (width/18)-15, 9, 50)
 		end
 	end
 end
@@ -487,6 +493,7 @@ function P.drawPlayer()
 	local charSprite = util.getImage(player.character.sprite)
 	love.graphics.draw(charSprite, math.floor(player.x-charSprite:getWidth()*player.character.scale/2), math.floor(player.y-charSprite:getHeight()*player.character.scale-player.elevation*scale), 0, player.character.scale, player.character.scale)
 	love.graphics.setShader()
+	love.graphics.setNewFont(fontSize)
 	love.graphics.print(player.character:getInfoText(), math.floor(player.x-charSprite:getWidth()*player.character.scale/2), math.floor(player.y-charSprite:getHeight()*player.character.scale));
 	love.graphics.setShader(myShader)
 end
@@ -526,6 +533,17 @@ function P.drawAnimal(animal)
 			love.graphics.draw(markSprite, markx, marky, 0, markScale, markScale)
 		end
 	end
+	love.graphics.draw(animalSprite, drawx, drawy, 0, animal.scale, animal.scale)
+	if (not animal.dead) and animal:getText()~=nil and math.abs(player.tileX-animal.tileX)+math.abs(player.tileY-animal.tileY)<=animal.textDist then
+		love.graphics.setShader()
+		love.graphics.setNewFont(fontSize)
+		love.graphics.rectangle("fill", drawx+animalSprite:getWidth()/2*scale-tileUnit*2*scale, drawy-1.8*tileUnit*scale, tileUnit*4*scale, tileUnit*1.5*scale)
+		love.graphics.setColor(0,0,0,255)
+		love.graphics.print(animal:getText(), drawx+animalSprite:getWidth()/2*scale-tileUnit*2*scale, drawy-1.8*tileUnit*scale)
+		love.graphics.setColor(255,255,255,255)
+		love.graphics.setShader(myShader)
+	end
+
 end
 
 function P.drawPushable(pushable)
@@ -552,20 +570,12 @@ function P.drawWallsAndFloor()
 	end
 
 	if validSpace() then
-		local testRooms = {{-1,0}, {1,0}, {0,-1}, {0,1}}
-		for k = 1, #testRooms do
+		for dir = 1, 4 do
 			local drawFloorPath = true
-			local xdiff = testRooms[k][1]
-			local ydiff = testRooms[k][2]
-			if not (mapx+xdiff<=#completedRooms[mapy] and mapx+xdiff>0 and mapy+ydiff<=#completedRooms and mapy+ydiff>0) then
-				drawFloorPath = false
-			elseif mainMap[mapy+ydiff][mapx+xdiff]==nil then
-				drawFloorPath = false
-			elseif completedRooms[mapy][mapx]<1 and completedRooms[mapy+ydiff][mapx+xdiff]<1 then
-				drawFloorPath = false
-			elseif visibleMap[mapy+ydiff][mapx+xdiff]<1 then
-				drawFloorPath = false
-			end
+			local mapChange = util.getOffsetByDir(dir)
+			local xdiff = mapChange.x
+			local ydiff = mapChange.y
+			drawFloorPath = drawFloorPath and map.isDoorOpen(mapy, mapx, dir)
 
 			toDrawFloor = dungeonFloor
 
@@ -609,20 +619,12 @@ function P.drawWallsAndFloor()
 
 		--temp draw doors
 		if validSpace() then
-			local testRooms = {{-1,0}, {1,0}, {0,-1}, {0,1}}
-			for k = 1, #testRooms do
+			for dir = 1, 4 do
 				local drawFloorPath = true
-				local xdiff = testRooms[k][1]
-				local ydiff = testRooms[k][2]
-				if not (mapx+xdiff<=#completedRooms[mapy] and mapx+xdiff>0 and mapy+ydiff<=#completedRooms and mapy+ydiff>0) then
-					drawFloorPath = false
-				elseif mainMap[mapy+ydiff][mapx+xdiff]==nil then
-					drawFloorPath = false
-				elseif completedRooms[mapy][mapx]<1 and completedRooms[mapy+ydiff][mapx+xdiff]<1 then
-					drawFloorPath = false
-				elseif visibleMap[mapy+ydiff][mapx+xdiff]<1 then
-					drawFloorPath = false
-				end
+				local mapChange = util.getOffsetByDir(dir)
+				local xdiff = mapChange.x
+				local ydiff = mapChange.y
+				drawFloorPath = drawFloorPath and map.isDoorOpen(mapy, mapx, dir)
 
 				toDrawFloor = dungeonFloor
 

@@ -8,7 +8,22 @@
 			{
 				
 			}
-		}
+		},
+		"normalRooms": 
+		{
+			"filePath": "RoomData/rooms.json",
+			"requirements":
+			{
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
+				}
+			}
+		},
 	},
 	"data":
 	{

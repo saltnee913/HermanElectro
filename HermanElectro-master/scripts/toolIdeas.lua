@@ -335,7 +335,10 @@ function P.tempUpgrade:useToolNothing()
 	else tool = 0
 	end
 
-	specialTools = {0,0,0}
+	specialTools = {}
+	for i = 1, player.character.superSlots do
+		specialTools[i] = 0
+	end
 	updateTools()
 end
 P.tempUpgrade.useToolTile = P.tempUpgrade.useToolNothing
@@ -410,7 +413,10 @@ function P.permaUpgrade:useToolNothing()
 	else tool = 0
 	end
 
-	specialTools = {0,0,0}
+	specialTools = {}
+	for i = 1, player.character.superSlots do
+		specialTools[i] = 0
+	end
 	updateTools()
 end
 P.permaUpgrade.useToolTile = P.permaUpgrade.useToolNothing

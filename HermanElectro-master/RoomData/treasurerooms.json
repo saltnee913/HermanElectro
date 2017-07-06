@@ -286,6 +286,7 @@
     "dirEnter": [1,1,1,1],
     "hasEndTile": false,
     "hidden": false,
-    "beginner": true
+    "beginner": true,
+    "tag": "treasure"
   }
 }
