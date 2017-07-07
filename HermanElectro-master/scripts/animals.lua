@@ -22,7 +22,7 @@ P.waitSprite = 'Graphics/waitCounterMark.png'
 P.trainedSprite = 'Graphics/trainedMark.png'
 
 --speed same as player (250)
-P.animal = Object:new{elevation = 0, scale = 1.1*scale, yOffset = 0, movesInTurn = true, frozen = false, trained = false, conductive = false,
+P.animal = Object:new{elevation = 0, textDist = 1, scale = 1.1*scale, yOffset = 0, movesInTurn = true, frozen = false, trained = false, conductive = false,
 pickedUp = false, canDropTool = false, willDropTool = false, flying = false, triggered = false, waitCounter = 1, dead = false, name = "animal",
 tileX, tileY, prevx, prevy, prevTileX, prevTileY, x, y, speed = 250, width = 16*scale, height = 16*scale, sprite = 'Graphics/pitbull.png', deadSprite = 'Graphics/pitbulldead.png', tilesOn = {}, oldTilesOn = {}}
 function P.animal:move(playerx, playery, room, isLit)
@@ -292,6 +292,9 @@ function P.animal:afraidPrimaryMove(playerx, playery, room, isLit)
 			end
 		end
 	end
+end
+function P.animal:getText()
+	return nil
 end
 function P.animal:tryMove(diffx, diffy)
 	self.tileX = self.tileX+diffx
@@ -771,6 +774,96 @@ P.robotGuard.initiateMove = P.pitbull.move
 function P.robotGuard:move()
 end
 
+P.shopkeeper = P.animal:new{name = "Shopkeeper", sprite = 'Graphics/Characters/Shopkeeper.png', triggered = true, waitCounter = 0}
+function P.shopkeeper:move()
+end
+function P.shopkeeper:primaryMove()
+end
+function P.shopkeeper:secondaryMove()
+end
+function P.shopkeeper:getText()
+	return "Aye, I've been in here 25 years,\nand I've acquired quite a\ncollection of items! If you give\nme some of yer tools, maybe we\ncan strike a deal!"
+end
+
+P.baseBoss = P.animal:new{name = "baseBoss", sprite = "Graphics/Characters/RobotGuard.png", directTurn = true, hp = 5}
+function P.baseBoss:move(playerx, playery, room, isLit)
+	if self.dead or (not isLit and not self.triggered) or self.frozen then
+		return
+	end
+	if player.attributes.shelled or player.attributes.invisible or player.attributes.timeFrozen then
+		return
+	elseif player.attributes.fear then
+		self:afraidPrimaryMove(playerx, playery, room, isLit)
+		return
+	elseif room[playery][playerx]~=nil and room[playery][playerx].scaresAnimals then
+		self:afraidPrimaryMove(playerx, playery, room, isLit)
+		return
+	end
+	self.triggered = true
+	self.prevTileX = self.tileX
+	self.prevTileY = self.tileY
+	if self.waitCounter>0 then
+		return
+	end
+	
+	if playerx-self.tileX==0 and playery-self.tileY==0 then
+		return
+	end
+	if not directTurn then
+		self:indirectMove()
+	elseif not self:primaryMove(playerx, playery) then
+		self:secondaryMove(playerx, playery)
+	end
+	directTurn = not directTurn
+end
+function P.baseBoss:indirectMove()
+	local plusY = 0
+	local plusX = 0
+	local moveWhere = util.random(4, 'misc')
+	if moveWhere<=2 then
+		plusY = moveWhere*2-3
+	else
+		plusX = moveWhere*2-7
+	end
+
+	if self.tileX+plusX>0 and self.tileX+plusX<roomLength then
+		self.tileX = self.tileX+plusX
+	else
+		self.tileX = self.tileX-plusX
+	end
+	if self.tileY+plusY>0 and self.tileY+plusY<roomHeight then
+		self.tileY = self.tileY+plusY
+	else
+		self.tileY = self.tileY-plusY
+	end
+
+	if room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX]:obstructsMovementAnimal(self) then
+		self.tileY = self.prevTileY
+		self.tileX = self.prevTileX
+		return false
+	elseif room[self.tileY][self.tileX]==nil and math.abs(self.elevation)>3 then
+		self.tileY = self.prevTileY
+		self.tileX = self.prevTileX
+		return false		
+	end
+
+	if not self:pushableCheck() then
+		self.tileX = self.prevTileX
+		self.tileY = self.prevTileY
+		return false
+	end
+
+	self.moveAway = not self.moveAway
+
+	return true
+end
+function P.baseBoss:kill()
+	self.hp = self.hp-1
+	if self.hp==0 then
+		P.animal.kill(self)
+	end
+end
+
 animalList[1] = P.animal
 animalList[2] = P.pitbull
 animalList[3] = P.pup
@@ -793,5 +886,7 @@ animalList[19] = P.babyDragon
 animalList[20] = P.dragonFriend
 animalList[21] = P.mimic
 animalList[22] = P.robotGuard
+animalList[23] = P.shopkeeper
+animalList[24] = P.baseBoss
 
 return animalList

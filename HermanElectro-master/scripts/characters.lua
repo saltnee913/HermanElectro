@@ -357,7 +357,6 @@ function P.random:onBegin()
 		charSlot = util.random(#charsToSelect-1, 'misc')
 	end
 	player.character = charsToSelect[charSlot]:new()
-			print(player.character.name)
 	player.character:onBegin()
 end
 
@@ -733,6 +732,7 @@ function P.four:onSelect()
 	specialTools = {0,0,0,0}
 end
 function P.four:onCharLoad()
+	self:onSelect()
 	tools.giveToolsByReference({tools.supertoolReroller})
 end
 

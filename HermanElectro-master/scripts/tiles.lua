@@ -11,7 +11,7 @@ tiles = P
 P.tile = Object:new{yOffset = 0, canElevate = true, enterCheckWin = false, untoolable = false, blueHighlighted = false, attractsAnimals = false, scaresAnimals = false, formerPowered = nil, updatePowerOnEnter = false, text = "", updatePowerOnLeave = false, overlayable = false, overlaying = false, gone = false, lit = false, destroyed = false,
   blocksProjectiles = false, isVisible = true, rotation = 0, powered = false, blocksMovement = false, animationTimer = 0,
   blocksAnimalMovement = false, poweredNeighbors = {0,0,0,0}, blocksVision = false, dirSend = {1,1,1,1}, 
-  dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile", emitsLight = false, litWhenPowered = false, intensity = 0.5, range = 25,
+  dirAccept = {0,0,0,0}, canBePowered = false, name = "basicTile", allowsOverlayPickups = true, emitsLight = false, litWhenPowered = false, intensity = 0.5, range = 25,
   sprite = 'Graphics/cavesfloor.png', 
   wireHackOn = 'Graphics3D/wirehackon.png',
   wireHackOff = 'Graphics3D/wirehackoff.png'}
@@ -1036,7 +1036,10 @@ function P.endTile:onEnter(player)
 		--unlocks.unlockUnlockableRef(unlocks.stickyButtonUnlock)
 	end
 	if self.done then return end
-	beatRoom()
+
+	local noDrops = false
+	--if floorIndex==7 then noDrops = true end
+	beatRoom(noDrops)
 	self.done = true
 	self.isCompleted = true
 	self.isVisible = false
@@ -1080,6 +1083,8 @@ P.ramTile = P.pitbullTile:new{name = "ram", animal = animalList[14], listIndex =
 P.twinPitbullTile = P.pitbullTile:new{name = "twinPitbull", animal = animalList[17], listIndex = 17}
 P.testChargedBossTile = P.pitbullTile:new{name = "testChargedBoss", animal = animalList[18], listIndex = 18}
 P.robotGuardTile = P.pitbullTile:new{name = "robotGuardTile", animal = animalList[22], listIndex = 22}
+P.shopkeeperTile = P.pitbullTile:new{name = "shopkeeperTile", animal = animalList[23], listIndex = 23}
+P.baseBossTile = P.pitbullTile:new{name = "baseBossTile", animal = animalList[24], listIndex = 24}
 
 P.spotlightTile = P.tile:new{name = "spotlight", spotlight = spotlightList.spotlight,
 baseTime = 3600, currTime = 0,
@@ -1230,7 +1235,7 @@ function P.upTunnel:onReachMid()
 	end
 end
 function P.upTunnel:onLeave(player)
-	if floorIndex>=7 then
+	if floorIndex>7 then
 		self.done = true
 		self.isCompleted = true
 		self.isVisible = false
@@ -2465,7 +2470,7 @@ P.spongeTile = P.toolTile:new{name = "spongeTile", toolId = 5, sprite = tools.sp
 P.waterBottleTile = P.toolTile:new{name = "waterBottleTile", toolId = 4, sprite = tools.waterBottle.image}
 
 
-P.toolTaxTile = P.reinforcedGlass:new{name = "toolTaxTile", dirSend = {0,0,0,0}, sprite = 'Graphics/tooltaxtile.png', tool = nil}
+P.toolTaxTile = P.reinforcedGlass:new{name = "toolTaxTile", allowsOverlayPickups = false, dirSend = {0,0,0,0}, sprite = 'Graphics/tooltaxtile.png', tool = nil}
 function P.toolTaxTile:updateSprite()
 	if self.tool == tools.wireCutters then
 		self.overlay = P.wireCuttersTile
@@ -3780,6 +3785,8 @@ tiles[217] = P.movingSpikeSlow
 tiles[218] = P.movingSpikeCustom
 tiles[219] = P.robotGuardTile
 tiles[220] = P.laserBlock
+tiles[221] = P.shopkeeperTile
+tiles[222] = P.baseBossTile
 
 
 return tiles

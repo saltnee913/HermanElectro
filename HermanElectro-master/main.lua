@@ -37,7 +37,7 @@ text = require('scripts.text')
 saving = require('scripts.saving')
 toolManuel = require('scripts.toolManuel')
 processList = require('scripts.process')
-graphics = require('scripts.graphics')
+graphicsManager = require('scripts.graphics')
 menus = require('scripts.menu')
 loadedOnce = false
 
@@ -171,7 +171,7 @@ function love.load()
 	love.graphics.setBackgroundColor(255,255,255)
 	forcePowerUpdateNext = false
 
-	graphics.createShader()
+	graphicsManager.createShader()
 
 	if not loadedOnce then
 		fontFile = 'Resources/upheavtt.ttf'
@@ -1640,7 +1640,7 @@ function canBePowered(x,y,dir)
 end
 
 function love.draw()
-	graphics:draw()
+	graphicsManager.draw()
 end
 
 translation = {x = 0, y = 0}
@@ -2184,14 +2184,16 @@ function enterMove()
 	if room[player.tileY][player.tileX]~=nil then
 		if player.prevTileY == player.tileY and player.prevTileX == player.tileX then
 			room[player.tileY][player.tileX]:onStay(player)
-			if room[player.tileY][player.tileX]~=nil and room[player.tileY][player.tileX].overlay~=nil then
+			if room[player.tileY][player.tileX]~=nil and room[player.tileY][player.tileX].overlay~=nil and
+			room[player.tileY][player.tileX].allowsOverlayPickups then
 				room[player.tileY][player.tileX].overlay:onStay(player)
 			end
 		else
 			player.character:preTileEnter(room[player.tileY][player.tileX])
 			preTileEnter(room[player.tileY][player.tileX])
 			room[player.tileY][player.tileX]:onEnter(player)
-			if room[player.tileY][player.tileX]~=nil and room[player.tileY][player.tileX].overlay~=nil then
+			if room[player.tileY][player.tileX]~=nil and room[player.tileY][player.tileX].overlay~=nil and
+			room[player.tileY][player.tileX].allowsOverlayPickups then
 				room[player.tileY][player.tileX].overlay:onEnter(player)
 			end
 		end
@@ -2865,9 +2867,6 @@ function processTurn()
 	    		if room[pushables[i].tileY][pushables[i].tileX].updatePowerOnEnter then
 	    			noPowerUpdate = false
 	    		end
-	    	end
-	    	if pushables[i].conductive and (pushables[i].tileY~=pushables[i].prevTileY or pushables[i].tileX~=pushables[i].prevTileX) then
-	    		noPowerUpdate = false
 	    	end
 	    	if pushables[i].prevTileY~=nil and pushables[i].prevTileX~=nil and 
 	    	room[pushables[i].prevTileY]~=nil and room[pushables[i].prevTileY][pushables[i].prevTileX]~=nil then
@@ -3834,7 +3833,8 @@ function beatRoom(noDrops)
 	saving.saveRecording()
 	spotlights = {}
 	if noDrops == nil then noDrops = false end
-	--if floorIndex>6 then noDrops = true end
+
+--if floorIndex>6 then noDrops = true end
 	gameTime.timeLeft = gameTime.timeLeft+gameTime.roomTime
 	unlockDoors()
 	if not noDrops then

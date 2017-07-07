@@ -3,7 +3,7 @@
 	{
 		"rooms": 
 		{
-			"filePath": "RoomData/mediumRooms.json",
+			"filePath": "RoomData/hardrooms.json",
 			"requirements":
 			{
 				"not":
@@ -130,9 +130,9 @@
 	{
 		"requireUnlocks": true,
 		"height": 12,
-		"numRooms":8,
+		"numRooms":9,
 		"generateFunction": "generateMapWeighted",
-		"startRoomID": "f6_start_2",
+		"startRoomID": "hardrooms_start",
 		//numRoomsToCheck is the amount of rooms to try when deciding a room's roomid, decreasing this increases rng
 		"numRoomsToCheck": 3,
 		"finalFloor": true,
