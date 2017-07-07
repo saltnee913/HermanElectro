@@ -20028,9 +20028,7 @@
           [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
       "itemsNeeded":[
           [0,0,0,0,0,0,0]],
-      "set": "glue_snails_in_a_line",
-      "dumb": true,
-      "hard": true
+      "set": "glue_snails_in_a_line"
     },
     "glue_snails_in_a_line_with_gun":
     {
