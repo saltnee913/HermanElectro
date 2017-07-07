@@ -1992,9 +1992,9 @@ function enterRoom(dir)
 
 	player.prevTileX = player.tileX
 	player.prevTileY = player.tileY
-	prevMapX = mapx
-	prevMapY = mapy
-	prevRoom = room
+	local prevMapX = mapx
+	local prevMapY = mapy
+	local prevRoom = room
 
 	local mapChange = util.getOffsetByDir(dir+1)
 	if not map.isDoorOpen(mapy, mapx, dir+1) then
@@ -3095,7 +3095,7 @@ end
 
 function resolveConflicts()
 	local firstRun = true
-	conflicts = true
+	local conflicts = true
 	while conflicts do
 		for i = 1, #animals do
 			for j = 1, i-1 do
