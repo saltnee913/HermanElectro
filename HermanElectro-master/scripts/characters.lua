@@ -40,7 +40,7 @@ end
 P.character = Object:new{name = "Name", tallSprite = true, dirFacing = "down", scale = 1, sprite = 'Graphics/Characters/Herman.png',
   description = "description", startingTools = {0,0,0,0,0,0,0}, superSlots = 3, scale = 0.25 * width/1200, randomOption = true, forcePowerUpdate = false, tint = {1,1,1}, winUnlocks = {},
   animationTimer = 0, animationLength = 0, crime = "",
-  f7File = "RoomData/floor7Felix.json"}
+  f7File = "RoomData/floor7Eden.json"}
 function P.character:onBegin()
     --[[myShader:send("tint_r", self.tint[1])
     myShader:send("tint_g", self.tint[2])

@@ -5578,7 +5578,9 @@ end
 P.randomizer = P.superTool:new{name = "Randomizer", description = "Bing bing bong bong, randomized", baseRange = 3, quality = -1, cost = 3, image = "Graphics/randomizer.png",
 infiniteUses = true}
 function P.randomizer:usableOnTile(tile)
-	if tile:instanceof(tiles.wall) then return true
+	if tile.destroyed then return false end
+	
+	if tile:instanceof(tiles.wall) and not tile:instanceof(tiles.concreteWall) then return true
 	elseif tile:instanceof(tiles.button) then return true
 	end
 end
@@ -5623,6 +5625,8 @@ function P.randomizer:useToolAnimal(animal)
 			newAni.tileX = animals[i].tileX
 			newAni.tileY = animals[i].tileY
 			newAni:setLoc()
+			newAni.triggered = true
+			newAni.waitCounter = 0
 			animals[i] = newAni
 			return
 		end
@@ -5654,7 +5658,7 @@ function P.randomizer:getButtonsList()
 	return {tiles.button, tiles.stayButton, tiles.stickyButton}
 end
 function P.randomizer:getWallList()
-	return {tiles.wall, tiles.metalWall, tiles.glassWall, tiles.concreteWall, tiles.reinforcedGlass}
+	return {tiles.wall, tiles.metalWall, tiles.glassWall}
 end
 function P.randomizer:getAnimalList()
 	return {animalList.pitbull, animalList.cat, animalList.bombBuddy,
