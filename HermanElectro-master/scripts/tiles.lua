@@ -2424,6 +2424,7 @@ P.supertoolQ2 = P.supertoolTile:new{name = "supertoolTileQ2", superQuality = 2}
 P.supertoolQ3 = P.supertoolTile:new{name = "supertoolTileQ3", superQuality = 3}
 P.supertoolQ4 = P.supertoolTile:new{name = "supertoolTileQ4", superQuality = 4}
 P.supertoolQ5 = P.supertoolTile:new{name = "supertoolTileQ5", superQuality = 5}
+P.supertoolQInf = P.supertoolTile:new{name = "supertoolTileQInf", superQuality = -1}
 
 P.dungeonSuper = P.supertoolTile:new{name = "dungeonSuper"}
 function P.dungeonSuper:selectTool()
@@ -3787,6 +3788,6 @@ tiles[219] = P.robotGuardTile
 tiles[220] = P.laserBlock
 tiles[221] = P.shopkeeperTile
 tiles[222] = P.baseBossTile
-
+tiles[223] = P.supertoolQInf
 
 return tiles

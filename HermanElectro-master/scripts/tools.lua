@@ -5599,16 +5599,22 @@ function P.randomizer:useToolTile(tile, tileY, tileX)
 
 	--select which tile to use, then set
 	local whichTile = util.random(#tilesArr,'misc')
-	while (tilesArr[whichTile].name == tile.name) do
-		whichTile = util.random(#tilesArr,'misc')
+	for i = 1, #tilesArr do
+		if tile.name == tilesArr[i].name then
+			if i<#tilesArr then whichTile = i+1
+			else whichTile = 1 end
+		end
 	end
 	room[tileY][tileX] = tilesArr[whichTile]:new()
 end
 function P.randomizer:useToolAnimal(animal)
 	local animalArr = self:getAnimalList()
 	local whichAni = util.random(#animalArr, 'misc')
-	while (animalArr[whichAni].name == animal.name) do
-		whichAni = util.random(#animalArr, 'misc')
+	for i = 1, #animalArr do
+		if animal.name == animalArr[i].name then
+			if i<#animalArr then whichAni = i+1
+			else whichAni = 1 end
+		end
 	end
 
 	for i = 1, #animals do
@@ -5625,8 +5631,11 @@ end
 function P.randomizer:useToolPushable(pushable)
 	local pushableArr = self:getPushableList()
 	local whichPushable = util.random(#pushableArr, 'misc')
-	while (pushableArr[whichPushable].name == pushable.name) do
-		whichPushable = util.random(#pushableArr, 'misc')
+	for i = 1, #pushableArr do
+		if pushable.name == pushableArr[i].name then
+			if i<#pushableArr then whichPushable = i+1
+			else whichPushable = 1 end
+		end
 	end
 
 	for i = 1, #pushables do
@@ -5645,12 +5654,11 @@ function P.randomizer:getButtonsList()
 	return {tiles.button, tiles.stayButton, tiles.stickyButton}
 end
 function P.randomizer:getWallList()
-	return {tiles.wall, tiles.metalWall, tiles.glassWall, tiles.concreteWall, tiles.reinforcedGlass,
-	tiles.halfWall, tiles.tallWall, tiles.toolTaxTile}
+	return {tiles.wall, tiles.metalWall, tiles.glassWall, tiles.concreteWall, tiles.reinforcedGlass}
 end
 function P.randomizer:getAnimalList()
 	return {animalList.pitbull, animalList.cat, animalList.bombBuddy,
-			animalList.snail, animalList.glueSnail, animalList.conductiveSnail}
+			animalList.glueSnail, animalList.conductiveSnail}
 end
 function P.randomizer:getPushableList()
 	return {pushableList.box, pushableList.conductiveBox, pushableList.lamp,

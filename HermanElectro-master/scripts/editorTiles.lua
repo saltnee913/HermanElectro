@@ -133,6 +133,7 @@ P.shopTiles[#P.shopTiles+1] = tiles.spongeTile
 P.shopTiles[#P.shopTiles+1] = tiles.brickTile
 P.shopTiles[#P.shopTiles+1] = tiles.gunTile
 P.shopTiles[#P.shopTiles+1] = tiles.shopkeeperTile
+P.shopTiles[#P.shopTiles+1] = tiles.supertoolQInf
 
 
 return P
