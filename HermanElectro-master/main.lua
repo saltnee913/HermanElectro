@@ -1159,7 +1159,7 @@ function updatePower()
 				end
 			end
 			for i = 1, #animals do
-				if animals[i].conductive then
+				if animals[i].conductive and not animals[i].dead then
 					local conductPower = false
 					local pX = animals[i].tileX
 					local pY = animals[i].tileY
