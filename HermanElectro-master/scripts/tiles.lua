@@ -2428,7 +2428,7 @@ P.supertoolQInf = P.supertoolTile:new{name = "supertoolTileQInf", superQuality =
 
 P.dungeonSuper = P.supertoolTile:new{name = "dungeonSuper"}
 function P.dungeonSuper:selectTool()
-	local toolOptions = {tools.tunneler, tools.roomUnlocker, tools.roomUnlocker, tools.roomUnlocker}
+	local toolOptions = {tools.tunneler, tools.roomUnlocker, tools.map}
 	self.tool = toolOptions[util.random(#toolOptions, 'toolDrop')]
 	self:updateSprite()
 end
