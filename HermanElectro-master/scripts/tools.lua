@@ -5659,6 +5659,32 @@ function P.randomizer:getPushableList()
 			pushableList.bombBox}
 end
 
+P.playerClonerInfinite  = P.superTool:new{name = "playerClonerInfinite", description = "Unleash a new you", cloneExists = false, baseRange = 0, image = 'Graphics/playercloner1.2.png',
+imageNoClone = 'Graphics/playercloner1.2.png', imageClone = 'Graphics/playercloner2.2.png', quality = -1, infiniteUses = true}
+function P.playerClonerInfinite:usableOnNothing()
+	return true
+end
+function P.playerClonerInfinite:usableOnTile(tile)
+	return true
+end
+
+function P.playerClonerInfinite:useToolNothing()
+	if not self.cloneExists then
+		self.cloneExists = true
+		player.clonePos = {x = player.tileX, y = player.tileY, z = player.elevation}
+		self.image = self.imageClone
+	else
+		self.cloneExists = false
+		player.tileX = player.clonePos.x
+		player.tileY = player.clonePos.y
+		player.elevation = player.clonePos.z
+		player.clonePos = {x = 0, y = 0, z = 0}
+		self.image = self.imageNoClone
+		setPlayerLoc()
+	end
+end
+P.playerClonerInfinite.useToolTile = P.playerClonerInfinite.useToolNothing
+
 
 P.chargedShield = P.superTool:new{name = "Charged Shield", description = "The odds of survival are ever increasing", quality = 3, image = 'Graphics/RiskyRevive.png', charge = 0, baseRange = 0, cost = 3}
 function P.chargedShield:giveOne()
@@ -6072,6 +6098,7 @@ P:addTool(P.chargedShield)
 
 --infiniteUse special char tools
 P:addTool(P.randomizer)
+P:addTool(P.playerClonerInfinite)
 
 P.resetTools()
 
