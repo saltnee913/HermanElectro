@@ -5685,6 +5685,33 @@ function P.playerClonerInfinite:useToolNothing()
 end
 P.playerClonerInfinite.useToolTile = P.playerClonerInfinite.useToolNothing
 
+P.powerVacuum  = P.superTool:new{name = "powerVacuum", description = "Unleash a new you", charged = false, baseRange = 3, image = 'Graphics/powervacuum.png',
+baseImage = 'Graphics/powervacuum.png', imageCharged = 'Graphics/powervacuumcharged.png', quality = -1, infiniteUses = true}
+function P.powerVacuum:usableOnTile(tile)
+	return (not self.charged) and tile:instanceof(tiles.powerSupply)
+end
+function P.powerVacuum:usableOnAnimal(animal)
+	return (self.charged) and (not animal.charged)
+end
+function P.powerVacuum:useToolTile(tile)
+	tile:destroy()
+	self.charged = true
+	self:updateSprite()
+end
+function P.powerVacuum:useToolAnimal(animal)
+	animal.charged = true
+	animal.conductive = true
+	self.charged = false
+	self:updateSprite()
+end
+function P.powerVacuum:updateSprite()
+	if self.charged then
+		self.image = self.imageCharged
+	else
+		self.image = self.baseImage
+	end
+end
+
 
 P.chargedShield = P.superTool:new{name = "Charged Shield", description = "The odds of survival are ever increasing", quality = 3, image = 'Graphics/RiskyRevive.png', charge = 0, baseRange = 0, cost = 3}
 function P.chargedShield:giveOne()
@@ -6099,6 +6126,7 @@ P:addTool(P.chargedShield)
 --infiniteUse special char tools
 P:addTool(P.randomizer)
 P:addTool(P.playerClonerInfinite)
+P:addTool(P.powerVacuum)
 
 P.resetTools()
 

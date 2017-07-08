@@ -22,7 +22,7 @@ P.waitSprite = 'Graphics/waitCounterMark.png'
 P.trainedSprite = 'Graphics/trainedMark.png'
 
 --speed same as player (250)
-P.animal = Object:new{elevation = 0, textDist = 1, scale = 1.1*scale, yOffset = 0, movesInTurn = true, frozen = false, trained = false, conductive = false,
+P.animal = Object:new{elevation = 0, charged = false, textDist = 1, scale = 1.1*scale, yOffset = 0, movesInTurn = true, frozen = false, trained = false, conductive = false,
 pickedUp = false, canDropTool = false, willDropTool = false, flying = false, triggered = false, waitCounter = 1, dead = false, name = "animal",
 tileX, tileY, prevx, prevy, prevTileX, prevTileY, x, y, speed = 250, width = 16*scale, height = 16*scale, sprite = 'Graphics/pitbull.png', deadSprite = 'Graphics/pitbulldead.png', tilesOn = {}, oldTilesOn = {}}
 function P.animal:move(playerx, playery, room, isLit)
