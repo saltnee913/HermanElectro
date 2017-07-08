@@ -83,6 +83,12 @@
 			"requirements": {
 				
 			}
+		},
+		"bobf7": {
+			"filePath": "RoomData/f7Bob.json",
+			"requirements": {
+				
+			}
 		}
 	},
 	"data":

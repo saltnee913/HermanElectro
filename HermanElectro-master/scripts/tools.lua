@@ -5697,7 +5697,7 @@ function P.playerClonerInfinite:useToolNothing()
 end
 P.playerClonerInfinite.useToolTile = P.playerClonerInfinite.useToolNothing
 
-P.powerVacuum  = P.superTool:new{name = "powerVacuum", description = "Unleash a new you", charged = false, baseRange = 3, image = 'Graphics/powervacuum.png',
+P.powerVacuum  = P.superTool:new{name = "Power Vacuum", description = "Unleash a new you", charged = false, baseRange = 3, image = 'Graphics/powervacuum.png',
 baseImage = 'Graphics/powervacuum.png', imageCharged = 'Graphics/powervacuumcharged.png', quality = -1, infiniteUses = true}
 function P.powerVacuum:usableOnTile(tile)
 	return (not self.charged) and tile:instanceof(tiles.powerSupply)

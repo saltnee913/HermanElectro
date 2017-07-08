@@ -264,7 +264,8 @@ end
 P.battery = P.character:new{name = "Bob", tallSprite = false, description = "The Battery",
 sprite = 'Graphics/Characters/Bob.png',
   onSprite = 'Graphics/Characters/BobPowered.png', offSprite = 'Graphics/Characters/Bob.png', 
-  scale = scale*1.2, storedTile = nil, forcePowerUpdate = false, powered = false}
+  scale = scale*1.2, storedTile = nil, forcePowerUpdate = false, powered = false,
+  f7File = "RoomData/floor7Bob.json"}
 function P.battery:onKeyPressedChar(key)
 	--log(key)
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
