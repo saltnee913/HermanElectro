@@ -80,7 +80,7 @@
 		},
 		"mediumRooms":
 		{
-			"filePath": "RoomData/mediumRooms.json",
+			"filePath": "RoomData/hardRooms.json",
 			"requirements": {
 				
 			}
