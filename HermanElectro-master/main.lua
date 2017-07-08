@@ -629,7 +629,7 @@ function startDaily()
 	local month = date.month
 	local day = date.day
 
-	seedOverride = month*math.pow(day,5)
+	seedOverride = math.pow(7,month)+math.pow(3,day)
 
 	local seed = loadRandoms()
 	if not saving.isPlayingBack() then
