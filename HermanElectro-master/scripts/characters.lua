@@ -397,9 +397,7 @@ end
 function P.lenny:onTileLeave()
 	if self.slime then
 		if room[player.prevTileY][player.prevTileX]==nil
-		or (room[player.prevTileY][player.prevTileX]:instanceof(tiles.wire) and room[player.prevTileY][player.prevTileX].destroyed)
-		or (room[player.prevTileY][player.prevTileX]:instanceof(tiles.electricFloor) and room[player.prevTileY][player.prevTileX].destroyed)
-		or (room[player.prevTileY][player.prevTileX]:instanceof(tiles.wall) and room[player.prevTileY][player.prevTileX].destroyed) then
+		or room[player.prevTileY][player.prevTileX]:usableOnNothing() then
 			room[player.prevTileY][player.prevTileX]=tiles.conductiveSlime:new()
 			updateGameState(false)
 		end
