@@ -628,8 +628,9 @@ function startDaily()
 	local date = os.date("*t")
 	local month = date.month
 	local day = date.day
+	local year = date.year
 
-	seedOverride = math.pow(7,month)+math.pow(3,day)
+	seedOverride = math.pow(7,month)+math.pow(3,day)+math.pow(2,year%100)
 
 	local seed = loadRandoms()
 	if not saving.isPlayingBack() then

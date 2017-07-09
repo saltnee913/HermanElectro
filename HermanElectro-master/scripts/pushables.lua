@@ -341,6 +341,10 @@ end
 P.invisibleBox = P.box:new{name = "invisibleBox", visible = false}
 
 P.lamp = P.conductiveBox:new{name = "lamp", sprite = 'Graphics/lamp.png', poweredSprite = 'Graphics/lamp.png', intensity = 1, charged = true, range = 200}
+function P.lamp:destroy()
+	self.destroyed = true
+	updateGameState()
+end
 
 P.iceBox = P.box:new{name = "icebox", sprite = 'Graphics/icebox.png', forcePower = true, sawable = false}
 function P.iceBox:onLeaveNothing()
