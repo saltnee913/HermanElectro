@@ -3477,13 +3477,13 @@ function checkWin()
 end
 
 function checkAllDeath()
-	checkDeath()
-	for i = 1, #animals do
-		animals[i]:checkDeath()
-	end
 	for i = 1, #pushables do
 		pushables[i]:checkDestruction()
 	end
+	for i = 1, #animals do
+		animals[i]:checkDeath()
+	end
+	checkDeath()
 end
 
 function updateTools()
