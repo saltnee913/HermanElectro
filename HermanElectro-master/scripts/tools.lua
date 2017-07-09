@@ -2277,7 +2277,7 @@ P.suicideKing.useToolTile = P.suicideKing.useToolNothing
 
 
 --Screwdriver: destroys spikes
-P.screwdriver = P.superTool:new{name = "Screwdriver", description = "Remove those spikey plates", image = 'Graphics/screwdriver.png', baseRange = 1, quality = 2}
+P.screwdriver = P.superTool:new{name = "Screwdriver", description = "Remove those spikey plates", image = 'Graphics/screwdriver.png', baseRange = 1, quality = 1}
 function P.screwdriver:usableOnTile(tile)
 	return tile:instanceof(tiles.spikes)
 end
@@ -4904,7 +4904,7 @@ end
 P.card = P.superTool:new{name = "Card", description = "Expanding the deck", quality = 3, cost = 2,
 image = 'Graphics/deckofcards.png', baseImage = 'Graphics/card.png',
 cardOrder = {},
-spriteOrder = {'Graphics/diamondcard.png', 'Graphics/heartcard.png', 'Graphics/spadecard.png', 'Graphics/clubcard.png', 'Graphics/jokercard.png'}}
+spriteOrder = {'Graphics/diamondcard.png', 'Graphics/heartcard.png', 'Graphics/spadecard.png', 'Graphics/clubcard.png', 'Graphics/jokercard.png'}, defaultDisabled = true}
 function P.card:giveOne()
 	self:draw(1)
 end
@@ -4967,7 +4967,7 @@ function P.card:getDisplayImage()
 	return self.baseImage
 end
 
-P.deckOfCards = P.superTool:new{name = "Deck of Cards", description = "One hand at a time", image = 'Graphics/deckofcards.png', quality = 5, cost = 8}
+P.deckOfCards = P.superTool:new{name = "Deck of Cards", description = "One hand at a time", image = 'Graphics/deckofcards.png', quality = 5, cost = 8, defaultDisabled = true}
 function P.deckOfCards:giveOne()
 	tools.card:draw(7)
 end
