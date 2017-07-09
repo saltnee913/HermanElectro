@@ -753,46 +753,14 @@ function P.tempus:onToolUse()
 	self:addSelvesAndRooms()
 end
 function P.tempus:addSelvesAndRooms()
-	if #self.pastSelves>=3 then
-		for i = 2, #self.pastSelves do
-			self.pastSelves[i-1] = self.pastSelves[i]
-		end
-		self.pastSelves[#self.pastSelves] = nil
-	end
-	self.pastSelves[#self.pastSelves+1] = player
-
-	if #self.pastRooms>=3 then
-		for i = 2, #self.pastRooms do
-			self.pastRooms[i-1] = self.pastRooms[i]
-		end
-	end
 	self.pastRooms[#self.pastRooms+1] = room
 end
 function P.tempus:onKeyPressedChar(key)
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
-		if #self.pastSelves>=2 and #self.pastRooms>=2 then
-			print(#self.pastSelves.."   "..#self.pastRooms.."   "..player.tileX.."  "..player.tileY)
-			player = self.pastSelves[#self.pastSelves-1]
-			print(self.pastSelves[#self.pastSelves-1].tileX)
-			room = self.pastRooms[#self.pastRooms-1]
-			self:subtractSelvesAndRooms()
-			setPlayerLoc()
-			print(player.tileX.."  "..player.tileY)
-			return true
-		end
+		room = self.pastRooms[#self.pastRooms-2]
+		print("aaa")
 	end
 	return false
-end
-function P.tempus:subtractSelvesAndRooms()
-	for i = 1, #self.pastSelves-1 do
-		self.pastSelves[i] = self.pastSelves[i+1]
-	end
-	self.pastSelves[#self.pastSelves] = nil
-
-	for i = 1, #self.pastRooms-1 do
-		self.pastRooms[i] = self.pastRooms[i+1]
-	end
-	self.pastRooms[#self.pastRooms] = nil
 end
 function P.tempus:onRoomEnter()
 	self.pastSelves = {player}
@@ -816,7 +784,7 @@ P[#P+1] = P.scientist
 P[#P+1] = P.dragon
 P[#P+1] = P.four
 P[#P+1] = P.eden
---P[#P+1] = P.tempus
+P[#P+1] = P.tempus
 
 P[#P+1] = P.gabe
 
