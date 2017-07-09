@@ -2277,7 +2277,7 @@ P.suicideKing.useToolTile = P.suicideKing.useToolNothing
 
 
 --Screwdriver: destroys spikes
-P.screwdriver = P.superTool:new{name = "Screwdriver", description = "Remove those spikey plates", image = 'Graphics/screwdriver.png', baseRange = 1, quality = 2}
+P.screwdriver = P.superTool:new{name = "Screwdriver", description = "Remove those spikey plates", image = 'Graphics/screwdriver.png', baseRange = 1, quality = 1}
 function P.screwdriver:usableOnTile(tile)
 	return tile:instanceof(tiles.spikes)
 end
