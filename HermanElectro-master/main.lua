@@ -3827,7 +3827,7 @@ function giveToolsFullClear()
 		end
 	end
 
-	tools.giveRandomTools(totalDropNum)
+	tools.giveRandomTools(totalDropNum)	
 end
 
 function beatRoom(noDrops)
