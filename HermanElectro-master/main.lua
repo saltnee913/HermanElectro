@@ -3431,7 +3431,7 @@ function accelerate()
 					local canAccelerate = true
 					if room[potentialY][potentialX]~=nil and room[potentialY][potentialX].blocksMovement then canAccelerate = false 	end
 					for i = 1, #pushables do
-						if pushables[i].tileY == potentialY and pushables[i].tileX == potentialX then canAccelerate = false end
+						if (not pushables[i].destroyed) and pushables[i].tileY == potentialY and pushables[i].tileX == potentialX then canAccelerate = false end
 					end
 					for i = 1, #animals do
 						if animals[i].tileY == potentialY and animals[i].tileX == potentialX then canAccelerate = false end

@@ -98,6 +98,7 @@ function P.pushable:moveNoMover()
 		end
 	end
 	if sameSpotCounter>=2 then
+		print("aaa")
 		self.tileX = self.prevTileX
 		self.tileY = self.prevTileY
 		return false
