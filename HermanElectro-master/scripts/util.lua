@@ -238,7 +238,7 @@ function P.createHarmfulExplosion(y, x, range)
 	--kill player
 	if player.tileY<=y+1 and player.tileX<=x+1 and player.tileY>=y-1 and player.tileX>=x-1 then
 		kill("explosion")
-	end 
+	end
 
 	--all other explosion stuff
 	util.createHarmlessExplosion(y,x,range)
