@@ -64,6 +64,9 @@ end
 function P.tile:sticksPlayer()
 	return false
 end
+function P.tile:pushableAttempt()
+	return false
+end
 function P.tile:getInfoText()
 	return nil
 end
@@ -864,6 +867,16 @@ function P.hDoor:onEnter(player)
 	self.blocksVision = false
 	self.blocksMovement = false
 	self.blocksProjectiles = false
+end
+function P.hDoor:pushableAttempt(pushable)
+	if not self.blocksMovement then return true end
+
+	self.sprite = self.openSprite
+	self.blocksVision = false
+	self.blocksMovement = false
+	self.blocksProjectiles = false
+
+	return true
 end
 function P.hDoor:getHeight()
 	return 6

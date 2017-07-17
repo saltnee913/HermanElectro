@@ -2888,6 +2888,7 @@ function processTurn()
 	for i = 1, #pushables do
 		pushables[i].prevTileX = pushables[i].tileX
 		pushables[i].prevTileY = pushables[i].tileY
+		pushables[i].justPushed = false
 	end
 	if playerMoved() then
 		player.character:postMove()
