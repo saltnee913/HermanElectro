@@ -790,9 +790,22 @@ function P.npc:blocksPlayer()
 	return (not self.dead)
 end
 
-P.shopkeeper = P.npc:new{name = "Shopkeeper", sprite = 'Graphics/Characters/Shopkeeper.png', triggered = true, waitCounter = 0}
-function P.npc:getText()
+P.shopkeeper = P.npc:new{name = "Shopkeeper", sprite = 'Graphics/Characters/Shopkeeper.png'}
+function P.shopkeeper:getText()
 	return "Aye, I've been in here 25 years,\nand I've acquired quite a\ncollection of items! If you give\nme some of yer tools, maybe we\ncan strike a deal!"
+end
+
+P.characterNPC = P.npc:new{name = "Char"}
+function P.characterNPC:updateNPC()
+	self:updateSprite()
+end
+function P.characterNPC:updateSprite()
+	for i = 1, #characters do
+		if characters[i].name==self.name then
+			self.scale = characters[i].scale
+			self.sprite = characters[i].sprite
+		end
+	end
 end
 
 P.baseBoss = P.animal:new{name = "baseBoss", sprite = "Graphics/Characters/RobotGuard.png", directTurn = true, hp = 5}
@@ -898,5 +911,6 @@ animalList[21] = P.mimic
 animalList[22] = P.robotGuard
 animalList[23] = P.shopkeeper
 animalList[24] = P.baseBoss
+animalList[25] = P.characterNPC
 
 return animalList

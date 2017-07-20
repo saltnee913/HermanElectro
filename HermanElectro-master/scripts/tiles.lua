@@ -1099,6 +1099,17 @@ P.robotGuardTile = P.pitbullTile:new{name = "robotGuardTile", animal = animalLis
 P.shopkeeperTile = P.pitbullTile:new{name = "shopkeeperTile", animal = animalList[23], listIndex = 23}
 P.baseBossTile = P.pitbullTile:new{name = "baseBossTile", animal = animalList[24], listIndex = 24}
 
+P.characterNPCTile = P.pitbullTile:new{name = "character", animal = animalList[25], listIndex = 25}
+function P.characterNPCTile:onLoad()
+	local charsToSelect = characters
+	local charSlot = 0
+	while (charSlot==0 or not charsToSelect[charSlot].randomOption) do
+		charSlot = util.random(#charsToSelect-1, 'misc')
+	end
+	self.animal.name = charsToSelect[charSlot].name
+	self.animal:updateNPC()
+end
+
 P.spotlightTile = P.tile:new{name = "spotlight", spotlight = spotlightList.spotlight,
 baseTime = 3600, currTime = 0,
 sprite = 'Graphics/spotlightTile.png'}
@@ -3802,5 +3813,6 @@ tiles[220] = P.laserBlock
 tiles[221] = P.shopkeeperTile
 tiles[222] = P.baseBossTile
 tiles[223] = P.supertoolQInf
+tiles[224] = P.characterNPCTile
 
 return tiles

@@ -350,7 +350,8 @@ function P.francisco:onCharLoad()
 	tools.giveToolsByReference({tools.coin})
 end
 
-P.random = P.character:new{name = "Random", description = "", sprite = 'Graphics/Characters/Random.png', scale = 1.1*scale}
+P.random = P.character:new{name = "Random", description = "", sprite = 'Graphics/Characters/Random.png', scale = 1.1*scale,
+randomOption = false}
 function P.random:onBegin()
 	local charsToSelect = characters.getUnlockedCharacters()
 	local charSlot = 0
@@ -758,7 +759,6 @@ end
 function P.tempus:onKeyPressedChar(key)
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
 		room = self.pastRooms[#self.pastRooms-2]
-		print("aaa")
 	end
 	return false
 end
@@ -784,7 +784,6 @@ P[#P+1] = P.scientist
 P[#P+1] = P.dragon
 P[#P+1] = P.four
 P[#P+1] = P.eden
-P[#P+1] = P.tempus
 
 P[#P+1] = P.gabe
 
