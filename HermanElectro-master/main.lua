@@ -2938,6 +2938,14 @@ function processMove(key, dt)
 			elseif room[player.tileY][player.tileX]~=nil and room[player.tileY][player.tileX]:obstructsMovement() and not player.character:bypassObstructsMovement(room[player.tileY][player.tileX]) then
 				player.tileX = player.prevTileX
 				player.tileY = player.prevTileY
+			else
+				for i = 1, #animals do
+					--checks for NPCs or animals that block the player
+					if animals[i]:blocksPlayer() and animals[i].tileX==player.tileX and animals[i].tileY==player.tileY then
+						player.tileX = player.prevTileX
+						player.tileY = player.prevTileY
+					end
+				end
 			end
 		end
 	else

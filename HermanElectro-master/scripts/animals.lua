@@ -160,7 +160,9 @@ end
 function P.animal:getDrawY()
 	return math.floor(self.y-util.getImage(self.sprite):getHeight()*self.scale-self.elevation*scale)
 end
-
+function P.animal:blocksPlayer()
+	return false
+end
 function P.animal:checkDeath()
 	if self.dead then return end
 	if room[self.tileY]~=nil and room[self.tileY][self.tileX]~=nil then
@@ -774,14 +776,22 @@ P.robotGuard.initiateMove = P.pitbull.move
 function P.robotGuard:move()
 end
 
-P.shopkeeper = P.animal:new{name = "Shopkeeper", sprite = 'Graphics/Characters/Shopkeeper.png', triggered = true, waitCounter = 0}
-function P.shopkeeper:move()
+P.npc = P.animal:new{name = "NPC", sprite = 'Graphics/Characters/Shopkeeper.png', triggered = true, waitCounter = 0}
+function P.npc:move()
 end
-function P.shopkeeper:primaryMove()
+function P.npc:primaryMove()
 end
-function P.shopkeeper:secondaryMove()
+function P.npc:secondaryMove()
 end
-function P.shopkeeper:getText()
+function P.npc:getText()
+	return "Insert NPC text here"
+end
+function P.npc:blocksPlayer()
+	return (not self.dead)
+end
+
+P.shopkeeper = P.npc:new{name = "Shopkeeper", sprite = 'Graphics/Characters/Shopkeeper.png', triggered = true, waitCounter = 0}
+function P.npc:getText()
 	return "Aye, I've been in here 25 years,\nand I've acquired quite a\ncollection of items! If you give\nme some of yer tools, maybe we\ncan strike a deal!"
 end
 
