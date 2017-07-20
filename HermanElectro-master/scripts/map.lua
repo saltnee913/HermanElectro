@@ -1659,6 +1659,11 @@ function P.generateTutorial()
 	return P.generateMapFromJSON('RoomData/tut_map.json')
 end
 
+function P.generateMapF7()
+	--will need to mess with later to make char-specific
+	return P.generateMapFromJSON()
+end
+
 function P.generateMapFromJSON()
 	local newmap = P.floorInfo.map
 	newmap.height = #newmap

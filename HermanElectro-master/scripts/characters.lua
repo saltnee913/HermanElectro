@@ -45,7 +45,7 @@ function P.character:onBegin()
     --[[myShader:send("tint_r", self.tint[1])
     myShader:send("tint_g", self.tint[2])
     myShader:send("tint_b", self.tint[3])]]
-    map.defaultFloorOrder[7] = self.f7File
+    --map.defaultFloorOrder[7] = self.f7File
 	self:setStartingTools()
 	self:onCharLoad()
 end
