@@ -21607,7 +21607,8 @@
             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
         "itemsNeeded":[
-            [1,0,0,0,0,1,0]],
+            [1,0,0,0,0,0,0]],
+        "toCheck": true//there is a cool solution with dog and stuff but 1 saw is so much easier ioi
 
       },
 
