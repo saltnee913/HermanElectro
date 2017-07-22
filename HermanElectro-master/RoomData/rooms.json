@@ -21568,7 +21568,8 @@
             [2,0,0,2,1,0,0],
             [1,1,1,1,0,0,0],
             [0,1,0,1,1,1,0]],
-        "set": "erik_termites_collab"
+        "set": "erik_termites_collab",
+        "dumb": true //doesn't add anything significant other than another 4 tool solution
       },
 
       "Ek-Ben2":
