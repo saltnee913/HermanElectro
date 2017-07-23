@@ -89,6 +89,13 @@
 			"requirements": {
 				
 			}
+		},
+		"dreamRooms": {
+			"filePath": "RoomData/dungeonBigRooms.json",
+			"requirements": {
+				
+			}
+
 		}
 	},
 	"data":
