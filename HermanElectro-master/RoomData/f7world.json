@@ -1,0 +1,30 @@
+{
+  	"loadRooms":
+  	{
+  		"tutrooms":
+  		{
+  			"filePath": "RoomData/tut_beginning.json"
+  		},
+      "rooms":
+      {
+        "filePath": "RoomData/openingrooms.json"
+      }
+  	},
+  	"data":
+  	{
+  		"map":
+  		[
+        ["credits_room", 0, 0, 0, 0],
+        ["start_room",     "dragon_room", "extra_end", "extra_4",        0],
+        ["tut_not_2",      0,             0,           "extra_3",        0],
+        ["tut_and_2",      0,             0,           "extra_2",        0],
+        ["tut_button",     "tut_death",   "tut_start", "extra_1",        0],
+        ["tut_wiring",     0,             0,           0,                0],
+        ["tut_doors",      0,             0,           0,                0],
+        ["tut_saw",        "tut_glass",   "tut_ef",    "tut_doggo_door", 0],
+  		],
+  		"generateFunction": "generateMapFromJSON",
+      "tint": [0,0,0],
+      "playerRange": 600
+  	},
+}

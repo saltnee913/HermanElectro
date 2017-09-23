@@ -77,7 +77,7 @@ P.statUnlockTriggers["GabeWinsPlus"] = {[1] = unlocks.bombBuddyUnlock}
 P.statUnlockTriggers["GabeDungeonWins"] = {[1] = unlocks.inflationUnlock}
 P.statUnlockTriggers["GabeReachFloor6"] = {[1] = unlocks.boxesUnlock}
 
-P.statUnlockTriggers["ErikWins"] = {[1] = unlocks.stopwatchUnlock}
+P.statUnlockTriggers["ErikWins"] = {[1] = unlocks.roomRestorerUnlock}
 P.statUnlockTriggers["ErikWinsPlus"] = {[1] = unlocks.bombBuddyUnlock}
 P.statUnlockTriggers["ErikDungeonWins"] = {[1] = unlocks.inflationUnlock}
 P.statUnlockTriggers["ErikReachFloor6"] = {[1] = unlocks.boxesUnlock}
@@ -102,7 +102,7 @@ P.statUnlockTriggers["LennyWinsPlus"] = {[1] = unlocks.bombBuddyUnlock}
 P.statUnlockTriggers["LennyDungeonWins"] = {[1] = unlocks.inflationUnlock}
 P.statUnlockTriggers["LennyReachFloor6"] = {[1] = unlocks.boxesUnlock}
 
-P.statUnlockTriggers["AureliusWins"] = {[1] = unlocks.missileUnlock}
+P.statUnlockTriggers["AureliusWins"] = {[1] = unlocks.luckyPennyUnlock}
 P.statUnlockTriggers["AureliusWinsPlus"] = {[1] = unlocks.traderUnlock}
 P.statUnlockTriggers["AureliusDungeonWins"] = {[1] = unlocks.inflationUnlock}
 P.statUnlockTriggers["AureliusReachFloor6"] = {[1] = unlocks.boxesUnlock}

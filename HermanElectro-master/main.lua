@@ -628,8 +628,9 @@ function startDaily()
 	local date = os.date("*t")
 	local month = date.month
 	local day = date.day
+	local year = date.year
 
-	seedOverride = month*math.pow(day,5)
+	seedOverride = math.pow(7,month)+math.pow(3,day)+math.pow(2,year%100)
 
 	local seed = loadRandoms()
 	if not saving.isPlayingBack() then
@@ -1159,7 +1160,7 @@ function updatePower()
 				end
 			end
 			for i = 1, #animals do
-				if animals[i].conductive then
+				if animals[i].conductive and not animals[i].dead then
 					local conductPower = false
 					local pX = animals[i].tileX
 					local pY = animals[i].tileY
@@ -1992,9 +1993,9 @@ function enterRoom(dir)
 
 	player.prevTileX = player.tileX
 	player.prevTileY = player.tileY
-	prevMapX = mapx
-	prevMapY = mapy
-	prevRoom = room
+	local prevMapX = mapx
+	local prevMapY = mapy
+	local prevRoom = room
 
 	local mapChange = util.getOffsetByDir(dir+1)
 	if not map.isDoorOpen(mapy, mapx, dir+1) then
@@ -2887,6 +2888,7 @@ function processTurn()
 	for i = 1, #pushables do
 		pushables[i].prevTileX = pushables[i].tileX
 		pushables[i].prevTileY = pushables[i].tileY
+		pushables[i].justPushed = false
 	end
 	if playerMoved() then
 		player.character:postMove()
@@ -2936,6 +2938,14 @@ function processMove(key, dt)
 			elseif room[player.tileY][player.tileX]~=nil and room[player.tileY][player.tileX]:obstructsMovement() and not player.character:bypassObstructsMovement(room[player.tileY][player.tileX]) then
 				player.tileX = player.prevTileX
 				player.tileY = player.prevTileY
+			else
+				for i = 1, #animals do
+					--checks for NPCs or animals that block the player
+					if animals[i]:blocksPlayer() and animals[i].tileX==player.tileX and animals[i].tileY==player.tileY then
+						player.tileX = player.prevTileX
+						player.tileY = player.prevTileY
+					end
+				end
 			end
 		end
 	else
@@ -3095,7 +3105,7 @@ end
 
 function resolveConflicts()
 	local firstRun = true
-	conflicts = true
+	local conflicts = true
 	while conflicts do
 		for i = 1, #animals do
 			for j = 1, i-1 do
@@ -3430,7 +3440,7 @@ function accelerate()
 					local canAccelerate = true
 					if room[potentialY][potentialX]~=nil and room[potentialY][potentialX].blocksMovement then canAccelerate = false 	end
 					for i = 1, #pushables do
-						if pushables[i].tileY == potentialY and pushables[i].tileX == potentialX then canAccelerate = false end
+						if (not pushables[i].destroyed) and pushables[i].tileY == potentialY and pushables[i].tileX == potentialX then canAccelerate = false end
 					end
 					for i = 1, #animals do
 						if animals[i].tileY == potentialY and animals[i].tileX == potentialX then canAccelerate = false end
@@ -3476,13 +3486,13 @@ function checkWin()
 end
 
 function checkAllDeath()
-	checkDeath()
-	for i = 1, #animals do
-		animals[i]:checkDeath()
-	end
 	for i = 1, #pushables do
 		pushables[i]:checkDestruction()
 	end
+	for i = 1, #animals do
+		animals[i]:checkDeath()
+	end
+	checkDeath()
 end
 
 function updateTools()
@@ -3826,7 +3836,7 @@ function giveToolsFullClear()
 		end
 	end
 
-	tools.giveRandomTools(totalDropNum)
+	tools.giveRandomTools(totalDropNum)	
 end
 
 function beatRoom(noDrops)

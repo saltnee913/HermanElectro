@@ -284,7 +284,9 @@ function P.loadFloor(inFloorFile)
     myShader:send("floorTint_b", map.floorInfo.tint[3])
     --myShader:send("player_range", map.floorInfo.playerRange)
     --player.range = map.floorInfo.playerRange
-    map.flipRooms('rooms')
+    if releaseBuild then
+    	map.flipRooms('rooms')
+    end
 end
 
 function P.loadCustomRooms(fileLoc)
@@ -1655,6 +1657,11 @@ end
 
 function P.generateTutorial()
 	return P.generateMapFromJSON('RoomData/tut_map.json')
+end
+
+function P.generateMapF7()
+	--will need to mess with later to make char-specific
+	return P.generateMapFromJSON()
 end
 
 function P.generateMapFromJSON()

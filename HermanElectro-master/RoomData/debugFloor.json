@@ -71,19 +71,31 @@
 
 			}
 		},
-		"spikesRooms":
+		"f6rooms":
 		{
-			"filePath": "RoomData/f6spikesrooms.json",
-			"requirements": {
-
-			}
-		},
-		"mediumRooms":
-		{
-			"filePath": "RoomData/mediumRooms.json",
+			"filePath": "RoomData/hardRooms.json",
 			"requirements": {
 				
 			}
+		},
+		"edenf7": {
+			"filePath": "RoomData/f7Eden.json",
+			"requirements": {
+				
+			}
+		},
+		"bobf7": {
+			"filePath": "RoomData/f7Bob.json",
+			"requirements": {
+				
+			}
+		},
+		"dreamRooms": {
+			"filePath": "RoomData/dungeonBigRooms.json",
+			"requirements": {
+				
+			}
+
 		}
 	},
 	"data":

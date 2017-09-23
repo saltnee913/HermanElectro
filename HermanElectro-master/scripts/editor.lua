@@ -384,13 +384,16 @@ local function postTileAddCleanup(tempAdd, tileLocY, tileLocX)
 	end
 
 	if tiles[tempAdd]~=nil and tiles[tempAdd].pushable~=nil then
+		print(#pushables)
 		pushables[#pushables+1] = pushableList[tiles[tempAdd].listIndex]:new()
+		print(#pushables)
 		pushables[#pushables].tileX = tileLocX
 		pushables[#pushables].tileY = tileLocY
 		pushables[#pushables].y = (tileLocY-1)*tileWidth*scale+wallSprite.height
 		pushables[#pushables].x = (tileLocX-1)*tileHeight*scale+wallSprite.width
 		pushables[#pushables].prevTileX = pushables[#pushables].tileX
 		pushables[#pushables].prevTileY = pushables[#pushables].tileY
+		print(#pushables)
 	end
 	
 	updateGameState()

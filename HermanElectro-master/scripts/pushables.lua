@@ -6,7 +6,7 @@ local P = {}
 pushableList = P
 
 P.pushable = Object:new{name = "pushable", elevation = 0, forcePower = false, charged = false, aitCounter=0, visible = true, sawable = true, canBeAccelerated = true,
-conductive = false, prevTileX = 0, prevTileY = 0, tileX = 0, tileY = 0, x = 0, y = 0, destroyed = false, sprite = 'Graphics/box.png'}
+conductive = false, justPushed = false, prevTileX = 0, prevTileY = 0, tileX = 0, tileY = 0, x = 0, y = 0, destroyed = false, sprite = 'Graphics/box.png'}
 function P.pushable:onStep()
 end
 function P.pushable:setLoc()
@@ -17,6 +17,8 @@ function P.pushable:destroy()
 	self.destroyed = true
 end
 function P.pushable:move(mover)
+	if self.justPushed then return false end
+
 	if self.destroyed then
 		return true
 	end
@@ -32,9 +34,11 @@ function P.pushable:move(mover)
 		self.tileY = self.prevTileY
 		return false
 	elseif room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX]:getHeight()>self.elevation then
-		self.tileX = self.prevTileX
-		self.tileY = self.prevTileY
-		return false
+		if not room[self.tileY][self.tileX]:pushableAttempt() then
+			self.tileX = self.prevTileX
+			self.tileY = self.prevTileY
+			return false
+		end
 	end
 	local sameSpotCounter = 0
 	for i = 1, #pushables do
@@ -78,6 +82,7 @@ function P.pushable:move(mover)
 			unlocks.unlockUnlockableRef(unlocks.animalBoxUnlock)
 		end
 
+		self.justPushed = true
 		return true
 	elseif room[self.tileY][self.tileX]~=nil then
 		room[self.tileY][self.tileX]:onStayPushable(self)
@@ -127,6 +132,8 @@ function P.pushable:moveNoMover()
 		if room[self.prevTileY][self.prevTileX]~=nil then
 			room[self.prevTileY][self.prevTileX]:onLeavePushable(self)
 		end
+
+		self.justPushed = true
 		return true
 	elseif room[self.tileY][self.tileX]~=nil then
 		room[self.tileY][self.tileX]:onStayPushable(self)
@@ -150,6 +157,7 @@ function P.pushable:checkDestruction()
 		if self.destroyed == false and t:willDestroyPushable() then
 			self.destroyed = true
 			room[self.tileY][self.tileX]:destroyPushable()
+			if self.conductive then updateGameState() end
 		end
 	end
 end
@@ -172,6 +180,8 @@ P.boombox = P.box:new{name = "boombox", sprite = 'Graphics/boombox.png', sawable
 
 P.batteringRam = P.box:new{name = "batteringRam", sprite = 'Graphics/batteringram.png', forcePower = true}
 function P.batteringRam:move(mover)
+	if self.justPushed then return false end
+
 	if self.destroyed then
 		return true
 	end
@@ -230,6 +240,8 @@ function P.batteringRam:move(mover)
 		if Object.instanceof(mover,animalList.animal) then
 			unlocks.unlockUnlockableRef(unlocks.animalBoxUnlock)
 		end
+
+		self.justPushed = true
 		return true
 	elseif room[self.tileY][self.tileX]~=nil then
 		room[self.tileY][self.tileX]:onStayPushable(self)
@@ -279,6 +291,8 @@ function P.batteringRam:moveNoMover()
 		if room[self.prevTileY][self.prevTileX]~=nil then
 			room[self.prevTileY][self.prevTileX]:onLeavePushable(self)
 		end
+
+		self.justPushed = true
 		return true
 	elseif room[self.tileY][self.tileX]~=nil then
 		room[self.tileY][self.tileX]:onStayPushable(self)

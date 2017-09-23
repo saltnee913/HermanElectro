@@ -22,7 +22,7 @@ P.waitSprite = 'Graphics/waitCounterMark.png'
 P.trainedSprite = 'Graphics/trainedMark.png'
 
 --speed same as player (250)
-P.animal = Object:new{elevation = 0, textDist = 1, scale = 1.1*scale, yOffset = 0, movesInTurn = true, frozen = false, trained = false, conductive = false,
+P.animal = Object:new{elevation = 0, charged = false, textDist = 1, scale = 1.1*scale, yOffset = 0, movesInTurn = true, frozen = false, trained = false, conductive = false,
 pickedUp = false, canDropTool = false, willDropTool = false, flying = false, triggered = false, waitCounter = 1, dead = false, name = "animal",
 tileX, tileY, prevx, prevy, prevTileX, prevTileY, x, y, speed = 250, width = 16*scale, height = 16*scale, sprite = 'Graphics/pitbull.png', deadSprite = 'Graphics/pitbulldead.png', tilesOn = {}, oldTilesOn = {}}
 function P.animal:move(playerx, playery, room, isLit)
@@ -160,7 +160,9 @@ end
 function P.animal:getDrawY()
 	return math.floor(self.y-util.getImage(self.sprite):getHeight()*self.scale-self.elevation*scale)
 end
-
+function P.animal:blocksPlayer()
+	return false
+end
 function P.animal:checkDeath()
 	if self.dead then return end
 	if room[self.tileY]~=nil and room[self.tileY][self.tileX]~=nil then
@@ -774,15 +776,36 @@ P.robotGuard.initiateMove = P.pitbull.move
 function P.robotGuard:move()
 end
 
-P.shopkeeper = P.animal:new{name = "Shopkeeper", sprite = 'Graphics/Characters/Shopkeeper.png', triggered = true, waitCounter = 0}
-function P.shopkeeper:move()
+P.npc = P.animal:new{name = "NPC", sprite = 'Graphics/Characters/Shopkeeper.png', triggered = true, waitCounter = 0}
+function P.npc:move()
 end
-function P.shopkeeper:primaryMove()
+function P.npc:primaryMove()
 end
-function P.shopkeeper:secondaryMove()
+function P.npc:secondaryMove()
 end
+function P.npc:getText()
+	return "Insert NPC text here"
+end
+function P.npc:blocksPlayer()
+	return (not self.dead)
+end
+
+P.shopkeeper = P.npc:new{name = "Shopkeeper", sprite = 'Graphics/Characters/Shopkeeper.png'}
 function P.shopkeeper:getText()
 	return "Aye, I've been in here 25 years,\nand I've acquired quite a\ncollection of items! If you give\nme some of yer tools, maybe we\ncan strike a deal!"
+end
+
+P.characterNPC = P.npc:new{name = "Char"}
+function P.characterNPC:updateNPC()
+	self:updateSprite()
+end
+function P.characterNPC:updateSprite()
+	for i = 1, #characters do
+		if characters[i].name==self.name then
+			self.scale = characters[i].scale
+			self.sprite = characters[i].sprite
+		end
+	end
 end
 
 P.baseBoss = P.animal:new{name = "baseBoss", sprite = "Graphics/Characters/RobotGuard.png", directTurn = true, hp = 5}
@@ -888,5 +911,6 @@ animalList[21] = P.mimic
 animalList[22] = P.robotGuard
 animalList[23] = P.shopkeeper
 animalList[24] = P.baseBoss
+animalList[25] = P.characterNPC
 
 return animalList

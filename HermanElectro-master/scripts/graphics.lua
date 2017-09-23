@@ -127,7 +127,8 @@ function P.draw()
 					local playery = (player.clonePos.y-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
 					love.graphics.draw(charSprite, playerx-charSprite:getWidth()*player.character.scale/2, playery-charSprite:getHeight()*player.character.scale-player.clonePos.z*scale, 0, player.character.scale, player.character.scale)
 				end
-			elseif player.character.shiftPos~=nil and player.character.shiftPos.y == j then
+			end
+			if player.character.shiftPos~=nil and player.character.shiftPos.y == j then
 				local charSprite2 = util.getImage(player.character.sprite2)
 				local playerx = (player.character.shiftPos.x-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
 				local playery = (player.character.shiftPos.y-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10

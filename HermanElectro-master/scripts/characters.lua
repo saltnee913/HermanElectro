@@ -40,12 +40,12 @@ end
 P.character = Object:new{name = "Name", tallSprite = true, dirFacing = "down", scale = 1, sprite = 'Graphics/Characters/Herman.png',
   description = "description", startingTools = {0,0,0,0,0,0,0}, superSlots = 3, scale = 0.25 * width/1200, randomOption = true, forcePowerUpdate = false, tint = {1,1,1}, winUnlocks = {},
   animationTimer = 0, animationLength = 0, crime = "",
-  f7File = "RoomData/floor7Felix.json"}
+  f7File = "RoomData/floor7Eden.json"}
 function P.character:onBegin()
     --[[myShader:send("tint_r", self.tint[1])
     myShader:send("tint_g", self.tint[2])
     myShader:send("tint_b", self.tint[3])]]
-    map.defaultFloorOrder[7] = self.f7File
+    --map.defaultFloorOrder[7] = self.f7File
 	self:setStartingTools()
 	self:onCharLoad()
 end
@@ -264,7 +264,8 @@ end
 P.battery = P.character:new{name = "Bob", tallSprite = false, description = "The Battery",
 sprite = 'Graphics/Characters/Bob.png',
   onSprite = 'Graphics/Characters/BobPowered.png', offSprite = 'Graphics/Characters/Bob.png', 
-  scale = scale*1.2, storedTile = nil, forcePowerUpdate = false, powered = false}
+  scale = scale*1.2, storedTile = nil, forcePowerUpdate = false, powered = false,
+  f7File = "RoomData/floor7Bob.json"}
 function P.battery:onKeyPressedChar(key)
 	--log(key)
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
@@ -349,7 +350,8 @@ function P.francisco:onCharLoad()
 	tools.giveToolsByReference({tools.coin})
 end
 
-P.random = P.character:new{name = "Random", description = "", sprite = 'Graphics/Characters/Random.png', scale = 1.1*scale}
+P.random = P.character:new{name = "Random", description = "", sprite = 'Graphics/Characters/Random.png', scale = 1.1*scale,
+randomOption = false}
 function P.random:onBegin()
 	local charsToSelect = characters.getUnlockedCharacters()
 	local charSlot = 0
@@ -396,9 +398,7 @@ end
 function P.lenny:onTileLeave()
 	if self.slime then
 		if room[player.prevTileY][player.prevTileX]==nil
-		or (room[player.prevTileY][player.prevTileX]:instanceof(tiles.wire) and room[player.prevTileY][player.prevTileX].destroyed)
-		or (room[player.prevTileY][player.prevTileX]:instanceof(tiles.electricFloor) and room[player.prevTileY][player.prevTileX].destroyed)
-		or (room[player.prevTileY][player.prevTileX]:instanceof(tiles.wall) and room[player.prevTileY][player.prevTileX].destroyed) then
+		or room[player.prevTileY][player.prevTileX]:usableOnNothing() then
 			room[player.prevTileY][player.prevTileX]=tiles.conductiveSlime:new()
 			updateGameState(false)
 		end
@@ -754,46 +754,13 @@ function P.tempus:onToolUse()
 	self:addSelvesAndRooms()
 end
 function P.tempus:addSelvesAndRooms()
-	if #self.pastSelves>=3 then
-		for i = 2, #self.pastSelves do
-			self.pastSelves[i-1] = self.pastSelves[i]
-		end
-		self.pastSelves[#self.pastSelves] = nil
-	end
-	self.pastSelves[#self.pastSelves+1] = player
-
-	if #self.pastRooms>=3 then
-		for i = 2, #self.pastRooms do
-			self.pastRooms[i-1] = self.pastRooms[i]
-		end
-	end
 	self.pastRooms[#self.pastRooms+1] = room
 end
 function P.tempus:onKeyPressedChar(key)
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
-		if #self.pastSelves>=2 and #self.pastRooms>=2 then
-			print(#self.pastSelves.."   "..#self.pastRooms.."   "..player.tileX.."  "..player.tileY)
-			player = self.pastSelves[#self.pastSelves-1]
-			print(self.pastSelves[#self.pastSelves-1].tileX)
-			room = self.pastRooms[#self.pastRooms-1]
-			self:subtractSelvesAndRooms()
-			setPlayerLoc()
-			print(player.tileX.."  "..player.tileY)
-			return true
-		end
+		room = self.pastRooms[#self.pastRooms-2]
 	end
 	return false
-end
-function P.tempus:subtractSelvesAndRooms()
-	for i = 1, #self.pastSelves-1 do
-		self.pastSelves[i] = self.pastSelves[i+1]
-	end
-	self.pastSelves[#self.pastSelves] = nil
-
-	for i = 1, #self.pastRooms-1 do
-		self.pastRooms[i] = self.pastRooms[i+1]
-	end
-	self.pastRooms[#self.pastRooms] = nil
 end
 function P.tempus:onRoomEnter()
 	self.pastSelves = {player}
@@ -817,7 +784,6 @@ P[#P+1] = P.scientist
 P[#P+1] = P.dragon
 P[#P+1] = P.four
 P[#P+1] = P.eden
---P[#P+1] = P.tempus
 
 P[#P+1] = P.gabe
 

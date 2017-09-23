@@ -21,6 +21,7 @@ P.animalTiles[#P.animalTiles+1] = tiles.ratTile
 P.animalTiles[#P.animalTiles+1] = tiles.conductiveSnailTile
 P.animalTiles[#P.animalTiles+1] = tiles.testChargedBossTile
 P.animalTiles[#P.animalTiles+1] = tiles.mimicTile
+P.animalTiles[#P.animalTiles+1] = tiles.characterNPCTile
 
 P.boxTiles[#P.boxTiles+1] = tiles.boxTile
 P.boxTiles[#P.boxTiles+1] = tiles.animalBoxTile
@@ -86,13 +87,13 @@ P.advancedTiles[#P.advancedTiles+1] = tiles.blueBeggar
 P.advancedTiles[#P.advancedTiles+1] = tiles.goldBeggar
 P.advancedTiles[#P.advancedTiles+1] = tiles.blackBeggar
 P.advancedTiles[#P.advancedTiles+1] = tiles.whiteBeggar
-P.advancedTiles[#P.advancedTiles+1] = tiles.elevator
-P.advancedTiles[#P.advancedTiles+1] = tiles.delevator
 P.advancedTiles[#P.advancedTiles+1] = tiles.halfWall
 P.advancedTiles[#P.advancedTiles+1] = tiles.tallWall
 P.advancedTiles[#P.advancedTiles+1] = tiles.poweredEnd
 P.advancedTiles[#P.advancedTiles+1] = tiles.untriggeredPowerSupply
 P.advancedTiles[#P.advancedTiles+1] = tiles.mousetrap
+P.advancedTiles[#P.advancedTiles+1] = tiles.mousetrapOff
+P.advancedTiles[#P.advancedTiles+1] = tiles.cornerRotater
 P.advancedTiles[#P.advancedTiles+1] = tiles.mushroom
 P.advancedTiles[#P.advancedTiles+1] = tiles.endDungeonEnter
 P.advancedTiles[#P.advancedTiles+1] = tiles.powerTriggeredBomb
@@ -133,6 +134,7 @@ P.shopTiles[#P.shopTiles+1] = tiles.spongeTile
 P.shopTiles[#P.shopTiles+1] = tiles.brickTile
 P.shopTiles[#P.shopTiles+1] = tiles.gunTile
 P.shopTiles[#P.shopTiles+1] = tiles.shopkeeperTile
+P.shopTiles[#P.shopTiles+1] = tiles.supertoolQInf
 
 
 return P

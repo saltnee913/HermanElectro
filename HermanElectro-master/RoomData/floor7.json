@@ -3,7 +3,7 @@
 	{
 		"rooms": 
 		{
-			"filePath": "RoomData/f7tut.json",
+			"filePath": "RoomData/tut_beginning_f7.json",
 			"requirements":
 			{
 				"not":
@@ -23,6 +23,21 @@
 						"value": "1"
 					}
 				}
+			}
+		},
+		"additionalRooms":
+		{
+			"filePath": "RoomData/openingrooms.json",
+			"requirements":
+			{
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
+				},
 			}
 		},
 		"shops":
@@ -136,14 +151,25 @@
 		"requireUnlocks": true,
 		"height": 10,
 		"numRooms": 3,
-		"generateFunction": "generateMapWeighted",
-		"startRoomID": "tut_start",
+		"generateFunction": "generateMapF7",
+		"startRoomID": "tut_start_f7",
 		//numRoomsToCheck is the amount of rooms to try when deciding a room's roomid, decreasing this increases rng
 		"numRoomsToCheck": 5,
 		"tint": [0,0,0],
 		"playerRange": 300,
 		"numTreasure": 0,
 		"numShop": 0,
-		"numDonation": 0
+		"numDonation": 0,
+		"map":
+  		[
+        ["credits_room", 0, 0, 0, 0],
+        ["start_room",     "dragon_room", "extra_end", "extra_4",        0],
+        ["tut_not_2",      0,             0,           "extra_3",        0],
+        ["tut_and_2",      0,             0,           "extra_2",        0],
+        ["tut_button",     "tut_death",   "tut_start_f7", "extra_1",        0],
+        ["tut_wiring",     0,             0,           0,                0],
+        ["tut_doors",      0,             0,           0,                0],
+        ["tut_saw",        "tut_glass",   "tut_ef",    "tut_doggo_door", 0],
+  		]
 	}
 }

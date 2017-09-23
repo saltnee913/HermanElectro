@@ -64,6 +64,9 @@ end
 function P.tile:sticksPlayer()
 	return false
 end
+function P.tile:pushableAttempt()
+	return false
+end
 function P.tile:getInfoText()
 	return nil
 end
@@ -865,6 +868,16 @@ function P.hDoor:onEnter(player)
 	self.blocksMovement = false
 	self.blocksProjectiles = false
 end
+function P.hDoor:pushableAttempt(pushable)
+	if not self.blocksMovement then return true end
+
+	self.sprite = self.openSprite
+	self.blocksVision = false
+	self.blocksMovement = false
+	self.blocksProjectiles = false
+
+	return true
+end
 function P.hDoor:getHeight()
 	return 6
 end
@@ -1085,6 +1098,17 @@ P.testChargedBossTile = P.pitbullTile:new{name = "testChargedBoss", animal = ani
 P.robotGuardTile = P.pitbullTile:new{name = "robotGuardTile", animal = animalList[22], listIndex = 22}
 P.shopkeeperTile = P.pitbullTile:new{name = "shopkeeperTile", animal = animalList[23], listIndex = 23}
 P.baseBossTile = P.pitbullTile:new{name = "baseBossTile", animal = animalList[24], listIndex = 24}
+
+P.characterNPCTile = P.pitbullTile:new{name = "character", animal = animalList[25], listIndex = 25}
+function P.characterNPCTile:onLoad()
+	local charsToSelect = characters
+	local charSlot = 0
+	while (charSlot==0 or not charsToSelect[charSlot].randomOption) do
+		charSlot = util.random(#charsToSelect-1, 'misc')
+	end
+	self.animal.name = charsToSelect[charSlot].name
+	self.animal:updateNPC()
+end
 
 P.spotlightTile = P.tile:new{name = "spotlight", spotlight = spotlightList.spotlight,
 baseTime = 3600, currTime = 0,
@@ -2424,10 +2448,11 @@ P.supertoolQ2 = P.supertoolTile:new{name = "supertoolTileQ2", superQuality = 2}
 P.supertoolQ3 = P.supertoolTile:new{name = "supertoolTileQ3", superQuality = 3}
 P.supertoolQ4 = P.supertoolTile:new{name = "supertoolTileQ4", superQuality = 4}
 P.supertoolQ5 = P.supertoolTile:new{name = "supertoolTileQ5", superQuality = 5}
+P.supertoolQInf = P.supertoolTile:new{name = "supertoolTileQInf", superQuality = -1}
 
 P.dungeonSuper = P.supertoolTile:new{name = "dungeonSuper"}
 function P.dungeonSuper:selectTool()
-	local toolOptions = {tools.tunneler, tools.roomUnlocker, tools.roomUnlocker, tools.roomUnlocker}
+	local toolOptions = {tools.tunneler, tools.roomUnlocker, tools.map}
 	self.tool = toolOptions[util.random(#toolOptions, 'toolDrop')]
 	self:updateSprite()
 end
@@ -3787,6 +3812,7 @@ tiles[219] = P.robotGuardTile
 tiles[220] = P.laserBlock
 tiles[221] = P.shopkeeperTile
 tiles[222] = P.baseBossTile
-
+tiles[223] = P.supertoolQInf
+tiles[224] = P.characterNPCTile
 
 return tiles

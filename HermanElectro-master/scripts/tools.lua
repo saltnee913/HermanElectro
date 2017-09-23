@@ -1249,15 +1249,19 @@ function P.magnet:useToolPushable(pushable)
 end
 
 P.spring = P.superTool:new{name = "Spring", description = "Up, up in the air I go", useWithArrowKeys = false, baseRange = 4, image = 'Graphics/spring.png', quality = 3, cost = 3}
-function P.spring:usableOnTile(tile)
+function P.spring:usableOnTile(tile, tileY, tileX)
 	if tile.untoolable then return false
 	elseif tile:getHeight()>0 and (not tile.canElevate) then return false end
 	for i = 1, #pushables do
-		if pushables[i].tileX == tile.tileX and pushables[i].tileY == tile.tileY then return false end
+		if pushables[i].tileX == tileX and pushables[i].tileY == tileY then return false end
 	end
 	return true
 end
-function P.spring:usableOnNothing()
+function P.spring:usableOnNothing(tileY, tileX)
+	for i = 1, #pushables do
+		print(pushables[i].tileX.."   "..pushables[i].tileY)
+		if pushables[i].tileX == tileX and pushables[i].tileY == tileY then return false end
+	end
 	return true
 end
 function P.spring:useToolTile(tile, tileY, tileX)
@@ -1324,7 +1328,8 @@ function P.lamp:useToolNothing(tileY, tileX)
 	room[tileY][tileX] = tiles.lamp:new()
 end]]
 
-P.boxSpawner = P.superTool:new{name = "Box", description = "Still likes to be pushed around", baseRange = 1, image = 'Graphics/box.png', quality = 2}
+P.boxSpawner = P.superTool:new{name = "Box", description = "Still likes to be pushed around", baseRange = 1, image = 'Graphics/box.png', quality = 2,
+boxType = pushableList.box}
 function P.boxSpawner:usableOnNothing(tileY, tileX) --Was desc: Likes to be pushed around
 	if tileY==player.tileY and tileX==player.tileX then return false end
 	for i = 1, #animals do
@@ -1357,112 +1362,40 @@ function P.boxSpawner:usableOnTile(tile)
 end
 function P.boxSpawner:useToolTile(tile, tileY, tileX)
 	self.numHeld = self.numHeld-1
-	local toSpawn = pushableList[2]:new()
-	if player.character.name == "Tim" then toSpawn = pushableList.giftBox:new() end
+	local toSpawn = self.boxType:new()
+
 	toSpawn.tileY = tileY
 	toSpawn.tileX = tileX
+	toSpawn.prevTileY = tileY
+	toSpawn.prevTileX = tileX
 	toSpawn:setLoc()
 	pushables[#pushables+1] = toSpawn
 end
 function P.boxSpawner:useToolNothing(tileY, tileX)
 	self.numHeld = self.numHeld-1
-	local toSpawn = pushableList[2]:new()
-	if player.character.name == "Tim" then toSpawn = pushableList.giftBox:new() end
+	local toSpawn = self.boxType:new()
+
 	toSpawn.tileY = tileY
 	toSpawn.tileX = tileX
+	toSpawn.prevTileY = tileY
+	toSpawn.prevTileX = tileX
 	toSpawn:setLoc()
 	pushables[#pushables+1] = toSpawn
 end
 
-P.playerBoxSpawner = P.boxSpawner:new{name = "Player Box", description = "Special treatment", image = 'Graphics/playerBox.png', quality = 2}
-function P.playerBoxSpawner:useToolTile(tile, tileY, tileX)
-	self.numHeld = self.numHeld-1
-	local toSpawn = pushableList[3]:new()
-	toSpawn.tileY = tileY
-	toSpawn.tileX = tileX
-	toSpawn:setLoc()
-	pushables[#pushables+1] = toSpawn
-end
-function P.playerBoxSpawner:useToolNothing(tileY, tileX)
-	self.numHeld = self.numHeld-1
-	local toSpawn = pushableList[3]:new()
-	toSpawn.tileY = tileY
-	toSpawn.tileX = tileX
-	toSpawn:setLoc()
-	pushables[#pushables+1] = toSpawn
-end
+P.playerBoxSpawner = P.boxSpawner:new{name = "Player Box", description = "Special treatment", image = 'Graphics/playerBox.png', quality = 2, boxType = pushableList.playerBox}
 
-P.bombBoxSpawner = P.boxSpawner:new{name = "Bomb Box", description  = "Perfect for those seeking a bigger package", image = 'Graphics/bombBox.png', quality = 3, cost = 3}
-function P.bombBoxSpawner:useToolTile(tile, tileY, tileX) -- desc?: It's fantastic 		Needs new desc
-	self.numHeld = self.numHeld-1
-	local toSpawn = pushableList[8]:new()
-	toSpawn.tileY = tileY
-	toSpawn.tileX = tileX
-	toSpawn:setLoc()
-	pushables[#pushables+1] = toSpawn
-end
-function P.bombBoxSpawner:useToolNothing(tileY, tileX)
-	self.numHeld = self.numHeld-1
-	local toSpawn = pushableList[8]:new()
-	toSpawn.tileY = tileY
-	toSpawn.tileX = tileX
-	toSpawn:setLoc()
-	pushables[#pushables+1] = toSpawn
-end
+P.bombBoxSpawner = P.boxSpawner:new{name = "Bomb Box", description  = "Perfect for those seeking a bigger package", image = 'Graphics/bombBox.png', quality = 3, cost = 3,
+boxType = pushableList.bombBox}
 
-P.jackInTheBoxSpawner = P.boxSpawner:new{name = "Jack In The Box", description  = "REMOVED",image = 'Graphics/jackinthebox.png', quality = 2}
-function P.jackInTheBoxSpawner:useToolTile(tile, tileY, tileX)
-	self.numHeld = self.numHeld-1
-	local toSpawn = pushableList[10]:new()
-	toSpawn.tileY = tileY
-	toSpawn.tileX = tileX
-	toSpawn:setLoc()
-	pushables[#pushables+1] = toSpawn
-end
-function P.jackInTheBoxSpawner:useToolNothing(tileY, tileX)
-	self.numHeld = self.numHeld-1
-	local toSpawn = pushableList[10]:new()
-	toSpawn.tileY = tileY
-	toSpawn.tileX = tileX
-	toSpawn:setLoc()
-	pushables[#pushables+1] = toSpawn
-end
+P.jackInTheBoxSpawner = P.boxSpawner:new{name = "Jack In The Box", description  = "REMOVED",image = 'Graphics/jackinthebox.png', quality = 2,
+boxType = pushableList.jackInTheBox}
 
-P.lamp = P.boxSpawner:new{name = "Lamp", description  = "A star in a jar", baseRange = 1, image = 'Graphics/lamp.png', quality = 4, cost = 4}
-function P.lamp:useToolNothing(tileY, tileX)
-	self.numHeld = self.numHeld-1
-	local toSpawn = pushableList.lamp:new()
-	toSpawn.tileY = tileY
-	toSpawn.tileX = tileX
-	toSpawn:setLoc()
-	pushables[#pushables+1] = toSpawn
-end
-function P.lamp:useToolTile(tile, tileY, tileX)
-	self.numHeld = self.numHeld-1
-	local toSpawn = pushableList[7]:new()
-	toSpawn.tileY = tileY
-	toSpawn.tileX = tileX
-	toSpawn:setLoc()
-	pushables[#pushables+1] = toSpawn
-end
+P.lamp = P.boxSpawner:new{name = "Lamp", description  = "A star in a jar", baseRange = 1, image = 'Graphics/lamp.png', quality = 4, cost = 4, boxType = pushableList.lamp}
 
-P.ramSpawner = P.boxSpawner:new{name = "Battering Ram", description  = "Knock down that wall", image = 'Graphics/batteringram.png', quality = 2}
-function P.ramSpawner:useToolTile(tile, tileY, tileX)
-	self.numHeld = self.numHeld-1
-	local toSpawn = pushableList[7]:new()
-	toSpawn.tileY = tileY
-	toSpawn.tileX = tileX
-	toSpawn:setLoc()
-	pushables[#pushables+1] = toSpawn
-end
-function P.ramSpawner:useToolNothing(tileY, tileX)
-	self.numHeld = self.numHeld-1
-	local toSpawn = pushableList[7]:new()
-	toSpawn.tileY = tileY
-	toSpawn.tileX = tileX
-	toSpawn:setLoc()
-	pushables[#pushables+1] = toSpawn
-end
+P.ramSpawner = P.boxSpawner:new{name = "Battering Ram", description  = "Knock down that wall", image = 'Graphics/batteringram.png', quality = 2,
+boxType = pushableList.batteringRam}
+
 
 --Removed
 P.gateBreaker = P.superTool:new{name = "Gate Breaker", description = "Fuck logic.", baseRange = 1, image = 'Graphics/shovel.png', quality = 3}
@@ -1475,42 +1408,11 @@ function P.gateBreaker:useToolTile(tile)
 end
 
 --Removed
-P.conductiveBoxSpawner = P.boxSpawner:new{name = "Conductive Box Spawner", description = "", image = 'Graphics/conductiveBox.png', quality = 1}
-function P.conductiveBoxSpawner:useToolTile(tile, tileY, tileX)
-	self.numHeld = self.numHeld-1
-	local toSpawn = pushableList[5]:new()
-	toSpawn.tileY = tileY
-	toSpawn.tileX = tileX
-	toSpawn:setLoc()
-	pushables[#pushables+1] = toSpawn
-end
-function P.conductiveBoxSpawner:useToolNothing(tileY, tileX)
-	self.numHeld = self.numHeld-1
-	local toSpawn = pushableList[5]:new()
-	toSpawn.tileY = tileY
-	toSpawn.tileX = tileX
-	toSpawn:setLoc()
-	pushables[#pushables+1] = toSpawn
-end
+P.conductiveBoxSpawner = P.boxSpawner:new{name = "Conductive Box Spawner", description = "", image = 'Graphics/conductiveBox.png', quality = 1, boxType = pushableList.conductiveBox}
 
 --Removed
-P.boomboxSpawner = P.boxSpawner:new{name = "BoomboxSpawner", description = "Rock n' Roll", image = 'Graphics/boombox.png', quality = 1}
-function P.boomboxSpawner:useToolTile(tile, tileY, tileX)
-	self.numHeld = self.numHeld-1
-	local toSpawn = pushableList[6]:new()
-	toSpawn.tileY = tileY
-	toSpawn.tileX = tileX
-	toSpawn:setLoc()
-	pushables[#pushables+1] = toSpawn
-end
-function P.boomboxSpawner:useToolNothing(tileY, tileX)
-	self.numHeld = self.numHeld-1
-	local toSpawn = pushableList[6]:new()
-	toSpawn.tileY = tileY
-	toSpawn.tileX = tileX
-	toSpawn:setLoc()
-	pushables[#pushables+1] = toSpawn
-end
+P.boomboxSpawner = P.boxSpawner:new{name = "BoomboxSpawner", description = "Rock n' Roll", image = 'Graphics/boombox.png', quality = 1, boxIndex = 6,
+boxType = pushableList.boombox}
 
 
 --L.A.S.E.R.: kills all dogs in a line
@@ -2098,11 +2000,11 @@ function P.buttonFlipper:useToolNothing(tileY, tileX)
 			if room[i][j]~=nil and room[i][j]:instanceof(tiles.button) and not room[i][j]:instanceof(tiles.stayButton) then
 				if room[i][j]:instanceof(tiles.stickyButton) then
 					if room[i][j].down then room[i][j]:unstick()
-					else room[i][j]:onEnter() end
-				else room[i][j]:onEnter() end
+					else room[i][j]:onEnter(player) end
+				else room[i][j]:onEnter(player) end
 			elseif room[i][j]~=nil and room[i][j]:instanceof(tiles.stayButton) then
 				if room[i][j].down then room[i][j]:onLeave()
-				else room[i][j]:onEnter() end
+				else room[i][j]:onEnter(player) end
 			end
 		end
 	end
@@ -2277,7 +2179,7 @@ P.suicideKing.useToolTile = P.suicideKing.useToolNothing
 
 
 --Screwdriver: destroys spikes
-P.screwdriver = P.superTool:new{name = "Screwdriver", description = "Remove those spikey plates", image = 'Graphics/screwdriver.png', baseRange = 1, quality = 2}
+P.screwdriver = P.superTool:new{name = "Screwdriver", description = "Remove those spikey plates", image = 'Graphics/screwdriver.png', baseRange = 1, quality = 1}
 function P.screwdriver:usableOnTile(tile)
 	return tile:instanceof(tiles.spikes)
 end
@@ -3020,10 +2922,16 @@ end
 P.shell.useToolTile = P.shell.useToolNothing
 
 P.glitch = P.superTool:new{name = "Glitch", description = "...what just happened?", image = 'Graphics/glitch.png', baseRange = 1, quality = 3}
-function P.glitch:usableOnNothing()
+function P.glitch:usableOnNothing(tileY, tileX)
+	for i = 1, #pushables do
+		if pushables[i].tileX == tileX and pushables[i].tileY == tileY then return false end
+	end
 	return true
 end
 function P.glitch:usableOnTile(tile, tileY, tileX)
+	for i = 1, #pushables do
+		if pushables[i].tileX == tileX and pushables[i].tileY == tileY then return false end
+	end
 	if tile:getHeight()>0 and (not tile.canElevate) then return false end
 	return true
 end
@@ -3103,10 +3011,16 @@ function P.bouncer:useToolTile(tile, tileY, tileX)
 end
 
 P.shift = P.superTool:new{name = "Shift", description = "Now slide to the left", image = 'Graphics/shift.png', baseRange = 1, quality = 1}
-function P.shift:usableOnNothing()
+function P.shift:usableOnNothing(tileY, tileX)
+	for i = 1, #pushables do
+		if pushables[i].tileX == tileX and pushables[i].tileY == tileY then return false end
+	end
 	return true
 end
-function P.shift:usableOnTile(tile)
+function P.shift:usableOnTile(tile, tileY, tileX)
+	for i = 1, #pushables do
+		if pushables[i].tileX == tileX and pushables[i].tileY == tileY then return false end
+	end
 	return not tile:obstructsMovement()
 end
 function P.shift:useToolNothing(tileY, tileX)
@@ -3123,7 +3037,7 @@ function P.shift:useToolTile(tile, tileY, tileX)
 	player.prevTileY = player.tileY
 	player.tileX = tileX
 	player.tileY = tileY
-	room[player.tileY][player.tileX]:onEnter()
+	room[player.tileY][player.tileX]:onEnter(player)
 	setPlayerLoc()
 end
 
@@ -4038,7 +3952,9 @@ function P.christmasSurprise:useToolTile(tile, tileY, tileX)
 			local giftX = pushables[i].tileX
 			pushables[i] = pushableList.giftBox:new()
 			pushables[i].tileY = giftY
-			pushables[i].tileX = giftX	
+			pushables[i].tileX = giftX
+			pushables[i].prevTileY = giftY
+			pushables[i].prevTileX = giftX
 			pushables[i]:setLoc()
 		end
 	end
@@ -4058,6 +3974,8 @@ function P.christmasSurprise:useToolNothing(tileY, tileX)
 			pushables[i] = pushableList.giftBox:new()
 			pushables[i].tileY = giftY
 			pushables[i].tileX = giftX
+			pushables[i].prevTileY = giftY
+			pushables[i].prevTileX = giftX
 			pushables[i]:setLoc()
 		end
 	end
@@ -4834,41 +4752,11 @@ function P.shittyPotion:useToolTile()
 end
 P.shittyPotion.useToolNothing = P.shittyPotion.useToolTile
 
-P.recycleBin = P.boxSpawner:new{name = "Recycle Bin", description = "Saving the Earth, one tool at a time", image = 'Graphics/recyclebin.png', quality = 3, cost  = 3}
-function P.recycleBin:useToolTile(tile, tileY, tileX)
-	self.numHeld = self.numHeld-1
-	local toSpawn = pushableList[14]:new()
-	toSpawn.tileY = tileY
-	toSpawn.tileX = tileX
-	toSpawn:setLoc()
-	pushables[#pushables+1] = toSpawn
-end
-function P.recycleBin:useToolNothing(tileY, tileX)
-	self.numHeld = self.numHeld-1
-	local toSpawn = pushableList[14]:new()
-	toSpawn.tileY = tileY
-	toSpawn.tileX = tileX
-	toSpawn:setLoc()
-	pushables[#pushables+1] = toSpawn
-end
+P.recycleBin = P.boxSpawner:new{name = "Recycle Bin", description = "Saving the Earth, one tool at a time", image = 'Graphics/recyclebin.png', quality = 3, cost  = 3,
+boxType = pushableList.recycleBin}
 
-P.iceBox = P.boxSpawner:new{name = "Ice Box", description = "Brrrrrrrrrr", image = 'Graphics/icebox.png', quality = 3, cost  = 2}
-function P.iceBox:useToolTile(tile, tileY, tileX)
-	self.numHeld = self.numHeld-1
-	local toSpawn = pushableList[13]:new()
-	toSpawn.tileY = tileY
-	toSpawn.tileX = tileX
-	toSpawn:setLoc()
-	pushables[#pushables+1] = toSpawn
-end
-function P.iceBox:useToolNothing(tileY, tileX)
-	self.numHeld = self.numHeld-1
-	local toSpawn = pushableList[13]:new()
-	toSpawn.tileY = tileY
-	toSpawn.tileX = tileX
-	toSpawn:setLoc()
-	pushables[#pushables+1] = toSpawn
-end
+P.iceBox = P.boxSpawner:new{name = "Ice Box", description = "Brrrrrrrrrr", image = 'Graphics/icebox.png', quality = 3, cost  = 2,
+boxType = pushableList.iceBox}
 
 P.nineLives = P.superTool:new{name = "Cat's Paw", description = "", lifeCount = 9, quality = -1, image = 'Graphics/catpaw9.png',
 imageSet = {'Graphics/catpaw1.png', 'Graphics/catpaw2.png', 'Graphics/catpaw3.png', 'Graphics/catpaw4.png',
@@ -4904,7 +4792,7 @@ end
 P.card = P.superTool:new{name = "Card", description = "Expanding the deck", quality = 3, cost = 2,
 image = 'Graphics/deckofcards.png', baseImage = 'Graphics/card.png',
 cardOrder = {},
-spriteOrder = {'Graphics/diamondcard.png', 'Graphics/heartcard.png', 'Graphics/spadecard.png', 'Graphics/clubcard.png', 'Graphics/jokercard.png'}}
+spriteOrder = {'Graphics/diamondcard.png', 'Graphics/heartcard.png', 'Graphics/spadecard.png', 'Graphics/clubcard.png', 'Graphics/jokercard.png'}, defaultDisabled = true}
 function P.card:giveOne()
 	self:draw(1)
 end
@@ -4967,7 +4855,7 @@ function P.card:getDisplayImage()
 	return self.baseImage
 end
 
-P.deckOfCards = P.superTool:new{name = "Deck of Cards", description = "One hand at a time", image = 'Graphics/deckofcards.png', quality = 5, cost = 8}
+P.deckOfCards = P.superTool:new{name = "Deck of Cards", description = "One hand at a time", image = 'Graphics/deckofcards.png', quality = 5, cost = 8, defaultDisabled = true}
 function P.deckOfCards:giveOne()
 	tools.card:draw(7)
 end
@@ -5376,7 +5264,7 @@ P.rewindRevive = P.superTool:new{name = "Revert", description = "Not dead...yet"
 function P.rewindRevive:checkDeath()
 	
 
-	saveStairs.onEnter()
+	saveStairs.onEnter(player)
 
 	updateGameState(false)
 	self.numHeld = self.numHeld-1
@@ -5422,7 +5310,7 @@ function P.treasureThief:grab(tileY, tileX)
 		end
 		for i = player.tileX, endCoord, stepNum do
 			if room[tileY][i]~=nil and room[tileY][i]:instanceof(tiles.treasureTile) then
-				room[tileY][i]:onEnter()
+				room[tileY][i]:onEnter(player)
 				room[tileY][i] = nil
 				return
 			end
@@ -5435,7 +5323,7 @@ function P.treasureThief:grab(tileY, tileX)
 		end
 		for i = player.tileY, endCoord, stepNum do
 			if room[i][tileX]~=nil and room[i][tileX]:instanceof(tiles.treasureTile) then
-				room[i][tileX]:onEnter()
+				room[i][tileX]:onEnter(player)
 				room[i][tileX] = nil
 				return
 			end
@@ -5578,7 +5466,9 @@ end
 P.randomizer = P.superTool:new{name = "Randomizer", description = "Bing bing bong bong, randomized", baseRange = 3, quality = -1, cost = 3, image = "Graphics/randomizer.png",
 infiniteUses = true}
 function P.randomizer:usableOnTile(tile)
-	if tile:instanceof(tiles.wall) then return true
+	if tile.destroyed then return false end
+	
+	if tile:instanceof(tiles.wall) and not tile:instanceof(tiles.concreteWall) then return true
 	elseif tile:instanceof(tiles.button) then return true
 	end
 end
@@ -5599,16 +5489,22 @@ function P.randomizer:useToolTile(tile, tileY, tileX)
 
 	--select which tile to use, then set
 	local whichTile = util.random(#tilesArr,'misc')
-	while (tilesArr[whichTile].name == tile.name) do
-		whichTile = util.random(#tilesArr,'misc')
+	for i = 1, #tilesArr do
+		if tile.name == tilesArr[i].name then
+			if i<#tilesArr then whichTile = i+1
+			else whichTile = 1 end
+		end
 	end
 	room[tileY][tileX] = tilesArr[whichTile]:new()
 end
 function P.randomizer:useToolAnimal(animal)
 	local animalArr = self:getAnimalList()
 	local whichAni = util.random(#animalArr, 'misc')
-	while (animalArr[whichAni].name == animal.name) do
-		whichAni = util.random(#animalArr, 'misc')
+	for i = 1, #animalArr do
+		if animal.name == animalArr[i].name then
+			if i<#animalArr then whichAni = i+1
+			else whichAni = 1 end
+		end
 	end
 
 	for i = 1, #animals do
@@ -5617,6 +5513,8 @@ function P.randomizer:useToolAnimal(animal)
 			newAni.tileX = animals[i].tileX
 			newAni.tileY = animals[i].tileY
 			newAni:setLoc()
+			newAni.triggered = true
+			newAni.waitCounter = 0
 			animals[i] = newAni
 			return
 		end
@@ -5625,8 +5523,11 @@ end
 function P.randomizer:useToolPushable(pushable)
 	local pushableArr = self:getPushableList()
 	local whichPushable = util.random(#pushableArr, 'misc')
-	while (pushableArr[whichPushable].name == pushable.name) do
-		whichPushable = util.random(#pushableArr, 'misc')
+	for i = 1, #pushableArr do
+		if pushable.name == pushableArr[i].name then
+			if i<#pushableArr then whichPushable = i+1
+			else whichPushable = 1 end
+		end
 	end
 
 	for i = 1, #pushables do
@@ -5645,18 +5546,70 @@ function P.randomizer:getButtonsList()
 	return {tiles.button, tiles.stayButton, tiles.stickyButton}
 end
 function P.randomizer:getWallList()
-	return {tiles.wall, tiles.metalWall, tiles.glassWall, tiles.concreteWall, tiles.reinforcedGlass,
-	tiles.halfWall, tiles.tallWall, tiles.toolTaxTile}
+	return {tiles.wall, tiles.metalWall, tiles.glassWall}
 end
 function P.randomizer:getAnimalList()
 	return {animalList.pitbull, animalList.cat, animalList.bombBuddy,
-			animalList.snail, animalList.glueSnail, animalList.conductiveSnail}
+			animalList.glueSnail, animalList.conductiveSnail}
 end
 function P.randomizer:getPushableList()
 	return {pushableList.box, pushableList.conductiveBox, pushableList.lamp,
 			pushableList.batteringRam, pushableList.boombox,
 			pushableList.jackInTheBox, pushableList.playerBox, pushableList.animalBox,
 			pushableList.bombBox}
+end
+
+P.playerClonerInfinite  = P.superTool:new{name = "playerClonerInfinite", description = "Unleash a new you", cloneExists = false, baseRange = 0, image = 'Graphics/playercloner1.2.png',
+imageNoClone = 'Graphics/playercloner1.2.png', imageClone = 'Graphics/playercloner2.2.png', quality = -1, infiniteUses = true}
+function P.playerClonerInfinite:usableOnNothing()
+	return true
+end
+function P.playerClonerInfinite:usableOnTile(tile)
+	return true
+end
+
+function P.playerClonerInfinite:useToolNothing()
+	if not self.cloneExists then
+		self.cloneExists = true
+		player.clonePos = {x = player.tileX, y = player.tileY, z = player.elevation}
+		self.image = self.imageClone
+	else
+		self.cloneExists = false
+		player.tileX = player.clonePos.x
+		player.tileY = player.clonePos.y
+		player.elevation = player.clonePos.z
+		player.clonePos = {x = 0, y = 0, z = 0}
+		self.image = self.imageNoClone
+		setPlayerLoc()
+	end
+end
+P.playerClonerInfinite.useToolTile = P.playerClonerInfinite.useToolNothing
+
+P.powerVacuum  = P.superTool:new{name = "Power Vacuum", description = "Unleash a new you", charged = false, baseRange = 3, image = 'Graphics/powervacuum.png',
+baseImage = 'Graphics/powervacuum.png', imageCharged = 'Graphics/powervacuumcharged.png', quality = -1, infiniteUses = true}
+function P.powerVacuum:usableOnTile(tile)
+	return (not self.charged) and tile:instanceof(tiles.powerSupply)
+end
+function P.powerVacuum:usableOnAnimal(animal)
+	return (self.charged) and (not animal.charged)
+end
+function P.powerVacuum:useToolTile(tile)
+	tile:destroy()
+	self.charged = true
+	self:updateSprite()
+end
+function P.powerVacuum:useToolAnimal(animal)
+	animal.charged = true
+	animal.conductive = true
+	self.charged = false
+	self:updateSprite()
+end
+function P.powerVacuum:updateSprite()
+	if self.charged then
+		self.image = self.imageCharged
+	else
+		self.image = self.baseImage
+	end
 end
 
 
@@ -5772,7 +5725,7 @@ function P.chargedBeam:destroyTiles(tileY, tileX)
 		end
 		for i = player.tileX, endCoord, stepNum do
 			if room[tileY][i]~=nil and room[tileY][i]:instanceof(tiles.treasureTile) then
-				room[tileY][i]:onEnter()
+				room[tileY][i]:onEnter(player)
 				room[tileY][i] = nil
 				return
 			end
@@ -5785,7 +5738,7 @@ function P.chargedBeam:destroyTiles(tileY, tileX)
 		end
 		for i = player.tileY, endCoord, stepNum do
 			if room[i][tileX]~=nil and room[i][tileX]:instanceof(tiles.treasureTile) then
-				room[i][tileX]:onEnter()
+				room[i][tileX]:onEnter(player)
 				room[i][tileX] = nil
 				return
 			end
@@ -6072,6 +6025,8 @@ P:addTool(P.chargedShield)
 
 --infiniteUse special char tools
 P:addTool(P.randomizer)
+P:addTool(P.playerClonerInfinite)
+P:addTool(P.powerVacuum)
 
 P.resetTools()
 
