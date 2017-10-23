@@ -1117,7 +1117,7 @@ function updatePower()
 		end
 		for i = 1, #animals do
 			animals[i].powered = false
-		end
+		end 
 		for i = 1, 5 do
 			for i = 1, #pushables do
 				if pushables[i].conductive and not pushables[i].destroyed then
