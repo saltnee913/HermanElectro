@@ -12,5 +12,9 @@ function Object:instanceof(super)
 		if metatable == super then return true end
 		metatable = getmetatable(metatable)
 	end
-	return false
+	return self==super
+end
+
+function Object:super(func, ...)
+	return getmetatable(self)[func](self,unpack(arg))
 end

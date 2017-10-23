@@ -6,7 +6,38 @@
 			"filePath": "RoomData/rooms.json",
 			"requirements":
 			{
-
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
+				},
+				"or":
+				{
+					"toolRange": [4,7],
+					"equals":
+					{
+						"key": "roomid",
+						"value": "1"
+					}
+				}
+			}
+		},
+		"shops":
+		{
+			"filePath": "RoomData/shops.json",
+			"requirements":
+			{
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
+				},
 			}
 		},
 		"treasureRooms": 
@@ -14,7 +45,14 @@
 			"filePath": "RoomData/treasurerooms.json",
 			"requirements":
 			{
-				
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
+				},				
 			}
 		},
 		"finalRooms": 
@@ -22,15 +60,90 @@
 			"filePath": "RoomData/finalrooms.json",
 			"requirements":
 			{
-				
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
+				},				
 			}
 		},
+		"donationRooms":
+		{
+			"filePath": "RoomData/donationrooms.json",
+			"requirements":
+			{
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
+				},				
+			}
+		},
+		"dungeons":
+		{
+			"filePath": "RoomData/dungeons.json",
+			"requirements":
+			{
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
+				},				
+			}
+		},
+		"heavenRooms":
+		{
+			"filePath": "RoomData/heavenRooms.json",
+			"requirements":
+			{
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
+				},				
+			}
+		},
+		"secretRooms":
+		{
+			"filePath": "RoomData/secretrooms.json",
+			"requirements":
+			{
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
+				},				
+			}
+		}
 	},
 	"data":
 	{
-		"height": 10,
-		"numRooms": 20,
-		"generateFunction": "generateMapStandard",
-		"startRoomID": "1"
+		"requireUnlocks": true,
+		"height": 12,
+		"numRooms": 10,
+		"generateFunction": "generateMapWeighted",
+		"startRoomID": "1",
+		//numRoomsToCheck is the amount of rooms to try when deciding a room's roomid, decreasing this increases rng
+		"numRoomsToCheck": 5,
+		"tint": [0,0,0],
+		"playerRange": 300,
+		"numTreasure": 2,
+		"numShop": 0,
+		"numDonation": 1
 	}
 }

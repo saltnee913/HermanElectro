@@ -5,10 +5,6 @@ require('scripts.object')
 local P = {}
 animalList = P
 
-playerheight = 20
-playerwidth = 20
-roomHeight = 12
-roomLength = 24
 width2, height2 = love.graphics.getDimensions()
 if width2>height2*16/9 then
 	height = height2
@@ -21,81 +17,185 @@ wallSprite = {width = 187*width/1920, height = 170*height/1080, heightBottom = 1
 scale = (width - 2*wallSprite.width)/(20.3 * 16)*5/6
 --floor = tiles.tile
 
+P.frozenSprite = 'Graphics/frozenMark.png'
+P.waitSprite = 'Graphics/waitCounterMark.png'
+P.trainedSprite = 'Graphics/trainedMark.png'
+
 --speed same as player (250)
-P.animal = Object:new{pickedUp = false, flying = false, triggered = false, waitCounter = 0, dead = false, name = "animal", tileX, tileY, prevx, prevy, prevTileX, prevTileY, x, y, speed = 250, width = 16*scale, height = 16*scale, sprite = love.graphics.newImage('Graphics/pitbull.png'), deadSprite = love.graphics.newImage('Graphics/pitbulldead.png'), tilesOn = {}, oldTilesOn = {}}
+P.animal = Object:new{elevation = 0, charged = false, textDist = 1, scale = 1.1*scale, yOffset = 0, movesInTurn = true, frozen = false, trained = false, conductive = false,
+pickedUp = false, canDropTool = false, willDropTool = false, flying = false, triggered = false, waitCounter = 1, dead = false, name = "animal",
+tileX, tileY, prevx, prevy, prevTileX, prevTileY, x, y, speed = 250, width = 16*scale, height = 16*scale, sprite = 'Graphics/pitbull.png', deadSprite = 'Graphics/pitbulldead.png', tilesOn = {}, oldTilesOn = {}}
 function P.animal:move(playerx, playery, room, isLit)
-	if self.dead or (not isLit and not self.triggered) then
+	if self.dead or (not isLit and not self.triggered) or self.frozen then
 		return
 	end
-	triggered = true
-	diffx = playerx-self.tileX
-	diffy = playery-self.tileY
-	self.prevx = self.x
-	self.prevy = self.y
+	if player.attributes.shelled or player.attributes.invisible or player.attributes.timeFrozen then
+		return
+	elseif player.attributes.fear then
+		self:afraidPrimaryMove(playerx, playery, room, isLit)
+		return
+	elseif room[playery][playerx]~=nil and room[playery][playerx].scaresAnimals then
+		self:afraidPrimaryMove(playerx, playery, room, isLit)
+		return
+	end
+	self.triggered = true
 	self.prevTileX = self.tileX
 	self.prevTileY = self.tileY
 	if self.waitCounter>0 then
-		self.waitCounter = self.waitCounter - 1
 		return
 	end
-	if diffx==0 and diffy==0 then
+	
+	if playerx-self.tileX==0 and playery-self.tileY==0 then
 		return
 	end
-	local unableToMove = false
-	if math.abs(diffx)>math.abs(diffy) then
-		if playerx>self.tileX then
-			if not (room[self.tileY][self.tileX+1]~=nil and room[self.tileY][self.tileX+1].blocksMovement) then
-				--self.x = self.x+floor.sprite:getHeight()*scale
-				self.tileX = self.tileX+1
-			elseif room[self.tileY][self.tileX+1].blocksMovement then
-				unableToMove = true
-			end
-		else
-			if not (room[self.tileY][self.tileX-1]~=nil and room[self.tileY][self.tileX-1].blocksMovement) then
-				--self.x = self.x-floor.sprite:getHeight()*scale
-				self.tileX = self.tileX-1
-			elseif room[self.tileY][self.tileX-1].blocksMovement then
-				unableToMove = true
-			end
-		end
-	end
-	if math.abs(diffx)<=math.abs(diffy) or (unableToMove and math.abs(diffy)>0) then
-		if playery>self.tileY then
-			if not (room[self.tileY+1][self.tileX]~=nil and room[self.tileY+1][self.tileX].blocksMovement) then
-				--self.y = self.y+floor.sprite:getHeight()*scale
-				self.tileY = self.tileY+1
-				unableToMove = false
-			elseif room[self.tileY+1][self.tileX].blocksMovement then
-				unableToMove = true
-			end
-		else
-			if not (room[self.tileY-1][self.tileX]~=nil and room[self.tileY-1][self.tileX].blocksMovement) then
-				--self.y = self.y-floor.sprite:getHeight()*scale
-				self.tileY = self.tileY-1
-				unableToMove = false
-			elseif room[self.tileY-1][self.tileX].blocksMovement then
-				unableToMove = true
-			end
-		end
-	end
-	if unableToMove then
-		if playerx>self.tileX then
-			if not (room[self.tileY][self.tileX+1]~=nil and room[self.tileY][self.tileX+1].blocksMovement) then
-				--self.x = self.x+floor.sprite:getHeight()*scale
-				self.tileX = self.tileX+1
-			end
-		elseif playerx<self.tileX then
-			if not (room[self.tileY][self.tileX-1]~=nil and room[self.tileY][self.tileX-1].blocksMovement) then
-				--self.x = self.x-floor.sprite:getHeight()*scale
-				self.tileX = self.tileX-1
-			end
-		end
+
+	if not self:primaryMove(playerx, playery) then
+		self:secondaryMove(playerx, playery)
 	end
 end
+function P.animal:moveOverride(movex, movey)
+	return {x = movex, y = movey}
+end
+function P.animal:primaryMove(playerx, playery)
+	if player.attributes.shelled or player.attributes.invisible or player.attributes.timeFrozen then
+		return
+	end
+	local diffx = math.abs(playerx - self.tileX)
+	local diffy = math.abs(playery - self.tileY)
+
+	if diffx>diffy then
+		if playerx>self.tileX then
+			self.tileX = self.tileX+1
+		else
+			self.tileX = self.tileX-1
+		end
+	else
+		if playery>self.tileY then
+			self.tileY = self.tileY+1
+		else
+			self.tileY = self.tileY-1
+		end
+	end
+	if room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX]:obstructsMovementAnimal(self) then
+		self.tileY = self.prevTileY
+		self.tileX = self.prevTileX
+		return false
+	elseif room[self.tileY][self.tileX]==nil and math.abs(self.elevation)>3 then
+		self.tileY = self.prevTileY
+		self.tileX = self.prevTileX
+		return false		
+	end
+	if not self:pushableCheck() then
+		self.tileX = self.prevTileX
+		self.tileY = self.prevTileY
+		return false
+	end
+	return true
+end
+function P.animal:pushableCheck()
+	if not (self.prevTileY == self.tileY and self.prevTileX == self.tileX) then
+		for i = 1, #pushables do
+			if pushables[i].tileX == self.tileX and pushables[i].tileY == self.tileY then
+				if not pushables[i]:animalCanMove() or not pushables[i]:move(self) then
+					return false
+				end
+			end
+		end
+	end
+	return true
+end
+
+function P.animal:secondaryMove(playerx, playery)
+	if player.attributes.shelled or player.attributes.invisible or player.attributes.timeFrozen or self.frozen then
+		return
+	end
+	if player.character.name == "Leonard" and player.character.scaryMode == true then
+		self:afraidSecondaryMove(playerx, playery)
+		return
+	end
+	local diffx = math.abs(playerx - self.tileX)
+	local diffy = math.abs(playery - self.tileY)
+
+	if diffy>=diffx and not (self.tileX==playerx) then
+		if playerx>self.tileX then
+			self.tileX = self.tileX+1
+		else
+			self.tileX = self.tileX-1
+		end
+	elseif (self.tileY~=playery) then
+		if playery>self.tileY then
+			self.tileY = self.tileY+1
+		else
+			self.tileY = self.tileY-1
+		end
+	end
+
+	if room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX]:obstructsMovementAnimal(self) then
+		self.tileY = self.prevTileY
+		self.tileX = self.prevTileX
+		return false
+	elseif room[self.tileY][self.tileX]==nil and math.abs(self.elevation)>3 then
+		self.tileY = self.prevTileY
+		self.tileX = self.prevTileX
+		return false		
+	end
+
+	if not self:pushableCheck() then
+		self.tileX = self.prevTileX
+		self.tileY = self.prevTileY
+		return false
+	end
+
+	return true
+end
+
+function P.animal:getDrawCoords()
+	local drawx = self:getDrawX()
+	local drawy = self:getDrawY()
+	return {x = drawx, y = drawy}
+end
+function P.animal:getDrawX()
+	return math.floor(self.x-util.getImage(self.sprite):getWidth()/2*self.scale)
+end
+function P.animal:getDrawY()
+	return math.floor(self.y-util.getImage(self.sprite):getHeight()*self.scale-self.elevation*scale)
+end
+function P.animal:blocksPlayer()
+	return false
+end
 function P.animal:checkDeath()
-	if room[self.tileY][self.tileX]~=nil then
+	if self.dead then return end
+	if room[self.tileY]~=nil and room[self.tileY][self.tileX]~=nil then
 		t = room[self.tileY][self.tileX]
 		if self.dead == false and t:willKillAnimal() then
+			self:kill()
+			if t:instanceof(tiles.vPoweredDoor) then
+				unlocks.unlockUnlockableRef(unlocks.doorstopUnlock)
+			elseif t:instanceof(tiles.lemonade) then
+				unlocks.unlockUnlockableRef(unlocks.lemonPartyUnlock)
+			end
+			if room[self.tileY][self.tileX]:instanceof(tiles.pit) or room[self.tileY][self.tileX]:instanceof(tiles.poweredFloor) then
+				local animalsInPit = 0
+				for i = 1, #animals do
+					if animals[i].tileY == self.tileY and animals[i].tileX == self.tileX then
+						animalsInPit = animalsInPit+1
+					end
+				end
+				if animalsInPit>=2 then
+					unlocks.unlockUnlockableRef(unlocks.breakablePitUnlock)
+				end
+			end
+		end
+	end
+	for i = 1, #animals do
+		if animals[i].trained and not animals[i].dead and animals[i]~=self and
+		animals[i].tileX==self.tileX and animals[i].tileY==self.tileY then
+			self:kill()
+			unlocks.unlockUnlockableRef(unlocks.animalEnslaverUnlock)
+		end
+	end
+	for i = 1, #bossList do
+		if bossList[i]:willKillAnimal(self) then
 			self:kill()
 		end
 	end
@@ -103,11 +203,30 @@ end
 function P.animal:hasMoved()
 	return self.prevTileX ~= self.tileX or self.prevTileY ~= self.tileY
 end
-function P.animal:onNullLeave()
+function P.animal:onNullLeave(tileY, tileX)
+	return room[tileY][tileX]
 end
 function P.animal:kill()
+	if self.dead then return end
 	self.dead = true
 	self.sprite = self.deadSprite
+	if self.canDropTool and not self.willDropTool then
+		local bonusDropChance = util.random(100, 'toolDrop')
+		if bonusDropChance<=getLuckBonus() then
+			self.willDropTool = true
+		end
+	end
+	if self.willDropTool then
+		if(room[self.tileY][self.tileX]==nil or room[self.tileY][self.tileX].destroyed
+		or room[self.tileY][self.tileX]:usableOnNothing() or room[self.tileY][self.tileX].overlay==nil) then
+			self:dropTool()
+		end
+	end
+
+	stats.incrementStat(self.name..'Killed')
+	stats.incrementStat('animalsKilled')
+end
+function P.animal:specificKill()
 end
 function P.animal:update()
 	--checkBoundaries()
@@ -115,135 +234,658 @@ end
 function P.animal:willKillPlayer(player)
 	return false
 end
-
-
-P.pitbull = P.animal:new{name = "pitbull"}
-function P.pitbull:willKillPlayer()
-	return player.tileX == self.tileX and player.tileY == self.tileY and not self.dead
+function P.animal:explode()
 end
-
-P.pup = P.animal:new{name = "pup", sprite = love.graphics.newImage('Graphics/pup.png'), deadSprite = love.graphics.newImage('Graphics/pupdead.png')}
-
-P.snail = P.animal:new{name = "snail", sprite = love.graphics.newImage('Graphics/snail.png'), deadSprite = love.graphics.newImage('Graphics/pupdead.png')}
-function P.snail:onNullLeave()
-	return tiles.slime:new()
-end
-
-P.bat = P.animal:new{flying = true, name = "bat", sprite = love.graphics.newImage('Graphics/bat.png'), deadSprite = love.graphics.newImage('Graphics/pupdead.png')}
-function P.bat:move(playerx, playery, room, isLit)
-	if self.dead or (not isLit and not self.triggered) then
+function P.animal:afraidPrimaryMove(playerx, playery, room, isLit)
+	if player.attributes.shelled or player.attributes.invisible or player.attributes.timeFrozen then
 		return
 	end
-	triggered = true
-	diffx = playerx-self.tileX
-	diffy = playery-self.tileY
-	self.prevx = self.x
-	self.prevy = self.y
+	local diffCatx = math.abs(playerx - self.tileX)
+	local diffCaty = math.abs(playery - self.tileY)
+
+	if self.dead or (not isLit and not self.triggered) or self.frozen then
+		return
+	end
+	self.triggered = true
+
 	self.prevTileX = self.tileX
 	self.prevTileY = self.tileY
-	if diffx==0 and diffy==0 then
+
+	if self.waitCounter>0 then
 		return
 	end
-	if math.abs(diffx)>math.abs(diffy) then
+
+
+
+	local setOfMoves = {}
+	local currDist = math.abs(self.tileX-playerx)+math.abs(self.tileY-playery)
+	setOfMoves[1] = {dist = math.abs(self.tileX+1-playerx)+math.abs(self.tileY-playery), diffx = 1, diffy = 0}
+	setOfMoves[2] = {dist = math.abs(self.tileX-1-playerx)+math.abs(self.tileY-playery), diffx = -1, diffy = 0}
+	setOfMoves[3] = {dist = math.abs(self.tileX-playerx)+math.abs(self.tileY+1-playery), diffx = 0, diffy = 1}
+	setOfMoves[4] = {dist = math.abs(self.tileX-playerx)+math.abs(self.tileY-1-playery), diffx = 0, diffy = -1}
+
+	for i = 1, 4 do
+		for j = i, 4 do
+			if i~=j and setOfMoves[j].dist>setOfMoves[i].dist then
+				local temp = setOfMoves[i]
+				setOfMoves[i] = setOfMoves[j]
+				setOfMoves[j] = temp
+			--new AI beginning
+			elseif i~=j and setOfMoves[j].dist == setOfMoves[i].dist then
+				if diffCatx>diffCaty and math.abs(setOfMoves[j].diffy)>math.abs(setOfMoves[i].diffy) then
+					local temp = setOfMoves[i]
+					setOfMoves[i] = setOfMoves[j]
+					setOfMoves[j] = temp
+				elseif diffCaty>diffCatx and math.abs(setOfMoves[j].diffx)>math.abs(setOfMoves[i].diffx) then
+					local temp = setOfMoves[i]
+					setOfMoves[i] = setOfMoves[j]
+					setOfMoves[j] = temp
+				end
+			end
+			--new AI end
+		end
+	end
+
+	for i = 1, 4 do
+		if setOfMoves[i].dist>currDist then
+			self:tryMove(setOfMoves[i].diffx, setOfMoves[i].diffy)
+			if self:hasMoved() then
+				return
+			end
+		end
+	end
+end
+function P.animal:getText()
+	return nil
+end
+function P.animal:tryMove(diffx, diffy)
+	self.tileX = self.tileX+diffx
+	self.tileY = self.tileY+diffy
+
+	if room[self.tileY]==nil or self.tileX>roomLength or self.tileX<=0 or
+	(room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX]:obstructsMovementAnimal(self)) or
+	(room[self.tileY][self.tileX]==nil and math.abs(self.elevation)>3) then
+		self.tileY = self.prevTileY
+		self.tileX = self.prevTileX
+		return
+	end
+
+	if not self:pushableCheck() then
+		self.tileX = self.prevTileX
+		self.tileY = self.prevTileY
+	end
+
+	local sameSpotCounter = 0
+	for i = 1, #animals do
+		if animals[i].tileX == self.tileX and animals[i].tileY == self.tileY and not animals[i].dead then
+			sameSpotCounter = sameSpotCounter+1
+		end
+	end
+	if sameSpotCounter>1 then
+		self.tileX = self.prevTileX
+		self.tileY = self.prevTileY
+	end
+end
+
+function P.animal:afraidSecondaryMove(playerx, playery)
+	if player.attributes.shelled or player.attributes.invisible or player.attributes.timeFrozen then
+		return
+	end
+	local diffx = math.abs(playerx - self.tileX)
+	local diffy = math.abs(playery - self.tileY)
+
+	if diffy>diffx then
 		if playerx>self.tileX then
-			--self.x = self.x+floor.sprite:getHeight()*scale
-			self.tileX = self.tileX+1
-		else
-			--self.x = self.x-floor.sprite:getHeight()*scale
 			self.tileX = self.tileX-1
+		else
+			self.tileX = self.tileX+1
 		end
 	else
 		if playery>self.tileY then
-			--self.y = self.y+floor.sprite:getHeight()*scale
-			self.tileY = self.tileY+1
-		else
-			--self.y = self.y-floor.sprite:getHeight()*scale
 			self.tileY = self.tileY-1
+		else
+			self.tileY = self.tileY+1
+		end
+	end
+
+	if room[self.tileY]==nil or self.tileX<1 or self.tileX>roomLength or
+	(room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX]:obstructsMovementAnimal(self)) or
+	(room[self.tileY][self.tileX]==nil and math.abs(self.elevation)>3) then
+		self.tileY = self.prevTileY
+		self.tileX = self.prevTileX
+		return false
+	end
+
+	if not self:pushableCheck() then
+		self.tileX = self.prevTileX
+		self.tileY = self.prevTileY
+		return false
+	end
+
+	return true
+end
+function P.animal:setLoc()
+	--coords represent middle of body x-loc, bottom of feet y-loc
+
+	self.x = (self.tileX-1)*tileUnit*scale+wallSprite.width
+	self.x = self.x+scale*tileUnit/2
+
+	self.y = (self.tileY-1)*tileUnit*scale+wallSprite.height
+	self.y = self.y+scale*(2/3*tileUnit)
+end
+
+
+P.pitbull = P.animal:new{name = "pitbull", canDropTool = true, sprite = 'Graphics/Characters/Guard.png'}
+function P.pitbull:willKillPlayer()
+	return player.tileX == self.tileX and player.tileY == self.tileY and not self.dead
+end
+function P.pitbull:dropTool()
+	local whichTool = util.random(1, 'toolDrop')
+	if whichTool==1 then
+		if not tools.dropTool(tools.meat, self.tileY, self.tileX) then
+			return
+		end
+	else
+		if not tools.dropTool(tools.rottenMeat, self.tileY, self.tileX) then
+			return
 		end
 	end
 end
+
+P.pup = P.animal:new{name = "pup", sprite = 'NewGraphics/pupDesign.png', deadSprite = 'Graphics/pupdead.png', canDropTool = true}
+P.pup.dropTool = P.pitbull.dropTool
+
+P.snail = P.animal:new{name = "snail", sprite = 'NewGraphics/snailDesign.png', deadSprite = 'Graphics/pupdead.png', canDropTool = true}
+function P.snail:onNullLeave()
+	return tiles.slime:new()
+end
+function P.snail:dropTool()
+	if tools.dropTool(tools.shell, self.tileY, self.tileX) then
+		return
+	end
+end
+
+P.conductiveSnail = P.snail:new{name = "conductiveSnail", sprite = 'NewGraphics/snailCDesign.png'}
+function P.conductiveSnail:onNullLeave()
+	return tiles.conductiveSlime:new()
+end
+
+
+P.glueSnail = P.snail:new{name = "glueSnail", sprite = 'Graphics/gluesnail.png'}
+function P.glueSnail:onNullLeave()
+	return tiles.glue:new()
+end
+
+P.bat = P.animal:new{flying = true, name = "bat", sprite = 'Graphics/bat.png', deadSprite = 'Graphics/pupdead.png'}
 function P.bat:checkDeath()
 end
 P.bat.willKillPlayer = P.pitbull.willKillPlayer
 
-P.cat = P.animal:new{name = "cat", sprite = love.graphics.newImage('Graphics/cat.png'), deadSprite = love.graphics.newImage('Graphics/catdead.png')}
-function P.cat:move(playerx, playery, room, isLit)
-	if self.dead or (not isLit and not self.triggered) then
+P.cat = P.animal:new{name = "cat", canDropTool = true, sprite = 'NewGraphics/catDesign.png', deadSprite = 'Graphics/catdead.png'}
+P.cat.move = P.animal.afraidPrimaryMove
+P.cat.secondaryMove = P.animal.afraidSecondaryMove
+function P.cat:dropTool()
+	tools.dropTool(tools.nineLives, self.tileY, self.tileX)
+end
+
+P.bombBuddy = P.animal:new{name = "bombBuddy", scale = 0.6*scale,
+sprite = 'Graphics/bombBuddyFront.png', deadSprite = 'Graphics/catdead.png', canDropTool = true}
+function P.bombBuddy:explode()
+	util.createHarmfulExplosion(self.tileY, self.tileX, 1)
+end
+function P.bombBuddy:dropTool()
+	tools.dropTool(tools.explosiveMeat, self.tileY, self.tileX)
+end
+
+P.conductiveDog = P.pup:new{name = "conductiveDog", powered = false, conductive = true, sprite = 'Graphics/conductivedog.png'}
+
+P.wife = P.cat:new{name = "wife", sprite = 'Graphics/wife.png'}
+P.son = P.cat:new{name = "son", sprite = 'Graphics/son.png'}
+P.daughter = P.cat:new{name = "daughter", sprite = 'Graphics/daughter.png'}
+
+P.ram = P.animal:new{name = "Ram", sprite = 'Graphics/ram.png', scale = 0.1*scale}
+P.ram.move = P.animal.afraidPrimaryMove
+function P.ram:tryMove(diffx, diffy)
+	self.tileX = self.tileX+diffx
+	self.tileY = self.tileY+diffy
+
+	if room[self.tileY]==nil or self.tileX>roomLength or self.tileX<=0 or
+	(room[self.tileY][self.tileX]==nil and math.abs(self.elevation)>3) then
+		self.tileY = self.prevTileY
+		self.tileX = self.prevTileX
+		return
+	elseif room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX]:obstructsMovementAnimal(self) then
+		if room[self.tileY][self.tileX]:getHeight()<=self.elevation then
+			self.tileY = self.prevTileY
+			self.tileX = self.prevTileX
+			return
+		else
+			room[self.tileY][self.tileX]:destroy()
+		end
+	end
+
+	if not self:pushableCheck() then
+		self.tileX = self.prevTileX
+		self.tileY = self.prevTileY
+	end
+
+	local sameSpotCounter = 0
+	for i = 1, #animals do
+		if animals[i].tileX == self.tileX and animals[i].tileY == self.tileY then
+			sameSpotCounter = sameSpotCounter+1
+		end
+	end
+	if sameSpotCounter>1 then
+		self.tileX = self.prevTileX
+		self.tileY = self.prevTileY
+	end
+end
+
+function P.ram:afraidSecondaryMove(playerx, playery)
+	local diffx = math.abs(playerx - self.tileX)
+	local diffy = math.abs(playery - self.tileY)
+
+	if diffy>diffx then
+		if playerx>self.tileX then
+			self.tileX = self.tileX-1
+		else
+			self.tileX = self.tileX+1
+		end
+	else
+		if playery>self.tileY then
+			self.tileY = self.tileY-1
+		else
+			self.tileY = self.tileY+1
+		end
+	end
+
+	if room[self.tileY]==nil or self.tileX<1 or self.tileX>roomLength or
+	(room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX]:obstructsMovementAnimal(self)) or
+	(room[self.tileY][self.tileX]==nil and math.abs(self.elevation)>3) then
+		self.tileY = self.prevTileY
+		self.tileX = self.prevTileX
+		return false
+	end
+
+	if not self:pushableCheck() then
+		self.tileX = self.prevTileX
+		self.tileY = self.prevTileY
+		return false
+	end
+
+	return true
+end
+
+P.rat = P.animal:new{name = "rat", sprite = 'Graphics/rat.png', triggered = true, canDropTool = true}
+function P.rat:dropTool()
+	if not tools.dropTool(tools.rottenMeat, self.tileY, self.tileX) then
 		return
 	end
-	triggered = true
-	diffx = playerx-self.tileX
-	diffy = playery-self.tileY
-	--self.prevx = self.x
-	--self.prevy = self.y
+end
+
+P.babyDragon = P.rat:new{name = "babyDragon", sprite = "Graphics/dragonBaby.png", trained = true, scale = 0.5*scale}
+
+P.dragonFriend = P.babyDragon:new{name = "dragonFriend", sprite = "Graphics/dragonFriend.png", trained = true, scale = 0.5*scale}
+function P.dragonFriend:move()
+	if self.dead or (not isLit and not self.triggered) or self.frozen then
+		return
+	end
+
 	self.prevTileX = self.tileX
 	self.prevTileY = self.tileY
-	if diffx==0 and diffy==0 then
+
+	if player.tileX>player.prevTileX then
+		if self.tileX<roomLength then
+			self.tileX = self.tileX+1
+		else
+			return
+		end
+	elseif player.tileX<player.prevTileX then
+		if self.tileX>1 then
+			self.tileX = self.tileX-1
+		else
+			return
+		end
+	elseif player.tileY>player.prevTileY then
+		if self.tileY<roomHeight then
+			self.tileY = self.tileY+1
+		else
+			return
+		end
+	elseif player.tileY<player.prevTileY then
+		if self.tileY>1 then
+			self.tileY = self.tileY-1
+		else
+			return
+		end
+	else return end
+
+	if room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX]:obstructsMovementAnimal(self) then
+		self.tileY = self.prevTileY
+		self.tileX = self.prevTileX
+		return false
+	elseif room[self.tileY][self.tileX]==nil and math.abs(self.elevation)>3 then
+		self.tileY = self.prevTileY
+		self.tileX = self.prevTileX
+		return false		
+	end
+	if not self:pushableCheck() then
+		self.tileX = self.prevTileX
+		self.tileY = self.prevTileY
+		return false
+	end
+end
+function P.dragonFriend:primaryMove()
+end
+P.dragonFriend.secondaryMove = P.dragonFriend.primaryMove
+
+P.termite = P.animal:new{name = "termite", sprite = 'Graphics/termite.png', waitCounter = 0}
+
+P.twinPitbull = P.pitbull:new{name = "twinPitbull", sprite = 'Graphics/twinpitbull.png'}
+function P.twinPitbull:moveOverride(movex, movey)
+	movex = self.tileX
+	movey = self.tileY
+
+	for i = 1, #animals do
+		if animals[i]:instanceof(P.twinPitbull) and animals[i]~=self then
+			if movex~=self.tileX or movey~=self.tileY then
+				local iDist = math.abs(animals[i].tileX-self.tileX)+math.abs(animals[i].tileY-self.tileY)
+				local currDist = math.abs(movex-self.tileX)+math.abs(movey-self.tileY)
+				if currDist>iDist then
+					movex = animals[i].tileX
+					movey = animals[i].tileY
+				end
+			else
+				movex = animals[i].tileX
+				movey = animals[i].tileY
+			end
+		end
+	end
+
+	return {x = movex, y = movey}
+end
+
+P.testChargedBoss = P.pitbull:new{name = "testChargedBoss", sprite = 'Graphics/twinpitbull.png',
+chargeCounter = 1.5, maxChargeCounter = 1.5, charged = true, conductive = true}
+function P.testChargedBoss:update(dt)
+	self.chargeCounter = self.chargeCounter-dt
+	if self.chargeCounter<=0 then
+		self.charged = not self.charged
+		self.chargeCounter = self.maxChargeCounter
+		updateGameState(false,false)
+	end
+end
+function P.testChargedBoss:kill()
+	if self.dead then return end
+	self.dead = true
+	self.sprite = self.deadSprite
+	self.conductive = false
+end
+
+P.mimic = P.pitbull:new{name = "mimic", sprite = 'Graphics/Tiles/endTile.png', triggeredSprite = animalList.pitbull.sprite}
+function P.mimic:move(playerx, playery, room, isLit)
+	if self.dead or (not isLit and not self.triggered) or self.frozen then
 		return
 	end
+	if player.attributes.shelled or player.attributes.invisible or player.attributes.timeFrozen then
+		return
+	elseif player.attributes.fear then
+		self:afraidPrimaryMove(playerx, playery, room, isLit)
+		return
+	elseif room[playery][playerx]~=nil and room[playery][playerx].scaresAnimals then
+		self:afraidPrimaryMove(playerx, playery, room, isLit)
+		return
+	end
+
+	if not self.triggered then
+		local distFromPlayer = math.abs(self.tileX-player.tileX)+math.abs(self.tileY-player.tileY)
+		if distFromPlayer<3 then
+			self.triggered = true
+			self:updateSprite()
+		end
+	end
+
+	self.prevTileX = self.tileX
+	self.prevTileY = self.tileY
 	if self.waitCounter>0 then
-		self.waitCounter = self.waitCounter - 1
 		return
 	end
-	local unableToMove = false
-	if math.abs(diffy)>math.abs(diffx) then
-		if playerx>=self.tileX then
-			if self.tileX>1 and not (room[self.tileY][self.tileX-1]~=nil and room[self.tileY][self.tileX-1].blocksMovement) then
-				--self.x = self.x-floor.sprite:getHeight()*scale
-				self.tileX = self.tileX-1
-				return
-			else
-				unableToMove = true
-			end
-		end
-		if playerx<=self.tileX then
-			if self.tileX<roomLength and not (room[self.tileY][self.tileX+1]~=nil and room[self.tileY][self.tileX+1].blocksMovement) then
-				--self.x = self.x+floor.sprite:getHeight()*scale
-				self.tileX = self.tileX+1
-				return
-			else
-				unableToMove = true
-			end
+	
+	if playerx-self.tileX==0 and playery-self.tileY==0 then
+		return
+	end
+
+	if not self:primaryMove(playerx, playery) then
+		self:secondaryMove(playerx, playery)
+	end
+end
+function P.mimic:updateSprite()
+	if self.triggered then
+		self.sprite = self.triggeredSprite
+	end
+end
+function P.mimic:kill()
+	if self.dead then return
+	elseif not self.triggered then return end
+	
+	self.dead = true
+	self.sprite = self.deadSprite
+	if self.canDropTool and not self.willDropTool then
+		local bonusDropChance = util.random(100, 'toolDrop')
+		if bonusDropChance<=getLuckBonus() then
+			self.willDropTool = true
 		end
 	end
-	if math.abs(diffy)<=math.abs(diffx) or unableToMove then
-		if playery>=self.tileY then
-			if self.tileY>1 and not (room[self.tileY-1][self.tileX]~=nil and room[self.tileY-1][self.tileX].blocksMovement) then
-				--self.y = self.y-floor.sprite:getHeight()*scale
-				self.tileY = self.tileY-1
-				return
-			else
-				unableToMove = true
-			end
-		end
-		if playery<=self.tileY then
-			if self.tileY<roomHeight and not (room[self.tileY+1][self.tileX]~=nil and room[self.tileY+1][self.tileX].blocksMovement) then
-				--self.y = self.y+floor.sprite:getHeight()*scale
-				self.tileY = self.tileY+1
-				return
-			else
-				unableToMove = true
-			end
+	if self.willDropTool then
+		if(room[self.tileY][self.tileX]==nil or room[self.tileY][self.tileX].destroyed
+		or room[self.tileY][self.tileX]:usableOnNothing() or room[self.tileY][self.tileX].overlay==nil) then
+			self:dropTool()
 		end
 	end
-	if unableToMove then
-		if playerx>=self.tileX then
-			if self.tileX>1 and not (room[self.tileY][self.tileX-1]~=nil and room[self.tileY][self.tileX-1].blocksMovement) then
-				--self.x = self.x-floor.sprite:getHeight()*scale
-				self.tileX = self.tileX-1
-				return
+
+	stats.incrementStat(self.name..'Killed')
+	stats.incrementStat('animalsKilled')
+end
+
+P.robotGuard = P.pitbull:new{name = "robotGuard", sprite = 'Graphics/Characters/RobotGuard.png',
+movesInTurn = false, timeLeft = 0, waitCounter = 0}
+function P.robotGuard:update(dt)
+	if self.dead then return end
+
+	if self.baseTime==nil then
+		self.baseTime = keyTimer.base
+	end
+
+	if self.timeLeft>0 then
+		self.timeLeft = self.timeLeft-dt
+	end
+	if self.timeLeft<=0 then
+		self.timeLeft = self.baseTime
+		self:attemptMove()
+	end
+
+	self:checkKill()
+end
+
+function P.robotGuard:checkKill()
+	if coordsToTile(self.y, self.x).y==coordsToTile(player.y, player.x).y and
+	coordsToTile(self.y, self.x).x==coordsToTile(player.y, player.x).x then
+		kill('robotGuard')
+	end
+end
+
+function P.robotGuard:attemptMove()
+	if self:canSeePlayer() then
+		self:initiateMove(player.tileX, player.tileY, room, true)
+
+		local onTileCount = 0
+		for i = 1, #animals do
+			if animals[i].tileY==self.tileY and animals[i].tileX==self.tileX and not animals[i].dead then
+				onTileCount = onTileCount+1
 			end
 		end
-		if playerx<=self.tileX then
-			if self.tileX<roomLength and not (room[self.tileY][self.tileX+1]~=nil and room[self.tileY][self.tileX+1].blocksMovement) then
-				--self.x = self.x+floor.sprite:getHeight()*scale
-				self.tileX = self.tileX+1
-				return
+		if onTileCount>=2 then
+			self.tileY = self.prevTileY
+			self.tileX = self.prevTileX
+		end
+
+		if self:hasMoved() and not self.dead and not self.frozen then
+			local moveProcess = processList.moveAnimal:new()
+			moveProcess.animal = self
+		    if self.tileY<self.prevTileY then
+				moveProcess.direction = 0
+			elseif self.tileX<self.prevTileX  then
+				moveProcess.direction = 3
+			elseif self.tileY>self.prevTileY then
+				moveProcess.direction = 2
+			elseif self.tileX>self.prevTileX then
+				moveProcess.direction = 1
 			end
+			processes[#processes+1] = moveProcess
+		else
+			self.prevTileX = self.tileX
+			self.prevTiley = self.tileY
+		end
+	else
+		self.prevTileX = self.tileX
+		self.prevTileY = self.tileY
+	end
+end
+function P.robotGuard:canSeePlayer()
+	--move up line btw. guard and player, see if anything blocking vision
+	local playerTileInfo = tileToCoordsPlayer(player.tileY, player.tileX)
+	local xdiff = playerTileInfo.x-self.x
+	local ydiff = playerTileInfo.y-self.y
+	local len = math.sqrt(xdiff*xdiff+ydiff*ydiff)
+
+	for i = 1, len/10 do
+		local coordx = self.x+xdiff*(10*i/len)
+		local coordy = self.y+ydiff*(10*i/len)
+
+		local tileInfo = coordsToTile(coordy, coordx)
+		if room[tileInfo.y][tileInfo.x]~=nil and room[tileInfo.y][tileInfo.x]:obstructsVision() then
+			return false
+		end
+	end
+
+	return true
+end
+P.robotGuard.initiateMove = P.pitbull.move
+
+--disable regular movement; can move ONLY from self:attemptMove
+function P.robotGuard:move()
+end
+
+P.npc = P.animal:new{name = "NPC", sprite = 'Graphics/Characters/Shopkeeper.png', triggered = true, waitCounter = 0}
+function P.npc:move()
+end
+function P.npc:primaryMove()
+end
+function P.npc:secondaryMove()
+end
+function P.npc:getText()
+	return "Insert NPC text here"
+end
+function P.npc:blocksPlayer()
+	return (not self.dead)
+end
+
+P.shopkeeper = P.npc:new{name = "Shopkeeper", sprite = 'Graphics/Characters/Shopkeeper.png'}
+function P.shopkeeper:getText()
+	return "Aye, I've been in here 25 years,\nand I've acquired quite a\ncollection of items! If you give\nme some of yer tools, maybe we\ncan strike a deal!"
+end
+
+P.characterNPC = P.npc:new{name = "Char"}
+function P.characterNPC:updateNPC()
+	self:updateSprite()
+end
+function P.characterNPC:updateSprite()
+	for i = 1, #characters do
+		if characters[i].name==self.name then
+			self.scale = characters[i].scale
+			self.sprite = characters[i].sprite
 		end
 	end
 end
 
+P.baseBoss = P.animal:new{name = "baseBoss", sprite = "Graphics/Characters/RobotGuard.png", directTurn = true, hp = 5}
+function P.baseBoss:move(playerx, playery, room, isLit)
+	if self.dead or (not isLit and not self.triggered) or self.frozen then
+		return
+	end
+	if player.attributes.shelled or player.attributes.invisible or player.attributes.timeFrozen then
+		return
+	elseif player.attributes.fear then
+		self:afraidPrimaryMove(playerx, playery, room, isLit)
+		return
+	elseif room[playery][playerx]~=nil and room[playery][playerx].scaresAnimals then
+		self:afraidPrimaryMove(playerx, playery, room, isLit)
+		return
+	end
+	self.triggered = true
+	self.prevTileX = self.tileX
+	self.prevTileY = self.tileY
+	if self.waitCounter>0 then
+		return
+	end
+	
+	if playerx-self.tileX==0 and playery-self.tileY==0 then
+		return
+	end
+	if not directTurn then
+		self:indirectMove()
+	elseif not self:primaryMove(playerx, playery) then
+		self:secondaryMove(playerx, playery)
+	end
+	directTurn = not directTurn
+end
+function P.baseBoss:indirectMove()
+	local plusY = 0
+	local plusX = 0
+	local moveWhere = util.random(4, 'misc')
+	if moveWhere<=2 then
+		plusY = moveWhere*2-3
+	else
+		plusX = moveWhere*2-7
+	end
+
+	if self.tileX+plusX>0 and self.tileX+plusX<roomLength then
+		self.tileX = self.tileX+plusX
+	else
+		self.tileX = self.tileX-plusX
+	end
+	if self.tileY+plusY>0 and self.tileY+plusY<roomHeight then
+		self.tileY = self.tileY+plusY
+	else
+		self.tileY = self.tileY-plusY
+	end
+
+	if room[self.tileY][self.tileX]~=nil and room[self.tileY][self.tileX]:obstructsMovementAnimal(self) then
+		self.tileY = self.prevTileY
+		self.tileX = self.prevTileX
+		return false
+	elseif room[self.tileY][self.tileX]==nil and math.abs(self.elevation)>3 then
+		self.tileY = self.prevTileY
+		self.tileX = self.prevTileX
+		return false		
+	end
+
+	if not self:pushableCheck() then
+		self.tileX = self.prevTileX
+		self.tileY = self.prevTileY
+		return false
+	end
+
+	self.moveAway = not self.moveAway
+
+	return true
+end
+function P.baseBoss:kill()
+	self.hp = self.hp-1
+	if self.hp==0 then
+		P.animal.kill(self)
+	end
+end
 
 animalList[1] = P.animal
 animalList[2] = P.pitbull
@@ -251,5 +893,24 @@ animalList[3] = P.pup
 animalList[4] = P.cat
 animalList[5] = P.snail
 animalList[6] = P.bat
+animalList[7] = P.conductiveSnail
+animalList[8] = P.glueSnail
+animalList[9] = P.bombBuddy
+animalList[10] = P.conductiveDog
+animalList[11] = P.wife
+animalList[12] = P.son
+animalList[13] = P.daughter
+animalList[14] = P.ram
+animalList[15] = P.rat
+animalList[16] = P.termite
+animalList[17] = P.twinPitbull
+animalList[18] = P.testChargedBoss
+animalList[19] = P.babyDragon
+animalList[20] = P.dragonFriend
+animalList[21] = P.mimic
+animalList[22] = P.robotGuard
+animalList[23] = P.shopkeeper
+animalList[24] = P.baseBoss
+animalList[25] = P.characterNPC
 
 return animalList

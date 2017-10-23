@@ -1,0 +1,38 @@
+{
+	"loadRooms":
+	{
+		"rooms": 
+		{
+			"filePath": "RoomData/editorRooms.json",
+			"requirements":
+			{
+				
+			}
+		},
+		"normalRooms": 
+		{
+			"filePath": "RoomData/rooms.json",
+			"requirements":
+			{
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
+				}
+			}
+		},
+	},
+	"data":
+	{
+		"height": 10,
+		"numRooms": 2,
+		"generateFunction": "generateMapEditor",
+		"startRoomID": "1",
+		"numRoomsToCheck": 5,
+		"tint": [0,0,0],
+		"playerRange": 300
+	}
+}

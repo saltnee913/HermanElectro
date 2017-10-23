@@ -250,7 +250,7 @@ function json.encodeexception(reason, value, state, defaultmessage)
   return quotestring("<" .. defaultmessage .. ">")
 end
 
-encode2 = function (value, indent, level, buffer, buflen, tables, globalorder, state)
+encode2 = function (value, indent, level, buffer, buflen, tables, globalorder, state, depth)
   local valtype = type (value)
   local valmeta = getmetatable (value)
   valmeta = type (valmeta) == 'table' and valmeta -- only tables
@@ -296,13 +296,13 @@ encode2 = function (value, indent, level, buffer, buflen, tables, globalorder, s
     end
     local msg
     if isa then -- JSON array
-      if indent then
+      if indent and depth == 0 then
         buflen = addnewline2 (level, buffer, buflen)
       end
       buflen = buflen + 1
       buffer[buflen] = "["
       for i = 1, n do
-        buflen, msg = encode2 (value[i], indent, level, buffer, buflen, tables, globalorder, state)
+        buflen, msg = encode2 (value[i], indent, level, buffer, buflen, tables, globalorder, state, (depth == nil and 0 or depth + 1))
         if not buflen then return nil, msg end
         if i < n then
           buflen = buflen + 1
@@ -509,7 +509,7 @@ end
 
 local scanvalue -- forward declaration
 
-local function scantable (what, closechar, str, startpos, nullval, objectmeta, arraymeta)
+local function scantable (what, closechar, str, startpos, nullval, objectmeta, arraymeta, isWatched)
   local len = strlen (str)
   local tbl, n = {}, 0
   local pos = startpos + 1
@@ -537,10 +537,14 @@ local function scantable (what, closechar, str, startpos, nullval, objectmeta, a
       end
       pos = scanwhite (str, pos + 1)
       if not pos then return unterminated (str, what, startpos) end
+      local isVal1Watched = (val1 == WatchFor) and true or nil
       local val2
-      val2, pos, err = scanvalue (str, pos, nullval, objectmeta, arraymeta)
+      val2, pos, err = scanvalue (str, pos, nullval, objectmeta, arraymeta, isVal1Watched)
       if err then return nil, pos, err end
       tbl[val1] = val2
+      if isWatched ~= nil then
+        WatchCount[#WatchCount+1] = val1
+      end
       pos = scanwhite (str, pos)
       if not pos then return unterminated (str, what, startpos) end
       char = strsub (str, pos, pos)
@@ -554,7 +558,7 @@ local function scantable (what, closechar, str, startpos, nullval, objectmeta, a
   end
 end
 
-scanvalue = function (str, pos, nullval, objectmeta, arraymeta)
+scanvalue = function (str, pos, nullval, objectmeta, arraymeta, isWatched)
   pos = pos or 1
   pos = scanwhite (str, pos)
   if not pos then
@@ -562,7 +566,7 @@ scanvalue = function (str, pos, nullval, objectmeta, arraymeta)
   end
   local char = strsub (str, pos, pos)
   if char == "{" then
-    return scantable ('object', "}", str, pos, nullval, objectmeta, arraymeta)
+    return scantable ('object', "}", str, pos, nullval, objectmeta, arraymeta, isWatched)
   elseif char == "[" then
     return scantable ('array', "]", str, pos, nullval, objectmeta, arraymeta)
   elseif char == "\"" then
@@ -598,9 +602,15 @@ local function optionalmetatables(...)
   end
 end
 
+WatchFor = nil
+WatchCount = {}
+
 function json.decode (str, pos, nullval, ...)
-  local objectmeta, arraymeta = optionalmetatables(...)
-  return scanvalue (str, pos, nullval, objectmeta, arraymeta)
+  local watchfor, objectmeta, arraymeta = optionalmetatables(...)
+  WatchFor = watchfor
+  WatchCount = {}
+  local obj, pos, err = scanvalue (str, pos, nullval, objectmeta, arraymeta)
+  return obj, pos, err, WatchCount
 end
 
 function json.use_lpeg ()

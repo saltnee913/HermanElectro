@@ -1,0 +1,112 @@
+{
+	"loadRooms":
+	{
+		"rooms": 
+		{
+			"filePath": "RoomData/rooms.json",
+			"requirements":
+			{
+				
+			}
+		},
+		"treasureRooms": 
+		{
+			"filePath": "RoomData/treasurerooms.json",
+			"requirements":
+			{
+				
+			}
+		},
+		"shops":
+		{
+			"filePath": "RoomData/shops.json",
+			"requirements":
+			{
+
+			}
+		},
+		"finalRooms": 
+		{
+			"filePath": "RoomData/finalrooms.json",
+			"requirements":
+			{
+				
+			}
+		},
+		"donationRooms":
+		{
+			"filePath": "RoomData/donationrooms.json",
+			"requirements":
+			{
+				
+			}
+		},
+		"bigRooms":
+		{
+			"filePath": "RoomData/bigrooms.json",
+			"requirements":
+			{
+				
+			}
+		},
+		"dungeons":
+		{
+			"filePath": "RoomData/dungeons.json",
+			"requirements":
+			{
+				
+			}
+		},
+		"exitDungeons":
+		{
+			"filePath": "RoomData/edPuzzle.json",
+			"requirements": {
+
+			}
+		},
+		"finalPuzzles":
+		{
+			"filePath": "RoomData/endpuzzles.json",
+			"requirements": {
+
+			}
+		},
+		"f6rooms":
+		{
+			"filePath": "RoomData/hardRooms.json",
+			"requirements": {
+				
+			}
+		},
+		"edenf7": {
+			"filePath": "RoomData/f7Eden.json",
+			"requirements": {
+				
+			}
+		},
+		"bobf7": {
+			"filePath": "RoomData/f7Bob.json",
+			"requirements": {
+				
+			}
+		},
+		"dreamRooms": {
+			"filePath": "RoomData/dungeonBigRooms.json",
+			"requirements": {
+				
+			}
+
+		}
+	},
+	"data":
+	{
+		"height": 10,
+		"numRooms": 6,
+		"generateFunction": "generateMapStandard",
+		"startRoomID": "1",
+		//numRoomsToCheck is the amount of rooms to try when deciding a room's roomid, decreasing this increases rng
+		"numRoomsToCheck": 5,
+		"tint": [0,0,0],
+		"playerRange": 300
+	}
+}

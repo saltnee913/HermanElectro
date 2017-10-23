@@ -6,7 +6,24 @@
 			"filePath": "RoomData/rooms.json",
 			"requirements":
 			{
-
+				//"tilesWhitelist": [3, 4, 5, 6, 7, 8, 11, 12, 13, 18, 19, 20, 21, 24, 25, 30, 32, 34, 50, 53, 58, 59, 60],
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
+				},
+				"or":
+				{
+					"toolRange": [1,2],
+					"equals":
+					{
+						"key": "roomid",
+						"value": "1"
+					}
+				}
 			}
 		},
 		"treasureRooms": 
@@ -14,7 +31,29 @@
 			"filePath": "RoomData/treasurerooms.json",
 			"requirements":
 			{
-				
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
+				},				
+			}
+		},
+		"shops":
+		{
+			"filePath": "RoomData/shops.json",
+			"requirements":
+			{
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
+				},
 			}
 		},
 		"finalRooms": 
@@ -22,15 +61,75 @@
 			"filePath": "RoomData/finalrooms.json",
 			"requirements":
 			{
-				
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
+				},				
 			}
 		},
+		"donationRooms":
+		{
+			"filePath": "RoomData/donationrooms.json",
+			"requirements":
+			{
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
+				},				
+			}
+		},
+		"dungeons":
+		{
+			"filePath": "RoomData/dungeons.json",
+			"requirements":
+			{
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
+				},				
+			}
+		},
+		"secretRooms":
+		{
+			"filePath": "RoomData/secretrooms.json",
+			"requirements":
+			{
+				"not":
+				{
+					"equals":
+					{
+						"key": "dumb",
+						"value": true
+					}
+				},				
+			}
+		}
 	},
 	"data":
 	{
-		"height": 5,
-		"numRooms": 5,
-		"generateFunction": "generateMapStandard",
-		"startRoomID": "1"
+		"requireUnlocks": true,
+		"height": 10,
+		"numRooms": 9,
+		"generateFunction": "generateMapWeighted",
+		"startRoomID": "1",
+		//numRoomsToCheck is the amount of rooms to try when deciding a room's roomid, decreasing this increases rng
+		"numRoomsToCheck": 5,
+		"tint": [0,0,0],
+		"playerRange": 300,
+		"numTreasure": 1,
+		"numShop": 1,
+		"numDonation": 0
 	}
 }

@@ -1,20 +1,26 @@
 {
   	"loadRooms":
   	{
-  		"rooms":
-  		{
-  			"filePath": "RoomData/tut_rooms.json"
-  		}
+      "rooms":
+      {
+        "filePath": "RoomData/tut_new.json"
+      }
   	},
   	"data":
   	{
   		"map":
   		[
-  			[0 			   ,"tut_2_trapdoors" ,"tut_5_ladder" ,"tut_6_pitbull" ,0			  , 0 ],
-  			[0 			   ,"tut_1_endpoint"  ,0 			  ,0 			   ,0			  , 0 ],
-  			["tut_4_buttons" ,"tut_3_walls"	  ,"tut_7_stack"  ,"tut_8_srdt1"   ,"tut_9_srdt2" , 0 ],
-  			[0 			   ,0 				  ,0 			  ,0 			   ,0			  , 0 ]
+        [0,             0,                0,              0,              0,              0,                0,               0]
+        [0,             0,                0,              0,              0,              0,                0,               0]
+        [0,             0,                0,              0,              0,              0,                0,               0]
+        [0,             "tut_start",      "tut_death",    "tut_button",   "tut_wiring",   "tut_doors",      "tut_saw",       0]
+        [0,             0,                0,              0,              0,              0,                "tut_glass",     0]
+        [0,             0,                "tut_final",              0,              0,              0,                "tut_ef",        0]
+        [0,             0,                "tut_doggo_door",  "tut_buttons",    "tut_metal",    "tut_not_2",      "tut_and_2",     0]
+        [0,             0,                0,              0,              0,              0,                0,               0]
   		],
-  		"generateFunction": "generateMapFromJSON"
+  		"generateFunction": "generateMapFromJSON",
+      "tint":[0,0,0],
+      "playerRange": 300
   	}
 }
