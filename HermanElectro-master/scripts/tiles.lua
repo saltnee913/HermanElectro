@@ -1323,9 +1323,9 @@ function P.treasureTile:onEnter()
 end
 function P.treasureTile:giveReward()
 	local timesCounter = 0
-	local probBasic = 400
-	local probBasic2 = 100
-	local probSuper = 100
+	local probBasic = 200
+	local probBasic2 = 200
+	local probSuper = 500
 	local basicCount = 0
 	local superCount = 0
 	local rand = util.random(1000,'toolDrop')
@@ -1345,9 +1345,9 @@ function P.treasureTile:giveReward()
 	else tools.giveRandomTools(basicCount,superCount,self.treasureWeights) end]]
 	if rand<100-donations then
 		donations = donations+100
-	elseif rand<800-donations then
+	elseif rand<500-donations then
 		tools.giveRandomTools(1)
-	elseif rand<900-donations then
+	elseif rand<750-donations then
 		tools.giveRandomTools(2)
 	else
 		local quality
@@ -1362,7 +1362,7 @@ function P.treasureTile:giveReward()
 		else
 			quality = 5
 		end
-		tools.giveRandomTools(1,1,{quality})
+		tools.giveRandomTools(0,1,{quality})
 	end
 end
 
@@ -1934,7 +1934,7 @@ function P.treasureTile2:giveReward()
 		return
 	end
 	local reward = util.random(1000,'toolDrop')
-	if reward<775 then
+	if reward<500 then
 		tools.giveRandomTools(1)
 	else
 		local quality
@@ -1943,7 +1943,7 @@ function P.treasureTile2:giveReward()
 		else
 			quality = 3
 		end
-		tools.giveRandomTools(1,1,{quality})
+		tools.giveRandomTools(0,1,{quality})
 	end
 end
 
