@@ -1141,7 +1141,7 @@ function P.sign:onEnter(player)
 	messageInfo.text = self.text
 end
 function P.sign:onLeave()
-	if room[player.tileY][player.tileX]==nil or room[player.tileY][player.tileX].text==nil then
+	if room[player.tileY][player.tileX]==nil or room[player.tileY][player.tileX].text==nil or room[player.tileY][player.tileX].text == "" then
 		messageInfo.text = nil
 	end
 end
