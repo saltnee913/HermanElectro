@@ -37,6 +37,8 @@ P.statUnlockTriggers["bombBuddyKilled"] = {[3] = unlocks.explosiveMeatUnlock}
 P.statUnlockTriggers["ratKilled"] = {[1] = unlocks.rottenMeatUnlock}
 P.statUnlockTriggers["catKilled"] = {[1] = unlocks.nineLivesUnlock}
 
+P.statUnlockTriggers["The MapUses"] = {[1] = unlocks.franciscoUnlock}
+
 P.statUnlockTriggers["HermanWins"] = {[1] = unlocks.boxesUnlock}
 P.statUnlockTriggers["HermanDungeonWins"] = {[1] = unlocks.boxesUnlock}
 P.statUnlockTriggers["HermanWinsPlus"] = {[1] = unlocks.boxesUnlock}
