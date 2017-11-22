@@ -22,7 +22,7 @@ P.roomUnlockTriggers["treasureTilesReached"] = {[5] = unlocks.foresightUnlock}
 P.statUnlockTriggers = {}
 P.statUnlockTriggers["boxesSawed"] = {[11] = unlocks.playerBoxUnlock}
 P.statUnlockTriggers["totalLosses"] = {[3] = unlocks.rammyUnlock}
-P.statUnlockTriggers["totalWins"] = {[3] = unlocks.dungeonUnlock}
+P.statUnlockTriggers["totalWins"] = {[1] = unlocks.wizardUnlock, [3] = unlocks.dungeonUnlock}
 P.statUnlockTriggers["greenBeggarsShot"] = {[10] = unlocks.luckyPennyUnlock}
 P.statUnlockTriggers["stickyButtonsSponged"] = {[30] = unlocks.superStickyButtonUnlock}
 P.statUnlockTriggers["stayButtonsBricked"] = {[30] = unlocks.unbrickableStayButtonUnlock}
