@@ -297,7 +297,7 @@
     "layout":
     [
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-    [0,0,0,0,0,0,0,[26,"Not-gates conduct power in the forward direction\nwhen their back is powered\n\nTheir sides do not conduct."],0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+    [0,0,0,0,0,0,0,[26,"Nothing in the back, power goes through.\nPower in the back, nothing goes through.\n\nPower in the sides, who cares?"],0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     [0,0,0,0,0,0,0,16.2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     [0,0,0,0,0,0,31,[31,5.1],31,31,31,31,31,31,31,31,31,31,0,0,0,0,0,0]
