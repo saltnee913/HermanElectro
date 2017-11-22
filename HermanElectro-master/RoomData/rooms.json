@@ -17786,8 +17786,7 @@
             [0,0,0,0,0,0,1],
             [0,1,0,0,0,0,0],
             [0,0,0,0,1,0,0]],
-        "set": "cool_dog_simple",
-      "beginner": true
+        "set": "cool_dog_simple"
       },
 
       "cool_dog_simple_4":
