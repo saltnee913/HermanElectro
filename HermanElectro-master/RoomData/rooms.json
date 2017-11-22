@@ -2855,7 +2855,8 @@
           [0,1,0,0,0,0,0],
           [0,0,0,1,0,0,0]],
       "set": "most_37",
-      "beginner": true
+      "beginner": true,
+      "toCheck": true//is this really beginner? maybe disable water bottle solution
     },
     "most_37_2":
     {
@@ -17737,15 +17738,13 @@
             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
         "itemsNeeded":
           [
-            [0,0,1,1,0,0,0],
-            [0,0,0,2,0,0,0],
-            [1,0,1,0,0,0,0],
-            [1,0,0,1,0,0,0],
+            [1,0,0,0,0,0,0],
+            [0,1,0,0,0,0,0],
             [0,0,0,0,0,0,1],
-            [1,1,0,0,0,0,0]],
+            [0,0,0,1,0,0,0]],
         
         "set": "cool_dog_simple",
-        "beginner": true
+        "toCheck": true//this is actually a hard one tool room, not an easy tool tool room
       },
 
       "cool_dog_simple_3":

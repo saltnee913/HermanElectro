@@ -677,6 +677,7 @@ function P.roomMeetsRequirements(roomData, requirements)
 end
 
 function P.createRoom(inRoom, arr)
+	print("Creating room: "..inRoom)
 	if inRoom == nil then inRoom = '1' end
 	if arr == nil then
 		for k, v in pairs(P.floorInfo.rooms) do
@@ -997,7 +998,7 @@ end
 
 function P.generateMapEditor()
 	local roomsArray = util.createIndexArray(P.floorInfo.rooms.rooms)
-	local startRoomID = roomsArray[1]
+	local startRoomID = P.floorInfo.startRoomID
 
 	local height = P.floorInfo.height
 	local numRooms = P.floorInfo.numRooms
