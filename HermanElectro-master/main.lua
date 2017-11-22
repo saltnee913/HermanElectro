@@ -15,6 +15,7 @@ gamePaused = false
 releaseBuild = false
 
 gameSpeed = 1
+defaultGameSpeed = 1
 
 spotlightList = require('scripts.spotlights')
 
@@ -2258,6 +2259,13 @@ function love.update(dt)
 		love.keypressed("s")
 	elseif love.keyboard.isDown("d") and lastMoveKey=="d" then
 		love.keypressed("d")
+	end
+
+	--sprint hax
+	if love.keyboard.isDown("lalt") or love.keyboard.isDown("ralt") then
+		gameSpeed = defaultGameSpeed * 1.7
+	else
+		gameSpeed = defaultGameSpeed
 	end
 
 	if (titlescreenCounter>0) then
