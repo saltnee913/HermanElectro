@@ -150,6 +150,8 @@ P.erikUnlock = P.charUnlock:new{name = '	', desc='	', charIds = {"Erik"}, sprite
 P.fishUnlock = P.charUnlock:new{name = 'Fish of the fish farm', desc='Bad at climbing trees.', charIds = {"Fish"}, sprite = 'Graphics/Characters/Fish.png'}
 P.scientistUnlock = P.charUnlock:new{name = 'science bitch', desc = '	', charIds = {"Marie"}, sprite = 'Graphics/Characters/Scienceman.png'}
 P.dragonUnlock = P.charUnlock:new{name = "Andy", desc='The Dragon', charIds = {"Dragon"}, sprite = 'Graphics/Characters/Arachne.png'}
+P.fourierUnlock = P.charUnlock:new{name = 'Fourier', desc='2+2=4', charIds = {"Fourier"}, sprite = 'Graphics/Characters/Tony.png'}
+P.edenUnlock = P.charUnlock:new{name = 'Eden', desc = 'The Zany', charIds = {"Eden"}, sprite = 'Graphics/Characters/Zach.png'}
 
 P.tileUnlock = P.unlock:new{name = 'tile', tileIds = {1}, sprite = tiles.tile.sprite}
 P.lockedTiles = P.tileUnlock:new{name = 'permanentlyLockedTiles', tileIds = {50}}
@@ -301,6 +303,7 @@ P.floorUnlocks = {nil,P.doorUnlock,nil,nil,P.fogUnlock,nil}
 --characters
 P[#P+1] = P.felixUnlock --done
 P[#P+1] = P.frederickUnlock --done
+P.frederickUnlock.unlocked = true
 P[#P+1] = P.franciscoUnlock --done
 P[#P+1] = P.rammyUnlock
 P[#P+1] = P.aureliusUnlock 
@@ -312,6 +315,8 @@ P[#P+1] = P.erikUnlock
 P[#P+1] = P.fishUnlock
 P[#P+1] = P.scientistUnlock
 P[#P+1] = P.dragonUnlock
+P[#P+1] = P.fourierUnlock
+P[#P+1] = P.edenUnlock
 
 --tiles
 P[#P+1] = P.boxesUnlock --done
