@@ -12,7 +12,7 @@ fontSize = 12
 debug = true
 loadTutorial = false
 gamePaused = false
-releaseBuild = false
+releaseBuild = true
 
 gameSpeed = 1
 defaultGameSpeed = 1

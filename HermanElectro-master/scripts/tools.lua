@@ -910,7 +910,7 @@ end
 
 
 --Electrifier: Makes a tile conductive
-P.electrifier = P.superTool:new{name = 'Electrifier', description = "Forming connections", baseRange = 1, image = 'Graphics/conduit.png', quality = 3}
+P.electrifier = P.superTool:new{name = 'Electrifier', description = "Forming connections", baseRange = 1, image = 'Graphics/Conduit.png', quality = 3}
 function P.electrifier:usableOnTile(tile)--No longer called moisten, old desc: let the love flow
 	if not tile.destroyed and tile:instanceof(tiles.wall) and not tile:instanceof(tiles.metalWall) and not tile.electrified then
 		return true
