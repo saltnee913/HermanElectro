@@ -124,6 +124,9 @@ end
 function P.isDungeonUnlocked()
 	return P[P.dungeonUnlockId].unlocked
 end
+function P.isEditorUnlocked()
+	return P[P.editorUnlockId].unlocked
+end
 
 --[[ideas:
 	unlock for standing on bombbuddy
@@ -295,6 +298,7 @@ P.puddleUnlock = P.tileUnlock:new{name = 'Oops, you spilled something', tileIds 
 P.portalUnlock = P.tileUnlock:new{name = 'portals', tileIds = {56,57}, toolIds = {tools.portalPlacer}, sprite = tiles.entrancePortal.sprite}
 
 P.dungeonUnlock = P.unlock:new{name = 'Dungeon', desc="", sprite = tiles.endDungeonEnter.sprite}
+P.editorUnlock = P.unlock:new{name = 'Editor', desc="Editor Mode", sprite = tiles.editorStairs.sprite}
 
 
 --P.floorUnlocks = {P.doorUnlock, P.catUnlock, P.boxesUnlock, P.unbreakableWires, P.mousetrapUnlock, P.wizardUnlock}
@@ -446,6 +450,8 @@ P[#P+1] = P.portalUnlock --done
 
 P[#P+1] = P.dungeonUnlock
 P.dungeonUnlockId = #P
+P[#P+1] = P.editorUnlock
+P.editorUnlockId = #P
 P[#P+1] = P.tutorialBeatenUnlock
 P[#P+1] = P.mainGameUnlock
 

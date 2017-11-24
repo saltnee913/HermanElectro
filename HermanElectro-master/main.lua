@@ -12,7 +12,7 @@ fontSize = 12
 debug = true
 loadTutorial = false
 gamePaused = false
-releaseBuild = true
+releaseBuild = false
 
 gameSpeed = 1
 defaultGameSpeed = 1
@@ -420,6 +420,7 @@ function preFloorChange()
 
 	if floorIndex==4 then
 		unlocks.unlockUnlockableRef(unlocks.mainGameUnlock)
+		unlocks.unlockUnlockableRef(unlocks.editorUnlock)
 	end
 end
 

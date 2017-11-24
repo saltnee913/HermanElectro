@@ -3015,7 +3015,14 @@ function P.debugStairs:onReachMid()
 end
 
 P.editorStairs = P.tile:new{name = "editorStairs", sprite = 'KenGraphics/greenstairs.png'}
+function P.editorStairs:onLoad()
+	local unlocks = require('scripts.unlocks')
+	self.disabled = not unlocks.isEditorUnlocked()
+	self.isVisible = not self.disabled
+	self.untoolable = self.disabled
+end
 function P.editorStairs:onEnter()
+	if self.disabled then return end
 	stairsLocs[1] = {map ={x = mapx, y = mapy}, coords = {x = player.tileX, y = player.tileY}}
 	local animationProcess = processList.gameTransitionProcess:new()
 	animationProcess.gameType = "editor"

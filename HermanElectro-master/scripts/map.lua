@@ -1013,7 +1013,7 @@ function P.generateMapEditor()
 	newmap.initialY = starty
 	newmap.initialX = startx
 
-	local designRoom = roomsArray[2]
+	local designRoom = P.floorInfo.editorRoomID
 	newmap[starty-1][startx] = {roomid = designRoom, room = P.createRoom(designRoom), isFinal = false, isInitial = false}
 	return newmap
 end

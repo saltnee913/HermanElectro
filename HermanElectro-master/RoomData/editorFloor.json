@@ -31,6 +31,7 @@
 		"numRooms": 2,
 		"generateFunction": "generateMapEditor",
 		"startRoomID": "editor_start",
+		"editorRoomID": "editor_2",
 		"numRoomsToCheck": 5,
 		"tint": [0,0,0],
 		"playerRange": 300
