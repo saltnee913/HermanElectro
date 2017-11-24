@@ -236,7 +236,7 @@ function P.createHarmfulExplosion(y, x, range)
 	if range==nil then range = 1 end
 
 	--kill player
-	if player.tileY<=y+1 and player.tileX<=x+1 and player.tileY>=y-1 and player.tileX>=x-1 then
+	if player.tileY<=y+range and player.tileX<=x+range and player.tileY>=y-range and player.tileX>=x-range then
 		kill("explosion")
 	end
 
