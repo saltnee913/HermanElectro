@@ -1824,6 +1824,9 @@ P.teleporter = P.superTool:new{name = "Teleporter", description = "Who knows whe
 function P.teleporter:usableOnNothing()
 	return true
 end
+function P.teleporter:addOne()
+	self.numHeld = self.numHeld+2
+end
 P.teleporter.usableOnTile = P.teleporter.usableOnNothing
 function P.teleporter:useToolNothing()
 	self.numHeld = self.numHeld-1
@@ -5806,12 +5809,13 @@ P.resetTools()
 --Ideas: mushroom concoction (rainbow invincible mode), floor unlocker, ammo pack (3 guns)
 
 P:addTool(P.missile) --Missile: Within its reach                    , The hand of God
-P:addTool(P.laser) --L.A.S.E.R: Boson Beats
+P:addTool(P.laser) --L.A.S.E.R: Boson Beats, piercing beam/radiation gun/gamma ray burst
 P:addTool(P.explosiveMeat) --
 
 P:addTool(P.stealthBomber) 
+
 P:addTool(P.superGun)
-P:addTool(P.explosiveGun) --
+P:addTool(P.explosiveGun) --make the buffed basic
 P:addTool(P.ammoPack) --Rapid Reload: Get back on your feet		The Hoodlum Hookup: Packing Heat  or  
 P:addTool(P.thruCover) --ThruCover: Tactical Strike 	            Should we change this one? Yup
 P:addTool(P.iceyShot) --IceyShot: Pretty Cool
@@ -5823,15 +5827,15 @@ P:addTool(P.iceyShot) --IceyShot: Pretty Cool
 --Themes Drugs
 P:addTool(P.visionChanger) --Flashlight: Dispell the dark          , Dispel the phantoms, God's Eye View 
 P:addTool(P.gas) -- or Gas: Don't breathe
-P:addTool(P.wings) --Float Free or Ugrounded or 
+P:addTool(P.wings) --Float Free or Ugrounded or -- jetpack 
 P:addTool(P.ironMan) 
 P:addTool(P.seeds)
 P:addTool(P.salt) --
 P:addTool(P.superWaterBottle)
 P:addTool(P.foresight)
-P:addTool(P.growthHormones)
+P:addTool(P.growthHormones) --xray vision, icon
 P:addTool(P.gabeMaker)
-P:addTool(P.flame) --Shouldn't be hard to control or 
+P:addTool(P.flame) --Shouldn't be hard to control or ; use on guard for naked guard; melt ice, evaporate water; cooks meat
 P:addTool(P.lemonadeCup)
 P:addTool(P.lemonParty)
 P:addTool(P.shell)
@@ -5845,10 +5849,9 @@ P:addTool(P.revive) --		Revive: Not yet,	 Return of the King
 P:addTool(P.nineLives)
 
 --Theme Identity/Memes - Social
-P:addTool(P.pitbullChanger)
 P:addTool(P.trap)--
 P:addTool(P.doorstop)
-P:addTool(P.charger) -- Electrifier: Empowerment or 
+P:addTool(P.charger) -- Electrifier: Empowerment or; battery pack 
 P:addTool(P.recycleBin)
 P:addTool(P.animalEnslaver)
 P:addTool(P.trader)
@@ -5856,7 +5859,7 @@ P:addTool(P.christmasSurprise)
 P:addTool(P.luckyPenny)
 P:addTool(P.playerBoxSpawner) --Player Box: Special treatment
 P:addTool(P.playerCloner)
-P:addTool(P.inflation)--Keep
+P:addTool(P.inflation) --Keep
 P:addTool(P.shopReroller)
 P:addTool(P.laptop)--Keep
 P:addTool(P.snowballGlobal)
@@ -5908,7 +5911,7 @@ P:addTool(P.portalPlacerDouble)
 P:addTool(P.buttonReroller)
 
 
---Themes Prison + Escapep
+--Themes Prison + Escape
 P:addTool(P.knife) --Knife: They can't stop you
 P:addTool(P.crowbar) --Crowbar: It's on the other side  or Tool for a prying heart
 P:addTool(P.shovel) --Shovel: Seek treasure 	or dig deep, or plumb the depths
@@ -6022,6 +6025,7 @@ P:addTool(P.preservatives)
 P:addTool(P.mutantShield)
 P:addTool(P.superRange)
 P:addTool(P.chargedShield)
+P:addTool(P.pitbullChanger)
 
 --infiniteUse special char tools
 P:addTool(P.randomizer)
