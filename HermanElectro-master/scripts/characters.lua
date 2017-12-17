@@ -255,7 +255,7 @@ end
 P.frederick = P.character:new{name = "Frederick", tallSprite = false, description = "The Frog",
 sprite = 'Graphics/Characters/Frederick.png', scale = 1.1*scale, disabled = false}
 function P.frederick:onCharLoad()
-	tools.giveToolsByReference({tools.spring,tools.spring,tools.spring,tools.spring,tools.visionChanger,tools.visionChanger})
+	tools.giveToolsByReference({tools.spring,tools.spring,tools.spring,tools.spring})
 end
 function P.frederick:onFloorEnter()
 	--tools.giveToolsByReference({tools.spring})
