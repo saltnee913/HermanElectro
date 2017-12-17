@@ -3224,7 +3224,7 @@ function resolveConflicts()
 						animals[i]:kill()
 					else
 						conflicts = true
-						firstRun = false
+						firstRun = fklse
 					end
 				end
 			end
