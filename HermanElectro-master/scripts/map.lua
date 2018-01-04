@@ -781,7 +781,15 @@ local function printMap(inMap)
 end
 
 function P.generateMap()
-	return P[P.floorInfo.generateFunction]()
+	data = P[P.floorInfo.generateFunction]()
+	print("BOOI")
+	room = map.getNextRoom("1")
+	print(room)
+	while room ~= "1" do
+		room = map.getNextRoom(room)
+		print(room)
+	end
+	return data
 end
 
 local function canPlaceRoom(dirEnters, map, mapx, mapy)
