@@ -1141,7 +1141,7 @@ function P.sign:onEnter(player)
 	messageInfo.text = self.text
 end
 function P.sign:onLeave()
-	if room[player.tileY][player.tileX]==nil or room[player.tileY][player.tileX].text==nil then
+	if room[player.tileY][player.tileX]==nil or room[player.tileY][player.tileX].text==nil or room[player.tileY][player.tileX].text == "" then
 		messageInfo.text = nil
 	end
 end
@@ -1323,9 +1323,9 @@ function P.treasureTile:onEnter()
 end
 function P.treasureTile:giveReward()
 	local timesCounter = 0
-	local probBasic = 400
-	local probBasic2 = 100
-	local probSuper = 100
+	local probBasic = 200
+	local probBasic2 = 200
+	local probSuper = 500
 	local basicCount = 0
 	local superCount = 0
 	local rand = util.random(1000,'toolDrop')
@@ -1345,9 +1345,9 @@ function P.treasureTile:giveReward()
 	else tools.giveRandomTools(basicCount,superCount,self.treasureWeights) end]]
 	if rand<100-donations then
 		donations = donations+100
-	elseif rand<800-donations then
+	elseif rand<500-donations then
 		tools.giveRandomTools(1)
-	elseif rand<900-donations then
+	elseif rand<750-donations then
 		tools.giveRandomTools(2)
 	else
 		local quality
@@ -1362,7 +1362,7 @@ function P.treasureTile:giveReward()
 		else
 			quality = 5
 		end
-		tools.giveRandomTools(1,1,{quality})
+		tools.giveRandomTools(0,1,{quality})
 	end
 end
 
@@ -1934,7 +1934,7 @@ function P.treasureTile2:giveReward()
 		return
 	end
 	local reward = util.random(1000,'toolDrop')
-	if reward<775 then
+	if reward<500 then
 		tools.giveRandomTools(1)
 	else
 		local quality
@@ -1943,7 +1943,7 @@ function P.treasureTile2:giveReward()
 		else
 			quality = 3
 		end
-		tools.giveRandomTools(1,1,{quality})
+		tools.giveRandomTools(0,1,{quality})
 	end
 end
 
@@ -3015,7 +3015,14 @@ function P.debugStairs:onReachMid()
 end
 
 P.editorStairs = P.tile:new{name = "editorStairs", sprite = 'KenGraphics/greenstairs.png'}
+function P.editorStairs:onLoad()
+	local unlocks = require('scripts.unlocks')
+	self.disabled = not unlocks.isEditorUnlocked()
+	self.isVisible = not self.disabled
+	self.untoolable = self.disabled
+end
 function P.editorStairs:onEnter()
+	if self.disabled then return end
 	stairsLocs[1] = {map ={x = mapx, y = mapy}, coords = {x = player.tileX, y = player.tileY}}
 	local animationProcess = processList.gameTransitionProcess:new()
 	animationProcess.gameType = "editor"
@@ -3616,9 +3623,9 @@ tiles[23] = P.catTile
 tiles[24] = P.glassWall
 tiles[25] = P.vPoweredDoor
 tiles[26] = P.sign
-tiles[27] = P.rotater --marked
+tiles[27] = P.rotater
 tiles[28] = P.spikes
-tiles[29] = P.crossWire --marked
+tiles[29] = P.crossWire
 tiles[30] = P.tunnel
 tiles[31] = P.concreteWall
 tiles[32] = P.pit
@@ -3626,7 +3633,7 @@ tiles[33] = P.breakablePit
 tiles[34] = P.treasureTile --marked
 tiles[35] = P.maskedWire
 tiles[36] = P.maskedMetalWall
-tiles[37] = P.poweredEnd --marked
+tiles[37] = P.poweredEnd
 tiles[38] = P.mousetrap --marked
 tiles[39] = P.bomb --marked
 tiles[40] = P.unbreakableCrossWire --marked
@@ -3652,7 +3659,7 @@ tiles[59] = P.treasureTile3 --marked
 tiles[60] = P.treasureTile4 --marked
 tiles[61] = P.conductiveSlime --marked
 tiles[62] = P.conductiveSnailTile
-tiles[63] = P.untriggeredPowerSupply --marked
+tiles[63] = P.untriggeredPowerSupply --marked wtf
 tiles[64] = P.reinforcedGlass
 tiles[65] = P.powerTriggeredBomb --marked
 tiles[66] = P.boxTile

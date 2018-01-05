@@ -677,6 +677,7 @@ function P.roomMeetsRequirements(roomData, requirements)
 end
 
 function P.createRoom(inRoom, arr)
+	print("Creating room: "..inRoom)
 	if inRoom == nil then inRoom = '1' end
 	if arr == nil then
 		for k, v in pairs(P.floorInfo.rooms) do
@@ -780,7 +781,15 @@ local function printMap(inMap)
 end
 
 function P.generateMap()
-	return P[P.floorInfo.generateFunction]()
+	data = P[P.floorInfo.generateFunction]()
+	print("BOOI")
+	room = map.getNextRoom("1")
+	print(room)
+	while room ~= "1" do
+		room = map.getNextRoom(room)
+		print(room)
+	end
+	return data
 end
 
 local function canPlaceRoom(dirEnters, map, mapx, mapy)
@@ -997,7 +1006,7 @@ end
 
 function P.generateMapEditor()
 	local roomsArray = util.createIndexArray(P.floorInfo.rooms.rooms)
-	local startRoomID = roomsArray[1]
+	local startRoomID = P.floorInfo.startRoomID
 
 	local height = P.floorInfo.height
 	local numRooms = P.floorInfo.numRooms
@@ -1012,7 +1021,7 @@ function P.generateMapEditor()
 	newmap.initialY = starty
 	newmap.initialX = startx
 
-	local designRoom = roomsArray[2]
+	local designRoom = P.floorInfo.editorRoomID
 	newmap[starty-1][startx] = {roomid = designRoom, room = P.createRoom(designRoom), isFinal = false, isInitial = false}
 	return newmap
 end

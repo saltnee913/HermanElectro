@@ -15,6 +15,7 @@ gamePaused = false
 releaseBuild = false
 
 gameSpeed = 1
+defaultGameSpeed = 1
 
 spotlightList = require('scripts.spotlights')
 
@@ -419,6 +420,7 @@ function preFloorChange()
 
 	if floorIndex==4 then
 		unlocks.unlockUnlockableRef(unlocks.mainGameUnlock)
+		unlocks.unlockUnlockableRef(unlocks.editorUnlock)
 	end
 end
 
@@ -2260,6 +2262,13 @@ function love.update(dt)
 		love.keypressed("d")
 	end
 
+	--sprint hax
+	if love.keyboard.isDown("lalt") or love.keyboard.isDown("ralt") then
+		gameSpeed = defaultGameSpeed * 1.7
+	else
+		gameSpeed = defaultGameSpeed
+	end
+
 	if (titlescreenCounter>0) then
 		titlescreenCounter = titlescreenCounter-dt
 		if globalTint[1]<1 then
@@ -3215,7 +3224,7 @@ function resolveConflicts()
 						animals[i]:kill()
 					else
 						conflicts = true
-						firstRun = false
+						firstRun = fklse
 					end
 				end
 			end

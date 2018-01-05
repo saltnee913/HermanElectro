@@ -22,7 +22,7 @@ P.roomUnlockTriggers["treasureTilesReached"] = {[5] = unlocks.foresightUnlock}
 P.statUnlockTriggers = {}
 P.statUnlockTriggers["boxesSawed"] = {[11] = unlocks.playerBoxUnlock}
 P.statUnlockTriggers["totalLosses"] = {[3] = unlocks.rammyUnlock}
-P.statUnlockTriggers["totalWins"] = {[3] = unlocks.dungeonUnlock}
+P.statUnlockTriggers["totalWins"] = {[1] = unlocks.wizardUnlock, [3] = unlocks.dungeonUnlock}
 P.statUnlockTriggers["greenBeggarsShot"] = {[10] = unlocks.luckyPennyUnlock}
 P.statUnlockTriggers["stickyButtonsSponged"] = {[30] = unlocks.superStickyButtonUnlock}
 P.statUnlockTriggers["stayButtonsBricked"] = {[30] = unlocks.unbrickableStayButtonUnlock}
@@ -36,6 +36,8 @@ P.statUnlockTriggers["pitbullKilled"] = {[30] = unlocks.meatUnlock}
 P.statUnlockTriggers["bombBuddyKilled"] = {[3] = unlocks.explosiveMeatUnlock}
 P.statUnlockTriggers["ratKilled"] = {[1] = unlocks.rottenMeatUnlock}
 P.statUnlockTriggers["catKilled"] = {[1] = unlocks.nineLivesUnlock}
+
+P.statUnlockTriggers["The MapUses"] = {[1] = unlocks.franciscoUnlock}
 
 P.statUnlockTriggers["HermanWins"] = {[1] = unlocks.boxesUnlock}
 P.statUnlockTriggers["HermanDungeonWins"] = {[1] = unlocks.boxesUnlock}
