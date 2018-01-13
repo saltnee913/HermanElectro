@@ -241,7 +241,9 @@ end
 
 P.rammy = P.character:new{name = "Rammy", tallSprite = false, description = "The Ram",
 	sprite = 'Graphics/ram.png'}
-
+function P.rammy:onCharLoad()
+	
+end
 function P.rammy:preTileEnter(tile)
 	if tile.name == tiles.wall.name and not tile.destroyed and player.elevation<tile:getHeight()-3 then
 		local needToUGS = false
