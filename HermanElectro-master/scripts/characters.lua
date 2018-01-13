@@ -151,7 +151,7 @@ function P.felix:onCharLoad()
 	--if not tools.felixGun.isGun then
 		--tools.felixGun:switchEffects()
 	--end
-	tools.giveToolsByReference({tools.grenade})
+	tools.giveToolsByReference({tools.grenade,tools.brick})
 end
 function P.felix:onKeyPressedChar(key)
 	--log(key)
@@ -255,7 +255,7 @@ end
 P.frederick = P.character:new{name = "Frederick", tallSprite = false, description = "The Frog",
 sprite = 'Graphics/Characters/Frederick.png', scale = 1.1*scale, disabled = false}
 function P.frederick:onCharLoad()
-	tools.giveToolsByReference({tools.spring,tools.spring,tools.spring,tools.spring})
+	tools.giveToolsByReference({tools.spring,tools.spring,tools.spring,tools.spring,tools.waterBottle})
 end
 function P.frederick:onFloorEnter()
 	--tools.giveToolsByReference({tools.spring})
