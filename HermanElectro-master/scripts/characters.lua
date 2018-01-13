@@ -351,7 +351,7 @@ sprite = 'Graphics/Characters/Francisco.png', scale = 1.1*scale}
 function P.francisco:onCharLoad()
 	tools.giveToolsByReference({tools.roomUnlocker})
 	tools.giveToolsByReference({tools.saw})
-	tools.giveToolsByReference({tools.teleporter})
+	--tools.giveToolsByReference({tools.teleporter})
 	self:onFloorEnter()
 end
 function P.francisco:onFloorEnter()
