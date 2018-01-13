@@ -349,6 +349,7 @@ sprite = 'Graphics/Characters/Francisco.png', scale = 1.1*scale}
 function P.francisco:onCharLoad()
 	tools.giveToolsByReference({tools.roomUnlocker})
 	tools.giveToolsByReference({tools.saw})
+	tools.giveToolsByReference({tools.teleporter})
 	self:onFloorEnter()
 end
 function P.francisco:onFloorEnter()
@@ -739,8 +740,9 @@ function P.four:onSelect()
 end
 function P.four:onCharLoad()
 	self:onSelect()
-	tools.giveToolsByReference({tools.supertoolReroller})
-	
+	--tools.giveToolsByReference({tools.supertoolReroller})
+	tools.giveToolsByReference({tools.mindfulTool})
+	tools.giveToolsByReference({tools.wireCutters})
 end
 
 P.eden = P.character:new{name = "Eden", description = "The Zany", scale = 1.1*scale, sprite = 'Graphics/Characters/Zach.png'}
