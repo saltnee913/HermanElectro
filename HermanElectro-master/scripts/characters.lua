@@ -151,7 +151,7 @@ function P.felix:onCharLoad()
 	--if not tools.felixGun.isGun then
 		--tools.felixGun:switchEffects()
 	--end
-	tools.giveToolsByReference({tools.bomb})
+	tools.giveToolsByReference({tools.grenade})
 end
 function P.felix:onKeyPressedChar(key)
 	--log(key)
@@ -348,6 +348,7 @@ P.francisco = P.character:new{name = "Francisco", description = "The Cartographe
 sprite = 'Graphics/Characters/Francisco.png', scale = 1.1*scale}
 function P.francisco:onCharLoad()
 	tools.giveToolsByReference({tools.roomUnlocker})
+	tools.giveToolsByReference({tools.saw})
 	self:onFloorEnter()
 end
 function P.francisco:onFloorEnter()
@@ -739,6 +740,7 @@ end
 function P.four:onCharLoad()
 	self:onSelect()
 	tools.giveToolsByReference({tools.supertoolReroller})
+	
 end
 
 P.eden = P.character:new{name = "Eden", description = "The Zany", scale = 1.1*scale, sprite = 'Graphics/Characters/Zach.png'}
