@@ -347,7 +347,12 @@ P.giovanni.onFloorEnter = P.giovanni.onRoomEnter
 P.francisco = P.character:new{name = "Francisco", description = "The Cartographer", nextRoom = {yLoc = -1, xLoc = -1},
 sprite = 'Graphics/Characters/Francisco.png', scale = 1.1*scale}
 function P.francisco:onCharLoad()
-	tools.giveToolsByReference({tools.coin})
+	tools.giveToolsByReference({tools.roomUnlocker})
+	self:onFloorEnter()
+end
+function P.francisco:onFloorEnter()
+	tools.map.numHeld = tools.map.numHeld + 1
+	tools.map:useToolNothing()
 end
 
 P.random = P.character:new{name = "Random", description = "", sprite = 'Graphics/Characters/Random.png', scale = 1.1*scale,

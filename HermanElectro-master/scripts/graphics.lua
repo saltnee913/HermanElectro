@@ -477,7 +477,7 @@ function P.drawMap()
 				end
 				local minimapScale = 8/mapHeight
 				love.graphics.rectangle("fill", width - minimapScale*18*(mapHeight-j+1), minimapScale*9*i, minimapScale*18, minimapScale*9 )
-				if player.character.name == "Francisco" and
+				if false and player.character.name == "Francisco" and
 				i==player.character.nextRoom.yLoc and j==player.character.nextRoom.xLoc then
 					love.graphics.setColor(255, 0, 0)
 					love.graphics.rectangle("fill", width - minimapScale*18*(mapHeight-j+1), minimapScale*9*i, minimapScale*9, minimapScale*4 )
