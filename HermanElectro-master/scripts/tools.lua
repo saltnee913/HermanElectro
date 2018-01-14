@@ -1782,7 +1782,7 @@ P.swapper.getToolableAnimals = P.swapper.getToolableAnimalsBox
 
 
 P.bucketOfWater = P.superTool:new{name = "Bucket Of Water", description = "Bottomless", baseRange = 1,
-image = 'Graphics/Tools/bucketOfWater.png', quality = 1}
+image = 'Graphics/Tools/bucketOfWater.png', quality = -1}
 function P.bucketOfWater:usableOnNothing()
 	return true
 end
@@ -1961,7 +1961,7 @@ function P.explosiveGun:useToolAnimal(animal)
 	room[pY][pX] = nil
 end
 
-P.map = P.superTool:new{name = "The Map", description = "Prudent planning", baseRange = 0, image = 'Graphics/Tools/map.png', quality = 1}
+P.map = P.superTool:new{name = "The Map", description = "Prudent planning", baseRange = 0, image = 'Graphics/Tools/map.png', quality = 3}
 function P.map:usableOnNothing() --Was desc You'll find a way , There might still be a way..., Prudent planning
 	return true
 end
@@ -1991,7 +1991,7 @@ function P.map:useToolNothing(tileY, tileX)
 end
 P.map.useToolTile = P.map.useToolNothing
 
-P.buttonFlipper = P.superTool:new{name = "Button Master", description = "Flip off, flip on", baseRange = 0, image = 'Graphics/buttonflipper.png', quality = 3}
+P.buttonFlipper = P.superTool:new{name = "Button Master", description = "Flip off, flip on", baseRange = 0, image = 'Graphics/buttonflipper.png', quality = 2}
 function P.buttonFlipper:usableOnNothing()--Button Pusher, Button Master: Does more than push, "Click... click-click-click-click",
 	return true
 end
@@ -2034,7 +2034,7 @@ function P.wireBreaker:useToolNothing(tileY, tileX)
 end
 P.wireBreaker.useToolTile = P.wireBreaker.useToolNothing
 
-P.powerBreaker = P.superTool:new{name = "EMP", description = "Great for fighting robots", baseRange = 0, image = 'Graphics/powerbreaker.png', quality = 3}
+P.powerBreaker = P.superTool:new{name = "EMP", description = "Great for fighting robots", baseRange = 0, image = 'Graphics/powerbreaker.png', quality = 2}
 function P.powerBreaker:usableOnNothing() --Was Power Breaker: Powerless
 	return true
 end
@@ -2251,7 +2251,7 @@ function P.wireExtender:useToolTile(tile, tileY, tileX)
 
 end
 
-P.coin = P.superTool:new{name = "Coin", description = "One way to pay", image = 'Graphics/Tools/coin.png', range = 1, quality = 1}
+P.coin = P.superTool:new{name = "Coin", description = "One way to pay", image = 'Graphics/Tools/coin.png', range = 1, quality = 2}
 --Don't pretend things are free --  Nothing is free, One way to pay was Every millionaire starts somewhere
 function P.coin:usableOnTile(tile)
 	if tile:instanceof(tiles.toolTaxTile) and not tile.destroyed then
@@ -2710,7 +2710,7 @@ function P.ghostStep:useToolTile(tile)
 	updateGameState()
 end
 
-P.stoolPlacer = P.superTool:new{name = "Stool Placer", description = "Wanna get high?", image = 'GraphicsColor/halfwall.png', baseRange = 1, quality = 2}
+P.stoolPlacer = P.superTool:new{name = "Stool Placer", description = "Wanna get high?", image = 'GraphicsColor/halfwall.png', baseRange = 1, quality = 3}
 function P.stoolPlacer:usableOnNothing()
 	return true
 end
@@ -4098,7 +4098,7 @@ P.beggarReroller.useToolTile = P.beggarReroller.useToolNothing
 -- Seymour 
 P.xrayVision = P.superTool:new{name = "X-Ray Vision", description = "The bright side of Chernoybl",
 image = 'Graphics/Tools/xrayVision.png',
-baseRange = 0, quality = 4, cost  = 6}
+baseRange = 0, quality = 3, cost  = 3}
 function P.xrayVision:usableOnNothing()
 	return true
 end
@@ -4302,7 +4302,7 @@ end
 P.luckyCharm.useToolTile = P.luckyCharm.useToolNothing
 
 P.trader = P.superTool:new{name = "Trader", description = "",
-image = 'Graphics/trader.png', quality = 4, baseRange = 0, cost = 3}
+image = 'Graphics/trader.png', quality = -1, baseRange = 0, cost = 3}
 function P.trader:usableOnNothing()
 	return true
 end
@@ -4959,7 +4959,7 @@ function P.ammoPack:giveOne()
 	tools.gun.numHeld = tools.gun.numHeld+3
 end
 
-P.stopwatch = P.superTool:new{name = "Stopwatch", description = "Master of time", quality = 2, baseRange = 0, image = 'Graphics/Tools/stopwatch.png', cost = 1}
+P.stopwatch = P.superTool:new{name = "Stopwatch", description = "Master of time", quality = -1, baseRange = 0, image = 'Graphics/Tools/stopwatch.png', cost = 1}
 function P.stopwatch:usableOnNothing()
 	return true
 end
@@ -5251,7 +5251,7 @@ function P.eraser:useToolTile(tile, tileY, tileX)
 	room[tileY][tileX] = tiles.pit:new()
 end
 
-P.tpRevive = P.superTool:new{name = "Flashback", description = "Not dead...but afraid", baseRange = 0, image = 'Graphics/tprevive.png', destroyOnRevive = false, quality = 4, cost = 3}
+P.tpRevive = P.superTool:new{name = "Flashback", description = "Not dead...but afraid", baseRange = 0, image = 'Graphics/tprevive.png', destroyOnRevive = false, quality = 3, cost = 3}
 function P.tpRevive:checkDeath()
 	self.numHeld = self.numHeld-1
 
@@ -5378,7 +5378,7 @@ function P.gumball:useToolTile(tile)
 end
 
 
-P.repair = P.superTool:new{name = "Duct tape", description = "Fix just about anything", baseRange = 1, quality  = 2,
+P.repair = P.superTool:new{name = "Duct tape", description = "Fix just about anything", baseRange = 1, quality  = 1,
 image = 'Graphics/tape.png'}
 function P.repair:usableOnTile(tile)
 	return true
@@ -5809,10 +5809,10 @@ P.resetTools()
 --Ideas: mushroom concoction (rainbow invincible mode), floor unlocker, ammo pack (3 guns)
 
 P:addTool(P.missile) --Missile: Within its reach                    , The hand of God
-P:addTool(P.laser) --L.A.S.E.R: Boson Beats, piercing beam/radiation gun/gamma ray burst
+--P:addTool(P.laser) --L.A.S.E.R: Boson Beats, piercing beam/radiation gun/gamma ray burst
 P:addTool(P.explosiveMeat) --
 
-P:addTool(P.stealthBomber) 
+--P:addTool(P.stealthBomber) 
 
 P:addTool(P.superGun)
 P:addTool(P.explosiveGun) --make the buffed basic
@@ -5830,14 +5830,14 @@ P:addTool(P.gas) -- or Gas: Don't breathe
 P:addTool(P.wings) --Float Free or Ugrounded or -- jetpack 
 P:addTool(P.ironMan) 
 P:addTool(P.seeds)
-P:addTool(P.salt) --
+--P:addTool(P.salt) --
 P:addTool(P.superWaterBottle)
-P:addTool(P.foresight)
+--P:addTool(P.foresight)
 P:addTool(P.growthHormones) --xray vision, icon
 P:addTool(P.gabeMaker)
 P:addTool(P.flame) --Shouldn't be hard to control or ; use on guard for naked guard; melt ice, evaporate water; cooks meat
-P:addTool(P.lemonadeCup)
-P:addTool(P.lemonParty)
+--P:addTool(P.lemonadeCup)
+--P:addTool(P.lemonParty)
 P:addTool(P.shell)
 P:addTool(P.xrayVision)
 P:addTool(P.blankTool) -- Keep
@@ -5849,12 +5849,12 @@ P:addTool(P.revive) --		Revive: Not yet,	 Return of the King
 P:addTool(P.nineLives)
 
 --Theme Identity/Memes - Social
-P:addTool(P.trap)--
-P:addTool(P.doorstop)
+--P:addTool(P.trap)--
+--P:addTool(P.doorstop)
 P:addTool(P.charger) -- Electrifier: Empowerment or; battery pack 
 P:addTool(P.recycleBin)
 P:addTool(P.animalEnslaver)
-P:addTool(P.trader)
+--P:addTool(P.trader)
 P:addTool(P.christmasSurprise)
 P:addTool(P.luckyPenny)
 P:addTool(P.playerBoxSpawner) --Player Box: Special treatment
@@ -5862,7 +5862,7 @@ P:addTool(P.playerCloner)
 P:addTool(P.inflation) --Keep
 P:addTool(P.shopReroller)
 P:addTool(P.laptop)--Keep
-P:addTool(P.snowballGlobal)
+--P:addTool(P.snowballGlobal)
 P:addTool(P.swapper)
 P:addTool(P.heartTransplant)-- Desc"New memories"
 P:addTool(P.lube)
@@ -5893,16 +5893,16 @@ P:addTool(P.amnesiaPill)
 
 
 --Theme Electricity/Connection
-P:addTool(P.electrifier) --Conduit: Make connections
-P:addTool(P.delectrifier) -- Insulate: Isolate
-P:addTool(P.rotater) -- Rotator: Perpendicular
+--P:addTool(P.electrifier) --Conduit: Make connections
+--P:addTool(P.delectrifier) -- Insulate: Isolate
+--P:addTool(P.rotater) -- Rotator: Perpendicular
 P:addTool(P.buttonFlipper) --Button Master: Flip off, flip on      Does more than push
 
 P:addTool(P.wireBreaker)
 P:addTool(P.powerBreaker)
-P:addTool(P.portalPlacer)
-P:addTool(P.wireExtender) --Extension cord: Longer is better
-P:addTool(P.wireToButton)--Nice
+--P:addTool(P.portalPlacer)
+--P:addTool(P.wireExtender) --Extension cord: Longer is better
+--P:addTool(P.wireToButton)--Nice
 P:addTool(P.tileDisplacer)
 P:addTool(P.tileSwapper)--Swapper: Let's trade places
 P:addTool(P.tileCloner)--Epic
@@ -5927,19 +5927,19 @@ P:addTool(P.secretTeleporter)-- :Let me show you something
 P:addTool(P.superLadder)
 P:addTool(P.pickaxe) --Maybe Change, but defnitely keep
 P:addTool(P.towel)
-P:addTool(P.compass)
+--P:addTool(P.compass)
 
 
 ---Theme Tools
 P:addTool(P.bomb) -- Bomb: ANFO
 P:addTool(P.boxCutter) --Unboxer: Time to find out what's inside
-P:addTool(P.magnet) --For one of the magnets: F = Q * vector v cross vector B
+--P:addTool(P.magnet) --For one of the magnets: F = Q * vector v cross vector B
 P:addTool(P.superWireCutters) --Super Wire-cutters: They can't stop you
 P:addTool(P.bucketOfWater)  --Bucket of Water: Fathomless
 P:addTool(P.toolIncrementer) -- Seven: One of each
 P:addTool(P.superLaser) -- Super L.A.S.E.R.: The Big Bad Beam
 P:addTool(P.axe) -- Axes are friendly, maybe this won't be an axe
-P:addTool(P.screwdriver) --Keep
+--P:addTool(P.screwdriver) --Keep
 P:addTool(P.stoolPlacer)
 P:addTool(P.superBrick)
 P:addTool(P.superSaw)
@@ -5969,18 +5969,18 @@ P:addTool(P.boxSpawner) --Box: Still likes to be pushed around         or Likes 
 
 P:addTool(P.roomReroller)-- Contents Randomizer: What it should have been
 
-P:addTool(P.superSnowball) -- Mask - Hypnotoad
+--P:addTool(P.superSnowball) -- Mask - Hypnotoad
 
 
-P:addTool(P.sock)
+--P:addTool(P.sock)
 P:addTool(P.gasPourer)
 P:addTool(P.gasPourerXtreme)
 
-P:addTool(P.shift) --Lets talk about this one
+--P:addTool(P.shift) --Lets talk about this one
 P:addTool(P.glitch) -- Glitch: ...what just happened?
 P:addTool(P.rottenMeat) -- Rotten Meat: What poor people have to eat
 --P:addTool(P.bouncer) --lol
-P:addTool(P.block) --Mental Block: 			Poof or ...
+--P:addTool(P.block) --Mental Block: 			Poof or ...
 P:addTool(P.supertoolDoubler) -- Ehhh lets talk
 
 P:addTool(P.boxDisplacer)
@@ -6018,14 +6018,14 @@ P:addTool(P.tpRevive)
 
 --P:addTool(P.rewindRevive)
 P:addTool(P.treasureThief)
-P:addTool(P.shroomRevive)
+--P:addTool(P.shroomRevive)
 P:addTool(P.roomRestore)
 P:addTool(P.repair)
 P:addTool(P.preservatives)
 P:addTool(P.mutantShield)
 P:addTool(P.superRange)
-P:addTool(P.chargedShield)
-P:addTool(P.pitbullChanger)
+--P:addTool(P.chargedShield)
+--P:addTool(P.pitbullChanger)
 
 --infiniteUse special char tools
 P:addTool(P.randomizer)
