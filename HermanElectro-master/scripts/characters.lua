@@ -144,14 +144,15 @@ function P.herman:onCharLoad()
 	myShader:send("player_range", 600)
 end
 
-P.felix = P.character:new{name = "Natasha", scale = 1.1*scale, description = "The Sharpshooter", sprite = 'Graphics/Characters/Sydney.png', startingTools = {0,0,0,0,0,0,1},
+P.felix = P.character:new{name = "Natasha", scale = 1.1*scale, description = "The Sharpshooter", sprite = 'Graphics/Characters/Sydney.png', startingTools = {0,0,0,0,0,0,0},
 crime = "Ten Years for Pyromanic Episode"}
 function P.felix:onCharLoad()
 	--tools[7] = tools.felixGun
 	--if not tools.felixGun.isGun then
 		--tools.felixGun:switchEffects()
 	--end
-	tools.giveToolsByReference({tools.grenade,tools.brick})
+	--tools.giveToolsByReference({tools.grenade,tools.brick})
+	tools.giveToolsByReference({tools.knife,tools.knife,tools.playerBoxSpawner,tools.playerBoxSpawner})
 end
 function P.felix:onKeyPressedChar(key)
 	--log(key)
@@ -744,7 +745,7 @@ function P.four:onCharLoad()
 	self:onSelect()
 	--tools.giveToolsByReference({tools.supertoolReroller})
 	tools.giveToolsByReference({tools.mindfulTool})
-	tools.giveToolsByReference({tools.wireCutters})
+	tools.giveToolsByReference({tools.gasPourer})
 end
 
 P.eden = P.character:new{name = "Eden", description = "The Zany", scale = 1.1*scale, sprite = 'Graphics/Characters/Zach.png'}
