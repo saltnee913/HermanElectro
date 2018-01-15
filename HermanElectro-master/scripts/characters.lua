@@ -151,8 +151,14 @@ function P.felix:onCharLoad()
 	--if not tools.felixGun.isGun then
 		--tools.felixGun:switchEffects()
 	--end
-	--tools.giveToolsByReference({tools.grenade,tools.brick})
+	--Option 1
+	--tools.giveToolsByReference({tools.grenade,tools.brick,tools.gun})
+	--Option 2
 	tools.giveToolsByReference({tools.knife,tools.knife,tools.playerBoxSpawner,tools.playerBoxSpawner})
+	--Option 3
+	--tools.giveToolsByReference({tools.mutantShield,tools.tpRevive,tools.playerCloner})
+	--Option 4
+	
 end
 function P.felix:onKeyPressedChar(key)
 	--log(key)
