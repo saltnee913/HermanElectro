@@ -1291,7 +1291,7 @@ function P.spring:useToolNothing(tileY, tileX)
 end
 P.spring.getToolableTiles = P.tool.getToolableTilesBox
 
-P.glue = P.superTool:new{name = "Glue", description = "Almost strong enough to hold your life together", image = 'Graphics/Tools/glue.png', baseRange = 3, quality = 2}
+P.glue = P.superTool:new{name = "Glue", description = "Almost strong enough to hold your life together", image = 'Graphics/Tools/glue.png', baseRange = 3, quality = 1}
 function P.glue:usableOnNothing() --Sticktion? was desc: Stay boy, stay!
 	return true
 end
@@ -1328,7 +1328,7 @@ function P.lamp:useToolNothing(tileY, tileX)
 	room[tileY][tileX] = tiles.lamp:new()
 end]]
 
-P.boxSpawner = P.superTool:new{name = "Box", description = "Still likes to be pushed around", baseRange = 1, image = 'Graphics/box.png', quality = 2,
+P.boxSpawner = P.superTool:new{name = "Box", description = "Still likes to be pushed around", baseRange = 1, image = 'Graphics/box.png', quality = -1,
 boxType = pushableList.box}
 function P.boxSpawner:usableOnNothing(tileY, tileX) --Was desc: Likes to be pushed around
 	if tileY==player.tileY and tileX==player.tileX then return false end
@@ -1385,7 +1385,7 @@ end
 
 P.playerBoxSpawner = P.boxSpawner:new{name = "Player Box", description = "Special treatment", image = 'Graphics/playerBox.png', quality = 2, boxType = pushableList.playerBox}
 
-P.bombBoxSpawner = P.boxSpawner:new{name = "Bomb Box", description  = "Perfect for those seeking a bigger package", image = 'Graphics/bombBox.png', quality = 3, cost = 3,
+P.bombBoxSpawner = P.boxSpawner:new{name = "Bomb Box", description  = "Perfect for those seeking a bigger package", image = 'Graphics/bombBox.png', quality = -1, cost = 3,
 boxType = pushableList.bombBox}
 
 P.jackInTheBoxSpawner = P.boxSpawner:new{name = "Jack In The Box", description  = "REMOVED",image = 'Graphics/jackinthebox.png', quality = 2,
@@ -1393,7 +1393,7 @@ boxType = pushableList.jackInTheBox}
 
 P.lamp = P.boxSpawner:new{name = "Lamp", description  = "A star in a jar", baseRange = 1, image = 'Graphics/lamp.png', quality = 4, cost = 4, boxType = pushableList.lamp}
 
-P.ramSpawner = P.boxSpawner:new{name = "Battering Ram", description  = "Knock down that wall", image = 'Graphics/batteringram.png', quality = 2,
+P.ramSpawner = P.boxSpawner:new{name = "Battering Ram", description  = "Knock down that wall", image = 'Graphics/batteringram.png', quality = 3,
 boxType = pushableList.batteringRam}
 
 
@@ -1936,7 +1936,7 @@ end
 
 
 --Explosive Gun: gun, but more range and explodes the tile it hits
-P.explosiveGun = P.gun:new{name = "The Bombastic Bullet", description = "Ballistic blast", baseRange = 5, image = 'Graphics/supergun.png', quality = 2}
+P.explosiveGun = P.gun:new{name = "The Bombastic Bullet", description = "Ballistic blast", baseRange = 5, image = 'Graphics/supergun.png', quality = 3}
 function P.explosiveGun:useToolTile(tile, tileY, tileX)--Destruction at a distance  --- Terrible
 	self.numHeld = self.numHeld-1
 	if tile:instanceof(tiles.beggar) then
@@ -2383,7 +2383,7 @@ P.mask.useToolNothing = P.mask.useToolTile
 
 
 --Growth Hormones: Let's you use tools over walls, needs art
-P.growthHormones = P.superTool:new{name = "Growth Hormones", description = "Growing up", image = 'Graphics/growthHormones.png', baseRange = 0, quality = 2}
+P.growthHormones = P.superTool:new{name = "Growth Hormones", description = "Growing up", image = 'Graphics/growthHormones.png', baseRange = 0, quality = 3}
 function P.growthHormones:usableOnTile(tile) --Might need a different name
 	return true
 end
@@ -2401,7 +2401,7 @@ P.growthHormones.useToolNothing = P.growthHormones.useToolTile
 
 
 --ThruCover Ammo: gives three thrucover guns on pickup, these can shoot through walls
-P.thruCover = P.gun:new{name= "ThruCover Ammo", description = "Tactical Strike", image = 'Graphics/gun.png', quality = 3}
+P.thruCover = P.gun:new{name= "ThruCover Ammo", description = "Tactical Strike", image = 'Graphics/gun.png', quality = -1}
 function P.thruCover:giveOne()
 	self.numHeld =self.numHeld + 2
 end
@@ -2924,7 +2924,7 @@ function P.shell:useToolNothing()
 end
 P.shell.useToolTile = P.shell.useToolNothing
 
-P.glitch = P.superTool:new{name = "Glitch", description = "...what just happened?", image = 'Graphics/glitch.png', baseRange = 1, quality = 3}
+P.glitch = P.superTool:new{name = "Glitch", description = "...what just happened?", image = 'Graphics/glitch.png', baseRange = 1, quality = 2}
 function P.glitch:usableOnNothing(tileY, tileX)
 	for i = 1, #pushables do
 		if pushables[i].tileX == tileX and pushables[i].tileY == tileY then return false end
@@ -3154,7 +3154,7 @@ function P.pickaxe:useToolPushable(pushable)
 	pushable:destroy()
 end
 
-P.luckyPenny = P.coin:new{name = "Lucky Penny", description = "May all your wishes come true", quality = 2, image = 'Graphics/Tools/luckyPenny.png'}
+P.luckyPenny = P.coin:new{name = "Lucky Penny", description = "May all your wishes come true", quality = 3, image = 'Graphics/Tools/luckyPenny.png'}
 function P.luckyPenny:useToolTile(tile)
 	if tile:instanceof(tiles.puddle) then
 		self.numHeld = self.numHeld-1
@@ -3767,7 +3767,7 @@ function P.superGun:useToolAnimal(animal)
 end
 
 P.woodenRain = P.superTool:new{name = "Wooden Rain", description = "It's raining wood", image = 'Graphics/woodenrain2.png',
-baseRange = 0, quality = 2, cost  = 1}
+baseRange = 0, quality = -1, cost  = 1}
 function P.woodenRain:usableOnNothing()
 	return true
 end
@@ -4064,7 +4064,7 @@ P.wallReroller.useToolTile = P.wallReroller.useToolNothing
 
 --selects beggars from: red, green, blue, black, white, gold
 P.beggarReroller = P.superTool:new{name = "Beggar Reroller", description = "Changing hats", image = 'Graphics/beggarreroller.png',
-baseRange = 0, quality = 1, cost = 1}
+baseRange = 0, quality = 2, cost = 1}
 function P.beggarReroller:usableOnNothing()
 	return true
 end

@@ -11396,8 +11396,7 @@
       ]],
       "itemsNeeded":
       [
-      [0,2,0,0,0,0,0],
-      [0,1,0,0,0,1,0]
+      [0,1,0,0,0,0,0]
       ],
       "set": "more_most_ambiguity"
       },
@@ -13001,7 +13000,7 @@
     "set": "dogs_brown_pits_2"
     },
 
-    "dogs_brown_pits_3":
+    "dogs_brown_pits_3": //WARNING: Extremely hard erik solution
     {
     "layout":
     [
@@ -13020,7 +13019,9 @@
     ],
     "itemsNeeded":
     [ 
-    [1,0,0,0,0,0,0]
+    [1,0,0,0,0,0,0] //Damn straight I'm proud for seeing that right away
+
+
     ],
     "set": "dogs_brown_pits_2"
     },
@@ -19151,10 +19152,12 @@
         [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
         "itemsNeeded":
           [
+            [3,0,0,0,0,0,0], //Lower cost solution, requires dir enter
             [3,0,0,0,0,1,0],
             [0,0,1,0,0,3,0],
             [0,0,0,1,0,3,0]],
-        "set": "termite_or_ladder"
+        "set": "termite_or_ladder_3",
+        "dirEnter": [1,1,1,0]
       },
 
       "twins_on_stay_1":
@@ -23242,7 +23245,7 @@
             [0,24,24,24,24,24,24,24,24,24,24,24,24,24,24,0,0,0,0,0,0,0,0,0],
             [0,0,0,0,0,0,0,0,32,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
         "itemsNeeded":[
-            [1,0,0,0,0,0,0]],
+            [0,0,0,0,0,0,0]],
         "set": "tres_buttons_dog_ram"
       },
 

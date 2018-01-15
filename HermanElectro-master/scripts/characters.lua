@@ -154,11 +154,12 @@ function P.felix:onCharLoad()
 	--Option 1
 	--tools.giveToolsByReference({tools.grenade,tools.brick,tools.gun})
 	--Option 2
-	tools.giveToolsByReference({tools.knife,tools.knife,tools.playerBoxSpawner,tools.playerBoxSpawner})
+	--tools.giveToolsByReference({tools.knife,tools.knife,tools.playerBoxSpawner,tools.playerBoxSpawner})
 	--Option 3
 	--tools.giveToolsByReference({tools.mutantShield,tools.tpRevive,tools.playerCloner})
 	--Option 4
-	
+	tools.giveToolsByReference({tools.heartTransplant,tools.amnesiaPill})
+
 end
 function P.felix:onKeyPressedChar(key)
 	--log(key)
@@ -749,9 +750,13 @@ function P.four:onSelect()
 end
 function P.four:onCharLoad()
 	self:onSelect()
-	--tools.giveToolsByReference({tools.supertoolReroller})
-	tools.giveToolsByReference({tools.mindfulTool})
-	tools.giveToolsByReference({tools.gasPourer})
+	--Option A: Ben
+	tools.giveToolsByReference({tools.supertoolReroller})
+	--Option B: Erik
+	--tools.giveToolsByReference({tools.mindfulTool})
+	--tools.giveToolsByReference({tools.gasPourer})
+	--Option C: Erik2
+	--tools.giveToolsByReference({tools.blankTool})
 end
 
 P.eden = P.character:new{name = "Eden", description = "The Zany", scale = 1.1*scale, sprite = 'Graphics/Characters/Zach.png'}
