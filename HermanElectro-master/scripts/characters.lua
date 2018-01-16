@@ -147,6 +147,10 @@ end
 P.felix = P.character:new{name = "Natasha", scale = 1.1*scale, description = "The Sharpshooter", sprite = 'Graphics/Characters/Sydney.png', startingTools = {0,0,0,0,0,0,0},
 crime = "Ten Years for Pyromanic Episode"}
 function P.felix:onCharLoad()
+	gameTime.timeLeft = 50
+	gameTime.roomTime = 50
+	gameTime.levelTime = 0
+	--gameTime.goesDownInCompleted = true
 	--tools[7] = tools.felixGun
 	--if not tools.felixGun.isGun then
 		--tools.felixGun:switchEffects()
@@ -165,7 +169,7 @@ function P.felix:onCharLoad()
 end
 function P.felix:onKeyPressedChar(key)
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
-		if floorIndex>=2 and floorIndex<=7 then
+		if floorIndex>=2 and floorIndex<=7 and gameTime.timeLeft>100 then
 			local maintainStairsLocs = stairsLocs[floorIndex-1]
 			map.loadedMaps[floorIndex]=nil
 			floorIndex = floorIndex-1
@@ -174,6 +178,7 @@ function P.felix:onKeyPressedChar(key)
 			for i = 1, tools.numNormalTools do
 				tools[i].numHeld = 0
 			end
+			gameTime.timeLeft = gameTime.timeLeft-100
 		end
 	end
 	
