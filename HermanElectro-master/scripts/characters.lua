@@ -158,10 +158,25 @@ function P.felix:onCharLoad()
 	--Option 3
 	--tools.giveToolsByReference({tools.mutantShield,tools.tpRevive,tools.playerCloner})
 	--Option 4
-	tools.giveToolsByReference({tools.heartTransplant,tools.amnesiaPill})
+	--tools.giveToolsByReference({tools.heartTransplant,tools.amnesiaPill})
+	--Option 5, with shift ability 
+	tools.giveToolsByReference({tools.tpRevive})
 
 end
 function P.felix:onKeyPressedChar(key)
+	if key == 'rshift' or key == 'lshift' or key == 'shift' then
+		if floorIndex>=2 and floorIndex<=7 then
+			local maintainStairsLocs = stairsLocs[floorIndex-1]
+			map.loadedMaps[floorIndex]=nil
+			floorIndex = floorIndex-1
+			goDownFloor()
+			stairsLocs[floorIndex-1] = maintainStairsLocs
+			for i = 1, tools.numNormalTools do
+				tools[i].numHeld = 0
+			end
+		end
+	end
+	
 	--log(key)
 	--[[if key == 'rshift' or key == 'lshift' or key == 'shift' then
 		tools.felixGun:switchEffects()
@@ -188,8 +203,8 @@ P.erik = P.character:new{name = "Erik", tallSprite = false, description = "The R
   crime = "Life Imprisonment for Incompetence"}
 function P.erik:onCharLoad()
 	gameTime.timeLeft = 120
-	gameTime.roomTime = 20
-	gameTime.levelTime = 10
+	gameTime.roomTime = 25
+	gameTime.levelTime = 20
 	gameTime.goesDownInCompleted = true
 	tools.giveToolsByReference({tools.stopwatch,tools.stopwatch,tools.stopwatch,tools.heartTransplant})
 	

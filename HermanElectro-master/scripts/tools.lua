@@ -2034,7 +2034,7 @@ function P.wireBreaker:useToolNothing(tileY, tileX)
 end
 P.wireBreaker.useToolTile = P.wireBreaker.useToolNothing
 
-P.powerBreaker = P.superTool:new{name = "EMP", description = "Great for fighting robots", baseRange = 0, image = 'Graphics/powerbreaker.png', quality = 2}
+P.powerBreaker = P.superTool:new{name = "EMP", description = "Made in Somalia", baseRange = 0, image = 'Graphics/powerbreaker.png', quality = 2}
 function P.powerBreaker:usableOnNothing() --Was Power Breaker: Powerless
 	return true
 end
