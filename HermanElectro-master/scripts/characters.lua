@@ -169,7 +169,7 @@ function P.felix:onCharLoad()
 end
 function P.felix:onKeyPressedChar(key)
 	if key == 'rshift' or key == 'lshift' or key == 'shift' then
-		if floorIndex>=2 and floorIndex<=7 and gameTime.timeLeft>100 then
+		if floorIndex>=2 and floorIndex<=7 and gameTime.timeLeft>120 then
 			local maintainStairsLocs = stairsLocs[floorIndex-1]
 			map.loadedMaps[floorIndex]=nil
 			floorIndex = floorIndex-1
@@ -178,7 +178,7 @@ function P.felix:onKeyPressedChar(key)
 			for i = 1, tools.numNormalTools do
 				tools[i].numHeld = 0
 			end
-			gameTime.timeLeft = gameTime.timeLeft-100
+			gameTime.timeLeft = gameTime.timeLeft-120
 		end
 	end
 	
