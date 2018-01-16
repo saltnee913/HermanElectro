@@ -159,8 +159,8 @@ function P.felix:onCharLoad()
 	--tools.giveToolsByReference({tools.mutantShield,tools.tpRevive,tools.playerCloner})
 	--Option 4
 	--tools.giveToolsByReference({tools.heartTransplant,tools.amnesiaPill})
-	--Option 5, with shift ability 
-	tools.giveToolsByReference({tools.tpRevive})
+	--Option 5, with shift ability (Too OP)
+	--tools.giveToolsByReference({tools.tpRevive})
 
 end
 function P.felix:onKeyPressedChar(key)
