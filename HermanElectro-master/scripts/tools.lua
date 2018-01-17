@@ -5748,12 +5748,44 @@ function P.chargedBeam:destroyTiles(tileY, tileX)
 		end
 	end
 end
+
+
+P. amnesiaTab= P.superTool:new{name = "Denial", description = "Forget total recall", quality = -1, baseRange = 0, cost = -1,
+image = 'Graphics/tools/pillsAmnesia.png'}	-- Groundhog's Day? 
+function P.amnesiaTab:usableOnNothing()
+	--on floors 1-6
+	return floorIndex>=2 and floorIndex<=7
+end
+P.amnesiaTab.usableOnTile = P.amnesiaTab.usableOnNothing
+function P.amnesiaTab:useToolNothing()
+	self.numHeld = self.numHeld-1
+	local maintainStairsLocs = stairsLocs[floorIndex-1]
+	map.loadedMaps[floorIndex]=nil
+	floorIndex = floorIndex-1
+	goDownFloor()
+	stairsLocs[floorIndex-1] = maintainStairsLocs
+	for i = 1, tools.numNormalTools do
+			tools[i].numHeld = 0
+	end
+end
+P.amnesiaTab.useToolTile = P.amnesiaTab.useToolNothing
+
+
+
+
+
+
+
+
 --Charges up with basic use, consumes all charge on use. 
 --Idea: A blast which becomes stronger and bigger and can be launched farther 
 --Idea: A beam which becomes more lasting and penetrating and affecting 
 
+
 P.solarBattery = P.superTool:new{}
 P.repairKit = P.superTool:new{}
+
+
 
 
 ---Also, potential related tools would charge up each time you use a basic
@@ -6031,6 +6063,11 @@ P:addTool(P.superRange)
 P:addTool(P.randomizer)
 P:addTool(P.playerClonerInfinite)
 P:addTool(P.powerVacuum)
+
+
+
+--recent additions
+P:addTool(P.amnesiaTab)
 
 P.resetTools()
 
