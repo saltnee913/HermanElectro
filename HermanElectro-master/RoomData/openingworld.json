@@ -9,9 +9,6 @@
       {
         "filePath": "RoomData/openingrooms.json"
       },
-      "mosttutrooms": {
-        "filePath": "RoomData/mosttuts.json"
-      },
       "elitutrooms": {
         "filePath": "RoomData/elituts.json"
       }
@@ -30,18 +27,18 @@
         ["tut_saw",        "tut_glass",   "tut_ef",    "tut_doggo_door", 0],
   		], 
       [
-      [0, "tut_start_most", "open_shell", "watch_and_learn", 0],
-      [0, 0, 0, "tut_doors", 0],
-      [0, 0, "tut_wiring", "wc_practice", 0],
-      [0, 0, 0, "cuttable_shell", 0],
-      [0, "start_room", "efloors_surrounding", "glass_and_efloor", 0],
-      ],*/
+
+      [0, 0, "tut_start_most", "open_shell", 0],
+      [0, 0, 0, "open_shell_with_wc", 0],
+      [0, 0, "watch_and_learn", "free_maze", 0],
+      [0, 0, 0, "os_with_wc_extended", 0],
+      [0, 0, "start_room", "watch_and_learn_2", 0],*/
       [
-      [0, "tut_start_eli", "open_shell_eli", "maze_tut_eli", 0],
-      [0, 0, 0, "saw_tut_eli", 0],
-      [0, 0, "watch_and_learn_flipped", "open_shell_with_wc_eli", 0],
-      [0, 0, 0, "powertut", 0],
-      [0, 0, 0, "start_room", 0],
+      [0, "tut_start_eli", "open_shell_eli", 0],
+      [0, 0, "maze_tut_eli", 0],
+      [0, "watch_and_learn_flipped", "open_shell_with_wc_eli", 0],
+      [0, 0, "powertut", 0],
+      [0, "start_room", "watch_and_learn_2"],
       ],
   		"generateFunction": "generateMapFromJSON",
       "tint": [0,0,0],
