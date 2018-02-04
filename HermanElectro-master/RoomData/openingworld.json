@@ -27,11 +27,11 @@
         ["tut_saw",        "tut_glass",   "tut_ef",    "tut_doggo_door", 0],
   		],*/
       [
-      [0, "tut_start_most", "open_shell", "watch_and_learn", 0],
-      [0, 0, 0, "tut_doors", 0],
-      [0, 0, "tut_wiring", "wc_practice", 0],
-      [0, 0, 0, "cuttable_shell", 0],
-      [0, "start_room", "efloors_surrounding", "glass_and_efloor", 0],
+      [0, 0, "tut_start_most", "open_shell", 0],
+      [0, 0, 0, "open_shell_with_wc", 0],
+      [0, 0, "watch_and_learn", "wc_practice", 0],
+      [0, 0, 0, "watch_and_learn_2", 0],
+      [0, 0, "start_room", "watch_and_learn_2", 0],
       ],
   		"generateFunction": "generateMapFromJSON",
       "tint": [0,0,0],
