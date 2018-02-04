@@ -29,8 +29,8 @@
       [
       [0, 0, "tut_start_most", "open_shell", 0],
       [0, 0, 0, "open_shell_with_wc", 0],
-      [0, 0, "watch_and_learn", "wc_practice", 0],
-      [0, 0, 0, "watch_and_learn_2", 0],
+      [0, 0, "watch_and_learn", "free_maze", 0],
+      [0, 0, 0, "os_with_wc_extended", 0],
       [0, 0, "start_room", "watch_and_learn_2", 0],
       ],
   		"generateFunction": "generateMapFromJSON",
