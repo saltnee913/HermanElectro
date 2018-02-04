@@ -19,7 +19,7 @@
       "itemsNeeded":[
           [0,0,0,0,0,0,0]],
       "isInitial": true,
-      "isInitialAfterTut": true
+      "isInitialBeforeTut": true
     },
 
     "open_shell":
