@@ -746,7 +746,7 @@ function P.getFieldForRoom(inRoom, inField)
 			return v[inRoom][inField]
 		end
 	end
-	log('invalid room id: '..inRoom)
+	print('invalid room id: '..inRoom)
 	game.crash()
 	return nil
 end

@@ -5,11 +5,11 @@
   		{
   			"filePath": "RoomData/tut_beginning.json"
   		},
-      /*"rooms":
+      "rooms":
       {
         "filePath": "RoomData/openingrooms.json"
-      },*/
-      "rooms": {
+      },
+      "mosttutrooms": {
         "filePath": "RoomData/mosttuts.json"
       }
   	},
@@ -27,11 +27,11 @@
         ["tut_saw",        "tut_glass",   "tut_ef",    "tut_doggo_door", 0],
   		],*/
       [
-      [0, "start_room", "open_shell", "watch_and_learn", 0],
+      [0, "tut_start_most", "open_shell", "watch_and_learn", 0],
       [0, 0, 0, "tut_doors", 0],
       [0, 0, "tut_wiring", "wc_practice", 0],
       [0, 0, 0, "cuttable_shell", 0],
-      [0, 0, "efloors_surrounding", "glass_and_efloor", 0],
+      [0, "start_room", "efloors_surrounding", "glass_and_efloor", 0],
       ],
   		"generateFunction": "generateMapFromJSON",
       "tint": [0,0,0],
