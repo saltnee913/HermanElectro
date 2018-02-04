@@ -35,8 +35,8 @@
       [0, 0, "start_room", "watch_and_learn_2", 0],*/
       [
       [0, "tut_start_eli", "open_shell_eli", 0],
-      [0, 0, "maze_tut_eli", 0],
-      [0, "watch_and_learn_flipped", "open_shell_with_wc_eli", 0],
+      [0, 0, "open_shell_with_wc", 0],
+      [0, "glass_and_efloor", "watch_and_learn_crossroads", 0],
       [0, 0, "powertut", 0],
       [0, "start_room", "watch_and_learn_2"],
       ],
