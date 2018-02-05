@@ -290,6 +290,16 @@ P.horizontalWire = P.wire:new{powered = false, dirSend = {0,1,0,1}, dirAccept = 
 sprite = 'Graphics/Tiles/horizontalWireUnpowered.png',
 destroyedSprite = 'Graphics/Tiles/horizontalWireCut.png',
 poweredSprite = 'Graphics/Tiles/horizontalWirePowered.png'}
+P.trapWire = P.horizontalWire:new{}
+function P.trapWire:destroy()
+
+	P.horizontalWire.destroy(self)
+	if not unlocks.tutorialBeatenUnlock.unlocked then
+		messageInfo.text = "Ooops. How can you win now?\nYou probably shouldn't have cut that.\nPress 'r' to restart."
+	end
+end
+
+
 P.verticalWire = P.wire:new{powered = false, dirSend = {1,0,1,0}, dirAccept = {1,0,1,0}, canBePowered = true, name = "verticalWire", sprite = 'Graphics/verticalWireUnpowered.png', destroyedSprite = 'Graphics/verticalWireCut.png', poweredSprite = 'Graphics/verticalWirePowered.png'}
 P.cornerWire = P.wire:new{dirSend = {0,1,1,0}, dirAccept = {0,1,1,0}, name = "cornerWire",
 sprite = 'Graphics/Tiles/cornerWireUnpowered.png',
@@ -3821,5 +3831,6 @@ tiles[221] = P.shopkeeperTile
 tiles[222] = P.baseBossTile
 tiles[223] = P.supertoolQInf
 tiles[224] = P.characterNPCTile
+tiles[225] = P.trapWire
 
 return tiles

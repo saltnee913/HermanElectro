@@ -2703,6 +2703,7 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 end
 
 function restartGame()
+	messageInfo.text = nil
 	if loadTutorial or floorIndex == -1 then
 		player.dead = false
 		player.y = (player.enterY-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
