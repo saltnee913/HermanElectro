@@ -1268,11 +1268,14 @@ function P.tunnel:onLeave()
 end
 
 P.upTunnel = P.tunnel:new{name = "upTunnel", sprite = 'KenGraphics/stairsUp.png'}
+function P.upTunnel:onLoad()
+	self.isVisible = (floorIndex ~= 2)
+end
 function P.upTunnel:onEnter(player)
 end
 function P.upTunnel:onReachMid()
 	--goUpFloor()
-	if floorIndex ~= 2 or not saving.isPlayingBack() then
+	if self.isVisible and (floorIndex ~= 2 or not saving.isPlayingBack()) then
 		local animationProcess = processList.floorTransitionProcess:new()
 		animationProcess.override = "up"
 		processes[#processes+1] = animationProcess
