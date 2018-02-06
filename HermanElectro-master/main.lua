@@ -2577,7 +2577,7 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 		end
 	end
 
-	if key=="e" --[[and not releaseBuild]] then
+	if key=="e" and not releaseBuild then
 		editorMode = not editorMode
 		if floorIndex == -1 then
 			--started = false

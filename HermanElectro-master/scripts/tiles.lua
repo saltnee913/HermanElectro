@@ -1263,7 +1263,7 @@ function P.tunnel:onReachMid()
 	processes[#processes+1] = animationProcess
 end
 function P.tunnel:onLeave()
-	messageInfo.text = ""
+	messageInfo.text = nil
 end
 
 P.upTunnel = P.tunnel:new{name = "upTunnel", sprite = 'KenGraphics/stairsUp.png'}

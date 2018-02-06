@@ -402,6 +402,14 @@ function P.drawToolUI()
 			if tool == i+1 then
 				love.graphics.setColor(50, 200, 50)
 				love.graphics.rectangle("fill", i*width/18, 0, width/18, width/18)
+			elseif demoBuild and tools[i+1].numHeld > 0 then
+				if math.floor(globalCounter*1.5) % 2 == 0 then
+					love.graphics.setColor(255, 255, 255)
+				else
+					love.graphics.setColor(200, 25, 25)
+				end
+
+				love.graphics.rectangle("fill", i*width/18, 0, width/18, width/18)
 			end
 			--love.graphics.rectangle("fill", i*width/18, 0, width/18, width/18)
 			love.graphics.setColor(0,0,0)
