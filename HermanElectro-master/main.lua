@@ -699,6 +699,11 @@ function loadOpeningWorld()
 		--default coordinates
 		player.tileX = math.floor(roomLength/2)
 		player.tileY = roomHeight-3
+
+		if not unlocks.tutorialBeatenUnlock.unlocked then
+			player.tileY = math.floor(roomHeight/2)
+			player.tileX = 3
+		end
 	end
 
 	player.prevTileX = player.tileX
