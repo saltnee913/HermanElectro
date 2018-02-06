@@ -1243,6 +1243,12 @@ P.tunnel = P.tile:new{name = "tunnel", toolsNeeded = -1, toolsEntered = 0, sprit
 function P.tunnel:onEnter(player)
 end
 function P.tunnel:onReachMid()
+	if demoBuild then
+		messageInfo.text = "Congratulations! You beat the demo."
+
+		return
+	end
+
 	if floorIndex>=9 then
 		return
 		--should do something cool, can add later
@@ -1255,6 +1261,9 @@ function P.tunnel:onReachMid()
 	local animationProcess = processList.floorTransitionProcess:new()
 	animationProcess.override = "down"
 	processes[#processes+1] = animationProcess
+end
+function P.tunnel:onLeave()
+	messageInfo.text = ""
 end
 
 P.upTunnel = P.tunnel:new{name = "upTunnel", sprite = 'KenGraphics/stairsUp.png'}
@@ -1456,7 +1465,12 @@ function P.bomb:explode(x,y)
 	if not editorMode and math.abs(player.tileY-x)<2 and math.abs(player.tileX-y)<2 then 
 		kill()
 	end
-	util.createHarmfulExplosion(x,y)
+
+	if demoBuild then
+		util.createHarmlessExplosion(x,y)
+	else
+		util.createHarmfulExplosion(x,y)
+	end
 end
 
 P.capacitor = P.conductiveTile:new{name = "capacitor", counter = 3, maxCounter = 3, dirAccept = {1,0,1,0}, sprite = 'Graphics/capacitor.png', poweredSprite = 'Graphics/capacitor.png'}

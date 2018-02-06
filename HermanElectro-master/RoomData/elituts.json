@@ -172,7 +172,8 @@
 	  "dirEnter": [1,1,1,1],
 	  "hasEndTile": true,
 	  "autowin": false,
-	  "startRoomID": "start_most",
-	  "flippable": false
+	  "startRoomID": "tut_start_eli",
+	  "flippable": false,
+	  "beginner": true
 	}
 }

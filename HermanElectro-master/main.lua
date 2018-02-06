@@ -1,3 +1,8 @@
+demoBuild = true
+releaseBuild = false
+if demoBuild then releaseBuild = true end
+rememberKeys = ""
+
 love.graphics.setDefaultFilter( "nearest" )
 io.stdout:setvbuf("no")
 
@@ -12,7 +17,6 @@ fontSize = 12
 debug = true
 loadTutorial = false
 gamePaused = false
-releaseBuild = false
 
 gameSpeed = 1
 defaultGameSpeed = 1
@@ -277,7 +281,9 @@ function love.load()
 			return self.volume == 0
 		end
 
-		playMusic(1)
+		if not demoBuild then
+			playMusic(1)
+		end
 
 		--[[music = love.audio.newSource('Audio/newthemeidk.mp3')
 		music:play()]]
@@ -408,6 +414,9 @@ function loadRandoms()
 		seed = tonumber(seedOverride)
 	end
 	if seed == nil then seed = os.time() end
+
+	if demoBuild then seed = 85 end
+
 	util.newRandom('mapGen', seed)
 	util.newRandom('toolDrop', seed*3)
 	util.newRandom('misc', seed*5)
@@ -2415,22 +2424,25 @@ function isToolSelectKey(key)
 end
 
 function love.keypressed(key, unicode, isRepeat, isPlayback)
-
 	if key=="/" then
-		--lock everything
-     	for i = 1, #unlocks do
-    		--if not unlocks[i].hidden then
-    			unlocks.lockUnlockable(i)
-    		--end
-    	end
-    	stats.statsData = {}
-    	stats.writeStats()
-    	unlocks.frederickUnlock.unlocked = true
+		rememberKeys = rememberKeys.."/"
+		if rememberKeys == "///" then
+			rememberKeys = ""
+			--lock everything
+	     	for i = 1, #unlocks do
+	    		--if not unlocks[i].hidden then
+	    			unlocks.lockUnlockable(i)
+	    		--end
+	    	end
+	    	stats.statsData = {}
+	    	stats.writeStats()
+	    	unlocks.frederickUnlock.unlocked = true
 
-		loadOpeningWorld()
-		mapY = 0
-		mapX = 1
-		return
+			loadOpeningWorld()
+			mapY = 0
+			mapX = 1
+			return
+		end
 	end
 
 	if key=="w" or key=="a" or key=="s" or key=="d" then
@@ -2524,6 +2536,7 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 	end
 
 	if key=="k" then
+		if demoBuild then return end
 		if not music:muted() then
 			setMusicVolume(0)
 		else
