@@ -12,7 +12,7 @@ P.defaultFloorOrder = {'RoomData/floor1.json','RoomData/floor2.json','RoomData/f
 'RoomData/floor7.json', 'RoomData/floor8.json', 'RoomData/exitDungeonsMap.json'}
 
 if demoBuild then
-	P.defaultFloorOrder = {'RoomData/floor1.json'}
+	P.defaultFloorOrder = {'RoomData/floor1.json', 'RoomData/floor2.json'}
 end
 
 P.floorOrder = P.defaultFloorOrder
