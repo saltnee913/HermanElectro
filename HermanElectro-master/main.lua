@@ -415,7 +415,7 @@ function loadRandoms()
 	end
 	if seed == nil then seed = os.time() end
 
-	if demoBuild then seed = 85 end
+	--if demoBuild then seed = 316 end
 
 	util.newRandom('mapGen', seed)
 	util.newRandom('toolDrop', seed*3)

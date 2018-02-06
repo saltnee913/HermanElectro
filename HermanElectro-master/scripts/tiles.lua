@@ -1146,8 +1146,9 @@ P.slowSpotlightTile = P.spotlightTile:new{name = "slowSpotlight", spotlight = sp
 P.vDoor= P.hDoor:new{name = "vDoor", sprite = 'Graphics3D/door.png', closedSprite = 'Graphics/door.png', openSprite = 'Graphics/doorsopen.png'}
 P.vDoor.onEnter = P.hDoor.onEnter
 
-P.sign = P.tile:new{text = "", name = "sign", sprite = 'KenGraphics/sign.png'}
+P.sign = P.tile:new{text = "", name = "sign", sprite = 'KenGraphics/sign.png', isVisible = false}
 function P.sign:onEnter(player)
+	if demoBuild then return end
 	messageInfo.text = self.text
 end
 function P.sign:onLeave()
@@ -1243,8 +1244,8 @@ P.tunnel = P.tile:new{name = "tunnel", toolsNeeded = -1, toolsEntered = 0, sprit
 function P.tunnel:onEnter(player)
 end
 function P.tunnel:onReachMid()
-	if demoBuild then
-		messageInfo.text = "Congratulations! You beat the demo."
+	if demoBuild and floorIndex>=3 then
+		messageInfo.text = "Congratulations! You beat the demo.\n Press r to restart and try another demo run."
 
 		return
 	end
