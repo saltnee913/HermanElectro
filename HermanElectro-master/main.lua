@@ -1,4 +1,4 @@
-demoBuild = true
+demoBuild = false
 releaseBuild = false
 if demoBuild then releaseBuild = true end
 rememberKeys = ""
@@ -2425,7 +2425,7 @@ end
 
 function love.keypressed(key, unicode, isRepeat, isPlayback)
 	if key=="/" then
-		rememberKeys = rememberKeys.."/"
+		--[[rememberKeys = rememberKeys.."/"
 		if rememberKeys == "///" then
 			rememberKeys = ""
 			--lock everything
@@ -2442,7 +2442,22 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 			mapY = 0
 			mapX = 1
 			return
-		end
+		end]]
+		--lock everything
+	     	for i = 1, #unlocks do
+	    		--if not unlocks[i].hidden then
+	    			unlocks.lockUnlockable(i)
+	    		--end
+	    	end
+	    	stats.statsData = {}
+	    	stats.writeStats()
+	    	unlocks.frederickUnlock.unlocked = true
+
+	    	love.load()
+			loadOpeningWorld()
+			mapY = 0
+			mapX = 1
+			return
 	end
 
 	if key=="w" or key=="a" or key=="s" or key=="d" then
@@ -2536,7 +2551,6 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 	end
 
 	if key=="k" then
-		if demoBuild then return end
 		if not music:muted() then
 			setMusicVolume(0)
 		else
