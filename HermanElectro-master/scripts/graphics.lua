@@ -402,6 +402,14 @@ function P.drawToolUI()
 			if tool == i+1 then
 				love.graphics.setColor(50, 200, 50)
 				love.graphics.rectangle("fill", i*width/18, 0, width/18, width/18)
+			elseif demoBuild and tools[i+1].numHeld > 0 and floorIndex<=0 then
+				if math.floor(globalCounter*1.5) % 2 == 0 then
+					love.graphics.setColor(255, 255, 255)
+				else
+					love.graphics.setColor(200, 25, 25)
+				end
+
+				love.graphics.rectangle("fill", i*width/18, 0, width/18, width/18)
 			end
 			--love.graphics.rectangle("fill", i*width/18, 0, width/18, width/18)
 			love.graphics.setColor(0,0,0)
@@ -477,7 +485,7 @@ function P.drawMap()
 				end
 				local minimapScale = 8/mapHeight
 				love.graphics.rectangle("fill", width - minimapScale*18*(mapHeight-j+1), minimapScale*9*i, minimapScale*18, minimapScale*9 )
-				if player.character.name == "Francisco" and
+				if false and player.character.name == "Francisco" and
 				i==player.character.nextRoom.yLoc and j==player.character.nextRoom.xLoc then
 					love.graphics.setColor(255, 0, 0)
 					love.graphics.rectangle("fill", width - minimapScale*18*(mapHeight-j+1), minimapScale*9*i, minimapScale*9, minimapScale*4 )

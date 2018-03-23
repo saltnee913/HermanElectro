@@ -140,20 +140,55 @@ P.herman = P.character:new{name = "Herman", description = "The Electrician",
   crime = "Life Imprisonment for Attempted Circuit Break"}
 function P.herman:onCharLoad()
 	if loadTutorial or floorIndex == -1 then return end
-	tools.giveToolsByReference({tools.revive})
+
+	if demoBuild then
+		tools.giveToolsByReference({tools.bomb})
+	else
+		tools.giveToolsByReference({tools.revive})
+	end
 	myShader:send("player_range", 600)
 end
 
-P.felix = P.character:new{name = "Natasha", scale = 1.1*scale, description = "The Sharpshooter", sprite = 'Graphics/Characters/Sydney.png', startingTools = {0,0,0,0,0,0,1},
+P.felix = P.character:new{name = "Natasha", scale = 1.1*scale, description = "The Sharpshooter", sprite = 'Graphics/Characters/Sydney.png', startingTools = {0,0,0,0,0,0,0},
 crime = "Ten Years for Pyromanic Episode"}
 function P.felix:onCharLoad()
+	tools.giveToolsByReference({tools.amnesiaTab,tools.amnesiaTab,tools.tpRevive,tools.tpRevive})
+	--gameTime.timeLeft = 50
+	--gameTime.roomTime = 50
+	--gameTime.levelTime = 0
+	--gameTime.goesDownInCompleted = true
 	--tools[7] = tools.felixGun
 	--if not tools.felixGun.isGun then
 		--tools.felixGun:switchEffects()
 	--end
-	tools.giveToolsByReference({tools.bomb})
+	--Option 1
+	--tools.giveToolsByReference({tools.grenade,tools.brick,tools.gun})
+	--Option 2
+	--tools.giveToolsByReference({tools.knife,tools.knife,tools.playerBoxSpawner,tools.playerBoxSpawner})
+	--Option 3
+	--tools.giveToolsByReference({tools.mutantShield,tools.tpRevive,tools.playerCloner})
+	--Option 4
+	--tools.giveToolsByReference({tools.heartTransplant,tools.amnesiaPill})
+	--Option 5, with shift ability (Too OP)
+	--tools.giveToolsByReference({tools.tpRevive})
+
 end
 function P.felix:onKeyPressedChar(key)
+	
+	--if key == 'rshift' or key == 'lshift' or key == 'shift' then
+		--if floorIndex>=2 and floorIndex<=7 and gameTime.timeLeft>120 then
+			--local maintainStairsLocs = stairsLocs[floorIndex-1]
+			--map.loadedMaps[floorIndex]=nil
+			--floorIndex = floorIndex-1
+			--goDownFloor()
+			--stairsLocs[floorIndex-1] = maintainStairsLocs
+			--for i = 1, tools.numNormalTools do
+			--	tools[i].numHeld = 0
+			--end
+			--gameTime.timeLeft = gameTime.timeLeft-120
+		--end
+	--end
+	
 	--log(key)
 	--[[if key == 'rshift' or key == 'lshift' or key == 'shift' then
 		tools.felixGun:switchEffects()
@@ -162,6 +197,8 @@ function P.felix:onKeyPressedChar(key)
 	end]]
 	return false
 end
+
+
 function P.felix:onFloorEnter()
 	--tools.giveTools({7,7})
 end
@@ -180,8 +217,8 @@ P.erik = P.character:new{name = "Erik", tallSprite = false, description = "The R
   crime = "Life Imprisonment for Incompetence"}
 function P.erik:onCharLoad()
 	gameTime.timeLeft = 120
-	gameTime.roomTime = 20
-	gameTime.levelTime = 10
+	gameTime.roomTime = 25
+	gameTime.levelTime = 20
 	gameTime.goesDownInCompleted = true
 	tools.giveToolsByReference({tools.stopwatch,tools.stopwatch,tools.stopwatch,tools.heartTransplant})
 	
@@ -241,7 +278,9 @@ end
 
 P.rammy = P.character:new{name = "Rammy", tallSprite = false, description = "The Ram",
 	sprite = 'Graphics/ram.png'}
-
+function P.rammy:onCharLoad()
+	
+end
 function P.rammy:preTileEnter(tile)
 	if tile.name == tiles.wall.name and not tile.destroyed and player.elevation<tile:getHeight()-3 then
 		local needToUGS = false
@@ -255,7 +294,7 @@ end
 P.frederick = P.character:new{name = "Frederick", tallSprite = false, description = "The Frog",
 sprite = 'Graphics/Characters/Frederick.png', scale = 1.1*scale, disabled = false}
 function P.frederick:onCharLoad()
-	tools.giveToolsByReference({tools.spring,tools.spring,tools.spring,tools.spring})
+	tools.giveToolsByReference({tools.spring,tools.spring,tools.spring,tools.spring,tools.waterBottle})
 end
 function P.frederick:onFloorEnter()
 	--tools.giveToolsByReference({tools.spring})
@@ -347,7 +386,14 @@ P.giovanni.onFloorEnter = P.giovanni.onRoomEnter
 P.francisco = P.character:new{name = "Francisco", description = "The Cartographer", nextRoom = {yLoc = -1, xLoc = -1},
 sprite = 'Graphics/Characters/Francisco.png', scale = 1.1*scale}
 function P.francisco:onCharLoad()
-	tools.giveToolsByReference({tools.coin})
+	tools.giveToolsByReference({tools.roomUnlocker})
+	tools.giveToolsByReference({tools.saw})
+	--tools.giveToolsByReference({tools.teleporter})
+	self:onFloorEnter()
+end
+function P.francisco:onFloorEnter()
+	tools.map.numHeld = tools.map.numHeld + 1
+	tools.map:useToolNothing()
 end
 
 P.random = P.character:new{name = "Random", description = "", sprite = 'Graphics/Characters/Random.png', scale = 1.1*scale,
@@ -733,7 +779,13 @@ function P.four:onSelect()
 end
 function P.four:onCharLoad()
 	self:onSelect()
+	--Option A: Ben
 	tools.giveToolsByReference({tools.supertoolReroller})
+	--Option B: Erik
+	--tools.giveToolsByReference({tools.mindfulTool})
+	--tools.giveToolsByReference({tools.gasPourer})
+	--Option C: Erik2
+	--tools.giveToolsByReference({tools.blankTool})
 end
 
 P.eden = P.character:new{name = "Eden", description = "The Zany", scale = 1.1*scale, sprite = 'Graphics/Characters/Zach.png'}

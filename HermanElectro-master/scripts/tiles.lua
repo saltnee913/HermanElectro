@@ -290,6 +290,16 @@ P.horizontalWire = P.wire:new{powered = false, dirSend = {0,1,0,1}, dirAccept = 
 sprite = 'Graphics/Tiles/horizontalWireUnpowered.png',
 destroyedSprite = 'Graphics/Tiles/horizontalWireCut.png',
 poweredSprite = 'Graphics/Tiles/horizontalWirePowered.png'}
+P.trapWire = P.horizontalWire:new{}
+function P.trapWire:destroy()
+
+	P.horizontalWire.destroy(self)
+	if not unlocks.tutorialBeatenUnlock.unlocked then
+		messageInfo.text = "Ooops. How can you win now?\nYou probably shouldn't have cut that.\nPress 'r' to restart."
+	end
+end
+
+
 P.verticalWire = P.wire:new{powered = false, dirSend = {1,0,1,0}, dirAccept = {1,0,1,0}, canBePowered = true, name = "verticalWire", sprite = 'Graphics/verticalWireUnpowered.png', destroyedSprite = 'Graphics/verticalWireCut.png', poweredSprite = 'Graphics/verticalWirePowered.png'}
 P.cornerWire = P.wire:new{dirSend = {0,1,1,0}, dirAccept = {0,1,1,0}, name = "cornerWire",
 sprite = 'Graphics/Tiles/cornerWireUnpowered.png',
@@ -1136,8 +1146,9 @@ P.slowSpotlightTile = P.spotlightTile:new{name = "slowSpotlight", spotlight = sp
 P.vDoor= P.hDoor:new{name = "vDoor", sprite = 'Graphics3D/door.png', closedSprite = 'Graphics/door.png', openSprite = 'Graphics/doorsopen.png'}
 P.vDoor.onEnter = P.hDoor.onEnter
 
-P.sign = P.tile:new{text = "", name = "sign", sprite = 'KenGraphics/sign.png'}
+P.sign = P.tile:new{text = "", name = "sign", sprite = 'KenGraphics/sign.png', isVisible = false}
 function P.sign:onEnter(player)
+	if demoBuild then return end
 	messageInfo.text = self.text
 end
 function P.sign:onLeave()
@@ -1233,6 +1244,12 @@ P.tunnel = P.tile:new{name = "tunnel", toolsNeeded = -1, toolsEntered = 0, sprit
 function P.tunnel:onEnter(player)
 end
 function P.tunnel:onReachMid()
+	if demoBuild and floorIndex>=3 then
+		messageInfo.text = "Congratulations! You beat the demo.\n Press r to restart and try another demo run."
+
+		return
+	end
+
 	if floorIndex>=9 then
 		return
 		--should do something cool, can add later
@@ -1246,13 +1263,19 @@ function P.tunnel:onReachMid()
 	animationProcess.override = "down"
 	processes[#processes+1] = animationProcess
 end
+function P.tunnel:onLeave()
+	messageInfo.text = nil
+end
 
 P.upTunnel = P.tunnel:new{name = "upTunnel", sprite = 'KenGraphics/stairsUp.png'}
+function P.upTunnel:onLoad()
+	self.isVisible = (floorIndex ~= 2)
+end
 function P.upTunnel:onEnter(player)
 end
 function P.upTunnel:onReachMid()
 	--goUpFloor()
-	if floorIndex ~= 2 or not saving.isPlayingBack() then
+	if self.isVisible and (floorIndex ~= 2 or not saving.isPlayingBack()) then
 		local animationProcess = processList.floorTransitionProcess:new()
 		animationProcess.override = "up"
 		processes[#processes+1] = animationProcess
@@ -1446,7 +1469,12 @@ function P.bomb:explode(x,y)
 	if not editorMode and math.abs(player.tileY-x)<2 and math.abs(player.tileX-y)<2 then 
 		kill()
 	end
-	util.createHarmfulExplosion(x,y)
+
+	if demoBuild then
+		util.createHarmlessExplosion(x,y)
+	else
+		util.createHarmfulExplosion(x,y)
+	end
 end
 
 P.capacitor = P.conductiveTile:new{name = "capacitor", counter = 3, maxCounter = 3, dirAccept = {1,0,1,0}, sprite = 'Graphics/capacitor.png', poweredSprite = 'Graphics/capacitor.png'}
@@ -3821,5 +3849,6 @@ tiles[221] = P.shopkeeperTile
 tiles[222] = P.baseBossTile
 tiles[223] = P.supertoolQInf
 tiles[224] = P.characterNPCTile
+tiles[225] = P.trapWire
 
 return tiles

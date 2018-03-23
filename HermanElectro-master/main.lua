@@ -1,3 +1,8 @@
+demoBuild = false
+releaseBuild = false
+if demoBuild then releaseBuild = true end
+rememberKeys = ""
+
 love.graphics.setDefaultFilter( "nearest" )
 io.stdout:setvbuf("no")
 
@@ -12,7 +17,6 @@ fontSize = 12
 debug = true
 loadTutorial = false
 gamePaused = false
-releaseBuild = false
 
 gameSpeed = 1
 defaultGameSpeed = 1
@@ -277,7 +281,9 @@ function love.load()
 			return self.volume == 0
 		end
 
-		playMusic(1)
+		if not demoBuild then
+			playMusic(1)
+		end
 
 		--[[music = love.audio.newSource('Audio/newthemeidk.mp3')
 		music:play()]]
@@ -408,6 +414,9 @@ function loadRandoms()
 		seed = tonumber(seedOverride)
 	end
 	if seed == nil then seed = os.time() end
+
+	--if demoBuild then seed = 316 end
+
 	util.newRandom('mapGen', seed)
 	util.newRandom('toolDrop', seed*3)
 	util.newRandom('misc', seed*5)
@@ -699,6 +708,11 @@ function loadOpeningWorld()
 		--default coordinates
 		player.tileX = math.floor(roomLength/2)
 		player.tileY = roomHeight-3
+
+		if not unlocks.tutorialBeatenUnlock.unlocked then
+			player.tileY = math.floor(roomHeight/2)
+			player.tileX = 3
+		end
 	end
 
 	player.prevTileX = player.tileX
@@ -2410,6 +2424,41 @@ function isToolSelectKey(key)
 end
 
 function love.keypressed(key, unicode, isRepeat, isPlayback)
+	if key=="/" then
+		--[[rememberKeys = rememberKeys.."/"
+		if rememberKeys == "///" then
+			rememberKeys = ""
+			--lock everything
+	     	for i = 1, #unlocks do
+	    		--if not unlocks[i].hidden then
+	    			unlocks.lockUnlockable(i)
+	    		--end
+	    	end
+	    	stats.statsData = {}
+	    	stats.writeStats()
+	    	unlocks.frederickUnlock.unlocked = true
+
+			loadOpeningWorld()
+			mapY = 0
+			mapX = 1
+			return
+		end]]
+		--lock everything
+	     	for i = 1, #unlocks do
+	    		--if not unlocks[i].hidden then
+	    			unlocks.lockUnlockable(i)
+	    		--end
+	    	end
+	    	stats.statsData = {}
+	    	stats.writeStats()
+	    	unlocks.frederickUnlock.unlocked = true
+
+	    	love.load()
+			loadOpeningWorld()
+			mapY = 0
+			mapX = 1
+			return
+	end
 
 	if key=="w" or key=="a" or key=="s" or key=="d" then
 		 lastMoveKey = key
@@ -2703,6 +2752,7 @@ function love.keypressed(key, unicode, isRepeat, isPlayback)
 end
 
 function restartGame()
+	messageInfo.text = nil
 	if loadTutorial or floorIndex == -1 then
 		player.dead = false
 		player.y = (player.enterY-1)*scale*tileHeight+wallSprite.height+tileHeight/2*scale+10
@@ -3224,7 +3274,7 @@ function resolveConflicts()
 						animals[i]:kill()
 					else
 						conflicts = true
-						firstRun = fklse
+						firstRun = false
 					end
 				end
 			end

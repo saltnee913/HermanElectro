@@ -10,6 +10,11 @@ map = P
 --Temporary variable, we have to do this a better way later
 P.defaultFloorOrder = {'RoomData/floor1.json','RoomData/floor2.json','RoomData/floor3.json','RoomData/floor4.json','RoomData/floor5.json', 'RoomData/floor6.json',
 'RoomData/floor7.json', 'RoomData/floor8.json', 'RoomData/exitDungeonsMap.json'}
+
+if demoBuild then
+	P.defaultFloorOrder = {'RoomData/floor1.json', 'RoomData/floor2.json'}
+end
+
 P.floorOrder = P.defaultFloorOrder
 
 local MapInfo = Object:new{floor = 1, height = 0, numRooms = 0}
@@ -666,6 +671,7 @@ end
 
 
 function P.roomMeetsRequirements(roomData, requirements)
+
 	if (not unlocks.mainGameUnlock.unlocked) and floorIndex>0 then
 		if roomData.beginner==nil or not roomData.beginner then
 			return false
@@ -746,7 +752,7 @@ function P.getFieldForRoom(inRoom, inField)
 			return v[inRoom][inField]
 		end
 	end
-	log('invalid room id: '..inRoom)
+	print('invalid room id: '..inRoom)
 	game.crash()
 	return nil
 end

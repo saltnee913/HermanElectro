@@ -8,12 +8,15 @@
       "rooms":
       {
         "filePath": "RoomData/openingrooms.json"
+      },
+      "elitutrooms": {
+        "filePath": "RoomData/elituts.json"
       }
   	},
   	"data":
   	{
   		"map":
-  		[
+  		/*[
         ["credits_room", 0, 0, 0, 0],
         ["start_room",     "dragon_room", "extra_end", "extra_4",        0],
         ["tut_not_2",      0,             0,           "extra_3",        0],
@@ -22,7 +25,21 @@
         ["tut_wiring",     0,             0,           0,                0],
         ["tut_doors",      0,             0,           0,                0],
         ["tut_saw",        "tut_glass",   "tut_ef",    "tut_doggo_door", 0],
-  		],
+  		], 
+      [
+
+      [0, 0, "tut_start_most", "open_shell", 0],
+      [0, 0, 0, "open_shell_with_wc", 0],
+      [0, 0, "glass_and_efloor", "watch_and_learn_crossroads", 0],
+      [0, 0, 0, "os_with_wc_extended", 0],
+      [0, 0, "start_room", "watch_and_learn_2", 0],*/
+      [
+      [0, "tut_start_eli", "open_shell_eli", 0],
+      [0, 0, "open_shell_with_wc", 0],
+      [0, "three_button_strings", "watch_and_learn_crossroads", 0],
+      [0, 0, "powertut", 0],
+      [0, "start_room", "watch_and_learn_2"],
+      ],
   		"generateFunction": "generateMapFromJSON",
       "tint": [0,0,0],
       "playerRange": 600
